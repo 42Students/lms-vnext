@@ -15,11 +15,13 @@ export function DepartmentCreateForm({
   const router = useRouter();
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
+    setNotice(null);
 
     startTransition(async () => {
       const response = await fetch("/api/college/departments", {
@@ -33,6 +35,7 @@ export function DepartmentCreateForm({
         return;
       }
 
+      setNotice(`Created department “${name.trim()}”. Next, add programs or courses under it.`);
       setName("");
       router.refresh();
     });
@@ -64,6 +67,7 @@ export function DepartmentCreateForm({
       <Button type="submit" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : DEPARTMENT_COPY.createButton}
       </Button>
+      {notice ? <p role="status" className="m-0 w-full text-sm text-body">{notice}</p> : null}
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
           {error}

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { LearnerPlacementJobs, type LearnerPlacementJobItem } from "./learner-placement-jobs";
+import {LearnerSaveDriveButton} from "./learner-save-drive-button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   learnerJobDetailSummary,
@@ -8,6 +9,7 @@ import {
 import {learnerJobAvailabilityBanner} from "@/modules/placements/learner-job-availability-banner-model";
 import {learnerDriveEvidenceRequirements} from "@/modules/placements/learner-drive-evidence-requirements-model";
 import {learnerJobDeadlineLabel} from "@/modules/placements/learner-job-deadline-label-model";
+import {learnerDrivePayFacts} from "@/modules/placements/learner-drive-pay-model";
 
 function humanize(value: string) {
   return value.toLowerCase().split("_").map((part) =>
@@ -23,10 +25,11 @@ function statusTone(status: "PASS" | "FAIL" | "MISSING") {
 }
 
 export function LearnerPlacementJobDetail({
-  items,returnHref="/learn/my-placements/jobs",
+  items,returnHref="/learn/my-placements/jobs",initialSaved=false,
 }: {
   items: readonly LearnerPlacementJobItem[];
   returnHref?:string;
+  initialSaved?:boolean;
 }) {
   const summary = learnerJobDetailSummary(items);
   if (!summary) return null; // route has already returned notFound()
@@ -92,6 +95,7 @@ export function LearnerPlacementJobDetail({
           </div>
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
+          <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
           <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
@@ -252,6 +256,24 @@ export function LearnerPlacementJobDetail({
         </section>
       </div>
 
+      <section aria-labelledby="drive-pay-title" className="rounded-xl border border-border bg-surface p-5 sm:p-6">
+        <h2 id="drive-pay-title" className="text-lg font-semibold text-foreground">Pay</h2>
+        <p className="mt-1 text-sm text-body">Published compensation for each role. Missing amounts are not estimated.</p>
+        <ul className="mt-4 grid gap-3 lg:grid-cols-2">{items.map(row=>{
+          const pay=learnerDrivePayFacts({...row.roleOption,stipendPerMonthInr:row.job.stipendPerMonthInr??null});
+          return <li key={row.roleOption.id} className="rounded-md border border-border p-4">
+            <h3 className="font-semibold text-foreground">{row.roleOption.title}</h3>
+            <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
+              <div><dt className="text-muted-foreground">CTC</dt><dd>{pay.ctc}</dd></div>
+              <div><dt className="text-muted-foreground">Fixed</dt><dd>{pay.fixed}</dd></div>
+              <div><dt className="text-muted-foreground">Variable</dt><dd>{pay.variable}</dd></div>
+              <div><dt className="text-muted-foreground">Joining bonus</dt><dd>{pay.joiningBonus}</dd></div>
+              <div><dt className="text-muted-foreground">Stipend per month</dt><dd>{pay.stipend}</dd></div>
+            </dl>
+          </li>;
+        })}</ul>
+      </section>
+
       <section id="job-role-options" className="scroll-mt-24 space-y-4" aria-labelledby="role-options-title">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -267,7 +289,7 @@ export function LearnerPlacementJobDetail({
             My applications →
           </Link>
         </div>
-        <LearnerPlacementJobs items={items} />
+        <LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]} />
       </section>
     </main>
   );

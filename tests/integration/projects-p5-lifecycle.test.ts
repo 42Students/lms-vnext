@@ -32,6 +32,8 @@ import { SEED_IDS } from "../../scripts/db-seed-data";
 import {approveProjectTaskThroughReview,assignProjectTaskToLearner} from "./support/projects-review-fixture";
 import {updateProjectTaskStatusInputSchema} from "@/modules/projects/validation";
 import {updateMentorTaskDetails} from "@/modules/projects/mentor-task-details-service";
+import {createLearnerOwnTask,deleteLearnerOwnTask} from "@/modules/projects/learner-own-task-service";
+import {createProjectResource} from "@/modules/projects/resource-service";
 import {postProjectTaskComment,listProjectTaskComments} from "@/modules/projects/task-comment-service";
 
 const databaseUrl =
@@ -639,4 +641,39 @@ describe("Projects P5 lifecycle", () => {
         "project_sprints_active_project_uq",
     });
   });
+  it("LEARNER-projects-26 allows own backlog task and denies deleting another member's task",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    await startProjectSprint(mentor,project.id,workspace.sprints[0]!.id);
+    const task=await createLearnerOwnTask(learner,{projectId:project.id},{
+      sprintId:null,title:"Learner backlog task",description:null,approach:"Outline the demo",
+      acceptanceCriteria:"Mentor can review",priority:"MEDIUM",status:"TODO",
+      blockerReason:null,dueDate:null,estimatePoints:2,taskType:"CHORE",
+      expectedSprintUpdatedAt:null,
+    });
+    expect(task.sprintId).toBeNull();
+    expect(task.assigneeMembershipId).toBe(learner.membership!.id);
+    expect(task.approach).toBe("Outline the demo");
+    await expect(deleteLearnerOwnTask(mentor,{projectId:project.id},task.id))
+      .rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+    await expect(deleteLearnerOwnTask(learner,{projectId:project.id},task.id))
+      .resolves.toMatchObject({deleted:true});
+  },45000);
+
+  it("LEARNER-projects-33 shares team-visible resources but denies learner mentor-only visibility",async()=>{
+    const project=await createProject();
+    const workspace=await getProjectInstanceWorkspace(mentor,project.id);
+    await startProjectSprint(mentor,project.id,workspace.sprints[0]!.id);
+    const resource=await createProjectResource(learner,project.id,{
+      title:"Team reference",description:"Shared resource",
+      url:"https://example.com/learner-resource",required:false,visibility:"TEAM",
+    });
+    expect(resource.projectId).toBe(project.id);
+    expect(resource.visibility).toBe("TEAM");
+    await expect(createProjectResource(learner,project.id,{
+      title:"Hidden resource",description:"Should fail",
+      url:"https://example.com/private",required:false,visibility:"MENTOR_ONLY",
+    })).rejects.toMatchObject({code:"PROJECT_ACCESS_DENIED"});
+  },45000);
+
 });

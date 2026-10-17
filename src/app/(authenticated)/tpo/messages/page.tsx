@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -77,7 +78,7 @@ export default async function TpoMessagesPage({
         <PageHeader
           eyebrow="TPO · Communication"
           title="Messages"
-          description="Read-only college-scoped communication records."
+          description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
         <ErrorState
           title="Invalid message filters"
@@ -119,6 +120,19 @@ export default async function TpoMessagesPage({
   const sourceLabel = isRecruiterInbox
     ? "Recruiter conversations"
     : "Placement notifications";
+  // TPO-inbox-team-11: do not disguise notification deliveries as messages
+  // when the recruiter-thread tables are not available.
+  if(!isRecruiterInbox)return <div className="space-y-6">
+   <PageHeader eyebrow="TPO · Communication" title="Messages"
+    description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
+   <ErrorState title="Recruiter conversations are temporarily unavailable"
+    description="Your placement notifications remain available separately. No recruiter messages were loaded."
+    action={<Link href="/tpo/notifications"
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+      Open notifications
+     </Link>}/>
+  </div>;
+
 
   const rangeStart =
     total === 0
@@ -140,10 +154,11 @@ export default async function TpoMessagesPage({
 
   return (
     <div className="space-y-6">
+      <TpoLiveRefresh intervalMs={4000}/>
       <PageHeader
         eyebrow="TPO · Communication"
         title="Messages"
-        description="Recruiter conversations and placement notifications for your college. Times are displayed in IST."
+        description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={
           <div className="flex flex-wrap gap-2">
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
@@ -169,7 +184,7 @@ export default async function TpoMessagesPage({
       >
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-foreground">
-            Current source: {sourceLabel}
+            {sourceLabel}
           </h2>
           <StatusBadge
             tone={
@@ -179,34 +194,23 @@ export default async function TpoMessagesPage({
             }
           >
             {isRecruiterInbox
-              ? "Conversation tables available"
-              : "Notification fallback"}
+              ? "Conversations ready"
+              : "Notifications only"}
           </StatusBadge>
         </div>
 
         {isRecruiterInbox ? (
           <p className="mt-2 text-sm leading-6 text-body">
-            Recruiter conversation threads are persisted in
-            the current database. This overview shows authorized college recruiter threads.
-            Open a conversation to read its messages and reply.
+            Open a recruiter conversation to read messages, reply, and keep the discussion with its placement drive.
           </p>
         ) : (
           <p className="mt-2 text-sm leading-6 text-body">
-            Recruiter Messages tables are not fully registered
-            in this database. The list below therefore shows
-            actual in-app placement notifications delivered
-            to active TPO members of this college. These are
-            <strong> not recruiter conversations</strong>,
-            and their read/unread status belongs to the
-            notification recipient. Missing conversations
-            must not be interpreted as zero messages.
+            Recruiter conversations are temporarily unavailable. These are your placement notifications, not recruiter conversations.
           </p>
         )}
 
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
-          The outbound email/SMS messaging schema is draft-only.
-          No delivery, bounce, sent-message or inbox counts
-          are inferred from it. Notification bodies and private contact details are not exposed in this overview.
+          This page shows messages and notifications recorded for your college.
         </p>
       </section>
 
@@ -390,7 +394,24 @@ export default async function TpoMessagesPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <>
+          <ul aria-label="Recruiter conversations on phone" className="grid gap-3 md:hidden">
+           {items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+            <Link href={"/tpo/messages/"+encodeURIComponent(item.id)}
+              className="block min-h-11 font-semibold text-primary-text">
+             {item.participantName}{item.companyName?" · "+item.companyName:""} →
+            </Link>
+            <p className="text-sm text-body">{item.subject}</p>
+            {item.lastPreview?<p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{item.lastPreview}</p>:null}
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+             {item.waitingForYou?<span>Waiting for you</span>:null}
+             {item.accessEnded?<span>Access ended</span>:null}
+             <span>{item.unreadCount??0} unread</span>
+             <time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>
+            </div>
+           </li>)}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
             <table className="w-full min-w-[50rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
@@ -494,6 +515,7 @@ export default async function TpoMessagesPage({
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <nav

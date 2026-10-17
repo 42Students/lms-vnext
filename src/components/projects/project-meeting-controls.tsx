@@ -47,6 +47,8 @@ function toIso(value: string) {
 }
 
 function MeetingFields({
+  isRequest=false,
+  minStart,
   title,
   agenda,
   startsAt,
@@ -58,6 +60,8 @@ function MeetingFields({
   onEndsAt,
   onTimeZone,
 }: {
+  isRequest?:boolean;
+  minStart?:string;
   title: string;
   agenda: string;
   startsAt: string;
@@ -73,7 +77,7 @@ function MeetingFields({
     <div className="grid gap-4">
       <label>
         <span className="mb-1.5 block text-xs font-semibold text-body">
-          Title
+          {isRequest?"Title":"Title"}
         </span>
         <Input
           required
@@ -86,7 +90,7 @@ function MeetingFields({
       </label>
       <label>
         <span className="mb-1.5 block text-xs font-semibold text-body">
-          Agenda
+          {isRequest?"Agenda / reason":"Agenda"}
         </span>
         <Textarea
           value={agenda}
@@ -99,11 +103,12 @@ function MeetingFields({
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
-            Start
+            {isRequest?"Preferred start time":"Start"}
           </span>
           <Input
             type="datetime-local"
             required
+            min={isRequest?minStart:undefined}
             value={startsAt}
             onChange={(event) =>
               onStartsAt(event.target.value)
@@ -112,7 +117,7 @@ function MeetingFields({
         </label>
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
-            End
+            {isRequest?"Preferred end time":"End"}
           </span>
           <Input
             type="datetime-local"
@@ -155,12 +160,14 @@ export function RequestProjectMeetingControl({
   const [endsAt, setEndsAt] = useState("");
   const [timeZone, setTimeZone] =
     useState("UTC");
+  const [minStart,setMinStart]=useState("");
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
 
   function openDialog() {
+    setMinStart(toLocalInput(new Date()));
     setTimeZone(
       Intl.DateTimeFormat()
         .resolvedOptions().timeZone || "UTC",
@@ -174,6 +181,10 @@ export function RequestProjectMeetingControl({
   ) {
     event.preventDefault();
     setError(null);
+    if(startsAt && new Date(startsAt).getTime()<Date.now()){
+      setError("Preferred date cannot be in the past.");
+      return;
+    }
     if (
       !startsAt ||
       !endsAt ||
@@ -181,7 +192,7 @@ export function RequestProjectMeetingControl({
         new Date(startsAt).getTime()
     ) {
       setError(
-        "Meeting end time must be after the start time.",
+        "End time must be after the start time.",
       );
       return;
     }
@@ -202,7 +213,7 @@ export function RequestProjectMeetingControl({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "Meeting requested",
+        title: "Meeting request sent to your mentor.",
       });
       router.refresh();
     } catch (caught) {
@@ -223,12 +234,12 @@ export function RequestProjectMeetingControl({
         variant="secondary"
         onClick={openDialog}
       >
-        Request meeting
+        Request a meeting
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Request mentor meeting"
+        title="Request a meeting"
         description="Suggest a time window and agenda. A mentor or admin can turn the request into a scheduled meeting."
       >
         <form
@@ -236,6 +247,8 @@ export function RequestProjectMeetingControl({
           className="grid gap-4"
         >
           <MeetingFields
+            isRequest
+            minStart={minStart}
             title={title}
             agenda={agenda}
             startsAt={startsAt}
@@ -276,7 +289,7 @@ export function RequestProjectMeetingControl({
             >
               {pending
                 ? "Requesting…"
-                : "Request meeting"}
+                : "Send request"}
             </Button>
           </div>
         </form>
@@ -667,6 +680,7 @@ export function ProjectMeetingTransitionActions({
       (meeting.status === "REQUESTED" ||
         meeting.status === "SCHEDULED")) ||
     learnerOwnRequest;
+  const withdrawing=learnerOwnRequest&&!manager;
 
   if (!mayComplete && !mayCancel) {
     return null;
@@ -701,7 +715,7 @@ export function ProjectMeetingTransitionActions({
         title:
           action === "COMPLETE"
             ? "Meeting completed"
-            : "Meeting cancelled",
+            : withdrawing?"Meeting request withdrawn.":"Meeting cancelled",
       });
       router.refresh();
     } catch (caught) {
@@ -740,7 +754,7 @@ export function ProjectMeetingTransitionActions({
               setOpen("CANCEL")
             }
           >
-            Cancel meeting
+            {withdrawing?"Withdraw":"Cancel meeting"}
           </Button>
         ) : null}
       </div>
@@ -753,12 +767,12 @@ export function ProjectMeetingTransitionActions({
         title={
           open === "COMPLETE"
             ? "Complete meeting"
-            : "Cancel meeting"
+            : withdrawing?"Withdraw this meeting request?":"Cancel meeting"
         }
         description={
           open === "COMPLETE"
             ? "Capture the outcome before closing this Project meeting."
-            : "Cancellation keeps the meeting record and its history visible."
+            : withdrawing?"Your mentor will no longer see this request.":"Cancellation keeps the meeting record and its history visible."
         }
         footer={
           <>
@@ -786,16 +800,16 @@ export function ProjectMeetingTransitionActions({
                 ? "Saving…"
                 : open === "COMPLETE"
                   ? "Complete"
-                  : "Cancel meeting"}
+                  : withdrawing?"Withdraw request":"Cancel meeting"}
             </Button>
           </>
         }
       >
-        <label>
+        {!withdrawing?<label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
             {open === "COMPLETE"
               ? "Outcome"
-              : "Cancellation note"}
+              : "Cancellation note"
           </span>
           <Textarea
             value={note}
@@ -808,7 +822,7 @@ export function ProjectMeetingTransitionActions({
               setNote(event.target.value)
             }
           />
-        </label>
+        </label>:null}
       </Dialog>
     </>
   );

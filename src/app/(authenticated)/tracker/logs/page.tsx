@@ -10,6 +10,7 @@ import {
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
+import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 
 export const dynamic = "force-dynamic";
@@ -32,6 +33,11 @@ export default async function TrackerLogsPage({
         description="Durable error signatures, recurrence and triage. Live Cloud Logging search and alerts are separate integrations, not implied by this view."
       />
       <TrackerAdminNav />
+      {!telegramAlertsConfigured() ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Telegram alerts are not configured
+        </p>
+      ) : null}
     </>
   );
 

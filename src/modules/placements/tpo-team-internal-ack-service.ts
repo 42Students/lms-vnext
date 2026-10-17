@@ -2,7 +2,8 @@ import "server-only";
 import {and,eq,inArray,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications} from "@/db/schema";
-import {placementTpoInternalThreads} from "@/db/schema/tpo-internal";
+import {placementTpoInternalThreads,placementTpoInternalReads} from "@/db/schema/tpo-internal";
+import {placementTableExists} from "./staged-tables";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -15,6 +16,7 @@ export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:
  if(!membership||!hasMembershipRole(context,"TPO"))
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
+ const readsReady=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -27,6 +29,12 @@ export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:
        eq(placementTpoInternalThreads.invitedMembershipId,membership.id)),
    )).for("share").limit(1);
   if(!thread)throw new Error("TEAM_THREAD_NOT_FOUND");
+  if(readsReady)await tx.insert(placementTpoInternalReads).values({
+   collegeId:college.id,threadId:thread.id,membershipId:membership.id,readThrough:new Date(),
+  }).onConflictDoUpdate({
+   target:[placementTpoInternalReads.threadId,placementTpoInternalReads.membershipId],
+   set:{readThrough:new Date()},
+  });
   const ids=await tx.select({id:inAppNotifications.id})
    .from(inAppNotifications)
    .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))

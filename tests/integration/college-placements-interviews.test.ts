@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCollegeRoundSlotAppointments, mutateCollegeRoundSlotInterview } from "@/modules/placements/college-round-slot-action-service";
 import { finishCollegeInterview } from "@/modules/placements/college-interview-lifecycle-service";
+import {mutateCollegeApplicationStages,getCollegeApplicationPipeline} from "@/modules/placements/college-application-stage-service";
 import { listCollegeInterviewDirectory } from "@/modules/placements/college-interview-directory-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -60,6 +61,30 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
     if (!season.rows[0]) await p.query("INSERT INTO placement_seasons(id,college_id,name,code,start_date,end_date,created_by_user_id,status) VALUES($1,$2,$3,$4,'2026-01-01','2099-12-31',$5,'ACTIVE')", [ids.season, SEED_IDS.collegeA, tag, tag, SEED_IDS.collegeAdminUser]);
   });
   afterAll(async () => { await pool?.end(); await closeDatabaseConnection(); });
+
+  it("COL-placements-01 persists stage transitions and writes immutable history",async()=>{
+    const d=await makeDrive();
+    const response=await mutateCollegeApplicationStages(adminA,d.job,{
+      action:"MOVE",applicationIds:[d.app],stage:"ASSESSMENT",
+      reason:"Assessment is scheduled",notifyByEmail:false,confirmed:true,
+    });
+    expect(response.moved).toBe(1);
+    const history=await pool!.query("select to_stage from placement_college_application_stage_history where stage_id in (select id from placement_college_application_stages where application_id=$1)",[d.app]);
+    expect(history.rows).toEqual(expect.arrayContaining([expect.objectContaining({to_stage:"ASSESSMENT"})]));
+  });
+
+  it("COL-placements-05 filters applications against persisted stage and source",async()=>{
+    const d=await makeDrive();
+    const command=await mutateCollegeApplicationStages(adminA,d.job,{
+      action:"MOVE",applicationIds:[d.app],stage:"ASSESSMENT",
+      reason:"Proceeding to assessment",notifyByEmail:false,confirmed:true,
+    });
+    expect(command.moved).toBe(1);
+    const matches=await getCollegeApplicationPipeline(adminA,d.job,{status:"SUBMITTED",stage:"ASSESSMENT",source:"INTERNAL"});
+    expect(matches.items.map(row=>row.id)).toContain(d.app);
+    const excluded=await getCollegeApplicationPipeline(adminA,d.job,{status:"SUBMITTED",stage:"REJECTED",source:"INTERNAL"});
+    expect(excluded.items.map(row=>row.id)).not.toContain(d.app);
+  });
 
   it("COL-placements-04: schedule, edit, complete persist, audit and notify the candidate", async () => {
     const d = await makeDrive();

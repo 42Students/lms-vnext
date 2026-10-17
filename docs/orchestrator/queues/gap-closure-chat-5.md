@@ -256,6 +256,31 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-21 | S4 | PERMISSION | OPEN |
 
 ## Notes (blockers, one line each)
+- TPO-drive-workspace-65 BLOCKED: resume ZIP needs private bucket/malware scanner; emailed six-digit passcode needs real provider credentials (OD-09 resolved, privacy projection tested, token-only delivery not marked secure closure).
+- TPO-drive-workspace-18 PENDING REGISTRATION: `docs/proposed-migrations/tpo-drive-workspace-18-cancel-selections.sql` permits terminal CANCELLED; Drizzle/service and named PostgreSQL test pushed, acceptance must follow numbered migration replay.
+- TPO-drive-workspace-28 OPEN: registration/reminder and once-per-IST-day notification exist; persist 48-hour learner opt-out before claiming proxy-application closure.
+- TPO-drive-workspace-40 OPEN: strict 1,000-row CSV/XLSX import and named tests exist; company-portal identity mapping remains unimplemented, do not claim source ID matches.
+
+
+- TPO-drive-workspace-41 ROUND-2: bulk recorder now wired into /rounds/[roundId]/results with college-scoped roll search/paste, unique matching, 25-row limit and named tests; round roster over 500 fails closed.
+- TPO-drive-workspace-05 ROUND-2: cloned drafts now clear old cohort IDs and filter old passing years, with named pure-model test; TPO must review eligibility before publishing.
+- TPO-drive-workspace-22 ROUND-2 OPEN: roll/email/phone now appear in the spreadsheet, but branch/batch/academic proof/full legacy field set not yet shown.
+- TPO-drive-workspace-49 ROUND-2 OPEN: saved salary bands, export and response timing verified, but fixed/variable full rules, column/filter parity still missing; deliberately not marked DONE.
+- TPO-drive-workspace-11 ROUND-2 OPEN: college-admin tpo.access permission path has TPO-only route/service guards; needs coordinated permission and persisted-actor implementation, not an implicit role bypass.
+- TPO-drive-workspace-54 BLOCKED: PDF/PNG/JPG letter upload needs authenticated object storage and malware scanner; URL-based letter evidence can be built separately.
 
 ## Needs shell (chat-9 only)
 
+
+
+## Chat-5 round 3 — 2026-10-17 handoff
+
+- Ownership: TPO drive-workspace then TPO batches only; `tpo/students` and `tpo/requests-verification` were reassigned to chat-12 and left unchanged.
+- TPO-drive-workspace-07/19/32/36/58/R04/R05 and -74: inspected implementation or corrected UI text, named tests in `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, recorded in `docs/audit/acceptance/tpo-drive-workspace-verification.md`; -74 NOT-A-GAP.
+- TPO-drive-workspace-57 OPEN: release visibility wording added; holiday-aware offer reply rule still incomplete.
+- TPO-batches-19/31/32/01/02/03/04/05/06/08/10/21/22/29/30/33/34/36/37/38/39/40/41/42/48/58/59/13/14: 29 named tests in `tests/unit/tpo-batches-chat5-round3.test.ts` and page verification; only substantively covered gaps marked DONE, 11 partial cases left OPEN.
+- TPO-batches-13/14: legacy batch deadline and subtitle copy restored; -03 state cards now use eligible-derived legacy words.
+- TPO-batches-39/40: import preview and commit retain form on 409/non-JSON error, no action UUID/server codes shown.
+- BLOCKED TPO-drive-workspace-54 and TPO-drive-workspace-65: offer letters/resume ZIP upload needs private object storage and malware scanner; share one-time email code needs provider credentials.
+- GR helper integration pending: `src/lib/friendly-error.ts`, `src/lib/api-fetch.ts`, and guarded-action hook not on origin/main at adoption check; no fake helper imports added. Import UI uses local safe fallback messages.
+- Tests and builds written but NOT executed by chat-5; orchestrator handles full CI, database integration and runtime certification.

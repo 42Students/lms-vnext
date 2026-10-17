@@ -1,9 +1,9 @@
 import type { LearnerProjectGoalSummary } from "@/modules/projects/learner-project-goals-model";
 export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSummary}) {
-  const hasContent=Boolean(overview.goal || overview.description || overview.deliverables.length);
+  const hasContent=Boolean(overview.goal || overview.description || overview.deliverables.length || overview.definitionOfDone.length || overview.personas.length);
   return (
     <section aria-label="Project goals and deliverables" className="rounded-xl border border-border bg-surface p-5">
-      <h2 className="text-lg font-semibold text-foreground">Goals and deliverables</h2>
+      <h2 className="text-lg font-semibold text-foreground">About this project</h2>
       {!hasContent ? (
         <p className="mt-2 text-sm text-muted-foreground">No authored goal or deliverables have been recorded for this Project.</p>
       ) : (
@@ -12,12 +12,22 @@ export function LearnerProjectGoals({overview}: {overview:LearnerProjectGoalSumm
             <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body">{overview.goal}</p></div> : null}
           {overview.description ? <p className="whitespace-pre-wrap break-words text-sm leading-6 text-body">{overview.description}</p> : null}
           {overview.deliverables.length > 0 ? (
-            <div><h3 className="text-sm font-semibold text-foreground">Expected deliverables</h3>
+            <div><h3 className="text-sm font-semibold text-foreground">Deliverables</h3>
               <ul className="mt-2 list-inside list-disc space-y-2 text-sm leading-6 text-body">
                 {overview.deliverables.map((item,index)=><li key={index} className="break-words">{item}</li>)}
               </ul>
             </div>
-          ) : null}
+          ) : <p className="text-sm text-muted-foreground">No deliverables have been added yet.</p>}
+          <div><h3 className="text-sm font-semibold">Definition of done</h3>
+            {overview.definitionOfDone.length?<ul className="mt-2 list-disc pl-5 text-sm">
+              {overview.definitionOfDone.map((item,i)=><li key={i}>{item}</li>)}
+            </ul>:<p className="mt-1 text-sm text-muted-foreground">No definition of done has been added yet.</p>}
+          </div>
+          <div><h3 className="text-sm font-semibold">Who&apos;s who</h3>
+            {overview.personas.length?<ul className="mt-2 list-disc pl-5 text-sm">
+              {overview.personas.map((item,i)=><li key={i}>{item}</li>)}
+            </ul>:<p className="mt-1 text-sm text-muted-foreground">No personas have been added yet.</p>}
+          </div>
         </div>
       )}
     </section>

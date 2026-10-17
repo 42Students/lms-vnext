@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
@@ -24,7 +23,8 @@ export default async function CollegeOverviewPage() {
   const membership = context.membership;
 
   if (!membership) {
-    redirect("/dashboard");
+    return <EmptyState title="Admin not assigned to a college"
+      description="Your account does not have an active college assignment. Contact a platform administrator." />;
   }
 
   const colleges = await listColleges(
@@ -36,7 +36,7 @@ export default async function CollegeOverviewPage() {
   if (!college) {
     return (
       <EmptyState
-        title="College unavailable"
+        title="Admin not assigned to a college"
         description="Your active membership no longer resolves to an active college."
       />
     );

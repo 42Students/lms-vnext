@@ -31,7 +31,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  if(bytes.length>3_000_000)throw Error("Files must be smaller than 3 MB.");
  const ext=filename.toLowerCase();
  const grid=ext.endsWith(".xlsx")?parseResultXlsx(bytes):
-  ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8"),true):
+  ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8"),true,1000):
   (()=>{throw Error("Use a .xlsx or .csv file.");})();
  const header=grid.shift()??[];
  if(header.length>80||grid.some(row=>row.length>80))

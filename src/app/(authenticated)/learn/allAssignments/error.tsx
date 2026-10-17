@@ -17,7 +17,7 @@ export default function LearnerAssessmentsError({
         This is a loading problem, not an empty list. Check your connection and try again.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
-        <Button onClick={reset}>Try again</Button>
+        <Button onClick={reset}>Retry</Button>
         <Link href="/learn/courses" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">
           {LEARNER_BACK_TO_COURSES}
         </Link>

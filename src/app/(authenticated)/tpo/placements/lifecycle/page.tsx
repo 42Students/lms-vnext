@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -74,10 +74,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   }};}
   return <div className="space-y-6">
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
-    <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
-      description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
+    <PageHeader eyebrow="TPO" title="Drives"
+      description="Review requests, prepare drafts and run every placement drive from one workspace." />
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <Link href="/tpo/placements" className="text-sm font-semibold text-primary-text hover:underline">← Placement operations</Link>
+      <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>
       <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Create drive</Link>
     </div>
     <form action="/tpo/placements/lifecycle" method="get"
@@ -276,12 +276,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                  Select for export
                 </label>
                 <h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
-                <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
+                <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {tpoDriveEmploymentLabel(job.employmentType)} · {tpoDriveWorkModeLabel(job.workMode)}</p>
                 {data.display==="DETAILED"?<dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
                   <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
-                  <div className="flex gap-1"><dt>Job type:</dt><dd>{job.employmentType.replaceAll("_"," ")}</dd></div>
-                  <div className="flex gap-1"><dt>Mode:</dt><dd>{job.workMode}</dd></div>
+                  <div className="flex gap-1"><dt>Job type:</dt><dd>{tpoDriveEmploymentLabel(job.employmentType)}</dd></div>
+                  <div className="flex gap-1"><dt>Mode:</dt><dd>{tpoDriveWorkModeLabel(job.workMode)}</dd></div>
                   <div className="flex gap-1"><dt>Pay:</dt><dd className="font-semibold">
                     {job.minimumAnnualCtcInr == null && job.maximumAnnualCtcInr == null
                       ? "Not recorded"

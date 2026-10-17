@@ -72,7 +72,7 @@ describe.skipIf(!enabled)("TPO close consequence preview isolated PostgreSQL",()
   for(const id of roleIds)await pool.query("DELETE FROM membership_roles WHERE id=$1",[id]);
   await pool.end();
  }await closeDatabaseConnection();});
- it("closes from an accurate SQL-microsecond preview and audits; rejects forged scope and stale data",async()=>{
+ it("TPO-drive-workspace-17 closes after settled selections and issued offers, rejects stale and foreign writes",async()=>{
   if(!pool)throw Error("PG required");
   const jobId=await fixture();
   const blocked=await getTpoDriveClosePreview(tpo,jobId);
@@ -80,6 +80,13 @@ describe.skipIf(!enabled)("TPO close consequence preview isolated PostgreSQL",()
   expect(blocked.issuedOffers).toBe(1);
   await pool.query("UPDATE placement_offers SET status='WITHDRAWN',withdrawn_at=now(),withdrawn_by_user_id=$2,updated_at=now() WHERE id=$1",
    [ids.offer,SEED_IDS.facultyUser]);
+  const selection=await pool.query<{id:string}>(
+   "INSERT INTO placement_drive_selections(job_id,application_id,role_title,status,recorded_by_user_id) VALUES($1,$2,'Main','SELECTED',$3) RETURNING id",
+   [jobId,ids.application,SEED_IDS.facultyUser]);
+  const pending=await getTpoDriveClosePreview(tpo,jobId);
+  expect(pending.canClose).toBe(false);
+  expect(pending.pendingSelections).toBe(1);
+  await pool.query("DELETE FROM placement_drive_selections WHERE id=$1",[selection.rows[0]!.id]);
   const snapshot=await getTpoDriveClosePreview(tpo,jobId);
   expect(snapshot.canClose).toBe(true);
   expect(snapshot.counts).toEqual({applications:1,rounds:1,offers:1});

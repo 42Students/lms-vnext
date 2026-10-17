@@ -100,9 +100,13 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     await closeDatabaseConnection();
   });
 
-  it("previews impact, denies foreign/wrong-role/stale writes, then cancels rounds and audits", async () => {
+  it("TPO-drive-workspace-18 atomically cancels pending results and preserves accepted offers", async () => {
     if (!pool) throw Error("PG required");
     const jobId = await fixture(false);
+    const selection=await pool.query<{id:string}>(
+      "INSERT INTO placement_drive_selections(job_id,application_id,role_title,status,recorded_by_user_id) VALUES($1,$2,'Main','SELECTED',$3) RETURNING id",
+      [jobId,ids.application,SEED_IDS.facultyUser]);
+    const selectionId=selection.rows[0]!.id;
     const snapshot = await getTpoDriveCancelPreview(tpo, jobId);
     expect(snapshot.impact).toEqual({ submittedApplications: 1, openRounds: 1, issuedOffers: 1, acceptedOffers: 0 });
     expect(snapshot.cancellable).toBe(true);
@@ -123,6 +127,11 @@ describe.skipIf(!enabled)("TPO drive cancellation isolated PostgreSQL", () => {
     const saved = await cancelTpoDriveWithPreview(tpo, jobId, write);
     expect(saved.status).toBe("CANCELLED");
     expect(saved.roundsCancelled).toBe(1);
+    expect(saved.pendingSelectionsCancelled).toBe(1);
+    const selectionState=await pool.query<{status:string}>(
+      "SELECT status FROM placement_drive_selections WHERE id=$1",[selectionId]);
+    expect(selectionState.rows[0]?.status).toBe("CANCELLED");
+    await pool.query("DELETE FROM placement_drive_selections WHERE id=$1",[selectionId]);
     const round = await pool.query<{ status: string }>("SELECT status FROM placement_job_rounds WHERE id=$1", [ids.round]);
     expect(round.rows[0]?.status).toBe("CANCELLED");
     const screening=await pool.query("SELECT status FROM placement_application_screenings WHERE application_id=$1",[ids.application]);
