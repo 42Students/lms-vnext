@@ -44,7 +44,7 @@ export default async function TpoHome(){
    getTpoPlacementTeam(ctx,collegeId),
    listMyTpoInternalThreads(ctx),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
-    to:placementCalendarDayKey(weekEnd)}),
+    to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}),
  ]);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId):null;
