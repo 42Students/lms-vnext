@@ -81,7 +81,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
    });
    const data=await response.json().catch(()=>null);
    if(!response.ok)throw Error(data?.error??"Unable to update content.");
-   setEditing(false);setNotice("Content updated.");router.refresh();
+   setEditing(false);setReplacementUrl("");setNotice("Content updated.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update content.");}
   finally{setBusy(false);}
  }
