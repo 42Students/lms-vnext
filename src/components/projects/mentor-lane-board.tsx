@@ -45,7 +45,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    (!priority||task.priority===priority)&&
    (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
      task.assigneeMembershipId===assignee))&&
-   (!statusFilter||task.status===statusFilter));
+   (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
  const visible=matching.slice(0,visibleLimit);
  const lanes=groupLearnerBoardLanes(visible,sprints);
  async function move(id:string,status:string){
