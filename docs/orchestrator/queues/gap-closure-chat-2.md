@@ -141,7 +141,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-25 | S2 | STATE | FIXED-ON-MAIN |
 | TPO-recruiters-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-33 | S2 | STATE | FIXED-ON-MAIN |
-| TPO-recruiters-R01 | S2 | MISSING-FIELD | OPEN |
+| TPO-recruiters-R01 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-recruiters-22 | S3 | VALIDATION | IN-BRANCH |
 | TPO-recruiters-24 | S3 | COPY | IN-BRANCH |
 | TPO-recruiters-27 | S3 | COPY | FIXED-ON-MAIN |
@@ -213,10 +213,10 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-14 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-campaigns-public-16 | S2 | STATE | IN-BRANCH |
 | TPO-campaigns-public-17 | S2 | VALIDATION | UNCONFIRMED |
-| TPO-campaigns-public-22 | S2 | VALIDATION | OPEN |
+| TPO-campaigns-public-22 | S2 | VALIDATION | IN-BRANCH |
 | TPO-campaigns-public-23 | S2 | SIDE-EFFECT | OPEN |
-| TPO-campaigns-public-33 | S2 | MISSING-FIELD | OPEN |
-| TPO-campaigns-public-34 | S2 | MISSING-FIELD | OPEN |
+| TPO-campaigns-public-33 | S2 | MISSING-FIELD | IN-BRANCH |
+| TPO-campaigns-public-34 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-35 | S2 | STATE | IN-BRANCH |
 | TPO-campaigns-public-R08 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-campaigns-public-08 | S3 | STATE | FIXED-ON-MAIN |
@@ -229,11 +229,11 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-30 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-36 | S3 | COPY | OPEN |
 | TPO-campaigns-public-37 | S3 | STATE | OPEN |
-| TPO-campaigns-public-R04 | S3 | MISSING-FIELD | OPEN |
+| TPO-campaigns-public-R04 | S3 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-R09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-11 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-campaigns-public-12 | S4 | MISSING-FIELD | OPEN |
-| TPO-campaigns-public-R10 | S4 | PERFORMANCE | OPEN |
+| TPO-campaigns-public-R10 | S4 | PERFORMANCE | IN-BRANCH |
 
 ## Notes (blockers, one line each)
 - TPO-inbox-team-08 BLOCKED: recruiter email relay and reply-by-email need verified provider credentials plus registered inbound webhook; no live email delivery attempted.
@@ -278,3 +278,5 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Tests in `docs/orchestrator/unit-failures-r1.md` rechecked on code: public join "One more step", exact Retry, recruiter edit Save, Teams filtered counts and bell slice, company-name capitalization, and guarded read action. Corrected code or stale source assertions without deleting test cases.
 - Source-closed with regression coverage: TPO-inbox-team-34, TPO-inbox-team-38, TPO-companies-03; source-verified TPO-companies-22, TPO-campaigns-public-24/30, TPO-recruiters-38; partial/OPEN: TPO-inbox-team-18/22/29/54/60, TPO-companies-20, TPO-recruiters-40, TPO-campaigns-public-R06. See the four acceptance documents for precise tests and evidence.
 - Remaining hard gaps include multiperson/object threads, mentions, announcement recipient delivery/receipts, college team handover, bell event producers, and company experience consolidation. Nothing marked DONE is claimed runtime-certified; CI and PostgreSQL were not run.
+
+- Source evidence already on main and re-verified this round, now marked IN-BRANCH (not runtime-certified): TPO-recruiters-R01 (`tests/unit/chat2-engage-company-communication.test.ts`), TPO-campaigns-public-22 (`tests/unit/chat2-business-email-safety.test.ts`), -33/34 (`tests/unit/chat2-public-content-metrics.test.ts`, proposed migration not registered), -R04 (`tests/unit/chat2-public-join-known-company.test.ts`), -R10 (`tests/unit/chat2-engage-sql-audience-preview.test.ts`). Remain subject to orchestrator CI, migration registration, and deployment verification.
