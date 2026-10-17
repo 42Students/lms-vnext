@@ -89,3 +89,4 @@ export * from "./placement-tpo-company-communication";
 export * from "./placement-company-share-selection";
 export * from "./lesson-content-materials";
 export * from "./placement-learner-general-requests";
+export * from "./placement-tpo-prep-assignments";
