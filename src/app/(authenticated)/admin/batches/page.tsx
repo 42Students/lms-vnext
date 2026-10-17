@@ -58,9 +58,15 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-primary-text">Refresh</button>
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
+      <nav aria-label="Batch lifecycle views" className="flex flex-wrap gap-3 text-sm">
+        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Active batches</Link>
+        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Show inactive</Link>
+        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Show completed</Link>
+      </nav>
       <section aria-label="Manage batches" className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="text-lg font-semibold">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
@@ -83,7 +89,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             </tr>)}</tbody>
           </table></div>}
         <nav aria-label="Batch pages" className="flex items-center justify-between gap-3 text-sm">
-          <span>{data.total} batches · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex gap-3">
             {data.query.page>1?<Link href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
             {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
