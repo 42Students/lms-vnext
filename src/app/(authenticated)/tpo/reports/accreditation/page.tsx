@@ -112,11 +112,11 @@ export default async function TpoAccreditationReportPage({
         <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
         <div className="overflow-x-auto">
          <table className="min-w-[52rem] w-full text-left text-sm">
-          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
+          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Employer contact","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
            <th key={h} scope="col" className="border-b px-3 py-2">{h}</th>)}</tr></thead>
           <tbody>{studentReport.rows.slice(0,50).map(student=><tr key={student.membershipId} className="border-b">
            {[student.name,student.rollNumber,student.programme,student.branch,student.batch,
-            student.employer,accreditationPackageLpa(student.packageInr),student.offersHeld,
+            student.employer,student.employerContact??"Not recorded",accreditationPackageLpa(student.packageInr),student.offersHeld,
             accreditationOfferStatusLabel(student.offerStatus),accreditationJoiningLabel(student.joining)].map((value,index)=>
             <td key={index} className="px-3 py-2">{value??"—"}</td>)}
           </tr>)}</tbody>

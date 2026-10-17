@@ -1,13 +1,14 @@
 import "server-only";
-import {and,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,isNotNull,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,collegeMemberships,departments,learnerProfiles,learnerProgramEnrollments,
  placementApplications,placementCompanies,placementCompanyRelationships,placementJobs,
- placementJoiningOutcomes,placementOffers,placementCollegeRules,placementDriveSelections,programs,users} from "@/db/schema";
+ placementJoiningOutcomes,placementOffers,placementCollegeRules,placementDriveSelections,placementTpoLeads,programs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {getPlacementAccreditationReport} from "./report-accreditation-service";
+import {tpoCrmTablesReady} from "./tpo-crm-storage-readiness";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {accreditationStudentCsv,buildAccreditationStudentRows,ACCREDITATION_STUDENT_WARNING} from "./tpo-accreditation-students-model";
 
@@ -32,7 +33,8 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
  const offers=await getDb().select({
   membershipId:collegeMemberships.id,offerId:placementOffers.id,name:users.displayName,
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
-  batch:cohorts.name,company:placementCompanies.name,status:placementOffers.status,kind:placementOffers.kind,
+  batch:cohorts.name,company:placementCompanies.name,companyRelationshipId:placementCompanyRelationships.id,
+  status:placementOffers.status,kind:placementOffers.kind,
   annualCtcInr:placementOffers.annualCtcInr,joining:placementJoiningOutcomes.status,
  }).from(placementOffers)
   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
@@ -61,7 +63,8 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
  const selectionRows=countsAsPlacedAt==="SELECTED"?await getDb().select({
   membershipId:collegeMemberships.id,selectionId:placementDriveSelections.id,name:users.displayName,
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
-  batch:cohorts.name,company:placementCompanies.name,annualCtcInr:placementDriveSelections.annualCtcInr,
+  batch:cohorts.name,company:placementCompanies.name,companyRelationshipId:placementCompanyRelationships.id,
+  annualCtcInr:placementDriveSelections.annualCtcInr,
  }).from(placementDriveSelections)
   .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
   .innerJoin(placementJobs,and(eq(placementJobs.id,placementDriveSelections.jobId),
@@ -86,7 +89,16 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
    eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
    query.jobId?eq(placementJobs.id,query.jobId):undefined)):[];
 
- const students=[...offers,...selectionRows.map(row=>({...row,offerId:"selection:"+row.selectionId,
+ const contactRows=await tpoCrmTablesReady()?await getDb().select({
+  relationshipId:placementTpoLeads.companyRelationshipId,email:placementTpoLeads.emailNorm,
+ }).from(placementTpoLeads).where(and(eq(placementTpoLeads.collegeId,collegeId),
+  isNotNull(placementTpoLeads.emailNorm),isNotNull(placementTpoLeads.companyRelationshipId)))
+  .orderBy(asc(placementTpoLeads.createdAt),asc(placementTpoLeads.id)):[];
+ const employerContacts=new Map<string,string>();
+ for(const row of contactRows){if(row.relationshipId&&row.email&&!employerContacts.has(row.relationshipId))
+  employerContacts.set(row.relationshipId,row.email);}
+ const students=[...offers.map(row=>({...row,employerContact:employerContacts.get(row.companyRelationshipId)??null})),
+  ...selectionRows.map(row=>({...row,employerContact:employerContacts.get(row.companyRelationshipId)??null,offerId:"selection:"+row.selectionId,
   status:"SELECTED",kind:"OFFER",joining:null,selectedOutcome:true}))];
  const rows=buildAccreditationStudentRows(students,countsAsPlacedAt);
  return {rows,csv:accreditationStudentCsv(rows),batch,warning:ACCREDITATION_STUDENT_WARNING};
