@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel-model";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 const CANCEL_REASONS = [
   "Company withdrew",
@@ -21,6 +22,7 @@ type Preview = {
 
 export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const router = useRouter();
+  const {run}=useGuardedAction({timeoutMs:35000});
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reason, setReason] = useState("");
@@ -39,6 +41,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       setError("Please explain the cancellation in at least 10 characters.");
       return;
     }
+    await run(async()=>{
     setPending(true);
     setError(null);
     try {
@@ -61,6 +64,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
     } finally {
       setPending(false);
     }
+    });
   }
 
   return (
