@@ -97,8 +97,15 @@ describe("public sign-in verified gap closure",()=>{
  });
  it("PUB-auth-public-33 recruiter=email legacy invitation opens email first",()=>{
   const s=source("src/app/login/page.tsx"),h=home();
-  expect(s).toContain('"/?recruiter=email"');
+  expect(s).toContain('export { default, generateMetadata } from "../page"');
   expect(h).toContain('recruiterValue==="email"&&signin.email?"EMAIL":signin.primary');
+ });
+ it("PUB-auth-public-39 routes visitors to marketing but preserves an explicit secure login",()=>{
+  const s=home();
+  expect(s).toContain('tenant.kind === "platform" && requestPath !== "/login"');
+  expect(s).toContain('!authValue && !recruiterValue && !requested) redirect("/home")');
+  expect(source("src/app/login/page.tsx")).toContain('export { default, generateMetadata } from "../page"');
+  expect(source("src/components/marketing/marketing-layout.tsx")).toContain('href="/login"');
  });
  it("PUB-auth-public-34 method tabs announce selection and allow keyboard arrows",()=>{
   const s=login();expect(s).toContain('role="tablist"');
