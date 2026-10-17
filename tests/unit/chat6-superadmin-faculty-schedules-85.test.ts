@@ -1,8 +1,7 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
-import {planFacultyScheduleReassignment} from "@/modules/admin-ui/super-admin-faculty-schedule-reassign-model";
-import {superAdminFacultyScheduleReassignSchema}
-  from "@/modules/admin-ui/super-admin-faculty-schedule-reassign-service";
+import {planFacultyScheduleReassignment,superAdminFacultyScheduleReassignSchema}
+  from "@/modules/admin-ui/super-admin-faculty-schedule-reassign-model";
 const src=(p:string)=>readFileSync(p,"utf8");
 const at=(n:number)=>new Date(Date.UTC(2026,9,18,n,0,0));
 const id=(suffix:string)=>"00000000-0000-4000-a000-"+suffix.padStart(12,"0");
