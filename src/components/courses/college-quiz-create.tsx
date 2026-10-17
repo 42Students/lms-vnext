@@ -41,6 +41,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
   if(dueAt&&Number.isNaN(new Date(dueAt+":00+05:30").getTime()))return "Use a valid deadline.";
+  if(dueAt&&new Date(dueAt+":00+05:30").getTime()<=Date.now())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){
