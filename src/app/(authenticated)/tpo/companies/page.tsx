@@ -260,6 +260,7 @@ export default async function TpoCompanyMemoryPage({
                   <th scope="col" className="px-4 py-3">Offers</th>
                   <th scope="col" className="px-4 py-3">Accepted</th>
                   <th scope="col" className="px-4 py-3">Confirmed joins</th>
+                  <th scope="col" className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -312,6 +313,12 @@ export default async function TpoCompanyMemoryPage({
                     </td>
                     <td className="px-4 py-4 tabular-nums">
                       {company.confirmedJoinedLearners}
+                    </td>
+                    <td className="px-4 py-4">
+                      {company.companyId?<Link
+                        href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+                        className="whitespace-nowrap font-semibold text-primary-text underline">Create drive</Link>:
+                        <span className="text-xs text-muted-foreground">Link company first</span>}
                     </td>
                   </tr>
                 ))}
