@@ -234,6 +234,7 @@ export async function createCourseAssignment(
           ? new Date(input.dueAt)
           : null,
         maxPoints: input.maxPoints,
+        ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
         sequence: input.sequence,
         createdByUserId: context.user.id,
       })
