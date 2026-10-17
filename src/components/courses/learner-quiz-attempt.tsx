@@ -314,7 +314,7 @@ export function LearnerQuizAttempt() {
       );
       cancelPendingReturn.current?.();
       cancelPendingReturn.current = scheduleLearnerQuizReturn(
-        leaveQuiz, 2000, window.setTimeout.bind(window), window.clearTimeout.bind(window),
+        () => router.replace("/learn/allQuizzes"), 2000, window.setTimeout.bind(window), window.clearTimeout.bind(window),
       );
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Quiz submission failed.");
