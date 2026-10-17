@@ -52,6 +52,9 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
   if(!event||!["PLACEMENTS_RECRUITER_BULK_STAGE","PLACEMENTS_RECRUITER_BULK_OWNER"].includes(event.eventType))
    throw new TpoBulkUndoError("NOT_FOUND");
   const now=new Date();
+  const [already]=await tx.select({id:activityEvents.id}).from(activityEvents).where(eq(
+   activityEvents.dedupeKey,"tpo-recruiter-bulk-undo:"+input.runAuditId)).limit(1);
+  if(already)throw new TpoBulkUndoError("ALREADY_RESTORED");
   const age=now.getTime()-event.occurredAt.getTime();
   if(age<0||age>undoWindowMs)throw new TpoBulkUndoError("EXPIRED");
   const stageRun=event.eventType==="PLACEMENTS_RECRUITER_BULK_STAGE";
