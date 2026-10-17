@@ -228,7 +228,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <p className="text-xs text-muted-foreground">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
    {matching.length===0?<p className="text-xs text-muted-foreground">No saved items match this Lesson and Section.</p>:null}
    <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
-    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
+    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.courseCode} · {item.lessonName} · {item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
         ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
          (deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionCode??"")+")"):"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
