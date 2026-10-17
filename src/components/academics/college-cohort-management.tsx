@@ -246,7 +246,11 @@ export function CollegeCohortRowActions({ row, periods }: {
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Mark graduated
     </button>}
-    <button type="button" disabled={pending || row.status!=="PLANNED"} onClick={retire}
+    <button type="button" disabled={pending || row.status!=="PLANNED" ||
+        row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
+      title={row.activeSections>0 || row.activeEnrolledLearners>0
+        ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
+        : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Remove
     </button>
