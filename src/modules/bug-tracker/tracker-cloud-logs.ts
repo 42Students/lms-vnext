@@ -1,4 +1,9 @@
 import {z} from "zod";
+import {and,eq,inArray} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {db10LogAlertSignatures} from "@/db/schema/db10-log-alerts.draft";
+import {logAlertsRuntimeEnabled} from "@/modules/log-alerts/readiness";
+import {alertEnvironment,errorSignatureHash} from "@/modules/log-alerts/signature";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {cloudPollSettings} from "@/modules/log-alerts/scheduler";
@@ -38,12 +43,35 @@ export async function readTrackerLiveLogs(context:RequestContext,raw:unknown,now
     ...(input.pageToken?{pageToken:input.pageToken}:{}),
   });
   const term=input.query?.toLocaleLowerCase("en-IN")??"";
+  // SA-placements-projects-114: map a live log row to an already-persisted
+  // known-error signature. Do not expose message samples, hashes or account IDs.
+  // Match the reporter's same redacted error+path+environment canonical form.
+  const environment=alertEnvironment();
+  const hashes=page.errors.map(row=>errorSignatureHash({
+    environment,message:row.message,path:row.path,
+  }));
+  const matches=new Map<string,{id:string;muted:boolean}>();
+  if(logAlertsRuntimeEnabled()&&hashes.length){
+    try{
+      const known=await getDb().select({id:db10LogAlertSignatures.id,
+        hash:db10LogAlertSignatures.signatureHash,muted:db10LogAlertSignatures.muted})
+        .from(db10LogAlertSignatures).where(and(
+          eq(db10LogAlertSignatures.environment,environment),
+          inArray(db10LogAlertSignatures.signatureHash,[...new Set(hashes)]),
+        ));
+      for(const row of known)matches.set(row.hash,{id:row.id,muted:row.muted});
+    }catch{
+      // Cloud logs remain readable when Known Errors are not yet provisioned.
+    }
+  }
   const items=page.errors.filter(row=>!term||
     [row.message,row.path,row.event,row.requestId??""].some(value=>
       value.toLocaleLowerCase("en-IN").includes(term)))
     .map(row=>({
       id:row.id.slice(0,1024),time:row.timestamp.toISOString(),event:row.event,
       message:row.message,path:row.path,requestId:row.requestId??null,component:row.component??null,
+      knownErrorId:matches.get(errorSignatureHash({environment,message:row.message,path:row.path}))?.id??null,
+      muted:matches.get(errorSignatureHash({environment,message:row.message,path:row.path}))?.muted??null,
     }));
   return {configured:true,items,nextPageToken:page.nextPageToken??null};
 }

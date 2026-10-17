@@ -4,8 +4,10 @@ import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
-type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null};
+type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
+  knownErrorId?:string|null;muted?:boolean|null};
 type Page={configured:boolean;items:Entry[];nextPageToken:string|null};
 function mergeEntries(existing:Entry[],incoming:Entry[]):Entry[]{
   const seen=new Set(existing.map(item=>item.id));
@@ -32,6 +34,9 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [notice,setNotice]=useState("");
   const [reportOpen,setReportOpen]=useState(false);
   const [exporting,setExporting]=useState(false);
+  const [muteTarget,setMuteTarget]=useState<{id:string;muted:boolean}|null>(null);
+  const [muteReason,setMuteReason]=useState("");
+  const [mutating,setMutating]=useState(false);
   const locked=useRef(false);
   async function fetchPage(pageToken?:string):Promise<Page>{
     const params=new URLSearchParams({windowMinutes,query:query.trim()});
@@ -103,6 +108,26 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     }catch(error){setNotice(error instanceof FriendlyFetchError?error.message:"Could not prepare logs. Try again.");}
     finally{setExporting(false);}
   }
+  async function toggleKnownErrorMute(){
+    if(!muteTarget||mutating)return;
+    setMutating(true);setNotice("");
+    try{
+      const nextMuted=!muteTarget.muted;
+      await apiFetch("/api/tracker/logs/known-errors/"+encodeURIComponent(muteTarget.id),{
+        method:"PATCH",headers:{"content-type":"application/json"},
+        body:JSON.stringify({action:"MUTE",muted:nextMuted,
+          ...(nextMuted&&muteReason.trim()?{reason:muteReason.trim()}:{}),}),
+        timeoutMs:15_000,
+      });
+      setItems(previous=>previous.map(item=>item.knownErrorId===muteTarget.id?
+        {...item,muted:nextMuted}:item));
+      setMuteTarget(null);setMuteReason("");
+      setNotice(nextMuted?"Known error muted.":"Known error unmuted.");
+    }catch(error){
+      setNotice(error instanceof FriendlyFetchError?error.message:
+        "Could not update this known error. Try again.");
+    }finally{setMutating(false);}
+  }
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-5" aria-label="Live logs">
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div><h2 className="text-lg font-semibold">Live Google Cloud Logging</h2>
@@ -155,6 +180,16 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
               className="font-semibold text-primary-text underline">Report this</Link>
+            {item.knownErrorId?<>
+              <Link href={"/tracker/logs#known-error-"+item.knownErrorId}
+                className="font-semibold text-primary-text underline">Known error details</Link>
+              <button type="button" disabled={mutating}
+                onClick={()=>{setMuteReason("");setMuteTarget({id:item.knownErrorId!,muted:item.muted===true});}}
+                className="font-semibold text-primary-text underline disabled:opacity-50">
+                {item.muted?"Unmute this error":"Mute this error"}
+              </button>
+            </>:<Link href="/tracker/logs#known-errors"
+              className="font-semibold text-primary-text underline">Open Known Errors</Link>}
           </div>
         </details>
       </li>)}
@@ -163,6 +198,17 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold disabled:opacity-50">
       Load older
     </button>:null}
+    <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
+      title={muteTarget?.muted?"Unmute this known error?":"Mute this known error?"}
+      description="This updates the stored error signature for every matching log. It does not erase log records."
+      confirmLabel={muteTarget?.muted?"Unmute":"Mute error"} pending={mutating}
+      onConfirm={()=>void toggleKnownErrorMute()}>
+      {!muteTarget?.muted?<label className="grid gap-1 text-sm font-semibold">
+        Reason (optional)
+        <input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
+          className="min-h-10 rounded border border-border bg-background px-3"/>
+      </label>:null}
+    </ConfirmDialog>
     {reportOpen?<div role="dialog" aria-modal="true" aria-label="Report for Claude"
       className="rounded-lg border border-border bg-background p-4">
       <h3 className="font-semibold">Report for Claude</h3>

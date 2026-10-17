@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -17,7 +17,6 @@ export function MentorSprintCreate({
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -33,27 +32,6 @@ export function MentorSprintCreate({
   const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
     (!dueDate||!startDate||dueDate>=startDate);
-  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||
-    chosenReleaseId!==releaseId);
-  useEffect(()=>{
-    if(!open||!dirty)return;
-    const warn=(event:BeforeUnloadEvent)=>{
-      event.preventDefault();
-      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
-    };
-    window.addEventListener("beforeunload",warn);
-    return ()=>window.removeEventListener("beforeunload",warn);
-  },[open,dirty]);
-  function resetForm(){
-    setTitle("");setDescription("");setGoal("");setDone("");
-    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
-  }
-  function requestClose(){
-    if(busy)return;
-    if(dirty)setConfirmDiscard(true);
-    else setOpen(false);
-  }
-
   async function create() {
     if(!title.trim() || title.trim().length>200 || description.length>4000||
       goal.length>4000||done.length>4000||!datesValid||!chosenReleaseId||
@@ -66,7 +44,7 @@ export function MentorSprintCreate({
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
       showToast({tone:"success",title:"Sprint created"});
-      setOpen(false);resetForm();
+      discardDraft();
       router.refresh();
     } catch {
       showToast({tone:"error",title:"Could not create sprint",
