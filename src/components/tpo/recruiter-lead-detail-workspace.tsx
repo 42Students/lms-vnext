@@ -136,6 +136,19 @@ export function RecruiterLeadDetailWorkspace({
   const [invitePersonalNote,setInvitePersonalNote]=useState("");
   const [inviteMessage,setInviteMessage]=useState("");
   const [inviteExpiresAt,setInviteExpiresAt]=useState("");
+  useEffect(()=>{
+    if(!editing&&!notNowOpen)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[editing,notNowOpen]);
+  function confirmLeave(){
+    if(!editing&&!notNowOpen)return true;
+    return window.confirm("Leave this recruiter? Unsaved changes will be lost.");
+  }
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
   const params = "?collegeId=" + encodeURIComponent(collegeId);
@@ -393,7 +406,7 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="space-y-6">
-      <Link href="/tpo/recruiters" className="text-sm font-medium text-primary-text hover:underline">
+      <Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="text-sm font-medium text-primary-text hover:underline">
         ← Recruiter leads
       </Link>
       {phase === "loading" ? (
