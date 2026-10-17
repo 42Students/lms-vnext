@@ -155,7 +155,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   ]);
   // REC-home-drives-46: only placement-cell recorded candidate slots
   // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
-  const slotRows=filters.tab==="rounds"
+  const slotRows=(filters.tab==="rounds"||filters.tab==="overview")
     ?await db.select({roundId:placementRoundCandidateSlots.roundId,
       total:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`,
       confirmed:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.confirmedAt} is not null and ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`})
