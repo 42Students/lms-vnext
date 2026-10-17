@@ -45,7 +45,7 @@ export default async function TpoTeamPage({searchParams}:{
   member.roles.includes("TPO_ADMIN"));
  const people=sortTpoPeople(activeTeam,peopleSort);
  const awayState=tab==="people"?await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]})):null;
- const awayByMember=new Map(awayState?.items.map(row=>[row.membershipId,row.awayUntil])??[]);
+ const awayByMember=new Map<string,Date>((awayState?.items??[]).map(row=>[row.membershipId,row.awayUntil] as const));
  const search=parsed.success?(parsed.data.q??""):"";
  const conversationPage=parsed.success?(parsed.data.page??1):1;
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search,conversationPage)
