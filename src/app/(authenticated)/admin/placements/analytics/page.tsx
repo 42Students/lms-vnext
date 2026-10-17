@@ -4,6 +4,7 @@ import {getSuperAdminCompanyHiringReport} from "@/modules/admin-ui/super-admin-h
 import {getSuperAdminHiringReportFilters} from "@/modules/admin-ui/super-admin-hiring-report-filters-service";
 import {superAdminHiringReportQuery,hiringCompanyRollups,COMPANY_HIRING_COLUMNS} from "@/modules/admin-ui/super-admin-hiring-report-model";
 import {PageHeader} from "@/components/ui/page-header";
+import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
@@ -34,6 +35,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
   withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
  }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
+ const funnel=hiringFunnel(totals);
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
   <label className="grid gap-1 text-sm font-semibold">{label}<select name={key} defaultValue={q[key]??""}
    className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2">
@@ -62,9 +64,26 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
   </div>
-  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{key}</dt>
+  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
+   <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{hiringMetricLabel(key)}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
+  <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Hiring Funnel">
+   <div className="flex flex-wrap items-start justify-between gap-3">
+    <h2 className="text-lg font-semibold">Hiring Funnel</h2>
+    <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
+   </div>
+   <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
+    <li key={step.key} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3">
+     <span className="block text-sm font-semibold">{step.label}</span>
+     <strong className="block text-2xl tabular-nums">{step.count.toLocaleString("en-IN")}</strong>
+     <p className="text-xs text-muted-foreground">{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
+     <div className="mt-2 h-2 overflow-hidden rounded bg-muted" role="img"
+      aria-label={step.label+": "+step.count+" applications"}>
+      <div className="h-full rounded bg-primary" style={{width:step.widthPercent+"%"}} />
+     </div>
+    </li>)}</ol>
+  </section>
+  <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
   <section className="overflow-x-auto rounded-xl border border-border bg-surface">
    <table className="w-full min-w-[55rem] text-left text-sm">
     <thead><tr className="border-b border-border bg-muted">{COMPANY_HIRING_COLUMNS.map(name=><th key={name} scope="col" className="p-3">{name}</th>)}</tr></thead>
