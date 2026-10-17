@@ -6,6 +6,7 @@ export const mentorTaskTransitionSchema = z.object({
   status: z.enum(["TODO", "IN_PROGRESS", "BLOCKED"]),
   expectedUpdatedAt: z.iso.datetime({offset:true}),
   confirmed: z.literal(true),
+  blockerReason: z.string().trim().min(1).max(4000).optional(),
 }).strict();
 /** DONE and IN_REVIEW require a recorded learner submission and Mentor review. */
 export function allowedMentorTaskTransition(before:string,after:string){
