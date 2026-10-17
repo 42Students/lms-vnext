@@ -16,6 +16,8 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
+import {ShellWidgetBoundary} from "./shell-widget-boundary";
+import {ShellConnectivityNotice} from "./shell-connectivity-notice";
 import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
@@ -85,7 +87,7 @@ export async function AppShell({
           </div>
         </div>
         <div className="flex-1 overflow-y-auto py-4 pr-3">
-          <SidebarNav items={navigation} />
+          <ShellWidgetBoundary name="Sidebar navigation" fallbackHref="/dashboard"><SidebarNav items={navigation} /></ShellWidgetBoundary>
         </div>
         <div className="border-t border-[var(--lms-sidebar-border)] px-5 py-4">
           <p className="m-0 text-xs font-semibold text-muted-foreground">
@@ -107,7 +109,7 @@ export async function AppShell({
         <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
           <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
-              <MobileNavigation items={navigation} />
+              <ShellWidgetBoundary name="Mobile navigation" fallbackHref="/dashboard"><MobileNavigation items={navigation} /></ShellWidgetBoundary>
               <div className="min-w-0">
                 <p className="m-0 text-xs font-semibold text-muted-foreground">
                   {getShellRoleLabel(context)}
@@ -124,7 +126,7 @@ export async function AppShell({
               </div>
             </div>
             <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
-              {learner ? <LearnerTopbarTools /> : null}
+              {learner ? <ShellWidgetBoundary name="Learner tools" fallbackHref="/learn/notifications"><LearnerTopbarTools /></ShellWidgetBoundary> : null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher
                   choices={adminScopeChoices}
@@ -152,11 +154,12 @@ export async function AppShell({
                 </Link>
               ) : null}
               {hasActiveRecruiter(context)?<HrRecruiterBell/>:null}
-              <AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)&&!hasTpoTooling(context)} variant={accountVariant} />
+              <ShellWidgetBoundary name="Account actions" fallbackHref="/dashboard"><AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)&&!hasTpoTooling(context)} variant={accountVariant} /></ShellWidgetBoundary>
             </div>
           </div>
         </header>
 
+        <ShellConnectivityNotice />
         <main className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
