@@ -142,7 +142,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
     </details>:null}
     {rowActions ? mobileActionsCollapsible ?
       <details className="border-t border-border pt-3">
-       <summary className="min-h-11 cursor-pointer font-semibold">Row actions</summary>
+       <summary className="min-h-11 cursor-pointer font-semibold">Actions</summary>
        <div className="mt-2" aria-label="Row actions">{rowActions(row)}</div>
       </details> :
       <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div>

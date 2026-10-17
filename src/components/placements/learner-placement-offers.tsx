@@ -95,6 +95,8 @@ export function LearnerPlacementOffers({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  // Ref lock covers the gap between a click and the pending-state rerender.
+  const pendingRef = useRef(false);
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [acceptImpact,setAcceptImpact]=useState<OfferAcceptImpact|null>(null);
   const [acceptImpactBusy,setAcceptImpactBusy]=useState(false);
@@ -148,6 +150,8 @@ export function LearnerPlacementOffers({
     offerId: string,
     action: "ACCEPT" | "DECLINE",
   ) {
+    if (pendingRef.current) return;
+    pendingRef.current = true;
     const reason = action === "DECLINE" ? declineReason.trim() || null : null;
     setPendingId(offerId);
     try {
@@ -199,12 +203,13 @@ export function LearnerPlacementOffers({
             : "Could not record the offer response. Please retry.",
       });
     } finally {
+      pendingRef.current = false;
       setPendingId(null);
     }
   }
 
   async function requestExtension(){
-    if(!extensionsAvailable || !extensionOffer || pendingId!==null || !extensionOffer.expiresAt)return;
+    if(!extensionsAvailable || !extensionOffer || pendingId!==null || pendingRef.current || !extensionOffer.expiresAt)return;
     let input:ReturnType<typeof learnerOfferExtensionRequest>;
     try{
       input=learnerOfferExtensionRequest({
@@ -216,6 +221,7 @@ export function LearnerPlacementOffers({
       setExtensionError("Choose a later valid IST deadline and enter a reason (3–2000 characters).");
       return;
     }
+    pendingRef.current = true;
     setPendingId(extensionOffer.offerId);setExtensionError(null);
     try{
       const response=await fetch("/api/placements/requests",{
@@ -228,7 +234,7 @@ export function LearnerPlacementOffers({
         description:"Your placement team must approve the request before the offer deadline changes."});
       router.refresh();
     }catch(error){setExtensionError(error instanceof Error?error.message:"Unable to request extension.");}
-    finally{setPendingId(null);}
+    finally{pendingRef.current=false;setPendingId(null);}
   }
   function downloadOwnOffers(){
     const csv=learnerOffersCsv(sortedOffers);
