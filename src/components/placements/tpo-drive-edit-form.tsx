@@ -5,8 +5,12 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
-type Draft={id:string;title:string;description:string;updatedAt:string;
+type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
+ applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean};
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
@@ -35,8 +39,18 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   }
   const reason=String(fields.get("reason")??"").trim();
   if(reason.length<10){setError("Explain the edit in at least 10 characters.");return;}
+  let deadline:string|null;
+  try{
+   const raw=String(fields.get("applicationDeadline")??"").trim();
+   deadline=raw?driveDeadlineIstToIso(raw):null;
+  }catch{setError("Enter a valid application deadline in IST.");return;}
+  const cgpa=optionalNumber(fields.get("minCgpa"));
+  if(cgpa!==null&&(!Number.isFinite(cgpa)||cgpa<0||cgpa>10)){
+   setError("Enter a CGPA from 0 to 10.");return;
+  }
   setProposal({
    confirmed:true,expectedUpdatedAt:job.updatedAt,
+   applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
    reason,title:String(fields.get("title")??""),
    description:String(fields.get("description")??""),
    locations:String(fields.get("locations")??"").split(",").map(x=>x.trim()).filter(Boolean),
@@ -49,13 +63,13 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   });
   setConfirmOpen(true);
  }
- async function save(){
+ async function save(notifyApplicants=false){
   if(!proposal||pending)return;
   try{
    await run(async()=>{
     await apiFetch("/api/placements/tpo/jobs/"+encodeURIComponent(job.id)+"/edit",{
      method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
-     body:JSON.stringify(proposal),
+     body:JSON.stringify({...proposal,notifyApplicants}),
     });
     setConfirmOpen(false);
     router.push("/tpo/placements/jobs/"+encodeURIComponent(job.id));router.refresh();
@@ -86,16 +100,38 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     <input type="checkbox" name="isDream" defaultChecked={job.isDream} className="h-4 w-4 accent-primary"/>
     Dream drive — held-offer limit exception
   </label>
-  <label className="block text-sm font-semibold text-body">Reason for edit (audited)<textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
-  <p className="text-xs text-body">Only active-season draft drives can be edited. A changed version must be refreshed before another save.</p>
+  <div className="grid gap-4 sm:grid-cols-2">
+   <label className="block text-sm font-semibold text-body">Application deadline (IST)
+    <input name="applicationDeadline" type="datetime-local"
+      defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
+      className={cls}/>
+   </label>
+   <label className="block text-sm font-semibold text-body">Minimum CGPA for eligibility
+    <input name="minCgpa" type="number" min={0} max={10} step="0.01"
+      defaultValue={job.minCgpaHundredths===null?"":job.minCgpaHundredths/100} className={cls}/>
+   </label>
+  </div>
+    <label className="block text-sm font-semibold text-body">Reason for edit (audited)<textarea required name="reason" minLength={10} maxLength={1000} rows={2} className={cls}/></label>
+  <p className="text-xs text-body">Active-season draft and live drives can be edited. Live changes are audited; choose whether to notify existing applicants. A changed version must be refreshed before another save.</p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">{pending?"Saving…":"Save changes"}</button>
   <Link className="ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
    href={"/tpo/placements/jobs/"+encodeURIComponent(job.id)}>Open drive page</Link>
  </form>
- <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
-  title="Save changes to this draft drive?"
-  description="These changes are audited and will update this saved draft. Confirm only after checking the employer details."
-  confirmVariant="primary" confirmLabel="Save changes" pending={pending} onConfirm={()=>void save()}/>
+ {job.status==="PUBLISHED"?
+  <Dialog open={confirmOpen} onOpenChange={setConfirmOpen} title="Save changes to a live drive?"
+   description={"Choose whether to notify "+job.applicantCount+" existing applicants. Both choices audit the change."}
+   dismissible={!pending}
+   footer={<div className="flex flex-wrap gap-2">
+    <Button variant="secondary" disabled={pending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+    <Button variant="secondary" disabled={pending} onClick={()=>void save(false)}>Save without telling anyone</Button>
+    <Button disabled={pending} onClick={()=>void save(true)}>Save and notify {job.applicantCount} applicants</Button>
+   </div>}>
+   <p className="text-sm text-body">Changes to dates, compensation or eligibility may affect an applicant&apos;s next action.</p>
+  </Dialog>:
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+   title="Save changes to this draft drive?"
+   description="These changes are audited and will update this saved draft. Confirm only after checking the employer details."
+   confirmVariant="primary" confirmLabel="Save changes" pending={pending} onConfirm={()=>void save(false)}/>}
  </>;
 }

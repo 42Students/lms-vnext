@@ -2,18 +2,22 @@ import "server-only";
 import {and,asc,eq,ne,inArray,max,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courseSectionDeliveries,sections,courses,departments,lessonContents} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 /** College-only metadata for adding/scheduling link-based lesson content.
  * Never return private storage keys to the catalog or the editor. */
 export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
  const membership=ctx.membership;
- if(!membership||membership.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ const superAdmin=isSuperAdmin(ctx);
+ if(!superAdmin&&(!membership||membership.status!=="ACTIVE"||
+    ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN")))
   throw new AuthorizationError("courses.manage");
- requirePermission(ctx,"courses.manage",{collegeId:membership.collegeId,
-  organizationId:membership.organizationId});
- const collegeId=membership.collegeId;
+ const acting=superAdmin?await resolveActingCollege(ctx,"courses.manage"):null;
+ const collegeId=acting?.collegeId??membership!.collegeId;
+ const organizationId=acting?.organizationId??membership!.organizationId;
+ requirePermission(ctx,"courses.manage",{collegeId,organizationId});
  const db=getDb();
  const lessons=await db.select({
   id:courseLessons.id,name:courseLessons.name,course:courses.name,

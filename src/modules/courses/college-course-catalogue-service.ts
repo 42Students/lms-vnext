@@ -52,7 +52,7 @@ export async function listCollegeCourseCatalogue(
  const page=Math.min(query.page,pages);
  const items=await db.select({
   id:courses.id,name:courses.name,code:courses.code,
-  shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,
+  shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,takeaways:courses.takeaways,
   description:courses.description,status:courses.status,
   departmentId:courses.departmentId,departmentName:departments.name,
   createdAt:courses.createdAt,updatedAt:courses.updatedAt,
@@ -69,7 +69,7 @@ export async function listCollegeCourseCatalogueExport(context:RequestContext,ra
  const college=await authorizedCollege(context);
  const rows=await getDb().select({
   id:courses.id,name:courses.name,code:courses.code,shortTitle:courses.shortTitle,
-  officialCode:courses.officialCode,cardColor:courses.cardColor,description:courses.description,
+  officialCode:courses.officialCode,cardColor:courses.cardColor,takeaways:courses.takeaways,description:courses.description,
   status:courses.status,departmentName:departments.name,
  }).from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
   .where(whereCatalogue(college.id,query.q))

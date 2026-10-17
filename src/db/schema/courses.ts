@@ -46,6 +46,7 @@ export const courses = pgTable(
     shortTitle: varchar("short_title", { length: 120 }),
     officialCode: varchar("official_code", { length: 64 }),
     cardColor: varchar("card_color", { length: 7 }),
+    takeaways: text("takeaways"),
     description: text("description"),
     status: courseStatusEnum("status")
       .notNull()
@@ -77,6 +78,9 @@ export const courses = pgTable(
     index("courses_department_status_idx").on(
       table.departmentId,
       table.status,
+    ),
+    check("courses_card_color_hex_ck",
+      sql`${table.cardColor} IS NULL OR ${table.cardColor} ~ '^#[0-9A-Fa-f]{6}$'`,
     ),
   ],
 );

@@ -4,6 +4,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
+import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
+import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-authoring-options";
 import { adminAssessmentQuerySchema } from "@/modules/courses/admin-assessment-directory-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
@@ -24,9 +26,11 @@ export default async function SuperAdminQuizzesPage({
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its quizzes." />
   </div>;
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", query.data);
+  const lessons=await getCollegeQuizAuthoringOptions(context);
   return <div className="space-y-4">
     <a href={"/api/admin/quizzes/export?"+new URLSearchParams({q:query.data.q,status:query.data.status}).toString()}
      className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export quizzes.csv</a>
+    <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
     <AdminAssessmentDirectory data={data} />
   </div>;
 }
