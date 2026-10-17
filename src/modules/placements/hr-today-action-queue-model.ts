@@ -5,7 +5,7 @@ type UnreadThread={id:string;href:string;label:string;unread:number};
 /** REC-home-drives-01: only verified scoped signals become next-up actions.
  * A recorded result due date is not proof results are still outstanding. */
 export function buildRecruiterActionQueue(input:{
- jobs:readonly Job[];collegeId:string;companyId:string;unread:number;
+ jobs:readonly Job[];collegeId:string;companyId:string;unread:number;now?:Date;
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
@@ -20,7 +20,7 @@ export function buildRecruiterActionQueue(input:{
  const due=(input.resultsDue??[]).filter(item=>authorized.has(item.jobId)&&
    Number.isFinite(item.dueAt.getTime()))
   .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id))
-  .slice(0,5).map(item=>({key:"due:"+item.id, tone:"SOON" as const, at:item.dueAt,
+  .slice(0,5).map(item=>({key:"due:"+item.id, tone:(input.now&&item.dueAt.getTime()<input.now.getTime()?"URGENT":"SOON") as "URGENT"|"SOON", at:item.dueAt,
     label:"Check results deadline · "+item.roundName,
     description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
     href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
