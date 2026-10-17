@@ -7,13 +7,14 @@ import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
+import {MentorTaskCreate} from "./mentor-task-create";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
-type Sprint={id:string;title:string;status:string;releaseId:string};
-type Release={id:string;title:string};
+type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date};
+type Release={id:string;title:string;status:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
 type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType:string};
@@ -77,14 +78,29 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   if(id)void move(id,status);
  }
  const learnerChoices=members.filter(member=>member.role==="LEARNER");
+ const creationSprints=sprints.filter(item=>item.status!=="COMPLETED"&&
+   releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
+ const creationDefault=creationSprints.find(item=>item.status==="ACTIVE")??
+   creationSprints.find(item=>item.status==="PLANNED");
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-primary-text underline">Back to project</Link>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h1 className="text-xl font-semibold">Board</h1>
-   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-     className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-    Review submission</Link>
+   <div className="flex flex-wrap items-center gap-2">
+     {!readOnly?<MentorTaskCreate projectId={projectId}
+       sprintId={creationDefault?.id??""}
+       updatedAt={creationDefault?new Date(creationDefault.updatedAt).toISOString():""}
+       sprints={creationSprints.map(item=>({
+           id:item.id,title:item.title,status:item.status,updatedAt:new Date(item.updatedAt).toISOString(),
+         }))}
+       learners={members.filter(member=>member.role==="LEARNER").map(member=>({
+         membershipId:member.membershipId,displayName:member.displayName,
+       }))}/>:null}
+     <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+       className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+      Review submission</Link>
+   </div>
   </div>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release

@@ -10,8 +10,11 @@ import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
 
 export function MentorTaskCreate({
-  projectId,sprintId,updatedAt,
-}:{projectId:string;sprintId:string;updatedAt:string}){
+  projectId,sprintId,updatedAt,sprints=[],learners=[],
+}:{projectId:string;sprintId:string;updatedAt:string;
+  sprints?:readonly {id:string;title:string;status:string;updatedAt:string}[];
+  learners?:readonly {membershipId:string;displayName:string|null}[];
+}){
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
@@ -24,21 +27,34 @@ export function MentorTaskCreate({
   const [taskType,setTaskType]=useState("");
   const [dueDate,setDueDate]=useState("");
   const [blockerReason,setBlockerReason]=useState("");
+  const [selectedSprintId,setSelectedSprintId]=useState(sprintId);
+  const [status,setStatus]=useState<"TODO"|"IN_PROGRESS"|"BLOCKED">("TODO");
+  const [assigneeMembershipId,setAssigneeMembershipId]=useState("");
+  const choices=sprints.length?sprints.filter(item=>item.status!=="COMPLETED"):
+    sprintId?[{id:sprintId,title:"Current sprint",status:"PLANNED",updatedAt}]:[];
+  const chosenSprint=choices.find(item=>item.id===selectedSprintId);
+  const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
   const valid=title.trim().length>0&&title.trim().length<=200&&
-    description.length<=4000&&criteria.length<=4000;
+    description.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
+    (estimate===""||(Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000))&&
+    canSetStatus&&(status!=="BLOCKED"||Boolean(blockerReason.trim()));
   async function create(){
     if(!valid)return;
     setBusy(true);
     try{
       await projectMutation("/api/projects/"+projectId+"/tasks","POST",{
-        sprintId,title:title.trim(),description:description.trim()||null,
+        sprintId:selectedSprintId||null,
+        expectedSprintUpdatedAt:chosenSprint?.updatedAt??null,
+        title:title.trim(),description:description.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
-        priority,expectedSprintUpdatedAt:updatedAt,
+        priority,status,assigneeMembershipId:assigneeMembershipId||null,
         estimatePoints:estimate!==""?Number(estimate):null,
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
-      showToast({tone:"success",title:"Project task created"});
+      showToast({tone:"success",title:"Task added."});
       setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
+      setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
+      setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
       router.refresh();
     }catch(error){
       showToast({tone:"error",title:"Task was not created",
@@ -46,16 +62,26 @@ export function MentorTaskCreate({
     }finally{setBusy(false);}
   }
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Add task</Button>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
     <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
-      description="Creates a TODO task in this Sprint and records an audit event."
+      description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!valid} onClick={()=>void create()}>
-          {busy?"Creating…":"Confirm create"}
+          {busy?"Creating…":"Create task"}
         </Button>
       </>}>
       <div className="grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint
+          <select value={selectedSprintId} disabled={busy} onChange={event=>{
+            setSelectedSprintId(event.target.value);setStatus("TODO");
+          }} className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Leave blank for the backlog</option>
+            {choices.map(item=><option key={item.id} value={item.id}>
+              {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
+            </option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task title
           <Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />
         </label>
@@ -72,6 +98,17 @@ export function MentorTaskCreate({
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Status
+          <select value={status} disabled={busy||!selectedSprintId}
+            onChange={event=>setStatus(event.target.value as typeof status)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="TODO">To Do</option>
+            {chosenSprint?.status==="ACTIVE"?<>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="BLOCKED">Blocked</option>
+            </>:null}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Estimate
           <Input inputMode="numeric" type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
@@ -84,13 +121,26 @@ export function MentorTaskCreate({
             <option value="SPIKE">Spike</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assignee
+          <select value={assigneeMembershipId} disabled={busy}
+            onChange={event=>setAssigneeMembershipId(event.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Unassigned</option>
+            {learners.map(member=><option key={member.membershipId} value={member.membershipId}>
+              {member.displayName??"Learner"}
+            </option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Due date
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Blocker reason
+        <label className="grid gap-1 text-sm font-semibold text-body">What's blocking this task?
           <Textarea value={blockerReason} maxLength={4000}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
+        {status==="BLOCKED"&&!blockerReason.trim()?<p role="alert" className="text-sm text-error">
+          Explain what is blocking this task before creating it.
+        </p>:null}
       </div>
     </Dialog>
   </>;

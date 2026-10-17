@@ -1,9 +1,9 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
+import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectReleases,projectSprints,projectTasks,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -12,6 +12,7 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectLifecycleAccess} from "./access";
 import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
+import {notifyProjectMemberships} from "./project-notification-service";
 
 /** PR-S2-04: create task metadata on registered 0090 fields. */
 export async function createMentorProjectTask(context:RequestContext,rawParams:unknown,rawInput:unknown){
@@ -35,48 +36,77 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         .for("update").limit(1);
       if(!project||!["PLANNED","ACTIVE"].includes(project.status))
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      const [sprint]=await tx.select().from(projectSprints)
+      const [sprint]=input.sprintId?await tx.select().from(projectSprints)
         .where(and(eq(projectSprints.id,input.sprintId),
           eq(projectSprints.projectId,scope.project.id)))
-        .for("update").limit(1);
-      if(!sprint||sprint.status==="COMPLETED"||
-          sprint.updatedAt.getTime()!==new Date(input.expectedSprintUpdatedAt).getTime())
+        .for("update").limit(1):[null];
+      if(input.sprintId&&(!sprint||sprint.status==="COMPLETED"||
+          sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      const [release]=await tx.select({status:projectReleases.status})
-        .from(projectReleases)
-        .where(and(eq(projectReleases.id,sprint.releaseId),
-          eq(projectReleases.projectId,scope.project.id)))
-        .limit(1);
-      if(!release||release.status==="SHIPPED")
+      if(input.status!=="TODO"&&sprint?.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      if(sprint){
+        const [release]=await tx.select({status:projectReleases.status})
+          .from(projectReleases)
+          .where(and(eq(projectReleases.id,sprint.releaseId),
+            eq(projectReleases.projectId,scope.project.id)))
+          .limit(1);
+        if(!release||release.status==="SHIPPED")
+          throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      }
 
+      if(input.assigneeMembershipId){
+        const [eligible]=await tx.select({id:projectMembers.id}).from(projectMembers)
+          .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+          .innerJoin(users,eq(users.id,collegeMemberships.userId))
+          .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+            eq(membershipRoles.role,"LEARNER")))
+          .where(and(eq(projectMembers.projectId,scope.project.id),
+            eq(projectMembers.membershipId,input.assigneeMembershipId),
+            eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt),
+            eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
+            eq(users.platformStatus,"ACTIVE"))).limit(1);
+        if(!eligible)throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
+      }
       const [last]=await tx.select({sequence:projectTasks.sequence})
-        .from(projectTasks).where(eq(projectTasks.sprintId,sprint.id))
+        .from(projectTasks).where(and(eq(projectTasks.projectId,scope.project.id),
+          sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
         .orderBy(desc(projectTasks.sequence)).limit(1);
       const [created]=await tx.insert(projectTasks).values({
-        projectId:scope.project.id,sprintId:sprint.id,
+        projectId:scope.project.id,sprintId:sprint?.id??null,
         templateKey:"mentor-"+randomUUID().replaceAll("-",""),
         sequence:(last?.sequence??-1)+1,
         title:input.title,description:input.description,
         acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
-        status:"TODO",
+        status:input.status,assigneeMembershipId:input.assigneeMembershipId,
         blockerReason:input.blockerReason??null,dueDate:input.dueDate??null,
         estimatePoints:input.estimatePoints??null,taskType:input.taskType??null,
       }).returning();
       if(!created)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      // Invalidate other forms holding the old sprint timestamp.
-      const updatedAt=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
-      await tx.update(projectSprints).set({updatedAt})
-        .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
-      await recordActivityEventInTransaction(tx,context,{
+      // Invalidate other forms holding the old sprint timestamp, if any.
+      if(sprint){
+        const updatedAt=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
+        await tx.update(projectSprints).set({updatedAt})
+          .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
+      }
+      const event=await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
         subjectType:"project_task",subjectId:created.id,
         subjectLabel:created.title,summary:"Project task created",
-        metadata:{projectId:scope.project.id,sprintId:sprint.id,taskId:created.id},
+        metadata:{projectId:scope.project.id,sprintId:sprint?.id??null,taskId:created.id,
+          status:created.status,assigneeMembershipId:created.assigneeMembershipId},
         groupKey:"project:"+scope.project.id,
         dedupeKey:"project-task:"+created.id+":created",
       });
+      if(created.assigneeMembershipId){
+        await notifyProjectMemberships(tx,event.id,{
+          projectId:scope.project.id,collegeId:scope.collegeId,
+          membershipIds:[created.assigneeMembershipId],
+          title:"New task assigned",body:"You have been assigned "+created.title+".",
+          actionHref:"/learn/projects/"+scope.project.id+"?tab=board",
+        });
+      }
       return created;
     });
   }catch(error){
