@@ -28,6 +28,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { canAddPlacementHeldOffer, canShowLearnerSelfApply } from "./held-offer-policy";
+import { learnerJobApplyBlockers } from "./learner-job-apply-blockers-model";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
@@ -258,6 +259,23 @@ export async function listLearnerPlacementJobs(
         now,
       );
 
+      const heldOfferEligible = canAddPlacementHeldOffer({
+        maxHeldOffers: rules?.maxHeldOffers ?? 1,
+        upliftPct: rules?.upliftPct ?? 40,
+        nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
+          row.job.minimumAnnualCtcInr,
+        isDream: row.job.isDream,
+        heldOffers,
+      });
+      const applyContext = {
+        registrationState,
+        debarred,
+        canSelfApply: participation.canSelfApply,
+        hasApplication: application !== null,
+        deadlinePassed,
+        eligibilityStatus: eligibility.status,
+        heldOfferEligible,
+      };
       return {
         job: row.job,
         roleOption: row.roleOption,
@@ -265,22 +283,8 @@ export async function listLearnerPlacementJobs(
         application,
         eligibility,
         deadlinePassed,
-        canApply: canShowLearnerSelfApply({
-          registrationState,
-          debarred,
-          canSelfApply: participation.canSelfApply,
-          hasApplication: application !== null,
-          deadlinePassed,
-          eligibilityStatus: eligibility.status,
-          heldOfferEligible: canAddPlacementHeldOffer({
-            maxHeldOffers: rules?.maxHeldOffers ?? 1,
-            upliftPct: rules?.upliftPct ?? 40,
-            nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
-              row.job.minimumAnnualCtcInr,
-            isDream: row.job.isDream,
-            heldOffers,
-          }),
-        }),
+        canApply: canShowLearnerSelfApply(applyContext),
+        applicationBlockers: learnerJobApplyBlockers(applyContext),
       };
     }),
   );
