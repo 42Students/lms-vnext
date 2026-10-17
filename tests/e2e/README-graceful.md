@@ -39,7 +39,7 @@ These are fail-closed assertions; no dynamic identity bypass runs in production.
 | Recruiter | Message reply; designation and display-name saves; offline draft; missing drive; guarded submission |
 | Super Admin | Organization and college creation; unknown tenant; guarded submission |
 
-When applicable, test cases inject an API abort across all `/api/**`, HTML 502, hostile JSON 500 with fake database text, 403, 404, 409, 429, five-second slow 504, offline, and 401 session expiry. The missing-record deep links use nonexistent UUIDs. Dedicated GR-80/GR-82 production smoke exercises chunk-failure recovery for public sign-in and all seven authenticated roles via externally generated session state. **The matrix documents authored coverage, not passing execution.** Some endpoints currently show page-specific legacy errors instead of GR-02 copy; that is a failure to fix in the corresponding product lane rather than a reason to loosen assertions.
+When applicable, test cases inject an API abort across all `/api/**`, HTML 502, hostile JSON 500 with fake database text, 403, 404, 409, 429, 503 maintenance, five-second slow 504, offline, and 401 session expiry. The missing-record deep links use nonexistent UUIDs. Dedicated GR-80/GR-82 production smoke exercises chunk-failure recovery for public sign-in and all seven authenticated roles via externally generated session state. **The matrix documents authored coverage, not passing execution.** Some endpoints currently show page-specific legacy errors instead of GR-02 copy; that is a failure to fix in the corresponding product lane rather than a reason to loosen assertions.
 
 ## Writing a deterministic browser test
 
@@ -70,3 +70,7 @@ Chat-14 has merged unit suites under `tests/unit/graceful-api-helpers.test.ts`, 
 ## Sign-off rule
 
 Record the **exact merged commit SHA**, command, environment, scenario counts, failures, skips, trace links and result in `docs/audit/acceptance/graceful-e2e-verification.md`. An authored assertion, a mock endpoint that was never hit, and a skipped test are not product proof. Do not weaken failure copy, lose typed edits, accept framework overlays, or mark unrun suites green.
+
+### GR-83 proof still needed
+
+GR-51 explicitly requires a visible outbox state reading **"Will be retried automatically"** when a provider send fails. The merged named helper-unit tests cover GR-01–08, GR-30, GR-32–34, GR-50, GR-52 and GR-60, plus the GR-31 source-scan gate, but a distinct executed GR-51 outbox/UI witness has **not** been identified in the reviewed unit suite. This is an orchestration/owner-lane follow-up, not a license to claim GR-83. The outbox pipeline must be verified using an isolated persistence fixture and fake provider; no real SMS or email is sent. Retain GR-51 as BLOCKED until such proof exists.
