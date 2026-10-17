@@ -292,36 +292,22 @@ export function AdminAttendanceWorkspace({
 
   function exportCsv() {
     if (!data.grid) return;
-    const header = [
-      "Learner",
-      "Roll",
-      ...data.grid.sessions.map(
-        (session) =>
-          attendanceIndiaDay(session.startsAt) + " " +
-            new Intl.DateTimeFormat("en-IN", {
-              timeZone: "Asia/Kolkata",
-              hour: "2-digit",
-              minute: "2-digit",
-            }).format(new Date(session.startsAt)),
-      ),
-      "Attendance %",
-    ];
-    const rows = data.grid.roster.map(
-      (learner) => [
-        learnerName(learner),
-        learner.rollNumber ?? "",
-        ...data.grid!.sessions.map(
-          (session) =>
-            codeFor(
-              session,
-              recordMap.get(
-                `${session.id}:${learner.membershipId}`,
-              ),
-            ).label,
-        ),
-        learnerPercent(learner) ?? "",
-      ],
-    );
+    // One column per IST calendar day, so the file remains usable in the
+    // legacy monthly grid. Multiple sessions on a date are slash-delimited.
+    const header = ["Learner","Roll",...sessionDays.map(row=>row.day),"Attendance %"];
+    const rows = data.grid.roster.map(learner=>[
+      learnerName(learner),learner.rollNumber??"",
+      ...sessionDays.map(({sessions})=>{
+        if(sessions.length===0)return "✖";
+        return sessions.map(session=>{
+          const state=codeFor(session,recordMap.get(session.id+":"+learner.membershipId));
+          if(state.code==="P")return "P";
+          if(["A","E","M","L"].includes(state.code))return "A";
+          return "N";
+        }).join("/");
+      }),
+      learnerPercent(learner)??"",
+    ]);
     const csv = [header, ...rows]
       .map((row) => row.map(attendanceCsvCell).join(","))
       .join("\r\n");
