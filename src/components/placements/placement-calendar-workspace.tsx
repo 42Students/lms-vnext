@@ -891,7 +891,7 @@ export async function PlacementCalendarWorkspace({
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        events={events.map(item=>({
         id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
-        roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,
+        roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,followupId:item.followupId,
         startsAt:item.startsAt.toISOString(),endsAt:item.endsAt?.toISOString()??null,
         href:eventHref(item,audience),
        }))}/>:state.view !== "agenda" ? (
