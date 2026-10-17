@@ -110,4 +110,14 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("ownInbox.unreadCount");
   }
  });
+ it("COL-verification-misc-06 offers precise Education and Identity send-back reasons",()=>{
+  const drawer=source("src/components/verification/VerificationReviewDrawer.tsx");
+  expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
+  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  const college=source("src/components/verification/CollegeVerificationPanel.tsx");
+  expect(college).toContain('tpoVerificationSectionReasons("EDUCATION")');
+  expect(college).toContain('tpoVerificationSectionReasons("IDENTITY")');
+  expect(college).toContain("apiFetch<unknown>");
+ });
+
 });

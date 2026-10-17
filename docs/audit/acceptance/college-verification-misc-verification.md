@@ -20,8 +20,9 @@ NOT-A-GAP rationale:
 - COL-verification-misc-16: owner decision OD-22 explicitly allows College Admin announcements under permissions.
 - COL-verification-misc-19: personal account-scoped inbox with unread filtering is an approved additional surface; not a missing legacy requirement.
 
-PARTIAL / OPEN: COL-verification-misc-04 (bulk review page cap differs), -06 (section-specific
-send-back reason presets), -08 (complete saved views/columns), -10 (queue cap handling),
+| COL-verification-misc-06 | DONE | `src/components/verification/VerificationReviewDrawer.tsx`, `src/components/verification/CollegeVerificationPanel.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-06` |
+
+PARTIAL / OPEN: COL-verification-misc-04 (bulk review page cap differs), -08 (complete saved views/columns), -10 (queue cap handling),
 -11 (full readable activity feed/day groups), -13 (audit summary coverage), -17
 (domain and branding rights need matching OD-22), -18 (student-groups visibility), -20.
 Photo upload for -01/-02 requires private object storage; the HTTPS link route works.
