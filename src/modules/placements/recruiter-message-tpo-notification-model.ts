@@ -10,3 +10,9 @@ export function recruiterMessageTpoHref(threadId:string):string{
    : "/tpo/messages";
 }
 export const RECRUITER_MESSAGE_TPO_TITLE="New message from a recruiter";
+
+/** The TPO bell shows at most 120 visible codepoints of the recruiter's message. */
+export function recruiterMessageTpoPreview(body:string):string{
+ const text=Array.from(body.trim());
+ return text.length>120?text.slice(0,120).join("")+"…":text.join("");
+}
