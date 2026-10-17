@@ -92,6 +92,8 @@ export default async function AnnouncementsPage({
     receiverId: item.receiverId,
     title: item.title,
     message: item.message,
+    buttonLabel:item.buttonLabel,
+    buttonUrl:item.buttonUrl,
     senderType: item.senderType,
     scheduledAt: item.scheduledAt?.toISOString() ?? null,
     expiresAt: item.expiresAt?.toISOString() ?? null,
