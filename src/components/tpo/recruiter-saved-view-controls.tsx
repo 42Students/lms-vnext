@@ -26,7 +26,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  function currentQuery(){
   const params=new URLSearchParams(window.location.search),result:Record<string,string>={};
   for(const key of ["q","stage","owner","status","invite","source","company","reach",
-    "designation","nextFollowup","lastActivity","added","need","attention"]){
+    "designation","nextFollowup","lastActivity","added","need","attention","drives"]){
    const value=params.get(key);if(value)result[key]=value;
   }
   return result;
