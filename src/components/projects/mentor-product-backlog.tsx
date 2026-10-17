@@ -112,6 +112,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   <div className="grid gap-3 sm:grid-cols-2">
    {backlog.map(task=><article key={task.id} className="rounded-lg border border-border p-3">
     <p className="font-semibold">{task.title}</p>
+    {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
+      Approach: {task.approach}
+    </p>:null}
     <p className="mt-1 text-xs text-body">
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
