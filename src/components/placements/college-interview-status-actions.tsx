@@ -7,11 +7,13 @@ export function CollegeInterviewStatusActions({id,version,status}:{
  const router=useRouter(),[busy,setBusy]=useState(false),[message,setMessage]=useState("");
  async function update(next:"COMPLETED"|"NO_SHOW"){
   if(busy||status!=="SCHEDULED"||!window.confirm("Mark this interview as "+(next==="NO_SHOW"?"No Show":"Completed")+"?"))return;
+  const reason=window.prompt("Reason for interview "+next.toLowerCase().replaceAll("_"," ")+":");
+  if(!reason||reason.trim().length<3)return;
   setBusy(true);setMessage("");
   try{
    const res=await fetch("/api/college/placements/interviews/"+encodeURIComponent(id)+"/status",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({status:next,expectedVersion:version}),
+    body:JSON.stringify({status:next,expectedVersion:version,reason:reason.trim()}),
    });
    if(!res.ok)throw Error(res.status===409?"Interview changed. Refresh before retrying.":"Unable to update interview status.");
    setMessage(next==="NO_SHOW"?"Marked No Show.":"Marked Completed.");
