@@ -158,8 +158,20 @@ export async function listCollegeContentAggregate(
       .offset((query.page - 1) * COLLEGE_CONTENT_PAGE_SIZE),
   ]);
   const total = counts[0]?.total ?? 0;
+  const materialsReady=kind==="RESOURCE"&&resourceMaterialsRuntimeEnabled();
+  const materialCounts=materialsReady&&items.length?
+    await db.select({
+      contentId:lessonContentMaterials.lessonContentId,
+      total:count(),
+    }).from(lessonContentMaterials)
+     .where(inArray(lessonContentMaterials.lessonContentId,items.map(item=>item.id)))
+     .groupBy(lessonContentMaterials.lessonContentId):[];
+  const materialById=new Map(materialCounts.map(row=>[row.contentId,row.total]));
+  const annotated=items.map(item=>({
+    ...item,materialsCount:materialsReady?materialById.get(item.id)??0:null,
+  }));
   return {
-    kind, query, sectionOptions, view:live?.view??"ALL", from:live?.from, to:live?.to, items, total,
+    kind, query, sectionOptions, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
     totalPages: collegeContentPageCount(total),
   };
 }
