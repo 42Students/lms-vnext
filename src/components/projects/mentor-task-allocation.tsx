@@ -90,7 +90,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   <div id="mentor-allocation-filters" hidden={!filtersOpen}
     className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
-    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
+    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
+      remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
