@@ -48,7 +48,7 @@ function loadLoginAttempt(): SavedAttempt | null {
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CONTACT: "Enter a valid phone number or email address.",
   NOT_REGISTERED:
-    "No account was found for this contact. Check it, or ask your college administrator.",
+    "This number isn't registered. Check it, or sign in with your email.",
   NO_ACCOUNT_FOR_DOMAIN:
     "No account was found for this contact on this college's site.",
   ACCOUNT_DISABLED:
@@ -56,15 +56,15 @@ const ERROR_MESSAGES: Record<string, string> = {
   ACCOUNT_SUSPENDED:
     "This account is suspended. Contact your college administrator.",
   TOO_MANY_REQUESTS:
-    "Too many attempts. Please wait a few minutes and try again.",
-  TOO_SOON: "A code was just sent. Wait a few seconds before asking again.",
-  OTP_DELIVERY_FAILED: "We could not send the code. Please try again.",
-  INCORRECT_OTP: "That code is not correct. Check it and try again.",
-  OTP_EXPIRED: "That code has expired. Request a new one.",
-  INVALID_ATTEMPT: "That code is no longer valid. Request a new one.",
+    "Too many codes were requested. Try again in about 10 minutes.",
+  TOO_SOON: "A code was just sent. Wait a few seconds before asking for another.",
+  OTP_DELIVERY_FAILED: "We couldn't send the text message just now. Try again, or get the code by email.",
+  INCORRECT_OTP: "That code isn't right. Check it and try again.",
+  OTP_EXPIRED: "This code has expired. Ask for a new one.",
+  INVALID_ATTEMPT: "This code has expired. Ask for a new one.",
   OTP_ATTEMPTS_EXCEEDED:
-    "Too many wrong codes. Request a new code to continue.",
-  WRONG_TENANT: "This code was requested on a different site. Start again.",
+    "Too many wrong codes. Ask for a new one.",
+  WRONG_TENANT: "This code was asked for on another college's address. Start again here.",
   UNKNOWN_TENANT_HOST: "This address is not set up for sign-in.",
   EMAIL_NOT_AVAILABLE: "This account has no email address on file.",
   SECOND_FACTOR_REQUIRED: "Enter both codes to continue.",
@@ -144,7 +144,7 @@ export function LoginForm({
 
   function fail(errorCode: string | undefined) {
     const known = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
-    setError(known ?? "Something went wrong. Please try again.");
+    setError(known ?? "Something went wrong. Try again in a moment.");
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
       setAttempt(null);
