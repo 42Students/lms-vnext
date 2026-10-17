@@ -56,7 +56,7 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
    throw new RecruiterDriveRequestError("FORBIDDEN");
  return row;
 }
-async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"|"AUTO_APPROVED"="NEW",previousDraft?:unknown,currentDraft?:unknown,autoApproval?:{reason:string;jobId:string}{
+async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"|"AUTO_APPROVED"="NEW",previousDraft?:unknown,currentDraft?:unknown,autoApproval?:{reason:string;jobId:string}){
  const headline=action==="AUTO_APPROVED"?"Recruiter drive request automatically approved":
   action==="NEW"?"New drive request from "+context.recruiter!.companyName:
   action==="UPDATED"?"Recruiter updated a drive request":"Recruiter cancelled a drive request";
