@@ -16,7 +16,7 @@ describe("TPO settings audited source features",()=>{
  it("TPO-settings-audit-21 verifies existing implementation in src/components/tpo/tpo-job-types-editor.tsx",()=>{
   const source=text("src/components/tpo/tpo-job-types-editor.tsx");
   expect(source).toContain("New job type");
-  expect(source).toContain("Counts as placed");
+  expect(source).toContain("setCountsAsPlaced");
   expect(source).toContain("setCountsAsPlaced");
  });
  it("TPO-settings-audit-22 verifies partial implementation in src/modules/placements/tpo-job-type-write-service.ts",()=>{
