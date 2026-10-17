@@ -108,11 +108,11 @@ export default async function TpoTeamPage({searchParams}:{
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
     {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
     {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
-     {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS"] as const).map(key=><Link key={key}
+     {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS",...(conversations?.status==="READY"&&conversations.asksReady?["ASKS","AT_ME"] as const:[])] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
       aria-current={filter===key?"page":undefined}
       className={filter===key?"rounded-md bg-primary px-3 py-2 text-sm text-on-primary":"rounded-md border border-border px-3 py-2 text-sm text-body"}>
-      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":"Decisions"} ({conversationCounts[key]})
+      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
     <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
@@ -137,6 +137,7 @@ export default async function TpoTeamPage({searchParams}:{
         </div>
         <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
         {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
+        {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
        <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:null}</div>}

@@ -19,6 +19,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
  if(!await placementTableExists("placement_tpo_internal_threads"))
   return {status:"NOT_REGISTERED" as const,items:[]};
  const readsReady=await placementTableExists("placement_tpo_internal_reads");
+ const asksReady=await placementTableExists("placement_tpo_team_asks");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -37,6 +38,13 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
        then ${tpoInternalThreads.invitedMembershipId} else ${tpoInternalThreads.startedByMembershipId} end)
     limit 1)`,
    kind:sql<"PRIVATE">`'PRIVATE'`,
+
+   openAsks:asksReady?sql<number>`(select count(*)::integer from placement_tpo_team_asks a
+    where a.thread_id=${tpoInternalThreads.id} and a.college_id=${college.id}::uuid
+     and a.status='OPEN')`:sql<number>`0`,
+   asksForMe:asksReady?sql<number>`(select count(*)::integer from placement_tpo_team_asks a
+    where a.thread_id=${tpoInternalThreads.id} and a.college_id=${college.id}::uuid
+     and a.assignee_membership_id=${membership.id}::uuid and a.status='OPEN')`:sql<number>`0`,
    hasDecisions:sql<boolean>`exists(
     select 1 from activity_events decision_event
     where decision_event.college_id=${college.id}::uuid
@@ -87,7 +95,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   const hasMore=items.length>100;
   if(readsReady)return {status:"READY" as const,items:visibleItems.map(row=>({
    ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
-  })),page:safePage,hasMore};
+  })),page:safePage,hasMore,asksReady};
   // Legacy fallback while the proposed read-receipt migration is not yet registered.
   // Unread counts are per original recipient: query results never change who may read a thread.
   const unread = await tx.select({
@@ -113,6 +121,6 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   }
   return {status:"READY" as const,items:visibleItems.map(row=>({
    ...row,unreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
-  })),page:safePage,hasMore};
+  })),page:safePage,hasMore,asksReady};
  });
 }
