@@ -11,6 +11,7 @@ export function serializeTpoBatchStudentViewCsv(rows:readonly {membershipId:stri
 export function batchStudentViewExportHref(batchId:string,page:number,view:TpoBatchStudentViewOptions){
  const p=new URLSearchParams({page:String(page)});
  if(view.q)p.set("q",view.q);
+ if(view.classId)p.set("classId",view.classId);
  if(view.decision!=="ALL")p.set("decision",view.decision);
  if(view.source!=="ALL")p.set("source",view.source);
  if(view.registration!=="ALL")p.set("registration",view.registration);
