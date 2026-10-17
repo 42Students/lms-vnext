@@ -9,17 +9,8 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 import {PlacementsServiceError} from "./errors";
+import {recordedOutsideParticipantSchema} from "./recorded-outside-participation-model";
 
-export const recordedOutsideParticipantSchema=z.strictObject({
- recordId:z.string().uuid(),membershipId:z.string().uuid(),
- result:z.enum(["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"]),
- notes:z.string().trim().max(500).optional(),
-});
-export function outsideDriveResultLabel(value:string):string{
- return value==="PARTICIPATED"?"Participated":value==="PASSED"?"Passed":
- value==="FAILED"?"Did not pass":value==="SELECTED"?"Selected (outside platform)":
- value==="HIRED"?"Hired (external record)":"Not recorded";
-}
 export async function listTpoOutsideDriveRecords(context:RequestContext){
  const collegeId=await requireTpoJobCollege(context);
  await getDb().transaction(tx=>requireTpoJobActor(tx,context),{accessMode:"read only"});
