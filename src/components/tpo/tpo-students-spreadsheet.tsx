@@ -150,7 +150,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </select>
   </label>
-  <TpoGridFilterPanel fields={filters}/>
+  <TpoGridFilterPanel fields={filters} mobileSheet/>
   <TpoSpreadsheetGrid mobileActionsCollapsible rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}

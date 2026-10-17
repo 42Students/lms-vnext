@@ -79,3 +79,7 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 
 | TPO-students-36 | OPEN (XLSX and whole-filtered-view export pending) | Authorized visible selected CSV and richer persisted academics/stage/outcome columns, with formula escaping and safe failure; `tests/unit/chat12-selected-students-csv-round5.test.ts` `TPO-students-36` |
 | TPO-students-17 | OPEN (whole-filter selection and Shift range pending) | Selection download intersects authorized visible rows; no hidden-row selection exported; `tests/unit/chat12-selected-students-csv-round5.test.ts` `TPO-students-17` |
+
+| TPO-students-24 | OPEN (column-header filters, live counts pending) | Removable active-filter chips and Clear all, URL-preserving; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-24` |
+| TPO-students-51 | OPEN (desktop-only tools remain) | Mobile bottom-sheet filter control with accessible disclosure, desktop grid retained; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-51` |
+| TPO-students-48 | OPEN (cross-page selection remaining) | Live announced filter count and selected visible-page count retained; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-48` |
