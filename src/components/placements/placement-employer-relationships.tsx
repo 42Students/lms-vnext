@@ -177,16 +177,16 @@ export function PlacementEmployerRelationships({
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">
-          Employer relationships
+          Companies
         </h2>
         <p className="mt-1 text-sm text-body">
-          Keep recruiter ownership and trust decisions private to this college while reusing canonical employer identity.
+          Maintain each recruiting company once and reuse it across drives.
         </p>
       </div>
 
       {relationships.length === 0 ? (
         <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
-          No employer relationships yet. Create an opportunity to add the first employer.
+          No companies yet.
         </p>
       ) : (
         <div className="divide-y divide-border">
