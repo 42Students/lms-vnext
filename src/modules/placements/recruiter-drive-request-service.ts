@@ -8,6 +8,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
+import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
 import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
 
@@ -48,7 +49,7 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
    throw new RecruiterDriveRequestError("FORBIDDEN");
  return row;
 }
-async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"="NEW"){
+async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"="NEW",previousDraft?:unknown,currentDraft?:unknown){
  const headline=action==="NEW"?"New drive request from "+context.recruiter!.companyName:
   action==="UPDATED"?"Recruiter updated a drive request":"Recruiter cancelled a drive request";
  const [event]=await tx.insert(activityEvents).values({
@@ -56,7 +57,9 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
   actorUserId:context.user.id,module:"PLACEMENTS",eventType:action==="NEW"?"placements.recruiter.drive.requested":
     action==="UPDATED"?"placements.recruiter.drive.updated":"placements.recruiter.drive.cancelled",
   subjectType:"placement_recruiter_drive_request",subjectId:id,subjectLabel:title,
-  summary:headline,metadata:{requestId:id,action},
+  summary:headline,metadata:{requestId:id,action,
+   ...(previousDraft&&currentDraft?{previousDraft:tpoComparableDriveSnapshot(previousDraft),
+    currentDraft:tpoComparableDriveSnapshot(currentDraft)}:{})},
  }).returning({id:activityEvents.id});
  if(!event)throw new RecruiterDriveRequestError("STORAGE_NOT_READY");
  const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
@@ -150,7 +153,9 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
   await informPlacementCell(tx,context,{
    collegeId:input.collegeId,organizationId:scope.organizationId},updated.id,
    String(input.draft?.title??(original.draft as {title?:string})?.title??"Drive request"),
-   input.action==="CANCEL"?"CANCELLED":"UPDATED");
+   input.action==="CANCEL"?"CANCELLED":"UPDATED",
+   input.action==="RESUBMIT"?original.draft:undefined,
+   input.action==="RESUBMIT"?input.draft:undefined);
   return updated;
  });
 }
