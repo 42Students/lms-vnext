@@ -22,7 +22,8 @@ export type RequestTenant =
       collegeId: string;
       organizationId: string;
     }
-  | { kind: "unknown"; host: string };
+  | { kind: "unknown"; host: string }
+  | { kind: "unavailable"; host: string };
 
 type CacheEntry = { value: RequestTenant; expiresAt: number };
 const cache = new Map<string, CacheEntry>();
@@ -61,7 +62,9 @@ export async function resolveRequestTenant(
         }
       : { kind: "unknown", host };
   } catch {
-    value = { kind: "unknown", host };
+    // A transient domain lookup failure is not evidence that a college host is unknown.
+    // Do not cache a false "unknown" response after a database outage.
+    return {kind:"unavailable",host};
   }
 
   if (cache.size > 500) cache.clear();
