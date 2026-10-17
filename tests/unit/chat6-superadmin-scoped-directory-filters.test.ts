@@ -10,6 +10,7 @@ describe("Super Admin selected-college directory filters",()=>{
   const href=adminContentHref("VIDEOS",parsed);
   for(const param of ["offeringId","lessonId","deliveryId","scope=SECTION","page=2"])expect(href).toContain(param);
   expect(adminContentQuerySchema.safeParse({scope:"EVERYONE"}).success).toBe(false);
+  expect(adminContentQuerySchema.safeParse({offeringId:"",lessonId:"",deliveryId:""}).success).toBe(true);
   const svc=source("src/modules/courses/super-admin-content-directory-service.ts");
   for(const field of ["query.offeringId","query.lessonId","query.deliveryId","isNotNull(lessonContents.deliveryId)","eq(departments.collegeId,collegeId)"])expect(svc).toContain(field);
   const page=source("src/components/courses/super-admin-content-directory-page.tsx");
@@ -20,6 +21,7 @@ describe("Super Admin selected-college directory filters",()=>{
   const href=adminAssessmentHref("QUIZ",parsed);
   for(const key of ["courseCode=CS101","scope=SECTION","results=HIDDEN","page=2"])expect(href).toContain(key);
   expect(adminAssessmentQuerySchema.safeParse({scope:"GLOBAL"}).success).toBe(false);
+  expect(adminAssessmentQuerySchema.safeParse({courseCode:""}).success).toBe(true);
   for(const name of ["assignments","quizzes"]){const code=source("src/app/(authenticated)/admin/"+name+"/page.tsx");expect(code).toContain("courseCode:raw.courseCode");expect(code).toContain("scope:raw.scope");}
   const ui=source("src/components/courses/admin-assessment-read-directory.tsx");
   for(const key of ['name="courseCode"','name="scope"','name="results"'])expect(ui).toContain(key);
