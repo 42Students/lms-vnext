@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {learnerSavedDriveCopy} from "@/modules/placements/learner-saved-drives-model";
 
 /** LEARNER-placements-13: persisted private bookmark, never an application. */
-export function LearnerSaveDriveButton({jobId,initialSaved}:{jobId:string;initialSaved:boolean}){
+export function LearnerSaveDriveButton({jobId,jobTitle,initialSaved}:{jobId:string;jobTitle:string;initialSaved:boolean}){
  const router=useRouter();
  const [saved,setSaved]=useState(initialSaved);
  const [busy,setBusy]=useState(false);
@@ -27,7 +27,7 @@ export function LearnerSaveDriveButton({jobId,initialSaved}:{jobId:string;initia
  }
  return <span className="inline-flex flex-wrap items-center gap-2">
   <button type="button" disabled={busy} aria-pressed={saved} onClick={()=>void toggle()}
-   aria-label={saved?"Remove from saved drives":"Save "+jobId+" for later"}
+   aria-label={saved?"Remove "+jobTitle+" from saved drives":"Save "+jobTitle+" for later"}
    className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
    <span aria-hidden="true">{saved?"♥":"♡"}</span>
    {busy?"Saving…":learnerSavedDriveCopy(saved).action}
