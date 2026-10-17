@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {z} from "zod";
 import {notFound,redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
@@ -8,6 +9,7 @@ export default async function BatchDetail({params}:{params:Promise<{batchId:stri
  const context=await getCurrentRequestContext();
  if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const {batchId}=await params;
+ if(!z.string().uuid().safeParse(batchId).success)notFound();
  const batch=await getTpoMessagingBatch(context,batchId);
  if(!batch)notFound();
  return <main className="space-y-6">

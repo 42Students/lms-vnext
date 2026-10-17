@@ -21,6 +21,8 @@ describe("TPO Company Memory legacy parity",()=>{
  });
  it("TPO-companies-23 shows actor, activity type and optional note together",()=>{
   expect(source).toContain('item.type.toLowerCase()}{item.note?": "+item.note:""}');
-  expect(source).toContain('dateLabel(item.createdAt)');
+  expect(source).toContain("legacyActivityTime(item.createdAt)");
+  expect(source).toContain("legacyActivityDay(latest.createdAt)");
+  expect(source).toContain('month:"short",hour:"numeric",minute:"2-digit",hour12:true');
  });
 });

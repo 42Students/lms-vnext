@@ -9,11 +9,13 @@ import type {
   HrAccount,
   HrAccountFormValues,
   HrRelationshipOption,
+  HrCollegeOption,
 } from "./super-admin-hr-types";
 
 export function SuperAdminHrAccountDialog({
   account,
   relationships,
+  colleges,
   optionsLoading,
   optionsError,
   pending,
@@ -24,6 +26,7 @@ export function SuperAdminHrAccountDialog({
 }: {
   account: HrAccount | null;
   relationships: readonly HrRelationshipOption[];
+  colleges:readonly HrCollegeOption[];
   optionsLoading: boolean;
   optionsError: string | null;
   pending: boolean;
@@ -38,6 +41,11 @@ export function SuperAdminHrAccountDialog({
 
   const [companyRelationshipId, setRelationshipId] =
     useState("");
+  const [additionalRelationshipIds,setAdditionalRelationshipIds]=useState<string[]>([]);
+  const [createCompany,setCreateCompany]=useState(false);
+  const [newCompanyName,setNewCompanyName]=useState("");
+  const [newCompanyCollegeId,setNewCompanyCollegeId]=useState("");
+  const [newCompanyDomain,setNewCompanyDomain]=useState("");
   const [displayName, setDisplayName] = useState(
     account?.displayName ?? "",
   );
@@ -61,7 +69,7 @@ export function SuperAdminHrAccountDialog({
   const eligible =
     displayName.trim().length > 0 &&
     (!creating || phoneE164.trim().length > 0) &&
-    (!creating || Boolean(companyRelationshipId));
+    (!creating || (createCompany ? newCompanyName.trim().length>=2&&Boolean(newCompanyCollegeId) : Boolean(companyRelationshipId)));
 
   function submit(
     event: React.FormEvent<HTMLFormElement>,
@@ -74,6 +82,10 @@ export function SuperAdminHrAccountDialog({
 
     onSubmit({
       companyRelationshipId,
+      companyRelationshipIds:createCompany?[]:[companyRelationshipId,...additionalRelationshipIds],
+      ...(createCompany?{newCompany:{name:newCompanyName.trim(),collegeId:newCompanyCollegeId,
+        ...(newCompanyDomain.trim()?{primaryDomain:newCompanyDomain.trim()}:{}),
+      }}:{}),
       displayName,
       phoneE164,
       email,
@@ -130,7 +142,34 @@ export function SuperAdminHrAccountDialog({
       >
         {creating ? (
           <div>
-            <label
+            <label className="mb-3 flex min-h-10 items-center gap-2 text-sm">
+              <input type="checkbox" checked={createCompany} disabled={pending}
+                onChange={event=>{setCreateCompany(event.target.checked);setRelationshipId("");
+                  setAdditionalRelationshipIds([]);}}/>
+              Company not listed? Create a company by name
+            </label>
+            {createCompany?<div className="mb-4 space-y-3 rounded border border-border p-3">
+              <label className="grid gap-1 text-sm font-semibold">Company name
+                <Input value={newCompanyName} minLength={2} maxLength={150} required
+                  onChange={event=>setNewCompanyName(event.target.value)} disabled={pending}/>
+              </label>
+              <label className="grid gap-1 text-sm font-semibold">First college
+                <Select required value={newCompanyCollegeId} disabled={pending||optionsLoading}
+                  onChange={event=>setNewCompanyCollegeId(event.target.value)}>
+                  <option value="">Select a college</option>
+                  {colleges.map(c=><option key={c.collegeId} value={c.collegeId}>{c.collegeName}</option>)}
+                </Select>
+              </label>
+              <label className="grid gap-1 text-sm font-semibold">Company domain (optional)
+                <Input value={newCompanyDomain} placeholder="company.com" maxLength={253}
+                  disabled={pending} onChange={event=>setNewCompanyDomain(event.target.value)}/>
+              </label>
+              <p className="text-xs text-muted-foreground">
+                A new company will be linked to this college before the recruiter is created.
+                If recruiter creation fails, this company stays available for retry.
+              </p>
+            </div>:null}
+            {!createCompany?<><label
               htmlFor={`${id}-relationship`}
               className="mb-1.5 block text-xs font-semibold text-body"
             >
@@ -142,9 +181,10 @@ export function SuperAdminHrAccountDialog({
               value={companyRelationshipId}
               required
               disabled={pending || optionsLoading}
-              onChange={(event) =>
-                setRelationshipId(event.target.value)
-              }
+              onChange={(event) => {
+                setRelationshipId(event.target.value);
+                setAdditionalRelationshipIds([]);
+              }}
             >
               <option value="">
                 Select an active relationship
@@ -160,6 +200,25 @@ export function SuperAdminHrAccountDialog({
               ))}
             </Select>
 
+            {companyRelationshipId&&!createCompany ? (
+              <fieldset className="mt-3 space-y-2 rounded border border-border p-3">
+                <legend className="text-xs font-semibold">Colleges · optional additional access</legend>
+                <p className="text-xs text-muted-foreground">
+                  You can add or remove colleges later. Only colleges connected to this same company are shown.
+                </p>
+                {relationships.filter(option =>
+                  option.companyRelationshipId!==companyRelationshipId &&
+                  option.companyId===relationships.find(item=>item.companyRelationshipId===companyRelationshipId)?.companyId
+                ).map(option=><label key={option.companyRelationshipId} className="flex min-h-10 items-center gap-2 text-sm">
+                  <input type="checkbox" disabled={pending}
+                    checked={additionalRelationshipIds.includes(option.companyRelationshipId)}
+                    onChange={event=>setAdditionalRelationshipIds(old=>
+                      event.target.checked?[...old,option.companyRelationshipId]:old.filter(x=>x!==option.companyRelationshipId))}
+                  />{option.collegeName}
+                </label>)}
+              </fieldset>
+            ):null}
+            </>:null}
             {optionsLoading ? (
               <p
                 role="status"
@@ -187,7 +246,7 @@ export function SuperAdminHrAccountDialog({
               </div>
             ) : null}
 
-            {!optionsLoading &&
+            {!createCompany && !optionsLoading &&
             !optionsError &&
             relationships.length === 0 ? (
               <p className="mt-2 text-xs leading-5 text-muted-foreground">
@@ -335,9 +394,9 @@ export function SuperAdminHrAccountDialog({
             {status === "ARCHIVED" &&
             account.status !== "ARCHIVED" ? (
               <p className="mt-2 text-xs leading-5 text-warning">
-                Archiving revokes every active college
-                grant. Reopening the profile later does
-                not restore those grants automatically.
+                Suspending signs the recruiter out everywhere
+                and blocks sign-in. Existing college grants
+                remain linked for reactivation.
               </p>
             ) : null}
 

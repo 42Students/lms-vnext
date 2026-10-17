@@ -1,0 +1,21 @@
+# UI/UX excellence page list: /recruiter (17 pages)
+
+Tick a page only after its UX note exists at docs/audit/ux/<route-with-dashes>.md and its tests pass.
+
+- [ ] `/recruiter` (src/app/(authenticated)/recruiter/page.tsx)
+- [ ] `/recruiter/calendar` (src/app/(authenticated)/recruiter/calendar/page.tsx)
+- [ ] `/recruiter/colleges` (src/app/(authenticated)/recruiter/colleges/page.tsx)
+- [ ] `/recruiter/company` (src/app/(authenticated)/recruiter/company/page.tsx)
+- [ ] `/recruiter/drives` (src/app/(authenticated)/recruiter/drives/page.tsx)
+- [ ] `/recruiter/drives/[jobId]` (src/app/(authenticated)/recruiter/drives/[jobId]/page.tsx)
+- [ ] `/recruiter/drives/[jobId]/change-requests` (src/app/(authenticated)/recruiter/drives/[jobId]/change-requests/page.tsx)
+- [ ] `/recruiter/drives/[jobId]/interview-slots` (src/app/(authenticated)/recruiter/drives/[jobId]/interview-slots/page.tsx)
+- [ ] `/recruiter/drives/[jobId]/messages` (src/app/(authenticated)/recruiter/drives/[jobId]/messages/page.tsx)
+- [ ] `/recruiter/drives/[jobId]/rounds/editor` (src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/page.tsx)
+- [ ] `/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]` (src/app/(authenticated)/recruiter/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx)
+- [ ] `/recruiter/drives/new` (src/app/(authenticated)/recruiter/drives/new/page.tsx)
+- [ ] `/recruiter/drives/proposals` (src/app/(authenticated)/recruiter/drives/proposals/page.tsx)
+- [ ] `/recruiter/drives/recorded-outside` (src/app/(authenticated)/recruiter/drives/recorded-outside/page.tsx)
+- [ ] `/recruiter/home` (src/app/(authenticated)/recruiter/home/page.tsx)
+- [ ] `/recruiter/messages` (src/app/(authenticated)/recruiter/messages/page.tsx)
+- [ ] `/recruiter/profile` (src/app/(authenticated)/recruiter/profile/page.tsx)

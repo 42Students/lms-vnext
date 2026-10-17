@@ -12,6 +12,9 @@ export const tpoBulkStageSelectionsSchema = z.array(
 
 export const confirmedTpoBulkLeadStageSchema = z.discriminatedUnion("action", [
   z.object({
+    action: z.literal("NEW"),confirmed:z.literal(true),selections:tpoBulkStageSelectionsSchema,
+  }).strict(),
+  z.object({
     action: z.literal("CONTACTED"),
     confirmed: z.literal(true),
     selections: tpoBulkStageSelectionsSchema,
@@ -53,6 +56,10 @@ export function decideTpoBulkLeadStage(
   if (!current) return { status: "ineligible", reason: "Lead is unavailable in this college" };
   if (current.manualStage !== selection.expectedStage) {
     return { status: "ineligible", reason: "Stage changed; review the lead again" };
+  }
+  if (decision.action === "NEW") {
+    return current.manualStage === "NEW"?{status:"unchanged",reason:null}:
+     {status:"updated",reason:null};
   }
   if (decision.action === "CONTACTED") {
     return current.manualStage === "CONTACTED"

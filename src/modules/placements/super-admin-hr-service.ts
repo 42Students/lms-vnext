@@ -1,3 +1,4 @@
+import { createPlacementCompany } from "./company-service";
 import {superAdminHrLiteralSearchPattern} from "./super-admin-hr-search-model";
 import { recordActivityEvent, recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -479,6 +480,16 @@ export async function getSuperAdminHrAccount(
   };
 }
 
+export async function listSuperAdminHrColleges(context:RequestContext){
+  requireHrAdmin(context);
+  return getDb().select({
+    collegeId:colleges.id,collegeName:colleges.name,organizationId:colleges.organizationId,
+  }).from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
+      context.adminScope?.collegeId?eq(colleges.id,context.adminScope.collegeId):undefined,
+      context.adminScope?.organizationId?eq(colleges.organizationId,context.adminScope.organizationId):undefined,
+    )).orderBy(asc(colleges.name)).limit(200);
+}
 export async function listSuperAdminHrRelationshipOptions(
   context: RequestContext,
   rawCollegeId?: string,
@@ -640,16 +651,35 @@ export async function createSuperAdminHrAccount(
   const input =
     createSuperAdminHrInputSchema.parse(rawInput);
 
-  const relationship =
-    await loadActiveRelationship(
-      input.companyRelationshipId,
-    );
+  // Canonical company creation is idempotent by name/domain. If recruiter
+  // creation fails, the linked employer remains available for a later retry.
+  if(input.newCompany && input.companyRelationshipIds?.length)
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
+  const firstRelationshipId=input.newCompany
+    ?(await createPlacementCompany(context,{
+      collegeId:input.newCompany.collegeId,name:input.newCompany.name,
+      ...(input.newCompany.primaryDomain?{primaryDomain:input.newCompany.primaryDomain}:{}),
+      isTrusted:false,
+    })).relationship.id
+    :input.companyRelationshipId!;
+  const relationship=await loadActiveRelationship(firstRelationshipId);
 
   requireHrCollege(
     context,
     relationship.organizationId,
     relationship.collegeId,
   );
+  const selectedIds=[...new Set([
+    relationship.relationshipId,...(input.companyRelationshipIds??[]),
+  ])];
+  if(selectedIds.length>20)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
+  const additionalRelationships=await Promise.all(selectedIds.slice(1).map(loadActiveRelationship));
+  for(const candidate of additionalRelationships){
+    if(candidate.companyId!==relationship.companyId)
+      throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
+    requireHrCollege(context,candidate.organizationId,candidate.collegeId);
+  }
+  const selectedRelationships=[relationship,...additionalRelationships];
 
   // Resolve and persist the canonical platform user
   // through the established first-party people path.
@@ -682,6 +712,8 @@ export async function createSuperAdminHrAccount(
         "admin-scope.select",
       );
 
+      // Lock and recheck every selected relationship before creating any grant.
+      for(const candidate of selectedRelationships){
       const [lockedRelationship] = await tx
         .select({
           id: placementCompanyRelationships.id,
@@ -696,7 +728,7 @@ export async function createSuperAdminHrAccount(
         .where(
           eq(
             placementCompanyRelationships.id,
-            relationship.relationshipId,
+            candidate.relationshipId,
           ),
         )
         .for("share")
@@ -706,9 +738,9 @@ export async function createSuperAdminHrAccount(
         !lockedRelationship ||
         lockedRelationship.status !== "ACTIVE" ||
         lockedRelationship.companyId !==
-          relationship.companyId ||
+          candidate.companyId ||
         lockedRelationship.collegeId !==
-          relationship.collegeId
+          candidate.collegeId
       ) {
         throw new PlacementsServiceError(
           "PLACEMENT_RECRUITER_RELATIONSHIP_INACTIVE",
@@ -717,10 +749,11 @@ export async function createSuperAdminHrAccount(
 
       requireHrCollege(
         context,
-        relationship.organizationId,
-        relationship.collegeId,
+        candidate.organizationId,
+        candidate.collegeId,
       );
 
+      }
       const [currentUser] = await tx
         .select({
           id: users.id,
@@ -772,10 +805,11 @@ export async function createSuperAdminHrAccount(
         reusedExisting = true;
       }
 
+      for(const candidate of selectedRelationships){
       const [newGrant] = await tx.insert(placementRecruiterCollegeGrants)
         .values({
           recruiterUserId: identity.userId,
-          companyRelationshipId: relationship.relationshipId,
+          companyRelationshipId: candidate.relationshipId,
           grantedByUserId: context.user.id,
           validUntil: grantExpiry,
         }).onConflictDoNothing().returning({id: placementRecruiterCollegeGrants.id});
@@ -785,7 +819,7 @@ export async function createSuperAdminHrAccount(
           validUntil: placementRecruiterCollegeGrants.validUntil,
         }).from(placementRecruiterCollegeGrants)
           .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, identity.userId),
-            eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.relationshipId),
+            eq(placementRecruiterCollegeGrants.companyRelationshipId, candidate.relationshipId),
             eq(placementRecruiterCollegeGrants.status, "ACTIVE")))
           .for("update").limit(1);
         if (!existingGrant) {
@@ -801,13 +835,15 @@ export async function createSuperAdminHrAccount(
         await recordActivityEventInTransaction(tx, context, {
           eventType: profile ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED
             : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
-          collegeId: relationship.collegeId,
-          organizationId: relationship.organizationId,
+          collegeId: candidate.collegeId,
+          organizationId: candidate.organizationId,
           subjectType: "recruiter", subjectId: identity.userId,
           summary: profile ? "Recruiter account created" : "Existing recruiter granted college access",
-          metadata: {companyRelationshipId: relationship.relationshipId,
+          metadata: {companyRelationshipId: candidate.relationshipId,
             validUntil: grantExpiry.toISOString()},
         });
+      }
+
       }
     });
   } catch (error) {
@@ -952,29 +988,9 @@ export async function updateSuperAdminHrAccount(
           );
       }
 
-      if (input.status === "ARCHIVED") {
-        await tx
-          .update(placementRecruiterCollegeGrants)
-          .set({
-            status: "REVOKED",
-            revokedByUserId:
-              context.user.id,
-            revokedAt: now,
-            updatedAt: now,
-          })
-          .where(
-            and(
-              eq(
-                placementRecruiterCollegeGrants.recruiterUserId,
-                userId,
-              ),
-              eq(
-                placementRecruiterCollegeGrants.status,
-                "ACTIVE",
-              ),
-            ),
-          );
-      }
+      // Suspend the account, not the college relationships.
+      // Sign-in is disabled by the archived recruiter profile; retained grants
+      // become available immediately after an explicit reactivation.
       const eventType = input.status === "ARCHIVED"
         ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SUSPENDED
         : input.status === "ACTIVE" && current.status === "ARCHIVED"
@@ -1001,18 +1017,10 @@ export async function updateSuperAdminHrAccount(
     throw error;
   }
 
-  // The profile is globally archived with its grants
-  // revoked. A selected college scope will no longer
-  // include it; fetch it again after clearing that scope.
-  if (
-    input.status === "ARCHIVED" &&
-    (context.adminScope?.collegeId ||
-      context.adminScope?.organizationId)
-  ) {
-    return {
-      userId,
-      status: "ARCHIVED" as const,
-    };
+  // A suspension signs out existing sessions without deleting the college grants.
+  // The revocation helper also writes the session-audit event.
+  if(input.status==="ARCHIVED") {
+    await terminateSuperAdminHrSessions(context,userId);
   }
 
   return getSuperAdminHrAccount(

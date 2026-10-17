@@ -9,6 +9,8 @@ import {
   academicPeriods,
 } from "@/db/schema";
 
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
@@ -127,12 +129,22 @@ export async function createAcademicPeriod(
   const db = getDb();
 
   try {
-    const [created] = await db
+    return await db.transaction(async (tx)=>{
+    const [created] = await tx
       .insert(academicPeriods)
       .values(input)
       .returning();
 
+    if(!created)throw new Error("Unable to persist period mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_PERIOD_CREATED,
+      organizationId:college.organizationId,collegeId:college.id,
+      subjectType:"period",subjectId:created.id,subjectLabel:created.name,
+      summary:"Period created",
+      metadata:{code:created.code,status:created.status},
+    });
     return created;
+   });
   } catch (error) {
     throw mapPeriodConstraint(error);
   }
@@ -184,7 +196,8 @@ export async function updateAcademicPeriod(
   const db = getDb();
 
   try {
-    const [updated] = await db
+    return await db.transaction(async (tx)=>{
+    const [updated] = await tx
       .update(academicPeriods)
       .set({
         ...input,
@@ -204,7 +217,16 @@ export async function updateAcademicPeriod(
       );
     }
 
+    if(!updated)throw new Error("Unable to persist period mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_PERIOD_UPDATED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"period",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"Period updated",
+      metadata:{previousCode:current.code,nextCode:updated.code,previousStatus:current.status},
+    });
     return updated;
+   });
   } catch (error) {
     if (error instanceof AcademicsServiceError) {
       throw error;
@@ -252,7 +274,8 @@ export async function transitionAcademicPeriod(
   }
 
   const db = getDb();
-  const [updated] = await db
+  return await db.transaction(async (tx)=>{
+    const [updated] = await tx
     .update(academicPeriods)
     .set({
       status: nextStatus,
@@ -275,5 +298,14 @@ export async function transitionAcademicPeriod(
     );
   }
 
-  return updated;
+  if(!updated)throw new Error("Unable to persist period mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_PERIOD_ACTIVATED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"period",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"Period status changed",
+      metadata:{previousStatus:current.status,nextStatus:updated.status},
+    });
+    return updated;
+   });
 }

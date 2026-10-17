@@ -24,6 +24,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const [note,setNote]=useState("");
+ const [amendsNoteId,setAmendsNoteId]=useState<string|null>(null);
  const [letterInput,setLetterInput]=useState<Record<string,string>>({});
  const [saving,setSaving]=useState(false);
  const [savingLetter,setSavingLetter]=useState(false);
@@ -47,8 +48,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   setSaving(true);setError("");setSuccess("");
   try{
    await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
-    body:JSON.stringify({body:note.trim()})});
-   setNote("");await reload();setSuccess("Internal note saved to application history.");
+    body:JSON.stringify({body:note.trim(),...(amendsNoteId?{amendsNoteId}:{})})});
+   setNote("");setAmendsNoteId(null);await reload();setSuccess(amendsNoteId?"Notes updated":"Internal note saved to application history.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
   finally{setSaving(false);}
  }
@@ -151,18 +152,24 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Internal Notes</h3>
-       <p className="mt-1 text-xs text-muted-foreground">Visible only to the college placement team; notes are append-only.</p>
+       <p className="mt-1 text-xs text-muted-foreground">Visible only to the college placement team; correcting a note adds a new version and preserves its history.</p>
        <div className="mt-3 max-h-48 space-y-2 overflow-auto">{detail.notes.map(n=>
         <div key={n.id} className="rounded border border-border p-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
+         <button type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
+          className="mt-1 min-h-10 rounded border border-border px-2 font-semibold text-primary-text">
+          Edit Internal Notes
+         </button>
         </div>)}</div>
-       <label className="mt-3 grid gap-2 text-sm font-semibold">Add internal notes (visible only to admins)
+       <label className="mt-3 grid gap-2 text-sm font-semibold">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
         <textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="rounded border border-border bg-surface p-3"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}
        <button type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
         className="mt-3 min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
-         {saving?"Saving…":"Add note"}</button>
+         {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</button>
+       {amendsNoteId?<button type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
+         className="ml-2 min-h-10 rounded border border-border px-3">Cancel correction</button>:null}
       </section>
       {sections.map(section=><section key={section.label} className="rounded-lg border border-border p-4">
         <h3 className="font-semibold">{section.label}</h3>

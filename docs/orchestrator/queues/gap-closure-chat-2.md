@@ -93,7 +93,7 @@ Audit: `docs/audit/pages/recruiter/calendar-messages-profile.md` (and `calendar-
 | REC-calendar-messages-profile-09 | S3 | COPY | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-10 | S3 | COPY | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-11 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| REC-calendar-messages-profile-12 | S3 | STATE | OPEN |
+| REC-calendar-messages-profile-12 | S3 | STATE | IN-BRANCH |
 | REC-calendar-messages-profile-13 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-14 | S3 | STATE | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-15 | S3 | VALIDATION | FIXED-ON-MAIN |
@@ -112,14 +112,14 @@ Audit: `docs/audit/pages/recruiter/calendar-messages-profile.md` (and `calendar-
 | REC-calendar-messages-profile-36 | S3 | COPY | IN-BRANCH |
 | REC-calendar-messages-profile-41 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-R02 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| REC-calendar-messages-profile-R03 | S3 | COPY | OPEN |
+| REC-calendar-messages-profile-R03 | S3 | COPY | IN-BRANCH |
 | REC-calendar-messages-profile-07 | S4 | STATE | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-20 | S4 | A11Y | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-33 | S4 | PERMISSION | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-37 | S4 | STATE | NOT-A-GAP |
 | REC-calendar-messages-profile-42 | S4 | COPY | IN-BRANCH |
 | REC-calendar-messages-profile-47 | S4 | STATE | OPEN |
-| REC-calendar-messages-profile-48 | S4 | COPY | OPEN |
+| REC-calendar-messages-profile-48 | S4 | COPY | IN-BRANCH |
 
 ## tpo/recruiters (34: FIXED-ON-MAIN 18, OPEN 15, UNCONFIRMED 1)
 
@@ -142,8 +142,8 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-33 | S2 | STATE | FIXED-ON-MAIN |
 | TPO-recruiters-R01 | S2 | MISSING-FIELD | OPEN |
-| TPO-recruiters-22 | S3 | VALIDATION | OPEN |
-| TPO-recruiters-24 | S3 | COPY | OPEN |
+| TPO-recruiters-22 | S3 | VALIDATION | IN-BRANCH |
+| TPO-recruiters-24 | S3 | COPY | IN-BRANCH |
 | TPO-recruiters-27 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-recruiters-28 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-recruiters-29 | S3 | STATE | FIXED-ON-MAIN |
@@ -154,13 +154,13 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-36 | S3 | RESPONSIVE | OPEN |
 | TPO-recruiters-37 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-recruiters-38 | S3 | VALIDATION | IN-BRANCH |
-| TPO-recruiters-39 | S3 | COPY | OPEN |
+| TPO-recruiters-39 | S3 | COPY | IN-BRANCH |
 | TPO-recruiters-40 | S3 | COPY | OPEN |
-| TPO-recruiters-41 | S3 | MISSING-ACTION | OPEN |
+| TPO-recruiters-41 | S3 | MISSING-ACTION | IN-BRANCH |
 | TPO-recruiters-R05 | S3 | SIDE-EFFECT | OPEN |
-| TPO-recruiters-42 | S4 | STATE | OPEN |
+| TPO-recruiters-42 | S4 | STATE | IN-BRANCH |
 | TPO-recruiters-43 | S4 | COPY | IN-BRANCH |
-| TPO-recruiters-R06 | S4 | COPY | OPEN |
+| TPO-recruiters-R06 | S4 | COPY | IN-BRANCH |
 
 ## tpo/companies (30: UNCONFIRMED 3, OPEN 10, FIXED-ON-MAIN 17)
 
@@ -179,15 +179,15 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-companies-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-companies-17 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-companies-19 | S2 | STATE | OPEN |
+| TPO-companies-19 | S2 | STATE | IN-BRANCH |
 | TPO-companies-25 | S2 | STATE | UNCONFIRMED |
 | TPO-companies-03 | S3 | COPY | OPEN |
 | TPO-companies-07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-companies-09 | S3 | COPY | OPEN |
+| TPO-companies-09 | S3 | COPY | IN-BRANCH |
 | TPO-companies-18 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-companies-20 | S3 | STATE | OPEN |
 | TPO-companies-21 | S3 | COPY | OPEN |
-| TPO-companies-22 | S3 | COPY | OPEN |
+| TPO-companies-22 | S3 | COPY | IN-BRANCH |
 | TPO-companies-24 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-companies-26 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-companies-27 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
@@ -195,7 +195,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-R03 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-companies-R05 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-companies-14 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-companies-23 | S4 | COPY | OPEN |
+| TPO-companies-23 | S4 | COPY | IN-BRANCH |
 | TPO-companies-28 | S4 | PERMISSION | FIXED-ON-MAIN |
 | TPO-companies-29 | S4 | RESPONSIVE | OPEN |
 
@@ -211,26 +211,26 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-06 | S2 | MISSING-TAB | FIXED-ON-MAIN |
 | TPO-campaigns-public-07 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-campaigns-public-14 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-campaigns-public-16 | S2 | STATE | OPEN |
+| TPO-campaigns-public-16 | S2 | STATE | IN-BRANCH |
 | TPO-campaigns-public-17 | S2 | VALIDATION | UNCONFIRMED |
 | TPO-campaigns-public-22 | S2 | VALIDATION | OPEN |
 | TPO-campaigns-public-23 | S2 | SIDE-EFFECT | OPEN |
 | TPO-campaigns-public-33 | S2 | MISSING-FIELD | OPEN |
 | TPO-campaigns-public-34 | S2 | MISSING-FIELD | OPEN |
-| TPO-campaigns-public-35 | S2 | STATE | OPEN |
+| TPO-campaigns-public-35 | S2 | STATE | IN-BRANCH |
 | TPO-campaigns-public-R08 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-campaigns-public-08 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-campaigns-public-09 | S3 | STATE | OPEN |
+| TPO-campaigns-public-09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-10 | S3 | COPY | OPEN |
-| TPO-campaigns-public-24 | S3 | COPY | OPEN |
+| TPO-campaigns-public-24 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-25 | S3 | STATE | UNCONFIRMED |
 | TPO-campaigns-public-27 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-campaigns-public-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-campaigns-public-30 | S3 | COPY | OPEN |
+| TPO-campaigns-public-30 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-36 | S3 | COPY | OPEN |
 | TPO-campaigns-public-37 | S3 | STATE | OPEN |
 | TPO-campaigns-public-R04 | S3 | MISSING-FIELD | OPEN |
-| TPO-campaigns-public-R09 | S3 | STATE | OPEN |
+| TPO-campaigns-public-R09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-11 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-campaigns-public-12 | S4 | MISSING-FIELD | OPEN |
 | TPO-campaigns-public-R10 | S4 | PERFORMANCE | OPEN |
@@ -261,3 +261,12 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Implemented: TPO-inbox-team-22 first-class member-scoped asks (create, idempotent retry, due/overdue, mark done with reply, cancel, audit, in-app notifications, deep links); -23 send-time decisions and Decisions filter; -18 Asks/ask-assignee chips; -31/-32 persisted ask counts and overdue sort; -34 away warning; R04 author notices with college handover view; REC-calendar-messages-profile-28 profile copy; -37 reports deep-link NOT-A-GAP; -42 invite decline verification; -47 explicit alias redirects; TPO-recruiters-38 email-provider inference, -39/-40/-43 source copy.
 - Proposed `docs/proposed-migrations/tpo-team-asks.sql` needs orchestrator registration. `tests/integration/tpo-team-asks-chat2.test.ts` requires disposable DB and is **not run by builder**. Do not claim HOME ask integration, full @mention handling, multi-person/object threads, member handover, or complete CRM parity.
 - Remaining major TPO-inbox-team OPEN IDs: 07,16,17,18,20,22,24,31,33,36,44,54,60,26,29,30,34,37,38,51,52,59,R02,42,R06. Recruiter profile mobile/combined save and TPO recruiter lifecycle/duplicate handling also remain.
+
+## Chat-2 latest round — 2026-10-17, reconcile at origin/main merge
+- Read main's `docs/orchestrator/unit-failures-r1.md` before work. Three chat-2-region failures (TPO-home-33, TPO-home-35, TPO-inbox-team-54) have already been repaired in the chat-2 branch's tests and bell/announcement code: source examined, no weakening or deletion. **Orchestrator CI must run tests; builder did not execute tests.**
+- Reviewed 30+ remaining OPEN gaps across tpo/inbox-team, recruiter/calendar-messages-profile, tpo/recruiters, tpo/companies, and tpo/campaigns-public. This round implements/verifies the core of the IN-BRANCH IDs above, with corresponding gap-named unit tests and acceptance table evidence. Entries left OPEN remain **partial or untouched**; this was not 30 fully verified closures.
+- TPO Recruiters: -07 persisted nonzero attention strips PARTIAL; -22 duplicate contact link DONE; -24 sources DONE; -30 error/detail copy PARTIAL; -36 keyboard trap PARTIAL; -39 view count and first-empty copy DONE; -41 audited restore-to-NEW and five-minute undo DONE; -42 independent snapshot reloading DONE; -R06 exact opted-out invite warning DONE.
+- TPO Companies: -09 status copy DONE, -19 stale snapshot PARTIAL, -21 friendly errors PARTIAL, -22 numbers and date labels DONE, -23 actor/type/note/timestamp DONE.
+- Recruiter: -12 guarded Discard / Keep writing DONE, -16 permission-aware access copy PARTIAL, -48 no-college address help DONE, -R03 misleading notification footer DONE; profile-edit mobile, comprehensive inbox and provider email relay remain OPEN.
+- TPO campaigns/public: -09 batch invalid UUID 404 DONE, -10 history copy PARTIAL, -16 and -R09 nonenumerating unsubscribes and inline retry DONE, -24 and -30 public invitation retry copy DONE, -35 unpublished 404 DONE, -36 legacy heading partial; -R01 stored optional phone, -R03 ALREADY_JOINED and -R07 company subdomains verified DONE outside this queue; -R02 field-level errors partial.
+- Shared caveats: storage/proxy/provider deployment checks remain required; never advertise delivery success without receipts. No numbered migrations added or scripts/auth/security/shell edited. Unit tests were added/updated but NOT RUN by this builder; orchestrator must run typecheck, lint, unit and disposable PostgreSQL before production.

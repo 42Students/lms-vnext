@@ -1,5 +1,5 @@
 import { headers } from "next/headers";
-import Link from "next/link";
+import {notFound} from "next/navigation";
 import { PublicRecruitFromUs } from "@/components/placements/public-recruit-from-us";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
@@ -22,6 +22,10 @@ export default async function PublicPlacementsPage() {
     ? await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(tenant.collegeId))
     : null;
   const published = publicRead?.available ? publicRead.value : null;
+  // An unknown host or an explicitly unpublished college page must be a 404.
+  // An unavailable database is not evidence that the college unpublished it.
+  if(tenant.kind!=="college"||(brandRead?.available&&!college)||
+   (publicRead?.available&&!published))notFound();
   const metrics = publicPlacementDisclosure([
     { label: "Students placed", count: published?.placed ?? null },
     { label: "Offers received", count: published?.offers ?? null },
@@ -34,13 +38,11 @@ export default async function PublicPlacementsPage() {
   return (
     <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-10 sm:px-8">
       <header className="space-y-3">
-        <p className="text-sm font-semibold text-primary-text">42Students · Placements</p>
         <h1 className="break-words text-3xl font-semibold text-foreground sm:text-4xl">
-          {college?.collegeName ?? "College placements"}
+          {"Placements at "+(college?.collegeName??"your college")}
         </h1>
         <p className="max-w-2xl text-sm leading-6 text-body">
-          Placement results appear only if the college has explicitly enabled public reporting and each count meets the minimum disclosure threshold.
-          Private student information is never displayed here.
+          Recruit from us. See the placements this college has chosen to share.
         </p>
       </header>
       {published && metrics.some(metric=>!metric.suppressed) ? (
@@ -79,7 +81,6 @@ export default async function PublicPlacementsPage() {
       <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
         enabled={Boolean(published) && process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
           process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED"} />
-      <footer className="mt-8 text-sm"><Link href="/" className="text-primary-text underline">Back to college home</Link></footer>
     </main>
   );
 }

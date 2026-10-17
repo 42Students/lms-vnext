@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { burstOverflowText, cloudPollSettings, cloudPollWindow, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
+import { burstOverflowText, cloudPollSettings, cloudPollWindow, formatDailyDigest, healthWatchStatus, istDayAndHour, runOptionalAlertTask } from "@/modules/log-alerts/scheduler";
 import { isValidTickSecret } from "@/app/api/internal/alerts/tick/route";
 
 describe("scheduled Telegram alerts", () => {
@@ -17,6 +17,20 @@ describe("scheduled Telegram alerts", () => {
       recentCount: 1, lastSpikeAt: null, now,
     })).toBe("REGRESSION");
   });
+  it("GR-118 GR-119 GR-125 isolates failed optional checks without stopping later digest work", async () => {
+    const providerFailure = new Error("synthetic provider URL and secret");
+    let continued = false;
+    expect(await runOptionalAlertTask(async () => { throw providerFailure; })).toBe(false);
+    expect(await runOptionalAlertTask(async () => { continued = true; })).toBe(true);
+    expect(continued).toBe(true);
+    const { readFileSync } = await import("node:fs");
+    const scheduler = readFileSync("src/modules/log-alerts/scheduler.ts", "utf8");
+    expect(scheduler).toContain("await runOptionalAlertTask(() => flushOverflow(now))");
+    expect(scheduler).toContain("await runOptionalAlertTask(() => sweepUndeliveredRegressions(now))");
+    expect(scheduler).toContain("await pollCloudLoggingErrors(now)");
+    expect(scheduler).toContain('withScheduledLease("telegram-digest"');
+  });
+
   it("GR-116 preserves excess burst counts for a later summary", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("13 more");
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
