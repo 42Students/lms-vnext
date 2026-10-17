@@ -124,4 +124,34 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   expect(source("src/components/courses/college-live-classes-directory.tsx")).toContain("CollegeContentCsvExport");
  });
 
+ it("COL-course-tabs-03 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-authoring-control.tsx");
+   expect(s).toContain("Existing Content");
+   expect(s).toContain("RESOURCE");
+   expect(s).toContain("materials");
+ });
+ it("COL-course-tabs-04 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-assignment-create.tsx");
+   expect(s).toContain("Create New Assignment");
+   expect(s).toContain("allowedMethods");
+   expect(s).toContain("dueAt");
+ });
+ it("COL-course-tabs-14 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-lesson-reorder-actions.tsx");
+   expect(s).toContain("apiFetch<unknown>");
+   expect(s).toContain("Move up");
+   expect(s).toContain("Move down");
+   expect(s).toContain("Lesson order updated");
+ });
+ it("COL-course-tabs-16 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-authoring-control.tsx");
+   expect(s).toContain("listSectionId");
+   expect(s).toContain("item.offeringId");
+   expect(s).toContain("Section");
+ });
+ it("COL-course-tabs-18 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-aggregate.tsx");
+   expect(s).toContain("Course code (exact)");
+   expect(s).toContain("Section");
+ });
 });
