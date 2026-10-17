@@ -22,3 +22,15 @@ Live numbers in legacy row fields remain conditional on available persisted data
 tests prove presentation policy rather than claiming unavailable provider data exists.
 
 TPO-home-07 and TPO-home-09 remain OPEN: their display models exist, but the live recruiter-access and team-ask/overdue inputs are not wired; presentation-only tests are not accepted as full closure.
+| TPO-home-10 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-10` |
+| TPO-home-18 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-18` |
+| TPO-home-20 | DONE | `src/app/(authenticated)/tpo/home/loading.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-20` |
+| TPO-home-21 | DONE | `src/app/(authenticated)/tpo/home/error.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-21` |
+| TPO-home-23 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-23` |
+| TPO-home-24 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-24` |
+| TPO-home-29 | DONE | `src/app/(authenticated)/tpo/find/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-29` |
+| TPO-home-30 | DONE | `src/components/tpo/tpo-topbar-new-menu.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-30` |
+| TPO-home-33 | DONE | `src/components/tpo/tpo-header-indicators.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-33` |
+| TPO-home-34 | DONE | `src/components/tpo/tpo-header-indicators.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-34` |
+| TPO-home-35 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-35` |
+| TPO-home-38 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-38` |

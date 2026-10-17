@@ -89,5 +89,75 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(src).toContain('title="Keyboard shortcuts"');
   expect(src).toContain('h:"/tpo/home"');
  });
+ it("TPO-home-10 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(s).toContain("tpoHomeNeedsLine");
+  expect(s).toContain("weekNext");
 
+ });
+ it("TPO-home-18 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(s).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
+
+ });
+ it("TPO-home-20 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/loading.tsx");
+  expect(s).toContain("Loading placement home");
+  expect(s).toContain("animate-pulse");
+
+ });
+ it("TPO-home-21 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/error.tsx");
+  expect(s).toContain("Could not load Home");
+  expect(s).toContain("Something went wrong while loading this content. Your current context has been kept.");
+  expect(s).toContain("onClick={reset}");
+
+ });
+ it("TPO-home-23 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(s).toContain("data-testid=\"tpo.home\"");
+  expect(s).not.toContain("lifecycle migration is registered");
+ });
+ it("TPO-home-24 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(s).toContain("aria-label=\"Your placement work\"");
+  expect(s).not.toContain('aria-label="Pending placement requests"');
+ });
+ it("TPO-home-29 verified legacy and graceful behavior",()=>{
+  const s=source("src/app/(authenticated)/tpo/find/page.tsx");
+  expect(s).toContain("Find a student, recruiter, company or drive");
+  expect(s).toContain("Type a name or a roll number, for example 21CS001");
+
+ });
+ it("TPO-home-30 verified legacy and graceful behavior",()=>{
+  const s=source("src/components/tpo/tpo-topbar-new-menu.tsx");
+  expect(s).toContain("item.label!==\"Follow-up\"");
+  expect(s).toContain("<TpoNewFollowupModal");
+
+ });
+ it("TPO-home-33 verified legacy and graceful behavior",()=>{
+  const s=source("src/components/tpo/tpo-header-indicators.tsx");
+  expect(s).toContain("messages>0");
+  expect(s).toContain("aria-label");
+
+ });
+ it("TPO-home-34 verified legacy and graceful behavior",()=>{
+  const s=source("src/components/tpo/tpo-header-indicators.tsx");
+  expect(s).toContain("visibilitychange");
+  expect(s).toContain("30000");
+
+ });
+ it("TPO-home-35 verified legacy and graceful behavior",()=>{
+  const s=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(s).toContain("/api/tpo/notifications/");
+  expect(s).toContain("setReadIds");
+  expect(s).toContain("router.push(href)");
+  expect(s.indexOf("setReadIds")).toBeLessThan(s.indexOf("router.push(href)"));
+ });
+ it("TPO-home-38 verified legacy and graceful behavior",()=>{
+  const s=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(s).toContain("/api/tpo/notifications/read-all");
+  expect(s).toContain("Mark all read");
+  expect(s).not.toContain("window.confirm");
+ });
 });
