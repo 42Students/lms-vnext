@@ -11,7 +11,7 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
   }else if(char===","&&!quoted){row.push(field.trim());field="";startedQuoted=false;closedQuote=false;}
   else if((char==="\n"||char==="\r")&&!quoted){
    if(char==="\r"&&text[i+1]==="\n")i++;
-   row.push(field.trim());field="";
+   row.push(field.trim());field="";startedQuoted=false;closedQuote=false;
    if(row.some(value=>value!==""))rows.push(row);
    else if(strictBlankRows)throw Error("Remove blank data rows from the file.");
    row=[];
