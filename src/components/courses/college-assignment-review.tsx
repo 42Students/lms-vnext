@@ -23,11 +23,12 @@ export function CollegeAssignmentReview({
  const [failedIds,setFailedIds]=useState<string[]>([]);
  const [progress,setProgress]=useState("");
  const router=useRouter();
- async function publishAllGrades(selectedDeliveryId:string){
+ async function publishAllGrades(selectedDeliveryId:string,retryOnly:readonly string[]|null=null){
   if(bulkBusy||!window.confirm(
+    retryOnly?"Retry publication of "+retryOnly.length+" failed grades for this Section?":
     "Publish grades for every graded submission in this Section? Published results become visible to learners."
   ))return;
-  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setProgress("Loading graded submissions…");
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setProgress("Loading graded submissions…");
   let published=0,failed=0;
   try{
    const base="/api/courses/college/assignments/"+encodeURIComponent(selectedDeliveryId)+
@@ -40,7 +41,8 @@ export function CollegeAssignmentReview({
     pages=result.totalPages;
     setProgress("Reviewing Section page "+page+" of "+pages+"…");
     for(const item of result.items){
-     if(item.gradingStatus!=="GRADED"||item.gradePublished)continue;
+     if(item.gradingStatus!=="GRADED"||item.gradePublished||
+       (retryOnly&&!retryOnly.includes(item.id)))continue;
      const saved=await fetch(
       "/api/courses/assignment-submissions/"+encodeURIComponent(item.id)+"/publish",{
        method:"POST",headers:{"Content-Type":"application/json"},
