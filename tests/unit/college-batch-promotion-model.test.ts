@@ -44,6 +44,15 @@ describe("College Admin batch promotion preview policy", () => {
     expect(batchPromotionPlan({ ...base, cohortStatus: "ARCHIVED" }).blockers)
       .toContain("BATCH_NOT_ACTIVE");
   });
+  it("COL-academic-setup-R04 blocks promotion when the active destination term has no mapped courses",()=>{
+    expect(batchPromotionPlan({...base,nextTermHasCourses:false}).blockers)
+      .toContain("NEXT_TERM_NO_MAPPED_COURSES");
+    expect(batchPromotionPlan({...base,nextTermHasCourses:true}).blockers).toEqual([]);
+    expect(batchPromotionPlan({...base,nextTermConfigured:false,nextTermHasCourses:false}).blockers)
+      .toContain("NEXT_TERM_UNCONFIGURED");
+    expect(batchPromotionPlan({...base,currentTermNumber:4,nextTermHasCourses:false}).blockers)
+      .not.toContain("NEXT_TERM_NO_MAPPED_COURSES");
+  });
   it("previews graduation only when current term is the program maximum", () => {
     expect(batchPromotionPlan({ ...base, currentTermNumber: 4 }))
       .toMatchObject({ action: "GRADUATE", targetTermNumber: null });

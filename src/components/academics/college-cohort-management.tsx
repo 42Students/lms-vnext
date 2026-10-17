@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
 import {
   createCollegeCohortSchema,
@@ -84,7 +85,10 @@ export function CollegeCohortCreateForm({ programs, periods }: {
     <h2 className="m-0 text-lg font-semibold text-foreground">Create batch</h2>
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
-        {programs.length === 0 ? "Create a program before adding batches." : "Create a usable academic period before adding batches."}
+        {programs.length === 0 ? "Create a program before adding batches." : <>
+          Create a usable academic period before adding batches.{" "}
+          <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
+        </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program

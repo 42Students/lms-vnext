@@ -8,11 +8,11 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-placements-projects-51 | S2 | MISSING-PAGE | OPEN |
+| SA-placements-projects-51 | S2 | MISSING-PAGE | NOT-A-GAP |
 | SA-placements-projects-56 | S2 | MISSING-ACTION | OPEN |
 | SA-placements-projects-60 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-62 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-64 | S2 | MISSING-FIELD | OPEN |
+| SA-placements-projects-64 | S2 | MISSING-FIELD | DONE |
 | SA-placements-projects-65 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-69 | S2 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-placements-projects-70 | S2 | STATE | FIXED-ON-MAIN |
@@ -24,30 +24,30 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-89 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-90 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-91 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-52 | S3 | COPY | OPEN |
+| SA-placements-projects-52 | S3 | COPY | DONE |
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-54 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-57 | S3 | COPY | OPEN |
+| SA-placements-projects-57 | S3 | COPY | DONE |
 | SA-placements-projects-58 | S3 | MISSING-FIELD | UNCONFIRMED |
-| SA-placements-projects-59 | S3 | MISSING-FILTER | OPEN |
+| SA-placements-projects-59 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-61 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-66 | S3 | MISSING-COLUMN | OPEN |
-| SA-placements-projects-67 | S3 | STATE | OPEN |
+| SA-placements-projects-66 | S3 | MISSING-COLUMN | DONE |
+| SA-placements-projects-67 | S3 | STATE | DONE |
 | SA-placements-projects-68 | S3 | STATE | UNCONFIRMED |
 | SA-placements-projects-71 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-72 | S3 | MISSING-ACTION | UNCONFIRMED |
-| SA-placements-projects-73 | S3 | COPY | OPEN |
+| SA-placements-projects-73 | S3 | COPY | DONE |
 | SA-placements-projects-74 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-75 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-76 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-78 | S3 | COPY | OPEN |
-| SA-placements-projects-79 | S3 | COPY | OPEN |
+| SA-placements-projects-78 | S3 | COPY | DONE |
+| SA-placements-projects-79 | S3 | COPY | DONE |
 | SA-placements-projects-80 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-86 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-87 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-92 | S3 | STATE | OPEN |
-| SA-placements-projects-55 | S4 | MISSING-FILTER | OPEN |
+| SA-placements-projects-87 | S3 | MISSING-ACTION | DONE |
+| SA-placements-projects-92 | S3 | STATE | DONE |
+| SA-placements-projects-55 | S4 | MISSING-FILTER | DONE |
 | SA-placements-projects-93 | S4 | MISSING-ACTION | OPEN |
 
 ## tpo/home (39: OPEN 18, FIXED-ON-MAIN 18, UNCONFIRMED 3)
@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-home-01 | S2 | COPY | OPEN |
+| TPO-home-01 | S2 | COPY | DONE |
 | TPO-home-04 | S2 | MISSING-FIELD | OPEN |
 | TPO-home-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -66,23 +66,23 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-26 | S2 | STATE | UNCONFIRMED |
 | TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
-| TPO-home-28 | S2 | MISSING-MODAL | OPEN |
+| TPO-home-28 | S2 | MISSING-MODAL | DONE |
 | TPO-home-42 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-43 | S2 | RESPONSIVE | FIXED-ON-MAIN |
 | TPO-home-10 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-17 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-home-18 | S3 | RESPONSIVE | OPEN |
-| TPO-home-19 | S3 | STATE | OPEN |
-| TPO-home-20 | S3 | STATE | OPEN |
-| TPO-home-21 | S3 | COPY | OPEN |
-| TPO-home-23 | S3 | COPY | OPEN |
+| TPO-home-18 | S3 | RESPONSIVE | DONE |
+| TPO-home-19 | S3 | STATE | DONE |
+| TPO-home-20 | S3 | STATE | DONE |
+| TPO-home-21 | S3 | COPY | DONE |
+| TPO-home-23 | S3 | COPY | DONE |
 | TPO-home-25 | S3 | PERMISSION | UNCONFIRMED |
-| TPO-home-29 | S3 | COPY | OPEN |
-| TPO-home-30 | S3 | COPY | OPEN |
+| TPO-home-29 | S3 | COPY | DONE |
+| TPO-home-30 | S3 | COPY | DONE |
 | TPO-home-32 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-home-34 | S3 | STATE | OPEN |
+| TPO-home-34 | S3 | STATE | DONE |
 | TPO-home-36 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-37 | S3 | STATE | OPEN |
+| TPO-home-37 | S3 | STATE | DONE |
 | TPO-home-39 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-home-40 | S3 | COPY | OPEN |
 | TPO-home-41 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -92,8 +92,8 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | TPO-home-22 | S4 | STATE | OPEN |
-| TPO-home-24 | S4 | COPY | OPEN |
-| TPO-home-38 | S4 | COPY | OPEN |
+| TPO-home-24 | S4 | COPY | DONE |
+| TPO-home-38 | S4 | COPY | DONE |
 | TPO-home-44 | S4 | RESPONSIVE | OPEN |
 
 ## superadmin/tenants-modules-3 (28: OPEN 11, FIXED-ON-MAIN 14, UNCONFIRMED 3)
@@ -112,24 +112,24 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-41 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-42 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-43 | S3 | COPY | OPEN |
-| SA-tenants-modules-44 | S3 | STATE | OPEN |
+| SA-tenants-modules-44 | S3 | STATE | DONE |
 | SA-tenants-modules-48 | S3 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-52 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-tenants-modules-55 | S3 | PERMISSION | FIXED-ON-MAIN |
-| SA-tenants-modules-58 | S3 | MISSING-FIELD | OPEN |
-| SA-tenants-modules-59 | S3 | MISSING-COLUMN | OPEN |
+| SA-tenants-modules-58 | S3 | MISSING-FIELD | DONE |
+| SA-tenants-modules-59 | S3 | MISSING-COLUMN | DONE |
 | SA-tenants-modules-60 | S3 | STATE | UNCONFIRMED |
 | SA-tenants-modules-62 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | SA-tenants-modules-64 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-tenants-modules-66 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-67 | S3 | COPY | OPEN |
+| SA-tenants-modules-67 | S3 | COPY | DONE |
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-45 | S4 | STATE | OPEN |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-50 | S4 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-61 | S4 | VALIDATION | OPEN |
+| SA-tenants-modules-61 | S4 | VALIDATION | DONE |
 
 ## learner/home-courses (27: FIXED-ON-MAIN 14, UNCONFIRMED 2, OPEN 11)
 
@@ -140,8 +140,8 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-course-detail-R02 | S2 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-home-courses-01 | S2 | COPY / MISSING-PAGE (landing) | UNCONFIRMED |
 | LEARNER-home-courses-14 | S2 | MISSING-FIELD / SIDE-EFFECT | UNCONFIRMED |
-| LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | OPEN |
-| LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | OPEN |
+| LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | DONE |
+| LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
 | LEARNER-course-detail-R04 | S3 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
 | LEARNER-home-courses-03 | S3 | STATE / COPY | OPEN |
@@ -149,21 +149,21 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | LEARNER-home-courses-09 | S3 | COPY / STATE | DONE |
-| LEARNER-home-courses-12 | S3 | COPY | OPEN |
-| LEARNER-home-courses-16 | S3 | COPY | OPEN |
+| LEARNER-home-courses-12 | S3 | COPY | DONE |
+| LEARNER-home-courses-16 | S3 | COPY | DONE |
 | LEARNER-home-courses-19 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-21 | S3 | STATE | FIXED-ON-MAIN |
 | LEARNER-home-courses-R01 | S3 | STATE | DONE |
 | LEARNER-home-courses-06 | S4 | COPY | DONE |
 | LEARNER-home-courses-07 | S4 | MISSING-FILTER | DONE |
-| LEARNER-home-courses-10 | S4 | STATE | OPEN |
+| LEARNER-home-courses-10 | S4 | STATE | DONE |
 | LEARNER-home-courses-11 | S4 | STATE | DONE |
 | LEARNER-home-courses-13 | S4 | COPY | DONE |
 | LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | FIXED-ON-MAIN |
 | LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | FIXED-ON-MAIN |
 | LEARNER-home-courses-22 | S4 | PERFORMANCE | OPEN |
-| LEARNER-home-courses-23 | S4 | COPY | OPEN |
+| LEARNER-home-courses-23 | S4 | COPY | DONE |
 
 ## college/course-tabs (23: FIXED-ON-MAIN 16, OPEN 4, UNCONFIRMED 3)
 
@@ -183,12 +183,12 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-12 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-13 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-course-tabs-17 | S2 | MISSING-ACTION | OPEN |
+| COL-course-tabs-17 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-14 | S3 | MISSING-ACTION | OPEN |
 | COL-course-tabs-15 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-18 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-19 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| COL-course-tabs-22 | S3 | STATE | OPEN |
+| COL-course-tabs-22 | S3 | STATE | DONE |
 | COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
@@ -206,21 +206,21 @@ Audit: `docs/audit/pages/college/verification-misc.md` (and `verification-misc-r
 | COL-verification-misc-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-verification-misc-05 | S2 | MISSING-FIELD | DONE |
 | COL-verification-misc-07 | S2 | SIDE-EFFECT | DONE |
-| COL-verification-misc-10 | S2 | STATE | OPEN |
+| COL-verification-misc-10 | S2 | STATE | DONE |
 | COL-verification-misc-11 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-verification-misc-17 | S2 | PERMISSION | OPEN |
+| COL-verification-misc-17 | S2 | PERMISSION | DONE |
 | COL-verification-misc-02 | S3 | MISSING-FIELD | DONE |
-| COL-verification-misc-06 | S3 | COPY | OPEN |
+| COL-verification-misc-06 | S3 | COPY | DONE |
 | COL-verification-misc-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-verification-misc-12 | S3 | MISSING-ACTION | DONE |
 | COL-verification-misc-13 | S3 | STATE | FIXED-ON-MAIN |
 | COL-verification-misc-15 | S3 | STATE | DONE |
 | COL-verification-misc-16 | S3 | PERMISSION | NOT-A-GAP |
-| COL-verification-misc-18 | S3 | PERMISSION | OPEN |
+| COL-verification-misc-18 | S3 | PERMISSION | NOT-A-GAP |
 | COL-verification-misc-19 | S3 | STATE | NOT-A-GAP |
-| COL-verification-misc-09 | S4 | COPY | OPEN |
+| COL-verification-misc-09 | S4 | COPY | DONE |
 | COL-verification-misc-14 | S4 | MISSING-EXPORT | NOT-A-GAP |
-| COL-verification-misc-20 | S4 | STATE | OPEN |
+| COL-verification-misc-20 | S4 | STATE | DONE |
 
 ## college/academic-people (9: OPEN 9)
 
@@ -229,10 +229,10 @@ Audit: `docs/audit/pages/college/academic-people.md` (and `academic-people-revie
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | COL-academic-setup-R02 | S2 | STATE | OPEN |
-| COL-academic-setup-R03 | S2 | MISSING-ACTION | OPEN |
-| COL-academic-setup-R04 | S2 | VALIDATION | OPEN |
+| COL-academic-setup-R03 | S2 | MISSING-ACTION | DONE |
+| COL-academic-setup-R04 | S2 | VALIDATION | DONE |
 | COL-people-R01 | S2 | VALIDATION | OPEN |
-| COL-people-R02 | S2 | PERMISSION | OPEN |
+| COL-people-R02 | S2 | PERMISSION | DONE |
 | COL-academic-setup-R01 | S3 | STATE | OPEN |
 | COL-people-R03 | S3 | VALIDATION | OPEN |
 | COL-academic-setup-R05 | S4 | VALIDATION | OPEN |
@@ -244,9 +244,9 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-attendance-R01 | S2 | VALIDATION | OPEN |
+| COL-attendance-R01 | S2 | VALIDATION | DONE |
 | COL-attendance-R02 | S3 | SIDE-EFFECT | OPEN |
-| COL-attendance-R03 | S3 | PERMISSION | OPEN |
+| COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | OPEN |
 | COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-R02 | S3 | MISSING-FIELD | OPEN |

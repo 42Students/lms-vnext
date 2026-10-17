@@ -17,6 +17,12 @@ const own:RequestContext={user:{
 const foreign:RequestContext={...own,membership:{...own.membership!,
   collegeId:SEED_IDS.collegeB,id:SEED_IDS.facultyCollegeBMembership}};
 const learner:RequestContext={...own,membership:{...own.membership!,roles:["LEARNER"]}};
+const actingSuperAdmin:RequestContext={
+  user:{id:SEED_IDS.superAdminUser,identityUid:"super-admin-attendance-corrections",
+    platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+  membership:null,
+  adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA},
+};
 const ids={period:randomUUID(),program:randomUUID(),cohort:randomUUID(),
   section:randomUUID(),event:randomUUID()};
 const label="w-attendance-policy-"+ids.event.slice(0,8);
@@ -57,6 +63,17 @@ describe.skipIf(!enabled)("College attendance policy correction read PG",()=>{
     expect(data.correctionRequestHistory).toBeNull();
     const unselected=await getCollegeCorrectionRead(own,{});
     expect(unselected.queried).toBe(false);
+  });
+  it("COL-attendance-R03 allows only a scoped Super Admin to read college corrections",async()=>{
+    const scoped=await getCollegeCorrectionRead(actingSuperAdmin,dates);
+    expect(scoped.items.some(row=>row.id===ids.event)).toBe(true);
+    const noScope:RequestContext={...actingSuperAdmin,adminScope:null};
+    await expect(getCollegeCorrectionRead(noScope,dates)).rejects.toBeDefined();
+    const otherScope:RequestContext={...actingSuperAdmin,adminScope:{
+      organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB,
+    }};
+    const other=await getCollegeCorrectionRead(otherScope,dates);
+    expect(other.items.some(row=>row.id===ids.event)).toBe(false);
   });
   it("isolates another college; denies forged and learner inputs",async()=>{
     const other=await getCollegeCorrectionRead(foreign,dates);

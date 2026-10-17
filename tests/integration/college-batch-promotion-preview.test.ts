@@ -29,7 +29,7 @@ const learner: RequestContext = {
 };
 const ids = {
   period: randomUUID(), program: randomUUID(), term1: randomUUID(), term2: randomUUID(),
-  cohort: randomUUID(), section: randomUUID(),
+  cohort: randomUUID(), section: randomUUID(), course:randomUUID(), mappedCourse:randomUUID(),
   user: randomUUID(), membership: randomUUID(), role: randomUUID(),
   enrollment: randomUUID(), sectionEnrollment: randomUUID(),
 };
@@ -61,6 +61,15 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
     await pool.query(
       "INSERT INTO program_terms(id,program_id,term_number,name) VALUES($1,$2,1,$3),($4,$2,2,$5)",
       [ids.term1, ids.program, code + " I", ids.term2, code + " II"],
+    );
+    await pool.query(
+      "INSERT INTO courses(id,department_id,name,code) VALUES($1,$2,$3::text,$3::text)",
+      [ids.course,SEED_IDS.departmentA,code+"-course"],
+    );
+    await pool.query(
+      "INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) " +
+      "VALUES($1,$2,$3,'CORE',3,1)",
+      [ids.mappedCourse,ids.term2,ids.course],
     );
     await pool.query(
       "INSERT INTO cohorts(id,program_id,name,code,start_period_id,status) " +
@@ -96,8 +105,10 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
           ["sections", "id", ids.section],
           ["cohort_progression_state", "cohort_id", ids.cohort],
           ["cohorts", "id", ids.cohort],
+          ["program_term_courses", "id", ids.mappedCourse],
           ["program_terms", "id", ids.term1],
           ["program_terms", "id", ids.term2],
+          ["courses", "id", ids.course],
           ["programs", "id", ids.program],
           ["academic_periods", "id", ids.period],
           ["membership_roles", "id", ids.role],
@@ -129,6 +140,18 @@ describe.skipIf(!enabled)("College Admin promotion preview, actual PostgreSQL ro
       [ids.cohort],
     );
     expect(after.rows).toEqual(before.rows);
+  });
+  it("COL-academic-setup-R04 previews and blocks an active but unmapped next semester",async()=>{
+    await pool!.query("DELETE FROM program_term_courses WHERE id=$1",[ids.mappedCourse]);
+    try{
+      const preview=await previewCollegeBatchPromotion(admin,{cohortId:ids.cohort});
+      expect(preview.blockers).toContain("NEXT_TERM_NO_MAPPED_COURSES");
+      expect(preview.simulatedReadiness).toBe(false);
+      expect(preview.plan.targetTermNumber).toBe(2);
+    }finally{
+      await pool!.query("INSERT INTO program_term_courses(id,program_term_id,course_id,type,credits,display_order) VALUES($1,$2,$3,'CORE',3,1)",
+        [ids.mappedCourse,ids.term2,ids.course]);
+    }
   });
   it("reads true persisted blocker rows, not a UI-derived count", async () => {
     await pool!.query(
