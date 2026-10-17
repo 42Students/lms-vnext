@@ -410,7 +410,8 @@ export async function CollegeRoleDirectoryWorkspace({
                       <div className="mt-2">
                         <StudentClassMoveAction membershipId={item.membershipId} name={item.name} />
                       </div> : null}
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
+                      <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                       <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
                         departments={kind==="FACULTY"?result.departmentOptions:[]}/>
                     </div>
