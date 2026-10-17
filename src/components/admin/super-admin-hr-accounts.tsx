@@ -648,7 +648,7 @@ export function SuperAdminHrAccounts({
       <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
       <h2 className="text-base font-semibold">Recruiter accounts</h2>
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
-        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended / archived",statusSummary.archived],["Disabled",statusSummary.disabled],
+        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended",statusSummary.archived],["Disabled",statusSummary.disabled],
       ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd></div>)}</dl>
       <form
         key={[
@@ -778,7 +778,7 @@ export function SuperAdminHrAccounts({
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
                       {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
-                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
                       <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
                         onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>
