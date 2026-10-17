@@ -2,7 +2,7 @@
 
 Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-9-b`. 225 gaps on 5 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
 
-## tpo/calendar-reports (56: OPEN 5, DONE-BRANCH 20, FIXED-ON-MAIN 30, UNCONFIRMED 1)
+## tpo/calendar-reports (56: OPEN 3, DONE-BRANCH 22, FIXED-ON-MAIN 30, UNCONFIRMED 1)
 
 Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-calendar-reports-verification.md`.
 
@@ -65,7 +65,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-R05 | S4 | STATE | FIXED-ON-MAIN |
 | TPO-calendar-reports-R07 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 
-## tpo/settings-audit (56: FIXED-ON-MAIN 35, OPEN 17, UNCONFIRMED 4)
+## tpo/settings-audit (56: FIXED-ON-MAIN 35, DONE-BRANCH 12, OPEN 5, UNCONFIRMED 2, NOT-A-GAP 2)
 
 Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-settings-audit-verification.md`.
 
@@ -99,7 +99,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-76 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-92 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-93 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-settings-audit-96 | S2 | COPY | OPEN |
+| TPO-settings-audit-96 | S2 | COPY | DONE-BRANCH |
 | TPO-settings-audit-R03 | S2 | STATE | NOT-A-GAP |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
@@ -117,7 +117,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-73 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-75 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-82 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-94 | S3 | COPY | OPEN |
+| TPO-settings-audit-94 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
@@ -237,7 +237,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-45 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-R05 | S4 | A11Y | OPEN |
 
-## college/projects (18: FIXED-ON-MAIN 5, OPEN 10, UNCONFIRMED 3)
+## college/projects (18: FIXED-ON-MAIN 7, DONE-BRANCH 5, OPEN 5, NOT-A-GAP 1)
 
 Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-projects-verification.md`.
 

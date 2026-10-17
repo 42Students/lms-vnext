@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 type Draft={id:string;title:string;description:string;updatedAt:string;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean};
@@ -60,7 +61,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     router.push("/tpo/placements/jobs/"+encodeURIComponent(job.id));router.refresh();
    });
   }catch(reason){
-   setError(reason instanceof Error?reason.message:"Could not save the drive. Please retry.");
+   setError(tpoDriveFormErrorMessage(reason));
    setConfirmOpen(false);
   }
  }

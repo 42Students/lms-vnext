@@ -12,6 +12,7 @@ export const COLLEGE_LEGACY_GROUPS: readonly CollegeLegacyGroup[] = [
     {label:"Semester–Course Mapping",href:"/college/semester-courses"},
     {label:"Batches",href:"/college/batches"},
     {label:"Classes",href:"/college/classes"},
+    {label:"Academic periods",href:"/college/academics"},
     {label:"Batch Promotion",href:"/college/batch-promotion"},
     {label:"Lecture Halls",href:"/college/lecture-halls"},
     {label:"Electives",href:"/college/electives"},

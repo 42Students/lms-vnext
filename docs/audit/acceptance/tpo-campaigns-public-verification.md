@@ -19,3 +19,12 @@
 
 | TPO-campaigns-public-16 | DONE (source, tests not run) | Unsubscribe confirmation now guarded client POST with inline retry instead of raw JSON navigation; unknown used tokens get non-enumerating success response. Named `tests/unit/chat2-unsubscribe-graceful.test.ts`. |
 | TPO-campaigns-public-R09 | DONE (source, tests not run) | Missing storage and network failures preserve confirmation page and show retry rather than raw JSON; same named test. |
+
+| TPO-campaigns-public-R10 | DONE (source; unrun) | Engagement audience count by segment is now one tenant-scoped aggregate SQL query instead of unbounded JS roster, and selected preview uses SQL IN with <=100 IDs; named `tests/unit/chat2-engage-sql-audience-preview.test.ts`. |
+
+| TPO-campaigns-public-22 | DONE (source; unrun) | Shared business-email policy now blocks personal/disposable/academic/IP hosts, adds distinct client hints and bounded server-side MX validation with retryable unavailable state before sending OTP. Named `tests/unit/chat2-business-email-safety.test.ts`. |
+
+| TPO-campaigns-public-33 | DONE (source; migration pending) | About placements is a bounded 4000-char, persisted, actor-scoped, audited college page section, editor with Save, public pre-wrap; `docs/proposed-migrations/tpo-public-page-content.sql`; `tests/unit/chat2-public-content-metrics.test.ts`. |
+| TPO-campaigns-public-34 | DONE (source; migration pending) | Seven real metric choices and ordered selection, preview, LPA/percentage formatting and suppression hints from live aggregates, no identity exposure. Same migration/test. |
+
+| TPO-campaigns-public-R04 | DONE (source, tests unrun) | Recruiter first requests an email code without company-name guess; upon successful mailbox delivery response reveals an existing matching active company, displays You are joining as X, or asks Company name on the Join form when unknown. Named `tests/unit/chat2-public-join-known-company.test.ts`. |

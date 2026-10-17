@@ -5,6 +5,8 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
+import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
+import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
@@ -240,6 +242,7 @@ export default async function HrPlacementJobPage({
 
   return (
     <div className="space-y-6">
+      <RecruiterDriveFocusRefresh />
       <Link href={returnTo} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
         ← Back to Drives
       </Link>
@@ -515,13 +518,14 @@ export default async function HrPlacementJobPage({
               <article key={applicant.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
+                {applicant.rollNumber?<p className="mt-1 text-xs text-body">Roll no. {applicant.rollNumber}</p>:null}
                 <div className="mt-2 flex flex-wrap gap-2"><StatusBadge>{applicant.status}</StatusBadge><StatusBadge>{applicant.screening}</StatusBadge></div>
                 <p className="mt-2 text-xs text-muted-foreground">Applied {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(applicant.submittedAt)}</p>
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&applicant="+applicant.id+returnQuery}
                   className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
-          </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
+          </div> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
           {selectedApplicant ? (<>
             <div aria-hidden="true" className="fixed inset-0 z-20 bg-black/40"/>
             <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
@@ -549,6 +553,7 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Applicant</dt><dd className="font-semibold text-foreground">{selectedApplicant.name}</dd></div>
                 <div><dt className="text-muted-foreground">Role</dt><dd className="text-foreground">{selectedApplicant.role}</dd></div>
                 <div><dt className="text-muted-foreground">Shared email</dt><dd className="break-all text-foreground">{selectedApplicant.email ?? "Not provided"}</dd></div>
+                {selectedApplicant.rollNumber?<div><dt className="text-muted-foreground">Roll no.</dt><dd className="text-foreground">{selectedApplicant.rollNumber}</dd></div>:null}
                 <div><dt className="text-muted-foreground">Application</dt><dd className="text-foreground">{selectedApplicant.status}</dd></div>
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
                 <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
@@ -638,17 +643,40 @@ export default async function HrPlacementJobPage({
               </Link>
             ))}
           </nav>
-          {offers.length ? <div className="grid gap-3 md:grid-cols-2">{offers.map(offer => (
-            <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
-              <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
-              <p className="mt-1 text-sm text-body">{offer.role}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">{offer.kind === "LOI" ? <StatusBadge tone="info">Letter of intent</StatusBadge> : null}<StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge>
-                {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
-              </div>
-              <p className="mt-2 text-xs text-muted-foreground">Issued {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(offer.issuedAt)} · Joining {offer.joiningDate ?? "Not set"}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Reply by {offer.expiresAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt) : "Not set"} · Joining outcome {offer.joiningStatus ?? "Not recorded"}</p>
-            </article>
-          ))}</div> : <p className="text-sm text-muted-foreground">No offers yet. Send a selection list below when the candidates are ready.</p>}
+          {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
+            <table className="w-full min-w-[56rem] text-left text-sm">
+              <caption className="sr-only">Offers for shared applicants at this college</caption>
+              <thead className="bg-surface-secondary text-xs font-semibold text-foreground">
+                <tr>
+                  <th scope="col" className="px-3 py-3">Candidate</th>
+                  <th scope="col" className="px-3 py-3">Type</th>
+                  <th scope="col" className="px-3 py-3">CTC (LPA)</th>
+                  <th scope="col" className="px-3 py-3">Status</th>
+                  <th scope="col" className="px-3 py-3">Reply by</th>
+                  <th scope="col" className="px-3 py-3">Joining</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {offers.map(offer=><tr key={offer.id}>
+                  <td className="px-3 py-3 font-semibold text-foreground">{offer.name||"Unnamed applicant"}
+                    <span className="block text-xs font-normal text-muted-foreground">{offer.role}</span></td>
+                  <td className="px-3 py-3 text-body">{offer.kind==="LOI"?"Letter of intent":"Offer"}</td>
+                  <td className="px-3 py-3 text-body">{offer.annualCtcInr==null?"—":
+                    (offer.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})}</td>
+                  <td className="px-3 py-3"><StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge></td>
+                  <td className="px-3 py-3 text-body">{offer.expiresAt?
+                    new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt):
+                    "Not set"}</td>
+                  <td className="px-3 py-3 text-body">
+                    {offer.joiningStatus==="JOINED"?"Joined":
+                     offer.joiningStatus==="DEFERRED"?"Deferred":
+                     offer.joiningStatus==="DID_NOT_JOIN"?"Did not join":"Not recorded"}
+                    <span className="block text-xs text-muted-foreground">{offer.joiningDate??"Date not set"}</span>
+                  </td>
+                </tr>)}
+              </tbody>
+            </table>
+          </div> : <p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
           <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
@@ -696,6 +724,30 @@ export default async function HrPlacementJobPage({
         {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h3 className="font-semibold text-foreground">Scheduled rounds and potential time conflicts</h3>
           <p className="text-sm text-body">IST times from this employer-owned drive. Overlap is calculated only for rounds with recorded durations; room and interviewer availability is unknown.</p>
+          <RecruiterRoundInlineEditor jobId={workspace.job.id}
+            readOnly={driveOverview.readOnly}
+            rows={workspace.rounds.map(round=>({
+              id:round.id,name:round.name,kind:round.kind,mode:round.mode,status:round.status,
+              createdByYou:round.createdByUserId===context.user.id,
+              updatedAt:round.updatedAt.toISOString(),
+            }))}/>
+          <ul aria-label="Hiring rounds and statuses" className="mt-3 grid gap-2 sm:grid-cols-2">
+            {workspace.rounds.map(round=><li key={round.id}
+             className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+              <p className="font-semibold text-foreground">{round.sequence}. {round.name}</p>
+              <p className="text-body">{round.status==="COMPLETED"?"Completed":
+                round.status==="SCHEDULED"?"Scheduled":"Not scheduled"}
+                {round.createdByUserId===context.user.id?" · Added by you":""}</p>
+              <p className="text-muted-foreground">{round.scheduledAt?
+                new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST":
+                "Date to be decided"} · {round.mode==="VIRTUAL"?"Online":
+                  round.mode==="ON_CAMPUS"?"On campus":"Mode to be decided"}</p>
+              <p className="text-muted-foreground">{round.venue??"Venue not set"}</p>
+              {!driveOverview.readOnly && round.createdByUserId===context.user.id ?
+                <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
+                 className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Change or remove</Link>:null}
+            </li>)}
+          </ul>
           {roundSchedule.length?<div className="grid gap-3 sm:grid-cols-2">
             {roundSchedule.map(round=><article key={round.id} className="rounded-lg border border-border bg-surface-secondary p-4">
               <h4 className="font-semibold text-foreground">{round.sequence}. {round.name}</h4>

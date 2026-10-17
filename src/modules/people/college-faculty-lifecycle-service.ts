@@ -10,6 +10,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import {assertMutableMembershipTarget} from "./membership-protection";
 import {
   collegeFacultyIdSchema, collegeFacultyLifecycleSchema,
 } from "./college-faculty-lifecycle-model";
@@ -38,7 +39,7 @@ export async function transitionCollegeFaculty(
   });
   return getDb().transaction(async tx => {
     const [faculty] = await tx.select({
-      id: collegeMemberships.id, status: collegeMemberships.status,
+      id: collegeMemberships.id, userId:collegeMemberships.userId, status: collegeMemberships.status,
       name: users.displayName, userStatus: users.platformStatus,
     }).from(collegeMemberships)
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
@@ -53,6 +54,12 @@ export async function transitionCollegeFaculty(
         eq(membershipRoles.role, "FACULTY"),
       )).for("share").limit(1);
     if (!facultyRole) throw new CollegeFacultyLifecycleError("FACULTY_NOT_FOUND");
+    const targetRoles=await tx.select({role:membershipRoles.role})
+      .from(membershipRoles).where(eq(membershipRoles.membershipId,membershipId))
+      .for("share");
+    assertMutableMembershipTarget(context,{userId:faculty.userId,
+      roles:targetRoles.map(item=>item.role)},
+      input.action==="DEACTIVATE"?"SUSPEND":"REACTIVATE");
     if (faculty.status !== input.expectedStatus)
       throw new CollegeFacultyLifecycleError("FACULTY_STATUS_CHANGED");
     if (input.action === "DEACTIVATE") {

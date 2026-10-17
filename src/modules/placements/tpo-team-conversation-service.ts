@@ -4,7 +4,8 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {collegeMemberships,users} from "@/db/schema";
 import { placementTpoInternalThreads, placementTpoInternalMessages } from "@/db/schema/tpo-internal";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "./scope";
@@ -19,7 +20,7 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
   const page = tpoMessagePageSchema.parse(rawPage);
   const id = tpoThreadIdSchema.parse(rawId);
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO"))
+  if (!membership || !hasPlacementTeamMembership(context))
     throw new AuthorizationError("placements.manage");
   const college = await requirePlacementManageScope(context, membership.collegeId);
   if (!await placementTableExists("placement_tpo_internal_threads"))

@@ -49,6 +49,7 @@ export default async function LearnerQuizzesPage() {
       />
       <LearnerAssessmentOverview
         courses={overview.courses}
+        classScope={overview.classScope}
         items={items}
         kind="QUIZ"
         snapshotNowMs={overview.snapshotNowMs}

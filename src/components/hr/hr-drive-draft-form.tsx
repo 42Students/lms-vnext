@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {useRouter} from "next/navigation";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
@@ -56,6 +58,8 @@ export function HrDriveDraftForm({
   const [branchInput,setBranchInput]=useState((initial.branches??[]).join(", "));
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
+  const [pendingLeave,setPendingLeave]=useState<string|null>(null);
+  const router=useRouter();
   const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
@@ -86,7 +90,7 @@ export function HrDriveDraftForm({
   // REC-home-drives-32: the browser cannot quietly throw away an active
   // edit or Hire Again draft. Unsubmitted data stays on this device.
   useEffect(()=>{
-    if((!fixRequestId&&!sourceJobId)||submittedRef.current||
+    if(submittedRef.current||
        !hrDraftContainsWork(draft)||JSON.stringify(draft)===JSON.stringify(initial))return;
     const beforeUnload=(event:BeforeUnloadEvent)=>{
       event.preventDefault();
@@ -101,7 +105,8 @@ export function HrDriveDraftForm({
         const destination=new URL(href,window.location.href);
         if(destination.origin!==window.location.origin)return;
         if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
-        if(!window.confirm("Leave without these changes?"))event.preventDefault();
+        event.preventDefault();event.stopPropagation();
+        setPendingLeave(destination.pathname+destination.search+destination.hash);
       }catch{/* Malformed navigation is handled by the browser. */}
     };
     window.addEventListener("beforeunload",beforeUnload);
@@ -195,7 +200,7 @@ export function HrDriveDraftForm({
       try{
         window.sessionStorage.setItem(feedbackKey,fixRequestId
           ? editMode==="EDIT"?"Saved. The placement cell sees the new version.":"Request resent to the placement cell."
-          : "Sent for review.");
+          : "Sent to the placement cell for review");
       }catch{/* A verified save must not depend on flash storage. */}
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
@@ -231,9 +236,17 @@ export function HrDriveDraftForm({
 
   return (
     <div className="space-y-6">
+      <ConfirmActionDialog open={pendingLeave!==null}
+       title="Discard this drive draft?" consequence="Leave without these changes?"
+       confirmLabel="Discard" onCancel={()=>setPendingLeave(null)}
+       onConfirm={()=>{
+        const href=pendingLeave;setPendingLeave(null);
+        submittedRef.current=true;
+        if(href)router.push(href);
+       }}/>
       {sourceJobTitle ? (
         <p className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-body">
-          Hire Again preview copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
+          Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">

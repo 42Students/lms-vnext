@@ -4,6 +4,7 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {MentorMeetingsCalendar} from "@/components/projects/mentor-meetings-calendar";
+import {MentorCalendarLoadFailure} from "@/components/projects/mentor-calendar-load-failure";
 import {listMyMentorCalendarMeetings} from "@/modules/projects/mentor-calendar-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 import {mentorCalendarFiltersSchema,filterMentorCalendar}
@@ -26,7 +27,11 @@ export default async function MentorCalendarPage({searchParams}:{
   const context=await getCurrentRequestContext();
   const access=await resolveOptionalModuleAccess(context).catch(()=>null);
   if(access?.projects.enabled!==true)return <MentorProjectsUnavailable/>;
-  const meetings=await listMyMentorCalendarMeetings(context);
+  const meetings=await listMyMentorCalendarMeetings(context).catch(()=>null);
+  if(meetings===null)return <div className="space-y-5">
+    <PageHeader title="Meetings" description="Every scheduled meeting across your assigned projects, in one place."/>
+    <MentorCalendarLoadFailure/>
+  </div>;
   // eslint-disable-next-line react-hooks/purity -- Server snapshot drives IST period filters and initial client clock.
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);

@@ -34,7 +34,7 @@ export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly T
   </label>)}
   {fields.some(field=>query.has(field.urlKey??"filter."+field.key))&&<button type="button"
    onClick={()=>{const next=clearTpoGridFilters(new URLSearchParams(query.toString()),fields);router.replace(pathname+(next.size?"?"+next.toString():""));}}
-   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Clear grid filters</button>}
+   className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Clear all</button>}
  </>;
  const wrapper="w-full min-w-0 space-y-3 rounded-lg border border-border bg-surface p-3";
  return mobileSheet?<div className="w-full min-w-0">

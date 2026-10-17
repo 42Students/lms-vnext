@@ -14,6 +14,15 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
+type ResourceMetadata={
+  resourceType:"FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
+  status:"ACTIVE"|"DRAFT"|"ARCHIVED";
+  pinned:boolean;accessNotes:string;sprintId:string;taskId:string;
+};
+const defaultMetadata:ResourceMetadata={
+  resourceType:"LINK",status:"ACTIVE",pinned:false,accessNotes:"",sprintId:"",taskId:"",
+};
+type RelatedOption={id:string;label:string};
 type Resource = {
   id: string;
   title: string;
@@ -21,6 +30,8 @@ type Resource = {
   url: string | null;
   required: boolean;
   visibility: "TEAM" | "MENTOR_ONLY";
+  resourceType?:ResourceMetadata["resourceType"];status?:ResourceMetadata["status"];
+  pinned?:boolean;accessNotes?:string|null;sprintId?:string|null;taskId?:string|null;
 };
 
 function ResourceForm({
@@ -29,6 +40,7 @@ function ResourceForm({
   url,
   required,
   visibility,
+  metadata,onMetadata,sprints,tasks,
   onVisibility,
   onTitle,
   onDescription,
@@ -41,6 +53,8 @@ function ResourceForm({
   url: string;
   required: boolean;
   visibility: "TEAM" | "MENTOR_ONLY";
+  metadata:ResourceMetadata;onMetadata:(metadata:ResourceMetadata)=>void;
+  sprints:readonly RelatedOption[];tasks:readonly RelatedOption[];
   onVisibility: (value: "TEAM" | "MENTOR_ONLY") => void;
   onTitle: (value: string) => void;
   onDescription: (value: string) => void;
@@ -91,6 +105,48 @@ function ResourceForm({
           }
         />
       </label>
+      {!isLearner ? <>
+        <label className="grid gap-1 text-sm font-semibold text-body">Type
+          <select value={metadata.resourceType}
+            onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            {(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
+              <option key={value} value={value}>{value[0]+value.slice(1).toLowerCase()}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Status
+          <select value={metadata.status}
+            onChange={event=>onMetadata({...metadata,status:event.target.value as ResourceMetadata["status"]})}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="ACTIVE">Active</option><option value="DRAFT">Draft</option>
+            <option value="ARCHIVED">Archived</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Related sprint
+          <select value={metadata.sprintId}
+            onChange={event=>onMetadata({...metadata,sprintId:event.target.value,taskId:""})}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="">No sprint</option>
+            {sprints.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Related task
+          <select value={metadata.taskId}
+            onChange={event=>onMetadata({...metadata,taskId:event.target.value})}
+            className="min-h-10 rounded-md border border-border bg-background px-3">
+            <option value="">No task</option>
+            {tasks.map(option=><option key={option.id} value={option.id}>{option.label}</option>)}
+          </select>
+        </label>
+        <label className="flex items-center gap-2 text-sm font-semibold text-body">
+          <input type="checkbox" checked={metadata.pinned}
+            onChange={event=>onMetadata({...metadata,pinned:event.target.checked})}/> Pinned
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Access notes
+          <Textarea maxLength={4000} value={metadata.accessNotes}
+            onChange={event=>onMetadata({...metadata,accessNotes:event.target.value})}/>
+        </label>
+      </> : null}
       {!isLearner ? <label className="grid gap-1 text-sm font-semibold text-body">
         Visible to
         <select value={visibility} onChange={event => onVisibility(event.target.value as "TEAM" | "MENTOR_ONLY")}
@@ -114,10 +170,11 @@ function ResourceForm({
 }
 
 export function CreateProjectResourceControl({
-  projectId, isLearner = false,
+  projectId, isLearner = false, sprints=[], tasks=[],
 }: {
   projectId: string;
   isLearner?: boolean;
+  sprints?:readonly RelatedOption[];tasks?:readonly RelatedOption[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -130,11 +187,13 @@ export function CreateProjectResourceControl({
   const [required, setRequired] =
     useState(false);
   const [visibility, setVisibility] = useState<"TEAM" | "MENTOR_ONLY">("TEAM");
+  const [metadata,setMetadata]=useState<ResourceMetadata>(defaultMetadata);
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
-  const dirty=Boolean(title.trim()||description.trim()||url.trim()||required||visibility!=="TEAM");
+  const dirty=Boolean(title.trim()||description.trim()||url.trim()||required||visibility!=="TEAM"||
+    JSON.stringify(metadata)!==JSON.stringify(defaultMetadata));
   useEffect(()=>{
     if(!open||!dirty)return;
     const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
@@ -171,6 +230,9 @@ export function CreateProjectResourceControl({
           url: url.trim() || undefined,
           required: isLearner ? false : required,
           visibility: isLearner ? "TEAM" : visibility,
+          ...(!isLearner?{resourceType:metadata.resourceType,status:metadata.status,
+            pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
+            sprintId:metadata.sprintId||null,taskId:metadata.taskId||null}:{}),
         },
       );
       setOpen(false);
@@ -179,6 +241,7 @@ export function CreateProjectResourceControl({
       setUrl("");
       setRequired(false);
       setVisibility("TEAM");
+      setMetadata(defaultMetadata);
       showToast({
         tone: "success",
         title: "Resource added.",
@@ -221,6 +284,7 @@ export function CreateProjectResourceControl({
             url={url}
             required={required}
             visibility={visibility}
+            metadata={metadata} onMetadata={setMetadata} sprints={sprints} tasks={tasks}
             onVisibility={setVisibility}
             onTitle={setTitle}
             onDescription={setDescription}
@@ -263,17 +327,18 @@ export function CreateProjectResourceControl({
         description="You have unsaved project changes. Leave this page and discard them?"
         confirmLabel="Discard changes" pending={pending}
         onConfirm={()=>{setDiscardOpen(false);setOpen(false);
-          setTitle("");setDescription("");setUrl("");setRequired(false);setVisibility("TEAM");}}/>
+          setTitle("");setDescription("");setUrl("");setRequired(false);setVisibility("TEAM");setMetadata(defaultMetadata);}}/>
     </>
   );
 }
 
 export function ProjectResourceActions({
   projectId,
-  resource,
+  resource,sprints=[],tasks=[],
 }: {
   projectId: string;
   resource: Resource;
+  sprints?:readonly RelatedOption[];tasks?:readonly RelatedOption[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -293,12 +358,20 @@ export function ProjectResourceActions({
   const [required, setRequired] =
     useState(resource.required);
   const [visibility, setVisibility] = useState<"TEAM" | "MENTOR_ONLY">(resource.visibility);
+  const [metadata,setMetadata]=useState<ResourceMetadata>({
+    resourceType:resource.resourceType??"LINK",status:resource.status??"ACTIVE",
+    pinned:resource.pinned??false,accessNotes:resource.accessNotes??"",
+    sprintId:resource.sprintId??"",taskId:resource.taskId??"",
+  });
   const [pending, setPending] =
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
   const dirty=title!==resource.title||description!==(resource.description??"")||
-    url!==(resource.url??"")||required!==resource.required||visibility!==resource.visibility;
+    url!==(resource.url??"")||required!==resource.required||visibility!==resource.visibility||
+    metadata.resourceType!==(resource.resourceType??"LINK")||metadata.status!==(resource.status??"ACTIVE")||
+    metadata.pinned!==(resource.pinned??false)||metadata.accessNotes!==(resource.accessNotes??"")||
+    metadata.sprintId!==(resource.sprintId??"")||metadata.taskId!==(resource.taskId??"");
   useEffect(()=>{
     if(!editOpen||!dirty)return;
     const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
@@ -335,6 +408,9 @@ export function ProjectResourceActions({
           url: url.trim() || null,
           required,
           visibility,
+          resourceType:metadata.resourceType,status:metadata.status,
+          pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
+          sprintId:metadata.sprintId||null,taskId:metadata.taskId||null,
         },
       );
       setEditOpen(false);
@@ -395,6 +471,11 @@ export function ProjectResourceActions({
             setUrl(resource.url ?? "");
             setRequired(resource.required);
             setVisibility(resource.visibility);
+            setMetadata({
+    resourceType:resource.resourceType??"LINK",status:resource.status??"ACTIVE",
+    pinned:resource.pinned??false,accessNotes:resource.accessNotes??"",
+    sprintId:resource.sprintId??"",taskId:resource.taskId??"",
+  });
             setError(null);
             setEditOpen(true);
           }}
@@ -425,6 +506,7 @@ export function ProjectResourceActions({
             url={url}
             required={required}
             visibility={visibility}
+            metadata={metadata} onMetadata={setMetadata} sprints={sprints} tasks={tasks}
             onVisibility={setVisibility}
             onTitle={setTitle}
             onDescription={setDescription}

@@ -2,8 +2,10 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {describe,it,expect} from "vitest";
 import {defaultTpoDriveView} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
 import {driveEligibilityPresetValue} from "@/modules/placements/tpo-drive-eligibility-presets";
+import {FriendlyFetchError} from "@/lib/api-fetch";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("chat-3 Drives round 4",()=>{
  it("TPO-drives-04 review-first default and persistent badge counts",()=>{
@@ -206,4 +208,38 @@ describe("chat-3 Drives round 4",()=>{
   expect(edit).toContain("<ConfirmDialog");
   expect(edit).not.toContain("window.confirm");
  });
+ it("TPO-drives-44 maps employer conflicts to customer wording and hides machine codes",()=>{
+  const conflict=new FriendlyFetchError("This changed while you were working.",409,"PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+  expect(tpoDriveFormErrorMessage(conflict)).toContain("Pick the company from the list");
+  expect(tpoDriveFormErrorMessage(new Error("PLACEMENT_JOB_NOT_PUBLISHABLE"))).not.toContain("PLACEMENT_JOB_NOT_PUBLISHABLE");
+  expect(tpoDriveFormErrorMessage(new Error("Add a valid HTTPS employer application link before publishing.")))
+    .toBe("Add a valid HTTPS employer application link before publishing.");
+  const create=source("src/components/placements/placement-job-create-form.tsx");
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(create).toContain("tpoDriveFormErrorMessage(error)");
+  expect(edit).toContain("tpoDriveFormErrorMessage(reason)");
+ });
+
+ it("TPO-drives-49 closed drive has immutable explanation, clone path and retriable read boundary",()=>{
+  const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
+  const boundary=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx");
+  const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/loading.tsx");
+  expect(page).toContain("This drive is closed: nothing here can be changed.");
+  expect(page).toContain('href="/tpo/placements/new"');
+  expect(boundary).toContain("Some drive setup data could not be loaded");
+  expect(boundary).toContain("<Button onClick={reset}>Retry</Button>");
+  expect(loading).toContain('aria-busy="true"');
+ });
+
+ it("TPO-drives-45 choosing end-of-day in IST stores 23:59 and preserves drafts",()=>{
+  expect(driveDeadlineIstEndOfDay("2099-11-05T00:00")).toBe("2099-11-05T23:59");
+  expect(driveDeadlineIstToIso(driveDeadlineIstEndOfDay("2099-11-05T08:15"))).toBe("2099-11-05T18:29:00.000Z");
+  expect(()=>driveDeadlineIstEndOfDay("2099-02-29T10:00")).toThrow("Enter a valid application deadline in IST.");
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("Use 11:59 PM IST");
+  expect(form).toContain("field.value=driveDeadlineIstEndOfDay(field.value)");
+  expect(form).toContain("saveBrowserDraft(form)");
+  expect(form).toContain("markDirty()");
+ });
+
 });

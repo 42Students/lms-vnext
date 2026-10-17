@@ -32,7 +32,11 @@ export function HrRecruiterBell(){
  const unread=state?.unread??0;
  return <div className="relative">
   <button type="button" aria-label={"Notifications, "+unread+" new"} aria-expanded={open}
-   onClick={()=>setOpen(value=>!value)} className="relative min-h-10 rounded border border-border px-3 text-sm font-semibold text-foreground">
+   onClick={()=>{
+    if(!open && state?.status==="READY" && (state.unread??0)>0 &&
+       state.items.filter(item=>item.unread).length>=state.unread)void markAll();
+    setOpen(value=>!value);
+   }} className="relative min-h-10 rounded border border-border px-3 text-sm font-semibold text-foreground">
    Notifications {unread>0?<span className="ml-1 rounded-full bg-primary px-1.5 text-xs text-on-primary">{unread}</span>:null}
   </button>
   {open?<section aria-label="Recruiter notifications" className="absolute right-0 z-50 mt-2 w-[400px] max-w-[calc(100vw-2rem)] rounded-xl border border-border bg-surface p-4 shadow-lg">

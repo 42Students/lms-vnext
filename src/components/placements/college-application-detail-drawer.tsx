@@ -12,7 +12,7 @@ export type CollegeApplicationDetail={
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
- scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string};
+ scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
  timeZone:"Asia/Kolkata"}).format(new Date(v));
@@ -28,6 +28,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [letterInput,setLetterInput]=useState<Record<string,string>>({});
  const [saving,setSaving]=useState(false);
  const [savingLetter,setSavingLetter]=useState(false);
+ const [rescreening,setRescreening]=useState(false);
+ const [rescreenResult,setRescreenResult]=useState<{
+  status:string;checks:Array<{criterion:string;status:string;detail:string;
+   actual:string|number|null;required:string|number}>;reviewedAt:string;
+ }|null>(null);
  const [success,setSuccess]=useState("");
  const [linkNotice,setLinkNotice]=useState("");
  const errorRef=useRef<HTMLParagraphElement>(null);
@@ -64,6 +69,20 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    await reload();setSuccess("Offer letter attached");
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
+ }
+ async function rescreen(){
+  if(rescreening)return;
+  setRescreening(true);setError("");setSuccess("");
+  try{
+   const result=await apiFetch<{status:string;checks:Array<{
+    criterion:string;status:string;detail:string;actual:string|number|null;required:string|number;
+   }>;reviewedAt:string}>(endpoint+"/rescreen",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({confirmed:true}),
+   });
+   setRescreenResult(result);setSuccess("Application re-screened");
+  }catch(reason){setError(reason instanceof Error?reason.message:"Unable to re-screen this application.");}
+  finally{setRescreening(false);}
  }
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[]},
@@ -107,8 +126,27 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Resume and match score</h3>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
+       {detail.resume.available&&detail.resume.url?
+        <a href={detail.resume.url} target="_blank" rel="noopener noreferrer"
+          className="mt-2 inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">
+          Resume Preview · Open securely
+        </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
-       <p className="text-xs text-muted-foreground">No invented private document URL or computed match score is shown.</p>
+       <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
+       <button type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
+        onClick={()=>void rescreen()}
+        className="mt-3 min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+        {rescreening?"Re-screening…":"Re-screen"}
+       </button>
+       <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
+       {rescreenResult?<div role="status" className="mt-3 space-y-2 rounded border border-border p-3">
+        <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
+        {rescreenResult.checks.length?<ul className="space-y-1 text-sm">
+         {rescreenResult.checks.map((check,i)=><li key={i}>
+          {check.criterion}: {check.status} · {check.detail}
+         </li>)}</ul>:<p>No individual policy checks were recorded.</p>}
+        <p className="text-xs text-muted-foreground">Reviewed {when(rescreenResult.reviewedAt)}</p>
+       </div>:null>
       </section>
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Assessment Link</h3>

@@ -50,6 +50,8 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
       { label: "Set up Programs", key: "programs", href: "/college/programs", desc: "Degree programs (B.Tech, MBA)" },
       { label: "Create Semesters", key: "semesters", href: "/college/semesters", desc: "Semesters within programs" },
       { label: "Map courses to semesters", key: "semester-courses", href: "/college/semester-courses", desc: "Which courses each semester teaches" },
+      { label: "Set up Academic Periods", key: "academic-periods", href: "/college/academics",
+        desc: "Required before creating batches, classes or elective offerings" },
       { label: "Create Batches", key: "batches", href: "/college/batches", desc: "Year batches (2024-2028)" },
       { label: "Create Classes", key: "classes", href: "/college/classes", desc: "Sections within each batch (e.g. CSE - A)" },
     ],
