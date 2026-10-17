@@ -92,6 +92,7 @@ export function FacultyLessonAuthoring({
   const [url, setUrl] = useState("");
   const [durationSeconds, setDurationSeconds] =
     useState("");
+  const [contentPoints,setContentPoints]=useState("1");
   const [startsAt, setStartsAt] =
     useState("");
   const [endsAt, setEndsAt] = useState("");
@@ -118,6 +119,7 @@ export function FacultyLessonAuthoring({
     setNotes("");
     setUrl("");
     setDurationSeconds("300");
+    setContentPoints("1");
     setStartsAt("");
     setEndsAt("");
     setDueAt("");
@@ -127,7 +129,7 @@ export function FacultyLessonAuthoring({
   }
 
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
-    endsAt||dueAt||durationSeconds!==""||maxPoints!=="10"||maxAttempts!=="1"||
+    endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!=="10"||maxAttempts!=="1"||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
@@ -258,6 +260,11 @@ export function FacultyLessonAuthoring({
         );
       }
 
+      const contentPointValue=Number(contentPoints);
+      if (["RESOURCE","YOUTUBE","LIVE_CLASS"].includes(mode??"") &&
+        (!Number.isInteger(contentPointValue)||contentPointValue<0||contentPointValue>1000))
+        throw new Error("Points must be a whole number between 0 and 1000.");
+
       if (mode === "RESOURCE") {
         if (!notes.trim() && !url.trim()) {
           throw new Error(
@@ -272,6 +279,7 @@ export function FacultyLessonAuthoring({
             deliveryId,
             contentType: "RESOURCE",
             title: cleanTitle,
+            points: contentPointValue,
             notes:
               notes.trim() || null,
             externalUrl:
@@ -307,6 +315,7 @@ export function FacultyLessonAuthoring({
             deliveryId,
             contentType: "YOUTUBE",
             title: cleanTitle,
+            points: contentPointValue,
             notes:
               notes.trim() || null,
             externalUrl: url.trim(),
@@ -340,6 +349,7 @@ export function FacultyLessonAuthoring({
             deliveryId,
             contentType: "LIVE_CLASS",
             title: cleanTitle,
+            points: contentPointValue,
             notes:
               notes.trim() || null,
             externalUrl: url.trim(),
@@ -682,6 +692,13 @@ export function FacultyLessonAuthoring({
                   required
                 />
               </label>
+
+              {(mode==="RESOURCE"||mode==="YOUTUBE"||mode==="LIVE_CLASS")?
+                <label className="block">
+                  <FieldLabel>Points</FieldLabel>
+                  <Input type="number" min={0} max={1000} value={contentPoints}
+                    onChange={event=>setContentPoints(event.target.value)} required/>
+                </label>:null}
 
               {mode === "YOUTUBE" ? (
                 <label className="block">

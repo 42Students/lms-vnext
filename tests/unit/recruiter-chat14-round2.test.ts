@@ -48,7 +48,11 @@ describe("chat-14 recruiter reassignment batch 2",()=>{
   const service=read("src/modules/placements/hr-job-read-service.ts");
   expect(service).toContain("where ${placementOffers.status}='EXPIRED'");
   expect(service).toContain('filters.offerState === "EXPIRED"');
-  expect(HR_OFFER_STATES).not.toContain("SELECTED");
+  // Legacy pre-issue/revoked states are represented in the filter,
+  // but the persisted placement_offers reader still needs a separate source.
+  expect(HR_OFFER_STATES).toContain("SELECTED");
+  expect(HR_OFFER_STATES).toContain("PENDING_VERIFICATION");
+  expect(HR_OFFER_STATES).toContain("REVOKED");
  });
  it("REC-calendar-messages-profile-23 avoids marking older unseen notifications as read",()=>{
   const code=read("src/components/hr/hr-recruiter-bell.tsx");

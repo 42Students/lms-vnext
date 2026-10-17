@@ -79,7 +79,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-R06 | S3 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-66 | S4 | MISSING-FIELD | OPEN |
 | TPO-drive-workspace-71 | S4 | A11Y | DONE |
-| TPO-drive-workspace-74 | S4 | STATE | UNCONFIRMED |
+| TPO-drive-workspace-74 | S4 | STATE | NOT-A-GAP |
 
 ## tpo/batches (63: FIXED-ON-MAIN 27, OPEN 34, UNCONFIRMED 2)
 
@@ -95,7 +95,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-07 | S2 | STATE | DONE |
 | TPO-batches-08 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-20 | S2 | MISSING-ACTION | OPEN |
-| TPO-batches-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-21 | S2 | MISSING-FIELD | DONE |
 | TPO-batches-22 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-26 | S2 | VALIDATION | DONE |
 | TPO-batches-33 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -119,7 +119,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-11 | S3 | MISSING-FILTER | OPEN |
 | TPO-batches-13 | S3 | COPY | DONE |
 | TPO-batches-14 | S3 | COPY | DONE |
-| TPO-batches-15 | S3 | STATE | UNCONFIRMED |
+| TPO-batches-15 | S3 | STATE | NOT-A-GAP |
 | TPO-batches-16 | S3 | STATE | DONE |
 | TPO-batches-23 | S3 | MISSING-FIELD | DONE |
 | TPO-batches-25 | S3 | MISSING-ACTION | DONE |
@@ -130,19 +130,19 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-43 | S3 | MISSING-MODAL | DONE |
 | TPO-batches-46 | S3 | MISSING-ACTION | OPEN |
 | TPO-batches-47 | S3 | MISSING-ACTION | DONE |
-| TPO-batches-48 | S3 | STATE | FIXED-ON-MAIN |
+| TPO-batches-48 | S3 | STATE | DONE |
 | TPO-batches-50 | S3 | STATE | OPEN |
 | TPO-batches-52 | S3 | COPY | DONE |
-| TPO-batches-55 | S3 | MISSING-ACTION | OPEN |
+| TPO-batches-55 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-56 | S3 | COPY | DONE |
 | TPO-batches-60 | S3 | COPY | DONE |
 | TPO-batches-61 | S3 | MISSING-ACTION | DONE |
-| TPO-batches-63 | S3 | SIDE-EFFECT | OPEN |
+| TPO-batches-63 | S3 | SIDE-EFFECT | DONE |
 | TPO-batches-64 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-batches-R04 | S3 | VALIDATION | OPEN |
 | TPO-batches-12 | S4 | STATE | DONE |
 | TPO-batches-17 | S4 | STATE | OPEN |
-| TPO-batches-24 | S4 | MISSING-FIELD | OPEN |
+| TPO-batches-24 | S4 | MISSING-FIELD | DONE |
 | TPO-batches-30 | S4 | A11Y | DONE |
 | TPO-batches-49 | S4 | MISSING-ACTION | OPEN |
 | TPO-batches-51 | S4 | COPY | DONE |

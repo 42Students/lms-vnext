@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { OrganizationActions } from "@/components/admin/organization-actions";
+import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { OrganizationCreateForm } from "@/components/admin/organization-create-form";
 import {
   DataTable,
@@ -9,7 +10,7 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { can } from "@/modules/permissions/policy";
-import { listOrganizations } from "@/modules/organizations/service";
+import { listOrganizations,listArchivedOrganizations } from "@/modules/organizations/service";
 
 type OrganizationRow = Awaited<
   ReturnType<typeof listOrganizations>
@@ -35,6 +36,7 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
     context,
     "organization.manage",
   );
+  const archived=canCreate?await listArchivedOrganizations(context):[];
 
   const columns: DataTableColumn<OrganizationRow>[] = [
     {
@@ -80,6 +82,20 @@ export default async function OrganizationsPage({searchParams}:{searchParams:Pro
         <OrganizationCreateForm />
       </section> : null}
       <h2 className="text-lg font-semibold text-foreground">Existing Organizations</h2>
+      {canCreate?<details className="rounded-xl border border-border bg-surface p-4">
+       <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">
+        Archived organizations · {archived.length} shown
+       </summary>
+       <p className="mt-2 text-xs text-muted-foreground">Restoring an organization does not restore archived colleges. Only the first 200 records in your safety scope are shown.</p>
+       <ul className="mt-3 grid gap-2">
+        {archived.map(organization=><li key={organization.id}
+         className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border p-3">
+         <span className="break-words text-sm font-semibold text-foreground">{organization.name}</span>
+         <TenantRestoreAction kind="organization" id={organization.id} name={organization.name}/>
+        </li>)}
+       </ul>
+       {!archived.length?<p role="status" className="mt-3 text-sm text-body">No archived organizations in this scope.</p>:null}
+      </details>:null}
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
        <label className="flex min-w-48 flex-1 flex-col gap-1 text-sm font-semibold text-body">Search organizations
         <input name="q" defaultValue={q} maxLength={100} placeholder="Search organizations"

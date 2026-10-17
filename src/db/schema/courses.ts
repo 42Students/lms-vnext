@@ -381,6 +381,8 @@ export const lessonContents = pgTable(
     externalUrl: text("external_url"),
     storageKey: text("storage_key"),
     durationSeconds: integer("duration_seconds"),
+    // FAC-courses-19: educator-assigned learning points across content kinds.
+    points: integer("points").notNull().default(1),
     startsAt: timestamp("starts_at", {
       withTimezone: true,
     }),
@@ -424,6 +426,7 @@ export const lessonContents = pgTable(
       "lesson_contents_sequence_ck",
       sql`${table.sequence} >= 0`,
     ),
+    check("lesson_contents_points_ck", sql`${table.points} between 0 and 1000`),
     check(
       "lesson_contents_duration_ck",
       sql`${table.durationSeconds} is null or ${table.durationSeconds} between 1 and 86400`,
