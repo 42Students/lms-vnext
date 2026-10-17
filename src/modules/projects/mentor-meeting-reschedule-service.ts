@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,lt,ne,or,sql} from "drizzle-orm";
+import {and,eq,gt,lt,ne,or,sql,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMeetings} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -57,15 +57,15 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
           eq(projectMeetings.projectId,scope.project.id),
           eq(projectMeetings.scheduledByUserId,organiserUserId),
         ),
-        ne(projectMeetings.id,meeting.id),eq(projectMeetings.status,"SCHEDULED"),
+        ne(projectMeetings.id,meeting.id),inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,end),gt(projectMeetings.endsAt,start)))
       .limit(1);
     if(conflict)throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     const now=new Date(Math.max(Date.now(),meeting.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectMeetings).set({
-      startsAt:start,endsAt:end,timeZone:meeting.timeZone,updatedAt:now,
+      startsAt:start,endsAt:end,timeZone:meeting.timeZone,status:"RESCHEDULED",updatedAt:now,
     }).where(and(eq(projectMeetings.id,meeting.id),
-      eq(projectMeetings.projectId,scope.project.id),eq(projectMeetings.status,"SCHEDULED"),
+      eq(projectMeetings.projectId,scope.project.id),inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
       sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
     )).returning();
     if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
