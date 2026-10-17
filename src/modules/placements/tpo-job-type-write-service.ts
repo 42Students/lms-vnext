@@ -8,10 +8,10 @@ import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
-import {isTpoBuiltinJobType} from "./tpo-builtin-job-types";
+import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
 const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
- constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"){
+ constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"){
   super(code);this.name="TpoConfigError";
  }
 }
@@ -109,5 +109,48 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    metadata:{from:current.label,to:updated.label},
   });
   return {changed:true,updatedAt:updated.updatedAt.toISOString()};
+ });
+}
+
+const builtinSchema=z.object({label:z.string().trim(),active:z.boolean(),
+ expectedVersion:z.union([z.literal("none"),z.iso.datetime({offset:true})])}).strict();
+/** Materialize a built-in override only on an explicit TPO save. Defaults stay virtual. */
+export async function setTpoBuiltinJobTypeActive(ctx:RequestContext,raw:unknown){
+ const input=builtinSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label===input.label);
+ if(!fixed)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
+   .where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  const rows=await tx.select().from(placementTpoJobTypes)
+   .where(eq(placementTpoJobTypes.collegeId,collegeId));
+  const current=rows.find(row=>row.label.toLocaleLowerCase("en-IN")===fixed.label.toLocaleLowerCase("en-IN"));
+  if((current?.updatedAt.toISOString()??"none")!==input.expectedVersion)
+   throw new TpoConfigError("TPO_SETTINGS_STALE");
+  if(!input.active){
+   const builtinActive=TPO_BUILTIN_JOB_TYPES.filter(item=>
+    rows.find(row=>row.label===item.label)?.active??true).length;
+   const customActive=rows.filter(row=>!isTpoBuiltinJobType(row.label)&&row.active).length;
+   const targetActive=current?.active??true;
+   if(targetActive&&builtinActive+customActive<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
+  }
+  if(!current&&input.active)return {changed:false,updatedAt:"none"};
+  if(current?.active===input.active&&current.isBuiltin)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  const now=new Date();
+  const [saved]=current?await tx.update(placementTpoJobTypes).set({
+   active:input.active,countsAsPlaced:fixed.countsAsPlaced,isBuiltin:true,updatedAt:now,
+  }).where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId)))
+   .returning():await tx.insert(placementTpoJobTypes).values({
+    collegeId,label:fixed.label,active:input.active,countsAsPlaced:fixed.countsAsPlaced,isBuiltin:true,
+   }).returning();
+  if(!saved)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
+   eventType:"placements.tpo_builtin_job_type.visibility_changed",subjectType:"JOB_TYPE",
+   subjectId:saved.id,summary:input.active?"TPO showed a built-in job type":"TPO hid a built-in job type",
+   metadata:{label:fixed.label,active:input.active}});
+  return {changed:true,updatedAt:saved.updatedAt.toISOString()};
  });
 }
