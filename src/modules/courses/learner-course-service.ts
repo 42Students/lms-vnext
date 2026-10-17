@@ -93,6 +93,7 @@ export async function listLearnerCourseDeliveries(
       sectionId: sections.id,
       sectionName: sections.name,
       sectionCode: sections.code,
+      cohortName: cohorts.name,
       academicPeriodId: academicPeriods.id,
       academicPeriodName:
         academicPeriods.name,
@@ -136,6 +137,10 @@ export async function listLearnerCourseDeliveries(
         sections.id,
         sectionEnrollments.sectionId,
       ),
+    )
+    .innerJoin(
+      cohorts,
+      eq(cohorts.id, sections.cohortId),
     )
     .innerJoin(
       courseSectionDeliveries,
@@ -280,6 +285,7 @@ export async function listLearnerCourseDeliveries(
       sectionId: sections.id,
       sectionName: sections.name,
       sectionCode: sections.code,
+      cohortName: cohorts.name,
       academicPeriodId: academicPeriods.id,
       academicPeriodName: academicPeriods.name,
       programId: programs.id,
