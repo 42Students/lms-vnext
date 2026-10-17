@@ -11,7 +11,7 @@ export default function LearnerProjectDetailError({
     <section role="alert" className="rounded-xl border border-border bg-surface px-5 py-10 text-center">
       <h1 className="text-lg font-semibold text-foreground">We couldn&apos;t load this project&apos;s activity</h1>
       <p className="mx-auto mt-2 max-w-lg text-sm text-body">
-        Your Project workspace could not be loaded. Retry instead of treating this failure as an empty Board.
+        Please check your connection, then try again. Your project activity has not been changed.
       </p>
       <div className="mt-5 flex flex-wrap justify-center gap-3">
         <Button onClick={reset}>Retry</Button>
