@@ -27,3 +27,5 @@ LEARNER-course-detail-03/04/05/10/11/12/17/18 and other audit entries are not cl
 | LEARNER-course-detail-15 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-15` test; existing implementation reviewed. |
 | LEARNER-course-detail-16 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-16` test; existing implementation reviewed. |
 | LEARNER-course-detail-20 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-20` test; existing implementation reviewed, corrected roadmap copy. |
+
+| LEARNER-course-detail-12 | PARTIAL | `tests/unit/chat15-player-and-placement-copy.test.ts`, playback-rate selector present; server tunables for progress cadence and threshold remain. |
