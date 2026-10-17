@@ -76,7 +76,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         projectId:scope.project.id,sprintId:sprint?.id??null,
         templateKey:"mentor-"+randomUUID().replaceAll("-",""),
         sequence:(last?.sequence??-1)+1,
-        title:input.title,description:input.description,
+        title:input.title,description:input.description,approach:input.approach,
         acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
         status:input.status,assigneeMembershipId:input.assigneeMembershipId,
         blockerReason:input.blockerReason??null,dueDate:input.dueDate??null,
