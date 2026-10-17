@@ -30,6 +30,7 @@ export function TpoBulkRoundResultRecorder({
 }) {
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
+  const [search,setSearch]=useState("");
   const [outcome, setOutcome] = useState<"PASS" | "FAIL" | "HOLD" | "ABSENT">("PASS");
   const [message, setMessage] = useState("");
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
@@ -41,6 +42,7 @@ export function TpoBulkRoundResultRecorder({
     (round.status !== "SCHEDULED" && round.status !== "COMPLETED")) return null;
 
   const available = rows.filter((row) => row.resultStatus === null);
+  const visible=available.filter(row=>!search.trim()||row.displayName.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))||row.applicationId.includes(search.trim()));
 
   function toggle(id: string, checked: boolean) {
     setSelected((current) =>
@@ -136,14 +138,19 @@ export function TpoBulkRoundResultRecorder({
             <legend className="text-sm font-semibold text-foreground">
               Select learners ({selected.length} / 25)
             </legend>
+            <label className="block text-sm font-semibold text-body">Find unmarked learner
+              <input type="search" maxLength={100} value={search} onChange={event=>setSearch(event.target.value)}
+               placeholder="Search name or application ID"
+               className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3 text-foreground"/>
+            </label>
             <div className="flex flex-wrap gap-3 text-sm">
-              <button type="button" disabled={busy} onClick={()=>setSelected(available.slice(0,25).map(row=>row.applicationId))}
+              <button type="button" disabled={busy} onClick={()=>setSelected(visible.slice(0,25).map(row=>row.applicationId))}
                 className="font-semibold text-primary-text">Select first 25 unmarked</button>
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-primary-text">Clear selection</button>
             </div>
             <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
-              {available.map((row) => (
+              {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-10 items-center gap-3 px-2 text-sm text-body">
                   <input
                     type="checkbox"
