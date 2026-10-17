@@ -1,4 +1,4 @@
-import { eq, and, inArray } from "drizzle-orm";
+import { eq, and, or, inArray } from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {platformSettingOverrides} from "@/db/schema";
 
@@ -17,7 +17,10 @@ export async function readLearnerPlaybackSettings(collegeId:string|undefined){
  const rows=await getDb().select({scopeType:platformSettingOverrides.scopeType,key:platformSettingOverrides.key,
   value:platformSettingOverrides.value}).from(platformSettingOverrides)
   .where(and(inArray(platformSettingOverrides.key,keys),
-    collegeId?inArray(platformSettingOverrides.scopeType,["GLOBAL","COLLEGE"]):eq(platformSettingOverrides.scopeType,"GLOBAL")));
+    collegeId?or(
+      and(eq(platformSettingOverrides.scopeType,"GLOBAL"),eq(platformSettingOverrides.scopeId,"GLOBAL")),
+      and(eq(platformSettingOverrides.scopeType,"COLLEGE"),eq(platformSettingOverrides.scopeId,collegeId)),
+    ):and(eq(platformSettingOverrides.scopeType,"GLOBAL"),eq(platformSettingOverrides.scopeId,"GLOBAL"))));
  const chosen=new Map<string,string>();
  for(const row of rows.filter(row=>row.scopeType==="GLOBAL"))chosen.set(row.key,row.value);
  if(collegeId)for(const row of rows.filter(row=>row.scopeType==="COLLEGE"))chosen.set(row.key,row.value);
