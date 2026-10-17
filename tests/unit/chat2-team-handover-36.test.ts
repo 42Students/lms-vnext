@@ -37,6 +37,8 @@ describe("Scoped Team ownership handover",()=>{
   expect(service).not.toContain("tx.delete(membershipRoles)");
   expect(service).not.toContain("tx.update(placementTpoTeamAsks)");
   expect(service).toContain("tx.insert(inAppNotifications)");
+  expect(service).toContain("if(!Object.values(counts).some(count=>count>0))");
+  expect(service).toContain("roleRevoked:false as const");
  });
  it("TPO-inbox-team-36 exposes guarded handover from People, not an unguarded role-revocation button",()=>{
   expect(route).toContain("isSameOriginRequest(request)");
