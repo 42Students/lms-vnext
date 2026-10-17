@@ -60,4 +60,16 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(tpoInterviewSlotActionSchema.safeParse({action:"CLEAR_AVAILABLE",confirmed:true}).success).toBe(true);
   expect(tpoInterviewSlotActionSchema.safeParse({action:"CLEAR_AVAILABLE",confirmed:false}).success).toBe(false);
  });
+ it("TPO-drive-workspace-47 rejects unreviewed and duplicate selection releases",()=>{
+  const id="11111111-1111-4111-8111-111111111111";
+  const timestamp="2099-05-03T09:00:00+05:30";
+  expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:true,
+    selectionIds:[id],expectedRecordedAt:{[id]:timestamp}}).success).toBe(true);
+  expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:false,
+    selectionIds:[id],expectedRecordedAt:{[id]:timestamp}}).success).toBe(false);
+  expect(releaseSelectionsSchema.safeParse({action:"VERIFY_AND_RELEASE",confirmed:true,
+    selectionIds:[id,id],expectedRecordedAt:{[id]:timestamp}}).success).toBe(false);
+  expect(summarizeSelectionRelease([{status:"released"},{status:"skipped",reason:"RULE_BLOCK"}]))
+    .toEqual({released:1,skipped:1});
+ });
 });
