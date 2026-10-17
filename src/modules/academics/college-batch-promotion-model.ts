@@ -1,9 +1,19 @@
 import { z } from "zod";
 
+export function formatPromotionAcademicYear(yearStart: number): string {
+  return `${yearStart}-${String((yearStart + 1) % 100).padStart(2, "0")}`;
+}
+
 export const collegePromotionQuerySchema = z.object({
   programId: z.string().uuid().optional(),
   cohortId: z.string().uuid().optional(),
-  yearStart: z.coerce.number().int().min(1900).max(9998).optional(),
+  yearStart: z.preprocess((value) => {
+    if (typeof value !== "string") return value;
+    const match = /^(\d{4})-(\d{2})$/.exec(value.trim());
+    if (!match) return value;
+    const first = Number(match[1]);
+    return Number(match[2]) === (first + 1) % 100 ? first : value;
+  }, z.coerce.number().int().min(1900).max(9998).optional()),
 }).strict();
 
 export type CollegePromotionQuery = z.infer<typeof collegePromotionQuerySchema>;

@@ -21,7 +21,7 @@ export const editTpoNoticeSchema=z.object({
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().refine(data=>Boolean(data.buttonLabel)===Boolean(data.buttonUrl),{path:["buttonUrl"],message:"The link has to start with https://"});
 
-/** Author-only, version-locked notice edits; no external email/SMS side effects. */
+/** College-scoped, version-locked TPO notice edits; no external email/SMS side effects. */
 export async function editTpoNotice(context:RequestContext,raw:unknown){
  const input=editTpoNoticeSchema.parse(raw);
  const membership=context.membership;
@@ -42,7 +42,6 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    eq(db10Announcements.receiverType,"COLLEGE"),
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,"TPO"),
-   eq(db10Announcements.senderUserId,context.user.id),
    isNull(db10Announcements.deletedAt),
   )).for("update").limit(1);
   if(!current)throw new Error("ANNOUNCEMENT_NOT_FOUND");

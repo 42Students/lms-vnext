@@ -203,9 +203,9 @@ describe("DB01 tenant-domain authorization and identity-state regression", () =>
     expect(s.remove).toHaveBeenCalledWith(DOMAIN_B, undefined);
   });
 
-  it("allows an active admin to select a verified primary in their own college", async () => {
+  it("allows an active authorized superadmin to select a verified primary in their own college", async () => {
     const s = store();
-    await setPrimaryTenantDomain(actor(), DOMAIN_A, s.repository);
+    await setPrimaryTenantDomain(actor({ noMembership: true, systemRoles: ["SUPER_ADMIN"] }), DOMAIN_A, s.repository);
     expect(s.primary).toHaveBeenCalledTimes(1);
     expect(s.primary).toHaveBeenCalledWith(DOMAIN_A);
   });

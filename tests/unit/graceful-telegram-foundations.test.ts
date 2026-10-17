@@ -20,11 +20,16 @@ afterEach(() => {
 
 describe("Telegram alert fundamentals", () => {
   it("GR-112 normalises volatile error identifiers before per-environment hashing", () => {
-    const a = { environment: "PRODUCTION", path: "/api/jobs/1234", message: "Job 456 failed at 2026-10-17T01:00:00Z for abc@example.com" };
-    const b = { environment: "PRODUCTION", path: "/api/jobs/9876", message: "Job 789 failed at 2026-10-18T02:30:00Z for def@example.com" };
+    const a = { environment: "PRODUCTION", path: "/api/jobs/1234", message: "Job 456 failed at 2099-10-17T01:00:00Z for abc@example.com" };
+    const b = { environment: "PRODUCTION", path: "/api/jobs/9876", message: "Job 789 failed at 2099-10-18T02:30:00Z for def@example.com" };
     expect(errorSignatureHash(a)).toEqual(errorSignatureHash(b));
     expect(errorSignatureHash({ ...b, environment: "DEVELOPMENT" })).not.toEqual(errorSignatureHash(a));
     expect(normaliseErrorForSignature("Quota 34 exceeded")).toEqual(normaliseErrorForSignature("Quota 99 exceeded"));
+    const first = "Job 456 failed at 2099-10-17T01:00:00Z for abc@example.com";
+    const second = "Job 789 failed at 2099-10-18T02:30:00Z for def@example.com";
+    expect(normaliseErrorForSignature(first)).toEqual(normaliseErrorForSignature(second));
+    expect(normaliseErrorForSignature(first)).not.toContain("abc@example.com");
+    expect(normaliseErrorForSignature(first)).not.toContain("2099-10-17");
   });
 
   it("GR-113 removes credentials, personal data, SQL parameters, stack frames and route identifiers", () => {
