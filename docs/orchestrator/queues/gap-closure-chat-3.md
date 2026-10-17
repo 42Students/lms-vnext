@@ -86,11 +86,11 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-21 | S3 | COPY | DONE |
 | LEARNER-learning-misc-22 | S3 | VALIDATION | NOT-A-GAP |
 | LEARNER-learning-misc-24 | S3 | MISSING-FIELD | DONE |
-| LEARNER-learning-misc-25 | S3 | MISSING-FIELD | UNCONFIRMED |
+| LEARNER-learning-misc-25 | S3 | MISSING-FIELD | NOT-A-GAP |
 | LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | DONE |
 | LEARNER-learning-misc-30 | S3 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-33 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-34 | S3 | PERFORMANCE | OPEN |
+| LEARNER-learning-misc-34 | S3 | PERFORMANCE | DONE |
 | LEARNER-learning-misc-36 | S3 | MISSING-COLUMN | DONE |
 | LEARNER-learning-misc-38 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-learning-misc-39 | S3 | COPY | DONE |
@@ -103,7 +103,7 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-35 | S4 | RESPONSIVE | FIXED-ON-MAIN |
 | LEARNER-learning-misc-37 | S4 | COPY | DONE |
 | LEARNER-learning-misc-40 | S4 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-41 | S4 | MISSING-PAGE | UNCONFIRMED |
+| LEARNER-learning-misc-41 | S4 | MISSING-PAGE | NOT-A-GAP |
 
 ## college/people (27: FIXED-ON-MAIN 19, UNCONFIRMED 3, OPEN 5)
 
@@ -146,7 +146,7 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | PUB-auth-public-44 | S2 | VALIDATION | FIXED-ON-MAIN |
-| PUB-auth-public-45 | S2 | STATE | FIXED-ON-MAIN |
+| PUB-auth-public-45 | S2 | STATE | NOT-A-GAP |
 | PUB-auth-public-46 | S2 | STATE | DONE |
 | PUB-auth-public-47 | S2 | COPY | OPEN |
 | PUB-auth-public-50 | S2 | PERMISSION | OPEN |
@@ -159,7 +159,7 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | PUB-auth-public-67 | S2 | MISSING-PAGE | DONE |
 | PUB-auth-public-68 | S2 | MISSING-PAGE | DONE |
 | PUB-auth-public-48 | S3 | COPY | DONE |
-| PUB-auth-public-49 | S3 | SIDE-EFFECT | UNCONFIRMED |
+| PUB-auth-public-49 | S3 | SIDE-EFFECT | DONE |
 | PUB-auth-public-54 | S3 | MISSING-EXPORT | DONE |
 | PUB-auth-public-57 | S3 | MISSING-FIELD | OPEN |
 | PUB-auth-public-60 | S3 | SIDE-EFFECT | UNCONFIRMED |
