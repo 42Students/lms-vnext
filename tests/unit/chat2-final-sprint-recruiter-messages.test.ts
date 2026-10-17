@@ -81,4 +81,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-09 |");
  });
 
+ it("REC-calendar-messages-profile-10 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("context.recruiter?.companyName??\"Company\"");
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("{row.unread} new");
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("timeAgo(row.lastMessageAt,displayNow)");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-10 |");
+ });
+
 });
