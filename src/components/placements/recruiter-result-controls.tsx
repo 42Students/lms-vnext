@@ -180,8 +180,10 @@ export function RecruiterResultControls({
 
     if (
       draft.outcome === "HOLD" &&
-      (!draft.waitlistRank ||
-        Number(draft.waitlistRank) <= 0)
+      (!draft.waitlistRank.trim() ||
+        !Number.isInteger(Number(draft.waitlistRank)) ||
+        Number(draft.waitlistRank) <= 0 ||
+        Number(draft.waitlistRank) > 10000)
     ) {
       showToast({
         tone: "error",
