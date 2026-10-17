@@ -50,6 +50,24 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
   }catch(error){setMessage(error instanceof Error?error.message:"Could not load leads.");}
   finally{setLoadingLeads(false);}
  }
+ async function moveFollowup(followupId:string,day:string,hour:number){
+  if(!canCreate||saving)return;
+  let dueAt:string;
+  try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
+  catch{setMessage("The selected IST time is invalid.");return;}
+  if(new Date(dueAt).getTime()<=Date.now()){setMessage("Choose a future time to reschedule.");return;}
+  if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;
+  setSaving(true);setMessage("");
+  try{
+   const response=await fetch("/api/placements/tpo/calendar/follow-ups/"+encodeURIComponent(followupId),{
+    method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({dueAt}),
+   });
+   if(!response.ok)throw Error("Could not move the follow-up.");
+   router.refresh();
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not move the follow-up.");}
+  finally{setSaving(false);}
+ }
  async function save(){
   if(!slot||saving||!leadId)return;
   let dueAt:string;
@@ -74,7 +92,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
      className="ml-2 min-h-10 rounded border border-border bg-surface px-2" placeholder="Company or event"/>
    </label>
   </div>
-  <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
+  <p className="text-xs text-muted-foreground">Click an empty hour to add a recruiter follow-up, or drag an existing follow-up onto another hour to move it. Events with an unknown duration use a 30-minute visual marker; it is not a booked time range. Overlapping events share their time lane.</p>
   <div className="overflow-x-auto rounded-xl border border-border bg-surface">
    <div className="grid min-w-[63rem] grid-cols-[5rem_repeat(7,minmax(0,1fr))]">
     <div className="sticky left-0 z-10 border-b border-r border-border bg-surface p-2 text-xs">IST</div>
@@ -93,7 +111,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
       {Array.from({length:LAST-FIRST},(_,offset)=><button key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
-       disabled={!canCreate} onClick={()=>void open(day,FIRST+offset)}
+       disabled={!canCreate||saving} onClick={()=>void open(day,FIRST+offset)}
+       onDragOver={event=>{if(canCreate){event.preventDefault();event.dataTransfer.dropEffect="move";}}}
+       onDrop={event=>{
+        event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
+        if(followupId)void moveFollowup(followupId,day,FIRST+offset);
+       }}
        className="absolute inset-x-0 border-t border-border text-left text-xs hover:bg-primary-subtle focus-visible:z-20 focus-visible:outline-2 disabled:cursor-default"
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
@@ -108,6 +131,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
         <span className="block truncate">{event.companyName}</span>
         <span className="block text-[10px]">{kinds[event.kind]??event.kind}</span></>;
        return event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
+        draggable={canCreate&&Boolean(event.followupId)}
+        onDragStart={dragEvent=>{
+         if(!event.followupId)return;
+         dragEvent.dataTransfer.setData("application/x-tpo-followup",event.followupId);
+         dragEvent.dataTransfer.effectAllowed="move";
+        }}
         style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</Link>:
        <div key={event.id} style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-[11px] leading-tight "+tone(event.kind)}>{inner}</div>;
       })}
