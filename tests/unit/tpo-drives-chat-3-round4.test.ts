@@ -4,6 +4,8 @@ import {describe,it,expect} from "vitest";
 import {defaultTpoDriveView} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {driveEligibilityPresetValue} from "@/modules/placements/tpo-drive-eligibility-presets";
+import {FriendlyFetchError} from "@/lib/api-fetch";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 describe("chat-3 Drives round 4",()=>{
  it("TPO-drives-04 review-first default and persistent badge counts",()=>{
@@ -206,4 +208,16 @@ describe("chat-3 Drives round 4",()=>{
   expect(edit).toContain("<ConfirmDialog");
   expect(edit).not.toContain("window.confirm");
  });
+ it("TPO-drives-44 maps employer conflicts to customer wording and hides machine codes",()=>{
+  const conflict=new FriendlyFetchError("This changed while you were working.",409,"PLACEMENT_COMPANY_IDENTITY_CONFLICT");
+  expect(tpoDriveFormErrorMessage(conflict)).toContain("Pick the company from the list");
+  expect(tpoDriveFormErrorMessage(new Error("PLACEMENT_JOB_NOT_PUBLISHABLE"))).not.toContain("PLACEMENT_JOB_NOT_PUBLISHABLE");
+  expect(tpoDriveFormErrorMessage(new Error("Add a valid HTTPS employer application link before publishing.")))
+    .toBe("Add a valid HTTPS employer application link before publishing.");
+  const create=source("src/components/placements/placement-job-create-form.tsx");
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(create).toContain("tpoDriveFormErrorMessage(error)");
+  expect(edit).toContain("tpoDriveFormErrorMessage(reason)");
+ });
+
 });
