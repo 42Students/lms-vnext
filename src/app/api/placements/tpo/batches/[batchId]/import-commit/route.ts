@@ -20,6 +20,8 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
   const {batchId}=await params,body=inputSchema.parse(await request.json());
   const context=await getCurrentRequestContext();
   const preview=await getBatchEligibilityImportPreview(context,batchId,{rows:body.rows});
+  // Never silently apply the matched subset while any source row is unusable.
+  if(preview.skipped>0)return NextResponse.json({error:"IMPORT_HAS_UNUSABLE_ROWS"},{status:422});
   if(!await placementTableExists("placement_eligibility_events"))
    return NextResponse.json({error:"BATCH_MIGRATION_PENDING"},{status:503});
   // Lock the preview's roll->membership mapping against roster edits and collisions.
@@ -33,7 +35,8 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
    const candidate=preview.preview[index],row=preview.rows[index];
    if(body.previewMemberIds&&candidate.membershipId!==body.previewMemberIds[index])
     return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
-   if(candidate.status!=="matched"||!candidate.membershipId||!candidate.expectedVersion)continue;
+   if(candidate.status!=="matched"||!candidate.membershipId||!candidate.expectedVersion)
+    return NextResponse.json({error:"IMPORT_HAS_UNUSABLE_ROWS"},{status:422});
    const version=body.expectedVersions[candidate.membershipId];
    if(!version||version!==candidate.expectedVersion)
     return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});

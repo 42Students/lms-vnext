@@ -2,7 +2,7 @@ import { z } from "zod";
 import { parseTpoImportCsvRecords } from "./tpo-import-csv-parser";
 
 export const tpoSheetRowSchema=z.object({
-  studentCode:z.string().trim().min(1).max(128),
+  studentCode:z.string().trim().max(128),
   decision:z.enum(["ELIGIBLE","INELIGIBLE","NOT_DECIDED"]),
   reason:z.string().trim().max(200).default(""),
 }).strict();
@@ -26,7 +26,7 @@ export function parseTpoEligibilitySheetCsv(source:string):TpoSheetRow[] {
     if(["Y","YES","TRUE","ELIGIBLE"].includes(name))return "ELIGIBLE";
     if(["N","NO","FALSE","INELIGIBLE"].includes(name))return "INELIGIBLE";
     if(["","NOT_DECIDED","UNDECIDED","CLEAR","INHERIT","RESET"].includes(name))return "NOT_DECIDED";
-    throw new Error("Unknown eligibility decision: "+value.slice(0,60));
+    throw new Error("Decision must be Eligible, Ineligible or Not decided");
   };
   return body.map((cells,index)=>{
     const studentCode=cells[withHeader?codeColumn:0]?.trim()??"";
@@ -49,16 +49,17 @@ export function previewTpoEligibilitySheet(rows:readonly TpoSheetRow[],
   const seen=new Set<string>(),seenMembers=new Set<string>();
   return rows.map((row,index)=>{
     const key=normalize(row.studentCode);
-    if(seen.has(key))return {index,status:"unusable" as const,reason:"Duplicate student ID",membershipId:null,expectedVersion:null};
+    if(!key)return {index,status:"unusable" as const,reason:"Roll number is missing",membershipId:null,expectedVersion:null};
+    if(seen.has(key))return {index,status:"unusable" as const,reason:"Roll number appears twice",membershipId:null,expectedVersion:null};
     seen.add(key);
     const found=byId.has(key)?[byId.get(key)!]:byRoll.get(key)??[];
     if(found.length!==1)return {index,status:"unusable" as const,
-      reason:found.length?"Ambiguous roll number in batch":"Student is not active in this batch",membershipId:null,expectedVersion:null};
+      reason:found.length?"Roll number appears twice":"No student with this roll number",membershipId:null,expectedVersion:null};
     const match=found[0];
-    if(seenMembers.has(match.membershipId))return {index,status:"unusable" as const,reason:"Repeated student",membershipId:null,expectedVersion:null};
+    if(seenMembers.has(match.membershipId))return {index,status:"unusable" as const,reason:"Roll number appears twice",membershipId:null,expectedVersion:null};
     seenMembers.add(match.membershipId);
     if(row.decision==="INELIGIBLE" && row.reason.length<3)
-      return {index,status:"unusable" as const,reason:"Reason must be at least 3 characters",membershipId:null,expectedVersion:null};
+      return {index,status:"unusable" as const,reason:"Ineligible needs a reason",membershipId:null,expectedVersion:null};
     return {index,status:"matched" as const,reason:null,membershipId:match.membershipId,expectedVersion:match.expectedVersion};
   });
 }
