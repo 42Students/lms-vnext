@@ -324,3 +324,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-calendar-reports-14 DONE source: verified responsive TPO view defaults and mobile agenda against actual existing implementation; browser checks outstanding.
 
 - TPO-calendar-reports-24 DONE source: transactional activity event on follow-up create and move; test written and not executed.
+
+- TPO-calendar-reports-55 DONE source: no empty snapshot on failure, explicit alert and Retry; source test authored.

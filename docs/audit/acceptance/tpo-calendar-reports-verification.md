@@ -61,3 +61,5 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-14 | DONE source | `tpo-calendar-url-model.ts` chooses Week on desktop and Agenda on phones; wide calendar grid is `hidden md:block` with mobile agenda. Test `TPO-calendar-reports-14 defaults desktop to Week and mobile to Agenda without displaying the wide grid on phones`. Browser acceptance still for orchestrator. |
 
 | TPO-calendar-reports-24 | DONE source | `src/modules/placements/tpo-crm-service.ts` creates/moves follow-ups with tenant-scoped activity events inside the same transaction; `tests/unit/chat9-tpo-calendar-followup-audit.test.ts` — `TPO-calendar-reports-24 inserts a tenant scoped activity event atomically with each create and move`. Orchestrator runs test. |
+
+| TPO-calendar-reports-55 | DONE source | `src/app/(authenticated)/tpo/reports/page.tsx` catches failed headline snapshot reads with explicit nonzero-inference warning and Retry link; `tests/unit/chat9-tpo-report-snapshot-error.test.ts` — `TPO-calendar-reports-55 never presents an empty placement snapshot as a successful zero and exposes Retry`. Test not run. |
