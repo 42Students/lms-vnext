@@ -1,31 +1,76 @@
-# Graceful-operation browser acceptance (GR-80–GR-83)
+# Graceful-operation browser acceptance — GR-80 through GR-83
 
-This suite tests the **customer-visible browser surface**, not API status codes alone. No test in this lane was executed by its author. The orchestrator must run it after chat-14's shared helpers and each page lane's adoption are merged. A committed spec is **not** passing acceptance evidence.
+**Tests are authored, not run.** These assertions are product release gates, not evidence of a passing environment. Do not mark a gap closed until the orchestrator runs the relevant suite on a pinned merged commit. The GR-02 catalog and GR-11 screens are now on main (checked at the round-2 merge). Page-level adoption is still not universal; a page that has not adopted the helper is expected to fail.
 
-## Preconditions
+## Environment and commands
 
-- Use a disposable local database with the existing E2E seed (`scripts/db-seed-data.ts`) and the additional role seed (`scripts/seed-test-tenants.ts`). Never use production customer records.
-- Enable the existing **development-only** harness with `APP_ENV=development`, `E2E_AUTH_ENABLED=true`, and a securely supplied `E2E_AUTH_SECRET` (at least 32 characters). The seed scripts must run before Playwright. No real OTP, email or SMS should be sent. The extra TPO and Recruiter accounts use the documented `9100061xxx` test phones; their active memberships/grants must be verified.
-- With the server running against that disposable DB, run targeted specs through the repository's normal Playwright command: `npx playwright test tests/e2e/graceful-*.spec.ts`. Default `playwright.config.ts` starts `npm run dev` for Chromium. There are no additional packages or global setup hooks in this lane.
-- For **GR-82 production-only smoke**, the orchestrator separately builds the application, serves a real `next start` deployment (not `npm run dev`), and sets `GRACEFUL_PRODUCTION_BASE_URL=http://localhost:<port>`. Use its non-customer environment. Run `npx playwright test tests/e2e/graceful-production.spec.ts`. The production smoke intentionally does not use the development E2E identity bypass.
+Use only disposable test data. `playwright.config.ts` runs Chromium at `http://localhost:3000` and starts `npm run dev` if necessary. Set `APP_ENV=development`, `E2E_AUTH_ENABLED=true`, `E2E_AUTH_SECRET` (32+ characters); populate the existing `scripts/db-seed-data.ts` seed and, for TPO/Recruiter, `scripts/seed-test-tenants.ts`. Never enable this identity bypass for `NODE_ENV=production`. Do not send real messages.
 
-## Add a role journey
+```bash
+npx playwright test tests/e2e/graceful-helper.spec.ts
+npx playwright test tests/e2e/graceful-public.spec.ts tests/e2e/graceful-*.spec.ts
+```
 
-1. Choose a stable seeded account/URL and identify the **actual** browser request triggered by its user action, such as `PUT /api/placements/preferences`. Server-only reads are not made testable by intercepting an unrelated URL.
-2. Authenticate with `authenticateGracefulRole(context, role)` in `support/roles.ts` if required. Prepopulate a real form field before installing the response interception.
-3. Install `failApi(page, exactMatcher, kind)` before the action. Each injected response is deliberately hostile (including database text), and `failApi.hits()` must be greater than zero; otherwise the test is a false positive. Unroute after the assertion.
-4. Assert a **visible, plain, actionable** error/Retry or home destination; the control exits pending; the typed input remains; `expectNoRawErrors(page)` passes; no uncaught `pageerror` occurs. Cover network abort, HTML 502, JSON 500, 403, 404, 409, 429, 5-second slow, offline, and 401 where meaningful.
-5. For a genuinely missing/deleted record use a known valid detail route and an impossible UUID; assert a calm not-found page with a link home. Do not mock a 404 response without triggering an actual UI request.
-6. Give the test a name containing **GR-80** (or the exact checklist ID). Record the path and exact name in `docs/audit/acceptance/graceful-e2e-verification.md`. A skipped test or authored-but-unrun suite must never be reported as green.
+The second command also matches the helper and production files; the production suite is skipped without `GRACEFUL_PRODUCTION_BASE_URL` under the default config. Narrow the file selection to investigate individual failures. Existing role tests use seed identities and sometimes role-specific enrollment, course, notification or company-grant fixtures.
 
-`support/no-raw-error.ts` implements **GR-81**; its self-tests prove that raw codes, framework copy, stack traces and blank pages are rejected. The GR-82 production spec requires a real production server and validates script map denial, overlay absence, user-visible reference identifiers and stale chunk recovery.
+### GR-82: an actual production build
 
-**GR-83 is cross-lane:** chat-14 owns the pure/helper unit and integration tests for GR-01..GR-08, GR-30..GR-34, GR-50..GR-52 and GR-60. This README records the E2E side and how those helper tests are integrated; no browser test substitutes for the missing backend retry/transaction integrations.
+Start a **separately built, disposable** `next start` instance (not `npm run dev`) on its own port. To prevent Playwright's normal config from accidentally launching a dev server, use the dedicated configuration with **no webServer**:
 
-## Known fixture limitations
+```bash
+GRACEFUL_PRODUCTION_BASE_URL=http://127.0.0.1:3100 \
+  npx playwright test --config tests/e2e/playwright.graceful-production.config.ts
+```
 
-The existing base seed does not guarantee unread Mentor notifications. Tests for the Mentor read-all mutation correctly skip when the button is disabled, so the orchestrator must add a deterministic unread fixture before claiming full GR-80. Recruiter grants from the extra seed must satisfy the current verified/capability/valid-until policy. Role-level chunks might not load after initial navigation; GR-82 injects one chunk 404 on a fresh production browser context and allows recovery reload.
+The orchestrator must verify that `GRACEFUL_PRODUCTION_BASE_URL` serves the expected production build. The public smoke checks branded errors, an unknown URL with a return-home link, dynamic-chunk sourcemap denial, HTML 502 redaction, a 500 with `Reference: abcd1234` and Copy reference, and one-time stale-chunk reload followed by working sign-in controls. The authenticated chunk matrix in `graceful-production-roles.spec.ts` uses role-specific Playwright storage state files generated by **real first-party sign-in** against isolated production-build staging; `GRACEFUL_PRODUCTION_AUTH_STORAGE_DIR` must point to a directory containing `learner.json`, `faculty.json`, `mentor.json`, `college.json`, `tpo.json`, `recruiter.json`, and `superadmin.json`. Do not commit them or print their cookies. When sessions are not supplied those seven cases report **skipped/blocked**, never passing. The orchestrator should invalidate and delete those files after the run; no development E2E identity bypass operates in production.
 
-## Acceptance
+These are fail-closed assertions; no dynamic identity bypass runs in production.
 
-Do not claim DONE from source alone. Run in a disposable environment, record output and the tested commit SHA, and investigate any failing check instead of loosening error assertions or removing injection-hit requirements. Do not disable or skip failing customer experience gates to produce a green report.
+## GR-80 journey coverage
+
+| Account | Real browser journeys |
+| --- | --- |
+| Public | Email and phone OTP-start failure matrix; disconnected network; guarded retry |
+| Learner | Placement preferences save; profile editor/reload draft; missing course; guarded submission |
+| Faculty | Assignment authoring save/offline; notification read-all and individual read, invalid inbox filters; membership-switch outage; missing course; guarded submission |
+| Mentor | Read-all and individual personal notifications, invalid inbox filters; invalid meeting filter recovery; offline calendar; missing project |
+| College Admin | Department creation; person onboarding; contacts recovery; missing student; guarded submission |
+| TPO | Engage recruiter lead list; company directory; two-step recruiter creation/offline draft; offline roster; missing lead |
+| Recruiter | Message reply; designation and display-name saves; offline draft; missing drive; guarded submission |
+| Super Admin | Organization and college creation; unknown tenant; guarded submission |
+
+When applicable, test cases inject an API abort across all `/api/**`, HTML 502, hostile JSON 500 with fake database text, 403, 404, 409, 429, 503 maintenance, five-second slow 504, offline, and 401 session expiry. The missing-record deep links use nonexistent UUIDs. Dedicated GR-80/GR-82 production smoke exercises chunk-failure recovery for public sign-in and all seven authenticated roles via externally generated session state. **The matrix documents authored coverage, not passing execution.** Some endpoints currently show page-specific legacy errors instead of GR-02 copy; that is a failure to fix in the corresponding product lane rather than a reason to loosen assertions.
+
+## Writing a deterministic browser test
+
+1. Identify the real seeded identity, product URL, form field, exact API pathname/method, and one user action. Install route interception *after* the page is rendered to avoid blocking its initial server read; inject before clicking.
+2. Use `authenticateGracefulRole(context, role)` for seeded accounts; public tests use normal login. For browser actions use `failApi(page, endpoint, kind)`. The helper returns `hits()`, `requests()`, and `dispose()`. Assert the target method/path appears in `requests()`; ambient polling must not make an unexercised test pass.
+3. For the shared GR-02 wording use `expectFriendlyFailure(page, kind)`, which checks a visible announced failure with the exact approved customer sentence. Do not copy the API `error`, provider `message` or SQL text into UI. Some legacy domain messages have separate approved wording and must be tested as such.
+4. Assert entered values are unchanged, controls leave pending after failure, retry/home remains usable, and `expectNoRawErrors(page)` passes. `captureUncaughtErrors(page)` watches page exceptions and console errors, excluding only Chromium's own logged synthetic network requests.
+5. For double-submit use a five-second delayed response and press Enter again while the action is pending; require **one** target request and restored editability. For offline tests toggle `context.setOffline(true)` *after* the page loads and restore it in `finally`. Do not reload offline unless a cached offline shell is explicitly part of the application contract.
+6. Prefer a true missing detail route with an impossible UUID to a mocked status that no component reads. For chunk failure require a post-reload interactive control, not only server-rendered text.
+7. Name every test with `GR-80`, `GR-81`, `GR-82` or `GR-83` as appropriate. Keep fixture cleanup isolated and do not write to customer DBs.
+
+## GR-81 negative self-tests and approved GR-02 copy
+
+The shared `tests/e2e/support/no-raw-error.ts` rejects long uppercase codes, stack frames, SQL/database/provider leaks, numeric HTTP status codes, `Error:`, `Exception`, `ECONN`, `undefined`, `null`, `NaN`, `[object`, an empty body and the `nextjs-portal` overlay. The negative tests in `graceful-helper.spec.ts` demonstrate these failures; its positive fixture verifies plain recovery prose. `GR02_TEXT` is imported directly from the merged `src/lib/friendly-error.ts` catalog, so browser expectations track the shared approved sentences.
+
+## GR-83 helper/unit and integration certification
+
+Chat-14 has merged unit suites under `tests/unit/graceful-api-helpers.test.ts`, `graceful-action-helpers.test.ts`, `graceful-server-helpers.test.ts`, `graceful-root-screens.test.ts`, `graceful-ui-primitives.test.ts`, `graceful-route-coverage.test.ts`, `graceful-login-guards.test.ts`, and `graceful-raw-error-scan.test.ts`. These cover GR-01–08, GR-30–34, GR-50/52, GR-60 and additional fallback rules; the orchestrator must verify the complete checklist mapping, merge the sources, and execute them. The real PostgreSQL retry and outbound queue integration also require disposable database gates; `tests/integration/db10-outbound-queue.test.ts` is an existing related integration witness, not by itself certification of GR-83. Chat-15 does not duplicate or falsely mark those tests passed.
+
+## Known blockers — do not silently skip
+
+- Mentor base fixtures do not guarantee a nonzero unread count; the notification mutation test explicitly skips until the orchestrator provides a deterministic unread Mentor row and must never be counted as passing.
+- The Recruiter seed's grants must be presently valid, verified and authorized for the relevant capabilities; rerun the seed or provide a conforming fixture before browser certification.
+- The chat-14 helpers and area not-found screens are merged on main. Many page-specific clients still use older domain-only error wording and must adopt GR-02/guarded helpers; controlled browser failures remain implementation dependencies.
+- GR-82 needs a real production build and a provisioned isolated external origin. A local dev build cannot close it.
+- GR-83 needs independently executed unit and disposable-PostgreSQL integration evidence from chat-14/orchestrator.
+
+## Sign-off rule
+
+Record the **exact merged commit SHA**, command, environment, scenario counts, failures, skips, trace links and result in `docs/audit/acceptance/graceful-e2e-verification.md`. An authored assertion, a mock endpoint that was never hit, and a skipped test are not product proof. Do not weaken failure copy, lose typed edits, accept framework overlays, or mark unrun suites green.
+
+### GR-83 proof still needed
+
+GR-51 explicitly requires a visible outbox state reading **"Will be retried automatically"** when a provider send fails. The merged named helper-unit tests cover GR-01–08, GR-30, GR-32–34, GR-50, GR-52 and GR-60, plus the GR-31 source-scan gate, but a distinct executed GR-51 outbox/UI witness has **not** been identified in the reviewed unit suite. This is an orchestration/owner-lane follow-up, not a license to claim GR-83. The outbox pipeline must be verified using an isolated persistence fixture and fake provider; no real SMS or email is sent. Retain GR-51 as BLOCKED until such proof exists.
