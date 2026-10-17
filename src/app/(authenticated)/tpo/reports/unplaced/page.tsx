@@ -2,7 +2,6 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import {
-  ReportCsvLink,
   ReportFilters,
   ReportNavigation,
   ReportScopeNote,
@@ -54,13 +53,19 @@ export default async function TpoUnplacedReportPage({
   const rowsById=new Map(intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
   const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
+  const exportParams=new URLSearchParams({
+   ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+   ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+   ...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
+  });
+  const filteredExportHref="/api/placements/tpo/reports/unplaced?"+exportParams.toString();
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={<ReportCsvLink workspace={workspace} kind="unplaced" />}
+        actions={permittedBatch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
       />
 
       <ReportNavigation workspace={workspace} />
