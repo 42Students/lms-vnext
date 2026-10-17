@@ -161,7 +161,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
         ? tpoVerificationSectionReasons("IDENTITY")
         : selectedRows.every(row=>row.section==="EDUCATION")
           ? tpoVerificationSectionReasons("EDUCATION")
-          : ["Submitted details do not match the document"] as const)).map(reason=>
+          : ["Submitted details do not match the document"] as const).map(reason=>
           <button key={reason} type="button" disabled={bulkBusy}
             onClick={()=>setBulkReason(reason)} className="rounded-md border px-3 py-2 text-xs">
             {reason}
