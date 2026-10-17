@@ -5,6 +5,13 @@ import {useRouter} from "next/navigation";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string};
+function istInput(value:Date|string|null){
+ if(!value)return "";
+ return new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).format(new Date(value)).replace(" ","T");
+}
 
 export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const router=useRouter();
@@ -15,10 +22,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [description,setDescription]=useState("");
  const [title,setTitle]=useState(assignment.title);
  const [points,setPoints]=useState(String(assignment.points));
- const [dueAt,setDueAt]=useState(assignment.dueAt?new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
- }).format(new Date(assignment.dueAt)).replace(" ","T"):"");
+ const [dueAt,setDueAt]=useState(istInput(assignment.dueAt));
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
