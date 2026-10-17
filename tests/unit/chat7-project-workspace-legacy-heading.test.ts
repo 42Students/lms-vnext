@@ -4,7 +4,10 @@ describe("Project workspace legacy title-only headings across roles",()=>{
  it("renders the real project title and optional persisted summary without invented eyebrow",()=>{
   const ui=readFileSync("src/components/projects/project-workspace.tsx","utf8");
   expect(ui).toContain("title={workspace.project.title}");
-  expect(ui).toContain("description={workspace.project.summary ?? undefined}");
+  expect(ui).toContain('title={workspace.project.title}');
+  expect(ui).toContain('description={mode==="MENTOR"');
+  expect(ui).toContain('workspace.project.summary ?? undefined');
+  expect(ui).toContain('"Mentor: "');
   expect(ui).not.toContain("Project workspace for execution, review and final delivery.");
   expect(ui).not.toContain("eyebrow={eyebrow}");
  });
