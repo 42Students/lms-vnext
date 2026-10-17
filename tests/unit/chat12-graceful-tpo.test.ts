@@ -33,7 +33,7 @@ describe("chat-12 touched TPO pages degrade gracefully",()=>{
  });
  it("GR-31 blocks duplicate sends and hides backend error codes from TPO messages",()=>{
   const source=read("src/components/tpo/tpo-student-nudge-panel.tsx");
-  expect(source).toContain("if(!response.ok)");
+  expect(source).toContain("apiFetch<");
   expect(source).toContain("disabled={pending");
   expect(source).not.toContain("data.error");
  });
