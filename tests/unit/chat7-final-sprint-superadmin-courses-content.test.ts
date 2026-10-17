@@ -73,6 +73,10 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
  it("SA-academics-people-64 connects assignments to publish archive and existing builder",()=>{
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
   expect(ui).toContain("<FacultyItemActions");
+  expect(ui).toContain("<CollegeAssignmentActions");
+  expect(ui).toContain("<CollegeAssignmentReview");
+  expect(read("src/modules/courses/college-assignment-submission-review-service.ts")).toContain("isSuperAdmin(context)");
+  expect(read("src/app/(authenticated)/admin/assignments/page.tsx")).toContain("<CollegeAssignmentCreate");
   expect(ui).toContain('assignment?"assignments":"quizzes"');
   expect(ui).toContain("Open offering builder / submissions");
   expect(read("src/app/(authenticated)/admin/assignments/page.tsx"))
@@ -81,6 +85,9 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
  it("SA-academics-people-65 exposes quiz transitions, result releases and existing builder entry",()=>{
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
   expect(ui).toContain("<AdminQuizResultsActions");
+  expect(ui).toContain("<CollegeQuizActions");
+  expect(ui).toContain("<CollegeQuizAttempts");
+  expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("<CollegeQuizCreate");
   expect(ui).toContain("resultsPublished={Boolean(item.resultsPublished)}");
   expect(ui).toContain("deadlineReached={item.resultsReleaseReady}");
   expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("Export quizzes.csv");
