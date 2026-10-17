@@ -122,3 +122,5 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 ## Chat-5 immediate decision undo feedback (2026-10-17)
 
 | TPO-batches-25 | DONE | `src/components/tpo/tpo-batch-inline-decision.tsx` and `src/components/tpo/tpo-batch-decision-control.tsx` now show saved decision counts and a version-checked Undo control using the actual server-issued `actionId`, with readable no-change states. Learner controls retain client feedback across `router.refresh`; `tests/unit/tpo-batches-25-chat5.test.ts` — `TPO-batches-25 displays server-issued Undo for saved learner and whole batch decisions`. |
+
+| TPO-batches-61 | DONE | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now puts the actual most recent undo action directly beneath the batch title/back link, with its previous decision in the tooltip and a checked, versioned audited reversal. `tests/unit/tpo-batches-61-chat5.test.ts` — `TPO-batches-61 shows a discoverable header undo with current decision tooltip`. |
