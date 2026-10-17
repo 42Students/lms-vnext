@@ -4,9 +4,11 @@ import {
   desc,
   eq,
   inArray,
+  max,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  identityDeviceSessions,
   placementApplications,
   placementCompanies,
   placementCompanyRelationships,
@@ -330,6 +332,16 @@ export async function getTpoCompanyMemory(
           .limit(200);
 
   const leadById = new Map(group.leads.map((lead) => [lead.id, lead]));
+  const recruiterIds=[...new Set(group.leads.flatMap(lead=>lead.recruiterUserId?[lead.recruiterUserId]:[]))];
+  const signins=recruiterIds.length
+    ?await getDb().select({
+      userId:identityDeviceSessions.userId,
+      latest:max(identityDeviceSessions.createdAt),
+    }).from(identityDeviceSessions)
+      .where(inArray(identityDeviceSessions.userId,recruiterIds))
+      .groupBy(identityDeviceSessions.userId)
+    :[];
+  const signinByUser=new Map(signins.map(row=>[row.userId,row.latest]));
   const people = group.leads.map((lead) => ({
     id: lead.id,
     name: lead.name,
@@ -340,6 +352,7 @@ export async function getTpoCompanyMemory(
     inviteSentAt: lead.inviteSentAt,
     inviteClickedAt: lead.inviteClickedAt,
     recruiterUserId: lead.recruiterUserId,
+    recruiterLastLoginAt:lead.recruiterUserId?signinByUser.get(lead.recruiterUserId)?.toISOString()??null:null,
     inviteBouncedAt: lead.inviteBouncedAt,
     source: lead.source,
     updatedAt: lead.updatedAt,

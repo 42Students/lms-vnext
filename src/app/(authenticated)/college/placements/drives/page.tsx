@@ -7,6 +7,7 @@ import { driveListHref, driveQueryFromSearch } from "@/modules/placements/colleg
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
 import {CollegeDriveBulkActions} from "@/components/placements/college-drive-bulk-actions";
 import {CollegeDriveDeadlineAction} from "@/components/placements/college-drive-deadline-action";
+import {CollegeDriveRowLifecycleAction} from "@/components/placements/college-drive-row-lifecycle-action";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -47,6 +48,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </label>
+      <label className="grid gap-1 text-sm">Deadline from
+        <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+          className="min-h-10 rounded-md border border-border px-2"/>
+      </label>
       <label className="grid gap-1 text-sm">Deadline on or before
         <input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           className="min-h-10 rounded-md border border-border px-2"/>
@@ -56,9 +61,15 @@ export default async function CollegeDrivesPage({ searchParams }: {
           defaultValue={query.minimumApplicants??""}
           className="min-h-10 rounded-md border border-border px-2"/>
       </label>
+      <label className="grid gap-1 text-sm">Sort
+        <select name="sort" defaultValue={query.sort} className="min-h-10 rounded-md border border-border px-2">
+          <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
+          <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
+        </select>
+      </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-3 font-semibold text-on-primary">Filter</button>
     </form>
-    <CollegeDriveBulkActions drives={data.items}/>
+    <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching persisted drives</p>
       {data.items.length ? <>
@@ -76,6 +87,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
               className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive</Link>
             <Link href={`/college/placements/jobs/${item.id}/applications`} className="ml-3 text-sm text-primary-text underline">Applications</Link>
             <Link href={`/college/placements/jobs/${item.id}/settings`} className="ml-3 text-sm text-primary-text underline">Edit</Link>
+            <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
             {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id} title={item.title}
              currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
           </article>)}
@@ -99,10 +111,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
             <td className="p-3 tabular-nums">{item.applicants}</td>
             <td className="p-3">{item.status}</td>
             <td className="p-3">
-              <Link href={`/college/placements/jobs/${item.id}/overview`}
+              <Link href={`/college/placements/jobs/${item.id}/applications`}
                 className="font-semibold text-primary-text underline">View applications</Link>
               <Link href={`/college/placements/jobs/${item.id}/settings`}
                 className="ml-3 font-semibold text-primary-text underline">Edit</Link>
+              <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
               {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
                title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
             </td>

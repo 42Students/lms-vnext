@@ -183,9 +183,22 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - `SA-placements-projects-63`: workspace title/slug/UUID search in scoped at-risk query; visible-page CSV export with formula-neutralized fields, correct page-only disclosure and college/date filename.
 - `LEARNER-projects-37`: debounced existing-draft PATCH autosave using the current draft payload; visible legacy Saved/Unsaved/Saving/Failure strings, no repeated failing retries and manual-save recovery. New first drafts still require an explicit Save draft to establish the ID; no fictitious autosave claim.
 - BLOCKED `MEN-projects-meetings-31`: external calendar sync needs provider configuration.
-- BLOCKED `MEN-projects-meetings-43`: comment-kind live UI requires proposed comment_kind migration to be registered.
+- RESOLVED `MEN-projects-meetings-43`: migration 0130 is registered; typed comment persistence/filter/compose and flag-to-mentor notices are now wired in the chat-11 branch.
 - BLOCKED `SA-placements-projects-101`: public reporter model requires OD-27 security owner decision.
 - BLOCKED `SA-placements-projects-103`: screenshots require private storage/consent configuration.
 - BLOCKED `SA-placements-projects-113`: live Cloud Logging needs GCP IAM and production configuration.
 - BLOCKED `SA-placements-projects-120`: findings importer requires GitHub credentials.
 - WP-02, WP-03, WP-04 remain **IN-PROGRESS**; other previously recorded statuses unchanged. Runtime acceptance not certified; no tests, typecheck, lint, build or CI waits under FAST v2.
+
+## [chat-11] FAST v2 lane continuation — migration 0130 (2026-10-17)
+
+- Fast-forwarded `chatgpt/chat-11-b` from `686d9f7` to main `672796fd` before edits; the old branch was an ancestor of latest main, so no conflicting lane history or force update.
+- `MEN-projects-meetings-43 / MEN-projects-meetings-42`: registration of `drizzle/0130_project_task_comment_kinds.sql` confirmed; runtime validation supports NOTE, PROGRESS_UPDATE, FLAG_FOR_MENTOR (defaults to NOTE for older clients), service persists and reads commentKind, filters and labels rendered in ProjectTaskComments, with authenticated tenant-scoped posting, activity metadata and special Flag for mentor notification.
+- `MEN-projects-meetings-42`: fixed comment-post optimistic timestamp token by returning the freshly updated project task `updatedAt` from its transaction (prior response returned undefined).
+- `MEN-projects-meetings-44 / MEN-projects-meetings-36`: backlog creation has type, due date, blocker notes, point validation and reset; prior undefined `ready` gate on Return to backlog was replaced with a real available-sprints condition. Additional create-task assignment/status/sprint controls remain OPEN.
+- BLOCKED `MEN-projects-meetings-31`: external calendar synchronization still requires provider secrets/configuration.
+- BLOCKED `SA-placements-projects-101`: reporter-session access needs OD-27 owner security decision.
+- BLOCKED `SA-placements-projects-103`: screenshot storage and consent prerequisites unavailable.
+- BLOCKED `SA-placements-projects-113`: live GCP logging requires runtime IAM.
+- BLOCKED `SA-placements-projects-120`: external findings import requires GitHub credential access.
+- WP-02 and WP-05 remain IN-PROGRESS for other gaps. No checks/tests/typecheck/build/lint or CI waits per FAST v2; pushed only to this branch.

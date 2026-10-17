@@ -60,7 +60,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="UNKNOWN">No expiry recorded</option>
     </select>
    </label>
-   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, roll, batch, branch or role
+   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
@@ -82,6 +82,6 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-primary-text">← Previous</Link>:null}
     {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-primary-text">Next →</Link>:null}</div>
   </nav>
-  <p className="text-xs text-muted-foreground">The CSV includes at most 500 matching offer versions with a truncation row, formula-neutralized cells and no contact details. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <p className="text-xs text-muted-foreground">The CSV includes up to 500 matching offer versions, with a truncation row, formula-neutralized fields, learner email and academic identifiers. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }

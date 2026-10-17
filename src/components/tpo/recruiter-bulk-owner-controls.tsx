@@ -37,6 +37,7 @@ export function RecruiterBulkOwnerControls({
   const [results, setResults] = useState<Result[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
+  const [reviewOpen,setReviewOpen]=useState(false);
 
   const assignable = rows;
   const selections = assignable
@@ -70,6 +71,7 @@ export function RecruiterBulkOwnerControls({
 
   function choose(id: string, checked: boolean) {
     setResults([]);
+    setReviewOpen(false);
     setChosen((current) => checked
       ? current.includes(id) || current.length >= 100 ? current : [...current, id]
       : current.filter((value) => value !== id));
@@ -88,11 +90,7 @@ export function RecruiterBulkOwnerControls({
       setError("The selected owner is no longer in the list; reload staff.");
       return;
     }
-    if (!window.confirm(
-      "Assign " + selections.length + " recruiter lead(s) to " +
-      (owner.displayName ?? "selected staff member") +
-      "? Each changed lead will receive an immutable activity record.",
-    )) return;
+    if(!reviewOpen){setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
@@ -116,6 +114,7 @@ export function RecruiterBulkOwnerControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosen([]);
+      setReviewOpen(false);
       onUpdated();
     } catch {
       setError(
@@ -161,13 +160,13 @@ export function RecruiterBulkOwnerControls({
               <select
                 className={fieldClass + " mt-1 block w-full max-w-md"}
                 value={ownerId}
-                onChange={(event) => setOwnerId(event.target.value)}
+                onChange={(event) => {setOwnerId(event.target.value);setReviewOpen(false);}}
                 disabled={busy}
               >
                 <option value="">Choose an active placement staff member</option>
                 {owners.map((item) => (
                   <option key={item.membershipId} value={item.membershipId}>
-                    {item.displayName ?? "Unnamed staff member"} · {item.membershipId.slice(0, 8)}
+                    {item.displayName ?? "Unnamed staff member"}
                   </option>
                 ))}
               </select>
@@ -196,6 +195,11 @@ export function RecruiterBulkOwnerControls({
               ))}
             </div>
           )}
+          {reviewOpen?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+            Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
+            Each changed lead receives an audit record.
+            <button type="button" className="ml-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit</button>
+          </p>:null}
           <div className="flex flex-wrap items-center gap-4 text-sm">
             <span className="text-body">{selections.length} / 100 selected</span>
             <button
@@ -204,7 +208,7 @@ export function RecruiterBulkOwnerControls({
               disabled={!canSubmit}
               className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
             >
-              {busy ? "Assigning…" : "Review and confirm assignment"}
+              {busy ? "Assigning…" : reviewOpen ? "Confirm assignment" : "Review and confirm assignment"}
             </button>
           </div>
         </>

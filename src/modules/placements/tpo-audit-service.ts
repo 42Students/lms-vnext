@@ -376,6 +376,7 @@ function auditDateFilters(
         or position(
           lower(${query.q}) in lower(record.kind)
         ) > 0
+        or position(lower(${query.q}) in lower(coalesce(actor.display_name,''))) > 0
       )
     `);
   }
@@ -483,6 +484,7 @@ export async function getTpoAuditLog(
           record.kind as kind,
           count(*)::int as total
         from audit record
+        left join users actor on actor.id = record.actor_user_id
         ${where}
         group by record.kind
       `),

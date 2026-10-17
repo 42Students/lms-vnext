@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SuperAdminContentAuthoring } from "@/components/courses/super-admin-content-authoring";
+import { SuperAdminContentActions } from "@/components/courses/super-admin-content-actions";
 import { listSuperAdminContentAuthoringLessons } from "@/modules/courses/super-admin-content-authoring-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -37,7 +38,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
    description="Manage lesson content in the selected college. Uploaded files and private meeting links remain access controlled."/>
-  <SuperAdminContentAuthoring kind={kind} lessons={lessons} />
+  <SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false} />
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -64,7 +65,11 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.durationSeconds!==null?<p className="text-sm text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
     {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
     {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
-    {item.offeringStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+    {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap text-sm text-body">{item.notes}</p>:null}
+    {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
+     <SuperAdminContentActions item={item}/>:
+     <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
+    {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
      className="inline-flex min-h-10 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content records" description="No matching authored content exists in this college or filter."/>}

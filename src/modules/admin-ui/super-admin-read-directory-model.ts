@@ -6,6 +6,7 @@ export const superAdminReadQuerySchema = z.strictObject({
  page: z.coerce.number().int().min(1).max(1000).default(1),
  pageSize: z.coerce.number().int().refine(n=>[10,25,50,100].includes(n)).default(25),
  jobId: z.string().uuid().optional(),
+ source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  pipelineStage:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"]).default("ALL"),
  departmentId:z.uuid().optional(),
  programId:z.uuid().optional(),
@@ -16,7 +17,7 @@ export const superAdminReadQuerySchema = z.strictObject({
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
 export type SuperAdminReadRow = {
  id:string; title:string; subtitle:string; details:readonly string[];
- status:string; href?:string;
+ status:string; href?:string;secondaryHref?:string;secondaryLabel?:string;
 };
 export type SuperAdminReadResult = {
  query:SuperAdminReadQuery; total:number; totalPages:number; items:SuperAdminReadRow[];
@@ -29,6 +30,7 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  if(query.q)params.set("q",query.q);
  if(query.jobId)params.set("jobId",query.jobId);
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
+ if(query.source!=="ALL")params.set("source",query.source);
  for(const key of ["departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.page>1)params.set("page",String(query.page));
@@ -36,7 +38,7 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,pipelineStage:raw.pipelineStage,source:raw.source,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";

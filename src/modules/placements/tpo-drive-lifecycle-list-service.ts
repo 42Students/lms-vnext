@@ -9,7 +9,6 @@ import { tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
-import { placementTableExists } from "./staged-tables";
 
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
@@ -61,7 +60,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const attentionCounts=attention??{noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
 
   if (filters.view === "REQUESTS") {
-    const available = await placementTableExists("placement_recruiter_drive_requests");
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,companies,owners,ownerUserId:filters.ownerUserId,
       companyId:filters.companyId,view:filters.view,search:filters.search,
@@ -69,8 +67,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,asOf:now.toISOString()};
-    if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
-      rows:[],requestRows:[],requestsAvailable:false as const,...common};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
@@ -110,7 +106,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       company:row.company,createdAt:row.createdAt.toISOString(),
       approvedJobId:row.approvedJobId,
     }));
-    return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
+    return {...pagination,counts:{...counts,total:tally?.total??0},rows:[],requestRows,requestsAvailable:true as const,...common};
   }
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
@@ -123,8 +119,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const startOfToday=new Date(day+"T00:00:00+05:30");
    const endOfToday=new Date(startOfToday.getTime()+86400000);
    const deadlineCondition=filters.deadline==="TODAY"?
-    and(gte(placementJobs.applicationDeadline,startOfToday),lt(placementJobs.applicationDeadline,endOfToday)):
-    filters.deadline==="LATER"?gte(placementJobs.applicationDeadline,end):
+    and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,startOfToday),lt(placementJobs.applicationDeadline,endOfToday)):
+    filters.deadline==="LATER"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,end)):
     filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
     filters.deadline==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
     filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;

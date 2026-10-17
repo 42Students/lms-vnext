@@ -184,9 +184,11 @@ export function CollegeFacultyAssignmentEnd({
 }) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [confirming,setConfirming]=useState(false);
+  const [success,setSuccess]=useState("");
   const [error, setError] = useState<string | null>(null);
   async function end() {
-    if (!window.confirm(`End ${role} assignment for ${facultyName} in ${courseName}? This cannot be undone. Teaching history is retained.`)) return;
+
     setError(null);
     setSaving(true);
     try {
@@ -195,6 +197,7 @@ export function CollegeFacultyAssignmentEnd({
         { method: "DELETE" },
       );
       if (!response.ok) throw new Error(await mutationError(response));
+      setSuccess("Deleted assignment. Teaching history is retained.");setConfirming(false);
       router.refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Assignment could not be ended.");
@@ -203,10 +206,16 @@ export function CollegeFacultyAssignmentEnd({
     }
   }
   return <div className="space-y-1">
-    <button type="button" disabled={saving} onClick={end}
+    <button type="button" disabled={saving} onClick={()=>{setConfirming(true);setError(null);}}
       className="min-h-9 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
       {saving ? "Ending…" : "End assignment"}
     </button>
+    {confirming?<div role="group" aria-label="Confirm end assignment" className="mt-2 space-y-2 rounded border border-border p-3 text-xs">
+      <p>End {role} assignment for {facultyName} in {courseName}? This cannot be undone. Teaching history is retained.</p>
+      <button type="button" disabled={saving} onClick={()=>void end()} className="rounded bg-primary px-3 py-2 font-semibold text-on-primary">Confirm end</button>
+      <button type="button" disabled={saving} onClick={()=>setConfirming(false)} className="ml-2 rounded border border-border px-3 py-2">Cancel</button>
+    </div>:null}
+    {success?<p role="status" className="text-xs">{success}</p>:null}
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
   </div>;
 }

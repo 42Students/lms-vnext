@@ -113,13 +113,34 @@ export function RecruiterLeadsWorkspace({
   initialAdd?: boolean;
   initialCompany?: string;
   initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
-    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added",string>>;
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention",string>>;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
   const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
   const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
   const [sortAscending,setSortAscending]=useState(false);
+  function changeRosterSort(value:EngageSort){
+    setRosterSort(value);
+    try{window.localStorage.setItem("tpo-engage-sort-v1",JSON.stringify({sort:value,ascending:sortAscending}));}
+    catch{/* Browser storage is optional. */}
+  }
+  function changeSortAscending(value:boolean){
+    setSortAscending(value);
+    try{window.localStorage.setItem("tpo-engage-sort-v1",JSON.stringify({sort:rosterSort,ascending:value}));}
+    catch{/* Browser storage is optional. */}
+  }
+
+  useEffect(()=>{
+    try{
+      const saved=window.localStorage.getItem("tpo-engage-sort-v1");
+      if(!saved)return;
+      const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
+      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME"].includes(value.sort??""))
+        setRosterSort(value.sort as EngageSort);
+      if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
+    }catch{ /* Browser storage is optional. */ }
+  },[]);
   useEffect(()=>{
     try{
       const stored=window.localStorage.getItem("tpo-engage-visible-columns-v1");
@@ -153,8 +174,8 @@ export function RecruiterLeadsWorkspace({
   const [activityFilter,setActivityFilter]=useState(initialFilters.lastActivity??"ALL");
   const [addedFilter,setAddedFilter]=useState(initialFilters.added??"ALL");
   const [stage, setStage] = useState<(typeof STAGES)[number]>(STAGES.includes(initialFilters.stage as (typeof STAGES)[number])?initialFilters.stage as (typeof STAGES)[number]:"ALL");
-  const [need, setNeed] = useState<EngageNeed>("ALL");
-  const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
+  const [need, setNeed] = useState<EngageNeed>(["ALL","UNASSIGNED","NOT_CONTACTED"].includes(initialFilters.need??"")?initialFilters.need as EngageNeed:"ALL");
+  const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>(initialFilters.attention&&initialFilters.attention in RECRUITER_ATTENTION_LABELS?initialFilters.attention as RecruiterAttentionChip:"ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companySearch,setCompanySearch]=useState("");
@@ -261,7 +282,7 @@ export function RecruiterLeadsWorkspace({
   }, [collegeId]);
 
   useEffect(() => {
-    if (view !== "companies") return;
+    // Company count is shown in every Engage tab, including a brand-new roster.
     const controller = new AbortController();
     const timer = setTimeout(() => void loadCompanies(controller.signal), 0);
     return () => {
@@ -322,6 +343,8 @@ export function RecruiterLeadsWorkspace({
     [visible,rosterSort,sortAscending]);
   const filterChips=([
     {key:"stage",label:"Stage",value:stage},
+    {key:"need",label:"Needs doing",value:need},
+    {key:"attention",label:"Needs attention",value:attention},
     {key:"owner",label:"Owner",value:ownerFilter},
     {key:"invite",label:"Invite",value:inviteFilter},
     {key:"status",label:"Status",value:statusFilter},
@@ -357,7 +380,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention",value:string){
    const params=new URLSearchParams(window.location.search);
    if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
@@ -374,6 +397,8 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="nextFollowup")setNextFilter(value);
    else if(kind==="lastActivity")setActivityFilter(value);
    else if(kind==="added")setAddedFilter(value);
+   else if(kind==="need")setNeed(["ALL","UNASSIGNED","NOT_CONTACTED"].includes(value)?value as EngageNeed:"ALL");
+   else if(kind==="attention")setAttention(value in RECRUITER_ATTENTION_LABELS?value as RecruiterAttentionChip:"ALL");
    else setQuery(value==="ALL"?"":value);
   }
 
@@ -572,7 +597,7 @@ export function RecruiterLeadsWorkspace({
                 ["UNASSIGNED","Unassigned",needCounts.unassigned],
                 ["NOT_CONTACTED","Not contacted",needCounts.notContacted],
               ] as const).map(([key,label,count])=><button key={key} type="button"
-                aria-pressed={need===key} onClick={()=>setNeed(key)}
+                aria-pressed={need===key} onClick={()=>updateFilter("need",key)}
                 className={need===key?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}>
                   {label} ({count})
                 </button>)}
@@ -581,7 +606,7 @@ export function RecruiterLeadsWorkspace({
                   className={attention === key
                     ? "min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
                     : "min-h-10 rounded-md border border-border px-3 text-sm text-body"}
-                  onClick={() => setAttention(current => current === key ? "ALL" : key)}>
+                  onClick={() => updateFilter("attention",attention===key?"ALL":key)}>
                   {RECRUITER_ATTENTION_LABELS[key]} ({rows.filter(row => row.chips?.includes(key)).length})
                 </button>
               ))}
@@ -604,19 +629,19 @@ export function RecruiterLeadsWorkspace({
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </select>
             </label>
-            <label className="min-w-36 text-sm">
-              View
-              <select className={inputStyle + " mt-1"} value={view}
-                onChange={e => {
-                  if (e.target.value === "campaigns") {
-                    window.location.assign("/tpo/recruiters?view=campaigns");
-                  } else {
-                    setView(e.target.value as typeof view);
-                  }
-                }}>
-                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies ({companies.length})</option><option value="campaigns">Emails</option>
-              </select>
-            </label>
+            <nav role="tablist" aria-label="Engage views" className="flex flex-wrap items-center gap-2">
+              {([["table","Table"],["board","Board"],["companies","Companies ("+companies.length+")"],["campaigns","Emails"]] as const).map(([key,label])=>
+                <button type="button" role="tab" key={key} aria-selected={key===view}
+                  className={key===view?"min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  onClick={()=>{
+                    const params=new URLSearchParams(window.location.search);
+                    if(key==="campaigns"){params.set("view","campaigns");
+                      window.location.assign("/tpo/recruiters?"+params.toString());return;}
+                    if(key==="table")params.delete("view");else params.set("view",key);
+                    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+                    setView(key);
+                  }}>{label}</button>)}
+            </nav>
           </div>
           <div className="space-y-3">
             <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
@@ -721,7 +746,7 @@ export function RecruiterLeadsWorkspace({
               <button type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
-                updateFilter("stage","ALL");setAttention("ALL");setNeed("ALL");
+                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
               }}>Clear filters</button>
             </div>:null}
           </div>
@@ -744,8 +769,8 @@ export function RecruiterLeadsWorkspace({
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
                 <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
-                <button type="button" className={buttonStyle} disabled={selectedIds.length===0}
-                  onClick={()=>exportRows("selected","csv")}>Export selected ({selectedIds.length})</button>
+                <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
+                  onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
                 <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</button>
@@ -756,8 +781,8 @@ export function RecruiterLeadsWorkspace({
               </div>
               <RecruiterSavedViewControls columns={visibleColumns}/>
               {selectedIds.length?<button type="button" className={buttonStyle}
-                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(selectedIds.slice(0,100).join(",")))}>
-                Send an email to selected ({Math.min(selectedIds.length,100)})
+                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).slice(0,100).map(row=>row.id).join(",")))}>
+                Send an email to selected ({Math.min(visible.filter(row=>selectedIds.includes(row.id)).length,100)})
               </button>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
@@ -872,7 +897,7 @@ export function RecruiterLeadsWorkspace({
           ) : view === "table" ? (
             <div className="space-y-3">
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
-                sort={rosterSort} onSort={setRosterSort} ascending={sortAscending} onAscending={setSortAscending}/>
+                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
               <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm" tabIndex={0}
                 onKeyDown={event=>{
@@ -1057,7 +1082,7 @@ export function RecruiterLeadsWorkspace({
               </select>
             </label>
             <label className="block text-sm">First follow-up (optional, IST)
-              <input type="date" className={inputStyle+" mt-1"} value={form.followupDate}
+              <input type="date" className={inputStyle+" mt-1"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
             <label className="block text-sm">Follow-up note (optional)

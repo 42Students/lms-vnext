@@ -16,7 +16,8 @@ export default async function CollegeAdminProfilePage({
   if (query.section === "contacts") redirect("/college/profile#contacts");
   if (query.section === "connect-accounts") redirect("/college/profile#social");
   const context = await getCurrentRequestContext();
-  if (!context.membership || context.membership.status !== "ACTIVE" ||
+  if (!context.membership) return <main className="space-y-3 p-6"><PageHeader eyebrow="College Admin" title="Profile"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Contact a Super Admin to access college staff profile controls.</p></main>;
+  if (context.membership.status !== "ACTIVE" ||
       !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const [account, profile] = await Promise.all([
     getOwnAccountSummary(context),

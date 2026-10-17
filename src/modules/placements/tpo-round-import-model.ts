@@ -34,6 +34,8 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8")):
   (()=>{throw Error("Use a .xlsx or .csv file.");})();
  const heads=(grid.shift()??[]).map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
+ if(new Set(heads.filter(Boolean)).size!==heads.filter(Boolean).length)
+  throw Error("Duplicate column headers make this result import ambiguous. Keep one column of each type.");
  const locate=(...words:string[])=>heads.findIndex(x=>words.includes(x));
  const app=locate("applicationid","applicantid"),email=locate("email","studentemail"),
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
@@ -47,7 +49,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,invalidRank:rankValue!==null&&(!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
+   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
    rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
