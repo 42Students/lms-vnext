@@ -13,7 +13,7 @@ export function recruiterTodayWeekEvents(input:{
   .map(e=>({
     id:e.id,kind:e.kind==="APPLICATION_DEADLINE"?"DEADLINE":e.kind==="INTERVIEW_SLOT"?"SLOT":"ROUND",
     startsAt:e.startsAt,title:e.title,jobTitle:e.jobTitle??"Hiring drive",
-    href:"/recruiter/drives/"+encodeURIComponent(e.jobId!)+(e.kind==="APPLICATION_DEADLINE"?"?tab=overview":"?tab=rounds"),
+    href:"/recruiter/drives/"+encodeURIComponent(e.jobId!)+(e.kind==="APPLICATION_DEADLINE"?"?tab=overview":"?tab=rounds"+(e.roundId?"&roundId="+encodeURIComponent(e.roundId):"")),
   }));
  const results=input.resultsDue.filter(e=>allowed.has(e.jobId)&&e.dueAt.getTime()>=start.getTime()&&e.dueAt.getTime()<end)
   .map(e=>({id:"results:"+e.id,kind:"RESULTS_DUE",startsAt:e.dueAt,title:"Results due · "+e.roundName,
