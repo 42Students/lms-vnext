@@ -91,6 +91,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       projectId:scope.project.id,sprintId:null,
       templateKey:"backlog-"+randomUUID().replaceAll("-",""),
       sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
+      approach:input.approach,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,status:"TODO",
       estimatePoints:input.estimatePoints,
       taskType:input.taskType,dueDate:input.dueDate,blockerReason:input.blockerReason,
