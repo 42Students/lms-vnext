@@ -335,7 +335,7 @@ export function LoginForm({
       {collegeName && (errorCode === "NO_ACCOUNT_FOR_DOMAIN" || errorCode === "WRONG_TENANT") ? (
         <p className="mt-2 text-sm text-body">
           This account may belong to another college.{" "}
-          <a href="https://42lms.com/" className="font-semibold text-primary-text underline">
+          <a href="https://42lms.com/login" className="font-semibold text-primary-text underline">
             Use the main sign-in page (42lms.com)
           </a>
         </p>

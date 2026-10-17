@@ -12,6 +12,7 @@ describe("SA-tenants-modules-40 Other stored keys",()=>{
   expect(service).toContain('action:"REMOVED_UNLISTED"');
   expect(service).toContain('.for("update")');
   expect(service).toContain("assertPersistedPlatformPermission");
+  expect(service).toContain('?"[redacted]":row.value');
  });
  it("SA-tenants-modules-40 guards create and delete API against cross-origin requests",()=>{
   const route=read("src/app/api/admin/settings/overrides/route.ts");

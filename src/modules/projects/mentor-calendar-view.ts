@@ -9,7 +9,7 @@ export type MentorMeetingCalendarItem = {
   projectTitle: string;
   projectStatus: string;
   title: string;
-  status: "REQUESTED" | "SCHEDULED" | "COMPLETED" | "CANCELLED";
+  status: "DRAFT" | "REQUESTED" | "SCHEDULED" | "RESCHEDULED" | "COMPLETED" | "CANCELLED";
   meetingType?: "GENERAL" | "PLANNING" | "STANDUP" | "REVIEW" | "RETRO";
   startsAt: string;
   endsAt: string;
@@ -49,7 +49,7 @@ export function splitMentorMeetings(
 export function mentorMeetingDisplayStatus(
   item: MentorMeetingCalendarItem, now: Date,
 ): string {
-  if (item.status !== "SCHEDULED") return item.status;
+  if (item.status !== "SCHEDULED" && item.status !== "RESCHEDULED") return item.status;
   // MISSED is a read-only derived badge, never persisted to PostgreSQL.
   // Evaluate the scheduled end instant, including meetings ending earlier today.
   const end = Date.parse(item.endsAt);
@@ -57,8 +57,9 @@ export function mentorMeetingDisplayStatus(
   return end < now.getTime() ? "MISSED" : item.status;
 }
 
-export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem): string | null {
-  if (item.status === "CANCELLED" || !item.meetingUrl) return null;
+export function safeMentorMeetingJoinUrl(item: MentorMeetingCalendarItem, now?: Date): string | null {
+  if (!["SCHEDULED", "RESCHEDULED"].includes(item.status) || !item.meetingUrl) return null;
+  if (now && Date.parse(item.endsAt) <= now.getTime()) return null;
   try {
     const url = new URL(item.meetingUrl);
     return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : null;

@@ -10,13 +10,13 @@ export default async function CollegeContactProfilePage() {
   const context = await getCurrentRequestContext();
   if (!hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
   const profile = await getOwnCollegeContactProfile(context);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader
       eyebrow="College Admin · My College"
       title="College contact profile"
       description="Manage the college display name, public support contacts and policy links."
       actions={<Link href="/college/branding"
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Branding workspace
       </Link>}
     />

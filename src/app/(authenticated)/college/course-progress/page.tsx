@@ -61,7 +61,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     offeringId:first(params.offeringId)||undefined,
     deliveryId:first(params.deliveryId)||undefined,
   });
-  return <div className="space-y-4">
+  return <div className="min-w-0 space-y-4">
     <CollegeLearnerProgressReport data={report}/>
     <Link prefetch={false} download href={collegeProgressCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
