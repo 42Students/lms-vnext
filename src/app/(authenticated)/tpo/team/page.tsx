@@ -32,7 +32,7 @@ export default async function TpoTeamPage({searchParams}:{
  return <div className="space-y-6">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
-   description="People are taken from active college memberships and recorded coordinator assignments, not employer conversations." />
+   description="Who does what, and what you decided. Recruiters and students never see this." />
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
    {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}
      aria-current={tab===item?"page":undefined}
