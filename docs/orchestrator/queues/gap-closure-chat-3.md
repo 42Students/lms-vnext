@@ -10,7 +10,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 |---|---|---|---|
 | TPO-drives-01 | S2 | MISSING-PAGE | DONE |
 | TPO-drives-03 | S2 | MISSING-TAB | NOT-A-GAP |
-| TPO-drives-05 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drives-05 | S2 | MISSING-COLUMN | DONE |
 | TPO-drives-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-07 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-09 | S2 | COPY | DONE |
@@ -18,7 +18,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-14 | S2 | SIDE-EFFECT | DONE |
 | TPO-drives-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-drives-17 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-drives-17 | S2 | MISSING-EXPORT | DONE |
 | TPO-drives-21 | S2 | COPY | DONE |
 | TPO-drives-22 | S2 | COPY | DONE |
 | TPO-drives-23 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -35,7 +35,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-47 | S2 | MISSING-MODAL | OPEN |
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-04 | S3 | STATE | DONE |
-| TPO-drives-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drives-08 | S3 | MISSING-COLUMN | DONE |
 | TPO-drives-11 | S3 | MISSING-FILTER | DONE |
 | TPO-drives-12 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-16 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -73,7 +73,7 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-03 | S2 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-04 | S2 | MISSING-ACTION | DONE |
 | LEARNER-learning-misc-07 | S2 | VALIDATION | OPEN |
-| LEARNER-learning-misc-09 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
+| LEARNER-learning-misc-09 | S3 | MISSING-MODAL | DONE |
 | LEARNER-learning-misc-10 | S3 | COPY | DONE |
 | LEARNER-learning-misc-11 | S3 | MISSING-FIELD | OPEN |
 | LEARNER-learning-misc-14 | S3 | COPY | DONE |
@@ -89,10 +89,10 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-25 | S3 | MISSING-FIELD | NOT-A-GAP |
 | LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | DONE |
 | LEARNER-learning-misc-30 | S3 | MISSING-FIELD | DONE |
-| LEARNER-learning-misc-33 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-33 | S3 | COPY | DONE |
 | LEARNER-learning-misc-34 | S3 | PERFORMANCE | DONE |
 | LEARNER-learning-misc-36 | S3 | MISSING-COLUMN | DONE |
-| LEARNER-learning-misc-38 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-38 | S3 | COPY | DONE |
 | LEARNER-learning-misc-39 | S3 | COPY | DONE |
 | LEARNER-learning-misc-12 | S4 | MISSING-ACTION | OPEN |
 | LEARNER-learning-misc-13 | S4 | COPY | DONE |
