@@ -1,3 +1,5 @@
+import { createRequestId } from "@/lib/request-id";
+
 export type LogSeverity =
   | "DEBUG"
   | "INFO"
@@ -33,6 +35,7 @@ export function createStructuredLogRecord(
   now = new Date(),
 ): StructuredLogRecord {
   return {
+    requestId: typeof fields.requestId === "string" ? fields.requestId : createRequestId(),
     ...fields,
     severity,
     event,
@@ -84,4 +87,9 @@ export function logError(
     ...fields,
     ...createErrorLogFields(error),
   });
+}
+
+/** GR-05: informational lines also have a searchable request reference. */
+export function logInfo(event: string, fields: Record<string, unknown> = {}) {
+  writeStructuredLog("INFO", event, fields);
 }
