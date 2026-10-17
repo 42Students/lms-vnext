@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import {
   TenantDomainManager,
   type TenantDomainClientRow,
@@ -29,6 +30,11 @@ export default async function CollegeDomainsPage() {
   if (!membership) {
     redirect("/dashboard");
   }
+
+  if(!isSuperAdmin(context))return <section className="space-y-3 p-5">
+    <PageHeader title="Tenant domains" description="Tenant domains and sign-in host changes are managed by a Super Admin."/>
+    <p role="status" className="text-sm text-body">Ask a Super Admin to connect or verify a college hostname.</p>
+   </section>;
 
   const domains = await listTenantDomainsWithRuntime(
     context,

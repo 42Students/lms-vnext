@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
-import type { RequestContext } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {
   createTenantDomainInputSchema,
   normalizeRequestHost,
@@ -85,6 +85,7 @@ function requireCollegeManage(
   context: RequestContext,
   college: { id: string; organizationId: string },
 ) {
+  if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
   requirePermission(context, "college.manage", {
     organizationId: college.organizationId,
     collegeId: college.id,
