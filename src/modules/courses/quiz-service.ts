@@ -235,6 +235,9 @@ export async function getCourseQuiz(
     deliveryId,
   );
 
+  if (access === "LEARNER" && !quiz.lessonVisibleToStudents) {
+    throw new CoursesServiceError("QUIZ_NOT_PUBLISHED");
+  }
   if (
     access === "LEARNER" &&
     (!["PUBLISHED", "CLOSED"].includes(
