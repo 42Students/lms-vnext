@@ -2,18 +2,47 @@
 
 import { useState } from "react";
 
-/** WebView-safe external navigation: same tab plus a visible fallback URL. */
+/** WebView-safe external navigation with a user-selectable, copyable fallback.
+ * Clipboard failures never hide the original validated HTTPS URL. */
 export function ThirdPartyLink({ href, label }: { href: string; label: string }) {
   const [showFallback, setShowFallback] = useState(false);
+  const [copyStatus, setCopyStatus] = useState("");
   let safeHref: string | null = null;
-  try { const url = new URL(href); if (url.protocol === "http:" || url.protocol === "https:") safeHref = url.href; } catch { /* Invalid destination handled inline. */ }
+  try {
+    const url = new URL(href);
+    if (url.protocol === "http:" || url.protocol === "https:") safeHref = url.href;
+  } catch { /* Invalid destinations are never made clickable. */ }
+
+  async function copyLink() {
+    if (!safeHref) return;
+    setShowFallback(true);
+    try {
+      if (!navigator.clipboard?.writeText) throw new Error("Clipboard unavailable");
+      await navigator.clipboard.writeText(safeHref);
+      setCopyStatus("Link copied. You can open it in another browser.");
+    } catch {
+      setCopyStatus("Copy the link displayed below and open it in another browser.");
+    }
+  }
+
   return <span className="inline-flex min-w-0 flex-col gap-2">
     {safeHref ? <a href={safeHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
       <span role="alert" className="text-sm text-foreground">This link is unavailable.</span>}
-    {safeHref ? <button type="button" onClick={() => setShowFallback(current => !current)}
-      className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
-      {showFallback ? "Hide link" : "Show link to copy"}
-    </button> : null}
-    {showFallback && safeHref ? <span role="status" className="min-w-0 select-text break-all text-sm text-body">{safeHref}</span> : null}
+    {safeHref ? <span className="flex flex-wrap gap-3">
+      <button type="button" onClick={() => { setCopyStatus("");setShowFallback(value=>!value); }}
+        aria-expanded={showFallback}
+        className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        {showFallback ? "Hide link" : "Show link to copy"}
+      </button>
+      <button type="button" onClick={() => void copyLink()}
+        className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
+        Copy link
+      </button>
+    </span> : null}
+    {showFallback && safeHref ? <span role="status" className="min-w-0 space-y-2 text-sm text-body">
+      <span className="block">The link could not be opened. Copy the destination below to try another browser.</span>
+      <span className="block select-text break-all">{safeHref}</span>
+      {copyStatus ? <span className="block" aria-live="polite">{copyStatus}</span> : null}
+    </span> : null}
   </span>;
 }
