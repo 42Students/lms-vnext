@@ -1,6 +1,7 @@
 "use client";
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
 import {COLLEGE_APPLICATION_STAGES} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
@@ -14,7 +15,7 @@ const transitions:Record<string,readonly string[]>={
  INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
  WAITLISTED:["OFFERED","REJECTED"],OFFERED:["HIRED","REJECTED"],HIRED:[],REJECTED:[],
 };
-export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery}){
+export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements"}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements"}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [allMatching,setAllMatching]=useState(false);
@@ -37,11 +38,10 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
  async function openDetail(id:string){
   setError("");
   try{
-   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
+   const body=await apiFetch<CollegeApplicationDetail>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
     "/applications/"+encodeURIComponent(id),{cache:"no-store"});
-   const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.application)throw Error(body?.error??"Unable to load application");
-   setDetailPayload(body as CollegeApplicationDetail);
+   if(!body?.application)throw Error("Could not load this application. Please try again.");
+   setDetailPayload(body);
    setDetailId(id);
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to open application");}
  }
@@ -56,15 +56,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
   if(!selectedCount||reason.trim().length<3||busy)return;
   setBusy(true);setError("");setOutcome(null);
   try{
-   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
+   const payload=await apiFetch<{moved?:number;skipped?:number;results?:Array<{applicationId:string;status:string;reason?:string}>}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/pipeline",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,applicationIds:allMatching?[]:selected,
       matchingFilter:allMatching?query:undefined,stage:action==="MOVE"?target:undefined,
       reason:reason.trim(),notifyByEmail:email,confirmed:true}),
    });
-   const payload=await response.json() as {error?:string;issues?:Array<{message:string}>;moved?:number;skipped?:number;
-    results?:Array<{applicationId:string;status:string;reason?:string}>};
-   if(!response.ok)throw Error(payload.issues?.[0]?.message??payload.error??"Could not update applications");
    setOutcome({moved:payload.moved??0,skipped:payload.skipped??0,results:payload.results??[]});
    setAllMatching(false);
    setSelected(payload.results?.filter(r=>r.status==="skipped").map(r=>r.applicationId).slice(0,100)??[]);
@@ -134,7 +131,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
    </table>
   </div>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
-    applicationId={detailId} initialDetail={detailPayload??undefined}
+    applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   {dialog?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div role="dialog" aria-modal="true" aria-label="Application status update"
