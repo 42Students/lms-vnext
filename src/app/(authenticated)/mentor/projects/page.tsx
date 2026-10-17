@@ -149,6 +149,19 @@ export default async function MentorProjectsPage({
       if (!query.status) {
         return true;
       }
+      if (query.status === "BLOCKED") {
+        return Boolean(row.project.blocker?.trim()) ||
+          (workCounts.get(row.project.id)?.blocked ?? 0) > 0;
+      }
+      if (query.status === "IN_PROGRESS") {
+        const facts = workCounts.get(row.project.id);
+        return row.project.status === "ACTIVE" && (facts?.open ?? 0) > 0;
+      }
+      if (query.status === "READY") {
+        const facts = workCounts.get(row.project.id);
+        return row.project.status === "COMPLETED" ||
+          Boolean(facts && facts.total > 0 && facts.done === facts.total);
+      }
       if (
         query.status === "CURRENT"
       ) {
@@ -297,7 +310,7 @@ export default async function MentorProjectsPage({
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
             dueLabel:row.project.dueLabel || row.project.endDate,
-            actionLine:row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open project"),
+            actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
             blockedHref:row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:

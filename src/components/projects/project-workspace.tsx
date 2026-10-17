@@ -329,10 +329,10 @@ export function ProjectWorkspace({
           className="rounded-xl border border-border bg-muted p-4"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":"Read-only project access"}
+            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace":"Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
-            Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.
+            {archived && mode==="MENTOR"?"This workspace is archived. You can read everything here, but tasks, resources, meetings and the submission can no longer be changed.":"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
           </p>
         </section>
       ) : null}
@@ -438,7 +438,7 @@ export function ProjectWorkspace({
       {show("overview") ? (
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="LEARNER"?"About this project":"Overview"}</h2>
+            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
               className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
               Review submission
@@ -654,9 +654,9 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              {mode==="LEARNER"?"Project team":"Project people"}
+              {mode==="ADMIN"?"Project people":"Project team"}
             </h2>
-            {mode==="LEARNER"?<p className="mt-1 text-sm text-body">
+            {mode!=="ADMIN"?<p className="mt-1 text-sm text-body">
               See who is assigned, what role they play, and how the project is staffed.
               {" "}{workspace.members.length} member(s)
             </p>:null}
@@ -741,15 +741,13 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            {mode==="LEARNER"?"Releases and Sprints":"Execution"}
+            {mode==="ADMIN"?"Execution":"Releases and Sprints"}
           </h2>
           {mentorReviewHref ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
             Review submission
           </Link> : null}
-          {mode!=="LEARNER"?<p className="mt-1 text-sm text-body">
-            Release and sprint execution records.
-          </p>:null}
+          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
