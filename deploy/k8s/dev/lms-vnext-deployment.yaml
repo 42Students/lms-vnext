@@ -20,6 +20,7 @@ spec:
     metadata:
       labels: { app: lms-vnext }
     spec:
+      terminationGracePeriodSeconds: 40
       automountServiceAccountToken: false
       securityContext:
         runAsNonRoot: true
@@ -44,6 +45,14 @@ spec:
           volumeMounts:
             - { name: tmp, mountPath: /tmp }
             - { name: next-cache, mountPath: /app/.next/cache }
+          startupProbe:
+            httpGet: { path: /health, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 30
+            timeoutSeconds: 2
+          lifecycle:
+            preStop:
+              exec: { command: ["sleep", "10"] }
           readinessProbe:
             httpGet: { path: /ready, port: 8080 }
             initialDelaySeconds: 10
