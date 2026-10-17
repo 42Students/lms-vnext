@@ -28,7 +28,9 @@ describe("Learner Profile and Learning Round-R gap closure",()=>{
  });
  it("LEARNER-profile-misc-R01 learner notification page is reachable but the topbar drawer remains shell-owned",()=>{
   const shell=source("src/components/shell/learner-topbar-tools.tsx");
-  expect(shell).toContain('href="/learn/notifications"');
+  const bell=source("src/components/shell/learner-notification-bell.tsx");
+  expect(shell).toContain("<LearnerNotificationBell />");
+  expect(bell).toContain('href="/learn/notifications"');
   expect(source("src/app/(authenticated)/learn/notifications/page.tsx")).toContain("LearnerNotificationsInbox");
  });
  it("LEARNER-profile-misc-R02 role, shift, city and specific role preferences have persisted schema and edit UI",()=>{
