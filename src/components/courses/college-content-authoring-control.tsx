@@ -67,6 +67,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(!editing&&deliveryId&&!allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
     setError("Select a Section for this Course.");return;
    }
+   if(!editing&&(nextOverride[lessonId]??selectedLesson?.nextSequence??0)>10000){
+    setError("This Lesson has reached the content ordering limit.");return;
+   }
    if(!window.confirm(editing?"Save changes?":"Create this content?"))return;
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
