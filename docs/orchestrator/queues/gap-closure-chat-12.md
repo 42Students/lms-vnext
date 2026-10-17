@@ -97,7 +97,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-27 | S3 | COPY | DONE |
 | TPO-requests-verification-28 | S3 | COPY | OPEN |
-| TPO-requests-verification-29 | S3 | MISSING-FIELD | UNCONFIRMED |
+| TPO-requests-verification-29 | S3 | MISSING-FIELD | DONE |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-requests-verification-R01 | S3 | SIDE-EFFECT | DONE |
@@ -156,3 +156,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-students-R03 DONE (authored, runtime pending): table/mobile grid row checkboxes now use the shared selection context with bulk actions, Add to Drive and notes. TPO-students-17 still OPEN for cross-page Shift/selection behavior.
 
 - Round 19–20: TPO-students-48/51/R04 DONE (code authored, acceptance pending); filtered and selected counts now live, phone cards show essential facts/details disclosure and two-column journey, Program/Class selector duplication removed. Tests authored, not run.
+
+- Round-21: `TPO-requests-verification-29` DONE (source-authored; runtime acceptance pending): private reviewer detail now limits to latest 50 audit events with education and masked proof, student roll and named reviewer context. Tests authored, not run.
