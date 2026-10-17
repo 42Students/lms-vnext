@@ -93,7 +93,7 @@ export function LearnerFinalDeliveryControl({
     attachments:safeDraftAttachments(draft?.attachments),
   }));
   const lastSavedSnapshot=useRef(savedSnapshot);
-  function markSaved(snapshot:string){markSaved(snapshot);setSavedSnapshot(snapshot);}
+  function markSaved(snapshot:string){lastSavedSnapshot.current=snapshot;setSavedSnapshot(snapshot);}
   function currentPayload(){
     return {
       summary:summary.trim(),
@@ -177,7 +177,7 @@ export function LearnerFinalDeliveryControl({
           `/api/projects/${projectId}/submissions/${draft.id}`,
           "PATCH",payload,
         );
-        lastSavedSnapshot.current=snapshot;
+        markSaved(snapshot);
         failedSnapshot.current=null;
         setAutosaveStatus("saved");
       }catch{
