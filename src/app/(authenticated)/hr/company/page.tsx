@@ -90,7 +90,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     );
   }
 
-  const jobs = await listOwnRecruiterPlacementJobs(context);
+  const jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
   const attributedDriveCounts=await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs);
   const matchingTeam = searchHrTeam(result.team,teamQuery.data);

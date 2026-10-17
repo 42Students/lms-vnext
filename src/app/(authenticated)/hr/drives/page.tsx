@@ -52,7 +52,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
-  const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
+  const jobs = (await listOwnRecruiterPlacementJobs(context,selectedCollege)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
   const totals = {...summarizeRecruiterDrives(jobs),

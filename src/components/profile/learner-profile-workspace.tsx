@@ -150,7 +150,7 @@ function newItem(section: CollectionKey) {
     item.currentlyWorking = false;
   }
   if (section === "languages") item.proficiency = "Intermediate";
-  if (section === "education") item.examDetails = {};
+  if (section === "education") {item.examDetails = {};item.isCurrentlyPursuing = false;}
   if (section === "metadata") item.type = "text";
   return item;
 }
@@ -483,6 +483,7 @@ export function LearnerProfileWorkspace(props: {
         maxGrade:String(itemDraft.maxGrade??""),
         startYear:String(itemDraft.startYear??""),
         endYear:String(itemDraft.endYear??""),
+        isCurrentlyPursuing:Boolean(itemDraft.isCurrentlyPursuing),
         examDetails:(itemDraft.examDetails && typeof itemDraft.examDetails==="object" && !Array.isArray(itemDraft.examDetails))
           ?itemDraft.examDetails as Record<string,string|number|boolean>:undefined,
       });
@@ -491,6 +492,7 @@ export function LearnerProfileWorkspace(props: {
     }
     const normalized = {
       ...itemDraft,
+      ...(collection === "education" && Boolean(itemDraft.isCurrentlyPursuing) ? {endYear:""} : {}),
       ...(collection === "projects"
         ? { skills: Array.isArray(itemDraft.skills) ? itemDraft.skills : String(itemDraft.skills || "").split(",").map((value) => value.trim()).filter(Boolean) }
         : {}),
@@ -958,6 +960,7 @@ export function LearnerProfileWorkspace(props: {
         {collection ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {fields[collection].map((field) => {
+              if(collection==="education"&&field.key==="endYear"&&itemDraft.isCurrentlyPursuing)return null;
               const raw = itemDraft[field.key];
               const value = field.key === "skills" && Array.isArray(raw) ? raw.join(", ") : String(raw || "");
               if(collection==="skills"&&field.key==="name")
@@ -984,6 +987,14 @@ export function LearnerProfileWorkspace(props: {
               if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
+            {collection==="education"?<label className="flex items-center gap-2 text-sm text-body sm:col-span-2">
+              <input type="checkbox" checked={Boolean(itemDraft.isCurrentlyPursuing)}
+                onChange={event=>setItemDraft(current=>({
+                  ...current,isCurrentlyPursuing:event.target.checked,
+                  ...(event.target.checked?{endYear:""}:{}),
+                }))}/>
+              Currently Pursuing
+            </label>:null}
             {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
               <fieldset className="grid gap-3 rounded-md border border-border p-3 sm:col-span-2 sm:grid-cols-2">
                 <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>

@@ -212,6 +212,7 @@ export function LearnerQuizAttempt() {
     () => new Map((latestAttempt?.answers ?? []).map((answer) => [answer.questionId, answer])),
     [latestAttempt],
   );
+  const deadlineMissing = Boolean(quiz && !quiz.quiz.dueAt);
   const duePassed = quiz?.quiz.dueAt && nowMs > 0
     ? !learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, nowMs)
     : false;
@@ -219,6 +220,7 @@ export function LearnerQuizAttempt() {
     quiz &&
       quiz.quiz.status === "PUBLISHED" &&
       !duePassed &&
+      !deadlineMissing &&
       quiz.attemptsRemaining > 0 &&
       questions.length > 0,
   );
@@ -374,6 +376,11 @@ export function LearnerQuizAttempt() {
           </div>
           <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">← Back</button>
         </div>
+        {deadlineMissing && !latestAttempt ? (
+          <p role="status" className="mt-4 rounded-lg border border-warning p-3 text-sm text-body">
+            Unavailable · Quiz deadline is not configured. Ask your faculty to set a due date.
+          </p>
+        ) : null}
         {learnerQuizSubmissionReceiptVisible(confirmedSubmissionQuizId,quiz.quiz.id) ? (
           <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">
             {latestAttempt?.resultsVisible&&latestAttempt.score!==null&&latestAttempt.maxScore!==null

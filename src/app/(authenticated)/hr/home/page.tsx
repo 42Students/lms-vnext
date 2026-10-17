@@ -71,7 +71,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayEightDayWindow(now);
-  const jobs=await listOwnRecruiterPlacementJobs(context);
+  const jobs=await listOwnRecruiterPlacementJobs(context,selectedId);
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
@@ -91,7 +91,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
-  const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,
+  const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
   });
@@ -143,13 +143,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         {actionQueue.map(task => <li key={task.key}>
           <Link href={task.href} className="block min-w-0 rounded-lg border border-border p-4 hover:border-primary">
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-body">
-              <span aria-hidden="true" className={task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
-              {task.tone==="SOON"?"Soon":"When you can"}
+              <span aria-hidden="true" className={task.tone==="URGENT"?"size-2 rounded-full bg-error":task.tone==="SOON"?"size-2 rounded-full bg-warning":"size-2 rounded-full bg-primary"}/>
+              {task.tone==="URGENT"?"Urgent":task.tone==="SOON"?"Soon":"When you can"}
             </span>
             <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
             <span className="mt-1 block text-xs text-body">{task.description}</span>
             {task.at?<span className="mt-1 block text-xs text-muted-foreground">
-              Recorded for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
+              {task.key.startsWith("due:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
             </span>:null}
           </Link>
         </li>)}
