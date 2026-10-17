@@ -455,7 +455,7 @@ export async function PlacementDriveWorkspace({
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
                       : "Date to be decided"}</dd></div>
                     <div><dt className="font-semibold">Mode and place</dt>
-                      <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":round.mode.replaceAll("_"," ")}
+                      <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":(round.mode??"").replaceAll("_"," ")}
                         {" · "}{round.venue??(round.meetingUrl?"Online":"Venue to be told")}
                         {round.meetingUrl&&/^https:\/\//i.test(round.meetingUrl)?<a href={round.meetingUrl}
                           target="_blank" rel="noopener noreferrer"

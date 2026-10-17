@@ -141,7 +141,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>setReason(e.target.value)} className="rounded border border-border bg-surface p-3"/></label>:null}
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap gap-3">
-     <button type="button" disabled={busy||!start||(editing&&reason.trim().length<3)}
+     <button type="button" disabled={busy||!start||(Boolean(editing)&&reason.trim().length<3)}
       onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
       {busy?"Saving…":editing?"Save interview":"Schedule and notify"}</button>
      <button type="button" disabled={busy} onClick={()=>setShow(false)}

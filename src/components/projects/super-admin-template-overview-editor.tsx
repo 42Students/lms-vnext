@@ -62,7 +62,7 @@ export function SuperAdminTemplateOverviewEditor({templateId,title,summary,versi
      <textarea className={field+" min-h-20"} value={item.value} onChange={e=>item.set(e.target.value)}/>
     </label>)}
    <label className="text-sm font-semibold">Submission type
-    <select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value)}>
+    <select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value as typeof submissionType)}>
      <option value="LINK">Link</option><option value="FILE">File upload</option><option value="TEXT">Text</option>
     </select></label>
    <label className="text-sm font-semibold sm:col-span-2">Submission instructions

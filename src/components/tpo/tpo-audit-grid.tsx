@@ -5,8 +5,8 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
 function safeClipboardCell(field:string){
- const oneLine=field.replaceAll(/[\\r\\n\\t]/g," ");
- return /^[\\s\\uFEFF]*[=+\\-@]/u.test(oneLine)?"'"+oneLine:oneLine;
+ const oneLine=field.replaceAll(/[\r\n\t]/g," ");
+ return /^[\s\uFEFF]*[=+\-@]/u.test(oneLine)?"'"+oneLine:oneLine;
 }
 function when(value:string){
  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})

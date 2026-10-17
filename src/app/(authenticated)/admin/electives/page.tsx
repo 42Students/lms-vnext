@@ -70,7 +70,7 @@ export default async function SuperAdminElectivesPage({
       </form>
       <p role="status" aria-live="polite" className="text-xs text-muted-foreground">In this page: {data.total} slots · {data.active} active · {data.archived} archived</p>
       {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
-        {data.items.map(item => <article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+        {data.items.map(row => { const item = row as typeof row & { description?: string | null; version: number }; return <article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h2 className="m-0 break-words text-base font-semibold text-foreground">{item.name}</h2>
             <StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{item.status}</StatusBadge>
@@ -94,7 +94,7 @@ export default async function SuperAdminElectivesPage({
             <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
               status={item.status} version={item.version} />
           </div> : null}
-        </article>)}
+        </article>; })}
       </div> : <EmptyState title="No elective slots" description="No persisted elective slots match the current college and filters." />}
       {data.truncated ? <p className="text-sm text-muted-foreground">Showing only 200 matching elective slots. Narrow the search for older entries.</p> : null}
     </>}

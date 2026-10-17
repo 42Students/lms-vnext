@@ -65,6 +65,7 @@ export default async function TpoJoiningStatusReportPage({
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
+        userId={context.user.id}
         path="/tpo/reports/joining-status"
       />
 

@@ -12,8 +12,9 @@ const steps = [
 
 /** Legacy Super Admin Academic Setup: the first six daily-use setup steps. */
 export function AcademicSetupSteps({ step }: { step: 1 | 2 | 3 | 4 | 5 | 6 }) {
-  const before = steps[step - 2];
-  const after = steps[step];
+  const list: readonly (typeof steps)[number][] = steps;
+  const before = list[step - 2];
+  const after = list[step];
   return (
     <nav aria-label="Academic setup steps"
       className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">

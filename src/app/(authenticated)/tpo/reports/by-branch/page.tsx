@@ -69,6 +69,7 @@ export default async function TpoByBranchReportPage({
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
+        userId={context.user.id}
         path="/tpo/reports/by-branch"
       />
       <ReportMetrics metrics={workspace.report.metrics} />

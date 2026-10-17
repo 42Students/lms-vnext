@@ -2,9 +2,9 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Party="TPO"|"COMPANY";
-type Item={id:string;proposerParty:Party;targetParty:Party;mode:string;field:string;
+type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdAt:string;updatedAt:string;
- decisionNote:string|null;messages:Array<{id:string;senderParty:Party;body:string;sentAt:string}>};
+ decisionNote:string|null;messages:Array<{id:string;senderParty:string;body:string;sentAt:string}>};
 const fields=[["DEADLINE","Application deadline"],["PAY","Pay / package"],["ELIGIBILITY","Eligibility"],["LOCATION","Location"],["ROUNDS","Interview rounds"],["OTHER","Other"]] as const;
 export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
  const router=useRouter();const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");

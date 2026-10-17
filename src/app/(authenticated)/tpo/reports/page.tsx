@@ -177,7 +177,7 @@ export default async function TpoReportsPage({
         }
       />
 
-      <ReportFilters workspace={workspace} path="/tpo/reports" />
+      <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports" />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
       <nav aria-label="Placement journey" className="space-y-2 rounded-xl border border-border bg-surface p-5">

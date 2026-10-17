@@ -71,7 +71,7 @@ export default async function TpoPerformanceIntelligencePage({
         }
       />
       <ReportNavigation workspace={workspace} />
-      <ReportFilters workspace={workspace} path="/tpo/reports/intelligence" />
+      <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/intelligence" />
       <ReportScopeNote note={workspace.registrationScopeNote} />
       {workspace.noSeason ? (
         <p role="status" className="rounded-lg border border-border bg-surface p-5 text-sm text-body">

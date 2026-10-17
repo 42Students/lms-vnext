@@ -26,6 +26,7 @@ export default async function HrPlacementsPage() {
       />
       <RecruiterPlacementPortfolio
         jobs={jobs}
+        now={new Date()}
       />
     </div>
   );

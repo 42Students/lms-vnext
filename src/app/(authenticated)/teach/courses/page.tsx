@@ -30,7 +30,7 @@ export default async function FacultyCoursesPage({searchParams}: {
         title="My Teaching Courses"
         description="Your active Course deliveries, exact Sections and the learning items visible to each class."
       />
-      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} />
+      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
     </div>
   );
 }

@@ -101,9 +101,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   async function create() {
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
-    if(mode==="INDIVIDUAL"&&!preflight)return;
-    if(mode==="INDIVIDUAL"&&!window.confirm("Create "+preflight.toCreate+
-      " workspaces? "+preflight.alreadyCovered+" already covered."))return;
+    if(mode==="INDIVIDUAL"){
+      if(!preflight)return;
+      if(!window.confirm("Create "+preflight.toCreate+
+        " workspaces? "+preflight.alreadyCovered+" already covered."))return;
+    }
     createInFlight.current=true;
     let created=false;
     setPending(true);setError("");setNotice("");

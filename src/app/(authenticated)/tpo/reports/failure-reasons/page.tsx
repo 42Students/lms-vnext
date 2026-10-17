@@ -81,6 +81,7 @@ export default async function TpoFailureReasonsPage({
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
+        userId={context.user.id}
         path="/tpo/reports/failure-reasons"
       />
 

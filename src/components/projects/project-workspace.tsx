@@ -408,7 +408,10 @@ export function ProjectWorkspace({
               canSubmitDraft={
                 readiness.finalSubmission.canSubmitDraft
               }
-              review={workspace.finalDelivery.reviews.at(-1)??null}
+              review={(()=>{
+                const latestReview=workspace.finalDelivery.reviews.at(-1);
+                return latestReview?{status:latestReview.decision,feedback:latestReview.feedback}:null;
+              })()}
               lastEditedBy={(()=>{
                 const latest=workspace.finalDelivery.submissions.at(-1);
                 if(!latest)return null;
@@ -810,6 +813,12 @@ export function ProjectWorkspace({
                                 title={sprint.title}
                                 description={sprint.description}
                                 updatedAt={sprint.updatedAt.toISOString()}
+                                goal={sprint.goal}
+                                definitionOfDone={sprint.definitionOfDone}
+                                startDate={sprint.startDate}
+                                endDate={sprint.endDate}
+                                dueDate={sprint.dueDate}
+                                status={sprint.status}
                               />
                             ) : null}
                           {mode === "MENTOR" &&
@@ -1130,7 +1139,7 @@ export function ProjectWorkspace({
                     {mode !== "LEARNER" ? (
                       <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
                         <div><dt className="font-semibold">Submission type</dt>
-                          <dd>{submission.attachments.some(item=>item?.kind==="FILE") ? "File upload" :
+                          <dd>{submission.attachments.some(item=>(item as {kind?:string}|null)?.kind==="FILE") ? "File upload" :
                             submission.sourceUrl && submission.demoUrl ? "Source + demo" :
                             submission.sourceUrl || submission.demoUrl ? "Link" : "Text"}</dd></div>
                         <div><dt className="font-semibold">Submitted by</dt>
@@ -1366,7 +1375,7 @@ export function ProjectWorkspace({
                           url: resource.url,
                           required:
                             resource.required,
-                          visibility: resource.visibility,
+                          visibility: resource.visibility as "TEAM" | "MENTOR_ONLY",
                         }}
                       />
                     ) : null}
@@ -1407,12 +1416,12 @@ export function ProjectWorkspace({
                     label: sprint.title,
                   }),
                 )}
-                tasks={workspace.tasks.map(
-                  (task) => ({
+                tasks={workspace.tasks.flatMap(
+                  (task) => task.sprintId ? [{
                     id: task.id,
                     label: task.title,
                     sprintId: task.sprintId,
-                  }),
+                  }] : [],
                 )}
               />
             ) : null}

@@ -46,9 +46,11 @@ export function reportHref(
 export function ReportFilters({
   workspace,
   path,
+  userId,
 }: {
   workspace: PlacementReportWorkspace;
   path: string;
+  userId: string;
 }) {
   return (
     <section
@@ -116,7 +118,7 @@ export function ReportFilters({
           Apply drive
         </button>
       </form>
-      <div className="lg:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId}/></div>
+      <div className="lg:col-span-2"><TpoReportSavedFilters path={path} collegeId={workspace.collegeId} userId={userId}/></div>
       <p className="text-xs leading-5 text-muted-foreground lg:col-span-2">
         Changing the season clears the drive filter. Changing the drive
         preserves the selected season. Reports are read-only and restricted

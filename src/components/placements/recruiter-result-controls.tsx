@@ -359,7 +359,7 @@ export function RecruiterResultControls({
     }
     setSelected(current=>({...current,
       [round.id]:(current[round.id]??[]).filter(id=>!succeeded.includes(id))}));
-    showToast({tone:failures?"warning":"success",
+    showToast({tone:failures?"error":"success",
       title:failures?"Some results could not be sent":"Sent to the placement cell to verify",
       description:succeeded.length+" sent to the placement cell to verify. "+failures+
         " failed; failed selections remain checked for retry.",

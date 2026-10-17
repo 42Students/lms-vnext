@@ -22,7 +22,7 @@ import {
   countTemplateBlueprintItems,
   templateVersionLabels,
   TEMPLATE_SUBVIEW_TABS,
-  type TemplateReadSubview,
+  type TemplateSubview,
 } from "@/modules/projects/template-subview-model";
 import { templateVersionComparisonHref } from "@/modules/projects/template-version-comparison-model";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
@@ -73,7 +73,7 @@ export async function SuperAdminTemplateSubviewPage({
   historyQuery = {},
 }: {
   templateId: string;
-  section: TemplateReadSubview;
+  section: TemplateSubview;
   historyQuery?: unknown;
 }) {
   const context =

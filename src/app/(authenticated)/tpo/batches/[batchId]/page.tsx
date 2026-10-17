@@ -87,7 +87,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    summary.assessed===0 ? <p className="text-sm text-body">No active learners are recorded in this batch. Add students to an academic class first.</p> :
    summary.undecided>0 ? <p className="text-sm text-body">Decide who is in placements. {summary.undecided} learners are not yet decided.</p> :
    !lifecycle?.invitedAt ? <p className="text-sm text-body">Eligibility is ready to review. Invite eligible learners to register.</p> :
-   registrations.unrecorded>0 ? <p className="text-sm text-body">{registrations.unrecorded} learners still need to record their registration choice.</p> :
+   (registrations.unrecorded ?? 0)>0 ? <p className="text-sm text-body">{registrations.unrecorded} learners still need to record their registration choice.</p> :
    <p className="text-sm text-body">All recorded learners have a registration choice. Review the next steps on Students.</p>}
   <div className="flex flex-wrap gap-3">
     <Link href={"/tpo/batches/"+batchId+(lifecycle?.finishedAt?"/history":summary.undecided>0?"/students?decision=NOT_DECIDED":!lifecycle?.invitedAt?"/invitation-prep":"/registrations")}
