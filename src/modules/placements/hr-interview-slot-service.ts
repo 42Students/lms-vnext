@@ -131,12 +131,21 @@ export async function writeHrInterviewSlot(
   }).where(and(eq(hrInterviewSlots.id,slot.id),eq(hrInterviewSlots.version,slot.version)))
    .returning({id:hrInterviewSlots.id});
   if(!updated)throw new Error("SLOT_STALE");
-  await tx.insert(activityEvents).values({
-   organizationId:job.organizationId,collegeId:job.collegeId,actorUserId:context.user.id,
-   module:"PLACEMENTS",eventType:"placements.hr_slot."+input.action.toLowerCase(),
-   subjectType:"interview_slot",subjectId:slot.id,
-   summary:"Recruiter updated internal interview slot",metadata:{jobId:job.id,action:input.action},
-  });
+  // A local BOOK reservation does not mean that the placement cell
+  // confirmed learner bookings; notify on OFFER and cancellation instead.
+  if(input.action==="OFFER"||input.action==="CANCEL"){
+   await notifyTpoOfRecruiterAction(tx,context,{
+    collegeId:job.collegeId,jobId:job.id,roundId:slot.roundId,
+    subjectId:slot.id,action:input.action==="OFFER"?"SLOT_OFFERED":"SLOT_CANCELLED",
+   });
+  }else{
+   await tx.insert(activityEvents).values({
+    organizationId:job.organizationId,collegeId:job.collegeId,actorUserId:context.user.id,
+    module:"PLACEMENTS",eventType:"placements.hr_slot.book",
+    subjectType:"interview_slot",subjectId:slot.id,
+    summary:"Recruiter updated internal interview slot",metadata:{jobId:job.id,action:input.action},
+   });
+  }
   return {id:updated.id,status:next};
  });
 }
