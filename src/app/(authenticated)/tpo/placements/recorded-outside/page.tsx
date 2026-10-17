@@ -4,7 +4,8 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
-import {recordedOutsideChoices,listTpoRecordedOutsideDrives,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
+import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
+import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string}>}){
  const context=await getCurrentRequestContext();
  if(
@@ -14,7 +15,8 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
   redirect("/dashboard");
  }
  const collegeId=context.membership.collegeId;
- const [result,history]=await Promise.all([recordedOutsideChoices(context,collegeId),listTpoRecordedOutsideDrives(context,collegeId)]);
+ const result=await recordedOutsideChoices(context,collegeId);
+ const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
  return <main className="space-y-5">
@@ -25,17 +27,17 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    External drive record saved. It was not published as a job.
   </p>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
-  <section aria-label="Previously recorded outside-platform drives" className="rounded-xl border border-border bg-surface p-4">
-   <h2 className="font-semibold">Recorded outside · history</h2>
-   <p className="mt-1 text-sm text-body">These are historical records, not live jobs. They never accept in-app applications, results, offers or reminders.</p>
-   {!history.rows.length?<p role="status" className="mt-3 text-sm text-body">No outside-platform drives recorded for this college.</p>:
-    <ul className="mt-3 space-y-3">{history.rows.map(record=><li key={record.id} className="rounded-md border border-border p-3">
-      <p className="font-semibold">{record.title} · {record.companyName}</p>
-      <p className="text-sm text-body">Recorded: happened outside · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(record.occurredAt)} IST</p>
-      {record.externalReferenceUrl&&/^https:\/\/[^/]+/i.test(record.externalReferenceUrl)?<a href={record.externalReferenceUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary-text underline">Open external reference</a>:null}
-      {record.notes?<p className="mt-1 whitespace-pre-wrap text-sm text-body">Staff note: {record.notes}</p>:null}
-    </li>)}</ul>}
-   {history.truncated?<p role="status" className="mt-3 text-sm text-warning-text">Showing the 100 most recent outside-platform drives. Older records remain stored.</p>:null}
+  <section aria-label="Recorded outside drives" className="space-y-3 rounded-md border border-border p-4">
+   <h2 className="font-semibold">Recorded outside drives</h2>
+   <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
+   {recorded.length?<ul className="space-y-2">
+    {recorded.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
+     <span>{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
+     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="font-semibold text-primary-text underline">
+      Add students and results
+     </Link>
+    </li>)}
+   </ul>:<p role="status" className="text-sm text-muted-foreground">No outside-platform drives have been recorded yet.</p>}
   </section>
  </main>;
 }

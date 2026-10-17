@@ -97,3 +97,24 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - All 32 reassigned mentor/SA queue IDs were already accounted for (27 authored-source DONE, 4 NOT-A-GAP, 1 blocked). `SA-placements-projects-120` cannot perform real GitHub findings imports: `42Students/lms-findings` is not accessible through the connected GitHub account (404). Real sync remains OPEN; the read-only status UI never claims success.
 - Rescanned OPEN mentor and Super Admin IDs against all builder queues: **zero unowned**. Do not repurpose another lane's gaps or falsely claim 30 new feature closures; this round adds 79 regression scenarios and one scoped security hardening.
 - No page UI/UX restyling. New suites still need execution in project CI.
+
+## FINAL SPRINT — 2026-10-18 (10 assigned IDs)
+
+| Gap ID | Status | Test | Acceptance |
+|---|---|---|---|
+| LEARNER-learning-misc-01 | PARTIAL; real private R2 + scanner blocked | `chat16-final-learner-learning-misc-01.test.ts` | `learner-learning-misc-verification.md` |
+| LEARNER-learning-misc-07 | NOT-A-GAP; safer validated file allowlist | `chat16-final-learner-learning-misc-07.test.ts` | `learner-learning-misc-verification.md` |
+| LEARNER-learning-misc-12 | PARTIAL; real Google Drive OAuth importer blocked | `chat16-final-learner-learning-misc-12.test.ts` | `learner-learning-misc-verification.md` |
+| LEARNER-learning-misc-25 | NOT-A-GAP; reject arbitrary HTML and unsupported text grading | `chat16-final-learner-learning-misc-25.test.ts` | `learner-learning-misc-verification.md` |
+| COL-placements-02 | DONE; fixed-on-main reviewed | `chat16-final-col-placements-02.test.ts` | `college-placements-verification.md` |
+| COL-placements-10 | DONE; fixed-on-main reviewed | `chat16-final-col-placements-10.test.ts` | `college-placements-verification.md` |
+| COL-placements-12 | DONE; present mappings reviewed and safe visibility decision documented | `chat16-final-col-placements-12.test.ts` | `college-placements-verification.md` |
+| SA-tenants-modules-25 | DONE; fixed-on-main reviewed | `chat16-final-sa-tenants-modules-25.test.ts` | `superadmin-tenants-modules-2-verification.md` |
+| SA-tenants-modules-29 | DONE; fixed-on-main reviewed | `chat16-final-sa-tenants-modules-29.test.ts` | `superadmin-tenants-modules-2-verification.md` |
+| SA-tenants-modules-35 | DONE; fixed-on-main reviewed | `chat16-final-sa-tenants-modules-35.test.ts` | `superadmin-tenants-modules-2-verification.md` |
+
+- First refreshed the branch from `main` through reverse-direction PR #151; changes only on `chatgpt/chat-16-b`.
+- Each final-sprint gap has at least one named test and a concrete, path-specific acceptance note. `tests/unit/chat16-final-sprint-closure.test.ts` checks the ten-ID evidence inventory.
+- `docs/audit/gap-register.md` now records COL-placements-12 source DONE and explicit LEARNER-learning-misc-07/-25 safer-policy decisions; LEARNER-learning-misc-01/-12 remain OPEN because unconfigured provider-integrated uploads cannot be claimed complete.
+- The two unfinished provider items are not reported as a successful end-to-end file upload or Google OAuth import. Other code is source-reviewed but has not passed a local TypeScript/Vitest/browser/DB run in this GitHub-only lane.
+- Do not restyle any page until UX signoff; changes were scoped to error copy, upload fallback text, tests, gap statuses and acceptance notes.

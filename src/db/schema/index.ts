@@ -24,6 +24,7 @@ export * from "./placement-company-identities";
 export * from "./activity";
 
 export * from "./attendance";
+export * from "./attendance-parent-sms";
 
 export * from "./discussions";
 
@@ -59,7 +60,6 @@ export * from "./inbound-mail";
 export * from "./platform-broadcasts";
 
 export * from "./tpo-internal";
-export * from "./tpo-company-team";
 export * from "./tpo-collaboration";
 export * from "./placement-external";
 

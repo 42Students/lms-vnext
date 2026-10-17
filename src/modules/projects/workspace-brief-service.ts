@@ -3,7 +3,7 @@ import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
-import {requireProjectManageAccess} from "./access";
+import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {updateWorkspaceBriefSchema} from "./workspace-brief-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -12,12 +12,12 @@ import {notifyActiveProjectMembers} from "./project-notification-service";
 /** The workspace-authored brief is separate from the immutable template version. */
 export async function updateProjectWorkspaceBrief(context:RequestContext,projectIdInput:string,raw:unknown){
  const input=updateWorkspaceBriefSchema.parse(raw);
- const scope=await requireProjectManageAccess(context,projectIdInput);
+ const scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select().from(projectInstances)
     .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
-  if(!project||project.status==="ARCHIVED"||
+  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED"||
      project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const [updated]=await tx.update(projectInstances).set({

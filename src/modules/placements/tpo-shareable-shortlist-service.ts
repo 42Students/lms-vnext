@@ -32,6 +32,8 @@ export async function getTpoShareableShortlist(
   const db = getDb();
   const [job] = await db.select({
     id: placementJobs.id, title: placementJobs.title,
+    companyRelationshipId:placementJobs.companyRelationshipId,
+    collegeId:placementJobs.collegeId,
   }).from(placementJobs).where(and(
     eq(placementJobs.id, query.jobId),
     eq(placementJobs.collegeId, college.id),

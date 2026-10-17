@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,asc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,learnerProgramEnrollments,programs,programTerms,
  sectionEnrollments,sections} from "@/db/schema";
@@ -42,4 +42,21 @@ export async function getLearnerCourseSetupStatus(context:RequestContext):Promis
  if(classRows[0]?.status!=="ACTIVE")return "CLASS_NOT_FOUND";
  if(!terms.length)return "NO_SEMESTER";
  return "NO_COURSES";
+}
+
+/** LEARNER-home-courses-02: list every curriculum semester for the learner's
+ * active program, even if its course deliveries have not been published yet. */
+export async function listLearnerProgramSemesters(context:RequestContext){
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
+  context.user.platformStatus!=="ACTIVE")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+ const db=getDb();
+ const active=await db.select({programId:learnerProgramEnrollments.programId})
+  .from(learnerProgramEnrollments)
+  .where(and(eq(learnerProgramEnrollments.membershipId,member.id),
+    eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(1);
+ if(!active[0])return [];
+ return db.select({termNumber:programTerms.termNumber,name:programTerms.name})
+  .from(programTerms).where(eq(programTerms.programId,active[0].programId))
+  .orderBy(asc(programTerms.termNumber));
 }

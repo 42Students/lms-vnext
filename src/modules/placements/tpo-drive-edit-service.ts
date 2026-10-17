@@ -1,7 +1,7 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,sql,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs,placementSeasons} from "@/db/schema";
+import {placementJobRoleOptions,placementJobs,placementSeasons,placementJobEligibilityPolicies,placementApplications,collegeMemberships,users,inAppNotifications,activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {placementJobIdSchema} from "./validation";
@@ -12,6 +12,7 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
  const [job]=await getDb().select({
   id:placementJobs.id,title:placementJobs.title,description:placementJobs.description,
   status:placementJobs.status,seasonId:placementJobs.seasonId,updatedAt:placementJobs.updatedAt,
+  applicationDeadline:placementJobs.applicationDeadline,
   locations:placementJobs.locations,openings:placementJobs.openings,
   minimumAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
   maximumAnnualCtcInr:placementJobs.maximumAnnualCtcInr,
@@ -22,8 +23,18 @@ export async function getTpoDriveEditState(context:RequestContext,rawJobId:unkno
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [season]=await getDb().select({status:placementSeasons.status}).from(placementSeasons)
  .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
+ const [policy]=await getDb().select({minCgpaHundredths:placementJobEligibilityPolicies.minCgpaHundredths})
+  .from(placementJobEligibilityPolicies).where(eq(placementJobEligibilityPolicies.jobId,jobId)).limit(1);
+ const [counter]=await getDb().select({total:sql<number>`count(distinct ${placementApplications.membershipId})::int`})
+  .from(placementApplications)
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(eq(placementApplications.jobId,jobId),eq(placementApplications.status,"SUBMITTED"),
+   eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
  return {...job,updatedAt:job.updatedAt.toISOString(),
-  editable:job.status==="DRAFT"&&season?.status==="ACTIVE"};
+  applicationDeadline:job.applicationDeadline?.toISOString()??null,
+  minCgpaHundredths:policy?.minCgpaHundredths??null,applicantCount:Number(counter?.total??0),
+  editable:["DRAFT","PUBLISHED"].includes(job.status)&&season?.status==="ACTIVE"};
 }
 export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
@@ -40,6 +51,7 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
   const decision=evaluateTpoDriveEdit(job.status,season?.status??null,input);
   if(decision==="INVALID_CTC")throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_CTC_RANGE");
+  if(decision==="INVALID_DEADLINE")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
   if(decision!=="ALLOW")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
   const [role]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
    .where(and(eq(placementJobRoleOptions.jobId,jobId),eq(placementJobRoleOptions.isPrimary,true),
@@ -51,13 +63,14 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
   if(duplicate)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_DUPLICATE");
   const [updated]=await tx.update(placementJobs).set({
    title:input.title,description:input.description,locations:input.locations,openings:input.openings,
+   ...(input.applicationDeadline!==undefined?{applicationDeadline:input.applicationDeadline?new Date(input.applicationDeadline):null}:{}),
    minimumAnnualCtcInr:input.minimumAnnualCtcInr,maximumAnnualCtcInr:input.maximumAnnualCtcInr,
    fixedCtcLpa:input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
    variableCtcLpa:input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
    stipendPerMonthInr:input.stipendPerMonthInr,isDream:input.isDream,
    updatedAt:sql`greatest(clock_timestamp(), date_trunc('milliseconds', ${placementJobs.updatedAt}) + interval '1 millisecond')`,
   }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
-   eq(placementJobs.status,"DRAFT"),
+   inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
    sql`date_trunc('milliseconds', ${placementJobs.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`
   )).returning();
   if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
@@ -70,11 +83,44 @@ export async function editTpoDrive(context:RequestContext,rawJobId:unknown,raw:u
    eq(placementJobRoleOptions.isPrimary,true),
    eq(placementJobRoleOptions.status,"ACTIVE"))).returning({id:placementJobRoleOptions.id});
   if(!savedRole)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_PRIMARY_REQUIRED");
+  if(input.minCgpaHundredths!==undefined){
+   await tx.insert(placementJobEligibilityPolicies).values({jobId:job.id,updatedByUserId:context.user.id,minCgpaHundredths:input.minCgpaHundredths})
+    .onConflictDoUpdate({target:placementJobEligibilityPolicies.jobId,
+      set:{minCgpaHundredths:input.minCgpaHundredths,updatedByUserId:context.user.id,updatedAt:new Date()}});
+  }
   await auditTpoJobChange(tx,context,updated,"PLACEMENTS_TPO_DRIVE_EDITED","edited",{
    reason:input.reason,fromTitle:job.title,toTitle:updated.title,
+   notifyApplicants:input.notifyApplicants,fromDeadline:job.applicationDeadline?.toISOString()??null,
+   toDeadline:updated.applicationDeadline?.toISOString()??null,
    fromUpdatedAt:job.updatedAt.toISOString(),toUpdatedAt:updated.updatedAt.toISOString(),
    changedFields:["title","description","locations","openings","minimumAnnualCtcInr","maximumAnnualCtcInr","fixedCtcLpa","variableCtcLpa","stipendPerMonthInr","isDream"],
   });
-  return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString()};
+  let notified=0;
+  if(job.status==="PUBLISHED"&&input.notifyApplicants){
+   const recipients=await tx.selectDistinct({userId:users.id}).from(placementApplications)
+    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
+      eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),
+      eq(users.platformStatus,"ACTIVE")));
+   if(recipients.length){
+    const [event]=await tx.insert(activityEvents).values({
+     organizationId:context.membership!.organizationId,collegeId,actorUserId:context.user.id,
+     actorMembershipId:context.membership!.id,module:"PLACEMENTS",
+     eventType:"placements.drive.live_edit_notification",subjectType:"placement_job",subjectId:job.id,
+     summary:"Placement cell notified applicants about changes to "+updated.title,
+     metadata:{reason:input.reason,applicants:recipients.length},occurredAt:new Date(),
+    }).returning({id:activityEvents.id});
+    if(!event)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_EDITABLE");
+    for(let i=0;i<recipients.length;i+=250)
+     await tx.insert(inAppNotifications).values(recipients.slice(i,i+250).map(recipient=>({
+      userId:recipient.userId,eventId:event.id,title:"Drive details updated",
+      body:"The placement cell updated "+updated.title+". Review the drive details before your next step.",
+      actionHref:"/learn/my-placements",
+     })));
+    notified=recipients.length;
+   }
+  }
+  return {id:updated.id,status:updated.status,updatedAt:updated.updatedAt.toISOString(),notified};
  });
 }
