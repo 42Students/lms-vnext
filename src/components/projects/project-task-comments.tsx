@@ -11,6 +11,9 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  const router=useRouter();const [open,setOpen]=useState(false);
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
+ const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
+ const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
+   ? lastPosted.updatedAt : updatedAt;
  const url="/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+encodeURIComponent(taskId)+"/comments";
  async function show(){
   setBusy(true);setError(null);
@@ -26,7 +29,11 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   if(!body.trim())return;
   setBusy(true);setError(null);
   try{
-   await projectMutation(url,"POST",{body:body.trim(),expectedTaskUpdatedAt:updatedAt});
+   const result=await projectMutation(url,"POST",{
+     body:body.trim(),expectedTaskUpdatedAt:currentToken,
+   }) as {comment:{updatedTaskAt?:string|Date}};
+   const nextToken=result.comment.updatedTaskAt;
+   if(nextToken)setLastPosted({taskId,updatedAt:new Date(nextToken).toISOString()});
    setBody("");await show();router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
   finally{setBusy(false);}
