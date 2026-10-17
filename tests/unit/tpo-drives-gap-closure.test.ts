@@ -114,6 +114,8 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
  it("TPO-drives-22 create and edit pages use exact Create drive and Edit drive names",()=>{
   expect(source("src/components/placements/placement-job-create-workspace.tsx")).toContain('title="Create drive"');
   expect(source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx")).toContain('title="Edit drive"');
+  expect(source("src/components/placements/placement-job-create-workspace.tsx")).toContain("Back to drives");
+  expect(create()).toContain('aria-label="Publish after reviewing the drive"');
  });
  it("TPO-drives-23 company picker filters named trusted college relationships",()=>{
   expect(create()).toContain("companySearch");
