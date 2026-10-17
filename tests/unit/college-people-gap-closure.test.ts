@@ -237,4 +237,39 @@ describe("College People legacy audited page contracts",()=>{
   expect(policy).toContain("return isSuperAdmin(context);");
  });
 
+ it("COL-people-21 shows persisted mentor workload risk and an Unassigned filter",()=>{
+  const page=src("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  const svc=src("src/modules/projects/mentor-reassignment-workload-service.ts");
+  expect(page).toContain("Mentor workload");
+  expect(page).toContain("listCollegeProjectMentorWorkload");
+  expect(page).toContain("row.activeWorkspaces");
+  expect(page).toContain("row.atRisk");
+  expect(page).toContain("Overloaded");
+  expect(page).toContain('"UNASSIGNED"');
+  expect(page).toContain("fromMentorId=");
+  expect(svc).toContain("listCollegeProjectMentorWorkload");
+ });
+ it("COL-people-22 preserves current-mentor filters and skips already-assigned workspace selection",()=>{
+  const form=src("src/components/projects/project-mentor-reassignment.tsx");
+  const page=src("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  expect(page).toContain("Filter by current mentor");
+  expect(page).toContain('name="fromMentorId"');
+  expect(page).toContain("matchingWorkspaces={projects.matchingWorkspaces}");
+  expect(form).toContain("Already this mentor — will skip");
+  expect(form).toContain("skippedSelection.length");
+  expect(form).toContain("selected workspaces will be skipped.");
+  expect(form).toContain("matchingWorkspaces.map(row => row.id)");
+ });
+ it("COL-people-23 server atomically clears outgoing tasks and notifies mentors and project learners",()=>{
+  const service=src("src/modules/projects/member-service.ts");
+  expect(service).toContain("COL-people-23: ownership of the outgoing mentor");
+  expect(service).toContain("await tx.update(projectTasks)");
+  expect(service).toContain("assigneeMembershipId: null");
+  expect(service).toContain("eq(projectTasks.assigneeMembershipId, currentPrimary.membershipId)");
+  expect(service).toContain("await notifyProjectMemberships(tx, reassignedEvent.id");
+  expect(service).toContain("await notifyActiveProjectMembers(tx, reassignedEvent.id");
+  expect(service).toContain('roles: ["LEARNER"]');
+  expect(service).toContain("taskAssignmentClearingSupported: true");
+ });
+
 });
