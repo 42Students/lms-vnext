@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
@@ -28,20 +29,12 @@ export function TpoAfterCollegeEditor({
     start(async () => {
       setMessage("");
       try {
-        const response = await fetch(
+        const data=await apiFetch<{version?:string}>(
           "/api/placements/tpo/students/" + encodeURIComponent(membershipId) + "/after-college",
           {
-            method: "PUT",
-            headers: { "content-type": "application/json" },
-            credentials: "same-origin",
-            body: JSON.stringify({ outcome, expectedVersion: version }),
+            method:"PUT",headers:{"content-type":"application/json"},
+            credentials:"same-origin",body:JSON.stringify({outcome,expectedVersion:version}),
           },
-        );
-        const data: { version?: string; error?: string } | null = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(
-          response.status === 409
-            ? "Another update was saved. Refresh this roster before trying again."
-            : data?.error ?? "Could not save outcome.",
         );
         const previous = saved;
         setSaved(outcome);
