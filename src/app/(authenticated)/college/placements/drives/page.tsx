@@ -47,6 +47,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
           {data.companies.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
         </select>
       </label>
+      <label className="grid gap-1 text-sm">Deadline from
+        <input type="date" name="deadlineAfter" defaultValue={query.deadlineAfter??""}
+          className="min-h-10 rounded-md border border-border px-2"/>
+      </label>
       <label className="grid gap-1 text-sm">Deadline on or before
         <input type="date" name="deadlineBefore" defaultValue={query.deadlineBefore??""}
           className="min-h-10 rounded-md border border-border px-2"/>
@@ -55,6 +59,12 @@ export default async function CollegeDrivesPage({ searchParams }: {
         <input type="number" name="minimumApplicants" min={0} max={100000}
           defaultValue={query.minimumApplicants??""}
           className="min-h-10 rounded-md border border-border px-2"/>
+      </label>
+      <label className="grid gap-1 text-sm">Sort
+        <select name="sort" defaultValue={query.sort} className="min-h-10 rounded-md border border-border px-2">
+          <option value="TITLE">Title A–Z</option><option value="DEADLINE">Deadline first</option>
+          <option value="NEWEST">Newest created</option><option value="APPLICANTS">Most applicants</option>
+        </select>
       </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-3 font-semibold text-on-primary">Filter</button>
     </form>
