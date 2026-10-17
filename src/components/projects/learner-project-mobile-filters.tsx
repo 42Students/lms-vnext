@@ -47,6 +47,7 @@ export function LearnerProjectMobileFilters({
               className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground">
               <option value="">All projects</option>
               <option value="LEARNER_ACTION">Needs my action</option>
+              <option value="BLOCKED">Blocked</option>
             </select>
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
