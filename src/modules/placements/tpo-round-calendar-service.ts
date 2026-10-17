@@ -2,6 +2,8 @@ import "server-only";
 import { and, asc, eq, ilike, inArray, isNull, ne, or } from "drizzle-orm";
 import {z} from "zod";
 import { getDb } from "@/db/client";
+import {placementTpoBlockedDates} from "@/db/schema/tpo-configuration";
+import {placementTableExists} from "./staged-tables";
 import { placementCompanies, placementCompanyRelationships, placementJobRounds, placementJobs } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -97,6 +99,12 @@ export async function decideTpoCalendarRound(context: RequestContext, raw: unkno
   }
   if (!input.localDateTime || !input.mode) throw new Error("Round schedule is incomplete");
   const start = parseIstRoundLocalTime(input.localDateTime);
+  const day=input.localDateTime.slice(0,10);
+  const blockedReady=await placementTableExists("placement_tpo_blocked_dates");
+  if(!blockedReady)throw new Error("Blocked-date storage is unavailable. Round scheduling is not permitted until dates can be checked.");
+  const [blocked]=await getDb().select({day:placementTpoBlockedDates.day})
+   .from(placementTpoBlockedDates).where(and(eq(placementTpoBlockedDates.collegeId,college.id),eq(placementTpoBlockedDates.day,day))).limit(1);
+  if(blocked&&!input.acknowledgedBlockedDate)throw new Error("This college has blocked the selected day. Review and explicitly acknowledge the conflict.");
   if (start.getTime() <= Date.now()) throw new Error("Round must be scheduled in the future");
   if (input.mode === "ON_CAMPUS") {
     if (!round.durationMinutes || round.durationMinutes <= 0)
