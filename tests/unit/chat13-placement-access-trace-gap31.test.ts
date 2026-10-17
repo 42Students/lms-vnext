@@ -52,3 +52,11 @@ describe("SA-tenants-modules-31 in-page learner explanation",()=>{
   expect(route).not.toContain("export async function POST");
  });
 });
+
+describe("SA-tenants-modules-31 customer-safe inline editor errors",()=>{
+ it("SA-tenants-modules-31 never renders raw server error codes in the drawer rule editor",()=>{
+  const editor=read("src/components/admin/student-rule-editor.tsx");
+  expect(editor).not.toContain('"Change failed ("+code+")."');
+  expect(editor).toContain("The module change could not be saved.");
+ });
+});
