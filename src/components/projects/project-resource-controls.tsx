@@ -225,7 +225,6 @@ export function CreateProjectResourceControl({
         `/api/projects/${projectId}/resources`,
         "POST",
         {
-          expectedUpdatedAt:new Date(resource.updatedAt).toISOString(),
           title: title.trim(),
           description:
             description.trim() || undefined,
@@ -404,6 +403,7 @@ export function ProjectResourceActions({
         `/api/projects/${projectId}/resources/${resource.id}`,
         "PATCH",
         {
+          expectedUpdatedAt:new Date(resource.updatedAt).toISOString(),
           title: title.trim(),
           description:
             description.trim() || null,
