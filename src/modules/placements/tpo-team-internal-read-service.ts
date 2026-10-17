@@ -28,6 +28,12 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
    lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
      where m.thread_id=placement_tpo_internal_threads.id
      order by m.created_at desc,m.id desc limit 1)`,
+   unreadMessages:readsReady?sql<number>`(select count(*)::integer from placement_tpo_internal_messages m
+     where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid
+       and m.author_membership_id<>${membership.id}::uuid
+       and m.created_at>coalesce((select r.read_through from placement_tpo_internal_reads r
+         where r.thread_id=${tpoInternalThreads.id} and r.membership_id=${membership.id}::uuid),
+          '-infinity'::timestamptz))`:sql<number>`0`,
    searchSnippet:q?sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
      where m.thread_id=placement_tpo_internal_threads.id
        and position(lower(${q}) in lower(m.body))>0
