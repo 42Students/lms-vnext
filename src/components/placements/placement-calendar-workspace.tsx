@@ -549,13 +549,13 @@ export async function PlacementCalendarWorkspace({
         title={
           isTpo
             ? TPO_OWNER_PAGE_COPY.calendar
-            : "Placement Interview Calendar"
+            : audience === "SUPER_ADMIN" ? "Interviews" : "Placement Interview Calendar"
         }
         description={
           isTpo
             ? TPO_CALENDAR_SUBTITLE
             : audience === "SUPER_ADMIN"
-              ? "Interview rounds and other employer events in the selected college, with company and job filters. Dates and times are shown in Indian Standard Time."
+              ? "Review the interview schedule, conflicts and candidate context without leaving the placements workspace."
               : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
         }
         actions={
