@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import {legacyPersonName} from "@/modules/people/college-onboard-mobile-model";
+import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -29,6 +29,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const field="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground";
   function submit(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();setError("");setResult(null);
+    if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
     if(!programId||!cohortId||!displayName.trim()||!phoneE164.trim()){
       setError("Name, phone, program and batch are required.");return;
     }
@@ -37,7 +38,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       try {
         const response=await fetch("/api/college/students/register",{
           method:"POST",headers:{"content-type":"application/json"},
-          body:JSON.stringify({displayName,phoneE164,email,programId,cohortId,
+          body:JSON.stringify({displayName,phoneE164:indianMobileToE164(phoneE164),email,programId,cohortId,
             sectionId:sectionId||undefined,rollNumber,gender,dateOfBirth,address}),
         });
         const body=await response.json().catch(()=>null) as
@@ -61,8 +62,8 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     <label className="grid gap-1 text-sm font-semibold">Last Name
       <input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold">Mobile number (with country code)
-      <input required type="tel" placeholder="+919876543210" value={phoneE164}
+    <label className="grid gap-1 text-sm font-semibold">Mobile Number
+      <input required type="tel" placeholder="9876543210" value={phoneE164}
         onChange={e=>setPhone(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Email
