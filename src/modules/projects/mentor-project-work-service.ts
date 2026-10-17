@@ -7,12 +7,13 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
-export async function getMentorProjectWorkCounts(context: RequestContext) {
+export async function getMentorProjectWorkCounts(context: RequestContext,
+ verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]) {
   if (!hasMembershipRole(context,"MENTOR") || context.user.platformStatus!=="ACTIVE") {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   // Re-read persisted memberships and active role grants, never trust caller-supplied project IDs.
-  const projects=(await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR");
+  const projects=(verifiedRows??await listMyProjectInstances(context)).filter(row=>row.memberRole==="MENTOR");
   const ids=projects.map(row=>row.project.id);
   const counts=new Map<string,{total:number;open:number}>();
   if(!ids.length)return counts;
