@@ -20,3 +20,6 @@ Remaining: COL-dashboard-10 (per-section partial failure handling), COL-dashboar
 | COL-dashboard-10 | DONE (source authored; runtime and injected-failure e2e pending) | `src/app/(authenticated)/college/page.tsx`, `src/components/admin/college-dashboard-section-failure.tsx`; `tests/unit/chat6-college-dashboard-graceful-round3.test.ts` → `COL-dashboard-10 isolates dashboard data sources with independent failed card states` |
 
 | COL-dashboard-17 | DONE (responsive source authored; 375px browser acceptance pending) | `src/components/admin/college-dashboard-cards.tsx`, `college-setup-checklist.tsx`, `admin-dashboard-actions.tsx`; `tests/unit/chat6-people-phone-session-and-mobile-round6.test.ts` → `COL-dashboard-17 uses wrapped count labels and a mobile-safe setup checklist with accessible links`. |
+
+
+| COL-dashboard-17 | DONE (source-level; browser at 375px pending) | Prefer responsive wrap and 2-count-card layout at 375px to truncating long legacy headings. `src/components/admin/college-dashboard-cards.tsx` and `src/components/admin/college-setup-checklist.tsx`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-dashboard-17 exposes 375px-safe cards and a single-column first checklist`. |
