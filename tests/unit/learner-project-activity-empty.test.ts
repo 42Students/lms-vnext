@@ -7,7 +7,7 @@ describe("learner Project Activity honest empty states",()=>{
   expect(learnerProjectActivityEmptyMessage({...base,hasMore:true})).toContain("Older");
  });
  it("distinguishes first-run and last-page emptiness",()=>{
-  expect(learnerProjectActivityEmptyMessage(base)).toBe("No persisted Project activity yet.");
+  expect(learnerProjectActivityEmptyMessage(base)).toBe("No project activity yet. Task moves, sprint updates and resource changes will appear here.");
   expect(learnerProjectActivityEmptyMessage({...base,olderPage:true})).toContain("No older activity");
  });
  it("does not claim the text query was applied to all historical pages",()=>{
