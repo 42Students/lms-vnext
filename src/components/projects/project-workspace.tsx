@@ -1453,10 +1453,10 @@ export function ProjectWorkspace({
                           {meeting.title}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {formatDateTime(
-                            meeting.startsAt,
-                          )}{" "}
-                          · {meeting.timeZone}
+                          {formatDateTime(meeting.startsAt)} – {formatDateTime(meeting.endsAt)}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Meeting zone: {meeting.timeZone}
                         </p>
                       </div>
                       <StatusBadge
