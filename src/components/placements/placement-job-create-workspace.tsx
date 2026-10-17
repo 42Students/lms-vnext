@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { PlacementJobCreateForm } from "./placement-job-create-form";
 import { PageHeader } from "@/components/ui/page-header";
 import { listCohorts } from "@/modules/academics/cohort-service";
@@ -47,6 +48,7 @@ export async function PlacementJobCreateWorkspace({
 
   return (
     <div className="space-y-6">
+      <Link href="/tpo/placements/lifecycle" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Back to drives</Link>
       <PageHeader
         eyebrow={eyebrow}
         title="Create drive"
