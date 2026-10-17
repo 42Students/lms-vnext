@@ -46,7 +46,7 @@ for (const action of actions) {
         const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : action.endpoint, kind);
         try {
           await page.getByRole("button", { name: action.button, exact: true }).click();
-          await expect.poll(failure.hits).toBeGreaterThan(0);
+          await expect.poll(() => failure.requests().some((request) => request.endsWith(new URL(action.endpoint.replace("**", "http://localhost:3000")).pathname))).toBe(true);
           await expectFriendlyFailure(page, kind);
           if (kind === "session-expired" && new URL(page.url()).pathname !== action.route) {
             // Simulates returning to the requested page after a fresh E2E sign-in.

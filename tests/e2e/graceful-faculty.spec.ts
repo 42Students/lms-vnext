@@ -32,7 +32,7 @@ test.describe("GR-80 Faculty authoring gracefully survives failed saves", () => 
       );
       try {
         await page.getByRole("button", { name: "Create draft" }).click();
-        await expect.poll(failure.hits).toBeGreaterThan(0);
+        await expect.poll(() => failure.requests().some((request) => request === `POST /api/courses/faculty/assignments/${deliveryId}/command`)).toBe(true);
         await expectFriendlyFailure(page, kind);
         await expect(title).toHaveValue("Graceful assignment unsaved draft");
         await expect(page.getByRole("textbox", { name: "Text instructions" }))

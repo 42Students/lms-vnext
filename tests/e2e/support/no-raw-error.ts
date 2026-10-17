@@ -35,10 +35,12 @@ export async function failApi(
   page: Page,
   matcher: string | RegExp,
   kind: FailureKind,
-): Promise<{ hits: () => number; dispose: () => Promise<void> }> {
+): Promise<{ hits: () => number; requests: () => readonly string[]; dispose: () => Promise<void> }> {
   let count = 0;
+  const matchedRequests: string[] = [];
   const intercept: Parameters<Page["route"]>[1] = async (route) => {
     count += 1;
+    matchedRequests.push(`${route.request().method()} ${new URL(route.request().url()).pathname}`);
     if (kind === "backend-down") {
       await route.abort("failed");
       return;
@@ -81,6 +83,7 @@ export async function failApi(
   await page.route(matcher, intercept);
   return {
     hits: () => count,
+    requests: () => matchedRequests,
     dispose: () => page.unroute(matcher, intercept),
   };
 }
@@ -88,6 +91,14 @@ export async function failApi(
 export function captureUncaughtErrors(page: Page): string[] {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
+  page.on("console", (message) => {
+    if (message.type() !== "error") return;
+    const value = message.text();
+    // Chromium itself logs the synthetic HTTP 4xx/5xx or aborted resource.
+    // These are the injected failures, not an unhandled application exception.
+    if (/^Failed to load resource: (?:the server responded with a status of|net::ERR_)/i.test(value)) return;
+    errors.push(value);
+  });
   return errors;
 }
 

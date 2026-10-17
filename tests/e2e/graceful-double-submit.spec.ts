@@ -43,7 +43,8 @@ for (const flow of flows) {
       const fault = await failApi(page, flow.endpoint, "slow");
       try {
         await page.getByRole("button", { name: flow.button, exact: true }).click();
-        await expect.poll(fault.hits).toBe(1);
+        await expect.poll(() => fault.requests().some((request) => request.includes(flow.endpoint.replace("**", "")))).toBe(true);
+        expect(fault.hits()).toBe(1);
         const submit = page.getByRole("button", { name: flow.button, exact: true });
         // While the server is slow, second user actions must not create a
         // second mutation. Press Enter as an impatient user would.
