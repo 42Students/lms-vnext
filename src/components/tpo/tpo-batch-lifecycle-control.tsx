@@ -1,6 +1,8 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string};
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -13,14 +15,13 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
   if(disabled)return;
   setBusy(true);setError("");
   try{
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/lifecycle",{
+   await apiFetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/lifecycle",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,expectedVersion:expectedVersion}),
    });
-   if(!response.ok)throw Error(response.status===409?"This changed while you were working. Your choice is kept. Refresh and review it again.":"We could not update this batch. Please try again.");
    setReviewed(false);
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to confirm action.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
  }
  return <div className="min-w-0 space-y-2">
   <p className="text-sm text-body">{action==="FINISH"?
