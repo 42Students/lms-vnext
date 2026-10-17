@@ -243,7 +243,7 @@ export function LoginForm({
         { attemptId: attempt.attemptId },
       );
       if (!result.ok) return fail((result.data as { error?: string }).error);
-      setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 15 minutes.`);
+      setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
       setCooldown(RESEND_SECONDS);
       if (attempt) saveLoginAttempt({
@@ -269,7 +269,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="w-full max-w-md">
+    <div className="w-full max-w-md" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h2 className="m-0 text-2xl font-semibold text-foreground">
         {attempt?"Enter your code":"Sign in"}
       </h2>
