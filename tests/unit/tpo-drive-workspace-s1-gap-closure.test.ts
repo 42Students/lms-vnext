@@ -72,4 +72,16 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(summarizeSelectionRelease([{status:"released"},{status:"skipped",reason:"RULE_BLOCK"}]))
     .toEqual({released:1,skipped:1});
  });
+ it("TPO-drive-workspace-48 matches company selection rows only on consistent internal identities",()=>{
+  const id="11111111-1111-4111-8111-111111111111";
+  const candidates=[{applicationId:id,name:"Akhil",email:"akhil@college.edu",
+   roleTitle:"Graduate Trainee",offerReady:true,alreadyOffered:false}];
+  const csv="Application ID,Email,Package LPA\n"+id+",akhil@college.edu,9.50";
+  const good=prepareSelectionImport(csv,candidates,"Graduate Trainee");
+  expect(good.accepted).toHaveLength(1);
+  expect(good.accepted[0]?.annualCtcInr).toBe(950000);
+  expect(prepareSelectionImport(csv.replace("akhil@college.edu","other@college.edu"),candidates,"Graduate Trainee").accepted).toHaveLength(0);
+  expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[{
+    applicationId:id,roleTitle:"Graduate Trainee",annualCtcInr:950000}]}).success).toBe(true);
+ });
 });
