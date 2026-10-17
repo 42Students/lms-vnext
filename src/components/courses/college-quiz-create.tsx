@@ -13,7 +13,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  lessons:readonly Lesson[];deliveries:readonly Delivery[];
 }){
  const router=useRouter();
- const [opened,setOpened]=useState(false),[lessonId,setLessonId]=useState(lessons[0]?.id??"");
+ const [opened,setOpened]=useState(false),[keepOpen,setKeepOpen]=useState(false),[lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState(""),[description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState(""),[maxAttempts,setMaxAttempts]=useState("1");
