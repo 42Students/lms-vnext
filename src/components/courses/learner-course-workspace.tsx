@@ -161,12 +161,14 @@ function ContentCard({
   deliveryId,
   readOnly,
   materialsEnabled,
+  saveIntervalMs,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
   lessonId: string;
   deliveryId: string;
   readOnly: boolean;
   materialsEnabled:boolean;
+  saveIntervalMs:number;
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
@@ -290,6 +292,7 @@ function ContentCard({
             "COMPLETED"
           }
           readOnly={readOnly}
+          saveIntervalMs={saveIntervalMs}
         />
       ) : content.type === "YOUTUBE" &&
       content.externalUrl ? (
@@ -981,7 +984,8 @@ export function LearnerCourseWorkspace({
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly}
-                            materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
+                            materialsEnabled={resourceMaterialsRuntimeEnabled()}
+                            saveIntervalMs={workspace.playbackSettings.saveIntervalMs}/>
                           </LearnerRoadmapItemDialog>
                         ) : null;
                       }
