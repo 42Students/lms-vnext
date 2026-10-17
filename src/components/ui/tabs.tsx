@@ -26,8 +26,10 @@ export function tabNextEnabled(items: readonly Pick<TabItem, "disabled">[], curr
 export function Tabs({ items, value, onValueChange, ariaLabel, className, renderPanel = true }: TabsProps) {
   const id = useId();
   const buttons = useRef<Array<HTMLButtonElement | null>>([]);
+  const interactive = renderPanel && typeof onValueChange === "function";
   const selected = items.find(item => item.value === value && !item.disabled);
   function keyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+    if (!interactive) return;
     let target = -1;
     if (event.key === "ArrowRight") target = tabNextEnabled(items, index, 1);
     else if (event.key === "ArrowLeft") target = tabNextEnabled(items, index, -1);
@@ -37,7 +39,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
     event.preventDefault();
     const item = items[target];
     if (!item) return;
-    onValueChange?.(item.value);
+    if (interactive) onValueChange?.(item.value);
     buttons.current[target]?.focus();
   }
   return (
@@ -48,20 +50,21 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             id={`${id}-tab-${index}`} type="button" role="tab"
             aria-controls={renderPanel ? `${id}-panel` : undefined}
             aria-selected={item.value === value}
-            disabled={item.disabled}
-            tabIndex={item.value === value ? 0 : -1}
+            disabled={item.disabled || !interactive}
+            aria-disabled={item.disabled || !interactive || undefined}
+            tabIndex={interactive && item.value === value ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
-            onClick={() => onValueChange?.(item.value)}
+            onClick={() => { if (interactive) onValueChange?.(item.value); }}
             className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
               item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
             {item.label}
           </button>
         ))}
       </div> : <nav aria-label={ariaLabel} className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
-        {items.map(item => item.href ? <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
+        {items.map(item => item.disabled || !item.href ? <span key={item.value} aria-disabled="true" className="inline-flex min-h-11 items-center whitespace-nowrap border-b-2 border-transparent px-4 text-sm text-body opacity-60">{item.label}</span> : <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
             className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]",
               item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
-              {item.label}</Link> : <span key={item.value} className="inline-flex min-h-11 items-center px-4 text-sm">{item.label}</span>)}
+              {item.label}</Link>)}
       </nav>}
       {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={`${id}-tab-${items.findIndex(item => item.value === value)}`} className="min-w-0 pt-4">{selected?.content}</section> : null}
     </div>

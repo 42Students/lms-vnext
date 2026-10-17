@@ -60,3 +60,15 @@ Tests were authored but not run in this builder session.
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-recruiters-R05 | PARTIAL — OPEN | A college-scoped immutable `PLACEMENTS_RECRUITER_BULK_STAGE` event records changed rows, action and undo metadata; `tests/unit/chat2-inbox-notification-partials.test.ts` named **TPO-recruiters-R05**. Full legacy per-action audit nomenclature/actor reasons and invites/import events still pending. |
+
+
+## Chat-2 gap-closure continuation (2026-10-18): immutable audit additions
+
+| ID | Evidence and status |
+| --- | --- |
+| TPO-recruiters-R05 | **PARTIAL / OPEN.** `tpo-crm-service.ts` now emits immutable `activityEvents` in the same transaction for lead-created, contact-edited, explicit Contacted/Not now stage and implicit stage changes after a call. `tpo-recruiter-invite-service.ts` emits an accurate invite-link-created event with `delivery: NOT_SENT` (not a fabricated invite email). `tpo-audit-model.ts` maps event names to user-friendly legacy Audit Log labels. Tests `tests/unit/chat2-engage-immutable-audit.test.ts`. Bulk stage run already has `PLACEMENTS_RECRUITER_BULK_STAGE`. Owner assignment, imports, actual emailed invites and complete bulk undo events remain unverified. |
+| TPO-recruiters-17 | **PARTIAL / BLOCKED on outbound provider.** Explicit invite issuance is now audited as a link, not e-mail. Day-4 reminder function and eligibility policy exist but have no verified scheduler/provider. Must not auto-send, mark as mailed or claim email side effects until messaging adapter and provider credentials are configured. Regression test above asserts no fabricated `RECRUITER_LEADS_INVITED_BY_EMAIL` event. |
+| TPO-recruiters-07 / 30 / 36 | **Prior work retained.** Needs doing counts and duplicate-contact link source-verified; responsive board partly keyboard accessible; mobile table selection remains OPEN. `tests/unit/chat2-engage-open-gap-decisions.test.ts`. |
+| TPO-recruiters-34 | **Intentional restricted permission.** Mutations require explicit scoped placement permission, not merely being a college user. No silent widening during UX freeze. |
+
+No e-mail was sent and no CI tests were executed by this builder.

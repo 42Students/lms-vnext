@@ -9,7 +9,7 @@ import {hrDriveDraftSchema} from "./hr-drive-draft-model";
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 type RequestRow=typeof placementRecruiterDriveRequests.$inferSelect;
 export type RecruiterDraftApprovalErrorCode="NO_ACTIVE_SEASON"|"AMBIGUOUS_ACTIVE_SEASONS"|
- "COMPANY_INACTIVE"|"WORK_MODE_REVIEW_REQUIRED"|"EXTERNAL_APPLICATION_URL_REQUIRED"|"REQUEST_STALE";
+ "COMPANY_INACTIVE"|"UNSUPPORTED_EMPLOYMENT_TYPE"|"WORK_MODE_REVIEW_REQUIRED"|"EXTERNAL_APPLICATION_URL_REQUIRED"|"REQUEST_STALE";
 export class RecruiterDraftApprovalError extends Error{
  constructor(readonly code:RecruiterDraftApprovalErrorCode){super(code);this.name="RecruiterDraftApprovalError";}
 }
@@ -37,6 +37,9 @@ export async function createRecruiterApprovedDraftJob(
    eq(placementSeasons.status,"ACTIVE"))).orderBy(asc(placementSeasons.id)).for("update").limit(2);
  if(!seasons.length)throw new RecruiterDraftApprovalError("NO_ACTIVE_SEASON");
  if(seasons.length!==1)throw new RecruiterDraftApprovalError("AMBIGUOUS_ACTIVE_SEASONS");
+ // Existing placement_job and role constraints permit only FULL_TIME, INTERNSHIP and CONTRACT.
+ if(draft.employmentType==="INTERNSHIP_FULL_TIME")
+  throw new RecruiterDraftApprovalError("UNSUPPORTED_EMPLOYMENT_TYPE");
  if(draft.workMode==="NO_PREFERENCE")throw new RecruiterDraftApprovalError("WORK_MODE_REVIEW_REQUIRED");
  if(draft.driveMode==="OFF_CAMPUS"&&!draft.externalApplicationUrl)
   throw new RecruiterDraftApprovalError("EXTERNAL_APPLICATION_URL_REQUIRED");

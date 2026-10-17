@@ -184,3 +184,10 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 |---|---|---|
 | TPO-batches-17 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/loading.tsx` and `error.tsx` now provide accessible animated card skeleton, friendly failed-refresh copy, and keyboard-safe Retry. `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-17 renders accessible batch card skeleton and retry without falsely reporting changed decisions`. A retained stale-data cache is still missing. |
 | TPO-batches-49 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now surfaces the reminder prompt only when `projectTpoBatchNextStep` proves the window open and learners still need to register, with a reviewed `#batch-reminder` link; `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-49 suggests a reminder only while eligible learner choices remain and registration is open`. Other suggestion chips not complete. |
+
+## [chat-5] Round-2 eligibility import decisions
+
+| ID | Status | Verified code and tests |
+|---|---|---|
+| TPO-batches-R04 | DONE (source verified; CI pending) | `src/modules/placements/tpo-eligibility-sheet-model.ts` uses legacy unusable-row reasons, `src/components/tpo/tpo-batch-eligibility-import.tsx` blocks unresolved rows and requires explicit acknowledgement, and `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` rechecks the source server-side. `tests/unit/chat5-batches-r04-import-contract.test.ts` contains three `TPO-batches-R04` cases. |
+| TPO-batches-39 | OPEN (remaining preview parity) | File picker now exposes `Download a template`; `Discard review` requires an explicit accessible consequence confirmation rather than silently dropping included rows. `tests/unit/chat5-batches-39-discard-template.test.ts` — two `TPO-batches-39` tests. Full imported column/preview grid parity still OPEN. |

@@ -11,3 +11,13 @@ export function learnerCourseAttendanceIstMonth(value:Date):string{
 export function learnerCourseAttendanceSameIstMonth(value:Date,month:string):boolean{
  return Number.isFinite(value.getTime())&&learnerCourseAttendanceIstMonth(value)===month;
 }
+
+/** A half-open IST month for SQL filtering: 00:00 IST on the first day of
+ * the chosen month through (but not including) the first of the next month. */
+export function learnerCourseAttendanceIstWindow(raw:string):{from:Date;to:Date}|null{
+ if(!/^(20|21)\d{2}-(0[1-9]|1[0-2])$/.test(raw))return null;
+ const [year,month]=raw.split("-").map(Number);
+ const start=new Date(Date.UTC(year,month-1,1,0,0)-330*60*1000);
+ const end=new Date(Date.UTC(year,month,1,0,0)-330*60*1000);
+ return {from:start,to:end};
+}
