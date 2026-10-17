@@ -10,6 +10,7 @@ import {
   courseQuizzes,
 } from "@/db/schema";
 import type { listFacultyCourseDeliveries } from "./faculty-course-service";
+import { countFacultyCourseCardItems } from "./faculty-course-card-summary-model";
 
 type AssignedCourse = Awaited<ReturnType<typeof listFacultyCourseDeliveries>>[number];
 
@@ -80,33 +81,14 @@ export async function listFacultyCourseCardSummaries(
     set.add(lesson.id);
     lessonSetByPath.set(lesson.learningPathId, set);
   }
-  function countRows<T extends { lessonId: string; deliveryId: string | null; status: string }>(
-    rows: readonly T[], lessonSet: Set<string>, deliveryId: string,
-  ) {
-    return rows.filter((row) =>
-      lessonSet.has(row.lessonId) && (row.deliveryId === null || row.deliveryId === deliveryId)
-    );
-  }
   for (const course of assigned) {
     const card = result.get(course.deliveryId);
     if (!card?.learningPath) continue;
     const set = lessonSetByPath.get(card.learningPath.id) ?? new Set<string>();
-    const visibleContents = countRows(contents, set, course.deliveryId);
-    const visibleAssignments = countRows(assignments, set, course.deliveryId);
-    const visibleQuizzes = countRows(quizzes, set, course.deliveryId);
-    const statuses = [
-      ...visibleContents.map((row) => row.status),
-      ...visibleAssignments.map((row) => row.status),
-      ...visibleQuizzes.map((row) => row.status),
-    ];
-    card.summary = {
-      lessons: set.size,
-      contents: visibleContents.length,
-      assignments: visibleAssignments.length,
-      quizzes: visibleQuizzes.length,
-      draftItems: statuses.filter((status) => status === "DRAFT").length,
-      publishedItems: statuses.filter((status) => status === "PUBLISHED").length,
-    };
+    card.summary = countFacultyCourseCardItems({
+      lessonIds: set, deliveryId: course.deliveryId,
+      contents, assignments, quizzes,
+    });
   }
   return result;
 }
