@@ -27,7 +27,7 @@ function one(value: string | string[] | undefined) {
 }
 
 const searchSchema = z.string().trim().max(100);
-const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
+const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED","IN_PROGRESS","READY","BLOCKED"]);
 const attentionSchema = z.enum(["LEARNER_ACTION","BLOCKED"]);
 const workSchema = z.enum(["BLOCKED","NO_TASKS"]);
 const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
@@ -105,6 +105,11 @@ export default async function LearnerProjectsPage({
         return row.project.status !== "ARCHIVED" &&
           row.project.status !== "COMPLETED";
       }
+      if(query.status==="IN_PROGRESS")return row.project.status==="ACTIVE"&&
+        (progressByProject.get(row.project.id)?.completedTasks??0)>0;
+      if(query.status==="READY")return row.project.status==="COMPLETED";
+      if(query.status==="BLOCKED")return Boolean(row.project.blocker?.trim())||
+        learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id));
       return row.project.status === query.status;
     })
     .filter((row) =>
