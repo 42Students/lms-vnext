@@ -214,8 +214,12 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
     if (!window) return;
     const token = await cloudLoggingAccessToken();
     let nextPageToken = window.pageToken;
-    // At most two pages of 12, protecting the CronJob HTTP time limit.
-    for (let page = 0; page < 2; page++) {
+    // At most one complete page of 12 errors per tick. Each incident may need
+    // a five-second Telegram attempt, and regression/digest work shares the
+    // 150-second Cron HTTP deadline. Resuming by provider page token avoids
+    // advancing the cursor past unseen entries at identical timestamps.
+    let limit = 12;
+    for (let page = 0; page < 1 && limit > 0; page++) {
       let result: Awaited<ReturnType<typeof readCloudLogErrorPage>>;
       try {
         result = await readCloudLogErrorPage({
@@ -233,7 +237,11 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
         }
         throw error;
       }
+      // Never persist this page's checkpoint after only some of its entries:
+      // replaying a partial page is safe, skipping its tail is not.
+      if (result.errors.length > limit) return;
       for (const record of result.errors) {
+        limit--;
         if (record.timestamp <= window.start || record.timestamp > window.end) continue;
         const success = await reportErrorForAlert({
           event: record.event, error: record.message, path: record.path,
