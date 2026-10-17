@@ -97,6 +97,24 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
+ it("COL-course-tabs-14 provides accessible batch lesson drag-and-drop with transactional CAS and rollback",async()=>{
+  const {rearrangeLessonIds,collegeLessonBulkOrderSchema}=await import("@/modules/courses/college-lesson-order-model");
+  const ids=["10000000-0000-4000-8000-000000000001","10000000-0000-4000-8000-000000000002","10000000-0000-4000-8000-000000000003"];
+  expect(rearrangeLessonIds(ids,ids[2],ids[0])).toEqual([ids[2],ids[0],ids[1]]);
+  const payload={learningPathId:ids[0],expected:ids.map((id,sequence)=>({id,sequence})),orderedIds:[ids[2],ids[0],ids[1]]};
+  expect(collegeLessonBulkOrderSchema.safeParse(payload).success).toBe(true);
+  expect(collegeLessonBulkOrderSchema.safeParse({...payload,orderedIds:[ids[1],ids[1],ids[0]]}).success).toBe(false);
+  const drag=source("src/components/courses/college-lesson-drag-order.tsx");
+  expect(drag).toContain("draggable");
+  expect(drag).toContain("onDrop");
+  expect(drag).toContain("Move up");
+  expect(drag).toContain("Move down");
+  expect(drag).toContain("setOrder(previous)");
+  const backend=source("src/modules/courses/lesson-service.ts");
+  expect(backend).toContain('for("update")');
+  expect(backend).toContain("firstTemporary");
+  expect(source("src/app/api/courses/lessons/reorder-all/route.ts")).toContain("isSameOriginRequest(request)");
+ });
  it("COL-course-tabs-R01 excludes resource clicks and counts only measured work",()=>{
   const service=source("src/modules/courses/college-learner-progress-service.ts");
   const report=source("src/components/courses/college-learner-progress-report.tsx");
