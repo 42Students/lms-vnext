@@ -29,7 +29,7 @@ export function RecruiterBulkStageControls({
   onUpdated: () => void;
 }) {
   const [chosenIds, setChosenIds] = useState<string[]>([]);
-  const [action, setAction] = useState<"CONTACTED" | "NOT_NOW">("CONTACTED");
+  const [action, setAction] = useState<"CONTACTED" | "NOT_NOW" | "NEW">("CONTACTED");
   const [reason, setReason] = useState("");
   const [revisitDate, setRevisitDate] = useState("");
   const [busy, setBusy] = useState(false);
@@ -91,7 +91,7 @@ export function RecruiterBulkStageControls({
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(action === "CONTACTED"
+        body: JSON.stringify(action !== "NOT_NOW"
           ? { action, confirmed: true, selections }
           : {
               action,
@@ -191,13 +191,14 @@ export function RecruiterBulkStageControls({
               <select
                 value={action}
                 onChange={(event) => {
-                  setAction(event.target.value as "CONTACTED" | "NOT_NOW");
+                  setAction(event.target.value as "CONTACTED" | "NOT_NOW" | "NEW");
                   setError("");setReviewOpen(false);
                 }}
                 disabled={busy}
                 className={fieldClass + " mt-1 block"}
               >
                 <option value="CONTACTED">Mark Contacted</option>
+                <option value="NEW">Restore to New</option>
                 <option value="NOT_NOW">Not Now</option>
               </select>
             </label>
@@ -236,7 +237,7 @@ export function RecruiterBulkStageControls({
             </button>
           </div>
           {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
-            Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":"Not now"}.
+            Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":action==="NEW"?"New":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
             <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit selection</button>
           </div>:null}
