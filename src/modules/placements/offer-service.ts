@@ -1324,6 +1324,10 @@ export async function listOwnPlacementOffers(
       job: {
         id: placementJobs.id,
         title: placementJobs.title,
+        employmentType: placementJobs.employmentType,
+      },
+      role: {
+        employmentType: placementJobRoleOptions.employmentType,
       },
       company: {
         id: placementCompanies.id,
@@ -1344,6 +1348,10 @@ export async function listOwnPlacementOffers(
         placementJobs.id,
         placementApplications.jobId,
       ),
+    )
+    .innerJoin(
+      placementJobRoleOptions,
+      eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
     )
     .innerJoin(
       placementCompanyRelationships,
