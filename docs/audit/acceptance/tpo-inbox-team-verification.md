@@ -114,3 +114,10 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | --- | --- | --- |
 | TPO-inbox-team-49 | PARTIAL — OPEN | `src/modules/announcements/tpo-notice-safe-links.ts` and announcement cards linkify verified HTTPS URLs, preserve other text, and retain the existing author/date/audience/state/CTA. Named test **TPO-inbox-team-49** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. Full email-delivery labels depend on additional delivery work. |
 | TPO-inbox-team-62 | DONE (source; unrun) | Reviewed `src/components/tpo/tpo-header-indicators.tsx` and `src/app/(authenticated)/tpo/layout.tsx`: 30-second + focus-visible refresh of scoped recruiter-message and TPO bell unread counts. Named test **TPO-inbox-team-62** in `tests/unit/tpo-notice-safe-links-chat2.test.ts`. |
+
+## Builder chat-2 continuation — People roster labeling
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-37 | PARTIAL — OPEN | `src/app/(authenticated)/tpo/team/page.tsx` no longer advertises legacy faculty/student coordinator duties as standing Team roles and restores the exact TPO-admin membership note. Named test **TPO-inbox-team-37** in `tests/unit/tpo-team-legacy-people-chat2.test.ts`. College-admin inclusion and membership policy still require R02/38 work. |
+| TPO-inbox-team-32 | PARTIAL — OPEN | People count now matches shown permanent members; existing Work and Name sort preserved. Named test **TPO-inbox-team-32** in the same suite. Overdue-first cannot be truthful until ask workload is persisted. |
