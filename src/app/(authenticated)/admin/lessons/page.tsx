@@ -27,6 +27,8 @@ export default async function SuperAdminLessonsPage({
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
       description="Read-only authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion." />
+    <a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status}).toString()}
+     className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export lessons.csv</a>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"

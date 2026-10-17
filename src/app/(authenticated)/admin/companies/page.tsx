@@ -156,6 +156,12 @@ export default async function SuperAdminCompaniesPage({
           {row.trusted ? <StatusBadge tone="success">Trusted</StatusBadge> : null}
         </div>
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-body">
+          <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>
+          <div><dt className="text-muted-foreground">Linked colleges</dt><dd className="tabular-nums">{row.companyCollegeCount??0}</dd></div>
+          <div><dt className="text-muted-foreground">Drives in this college</dt><dd className="tabular-nums">{row.driveCount??0}</dd></div>
+          <div><dt className="text-muted-foreground">Last drive activity</dt><dd>{row.lastActiveAt?new Date(row.lastActiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"}):"—"}</dd></div>
+        </dl>
         <Link className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline"
           href={`/admin/companies/${encodeURIComponent(row.companyId)}/drives`}>
           Drive history →

@@ -25,7 +25,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     ? await listAcademicPeriods(context, selected)
     : [];
   const periods = periodRows.filter(row => row.status !== "CLOSED")
-    .map(row => ({ id: row.id, name: row.name, code: row.code }));
+    .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
   return <div className="space-y-6">
       <AcademicSetupSteps step={5} />
     {data ? <>

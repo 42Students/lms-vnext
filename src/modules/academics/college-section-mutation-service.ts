@@ -246,6 +246,7 @@ export async function listCollegeSectionOptions(context: RequestContext) {
       name: cohorts.name,
       code: cohorts.code,
       programName: programs.name,
+      programId: programs.id,
       status: cohorts.status,
     }).from(cohorts)
       .innerJoin(programs, and(
