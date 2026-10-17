@@ -48,5 +48,13 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- return [...conversations,...due,...deadlines,...reviews,...notices];
+ const actions=[...conversations,...due,...deadlines,...reviews,...notices];
+ const priority={URGENT:0,SOON:1,FINE:2};
+ return actions.sort((a,b)=>{
+  const rank=priority[a.tone]-priority[b.tone];
+  if(rank!==0)return rank;
+  const first=a.at?.getTime()??Number.POSITIVE_INFINITY;
+  const second=b.at?.getTime()??Number.POSITIVE_INFINITY;
+  return first-second||a.key.localeCompare(b.key);
+ });
 }
