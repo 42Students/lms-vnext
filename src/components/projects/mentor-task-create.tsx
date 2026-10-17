@@ -35,7 +35,9 @@ export function MentorTaskCreate({
   const chosenSprint=choices.find(item=>item.id===selectedSprintId);
   const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
   const valid=title.trim().length>0&&title.trim().length<=200&&
-    description.length<=4000&&criteria.length<=4000;
+    description.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
+    (estimate===""||(Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000))&&
+    canSetStatus&&(status!=="BLOCKED"||Boolean(blockerReason.trim()));
   async function create(){
     if(!valid)return;
     setBusy(true);
