@@ -690,6 +690,7 @@ describe("lesson videos against PostgreSQL", () => {
     const content = await createLessonContent(collegeAdmin, {
       lessonId: structure.lesson.id,
       contentType: "VIDEO",
+      points: 1,
       title: "Arrays video",
       sequence: 0,
       storageKey: `video-asset/${done.id}`,
