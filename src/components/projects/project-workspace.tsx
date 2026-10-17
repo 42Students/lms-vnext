@@ -472,9 +472,10 @@ export function ProjectWorkspace({
               Review submission
             </Link> : null}
           </div>
-          {mode==="ADMIN"&&!readOnly?<WorkspaceBriefEditor
+          {(mode==="ADMIN"||mode==="MENTOR")&&!readOnly?<WorkspaceBriefEditor
             projectId={workspace.project.id} initial={authoredBrief}
             updatedAt={workspace.project.updatedAt}/>:null}
+          {mode==="MENTOR"&&!readOnly?<MentorProjectAboutEditor project={workspace.project}/>:null}
           {(isAuthored&&authoredBrief.completionConditions.length>0)||
             (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <div><h3 className="text-sm font-semibold">Completion conditions</h3>
