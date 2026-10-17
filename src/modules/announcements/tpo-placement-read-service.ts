@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10Announcements} from "@/db/schema/db10-announcements";
+import {db10Announcements,placementCellAnnouncementReads} from "@/db/schema/db10-announcements";
 import {placementTpoNoticeAudiences} from "@/db/schema/placement-tpo-notice-audiences";
 import {users} from "@/db/schema/users";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -20,6 +20,7 @@ export async function listTpoPlacementAnnouncements(
  const college=await requirePlacementManageScope(context,membership.collegeId);
  const tab=tpoAnnouncementTabSchema.parse(rawTab);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences");
+ const cellReadsReady=tab==="from-42"&&await placementTableExists("placement_cell_announcement_reads");
  const safePage=Number.isFinite(page)?Math.max(1,Math.min(1000,Math.trunc(page))):1;
  if(!await placementTableExists("announcements"))return {status:"NOT_REGISTERED" as const,items:[]};
  return getDb().transaction(async tx=>{
@@ -57,8 +58,17 @@ export async function listTpoPlacementAnnouncements(
    inArray(placementTpoNoticeAudiences.announcementId,visibleRows.map(row=>row.id))
   ):[];
   const audienceById=new Map(audiences.map(row=>[row.id,row.kind]));
+  const readRows=cellReadsReady&&visibleRows.length?await tx.select({
+   id:placementCellAnnouncementReads.announcementId,
+   readAt:placementCellAnnouncementReads.firstReadAt,
+  }).from(placementCellAnnouncementReads).where(and(
+   eq(placementCellAnnouncementReads.collegeId,college.id),
+   inArray(placementCellAnnouncementReads.announcementId,visibleRows.map(row=>row.id)),
+  )):[];
+  const readById=new Map(readRows.map(row=>[row.id,row.readAt]));
   return {status:"READY" as const,items:projectTpoAnnouncementRows(visibleRows).map(row=>({
    ...row,audienceKind:audienceById.get(row.id)??"COLLEGE",
-  })),page:safePage,hasMore:rows.length>100};
+   readAt:cellReadsReady?readById.get(row.id)??null:undefined,
+  })),page:safePage,hasMore:rows.length>100,readStateReady:cellReadsReady};
  });
 }
