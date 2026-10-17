@@ -13,6 +13,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import Link from "next/link";
@@ -54,6 +55,11 @@ export default async function TpoUnplacedReportPage({
     page:1,pageSize:100,
   },{includeExportRows:true}):null;
   const permittedBranch=!branchId||(intelligence?.branches??[]).some(item=>item.branchId===branchId);
+  const lastApplications=permittedBatch&&permittedBranch?
+   await getTpoUnplacedLastApplications(context,{
+    collegeId:context.membership.collegeId,seasonId:workspace.selectedSeasonId,
+    jobId:workspace.selectedJobId,
+   }):new Map<string,Date>();
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
   const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
@@ -95,7 +101,7 @@ export default async function TpoUnplacedReportPage({
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
       {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
-      <p className="text-xs text-muted-foreground">Applications count is all recorded activity across the current roster; academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
+      <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} path="/tpo/reports/unplaced" />
 
       <section className="grid gap-3 sm:grid-cols-2">
@@ -139,7 +145,9 @@ export default async function TpoUnplacedReportPage({
          const row=rowsById.get(learner.membershipId);
          return [learner.displayName,row?.rollNumber??"—",row?.cohortName??"—",
           learner.departmentName,"—","—","Not verified","Not confirmed",
-          row?.applicationCount??0,row?.activeApplicationCount?"Yes":"No","Not recorded"];
+          lastApplications.get(learner.membershipId)?.applications??0,
+          lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
+          lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Not recorded"];
         })}
         emptyDescription="No unplaced learners match this reporting scope. This does not prove that all learners have been placed across all seasons."
       />

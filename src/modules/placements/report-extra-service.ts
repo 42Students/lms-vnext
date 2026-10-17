@@ -9,6 +9,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  placementCompanyRelationships,
   placementApplicationScreenings,
   placementApplicationStatusHistory,
   placementApplications,
@@ -35,6 +36,8 @@ import {
   type PlacementReportQuery,
 } from "./report-service";
 import { listTpoLeads } from "./tpo-crm-service";
+import {summarizeFailedRoundShares} from "./tpo-failure-round-share-model";
+import {buildTpoCompanyEngagement} from "./tpo-company-engagement-model";
 import { summarizeTpoLeadHealth } from "./tpo-lead-health-model";
 
 /**
@@ -67,6 +70,7 @@ export async function getPlacementFailureReasonsReport(
     return {
       ...workspace,
       failures: summarizePlacementFailureReasons([]),
+      roundFailureShares:[],
     };
   }
 
@@ -274,6 +278,20 @@ export async function getPlacementFailureReasonsReport(
       ),
   ]);
 
+  const appliedRoundRows=await db.select({
+    id:placementRoundResults.id,roundId:placementJobRounds.id,
+    roundName:placementJobRounds.name,jobId:placementApplications.jobId,
+    outcome:placementRoundResults.outcome,
+  }).from(placementRoundResults)
+   .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
+   .innerJoin(placementApplications,and(
+    eq(placementApplications.id,placementRoundResults.applicationId),
+    eq(placementApplications.jobId,placementJobRounds.jobId)))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .where(and(scopedJob,eq(placementRoundResults.status,"APPLIED")));
+  const byRound=summarizeFailedRoundShares(appliedRoundRows);
+
   const facts: PlacementFailureFact[] = [];
 
   function append(
@@ -338,6 +356,7 @@ export async function getPlacementFailureReasonsReport(
   return {
     ...workspace,
     failures: summarizePlacementFailureReasons(facts),
+    roundFailureShares:byRound,
     failureScopeNote:
       "This report counts persisted adverse events or current decisions, " +
       "not unique learners. Screening rejection uses the current screening " +
@@ -371,7 +390,7 @@ export async function getPlacementLeadsReport(
   const leads = await listTpoLeads(context, collegeId);
   const db = getDb();
   // Only real contact types count as outreach; NOTE/creation/SYSTEM do not.
-  const [contacts, openSteps] = await Promise.all([
+  const [contacts, openSteps, relationships] = await Promise.all([
     db.select({ leadId: placementTpoLeadActivities.leadId,
       at: placementTpoLeadActivities.createdAt })
       .from(placementTpoLeadActivities)
@@ -381,6 +400,9 @@ export async function getPlacementLeadsReport(
       .from(placementTpoFollowups)
       .where(and(eq(placementTpoFollowups.collegeId, collegeId),
         isNull(placementTpoFollowups.doneAt))),
+    db.select({relationshipId:placementCompanyRelationships.id,companyId:placementCompanyRelationships.companyId})
+      .from(placementCompanyRelationships)
+      .where(eq(placementCompanyRelationships.collegeId,collegeId)),
   ]);
   const health = summarizeTpoLeadHealth(
     leads.map((lead) => ({ id: lead.id, manualStage: lead.manualStage,
@@ -394,6 +416,8 @@ export async function getPlacementLeadsReport(
   return {
     health,
     collegeId,
+    companyEngagement:buildTpoCompanyEngagement(leads,contacts.map(row=>({leadId:row.leadId})))
+      .map(row=>({...row,companyId:relationships.find(rel=>rel.relationshipId===row.companyRelationshipId)?.companyId??null})),
     leads: summarizePlacementLeads(
       leads.map((lead) => ({
         id: lead.id,
