@@ -23,6 +23,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
  const lock=useRef(false);
+ const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const chosen=lessons.find(x=>x.id===lessonId);
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
@@ -38,13 +39,16 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if(!title.trim()||!Number.isInteger(maxPoints)||maxPoints<1||maxPoints>10000){
    setError("Enter an assignment title and 1–10000 points.");return;
   }
-  if(chosen.nextSequence>10000){
+  if(allowedMethods.length===0){setError("Select at least one allowed submission method.");return;}
+  if((nextOverride[chosen.id]??chosen.nextSequence)>10000){
    setError("This lesson has reached the assignment ordering limit.");return;
   }
   const delivery=sections.find(x=>x.deliveryId===deliveryId);
   if(deliveryId&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
   const due=dueAt?new Date(dueAt+":00+05:30"):null;
-  if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
+  if(due&&(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dueAt)||Number.isNaN(due.getTime()))){
+   setError("Enter a valid deadline.");return;
+  }
   if(!window.confirm("Create assignment as a draft? Learners cannot submit until published."))return;
   lock.current=true;setPending(true);setError("");setMessage("");
   try{
@@ -52,11 +56,12 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:chosen.id,deliveryId:delivery?.deliveryId??null,
       title:title.trim(),description:description.trim()||null,
-      dueAt:due?.toISOString()??null,maxPoints,sequence:chosen.nextSequence,allowedMethods}),
+      dueAt:due?.toISOString()??null,maxPoints,sequence:nextOverride[chosen.id]??chosen.nextSequence,allowedMethods}),
    });
    const payload=await response.json().catch(()=>null);
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
+   setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
    setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
    setMessage("Assignment draft created. Publish it to let learners submit.");
    router.refresh();
