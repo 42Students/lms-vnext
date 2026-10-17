@@ -974,6 +974,12 @@ export default async function TpoStudentsPage({
               branchName: student.branchName,
               readinessSignal: student.readinessSignal,
             }))}
+            allLearners={roster.total<=5000?data.exportRows?.map(student=>({
+              membershipId:student.membershipId,
+              displayName:student.displayName,
+              branchName:student.branchName,
+              readinessSignal:student.readinessSignal,
+            }))??undefined:undefined}
             drives={bulkDriveChoices}
           />
         ) : null}
