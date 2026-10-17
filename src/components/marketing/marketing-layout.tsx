@@ -15,7 +15,7 @@ export function MarketingLayout({children}:{children:ReactNode}){
     <div className="flex flex-wrap items-center gap-5">
       {primaryNav.map(item=><Link key={item.href} href={item.href}
        className="text-sm font-semibold text-body hover:text-primary-text">{item.label}</Link>)}
-      <Link href="/" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary">Sign in</Link>
+      <Link href="/login" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-on-primary">Sign in</Link>
     </div>
    </nav>
   </header>

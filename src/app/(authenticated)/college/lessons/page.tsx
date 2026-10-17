@@ -62,7 +62,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
-  return <div className="space-y-4">
+  return <div className="min-w-0 space-y-4">
     <CollegeLessonCreateControl options={authoringOptions} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

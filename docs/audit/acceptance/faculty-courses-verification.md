@@ -47,3 +47,13 @@ Not verified: resource uploads (requires private bucket and scanning), enrollmen
 | FAC-courses-09 | DONE | `src/modules/courses/faculty-course-card-summary-service.ts`, `src/modules/courses/faculty-course-card-summary-model.ts`, `src/app/(authenticated)/teacher/courses/page.tsx`; `tests/unit/faculty-courses-chat7-batched-list.test.ts` — `FAC-courses-09 counts shared and exact Section records without leaking neighbouring deliveries`, `FAC-courses-09 uses fixed batched queries not one full workspace load per card`. Tests authored, not run. |
 
 | FAC-courses-19 | DONE | `src/db/schema/courses.ts`, `src/modules/courses/lesson-content-service.ts`, faculty content/video authoring; proposal `docs/proposed-migrations/chat7-faculty-lesson-content-points.sql`; `tests/unit/chat7-faculty-content-points.test.ts` — `FAC-courses-19 validates persisted points on video resources and live classes`. Tests authored, not run; migration awaits registration. |
+
+## Chat-7 round 2 — course listings and roster re-verification (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| FAC-courses-01 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-tab-navigation.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-01 faculty course back-link has legacy label and destination`. |
+| FAC-courses-04 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-list.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-04 only secondary teaching roles show role badge`. |
+| FAC-courses-05 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-list.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-05 course list exposes assignment and section metrics`. |
+| FAC-courses-08 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-list.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-08 empty/filter-miss messages distinguish conditions`. |
+| FAC-courses-29 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-roster.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-29 roster empty messaging matches class enrollment reality`. |
