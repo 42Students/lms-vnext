@@ -38,7 +38,6 @@ export default async function FacultyGradebookPage({
   const csv="/api/courses/faculty/gradebook/"+encodeURIComponent(parsed.data.deliveryId)+"/csv";
   return <div className="space-y-6">
     <PageHeader title="Published gradebook"
-      description={data.delivery.courseName+" · "+data.delivery.sectionName}
       actions={<Link href={csv}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         Download full Section CSV

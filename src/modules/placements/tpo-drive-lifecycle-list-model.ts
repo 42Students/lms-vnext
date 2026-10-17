@@ -1,4 +1,11 @@
 import { z } from "zod";
+
+/** TPO-drives-03: "Closed" is a view of both normal closures and cancellations.
+ * Do not include rejected recruiter requests: those are not placement jobs. */
+export const TPO_CLOSED_JOB_STATUSES = ["CLOSED", "CANCELLED"] as const;
+export function isTpoClosedJobStatus(status: string): status is (typeof TPO_CLOSED_JOB_STATUSES)[number] {
+  return status === "CLOSED" || status === "CANCELLED";
+}
 /** TPO-drives-04: explicit All view remains possible; first visit prioritizes review. */
 export function defaultTpoDriveView(pending:number,explicit?:"ALL"|"REQUESTS"|"DRAFT"|"LIVE"|"CLOSED"){
  return explicit??(pending>0?"REQUESTS":"LIVE");
@@ -51,7 +58,7 @@ export function projectTpoDriveLifecycle(
     total: facts.length,
     drafts: facts.filter((f) => f.status === "DRAFT").length,
     live: facts.filter((f) => f.status === "PUBLISHED").length,
-    closed: facts.filter((f) => f.status === "CLOSED" || f.status === "CANCELLED").length,
+    closed: facts.filter((f) => isTpoClosedJobStatus(f.status)).length,
     deadlinesNextSevenDays: facts.filter((f) => {
       if (f.status !== "PUBLISHED" || !f.applicationDeadline) return false;
       const due = Date.parse(f.applicationDeadline);
@@ -62,7 +69,7 @@ export function projectTpoDriveLifecycle(
     view === "CLOSED" ? "CLOSED" : null;
   return { counts,
     rows: facts.filter((f) => view==="CLOSED"?
-      f.status==="CLOSED"||f.status==="CANCELLED":target === null || f.status === target)
+      isTpoClosedJobStatus(f.status):target === null || f.status === target)
       .sort((a,b) => a.company.localeCompare(b.company) || a.title.localeCompare(b.title) || a.id.localeCompare(b.id)),
   };
 }

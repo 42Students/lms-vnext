@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {useState} from "react";
 import {filterTpoBatchFacets,type TpoBatchFacetQuery,type TpoBatchFacetRow,type TpoBatchFacetState} from "@/modules/placements/tpo-batch-facets-model";
 type Row=TpoBatchFacetRow;
@@ -76,7 +77,7 @@ export function TpoBatchFacetFilters({rows,initial,baseQuery}:{rows:readonly Row
    <div className="flex flex-wrap gap-2 text-sm">
     <button type="button" onClick={()=>setSelected({states:[],programs:[],departments:[],finalYears:[]})}
      className="min-h-10 rounded border border-border px-3">Reset</button>
-    <a href="/tpo/batches" className="inline-flex min-h-10 items-center rounded border border-border px-3">Clear all</a>
+    <Link href="/tpo/batches" className="inline-flex min-h-10 items-center rounded border border-border px-3">Clear all</Link>
     <button type="submit" className="min-h-10 rounded bg-primary px-3 text-on-primary">Show {count}</button>
    </div>
   </form>
