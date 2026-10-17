@@ -39,6 +39,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  }),[tasks,release,sprint,sprints,priority,status,assignmentScope]);
  const groups=[{membershipId:null,displayName:"Unassigned"},...learners];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
+ const projectUnassigned=tasks.filter(t=>t.assigneeMembershipId===null &&
+   !["DONE","IN_REVIEW"].includes(t.status)).length;
+ const activeFilterCount=[release,sprint,priority,status,assignmentScope].filter(Boolean).length;
  async function assign(id:string,membershipId:string|null){
   const task=tasks.find(row=>row.id===id);
   if(!task||busy||readOnly||["DONE","IN_REVIEW"].includes(task.status)||
