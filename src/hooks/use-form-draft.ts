@@ -26,15 +26,22 @@ export function useFormDraft<T>(key: string, initialValue: T, options: {
   const [restored, setRestored] = useState(false);
   const [dirty, setDirty] = useState(false);
   const cleared = useRef(false);
+  // Keep the newest user edit synchronously available to pagehide, even when
+  // the debounced React state effect has not saved anything yet.
+  const latestDraft = useRef<T>(initialValue);
+  const editedBeforeRestore = useRef(false);
+  const dirtyRef = useRef(false);
 
   useEffect(() => {
     if (!enabled) return;
     const timer = setTimeout(() => {
       try {
         const parsed = parseStoredDraft<T>(localStorage.getItem(storageKey));
-        if (parsed !== null && !cleared.current) {
+        if (parsed !== null && !cleared.current && !editedBeforeRestore.current) {
+          latestDraft.current = parsed;
           updateDraft(parsed);
           setRestored(true);
+          dirtyRef.current = true;
           setDirty(true);
         }
       } catch { /* private browsing may disable storage */ }
@@ -53,22 +60,41 @@ export function useFormDraft<T>(key: string, initialValue: T, options: {
   }, [enabled, ready, dirty, draft, storageKey, debounceMs]);
 
   useEffect(() => {
-    if (!dirty) return;
+    if (!enabled) return;
+    const flushDraft = () => {
+      if (cleared.current || !dirtyRef.current) return;
+      try { localStorage.setItem(storageKey, JSON.stringify(latestDraft.current)); }
+      catch { /* Private browsing may disable storage; keep the React value. */ }
+    };
     const warn = (event: BeforeUnloadEvent) => {
+      if (!dirtyRef.current) return;
+      // A user who accepts the warning still gets their latest edit back.
+      flushDraft();
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", warn);
-    return () => window.removeEventListener("beforeunload", warn);
-  }, [dirty]);
+    window.addEventListener("pagehide", flushDraft);
+    return () => {
+      window.removeEventListener("beforeunload", warn);
+      window.removeEventListener("pagehide", flushDraft);
+    };
+  }, [enabled, storageKey]);
 
   const setDraft = (next: T | ((current: T) => T)) => {
     cleared.current = false;
-    updateDraft(next);
+    const value = typeof next === "function"
+      ? (next as (current: T) => T)(latestDraft.current)
+      : next;
+    latestDraft.current = value;
+    editedBeforeRestore.current = true;
+    dirtyRef.current = true;
+    updateDraft(value);
     setDirty(true);
   };
   const clearDraft = () => {
     cleared.current = true;
+    dirtyRef.current = false;
     setDirty(false);
     setRestored(false);
     try { localStorage.removeItem(storageKey); }
