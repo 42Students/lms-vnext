@@ -241,5 +241,5 @@ export async function stageTpoRoundImport(
  }
  return {staged:results.filter(r=>r.status==="staged").length,
   skipped:results.filter(r=>r.status==="skipped").length,
-  unmatched:preview.unmatched.length,results};
+  unmatched:results.filter(r=>r.status==="skipped"&&r.line>0).length,results};
 }
