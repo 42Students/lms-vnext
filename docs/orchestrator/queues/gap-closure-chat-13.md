@@ -112,6 +112,10 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-R05 | S4 | A11Y | OPEN |
 
 ## Notes (blockers, one line each)
+- SA-academics-people-R03: queue gives STATE but no ID-level legacy evidence in page audit; inspect legacy-copy and reproduce before marking closure.
+- SA-academics-people-R04: queue gives SIDE-EFFECT but no ID-level legacy evidence in page audit; do not claim DONE without a persisted mutation contract.
+- SA-placements-projects-35: unit failure exposes real legacy mismatch — current ARCHIVED revokes recruiter grants while legacy Suspend keeps access; pending a separate lifecycle implementation (not just wording).
+- SA-placements-projects-05: fourth legacy offer-letter-evidence category cannot be inferred because no persisted offer letter evidence exists; remaining implementation requires proposed DB mapping.
 
 ## Needs shell (chat-9 only)
 

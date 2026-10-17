@@ -657,6 +657,11 @@ export function SuperAdminHrAccounts({
       />
 
       <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
+      <section aria-label="Recruiter account lifecycle" className="space-y-1">
+        <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">Industry access</p>
+        <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
+        <p className="text-sm text-body">Manage recruiter access, suspension and signed-in devices.</p>
+      </section>
       <h2 className="text-base font-semibold">Recruiter accounts</h2>
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
         ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended",statusSummary.archived],["Disabled",statusSummary.disabled],
