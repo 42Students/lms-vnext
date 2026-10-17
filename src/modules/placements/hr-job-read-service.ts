@@ -3,8 +3,9 @@ import { and, desc, eq, exists, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, placementJobRounds,placementRoundResults,users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
+import {projectRecruiterProfileLinks} from "./recruiter-applicant-shared-links-model";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
@@ -35,6 +36,10 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const shareUg=Boolean(share?.columns?.includes("cgpa"));
   const shareTenth=Boolean(share?.columns?.includes("tenth"));
   const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
+  const shareSkills=Boolean(share?.columns?.includes("skillMatch"));
+  const shareProjects=Boolean(share?.columns?.includes("projects"));
+  const [linkPolicy]=shareProjects?await db.select({projects:placementCompanyVisibilitySettings.showProjectLinks})
+   .from(placementCompanyVisibilitySettings).where(eq(placementCompanyVisibilitySettings.collegeId,workspace.college.id)).limit(1):[];
   // REC-home-drives-45: milestone predicates evaluate only inside the same
   // college-scoped, TPO-shortlisted audience. Stage counts may overlap.
   const roundMilestone=(kinds:readonly string[],outcome:"PASS"|"FAIL")=>exists(
@@ -86,6 +91,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       id: placementApplications.id, membershipId:placementApplications.membershipId,
       name: users.displayName, email: users.email, phone:users.phoneE164,
       rollNumber: learnerProfiles.rollNumber,
+      profileDocument:learnerProfiles.profileDocument,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
       submittedAt: placementApplications.submittedAt,
@@ -246,9 +252,14 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   }
   const percentage=(points:number|undefined)=>
    points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
-  const projected = projectSharedApplicants(applications.map(({membershipId,...row})=>{
+  const projected = projectSharedApplicants(applications.map(({membershipId,profileDocument,...row})=>{
     const marks=byMember.get(membershipId);
+    const links=projectRecruiterProfileLinks(profileDocument,{
+      projects:shareProjects&&linkPolicy?.projects===true,skills:shareSkills,
+    });
     return {...row,
+      githubUrl:links.githubUrl,portfolioUrl:links.portfolioUrl,
+      sharedSkills:links.skills,sharedProjects:links.projects,
       rollNumber:shareRoll?row.rollNumber:null,
       email:shareEmail?row.email:null,
       phone:sharePhone?row.phone:null,
