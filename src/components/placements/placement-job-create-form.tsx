@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -285,6 +286,7 @@ export function PlacementJobCreateForm({
           throw new Error("Pick the company from the list before publishing.");
         if(companyMode==="NEW"&&String(data.get("companyName")??"").trim().length<2)
           throw new Error("Enter the company name before publishing.");
+
         const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
@@ -311,7 +313,7 @@ export function PlacementJobCreateForm({
       const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
       const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
-      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<Date.parse(deadlineIso)))
+      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
        throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();

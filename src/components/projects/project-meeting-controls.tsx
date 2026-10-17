@@ -9,6 +9,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError } from "@/modules/projects/mentor-meeting-form-model";
 
 type Meeting = {
   id: string;
@@ -103,7 +104,7 @@ function MeetingFields({
           <Input
             type="datetime-local"
             required
-            min={isRequest?minStart:undefined}
+            min={minStart}
             value={startsAt}
             onChange={(event) =>
               onStartsAt(event.target.value)
@@ -317,6 +318,7 @@ export function ScheduleProjectMeetingControl({
     useState("Asia/Kolkata");
   const [meetingUrl, setMeetingUrl] =
     useState(meeting?.meetingUrl ?? "");
+  const [scheduleMinStart, setScheduleMinStart] = useState("");
   const [meetingType, setMeetingType] =
     useState(meeting?.meetingType ?? "GENERAL");
   const [linkedSprintId, setLinkedSprintId] =
@@ -329,6 +331,7 @@ export function ScheduleProjectMeetingControl({
     useState<string | null>(null);
 
   function openDialog() {
+    setScheduleMinStart(toLocalInput(new Date(Date.now() + 60_000)));
     setTitle(meeting?.title ?? "");
     setAgenda(meeting?.agenda ?? "");
     setStartsAt(
@@ -364,15 +367,15 @@ export function ScheduleProjectMeetingControl({
     event.preventDefault();
     setError(null);
 
-    if (
-      !startsAt ||
-      !endsAt ||
-      new Date(endsAt).getTime() <=
-        new Date(startsAt).getTime()
-    ) {
-      setError(
-        "Meeting end time must be after the start time.",
-      );
+    const validationError = mentorMeetingScheduleError({
+      title,
+      startsAt,
+      endsAt,
+      meetingUrl,
+      nowMs: Date.now(),
+    });
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -417,7 +420,7 @@ export function ScheduleProjectMeetingControl({
         tone: "success",
         title: meeting
           ? "Meeting scheduled"
-          : "Meeting created",
+          : "Meeting added.",
       });
       router.refresh();
     } catch (caught) {
@@ -452,9 +455,10 @@ export function ScheduleProjectMeetingControl({
             ? "Schedule Project meeting"
             : "New Project meeting"
         }
-        description="Meeting links must use HTTPS. Sprint/task links are validated server-side against this Project."
+        description="Use an HTTP or HTTPS meeting link. Sprint and task links are checked against this Project."
       >
         <form
+          noValidate
           onSubmit={submit}
           className="grid gap-4"
         >
@@ -464,6 +468,7 @@ export function ScheduleProjectMeetingControl({
             startsAt={startsAt}
             endsAt={endsAt}
             timeZone={timeZone}
+            minStart={scheduleMinStart}
             onTitle={setTitle}
             onAgenda={setAgenda}
             onStartsAt={setStartsAt}
@@ -472,7 +477,7 @@ export function ScheduleProjectMeetingControl({
           />
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Meeting type
+              Ceremony
             </span>
             <Select
               value={meetingType}
@@ -493,9 +498,7 @@ export function ScheduleProjectMeetingControl({
                   key={value}
                   value={value}
                 >
-                  {value
-                    .toLowerCase()
-                    .replaceAll("_", " ")}
+                  {mentorMeetingCeremonyLabel(value)}
                 </option>
               ))}
             </Select>
@@ -509,7 +512,7 @@ export function ScheduleProjectMeetingControl({
               required
               value={meetingUrl}
               maxLength={2048}
-              placeholder="https://…"
+              placeholder="https://… or http://…"
               onChange={(event) =>
                 setMeetingUrl(
                   event.target.value,
@@ -595,14 +598,7 @@ export function ScheduleProjectMeetingControl({
             </Button>
             <Button
               type="submit"
-              disabled={
-                pending ||
-                !title.trim() ||
-                !startsAt ||
-                !endsAt ||
-                !timeZone.trim() ||
-                !meetingUrl.trim()
-              }
+              disabled={pending}
             >
               {pending
                 ? "Saving…"

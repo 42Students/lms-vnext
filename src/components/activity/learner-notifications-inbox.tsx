@@ -170,7 +170,7 @@ export function LearnerNotificationsInbox({
         College announcements have no personal read status.
         {" "}{learnerNotificationPreviewNotice(personal.length,60)}
         {" "}<Link href="/learn/notifications/history" className="font-semibold text-primary-text underline">
-          Browse older personal notifications
+          Browse personal history
         </Link>
       </p>
 

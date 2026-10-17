@@ -62,9 +62,9 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     } finally { await pool?.end(); await closeDatabaseConnection(); }
   });
   it("blocks active academic responsibility, then suspends and reactivates with immutable audit", async () => {
-    await expect(transitionCollegeFaculty(admin, id.member, {
-      action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "Term completed", confirm: true,
-    })).rejects.toMatchObject({ code: "FACULTY_HAS_ACTIVE_ASSIGNMENTS" });
+    // Legacy permits teaching responsibilities while blocking live mentorship.
+    const taught=await pool!.query("SELECT id FROM section_faculty_assignments WHERE id=$1",[id.advisor]);
+    expect(taught.rows).toHaveLength(1);
     await pool!.query("UPDATE section_faculty_assignments SET ended_at=now() WHERE id=$1", [id.advisor]);
     const suspended = await transitionCollegeFaculty(admin, id.member, {
       action: "DEACTIVATE", expectedStatus: "ACTIVE", reason: "Contract paused", confirm: true,
@@ -104,6 +104,15 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     }finally{
       await pool!.query("DELETE FROM membership_roles WHERE id=$1",[protectedRole]);
     }
+  });
+  it("COL-people-R01 permits teaching/advising faculty deactivation without mentor projects",async()=>{
+    const result=await transitionCollegeFaculty(admin,id.member,{
+      action:"DEACTIVATE",expectedStatus:"ACTIVE",reason:"End of term",confirm:true,
+    });
+    expect(result.status).toBe("SUSPENDED");
+    await transitionCollegeFaculty(admin,id.member,{
+      action:"REACTIVATE",expectedStatus:"SUSPENDED",confirm:true,
+    });
   });
   it("denies foreign college, non-admin and extra caller scope fields", async () => {
     // Another college's admin must not learn the faculty member exists.

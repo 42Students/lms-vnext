@@ -31,6 +31,10 @@ export async function listCollegeCompanyDirectory(
       name:placementCompanies.name,
       websiteUrl:placementCompanies.websiteUrl,
       primaryDomain:placementCompanies.primaryDomain,
+      verifiedAt:placementCompanies.verifiedAt,
+      companyStatus:placementCompanies.status,
+      relationshipStatus:placementCompanyRelationships.status,
+      industry:placementCompanies.industry,
       isTrusted:placementCompanyRelationships.isTrusted,
       ownerMembershipId:placementCompanyRelationships.ownerMembershipId,
     }).from(placementCompanyRelationships)
