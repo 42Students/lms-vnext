@@ -154,6 +154,13 @@ function auditSources(
               ' · Held offers: ',coalesce(ae.metadata->>'maxHeldOffers','not recorded'),
               ' · Uplift: ',coalesce(ae.metadata->>'upliftPct','not recorded'),
               '% · Response hours: ',coalesce(ae.metadata->>'minResponseHours','not recorded'))
+           when ae.event_type = 'placements.tpo_company_visibility.changed'
+             then concat(
+              'Exact CGPA: ',coalesce(ae.metadata->>'showCgpaExact','not recorded'),
+              ' · 10th/12th: ',coalesce(ae.metadata->>'showTenthTwelfth','not recorded'),
+              ' · Project links: ',coalesce(ae.metadata->>'showProjectLinks','not recorded'),
+              ' · Assessment scores: ',coalesce(ae.metadata->>'showAssessmentScores','not recorded'),
+              ' · Attendance: ',coalesce(ae.metadata->>'showAttendance','not recorded'))
            when ae.event_type = 'PLACEMENTS_SEASON_DETAILS_UPDATED'
              then concat('Season: ',coalesce(ae.metadata->'after'->>'name','unknown'),
               ' · Ends: ',coalesce(ae.metadata->'after'->>'endDate','unknown'))
