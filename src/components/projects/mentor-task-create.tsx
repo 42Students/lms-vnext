@@ -85,7 +85,7 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Task title
           <Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Approach (optional)
+        <label className="grid gap-1 text-sm font-semibold text-body">Description
           <Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Acceptance criteria
