@@ -74,6 +74,13 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
    confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled} onConfirm={()=>{void save();}}>
    <p className="text-sm text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
+   {students!==null?<p className="mt-2 text-sm font-semibold text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
+    <p role="alert" className="mt-2 text-sm text-warning-text">Student population could not be confirmed. The change will not be saved.</p>}
+   {students!==null&&students>=100?<label className="mt-3 flex items-start gap-2 text-sm text-body">
+     <input type="checkbox" checked={acknowledgedPopulation}
+      onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
+     I understand this may change access for {students.toLocaleString("en-IN")} active learners.
+   </label>:null}
    {impact?<p role="status" className="mt-2 text-sm text-body">{impact}</p>:null}
   </ConfirmDialog>
  </div>;
