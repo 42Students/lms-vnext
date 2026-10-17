@@ -1,6 +1,8 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligibility-preview-csv-model";
 import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-sheet-model";
@@ -33,13 +35,13 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   if(busy)return;setBusy(true);setError("");setNotice("");setPreview(null);setSkippedByUser([]);
   try{
    const rows=parseTpoEligibilitySheetCsv(csv);
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-preview",{
+   const value=await apiFetch<Preview>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/import-preview",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows}),
    });
-   const value=await response.json().catch(()=>null) as Preview|null;
-   if(!response.ok||!value)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not prepare your import. Please check the file and try again.");
    setPreview(value);setPreviewPage(1);
-  }catch(e){setError(e instanceof Error?e.message:"Preview unavailable.");}finally{setBusy(false);}
+  }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
+    "This changed while you were working. Your import is still here; preview it again.":
+    e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
  }
  async function copyPreview(){
   if(!preview||busy)return;
@@ -59,12 +61,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   try{
    const versions=Object.fromEntries(selected.filter(({row})=>row.membershipId&&row.expectedVersion)
     .map(({row})=>[row.membershipId!,row.expectedVersion!]));
-   const response=await fetch("/api/placements/tpo/batches/"+batchId+"/import-commit",{
+   const data=await apiFetch<{changedCount?:number;skipped?:number;actionId?:string|null}>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/import-commit",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({rows:selections.map(item=>preview.rows[item.index]),expectedVersions:versions,previewMemberIds:selections.map(item=>item.row.membershipId),confirmed:true}),
    });
-   const data=await response.json().catch(()=>null) as {changedCount?:number;skipped?:number;actionId?:string|null}|null;
-   if(!response.ok||!data)throw Error(response.status===409?"This changed while you were working. Your import is still here; preview it again.":"We could not save the import. Your file and choices are kept; please try again.");
    setLastActionId(data.actionId??null);
    setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped.");
    setPreview(null);router.refresh();
