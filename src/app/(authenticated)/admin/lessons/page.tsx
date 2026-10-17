@@ -2,6 +2,8 @@ import Link from "next/link";
 import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
 import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
+import {LessonActions} from "@/components/courses/admin-learning-structure-actions";
+import {CollegeLessonReorderActions} from "@/components/courses/college-lesson-reorder-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -58,9 +60,14 @@ export default async function SuperAdminLessonsPage({
         <p className="mt-1 text-xs text-muted-foreground">{lesson.cohortName} · {lesson.periodName} · Order {lesson.sequence + 1}</p>
         <p className="mt-3 text-sm text-body">Learning path: {lesson.pathStatus} · Offering: {lesson.offeringStatus}</p>
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
+        {lesson.status==="ACTIVE"?<div className="mt-3 flex flex-wrap items-center gap-3">
+          <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
+          <CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
+            expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
+        </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
           className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
-          Open offering →
+          Open offering to add lessons, content, assignments or quizzes →
         </Link>
       </article>)}
     </div> : <EmptyState title="No lessons found" description="The current college and filters have no recorded lessons." />}
