@@ -196,6 +196,7 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
   status:courseAssignments.status,
   dueAt:courseAssignments.dueAt,
   maxPoints:courseAssignments.maxPoints,
+  updatedAt:courseAssignments.updatedAt,
  }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
  if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
  return row;
