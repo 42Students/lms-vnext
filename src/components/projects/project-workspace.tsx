@@ -623,8 +623,12 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              Project people
+              {mode==="LEARNER"?"Project team":"Project people"}
             </h2>
+            {mode==="LEARNER"?<p className="mt-1 text-sm text-body">
+              See who is assigned, what role they play, and how the project is staffed.
+              {" "}{workspace.members.length} member(s)
+            </p>:null}
           </div>
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
@@ -702,16 +706,15 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Execution
+            {mode==="LEARNER"?"Releases and Sprints":"Execution"}
           </h2>
           {mentorReviewHref ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
             Review submission
           </Link> : null}
-          <p className="mt-1 text-sm text-body">
-            Release → sprint → task state from normalized
-            Project records.
-          </p>
+          {mode!=="LEARNER"?<p className="mt-1 text-sm text-body">
+            Release and sprint execution records.
+          </p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
         <div className="space-y-4">
@@ -1455,7 +1458,7 @@ export function ProjectWorkspace({
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                No meetings yet.
+                {mode==="LEARNER"?"No upcoming meetings or recent meeting history.":"No meetings yet."}
               </div>
             ) : (
               workspace.meetings.map((meeting) => {
