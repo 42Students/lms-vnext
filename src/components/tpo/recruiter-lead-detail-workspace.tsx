@@ -61,8 +61,20 @@ const SOURCES = [
   ["REFERRAL", "Referral"], ["LINKEDIN", "LinkedIn"],
   ["JOB_PORTAL", "Job portal"], ["EVENT", "Event or job fair"],
   ["COLD_OUTREACH", "Cold outreach"], ["COMPANY_REACHED_OUT", "Company reached out"],
+  ["IMPORT", "Import"],
 ] as const;
 const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
+/** Keep keyboard focus within the open recruiter dialog. */
+function keepRecruiterDialogFocus(event:React.KeyboardEvent<HTMLFormElement>){
+ if(event.key!=="Tab")return;
+ const controls=Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
+  'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]'));
+ const first=controls[0],last=controls[controls.length-1];
+ if(!first||!last)return;
+ if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+ else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+}
+
 function activityDayIst(value:string){
  const time=new Date(value);
  return Number.isNaN(time.getTime())?"Date unavailable":
@@ -72,10 +84,10 @@ function activityDayIst(value:string){
 
 function messageFor(status: number, error?: string) {
   if (status === 503 && error === "DB09_MIGRATIONS_PENDING") {
-    return "Recruiter CRM remains unavailable until DB09 migrations and database checks pass.";
+    return "Recruiter details are temporarily unavailable. Please try again.";
   }
-  if (status === 409) return "Another lead already has that contact, or this action conflicts with its current state.";
-  if (status === 422) return "At least one valid contact is required.";
+  if (status === 409) return "Another recruiter already has those contact details. Open that lead or refresh before retrying.";
+  if (status === 422) return "Enter a valid email or phone number and review your contact details.";
   if (status === 404) return "The recruiter lead was not found in this college.";
   if (status === 403) return "You do not have permission for this college.";
   return "Could not complete the request. Try again.";

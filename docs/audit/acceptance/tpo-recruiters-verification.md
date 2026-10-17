@@ -14,3 +14,7 @@
 | TPO-recruiters-41 | DONE (source, tests not run) | `tpo-bulk-lead-stage-model.ts` accepts confirmed NEW and keeps derived recruiter stages separate. `tpo-bulk-lead-stage-service.ts` clears Not Now fields, records row audit and retains existing five-minute undo. UI exposes Restore to New. Named `tests/unit/chat2-tpo-recruiter-bulk-new.test.ts`. |
 
 | TPO-recruiters-42 | DONE (source, not run) | Last successful leads and companies snapshots survive errors, with separate Retry warnings. Named `tests/unit/chat2-tpo-recruiter-stale-refresh.test.ts`. |
+
+| TPO-recruiters-24 | DONE (source, not run) | Allowed source labels include imported leads and Zod rejects invalid source with meaningful choices, named `tests/unit/chat2-tpo-lead-modal-source.test.ts`. |
+| TPO-recruiters-30 | PARTIAL — OPEN | Edit modal uses field-specific friendly conflict/validation messages and legacy labels; duplicate peer link pending. Named test. |
+| TPO-recruiters-36 | PARTIAL — OPEN | Edit and Not now dialogs now trap Tab and close on Escape without unguarded action; board mobile actions/layout still pending. Named test. |
