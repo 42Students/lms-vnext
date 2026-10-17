@@ -1,4 +1,9 @@
 import { z } from "zod";
+/** TPO-drives-04: explicit All view remains possible; first visit prioritizes review. */
+export function defaultTpoDriveView(pending:number,explicit?:"ALL"|"REQUESTS"|"DRAFT"|"LIVE"|"CLOSED"){
+ return explicit??(pending>0?"REQUESTS":"LIVE");
+}
+
 export const tpoDriveLifecycleQuerySchema = z.object({
   seasonId: z.string().uuid().optional(),
   companyId:z.string().uuid().optional(),
