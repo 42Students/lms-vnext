@@ -29,6 +29,17 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
   expect(source("src/app/(authenticated)/tpo/home/page.tsx")).toContain("profileRows[0]?.displayName");
  });
+ it("TPO-home-R06 avoids invented fallback copy or fabricated null counts",()=>{
+  const unknown=rows({batch:{name:"Batch",eligible:null,registered:null,placed:null,invited:false}});
+  expect(unknown[0].status).toBe("Batch");
+  expect(unknown[2].status).toBe("");
+  expect(unknown[3].status).toBe("");
+  expect(unknown[4].status).toBe("");
+  expect(unknown[5].status).toBe("");
+  const known=rows({recruiterLeads:3,followUps:2,recruiterAccess:1});
+  expect(known[3].status).toBe("3 recruiters · 2 follow-ups today · 1 new account to approve");
+  for(const row of unknown)expect(row.status).not.toMatch(/Open student roster|Open recruiter relationships|Follow-ups unavailable|Open requests and messages|Open team|Registration summary unavailable/);
+ });
  it("TPO-home-04 uses distinct persisted eligible, registered and placed batch totals",()=>{
   const first=rows({batch:{name:"Batch 2027",eligible:120,registered:85,placed:24,invited:true},
     moreBatches:2})[0];

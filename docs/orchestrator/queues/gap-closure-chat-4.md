@@ -88,7 +88,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-41 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-home-R04 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-home-R05 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-R06 | S3 | COPY | OPEN |
+| TPO-home-R06 | S3 | COPY | DONE |
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | TPO-home-22 | S4 | STATE | OPEN |
