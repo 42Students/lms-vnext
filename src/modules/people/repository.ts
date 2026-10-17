@@ -28,6 +28,7 @@ import {
 } from "./membership-domain";
 import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
+import {assertMutableMembershipTarget} from "./membership-protection";
 import type {
   CollegePeoplePage,
   OnboardedPerson,
@@ -601,6 +602,9 @@ export const drizzlePeopleRepository:
         (row) => row.role,
       );
 
+      assertMutableMembershipTarget(mutation.context,
+        {userId:parent.userId,roles:currentRoles},"ROLE_ADD",role);
+
       if (currentRoles.includes(role)) {
         return currentRoles;
       }
@@ -714,6 +718,8 @@ export const drizzlePeopleRepository:
         .for("update");
 
       const currentRoles = currentRows.map((row) => row.role);
+      assertMutableMembershipTarget(mutation.context,
+        {userId:parent.userId,roles:currentRoles},"ROLE_REMOVE",role);
       const nextRoles = removeMembershipRoleFromSet(
         currentRoles,
         role,
@@ -795,6 +801,12 @@ export const drizzlePeopleRepository:
         throw new PeopleServiceError("MEMBERSHIP_NOT_FOUND");
       }
 
+      const lockedRoles=await tx.select({role:membershipRoles.role})
+        .from(membershipRoles).where(eq(membershipRoles.membershipId,membershipId))
+        .for("share");
+      assertMutableMembershipTarget(mutation.context,{
+        userId:mutation.person.user.id,roles:lockedRoles.map(row=>row.role),
+      },input.action);
       const patch = getMembershipLifecyclePatch(
         current,
         input,
