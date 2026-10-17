@@ -4,6 +4,7 @@ import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
 import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
+import {readTpoTeamOwnershipWorkload} from "@/modules/placements/tpo-team-ownership-workload-service";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
 import Link from "next/link";
@@ -49,9 +50,16 @@ export default async function TpoTeamPage({searchParams}:{
  const workload=tab==="people"?await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]})):null;
  const unowned=tab==="people"?await readTpoUnownedWork(context).catch(()=>({ready:false as const,drives:0,companies:0})):null;
  const workloadByMember=new Map((workload?.items??[]).map(row=>[row.membershipId,row] as const));
+ const ownerWorkload=tab==="people"?await readTpoTeamOwnershipWorkload(context).catch(()=>({ready:false as const,drivesReady:false,asksReady:false,items:[]})):null;
+ const ownerByMember=new Map((ownerWorkload?.items??[]).map(row=>[row.membershipId,row] as const));
  const people=sortTpoPeople(activeTeam.map(member=>({
   ...member,openAsks:workloadByMember.get(member.membershipId)?.openAsks??0,
   overdueAsks:workloadByMember.get(member.membershipId)?.overdueAsks??0,
+  liveDrives:ownerByMember.get(member.membershipId)?.liveDrives??0,
+  draftDrives:ownerByMember.get(member.membershipId)?.draftDrives??0,
+  companies:ownerByMember.get(member.membershipId)?.companies??0,
+  overdueFollowups:ownerByMember.get(member.membershipId)?.overdueFollowups??0,
+  waitingOnOthers:ownerByMember.get(member.membershipId)?.waitingOnOthers??0,
  })),peopleSort);
  const awayState=tab==="people"?await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]})):null;
  const awayByMember=new Map<string,Date>((awayState?.items??[]).map(row=>[row.membershipId,row.awayUntil] as const));
@@ -104,6 +112,13 @@ export default async function TpoTeamPage({searchParams}:{
        {workload?.ready?<p className="mt-2 text-xs text-muted-foreground">
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
        </p>:null}
+       {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
+        {([["Live drives",member.liveDrives],["Draft drives",member.draftDrives],
+          ["Companies",member.companies],["Overdue follow-ups",member.overdueFollowups],
+          ["Waiting on teammates",member.waitingOnOthers]] as const).map(([label,count])=><div key={label}>
+         <dt className="text-muted-foreground">{label}</dt><dd className="font-semibold">{label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":count}</dd>
+        </div>)}
+       </dl>:null}
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
        </p>:null}
