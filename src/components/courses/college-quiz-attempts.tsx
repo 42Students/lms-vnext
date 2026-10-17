@@ -14,6 +14,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const [opened,setOpened]=useState(false),[loading,setLoading]=useState(false);
  const [attempts,setAttempts]=useState<Attempt[]>([]),[error,setError]=useState("");
  const [learnerSearch,setLearnerSearch]=useState("");
+ const [page,setPage]=useState(1),[hasMore,setHasMore]=useState(false);
  const chosen=options.find(x=>x.deliveryId===deliveryId)??options[0];
  async function open(){
   if(!chosen||loading)return;
