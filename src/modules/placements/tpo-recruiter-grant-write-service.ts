@@ -117,6 +117,28 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       isRecruiterGrantStale(record.grant.updatedAt, input.expectedUpdatedAt)) {
       throw new TpoRecruiterGrantConflict();
     }
+    if(input.action==="EXTEND"){
+      const now=new Date();
+      const candidate=recruiterGrantValidUntil(now,input.months);
+      const validUntil=record.grant.validUntil&&record.grant.validUntil>candidate
+        ?record.grant.validUntil:candidate;
+      const [extended]=await tx.update(placementRecruiterCollegeGrants).set({
+        validUntil,updatedAt:now,
+      }).where(and(eq(placementRecruiterCollegeGrants.id,input.grantId),
+        eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+        eq(placementRecruiterCollegeGrants.updatedAt,record.grant.updatedAt))).returning();
+      if(!extended)throw new TpoRecruiterGrantConflict();
+      await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId,actorUserId,actorMembershipId,
+        module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_ACCESS_EXTENDED",
+        subjectType:"placement_recruiter_college_grant",subjectId:extended.id,
+        subjectLabel:"Recruiter access grant",summary:"TPO extended recruiter access",
+        metadata:{companyRelationshipId:extended.companyRelationshipId,
+          recruiterUserId:extended.recruiterUserId,months:input.months,
+          validUntil:validUntil.toISOString()},
+      });
+      return {outcome:"extended" as const,grantId:extended.id,validUntil:validUntil.toISOString()};
+    }
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({
       status: "REVOKED", revokedByUserId: actorUserId,
