@@ -3,6 +3,7 @@ import {
   LearnerCourseList,
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
+import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
 import { learnerCourseInstructorLabels } from "@/modules/courses/learner-course-instructor-labels-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
@@ -24,8 +25,8 @@ export default async function LearnerCoursesPage() {
   // Each delivery fails independently; one corrupt or temporarily unavailable
   // course must never hide the learner's remaining course cards.
   const seenDeliveries = new Set<string>();
-  const rows: LearnerCourseListRow[] = await Promise.all(
-    courses.map(async (course, index) => {
+  const rows: LearnerCourseListRow[] = await mapLearnerCourseCardsLimited(
+    courses, async (course, index) => {
       const duplicate = seenDeliveries.has(course.deliveryId);
       seenDeliveries.add(course.deliveryId);
       const baseCourse = {
@@ -106,7 +107,7 @@ export default async function LearnerCoursesPage() {
         // Never show internal access, database or content-fetch errors to learners.
         return unavailable("Course temporarily unavailable");
       }
-    }),
+    }, 4,
   );
 
   return (
