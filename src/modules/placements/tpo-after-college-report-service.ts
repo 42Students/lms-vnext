@@ -28,5 +28,6 @@ export async function getTpoAfterCollegeReport(ctx:RequestContext,input:{
  }));
  const counts=Object.fromEntries(AFTER_COLLEGE_OUTCOMES.map(key=>[key,
   result.filter(row=>row.outcome===key).length])) as Record<keyof typeof AFTER_COLLEGE_LABELS,number>;
- return {available:ready,rows:result,counts,total:result.length};
+ return {available:ready,rows:result,counts,total:result.length,
+  branches:data.branches.map(branch=>({id:branch.branchId,name:branch.branchName}))};
 }
