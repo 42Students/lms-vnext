@@ -197,3 +197,8 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - Registered migration `drizzle/0133_lanes_round_1.sql` was checked directly for SA-placements-projects-24/26/27/28. A migration file in source is not proof that a production database has applied it.
 - Original typecheck report is stale for this slice: `src/db/schema/placements.ts` currently imports `foreignKey`. Three reported failing chat13 unit-test contract expectations for SA-placements-projects-14/21/36 are present in current code. `tests/unit/chat13-ci-r1-repair-guards.test.ts` protects these source contracts. No fresh typecheck, unit or database tests were executed by this lane.
 - No page visual restyling was performed while UX playbook approval is pending.
+
+
+### CI unit-failure reconciliation added this round
+- Six previously failing Super Admin/directory assertions updated to match currently implemented behavior, without removing safety checks: `super-admin-dashboard-navigation.test.ts` (global Recruiter accounts fourth link and unique hrefs); `super-admin-videos-directory.test.ts` (source label “YouTube Video”); `super-admin-tracker-active-route-guards.test.ts` (distinct independent-audit readiness and service authorization); `super-admin-tracker-detail-url-denial.test.ts` (independent vs reported issue ID validation); `audit-findings-detail-link.test.ts` (independent finding and event editor); `audit-finding-version-refresh.test.ts` (detail CAS version and acknowledged refresh). 
+- The old `unit-failures-r1.md` predates the independent findings split and the Super Admin global navigation addition; these are test repairs, not a claimed fresh CI pass. No chat-16-owned Tracker page was modified and no UX restyling was done.
