@@ -3,6 +3,7 @@ import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
+import {TpoNoticeScheduleControls} from "@/components/tpo/tpo-notice-schedule-controls";
 import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -88,18 +89,13 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-1 text-sm font-semibold">Message
      <textarea name="message" required maxLength={10000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
-    <label className="grid gap-1 text-sm">Send at (IST, optional)
-      <input type="datetime-local" name="sendAt" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
-    </label>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
-    <button type="submit" disabled={!query.success||!audience||audience.potentiallyVisibleMemberships===0||!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)}
-      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-      {audience?"Send to "+audience.potentiallyVisibleMemberships+" members":
-       query.success&&query.data.audience!=="COLLEGE"?"Publish to selected audience":"Publish college notice"}
-    </button>
+    <TpoNoticeScheduleControls count={audience?.potentiallyVisibleMemberships??null}
+      enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
+       canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
    </form>
   </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
