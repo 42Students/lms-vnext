@@ -583,3 +583,46 @@ For FO3 on a purely read-only directory, for example, earn the three points only
 
 The repository `scripts/check-ux-anti-drift.mjs` and `npm run ux:guard` are normative for changed shared UI and audited critical routes. Forbidden native confirm/popup and 40px interaction classes must be resolved or enter an explicit expiring waiver recorded in `docs/design-system/UX-GUARD-WAIVERS.md`. Every page PR must attach `320/360/390/768/1280` screenshots, state/permissions fixtures, en-IN/IST and legacy-copy diff, and confirm the per-page §16 ledger. Raw screenshot baselines require an actual Playwright/browser runner and manual approval; **no screenshot hash is invented by documentation**. Golden fixtures are stored at `tests/fixtures/ux-reference-states.json`, with role scope and never real student data. The approval owner is the UX orchestrator after audits 1, 2 and 3.
 
+## 18. Audit 1 finding-to-rule crosswalk (all 33 findings; no page rollout)
+
+**Authoritative source:** [UX-AUDIT-1.md](audits/UX-AUDIT-1.md). This is the copy/paste rule index for the 4 BLOCKER, 20 MAJOR and 9 MINOR findings. Consult the linked sections for actual token, class, component and state details and the [changelog](UX-PLAYBOOK-CHANGELOG.md) for source files. **Documenting or committing a repair is not a browser-verified closure.** E-01, E-03, E-04 and F-03 still need independently observed reference-route, build, compatibility and screenshot evidence; device-dependent acceptance for other rows remains unverified. Audit 2 and Audit 3 must not be marked PASS from source review alone.
+
+| Audit 1 finding | Canonical playbook rule | Required fix / rule to copy |
+|---|---|---|
+| A-01 | §12 | Replace redirect aliases with actual leaf routes; label aliases noncopyable |
+| A-02 | §§15.1–15.3 | Set per-column/action priorities, permission variants and 320/360/390 wireframes for TPO students, HR job and placement calendar |
+| A-03 | §§5, 5.1, 15.6 | Require typed component APIs, all states, invalid/disabled semantics and call-site accessibility obligations |
+| A-04 | §§3, 6, 7, 15.4–15.5 | Pin shell breakpoint, keyboard/Back host contract, privacy-safe autosave and guarded-form implementation |
+| A-05 | §§8, 11, 15.7 | Specify all eight states for every archetype with role routes, authorization and noninvented copy |
+| B-01 | §§2, 17 | Map foreground-on-primary to dark ink on canonical teal, test both themes and block contrast-regressing class pairs |
+| B-02 | §§5–6, 15.1, 15.6 | Account for every hidden mobile field via reason/detail access; keep row actions exposed and heading text-only |
+| B-03 | §§5, 15.6 | Make disabled route tabs inert; make tabs lacking change handler read-only; preserve keyboard flow |
+| B-04 | §§4, 6.2, 15.6 | Expose always-visible mobile Search alongside Filters sheet and retain one stable form tree |
+| B-05 | §2 | Use AA-compliant link semantic token for body-sized links; reserve legacy lighter teal for qualifying large text |
+| B-06 | §2 | Use independent ink-on-primary token in the tracker dark scope; test contrast under theme attribute |
+| B-07 | §§3, 15.4 | Use consistent lg (1024px) sidebar activation with 256px reserved content gutter |
+| C-01 | §§6.11, 7, 15.4 | Replace quiz native confirms/history exit with pending-safe ConfirmDialog and known learner return destination |
+| C-02 | §§6.1, 15.1 | Use mobile roster and branch aggregate cards, with essential status/action visible at 320/360/390 |
+| C-03 | §§6.11, 17 | Forbid popup-only destinations; same-tab validated link or native intent with selectable URL fallback |
+| C-04 | §§6.2, 15.4 | Keep unsent filter state and focus stable through SSR hydration, resize and rotation |
+| C-05 | §§6.11, 15.4 | Dismiss topmost overlay before route Back; guard pending states and return focus to opener |
+| C-06 | §§3, 6.3–6.4, 15.4 | Constrain overlays to visual viewport, safe areas and keyboard-accessible action scroll |
+| C-07 | §§6.5, 17 | Require 44px phone action bounds with at least 8px separation; guard against min-h-10 regressions |
+| C-08 | §§5, 6.11, 15.6 | Validate MIME/extension and size, clear parent file state on reject, expose chooser fallback and server checks |
+| C-09 | §§6.10, 8 | Use min-h-dvh quiz loading skeleton with bounded 12-second retry without losing draft |
+| D-01 | §§3, 9, 15.4 | Offer skip-to-main before shell navigation and restore named focus through route/modal changes |
+| D-02 | §§5.1, 7, 15.5 | Use FormField-owned label/helper/error IDs; announce invalid states and focus first invalid |
+| D-03 | §§5.1, 9 | Use one live-region status text for skeleton, avoiding duplicate label announcement |
+| D-04 | §§9, 15.6 | Announce route/pagination transitions and focus the result heading or main appropriately |
+| E-01 | §§12, 14, 15.7, 17 | Treat four reference routes as conditional patterns until each has eight-state device/keyboard evidence |
+| E-02 | §§8, 15.7 | Isolate optional TPO reads, show unavailable as dash rather than zero and allow per-section recovery |
+| E-03 | §§14, 16.1, 17 | Require linked typecheck, lint, unit, browser, WebView and screen-reader results; never claim unrun evidence |
+| E-04 | §§5, 15.6, 17 | Keep original prop contracts; verify 30 affected call sites and note deliberate visual changes |
+| E-05 | §§5–6, 16.1 | Avoid duplicate formatter calls in responsive tables; enforce pagination or virtualize beyond 100 rows |
+| F-01 | §§14, 16–16.1 | Score 100 atomic observable checks with explicit no-evidence zero and benchmark scorecards |
+| F-02 | §§13, 17 | Run AST guard and review matrix for native prompts, new windows, tiny targets and bad colour pairs |
+| F-03 | §§14, 17 | Use sanitized fixtures and real approved viewport screenshot hashes; no invented golden evidence |
+
+### 18.1. Hard stop before rollout
+
+For each finding, auditor must attach source commit, the matching §18 rule, a passing targeted unit/integration or device observation when relevant, and a deterministic outcome in the review ledger. Execute `npm run ux:guard`, full typecheck/lint/Vitest, 320/360/390/768/1280 viewport capture, keyboard/AT and Android/iOS WebView verification on the **same revision**. Use authenticated disposable test tenants only. When fixtures or devices are unavailable, mark the result **OPEN — evidence unavailable**, not PASS. Do not build or restyle additional pages as part of this documentation-only stabilization pass.
