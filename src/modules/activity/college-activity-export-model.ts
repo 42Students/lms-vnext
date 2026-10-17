@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
+import {collegeActivityItem} from "./college-activity-presentation";
 
 export const COLLEGE_ACTIVITY_EXPORT_CAP = 1000;
 export const collegeActivityExportQuerySchema = z.object({
@@ -32,23 +33,28 @@ export function buildCollegeActivityCsv(
   rows: readonly ActivityExportRow[],
   truncated: boolean,
 ): string {
-  const columns = [
-    "Occurred At (UTC)", "Module", "Importance", "Event Type",
-    "Subject Type", "Subject ID", "Subject Label", "Summary", "Actor Name", "Actor Email",
-  ];
-  const lines = [columns.map(escapeActivityCsvCell).join(",")];
-  for (const row of rows) {
+  // Legacy read-only feed columns. Never synthesize or disclose client IP data.
+  const columns=["Time","Who","What","Item","Action key","IP"];
+  const timestamp=new Intl.DateTimeFormat("en-IN",{
+    dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+  });
+  const lines=[columns.map(escapeActivityCsvCell).join(",")];
+  for(const row of rows){
     lines.push([
-      row.occurredAt.toISOString(), row.module, row.importance, row.eventType,
-      row.subjectType, row.subjectId, row.subjectLabel ?? "",
-      row.summary, row.actorName ?? "", row.actorEmail ?? "",
+      timestamp.format(row.occurredAt)+" IST",
+      row.actorName?.trim()||row.actorEmail?.trim()||"System",
+      row.summary,
+      collegeActivityItem(row),
+      row.eventType,
+      "",
     ].map(escapeActivityCsvCell).join(","));
   }
-  if (truncated) {
+  if(truncated){
     lines.push([
-      "EXPORT TRUNCATED", "", "", "", "", "", "",
+      "EXPORT TRUNCATED",
+      "",
       `Only the latest ${COLLEGE_ACTIVITY_EXPORT_CAP} matching events were exported. Narrow the filters for older activity.`,
-      "", "",
+      "","","",
     ].map(escapeActivityCsvCell).join(","));
   }
   return "\ufeff" + lines.join("\r\n");
