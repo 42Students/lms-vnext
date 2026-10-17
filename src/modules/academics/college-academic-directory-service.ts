@@ -149,13 +149,15 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     status: aliasedColumn(cohorts.status, "batch_status"),
     updatedAt: aliasedColumn(cohorts.updatedAt, "batch_updated_at"),
     expectedEndPeriodId: aliasedColumn(cohorts.expectedEndPeriodId, "batch_expected_end_period_id"),
+    academicYear:aliasedColumn(cohorts.academicYear,"batch_academic_year"),
+    legacyStartDate:aliasedColumn(cohorts.startDate,"batch_legacy_start_date"),
+    legacyEndDate:aliasedColumn(cohorts.endDate,"batch_legacy_end_date"),
+    inactiveAt:aliasedColumn(cohorts.inactiveAt,"batch_inactive_at"),
     programId: aliasedColumn(programs.id, "batch_program_id"),
     programName: aliasedColumn(programs.name, "batch_program_name"),
     programCode: aliasedColumn(programs.code, "batch_program_code"),
     startPeriodName: aliasedColumn(academicPeriods.name, "batch_start_period_name"),
     startDate: sql<string>`coalesce(${cohorts.startDate},${academicPeriods.startDate})`.as("batch_start_date"),
-    academicYear:aliasedColumn(cohorts.academicYear,"batch_legacy_academic_year"),
-    inactiveAt:aliasedColumn(cohorts.inactiveAt,"batch_inactive_at"),
     endDate: sql<string | null>`coalesce(${cohorts.endDate},(select ap.end_date from academic_periods ap where ap.id = ${cohorts.expectedEndPeriodId}))`.as("batch_end_date"),
 
     startPeriodId: aliasedColumn(academicPeriods.id, "batch_start_period_id"),
@@ -232,6 +234,8 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     ...item,
     activeSections: sectionsMap.get(item.id) ?? 0,
     activeEnrolledLearners: learnersMap.get(item.id) ?? 0,
+    startDate:item.legacyStartDate??item.startDate,
+    endDate:item.legacyEndDate??item.endDate,
   }));
   const total = totalRows[0]?.total ?? 0;
   return {

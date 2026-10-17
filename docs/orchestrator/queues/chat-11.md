@@ -162,3 +162,14 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - **BLOCKED** `SA-placements-projects-113/109/114` live cloud logging requires GCP IAM/production configuration.
 - **BLOCKED** `SA-placements-projects-120` findings importer requires GitHub credentials.
 - WPs 02/03/06 remain IN-PROGRESS. WP-01 previously DONE for nonblocked source items. WPs 04/05/07/08 are not complete. No unverified WP declared DONE.
+
+## [chat-11] FAST v2 continuation — mentor Board and project notifications (2026-10-17)
+
+- Branch-only continuation: fast-forwarded `chatgpt/chat-11-b` from `47f22e9` to merged main `2dba274` (branch was ancestor), then pushed each small file group exclusively to `chatgpt/chat-11-b`. No main push or PR.
+- `MEN-projects-meetings-40`: corrected non-functional priority / assignee / lane filters, added Backlog filter and clickable lane chips, current sprint + backlog versus all-history scope persisted in URL, active filter count, empty-state distinctions, total/matching counts, and 150-row incremental reveal.
+- `MEN-projects-meetings-42`: mentor task modal now renders created/last-edited timestamps, event-backed creator/editor attribution when available, and per-submission author; consecutive task comments receive a refreshed optimistic update token.
+- `MEN-projects-meetings-47`: Blocked transitions request "What's blocking this task?" when no blocker note exists; API validates, atomically saves blocker reason and status under optimistic locking. Both Board and sprint task status controls use it.
+- `LEARNER-projects-R01`: restored projects now notify current learner/mentor members; College/Super Admin project Summary changes notify active learner/mentor team members via the existing tenant-scoped transactional notification service.
+- BLOCKED `MEN-projects-meetings-31` external calendar sync: no configured calendar provider credentials; existing in-app notices remain.
+- `MEN-projects-meetings-42/43` comment types and type filter remain OPEN until comment-kind storage design and migration are implemented; no synthetic type labels were shown.
+- `WP-chat-11-02` remains IN-PROGRESS: unresolved comment-kind parity and other unverified project notifications; do not certify all 22 gap IDs from this source-only round. No tests/typecheck/lint/build/CI waiting were performed under FAST v2.

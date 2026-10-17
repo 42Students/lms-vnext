@@ -21,7 +21,10 @@ export const tpoLeadCsvRowSchema = z.object({
   ]),
   phone: z.union([
     z.literal(""),
-    z.string().trim().min(7).max(30).regex(/^\+?[0-9() .-]+$/),
+    z.string().trim().max(30).regex(/^\+?[0-9() .-]+$/).refine(value => {
+      const digits = normalizeTpoLeadImportPhone(value);
+      return digits !== null && digits.length >= 8 && digits.length <= 10;
+    }, "Enter a phone number"),
   ]),
   companyName: z.string().trim().max(150),
   designation: z.string().trim().max(100),
@@ -132,7 +135,9 @@ export function previewTpoLeadCsv(csv: string) {
    phone:"phone",mobile:"phone",company:"companyName",companyName:"companyName",
    designation:"designation",title:"designation",source:"source",foundThrough:"source",
   };
-  const normalized=header?.map(value=>headerAliases[value]??"");
+  const normalized=header?.map(value=>Object.entries(headerAliases).find(
+    ([alias])=>alias.toLowerCase()===value.toLowerCase(),
+  )?.[1]??"");
   if(!header||!normalized||TPO_LEAD_CSV_HEADERS.some(expected=>
    normalized.filter(actual=>actual===expected).length!==1)){
     throw new Error("CSV_HEADER_MISMATCH");
@@ -140,6 +145,8 @@ export function previewTpoLeadCsv(csv: string) {
   const column=(cells:string[],key:(typeof TPO_LEAD_CSV_HEADERS)[number])=>
    cells[normalized.indexOf(key)]??"";
   if (records.length <= 1) throw new Error("CSV_EMPTY");
+  const seenEmails = new Set<string>();
+  const seenPhones = new Set<string>();
   const rows: TpoLeadCsvPreviewRow[] = records.slice(1).map((cells, index) => {
     const row = index + 2;
     const name = column(cells,"name").trim();
@@ -161,6 +168,14 @@ export function previewTpoLeadCsv(csv: string) {
         error: parsed.error.issues.map(issue => issue.message).join("; ").slice(0, 300),
       };
     }
+    const normalizedEmail = parsed.data.email.trim().toLowerCase();
+    const normalizedPhone = normalizeTpoLeadImportPhone(parsed.data.phone);
+    if ((normalizedEmail && seenEmails.has(normalizedEmail)) ||
+        (normalizedPhone && seenPhones.has(normalizedPhone))) {
+      return { row, name: parsed.data.name, lead: null, error: "Contact repeats an earlier valid row in this CSV" };
+    }
+    if (normalizedEmail) seenEmails.add(normalizedEmail);
+    if (normalizedPhone) seenPhones.add(normalizedPhone);
     return { row, name: parsed.data.name, lead: parsed.data, error: null };
   });
   return {

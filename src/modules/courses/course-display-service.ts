@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { courseDisplayContents } from "@/db/schema/course-display-staged";
 import type { RequestContext } from "@/modules/identity/context";
@@ -66,6 +66,18 @@ export async function loadCourseDisplayContentIfReady(
     )
     .limit(1);
   return row ? toView(row) : null;
+}
+
+/** Internal bulk lookup for pages that have already authorized every course ID.
+ * This must not be exposed through an unscoped HTTP endpoint. */
+export async function loadAuthorizedCourseDisplayContentsIfReady(
+ courseIds:readonly string[],
+):Promise<Map<string,CourseDisplayContentView>>{
+ if(!courseDisplayRuntimeEnabled()||courseIds.length===0)return new Map();
+ const ids=[...new Set(courseIds)].slice(0,200).map(id=>courseIdSchema.parse(id));
+ const rows=await getDb().select().from(courseDisplayContents)
+   .where(inArray(courseDisplayContents.courseId,ids));
+ return new Map(rows.map(row=>[row.courseId,toView(row)]));
 }
 
 export async function getAdminCourseDisplayContent(

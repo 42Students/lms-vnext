@@ -78,6 +78,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     name: aliased(courseLessons.name, "lesson_name_alias"),
     sequence: courseLessons.sequence,
     status: aliased(courseLessons.status, "lesson_status_alias"),
+    visibleToStudents: courseLessons.visibleToStudents,
+    updatedAt: courseLessons.updatedAt,
     pathStatus: aliased(courseLearningPaths.status, "path_status_alias"),
     offeringId: aliased(courseOfferings.id, "offering_id_alias"),
     offeringStatus: aliased(courseOfferings.status, "offering_status_alias"),

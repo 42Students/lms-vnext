@@ -8,6 +8,7 @@ import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed} from "./college-project-summary-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
  const scope=await requireProjectManageAccess(context,projectId);
  if(scope.access!=="ADMIN")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
@@ -51,12 +52,24 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    updatedAt:new Date(Math.max(Date.now(),row.updatedAt.getTime()+1)),
   }).where(and(eq(projectInstances.id,row.id),eq(projectInstances.collegeId,scope.collegeId))).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
-  await recordActivityEventInTransaction(tx,context,{
+  const updatedEvent=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_SUMMARY_UPDATED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project",subjectId:row.id,subjectLabel:updated.title,
    summary:"Project workspace summary updated",
    metadata:{from:{title:row.title,status:row.status,progressPercent:row.progressPercent},to:{title:updated.title,status:updated.status,progressPercent:updated.progressPercent},fields:["summary","phase","dueLabel","courseLabel","sectionId","blocker","nextAction","dates","sprintLengthWeeks","estimationUnit"]},
+  });
+  await notifyActiveProjectMembers(tx,updatedEvent.id,{
+   projectId:updated.id,collegeId:scope.collegeId,roles:["LEARNER"],
+   exceptUserId:context.user.id,title:"Project updated",
+   body:updated.title+" has been updated.",
+   actionHref:"/learn/projects/"+updated.id,
+  });
+  await notifyActiveProjectMembers(tx,updatedEvent.id,{
+   projectId:updated.id,collegeId:scope.collegeId,roles:["MENTOR"],
+   exceptUserId:context.user.id,title:"Project updated",
+   body:updated.title+" has been updated.",
+   actionHref:"/mentor/projects/"+updated.id,
   });
   return updated;
  });

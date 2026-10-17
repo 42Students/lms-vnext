@@ -3,9 +3,10 @@ import {
   LearnerCourseList,
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
+import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
 import { learnerCourseInstructorLabels } from "@/modules/courses/learner-course-instructor-labels-model";
 import { PageHeader } from "@/components/ui/page-header";
-import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
+import { loadAuthorizedCourseDisplayContentsIfReady } from "@/modules/courses/course-display-service";
 import { selectLearnerOverdueAssignment } from "@/modules/courses/learner-course-overdue-link-model";
 import { learnerCourseListSignals } from "@/modules/courses/learner-course-overview-model";
 import {
@@ -21,11 +22,19 @@ export default async function LearnerCoursesPage() {
     { includeHistorical: true },
   );
 
+  let displays=new Map<string,{thumbnailUrl:string|null}>();
+  try{
+    displays=await loadAuthorizedCourseDisplayContentsIfReady(courses
+      .map(course=>course.courseId).filter(id=>typeof id==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)));
+  }catch{
+    // Optional display metadata must not hide authenticated course cards.
+    displays=new Map();
+  }
   // Each delivery fails independently; one corrupt or temporarily unavailable
   // course must never hide the learner's remaining course cards.
   const seenDeliveries = new Set<string>();
-  const rows: LearnerCourseListRow[] = await Promise.all(
-    courses.map(async (course, index) => {
+  const rows: LearnerCourseListRow[] = await mapLearnerCourseCardsLimited(
+    courses, async (course, index) => {
       const duplicate = seenDeliveries.has(course.deliveryId);
       seenDeliveries.add(course.deliveryId);
       const baseCourse = {
@@ -65,16 +74,15 @@ export default async function LearnerCoursesPage() {
         return unavailable("Invalid course record " + (index + 1));
       }
       try {
-        const [workspace, instructors, display] = await Promise.all([
+        const [workspace, instructors] = await Promise.all([
           getLearnerCourseWorkspace(context, course.deliveryId),
           listLearnerCourseInstructors(context, course.deliveryId),
-          loadCourseDisplayContentIfReady(course.courseId),
         ]);
         const signals = learnerCourseListSignals(
           workspace.lessons, workspace.summary, new Date(workspace.snapshotNowMs),
         );
         return {
-          thumbnailUrl: display?.thumbnailUrl ?? null,
+          thumbnailUrl: displays.get(course.courseId)?.thumbnailUrl ?? null,
           lastActivity: signals.lastActivity,
           overdueAssignments: signals.overdueAssignments,
           firstOverdue: selectLearnerOverdueAssignment(workspace.lessons,workspace.snapshotNowMs),
@@ -106,7 +114,7 @@ export default async function LearnerCoursesPage() {
         // Never show internal access, database or content-fetch errors to learners.
         return unavailable("Course temporarily unavailable");
       }
-    }),
+    }, 4,
   );
 
   return (
