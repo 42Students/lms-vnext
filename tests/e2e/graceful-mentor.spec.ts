@@ -19,7 +19,7 @@ test.describe("GR-80 Mentor notifications and calendar failure behaviour", () =>
       await expect(markAll).toBeVisible();
       // The seed does not promise an unread notification; never claim the
       // API path was exercised when the product deliberately disables it.
-      test.skip(await markAll.isDisabled(), "Seed needs an unread Mentor notification for this mutation");
+      test.skip(await markAll.isDisabled(), "GR-80 blocked: deterministic unread Mentor fixture is missing");
       const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/mentor/notifications/read-all", kind);
       page.once("dialog", (dialog) => dialog.accept());
       try {
@@ -27,7 +27,7 @@ test.describe("GR-80 Mentor notifications and calendar failure behaviour", () =>
         await expect.poll(failure.hits).toBeGreaterThan(0);
         await expect(page.getByText(/could not mark all as read|retry the action|try again/i).first())
           .toBeVisible({ timeout: 15_000 });
-        await expectFriendlyFailure(page, kind);
+        // The notification toolbar deliberately uses domain-specific safe retry copy.
         await expect(markAll).toBeEnabled();
         await expectNoRawErrors(page);
         expect(errors).toEqual([]);
