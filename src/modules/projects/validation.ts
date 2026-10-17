@@ -703,6 +703,7 @@ export const createProjectResourceInputSchema = z
   );
 
 export const projectResourceExpectedVersionSchema = z.iso.datetime({offset:true});
+export const archiveProjectResourceInputSchema = z.object({expectedUpdatedAt:projectResourceExpectedVersionSchema.optional()}).strict();
 
 export const updateProjectResourceInputSchema = z
   .object({
