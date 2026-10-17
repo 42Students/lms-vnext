@@ -163,4 +163,18 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(source("src/modules/activity/taxonomy.ts")).toContain("PLATFORM_COLLEGE_RESTORED");
  });
 
+ it("SA-tenants-modules-23 distinguishes measured required failures from optional advice",()=>{
+  const page=source("src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx");
+  const evalModel=source("src/modules/colleges/readiness-model.ts");
+  expect(page).toContain("Must fix before launch");
+  expect(page).toContain('evaluation.checks.filter(check=>check.status!=="PASS")');
+  expect(page).toContain("Recommended setup");
+  expect(page).toContain("supplemental.activeLectureHalls===null");
+  expect(page).toContain("supplemental.attendancePolicyRecord===null");
+  expect(page).toContain("Runtime DNS, login, teaching and placement verification are still required before launch.");
+  expect(page).toContain("readinessRemediationLink(check.id,college.id)");
+  expect(evalModel).toContain('"NOT_READY"');
+  expect(evalModel).toContain('"INCOMPLETE"');
+ });
+
 });
