@@ -97,6 +97,7 @@ export function RecruiterResultControls({
   const [selected,setSelected]=useState<Record<string,string[]>>({});
   const [bulkPending,setBulkPending]=useState<string|null>(null);
   const bulkSubmissionLock=useRef(false);
+  const singleSubmissionLock=useRef(false);
   const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
   const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
   function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
@@ -159,7 +160,7 @@ export function RecruiterResultControls({
     roundId: string,
     applicationId: string,
   ) {
-    if(bulkSubmissionLock.current||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||singleSubmissionLock.current||pendingKey!==null)return;
     const key =
       roundId + ":" + applicationId;
     const draft = drafts[key];
@@ -208,6 +209,7 @@ export function RecruiterResultControls({
       return;
     }
 
+    singleSubmissionLock.current=true;
     setPendingKey(key);
     try {
       const response = await fetch(
@@ -273,13 +275,14 @@ export function RecruiterResultControls({
             : "Please try again.",
       });
     } finally {
+      singleSubmissionLock.current=false;
       setPendingKey(null);
     }
   }
 
 
   async function stageSelected(round:RecruiterRound){
-    if(bulkSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||singleSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
     const chosen=new Set(selected[round.id]??[]);
     const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
     if(!participants.length){showToast({tone:"error",title:"No candidates selected",description:"Select candidates who do not have applied results."});return;}
