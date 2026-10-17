@@ -2,6 +2,7 @@
 import {useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {electiveLifecyclePrompt} from "@/modules/electives/college-elective-lifecycle-model";
+import {friendlyApiError} from "@/lib/friendly-error";
 export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
   slotId:string;name:string;status:string;version:number;
 }){
@@ -19,7 +20,7 @@ export function CollegeElectiveLifecycleAction({slotId,name,status,version}:{
         });
         if(!res.ok){
           const body=await res.json().catch(()=>({error:"ELECTIVE_LIFECYCLE_FAILED"})) as {error?:string};
-          throw new Error(body.error??"ELECTIVE_LIFECYCLE_FAILED");
+          throw new Error(friendlyApiError({status:res.status,code:body.error}));
         }
         router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not change slot");}

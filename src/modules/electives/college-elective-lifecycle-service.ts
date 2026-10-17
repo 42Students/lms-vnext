@@ -2,9 +2,10 @@ import "server-only";
 import {and,eq,isNull,inArray,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {academicPeriods,departments,electiveOfferings,electiveSlots,lmsGroupMembers,programs} from "@/db/schema";
+import {academicPeriods,departments,electiveOfferings,electiveSlots,lmsGroups,programs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 
 import {assertPersistedGroupActor} from "@/modules/groups/actor-access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -24,6 +25,7 @@ export async function changeCollegeElectiveLifecycle(context:RequestContext,rawI
   transaction:TxRunner=(fn)=>getDb().transaction(fn)) {
   const id=z.string().uuid().parse(rawId),input=electiveLifecycleSchema.parse(raw);
   const actor=await resolveActingCollege(context,"academics.manage");
+  await assertCollegeElectivesEnabled(context);
   return transaction(async tx=>{
     const [slot]=await tx.select().from(electiveSlots)
       .where(and(eq(electiveSlots.id,id),eq(electiveSlots.collegeId,actor.collegeId),
@@ -34,16 +36,30 @@ export async function changeCollegeElectiveLifecycle(context:RequestContext,rawI
     if(slot.status!==before||slot.version!==input.expectedVersion)
       throw new ElectiveLifecycleError("ELECTIVE_SLOT_STALE");
     await assertPersistedGroupActor(tx,context,{collegeId:actor.collegeId,mode:"MANUAL"});
+    let archivedOfferings=0;
     if(input.action==="ARCHIVE"){
-      const [active]=await tx.select({id:electiveOfferings.id}).from(electiveOfferings)
+      // COL-academic-setup-R02: one atomic cascade, not a dead-end error
+      // when there are learner selections or active offerings. Preserve
+      // selection history; archived groups and offerings deny future access.
+      const active=await tx.select({id:electiveOfferings.id,groupId:electiveOfferings.groupId})
+        .from(electiveOfferings)
         .where(and(eq(electiveOfferings.slotId,id),eq(electiveOfferings.status,"ACTIVE"),
-          isNull(electiveOfferings.deletedAt))).limit(1);
-      if(active)throw new ElectiveLifecycleError("ELECTIVE_ACTIVE_OFFERINGS");
-      const [selected]=await tx.select({id:lmsGroupMembers.id}).from(lmsGroupMembers)
-        .innerJoin(electiveOfferings,eq(electiveOfferings.groupId,lmsGroupMembers.groupId))
-        .where(and(eq(electiveOfferings.slotId,id),
-          inArray(lmsGroupMembers.state,["REQUESTED","ACTIVE","WAITLISTED"]))).limit(1);
-      if(selected)throw new ElectiveLifecycleError("ELECTIVE_SELECTION_LOCKED");
+          isNull(electiveOfferings.deletedAt)))
+        .for("update");
+      if(active.length){
+        const now=new Date();
+        const ids=active.map(row=>row.id);
+        const groups=active.map(row=>row.groupId);
+        const archived=await tx.update(electiveOfferings).set({
+          status:"ARCHIVED",version:sql`${electiveOfferings.version}+1`,updatedAt:now,
+        }).where(and(inArray(electiveOfferings.id,ids),
+          eq(electiveOfferings.status,"ACTIVE"))).returning({id:electiveOfferings.id});
+        archivedOfferings=archived.length;
+        await tx.update(lmsGroups).set({
+          status:"ARCHIVED",version:sql`${lmsGroups.version}+1`,updatedAt:now,
+        }).where(and(inArray(lmsGroups.id,groups),eq(lmsGroups.status,"ACTIVE"),
+          eq(lmsGroups.kind,"ELECTIVE"),eq(lmsGroups.collegeId,actor.collegeId)));
+      }
     }else {
       const [program]=await tx.select({id:programs.id}).from(programs)
         .innerJoin(departments,and(eq(departments.id,programs.departmentId),
@@ -72,7 +88,7 @@ export async function changeCollegeElectiveLifecycle(context:RequestContext,rawI
       collegeId:actor.collegeId,organizationId:actor.organizationId,
       subjectType:"elective_slot",subjectId:id,
       summary:input.action==="ARCHIVE"?"College Admin archived elective slot":"College Admin restored elective slot",
-      metadata:{before,after:changed.status,version:changed.version},
+      metadata:{before,after:changed.status,version:changed.version,archivedOfferings},
     });
     return changed;
   });
