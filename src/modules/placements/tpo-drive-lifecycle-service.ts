@@ -67,7 +67,10 @@ async function loadFacts(
       eq(placementCompanyRelationships.collegeId, job.collegeId),
     )).limit(1);
   const [roles, rounds, policy, results, offers] = await Promise.all([
-    tx.select({ count: count() }).from(placementJobRoleOptions).where(and(
+    tx.select({
+      minimum:placementJobRoleOptions.minimumAnnualCtcInr,
+      maximum:placementJobRoleOptions.maximumAnnualCtcInr,
+    }).from(placementJobRoleOptions).where(and(
       eq(placementJobRoleOptions.jobId, job.id),
       eq(placementJobRoleOptions.status, "ACTIVE"),
     )),
@@ -101,10 +104,16 @@ async function loadFacts(
     seasonActive: season?.status === "ACTIVE",
     companyActive: company?.relationshipStatus === "ACTIVE" &&
       company.companyStatus === "ACTIVE",
-    roleCount: roles[0]?.count ?? 0,
+    roleCount: roles.length,
     evaluativeRoundCount: rounds[0]?.count ?? 0,
     policyPersisted: policy.length > 0,
-    deadlineValid: job.applicationDeadline === null || job.applicationDeadline > now,
+    deadlineValid: job.applicationDeadline !== null && job.applicationDeadline > now,
+    deadlinePresent: job.applicationDeadline !== null,
+    payPresent: job.minimumAnnualCtcInr !== null || job.maximumAnnualCtcInr !== null ||
+      job.stipendPerMonthInr !== null ||
+      roles.some(role => role.minimum !== null || role.maximum !== null),
+    externalUrlPresent: job.applicationMode === "INTERNAL" ||
+      Boolean(job.externalApplicationUrl?.trim()),
     appliedResultCount: results[0]?.count ?? 0,
     acceptedOfferCount: offers[0]?.count ?? 0,
   };
