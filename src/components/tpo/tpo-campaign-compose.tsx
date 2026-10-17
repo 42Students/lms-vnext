@@ -58,7 +58,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     data.error==="NO_RECIPIENTS"?"No eligible email recipients match this audience.":
     data.error==="INVALID_SELECTION"?"Some selected recruiters are no longer available in your college. Return to Engage and select again.":
     "Couldn't save your campaign draft. Please try again.");
-   setDone("Draft saved for "+data.recipients+" eligible recruiter contacts.");
+   setDone("Draft saved for "+data.recipients+" eligible recruiter contacts. No email was sent.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
