@@ -77,7 +77,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-104 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-academics-people-105 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-107 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-academics-people-111 | S3 | VALIDATION | UNCONFIRMED |
+| SA-academics-people-111 | S3 | VALIDATION | DONE |
 | SA-academics-people-112 | S3 | STATE | DONE |
 | SA-academics-people-113 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-114 | S3 | COPY | DONE |
@@ -129,7 +129,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-63 | S4 | COPY | DONE |
 | SA-academics-people-70 | S4 | STATE | NOT-A-GAP |
 | SA-academics-people-71 | S4 | COPY | DONE |
-| SA-academics-people-75 | S4 | RESPONSIVE | UNCONFIRMED |
+| SA-academics-people-75 | S4 | RESPONSIVE | DONE |
 | SA-academics-people-76 | S4 | A11Y | NOT-A-GAP |
 
 ## college/placements (26: FIXED-ON-MAIN 16, UNCONFIRMED 3, OPEN 7)
@@ -238,7 +238,7 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 | COL-dashboard-14 | S3 | COPY | DONE |
 | COL-dashboard-15 | S3 | STATE | DONE |
 | COL-dashboard-16 | S4 | A11Y | DONE |
-| COL-dashboard-17 | S4 | RESPONSIVE | UNCONFIRMED |
+| COL-dashboard-17 | S4 | RESPONSIVE | DONE |
 
 ## Notes (blockers, one line each)
 
