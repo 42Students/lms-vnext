@@ -70,7 +70,8 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
    const type=/\bt="([^"]+)"/.exec(attr)?.[1];
    const inline=[...body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)].map(x=>decodeXml(x[1]??"")).join("");
    const raw=/<v\b[^>]*>([\s\S]*?)<\/v>/.exec(body)?.[1]??"";
-   values[position]=type==="s"?shared[Number(raw)]??"":type==="inlineStr"?inline:decodeXml(raw);
+   if(type==="s"&&(!/^\d+$/.test(raw)||!Number.isSafeInteger(Number(raw))||shared[Number(raw)]===undefined)) throw Error("An Excel cell references an unknown shared string.");
+   values[position]=type==="s"?shared[Number(raw)]!:type==="inlineStr"?inline:decodeXml(raw);
   }
   if(!values.some(value=>value!==undefined&&value.trim()!==""))
    throw Error("A blank worksheet row would shift the learner-to-result mapping. Remove it before import.");
