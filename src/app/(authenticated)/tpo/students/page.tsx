@@ -304,6 +304,13 @@ export default async function TpoStudentsPage({
             {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
           </select>
         </label>
+        <label className="text-sm font-semibold">Class
+          <select name="classId" defaultValue={query.classId??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All classes</option>
+            {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
         <label className="text-sm font-semibold">After college
           <select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -674,7 +681,7 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))}
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
