@@ -38,15 +38,15 @@ Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if prese
 | LEARNER-projects-07 | S4 | STATE | DONE |
 | LEARNER-projects-08 | S4 | COPY | DONE |
 | LEARNER-projects-09 | S4 | COPY | DONE |
-| LEARNER-projects-11 | S4 | STATE | FIXED-ON-MAIN |
-| LEARNER-projects-19 | S4 | VALIDATION | UNCONFIRMED |
-| LEARNER-projects-20 | S4 | COPY | OPEN |
-| LEARNER-projects-21 | S4 | COPY | OPEN |
-| LEARNER-projects-22 | S4 | MISSING-FIELD | OPEN |
-| LEARNER-projects-30 | S4 | VALIDATION | FIXED-ON-MAIN |
-| LEARNER-projects-34 | S4 | COPY | UNCONFIRMED |
-| LEARNER-projects-35 | S4 | COPY | OPEN |
-| LEARNER-projects-R04 | S4 | MISSING-FIELD | OPEN |
+| LEARNER-projects-11 | S4 | STATE | DONE |
+| LEARNER-projects-19 | S4 | VALIDATION | DONE |
+| LEARNER-projects-20 | S4 | COPY | DONE |
+| LEARNER-projects-21 | S4 | COPY | DONE |
+| LEARNER-projects-22 | S4 | MISSING-FIELD | DONE |
+| LEARNER-projects-30 | S4 | VALIDATION | DONE |
+| LEARNER-projects-34 | S4 | COPY | DONE |
+| LEARNER-projects-35 | S4 | COPY | DONE |
+| LEARNER-projects-R04 | S4 | MISSING-FIELD | DONE |
 
 ## public/auth-public-1-login-session (39: OPEN 23, FIXED-ON-MAIN 11, UNCONFIRMED 5)
 
@@ -54,7 +54,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| PUB-auth-public-01 | S2 | MISSING-FIELD | OPEN |
+| PUB-auth-public-01 | S2 | MISSING-FIELD | DONE |
 | PUB-auth-public-03 | S2 | COPY | OPEN |
 | PUB-auth-public-04 | S2 | COPY | OPEN |
 | PUB-auth-public-05 | S2 | COPY | OPEN |
