@@ -31,6 +31,7 @@ export function TpoBulkRoundResultRecorder({
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
   const [search,setSearch]=useState("");
+  const [pastedIds,setPastedIds]=useState("");
   const [outcome, setOutcome] = useState<"PASS" | "FAIL" | "HOLD" | "ABSENT">("PASS");
   const [message, setMessage] = useState("");
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
@@ -149,6 +150,21 @@ export function TpoBulkRoundResultRecorder({
               <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
                 className="font-semibold text-primary-text">Clear selection</button>
             </div>
+            <details className="rounded border border-border p-3">
+              <summary className="cursor-pointer text-sm font-semibold">Paste application IDs from a spreadsheet</summary>
+              <p className="mt-2 text-xs text-body">Use exact application IDs, one per line or comma-separated. Unknown IDs are rejected. Roll-number matching belongs in the CSV/XLSX import workflow.</p>
+              <textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
+                className="mt-2 block w-full rounded border border-border bg-surface p-2 text-sm"/>
+              <button type="button" disabled={busy} className="mt-2 min-h-9 rounded border border-border px-3 text-sm"
+                onClick={()=>{
+                  const ids=[...new Set(pastedIds.split(/[\s,;]+/).filter(Boolean))];
+                  if(ids.length===0||ids.length>25||ids.some(id=>!available.some(row=>row.applicationId===id))){
+                    setError("Paste 1–25 distinct application IDs belonging to unmarked learners in this round.");
+                    return;
+                  }
+                  setError(null);setSelected(ids);
+                }}>Select matching learners</button>
+            </details>
             <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
               {visible.map((row) => (
                 <label key={row.applicationId} className="flex min-h-10 items-center gap-3 px-2 text-sm text-body">
