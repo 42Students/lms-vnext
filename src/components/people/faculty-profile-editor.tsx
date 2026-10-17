@@ -1,5 +1,6 @@
 "use client";
 import { useRef,useState } from "react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired,facultyProfileSavedStatus} from "@/modules/people/faculty-profile-error-model";
@@ -39,6 +40,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [needsReload,setNeedsReload]=useState(false);
+ const [reloadOpen,setReloadOpen]=useState(false);
  async function save(section:FacultySelfSection,value:unknown){
   if(!beginFacultyProfileSave(saveInFlight))return;
   setSavingSection(section);setPending(true);setError(null);setSuccess(null);setNeedsReload(false);
@@ -65,12 +67,15 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   }
   finally{saveInFlight.current=false;setPending(false);setSavingSection(null);}
  }
- return <div className="space-y-5">
+ return <div className="min-w-0 space-y-5">
+  <ConfirmDialog open={reloadOpen} onOpenChange={setReloadOpen}
+    title="Reload the latest Faculty profile?" description="Any unsaved changes in every section will be lost."
+    confirmLabel="Reload latest profile" onConfirm={() => window.location.reload()} />
   <p className="text-sm text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-error">
    <p>{error}</p>
    {needsReload?<button type="button" onClick={()=>{
-    if(window.confirm("Reload the latest Faculty profile? Any unsaved changes in every section will be lost."))window.location.reload();
+    setReloadOpen(true);
    }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground">Reload latest profile</button>:null}
   </div>:null}
   {pending&&savingSection?<p role="status" className="rounded-md border border-border p-3 text-sm text-foreground">
