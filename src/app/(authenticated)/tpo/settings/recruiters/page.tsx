@@ -3,7 +3,7 @@ import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-set
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
 
-import { TpoRecruiterGrantForm, TpoRecruiterRevoke } from "@/components/placements/tpo-recruiter-grant-controls";
+import { TpoRecruiterGrantForm, TpoRecruiterRevoke, TpoRecruiterExtend } from "@/components/placements/tpo-recruiter-grant-controls";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
 import { getTpoTrustedCompanies } from "@/modules/placements/tpo-settings-people-service";
@@ -311,11 +311,13 @@ export default async function TpoRecruiterAccessPage({
                         {item.ended?"Ended or removed":item.status === "ACTIVE"?"Active":"Revoked"}
                       </StatusBadge>
                       {item.status === "ACTIVE" && item.grantId && item.expectedUpdatedAt ? (
+                        <><TpoRecruiterExtend grantId={item.grantId}
+                           expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName}/>
                         <TpoRecruiterRevoke
                           grantId={item.grantId}
                           expectedUpdatedAt={item.expectedUpdatedAt}
                           displayName={item.displayName}
-                        />
+                        /></>
                       ) : null}
                     </td>
 
