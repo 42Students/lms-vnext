@@ -39,10 +39,17 @@ const filters:TpoFilterField[]=[
  {key:"stage",urlKey:"stage",allValue:"ALL",label:"Applicant stage",options:["SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"].map(value=>({value,label:value}))},
  {key:"channel",urlKey:"channel",allValue:"ALL",label:"Application channel",options:[{value:"INTERNAL",label:"Internal"},{value:"EXTERNAL",label:"External"}]},
  {key:"eligibility",urlKey:"eligibility",allValue:"ALL",label:"Eligibility evidence",options:[{value:"ELIGIBLE",label:"Eligible"},{value:"ELIGIBLE_WITH_MISSING_EVIDENCE",label:"Missing evidence"}]},
+ {key:"flag",urlKey:"flag",allValue:"ALL",label:"Applicant flags",options:[
+  {value:"WITHDRAWAL_REQUESTED",label:"Withdrawal requested"},
+  {value:"NO_SHOW",label:"No-show"},{value:"PLACED_ELSEWHERE",label:"Accepted another offer"},
+  {value:"ADDED_BY_COLLEGE",label:"Added by college"}]},
+ {key:"submittedWithin",urlKey:"submittedWithin",allValue:"ALL",label:"Applied",options:[
+  {value:"LAST_7_DAYS",label:"Last 7 days"},{value:"LAST_30_DAYS",label:"Last 30 days"}]},
 ];
 export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly Row[];jobId:string;jobStatus:string}){
- return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
+ return <div className="space-y-3"><TpoGridFilterPanel fields={filters} mobileSheet/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.id}
+   mobileActionsCollapsible storageKey={"tpo-drive-applicant-grid:"+jobId}
    rowActions={row=><div className="space-y-1">
     <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
       previousId={rows.findIndex(candidate=>candidate.id===row.id)>0?
