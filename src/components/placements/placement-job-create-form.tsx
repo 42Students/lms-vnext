@@ -145,6 +145,10 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [newEmployerName,setNewEmployerName]=useState("");
+  const [newEmployerDomain,setNewEmployerDomain]=useState("");
+  const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
+    Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
   const [pending, setPending] =
     useState(false);
   const [
@@ -614,6 +618,8 @@ export function PlacementJobCreateForm({
                 <input
                   className={inputClass}
                   name="companyName"
+                  value={newEmployerName}
+                  onChange={event=>setNewEmployerName(event.target.value)}
                   required
                   maxLength={200}
                 />
@@ -625,6 +631,8 @@ export function PlacementJobCreateForm({
                 <input
                   className={inputClass}
                   name="companyDomain"
+                  value={newEmployerDomain}
+                  onChange={event=>setNewEmployerDomain(event.target.value)}
                   placeholder="example.com"
                 />
               </label>
