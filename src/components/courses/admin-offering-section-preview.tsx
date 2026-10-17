@@ -3,6 +3,7 @@ import type {listOfferingSectionPreview} from "@/modules/courses/college-offerin
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
  id:string;title:string;status:string;sequence:number;scope:string;kind?:string;
+ studentVisible:boolean;
 }[]}){
  if(!items.length)return <p className="text-xs text-muted-foreground">No items for this Section.</p>;
  return <ul className="space-y-1">{items.map(item=><li key={item.id}
@@ -11,7 +12,8 @@ function ItemList({items}:{items:readonly {
    {item.kind?<span className="ml-1 text-xs text-muted-foreground">({item.kind.replaceAll("_"," ")})</span>:null}
   </span>
   <span className="text-xs text-muted-foreground">{item.scope==="SECTION"?"Section-specific":"Shared offering"}
-   {" · "}{item.status}{" · "}#{item.sequence+1}</span>
+   {" · "}{item.status}{" · "}#{item.sequence+1}
+   {" · "}{item.studentVisible?"Visible to students":"Not visible to students"}</span>
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
