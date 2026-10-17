@@ -1161,14 +1161,16 @@ export const placementApplicationScreeningHistory = pgTable(
     check(
       "placement_application_screening_history_status_ck",
       sql`${table.fromStatus} in ('PENDING', 'HOLD', 'SHORTLISTED', 'REJECTED')
-        and ${table.toStatus} in ('HOLD', 'SHORTLISTED', 'REJECTED')`,
+        and ${table.toStatus} in ('PENDING', 'HOLD', 'SHORTLISTED', 'REJECTED')`,
     ),
     check(
       "placement_application_screening_history_transition_ck",
       sql`(${table.fromStatus} = 'PENDING'
           and ${table.toStatus} in ('HOLD', 'SHORTLISTED', 'REJECTED'))
         or (${table.fromStatus} = 'HOLD'
-          and ${table.toStatus} in ('SHORTLISTED', 'REJECTED'))`,
+          and ${table.toStatus} in ('SHORTLISTED', 'REJECTED'))
+        or (${table.fromStatus} = 'REJECTED'
+          and ${table.toStatus} = 'PENDING')`,
     ),
   ],
 );
