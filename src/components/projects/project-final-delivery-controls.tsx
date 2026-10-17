@@ -109,6 +109,7 @@ export function LearnerFinalDeliveryControl({
     setNotes(draft?.notes ?? "");
     setAttachments(safeDraftAttachments(draft?.attachments));
     setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
+    failedSnapshot.current=null;
     lastSavedSnapshot.current=JSON.stringify({
       summary:(draft?.summary??"").trim(),
       sourceUrl:draft?.sourceUrl?.trim()||undefined,
