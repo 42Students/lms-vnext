@@ -29,3 +29,5 @@ No upload is claimed complete or safe without those dependencies. These blocked 
 
 | LEARNER-profile-misc-24 | DONE (source authored; browser pending) | `src/components/academics/learner-class-schedule.tsx`; `tests/unit/chat6-learner-calendar-round3.test.ts` → `LEARNER-profile-misc-24 restores the today next and all courses schedule labels` |
 | LEARNER-profile-misc-25 | DONE (source verified; browser failure injection pending) | `src/app/(authenticated)/learn/calendar/error.tsx`; `tests/unit/chat6-learner-calendar-round3.test.ts` → `LEARNER-profile-misc-25 renders the legacy partial calendar failure with Retry` |
+
+| LEARNER-profile-misc-02 | BLOCKED | Profile-photo binary upload and import-from-link cannot be represented by initials or a remote unsanitized URL. Safe replacement requires private object storage, malware/format scanning, verified upload receipts and per-user authorization; approved link-only storage policy does not authorize exposing arbitrary photo bytes. |
