@@ -160,7 +160,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      <textarea required maxLength={4000} rows={3} value={body} disabled={busy}
        onChange={event=>setBody(event.target.value)}
        onKeyDown={event=>{if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
-        event.preventDefault();void send(event.currentTarget.form?.dispatchEvent(new Event("submit",{bubbles:true,cancelable:true})) as never);
+        event.preventDefault();event.currentTarget.form?.requestSubmit();
        }}}
        className="rounded border border-border bg-surface p-3"/>
     </label>
