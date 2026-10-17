@@ -224,3 +224,8 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 ## Chat-2 round 5 — Drive Discussion handoff
 
 | TPO-inbox-team-07 | PARTIAL — OPEN | Drive-specific Discussion now links as `Discuss` to the persisted recruiter conversation, shows the last message preview and supports `?tab=discussion` legacy alias without relaxing scoped read; `tests/unit/tpo-drive-discussion-chat2.test.ts` names `TPO-inbox-team-07`. Change request quote/event lines remain to build in drive workspace. |
+
+## Chat-2 round 5 — away intervals
+
+| TPO-inbox-team-34 | PARTIAL — OPEN | Author-scoped away-until/back-now stored in proposed `placement_tpo_team_away` table, one-year bounded date and stale write checks, plus form and clear action. Proposed migration `docs/proposed-migrations/tpo-inbox-team-away-until.sql`, named test `TPO-inbox-team-34` in `tests/unit/tpo-team-away-chat2.test.ts`. The table must be registered by orchestrator before UI is writable; ask warnings not implemented. |
+| TPO-inbox-team-31 | PARTIAL — OPEN | People cards show persisted away interval only if enabled and allow current member to update their own absence, never inferred from activity; same test names `TPO-inbox-team-31`. Five workload aggregates remain open. |
