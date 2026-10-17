@@ -359,30 +359,9 @@ No tests were run here; orchestrator CI and database verification remain necessa
 
 No unit, type, lint or PostgreSQL tests were run by this builder.
 
-## Verified-closure follow-up: drive search and assignment confirmation (2026-10-17)
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
 
-The following entries supersede earlier PARTIAL/OPEN rows for these IDs. **Source verified; tests written but not run.** Migration 0133 is registered for Team read receipts, topic length, asks and away. The separate drive/company owner-column proposal is still pending registration.
-
-| ID | Status | Evidence (implementation and named tests) |
-| --- | --- | --- |
-| TPO-inbox-team-33 | DONE (source; owner-column migration pending) | `src/components/tpo/tpo-team-assign-unowned.tsx` shows an explicit cancelable confirmation with assignee and impact before POST; `src/modules/placements/tpo-team-unowned-service.ts` scopes work by college, changes only active unowned rows atomically, audits and sends the assigned member a bell; `src/app/api/placements/tpo/team/unowned/route.ts` verifies origin and schema. `tests/unit/chat2-tpo-unowned-confirm-33.test.ts` tests **TPO-inbox-team-33 shows an explicit confirm modal before assigning unowned work** and **TPO-inbox-team-33 assigns only unowned active college work and records a recipient bell**. Existing `tests/unit/chat2-tpo-unowned-work-parity.test.ts`. Migration proposal `docs/proposed-migrations/tpo-team-drive-owner.sql` is still required to enable this in PostgreSQL; do not represent it as deployed. |
-| TPO-inbox-team-44 | DONE (source; integration test pending) | `src/components/tpo/tpo-notice-audience-picker.tsx` selects multiple batches/branches, searches the college-scoped published drives with the selection cleared on new search and required target choice, and preserves all legacy empty texts; `src/modules/announcements/tpo-notice-target-options-service.ts` authorizes all lookups. `tests/unit/chat2-tpo-inbox-audience-44.test.ts` tests **TPO-inbox-team-44 searches published drives and refuses an unselected or missing target** and **TPO-inbox-team-44 supports multiple batch and branch choices without accepting arbitrary IDs as choices**. Existing `tests/unit/chat2-tpo-multi-notice-audience.test.ts` and `tests/integration/tpo-notice-target-options.test.ts` also cover targeting. |
-| TPO-inbox-team-51 | PARTIAL — OPEN | Version-locked edits now render the optional **Tell them it changed** checkbox in `src/app/(authenticated)/tpo/announcements/page.tsx` (bound to `notifyChanged` in its POST route and persisted recipient-safe notices in `tpo-placement-edit-service.ts`). Named test `tests/unit/chat2-notices-retraction-update.test.ts` **TPO-inbox-team-51 supports versioned edits and optional scoped re-notification**. Legacy unsent audience changes still need a fully scoped edit path, so this ID is not fully closed. |
-
-**Execution:** No tests, lint or typecheck were run by this lane; orchestrator should run them and the disposable PostgreSQL acceptance suite before marking deployment verified.
-
-
-## Chat-2 UNCONFIRMED decisions — 2026-10-17 (owner delegated safer behavior)
-| ID | Decision | Evidence |
-| --- | --- | --- |
-| TPO-inbox-team-08 | BLOCKED — legacy e-mail relay cannot be promised without real provider credentials, inbound reply routing and scoped send history. Keep recruiter conversations in-app, never show an email delivery success that has not happened. | `src/modules/placements/tpo-messages-service.ts`; `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts` test **TPO-inbox-team-08 does not claim provider email delivery without an active relay**. |
-| TPO-inbox-team-11 | DONE — safer than legacy's notification-as-message fallback: if conversation storage is unavailable, show a clear error and a separate Notifications link, not a fabricated conversation. | `src/app/(authenticated)/tpo/messages/page.tsx`; test **TPO-inbox-team-11 fails visibly when recruiter conversations are missing instead of presenting notifications as conversations** in `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts`. |
-| TPO-inbox-team-35 | NOT-A-GAP (intentional safer design) — adding a person to Team must not itself elevate their placement privileges; only an audited College Admin role-management path may grant authority, not any active TPO participant. | `src/modules/placements/placement-team-access-model.ts`; named **TPO-inbox-team-35 reserves role grants for audited college administration** in `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts`. Faculty search as a read-only picker may be added without changing this decision. |
-
-
-## Chat-2 OPEN-gap review — safer responsive/privacy decisions
-| ID | Decision | Evidence |
-| --- | --- | --- |
-| TPO-inbox-team-42 | NOT-A-GAP (deliberate responsive pattern) — retain one accessible conversation per route with a keyboard-usable **All conversations** back link and an optional Details pane; a miniature three-pane layout on small screens would be less usable. | `src/app/(authenticated)/tpo/team/page.tsx`, `[threadId]/page.tsx`; `tests/unit/chat2-safe-deviations-open-gap-decisions.test.ts` named **TPO-inbox-team-42…**. |
-| TPO-inbox-team-R02 | NOT-A-GAP (least privilege) — a College Admin can access the genuinely internal Team when authorized, but the TPO recruiter inbox, targeted announcements and recruiter outbound actions require explicit TPO authorization. Broad faculty/admin access to private recruiter conversations without a TPO grant is rejected. | `src/modules/placements/placement-team-access-model.ts`, `tpo-messages-service.ts`, `src/app/(authenticated)/tpo/announcements/page.tsx`; same named test **TPO-inbox-team-R02…**. |
-| TPO-inbox-team-R06 | NOT-A-GAP (privacy) — preserve event-time explicit deliveries to active scoped placement members instead of retroactively disclosing historic personal notifications to every future team member. A rejoined user retains only notifications that were actually delivered to their identity. | `src/modules/placements/recruiter-message-tpo-notification-service.ts`, `public-join/join-service.ts`; same named test **TPO-inbox-team-R06…**. |
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-inbox-team-08 | BLOCKED | Decision: In-app recruiter threads remain canonical. SMTP relay and inbound reply reconciliation require verified provider credentials and durable message-id signatures; never claim unconfigured email was sent. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-inbox-team-08` (source/policy regression; executable CI pending). |
+| TPO-inbox-team-35 | NOT-A-GAP | Decision: Keep granting staff the TPO role under College Admin's existing controlled people/role-management flow; avoid a TPO Team page that can self-grant college-wide access. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-inbox-team-35` (source/policy regression; executable CI pending). |
