@@ -66,7 +66,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      status,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),confirmed:true,
      ...(blockerReason?{blockerReason}:{}),
     }) as {task:Task};
-   setUndo({id,status:task.status});
+   setUndo(isUndo?null:{id,status:task.status});
    setTasks(rows=>rows.map(row=>row.id===id?{...row,...result.task}:row));
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Task transition failed.");}
