@@ -49,6 +49,7 @@ export default async function LearnerProfilePage({
               ?"Verified profile":"Not verified yet"}
           </span>
         </div>
+        <p className="mt-2 text-sm text-body">Your college checks your education and identity once. Companies and the placement cell then see your profile as verified.</p>
         {verification? <div className="mt-3 space-y-2 text-sm text-body">
           {(["education","identity"] as const).map(section=>{
             const row=verification[section];
@@ -64,11 +65,26 @@ export default async function LearnerProfilePage({
               You changed this after it was verified. The verified details stay in use until you send the changes for review.
             </p>:null}
         </div>:<p role="status" className="mt-2 text-sm text-body">Verification status is temporarily unavailable.</p>}
+        {verification?<div className="mt-4 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
+          {missing.length?<ul className="list-disc space-y-1 pl-5 text-sm text-body">
+            {missing.map(row=><li key={row.section+row.message}>
+              <strong>{row.section}:</strong> {row.message}
+            </li>)}
+          </ul>:<p role="status" className="text-sm text-body">
+            No missing items are reported by the saved profile and private receipt metadata.
+          </p>}
+          <p className="text-xs text-muted-foreground">
+            For verification, provide 10th, 12th or Diploma and degree education with marks and
+            marksheets, plus a resume. Provide Aadhaar or PAN details with a clean private document.
+            A saved receipt is not final verification.
+          </p>
+        </div>:null}
         <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Review verification status</Link>
       </section>
       {sectionNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{sectionNotice}</p> : null}
       <section aria-label="Academic identity" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-        <h2 className="text-base font-semibold text-foreground">Academic identity</h2>
+        <h2 className="sr-only">Academic identity</h2>
         <p className="mt-1 text-lg font-semibold text-foreground">{academic?.title??person.user.displayName??"Your profile"}</p>
         {!academicOutcome.available ? <div role="status" className="mt-3 text-sm text-body">
           <p>Your academic summary is temporarily unavailable. Your saved profile remains available below; no missing enrollment has been inferred.</p>
@@ -102,28 +118,6 @@ export default async function LearnerProfilePage({
         className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         View my academic record →
       </Link>
-      <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
-        <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
-        <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
-        {verification?<div className="mt-4 space-y-3">
-          <h3 className="text-sm font-semibold text-foreground">What is still missing</h3>
-          {missing.length?<ul className="list-disc space-y-1 pl-5 text-sm text-body">
-            {missing.map(row=><li key={row.section+row.message}>
-              <strong>{row.section}:</strong> {row.message}
-            </li>)}
-          </ul>:<p role="status" className="text-sm text-body">
-            No missing items are reported by the saved profile and private receipt metadata.
-          </p>}
-          <p className="text-xs text-muted-foreground">
-            For verification, provide 10th, 12th or Diploma and degree education with marks and
-            marksheets, plus a resume. Provide Aadhaar or PAN details with a clean private document.
-            A saved receipt is not final verification.
-          </p>
-        </div>:<p role="status" className="mt-3 text-sm text-body">
-          Verification requirements are temporarily unavailable. Open the verification page to retry.
-        </p>}
-        <Link href="/learn/profile/verification" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">View my verification status →</Link>
-      </section>
       <section aria-label="Coding profiles" className="min-w-0 rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Coding platform profiles</h2>
         <p className="mt-1 text-sm text-body">Saved GitHub and coding-platform links are learner-authored, not verified skill evidence.</p>

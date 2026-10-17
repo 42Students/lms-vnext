@@ -18,6 +18,13 @@ import {
   postgresConstraintName,
 } from "./errors";
 import {
+  DEFAULT_COURSE_PROGRESS_POLICY,
+  timedContentStarted,
+  timedContentWatched,
+  type CourseProgressPolicy,
+} from "./course-progress-policy";
+import { readCourseProgressPolicy } from "./course-progress-policy-service";
+import {
   requireLearningReadAccess,
 } from "./learning-access";
 import {
@@ -64,6 +71,7 @@ export function buildLearnerProgressView(
     "id" | "durationSeconds"
   >,
   progress: ProgressRow,
+  policy: CourseProgressPolicy = DEFAULT_COURSE_PROGRESS_POLICY,
 ): LearnerProgressView {
   const durationSeconds =
     content.durationSeconds ?? 0;
@@ -90,7 +98,7 @@ export function buildLearnerProgressView(
     contentId: content.id,
     status: completedAt
       ? "COMPLETED"
-      : lastPositionSeconds > 0
+      : timedContentStarted(lastPositionSeconds, durationSeconds, policy)
         ? "IN_PROGRESS"
         : "NOT_STARTED",
     lastPositionSeconds,
@@ -219,6 +227,7 @@ export async function getLearnerContentProgress(
   return buildLearnerProgressView(
     content,
     row,
+    await readCourseProgressPolicy(),
   );
 }
 
@@ -355,6 +364,7 @@ export async function saveLearnerContentProgress(
   const isTimed = TIMED_TYPES.has(
     content.contentType,
   );
+  const policy = await readCourseProgressPolicy();
   let positionSeconds = 0;
   let shouldComplete = false;
 
@@ -376,8 +386,7 @@ export async function saveLearnerContentProgress(
     // learner's position, but do not trust client claims to award completion.
     positionSeconds = duration>0
       ? Math.min(input.positionSeconds,duration):input.positionSeconds;
-    shouldComplete = duration>0 && positionSeconds*100 >=
-      duration*TIMED_CONTENT_COMPLETION_THRESHOLD_PERCENT;
+    shouldComplete = timedContentWatched(positionSeconds,duration,policy);
   } else {
     if (
       input.positionSeconds !== undefined &&
@@ -432,6 +441,7 @@ export async function saveLearnerContentProgress(
       return buildLearnerProgressView(
         content,
         inserted,
+        policy,
       );
     } catch (error) {
       if (
@@ -459,5 +469,6 @@ export async function saveLearnerContentProgress(
   return buildLearnerProgressView(
     content,
     updated,
+    policy,
   );
 }

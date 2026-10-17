@@ -14,7 +14,7 @@ describe("Learner profile checklist and offer confirmation source contracts", ()
     expect(workspace).toContain("learnerProfileChecklist(document)");
     expect(workspace).toContain('id="contacts"');
     expect(workspace).toContain("scrollIntoView");
-    expect(workspace).toContain("Profile completion checklist");
+    expect(workspace).toContain("Profile Completeness");
     expect(workspace).toContain("/api/profile/me");
     expect(read("src/app/(authenticated)/learn/profile/loading.tsx")).toContain("Loading");
     expect(read("src/app/(authenticated)/learn/profile/error.tsx")).toContain("Retry");

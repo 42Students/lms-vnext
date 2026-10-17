@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeNotAssignedAlert } from "@/components/courses/college-not-assigned-alert";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { CollegeLearnerProgressReport } from "@/components/courses/college-learner-progress-report";
 import { getCollegeLearnerProgressReport } from "@/modules/courses/college-learner-progress-service";
@@ -16,7 +16,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function CollegeCourseProgressPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <CollegeNotAssignedAlert tab="course-progress" />;
   const params = await searchParams;
   const parsed = collegeProgressQuerySchema.safeParse(
     Object.fromEntries(Object.entries({

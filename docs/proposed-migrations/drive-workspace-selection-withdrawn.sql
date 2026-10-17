@@ -1,0 +1,8 @@
+-- TPO-drive-workspace-18: cancelling a drive withdraws selections that were
+-- never released (legacy TpoDriveService.cancel). Adds the WITHDRAWN status to
+-- placement_drive_selections. Idempotent-safe: constraints are dropped if present
+-- then re-created. Matches src/db/schema/placement-drive-selections.ts exactly.
+ALTER TABLE "placement_drive_selections" DROP CONSTRAINT IF EXISTS "placement_drive_selections_status_ck";
+ALTER TABLE "placement_drive_selections" DROP CONSTRAINT IF EXISTS "placement_drive_selections_verified_ck";
+ALTER TABLE "placement_drive_selections" ADD CONSTRAINT "placement_drive_selections_status_ck" CHECK ("placement_drive_selections"."status" in ('SELECTED','VERIFIED','RELEASED','WITHDRAWN'));
+ALTER TABLE "placement_drive_selections" ADD CONSTRAINT "placement_drive_selections_verified_ck" CHECK (("placement_drive_selections"."status" = 'SELECTED' and "placement_drive_selections"."verified_at" is null and "placement_drive_selections"."released_at" is null and "placement_drive_selections"."released_offer_id" is null) or ("placement_drive_selections"."status" = 'VERIFIED' and "placement_drive_selections"."verified_at" is not null and "placement_drive_selections"."released_at" is null and "placement_drive_selections"."released_offer_id" is null) or ("placement_drive_selections"."status" = 'WITHDRAWN' and "placement_drive_selections"."released_at" is null and "placement_drive_selections"."released_offer_id" is null) or ("placement_drive_selections"."status" = 'RELEASED' and "placement_drive_selections"."verified_at" is not null and "placement_drive_selections"."released_offer_id" is not null and "placement_drive_selections"."released_at" is not null));

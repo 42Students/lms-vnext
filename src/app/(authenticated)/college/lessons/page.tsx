@@ -1,9 +1,11 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeNotAssignedAlert } from "@/components/courses/college-not-assigned-alert";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { CollegeLessonCreateControl } from "@/components/courses/college-lesson-create-control";
 import { getCollegeLessonAuthoringOptions } from "@/modules/courses/college-content-authoring-service";
+import {loadCollegeTabOptions} from "@/modules/courses/college-tab-options";
+import {CollegeOptionsUnavailable} from "@/components/courses/college-options-unavailable";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeLessonQuerySchema } from "@/modules/courses/college-learning-directory-model";
@@ -16,7 +18,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function CollegeLessonsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <CollegeNotAssignedAlert tab="lessons" />;
   const params = await searchParams;
   const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
@@ -60,10 +62,11 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
         action={<Link href="/college/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
-  const authoringOptions=await getCollegeLessonAuthoringOptions(context);
+  const optionLoad=await loadCollegeTabOptions(()=>getCollegeLessonAuthoringOptions(context),[]);
+  const authoringOptions=optionLoad.value;
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
   return <div className="space-y-4">
-    <CollegeLessonCreateControl options={authoringOptions} />
+    {optionLoad.failed?<CollegeOptionsUnavailable tab="lessons" href="/college/lessons"/>:<CollegeLessonCreateControl options={authoringOptions} />}
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered lessons CSV

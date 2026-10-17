@@ -1,8 +1,10 @@
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { CollegeNotAssignedAlert } from "@/components/courses/college-not-assigned-alert";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
 import {getCollegeQuizAuthoringOptions} from "@/modules/courses/college-quiz-authoring-options";
+import {loadCollegeTabOptions} from "@/modules/courses/college-tab-options";
+import {CollegeOptionsUnavailable} from "@/components/courses/college-options-unavailable";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
@@ -17,7 +19,7 @@ export default async function CollegeQuizzesPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <CollegeNotAssignedAlert tab="quizzes" />;
   const params = await searchParams;
   const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), results:one(params.results), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
@@ -33,9 +35,10 @@ export default async function CollegeQuizzesPage({
     );
   }
   const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
-  const lessons=await getCollegeQuizAuthoringOptions(context);
+  const optionLoad=await loadCollegeTabOptions(()=>getCollegeQuizAuthoringOptions(context),[]);
+  const lessons=optionLoad.value;
   return <div className="space-y-4">
-    <CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
+    {optionLoad.failed?<CollegeOptionsUnavailable tab="quizzes" href="/college/quizzes"/>:<CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>}
     <CollegeAssessmentAggregate data={data}/>
   </div>;
 }

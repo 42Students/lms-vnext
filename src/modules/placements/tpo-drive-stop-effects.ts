@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
   activityEvents,collegeMemberships,inAppNotifications,placementApplications,
@@ -125,6 +125,7 @@ export async function endDriveApplicants(
   let rejected=0;
   for(const row of rows){
     if(row.status!=="SUBMITTED"||protectedIds.has(row.id))continue;
+    const message=mode==="CLOSED"&&waitlisted.has(row.id)?waitlistMessage:visibleMessage;
     const [old]=await tx.select({status:placementApplicationScreenings.status})
       .from(placementApplicationScreenings)
       .where(eq(placementApplicationScreenings.applicationId,row.id)).limit(1);
@@ -132,17 +133,17 @@ export async function endDriveApplicants(
     const [saved]=await tx.insert(placementApplicationScreenings).values({
       applicationId:row.id,status:"REJECTED",
       decidedByUserId:ctx.user.id,decidedAt:timestamp,
-      candidateMessage:visibleMessage,
+      candidateMessage:message,
     }).onConflictDoUpdate({
       target:placementApplicationScreenings.applicationId,
       set:{status:"REJECTED",decidedByUserId:ctx.user.id,decidedAt:timestamp,
-        candidateMessage:visibleMessage,updatedAt:timestamp},
+        candidateMessage:message,updatedAt:timestamp},
     }).returning({id:placementApplicationScreenings.applicationId});
     if(!saved)throw new Error("PLACEMENT_APPLICATION_STOP_FAILED");
     if(!old||old.status==="PENDING"||old.status==="HOLD"){
       await tx.insert(placementApplicationScreeningHistory).values({
         applicationId:row.id,fromStatus:old?.status??"PENDING",toStatus:"REJECTED",
-        actorUserId:ctx.user.id,candidateMessage:visibleMessage,
+        actorUserId:ctx.user.id,candidateMessage:message,
       });
     }
     rejected++;
@@ -153,7 +154,7 @@ export async function endDriveApplicants(
     module:"PLACEMENTS",eventType:"DRIVE_APPLICANTS_ENDED",
     subjectType:"placement_job",subjectId:jobId,
     summary:mode==="CANCELLED"?"TPO cancelled a drive":"TPO closed a drive",
-    metadata:{mode,reason,rejected,acceptedOffersRetained:accepted.length},
+    metadata:{mode,reason,rejected,interviewsCancelled,acceptedOffersRetained:accepted.length},
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("PLACEMENT_APPLICANT_STOP_AUDIT_FAILED");
   const recipients=new Map<string,{accepted:boolean;withdrawn:boolean}>();

@@ -11,6 +11,7 @@ import { learnerScheduleSelectedDeliveries } from "@/modules/academics/learner-s
 import { learnerScheduleClock } from "@/modules/academics/learner-schedule-clock-model";
 import { learnerScheduleDayAfterShift } from "@/modules/academics/learner-schedule-shift-day-model";
 import { learnerScheduleAnchorForView } from "@/modules/academics/learner-schedule-view-anchor-model";
+import { learnerSchedulePills } from "@/modules/academics/learner-schedule-pill-model";
 import { learnerScheduleTodayDay } from "@/modules/academics/learner-schedule-today-day-model";
 import { learnerScheduleWeekdayExportAvailable } from "@/modules/academics/learner-schedule-weekday-export-model";
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
@@ -421,6 +422,24 @@ export function LearnerClassSchedule({
 
   return (
     <div className="space-y-5">
+      {courseBasePath==="/learn/courses"?(()=>{
+        const pills=learnerSchedulePills({todayCount:todayEvents.length,next:nextEvent,now});
+        return pills?(
+          <div className="flex flex-wrap gap-2" aria-label="Schedule summary">
+            <span title={todayEvents.map(e=>scheduleEventTooltip(e)).join("
+
+")||undefined}
+              className="inline-flex min-h-8 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              {pills.today}
+            </span>
+            {pills.next?<span title={pills.next.popoverTitle+"
+"+scheduleEventTooltip(nextEvent!)}
+              className="inline-flex min-h-8 items-center rounded-full border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              {pills.next.label}
+            </span>:null}
+          </div>
+        ):null;
+      })():(
       <div className="grid gap-3 sm:grid-cols-2">
         <Metric
           label="Today"
@@ -445,6 +464,7 @@ export function LearnerClassSchedule({
           }
         />
       </div>
+      )}
 
       {upcoming.length > 0 ? (
         <section

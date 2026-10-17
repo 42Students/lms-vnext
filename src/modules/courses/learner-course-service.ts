@@ -42,6 +42,7 @@ import {
 import {
   buildLearnerProgressView,
 } from "./progress-service";
+import { readCourseProgressPolicy } from "./course-progress-policy-service";
 import {
   loadCourseScope,
   loadCourseSectionDeliveryScope,
@@ -441,6 +442,7 @@ export async function getLearnerCourseWorkspace(
 ) {
   // Capture once for consistent deadline/availability and UI-activity decisions.
   const snapshotNowMs = Date.now();
+  const progressPolicy = await readCourseProgressPolicy();
   const membership =
     requireLearnerMembership(context);
   const deliveryId =
@@ -782,6 +784,7 @@ export async function getLearnerCourseWorkspace(
               completedAt:
                 row.progressCompletedAt,
             },
+        progressPolicy,
       ),
     });
   }

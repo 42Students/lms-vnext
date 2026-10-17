@@ -539,7 +539,7 @@ export function LearnerProfileWorkspace(props: {
         </div> : <p className="mt-2 text-sm text-body">All suggested career sections have saved entries.</p>}
       </nav>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">Saved profile data refreshes when you return to this tab.</p>
+        <span aria-hidden="true"/>
         <Button size="sm" variant="secondary" disabled={detailsOpen||contactOpen||collection!==null||pending||contactPending}
           onClick={()=>{lastRefreshAt.current=Date.now();router.refresh();}}>
           Refresh saved profile
@@ -575,7 +575,7 @@ export function LearnerProfileWorkspace(props: {
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-labelledby="learner-profile-checklist-title">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 id="learner-profile-checklist-title" className="text-base font-semibold text-foreground">
-            Profile completion checklist
+            Profile Completeness
           </h2>
           <Link href="/learn/profile/completeness" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
@@ -592,7 +592,7 @@ export function LearnerProfileWorkspace(props: {
             </svg>
             <div className="flex flex-wrap gap-2">
               <StatusBadge tone="success">{coverage.completed} Completed</StatusBadge>
-              <StatusBadge tone="neutral">{coverage.total-coverage.completed} Remaining</StatusBadge>
+              {coverage.total-coverage.completed>0?<StatusBadge tone="neutral">{coverage.total-coverage.completed} Remaining</StatusBadge>:null}
             </div>
           </div>
         </div>
@@ -665,7 +665,7 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
           </div>
         </Card>
-        <Card id="social-profiles" title="Social profiles"
+        <Card id="social-profiles" title="Social Profiles"
           action={<Button variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
           <div className="grid gap-4 sm:grid-cols-2">
             <Value label="LinkedIn" value={document.socialProfiles.linkedinUrl} />
@@ -842,7 +842,7 @@ export function LearnerProfileWorkspace(props: {
           </fieldset>
 
           <fieldset className="grid gap-4 sm:grid-cols-2">
-            <legend className="text-sm font-semibold text-foreground">Social profiles</legend>
+            <legend className="text-sm font-semibold text-foreground">Social Profiles</legend>
             {([
               ["linkedinUrl", "LinkedIn"],
               ["githubUrl", "GitHub"],
