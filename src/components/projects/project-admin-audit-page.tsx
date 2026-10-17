@@ -315,11 +315,11 @@ export async function ProjectAdminAuditPage({
           <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
         </div>)}
       </section>
-      <ProjectAuditPageExport rows={result.groups.map(group=>({
-        id:group.latest.event.id,action:group.latest.event.eventType,
-        summary:group.latest.event.summary,entity:group.latest.event.subjectLabel??"",
-        importance:group.latest.event.importance,
-        occurredAt:group.latest.event.occurredAt.toISOString(),
+      <ProjectAuditPageExport rows={result.items.map(item=>({
+        id:item.event.id,action:item.event.eventType,
+        summary:item.event.summary,entity:item.event.subjectLabel??"",
+        importance:item.event.importance,
+        occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       <ActivityCenter
         groups={groups}
