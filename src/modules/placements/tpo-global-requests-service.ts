@@ -25,6 +25,8 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     sort:query.sort,
     requestedBefore:tpoRequestAgeCutoff(query.age,new Date()),
     search: query.search,
+    urgentOnly:query.urgentOnly ?? false,
+    jobId:query.jobId,
     page: query.page,
     pageSize: query.pageSize,
   });
