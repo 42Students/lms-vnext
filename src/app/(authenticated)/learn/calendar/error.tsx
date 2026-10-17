@@ -14,7 +14,7 @@ export default function LearnerCalendarError({
         Unable to load class schedule
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        Unable to load class schedule. Please try again. Some calendar events may be unavailable until you retry.
+        Calendar events may be incomplete. Please try refreshing the page.
       </p>
       <div className="mt-5 flex justify-center">
         <Button onClick={reset}>

@@ -6,7 +6,7 @@ describe("College Placements additional UNCONFIRMED decisions",()=>{
   expect(file("src/components/placements/placement-drive-workspace.tsx")).toContain("PlacementOfferControls");
   expect(file("src/components/placements/placement-offer-controls.tsx")).toContain("isTpo");
   expect(file("docs/audit/owner-decisions-resolved.md")).toContain("links only until uploads");
-  expect(file("docs/audit/acceptance/college-placements-verification.md")).toContain("COL-placements-03 | OPEN (decided");
+  expect(file("docs/audit/acceptance/college-placements-verification.md")).toContain("COL-placements-03 | PARTIAL — OPEN");
  });
  it("COL-placements-15 does not delete a company identity or silently restore a global company",()=>{
   const service=file("src/modules/placements/company-service.ts");
@@ -14,6 +14,8 @@ describe("College Placements additional UNCONFIRMED decisions",()=>{
   expect(service).toContain("archivePlacementCompanyRelationship");
   expect(service).toContain('status: "ARCHIVED"');
   expect(directory).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
-  expect(file("docs/audit/acceptance/college-placements-verification.md")).toContain("COL-placements-15 | OPEN (decided");
+  expect(service).toContain("restorePlacementCompanyRelationship");
+  expect(service).toContain('current.company.status!=="ACTIVE"');
+  expect(file("docs/audit/acceptance/college-placements-verification.md")).toContain("COL-placements-15 | DONE");
  });
 });
