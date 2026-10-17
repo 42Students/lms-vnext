@@ -205,6 +205,7 @@ export const projectInstances = pgTable(
     endDate: date("end_date"),
     sprintLengthWeeks: integer("sprint_length_weeks"),
     estimationUnit: varchar("estimation_unit", { length: 32 }).default("POINTS"),
+    authoredBrief: jsonb("authored_brief").notNull().default(sql`'{"goal":"","description":"","deliverables":[],"completionConditions":[],"personas":[]}'::jsonb`),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -255,6 +256,10 @@ export const projectInstances = pgTable(
     check(
       "project_instances_sprint_length_weeks_ck",
       sql`${table.sprintLengthWeeks} is null or ${table.sprintLengthWeeks} between 1 and 104`,
+    ),
+    check(
+      "project_instances_authored_brief_shape_ck",
+      sql`jsonb_typeof(${table.authoredBrief}) = 'object'`,
     ),
     check(
       "project_instances_dates_ck",
