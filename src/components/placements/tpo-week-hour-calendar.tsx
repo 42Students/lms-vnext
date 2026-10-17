@@ -96,8 +96,16 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  useEffect(()=>{
   if(!hasDraft)return;
   const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  const protectLinks=(event:MouseEvent)=>{
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   if(target.closest("a[href]")&&!window.confirm("Discard this unfinished follow-up?")){
+    event.preventDefault();event.stopPropagation();
+   }
+  };
   window.addEventListener("beforeunload",prevent);
-  return ()=>window.removeEventListener("beforeunload",prevent);
+  document.addEventListener("click",protectLinks,true);
+  return ()=>{window.removeEventListener("beforeunload",prevent);document.removeEventListener("click",protectLinks,true);};
  },[hasDraft]);
  function cancelDraft(){
   if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;

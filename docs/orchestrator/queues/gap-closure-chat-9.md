@@ -319,3 +319,6 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - COL-projects-15 OPEN: Team tab has validated preselected bulk-reassignment deep link; full per-member legacy roster actions remain unverified.
 
 - COL-projects-18 OPEN: project Audit now filters resource events by Added/Edited/Saved/Removed and searches text, with persisted event-type model; exact Saved event origin unverified.
+
+- TPO-calendar-reports-21 DONE source: draft confirmation on escape/cancel/navigation/reload in both follow-up dialogs; orchestrator UI tests outstanding.
+- TPO-calendar-reports-14 DONE source: verified responsive TPO view defaults and mobile agenda against actual existing implementation; browser checks outstanding.
