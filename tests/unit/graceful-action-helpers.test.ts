@@ -44,7 +44,7 @@ describe("graceful action helpers", () => {
     const key = createIdempotencyKey();
     expect(key).toMatch(/^[0-9a-f-]{36}$/);
     const request = withIdempotencyKey({ method: "POST" }, key);
-    expect(new Headers(request.headers).get("Idempotency-Key")).toBe(key);
+    expect(new Headers((request as { headers?: HeadersInit }).headers).get("Idempotency-Key")).toBe(key);
   });
   it("GR-50 retries idempotent transient failures, not unkeyed POST calls", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response("", { status: 503 }))
