@@ -43,6 +43,10 @@ function humanize(value: string) {
     .join(" ");
 }
 
+/** Only persisted staff-origin codes qualify; never infer from an application's outcome. */
+export function isPlacementCellApplied(channel:string):boolean{
+ return ["PLACEMENT_CELL","TPO","STAFF","ON_BEHALF","BULK_ADD","COLLEGE_ADMIN"].includes(channel.trim().toUpperCase());
+}
 function statusTone(
   value: string,
 ): "neutral" | "info" | "success" | "warning" | "error" {
@@ -192,7 +196,7 @@ export function LearnerPlacementJourney({
                   {formatWhen(
                     item.submittedAt,
                   )}{" "}
-                  · {humanize(item.channel)}
+                  · {isPlacementCellApplied(item.channel) ? "Applied by the placement cell" : humanize(item.channel)}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -217,6 +221,13 @@ export function LearnerPlacementJourney({
               </div>
             </div>
 
+            {isPlacementCellApplied(item.channel) && item.applicationStatus==="SUBMITTED" ? (
+              <aside role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
+                <p className="font-semibold text-foreground">The placement cell applied for you</p>
+                <p className="mt-1 text-sm text-body">If you do not wish to continue with this application, ask your placement cell about available withdrawal options.</p>
+                <Link href="/learn/my-placements/placement#requests" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Contact the placement cell</Link>
+              </aside>
+            ) : null}
             {item.driveStatus === "CANCELLED" ? (
               <aside role="alert" className="mt-4 rounded-lg border border-warning bg-surface p-4">
                 <p className="font-semibold text-foreground">This drive was cancelled</p>
