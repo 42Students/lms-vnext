@@ -140,4 +140,14 @@ describe("chat-3 Drives round 4",()=>{
   expect(college).toContain("<PlacementJobCreateWorkspace");
   expect(college).toContain('basePath="/college/placements"');
  });
+ it("TPO-drives-26 Create drive now provides a scoped clone-past picker",()=>{
+  const body=source("src/components/placements/placement-job-create-workspace.tsx");
+  expect(body).toContain("Clone a past drive");
+  expect(body).toContain("inArray(placementJobs.status");
+  expect(body).toContain("eq(placementJobs.collegeId,collegeId)");
+  expect(body).toContain("<TpoDriveCloneAction jobId={job.id}");
+  const service=source("src/modules/placements/tpo-drive-clone-service.ts");
+  expect(service).toContain("sourceJobId:source.id");
+  expect(service).toContain("cleared:[");
+ });
 });
