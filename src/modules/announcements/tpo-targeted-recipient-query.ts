@@ -10,7 +10,7 @@ export type TpoTargetedNoticeAudience={
 };
 export function tpoTargetedRecipientQuery(collegeId:string,audience:TpoTargetedNoticeAudience):SQL{
  const targets=audience.targetIds?.length?audience.targetIds:audience.targetId?[audience.targetId]:[];
- const targetSql=sql.join(targets.map(id=>sql`${id}::uuid`),sql`,`);
+ const targetSql=targets.length?sql.join(targets.map(id=>sql`${id}::uuid`),sql`,`) : sql`NULL::uuid`;
  const active=sql`m.college_id=${collegeId}::uuid AND m.status='ACTIVE'
   AND u.platform_status='ACTIVE'`;
  const learner=sql`JOIN learner_program_enrollments e ON e.membership_id=m.id
