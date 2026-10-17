@@ -99,7 +99,8 @@ export async function bulkCollegeLessonStudentVisibility(context:RequestContext,
    changed.push(saved);
   }catch(error){
    failed.push({lessonId:item.lessonId,
-    reason:error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});
+    reason:error instanceof CoursesServiceError?error.code:
+     error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});
   }
  }
  return {changed,failed};
