@@ -6,18 +6,24 @@ import {TpoInterviewRescheduleForm} from "@/components/placements/tpo-interview-
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoInterviewReadiness} from "@/modules/placements/tpo-interview-readiness-service";
-type Props={searchParams:Promise<{days?:string|string[]}>};
+type Props={searchParams:Promise<{days?:string|string[];page?:string|string[];q?:string|string[]}>};
 export default async function TpoInterviewReadinessPage({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const query=await searchParams;const days=Array.isArray(query.days)?query.days[0]:query.days;
- const data=await getTpoInterviewReadiness(context,days?{days}:{});
+ const first=(x:string|string[]|undefined)=>Array.isArray(x)?x[0]:x;
+ const data=await getTpoInterviewReadiness(context,{days:days||14,page:first(query.page)||1,q:first(query.q)||""});
+ const href=(page:number)=>"/tpo/calendar/interviews?"+new URLSearchParams({days:String(data.days),page:String(page),...(data.q?{q:data.q}:{})}).toString();
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Interview rounds" title="Interview schedule readiness"
    description="Pending and scheduled round-level interviews. Candidate-specific slots are not recorded here."/>
   <Link href="/tpo/calendar" className="text-sm font-semibold text-primary-text hover:underline">← Calendar</Link>
   <form action="/tpo/calendar/interviews" method="get"
     className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+   <label className="text-sm font-semibold text-body">Search company, drive or round
+    <input name="q" type="search" maxLength={100} defaultValue={data.q}
+     className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3" />
+   </label>
    <label className="text-sm font-semibold text-body">Lookahead
     <select name="days" defaultValue={String(data.days)} className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
       {[7,14,30,60,90].map(n=><option key={n} value={n}>{n} days</option>)}
@@ -30,7 +36,11 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
     <p className="text-xl font-semibold tabular-nums text-foreground">{n}</p>
    </div>)}
   </section>
-  {data.limited?<p role="status" className="text-sm text-body">The scheduling source is capped at 200 rounds; not all interviews may be included.</p>:null}
+  <p role="status" className="text-sm text-body">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
+  <nav aria-label="Interview round pages" className="flex flex-wrap gap-3">
+   {data.page>1?<Link href={href(data.page-1)} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Previous 200</Link>:null}
+   {data.limited?<Link href={href(data.page+1)} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Next 200</Link>:null}
+  </nav>
   {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found."/>:
    <section aria-label="Interview rounds" className="grid gap-3">
    {data.rows.map(r=><article key={r.id} className="rounded-xl border border-border bg-surface p-4">

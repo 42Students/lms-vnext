@@ -44,6 +44,10 @@ export default async function TpoCtcReportPage({
   const ctc = workspace.details.ctc;
 
   const metrics = [
+    ["Students with a package", reportNumber(workspace.report.metrics.studentsWithPackage??0)],
+    ["Highest (best student offer)", reportCurrency(workspace.report.metrics.highestPackageInr)],
+    ["Median (best student offer)", reportCurrency(workspace.report.metrics.medianPackageInr)],
+    ["Average (best student offer)", reportCurrency(workspace.report.metrics.averagePackageInr)],
     ["Accepted full-time offers", reportNumber(ctc.acceptedFullTimeOffers)],
     ["Offers with known CTC", reportNumber(ctc.knownCtcOffers)],
     ["Average annual CTC", reportCurrency(ctc.averageInr)],
@@ -57,7 +61,7 @@ export default async function TpoCtcReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Compensation (CTC)"
-        description="Annual package distribution for currently accepted full-time offers. Internship and non-accepted offers are excluded."
+        description="Annual package statistics use each learner’s single highest accepted full-time offer. The separate distribution counts accepted offer records."
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 

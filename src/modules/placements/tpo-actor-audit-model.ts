@@ -7,6 +7,7 @@ export const tpoActorAuditQuerySchema = z.object({
   entityId: z.string().trim().min(1).max(128).optional(),
   from: z.iso.date().optional(),
   to: z.iso.date().optional(),
+  sort:z.enum(["NEWEST","OLDEST"]).default("NEWEST"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   pageSize: z.coerce.number().int().min(1).max(100).default(25),
 }).strict().superRefine((data, ctx) => {

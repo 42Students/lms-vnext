@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -110,6 +111,15 @@ export default async function TpoPlacementSummaryPage({
       </section>
 
 
+      <ReportBarChart title="Placed learners by company" units="learners"
+       rows={byCompany.map(row=>({label:row.companyName,value:row.placed}))}/>
+      <ReportBarChart title="Offers by recorded status" units="offers"
+       rows={[
+        {label:"Accepted",value:workspace.details.offers.totals.accepted},
+        {label:"Declined",value:workspace.details.offers.totals.declined},
+        {label:"Withdrawn",value:workspace.details.offers.totals.withdrawn},
+        {label:"Waiting for student",value:workspace.details.offers.totals.outstanding},
+       ]}/>
       {workspace.noSeason ? (
         <EmptyState
           title="No placement season available"

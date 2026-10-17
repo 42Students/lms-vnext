@@ -91,6 +91,10 @@ export default async function TpoOffersAcceptanceReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
+      <ReportBarChart title="Acceptance rate by company" units="percent"
+       rows={byCompany.filter(row=>row.accepted+row.declined>0)
+         .map(row=>({label:row.label,value:Math.round(row.accepted/(row.accepted+row.declined)*100),
+          detail:row.accepted+" accepted of "+(row.accepted+row.declined)+" answered offers"}))}/>
       <ReportBarChart title="Accepted offers by company" units="offers"
        rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
 

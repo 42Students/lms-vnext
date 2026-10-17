@@ -80,6 +80,7 @@ export const placementCalendarQuerySchema = z
     roundKind: z
       .enum(placementRoundKinds)
       .optional(),
+    includeDraftDeadlines:z.boolean().optional(),
   })
   .strict()
   .superRefine((input, ctx) => {
@@ -175,7 +176,9 @@ function companySearchPattern(value: string) {
  * All instants are queried with an inclusive IST day start
  * and an exclusive next-day boundary.
  *
- * DRAFT/ARCHIVED job deadlines are not actionable calendar
+ * DRAFT job deadlines are excluded by default; TPO Home may explicitly include
+ * internal draft deadlines to plan the next week. ARCHIVED deadlines never appear.
+ * Published job deadlines are actionable calendar
  * events. CANCELLED/PENDING rounds have no active interview
  * slot. Historical completed rounds and completed follow-ups
  * remain visible with their persisted status.
@@ -375,7 +378,7 @@ export async function listPlacementCalendarEvents(
                 ),
                 inArray(
                   placementJobs.status,
-                  ["PUBLISHED", "CLOSED"],
+                  input.includeDraftDeadlines?["DRAFT","PUBLISHED","CLOSED"]:["PUBLISHED", "CLOSED"],
                 ),
                 gte(
                   placementJobs.applicationDeadline,

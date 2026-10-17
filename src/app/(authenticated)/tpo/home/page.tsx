@@ -13,7 +13,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
-import {listTpoLeads,listDueTpoFollowups} from "@/modules/placements/tpo-crm-service";
+import {getTpoHomeCrmCounts} from "@/modules/placements/tpo-home-quick-counts-service";
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {getCollegePlacementRules} from "@/modules/placements/tpo-policy-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
@@ -44,13 +44,11 @@ export default async function TpoHome(){
    getTpoPlacementTeam(ctx,collegeId),
    listMyTpoInternalThreads(ctx),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
-    to:placementCalendarDayKey(weekEnd)}),
+    to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
  ]);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
- const [recruiters,dueFollowups]=crmReady?await Promise.all([
-   listTpoLeads(ctx,collegeId),listDueTpoFollowups(ctx,collegeId),
- ]):[null,null];
- const weekNext=weekEvents.events.filter(event=>event.startsAt>=calendarNow&&
+ const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
+ const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())
    .map(event=>({startsAt:event.startsAt,title:event.companyName+" · "+event.title}));
@@ -95,12 +93,12 @@ export default async function TpoHome(){
   driveHref:operations.workQueue.some(item=>item.code==="DRIVE_REQUESTS"&&item.count>0)
    ?"/tpo/placements?tab=requests":"/tpo/placements",
   registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
-  placedUnique:studentStats.summary.placed,recruiterLeads:recruiters?.length??null,
-  followUps:dueFollowups?.length??null,recruiterAccess:null,
+  placedUnique:studentStats.summary.placed,recruiterLeads:crmCounts?.leads??null,
+  followUps:crmCounts?.dueFollowups??null,recruiterAccess:null,
   pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
   teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
-  upcoming:weekNext,
+  upcoming:weekNext,calendarAvailable:weekEvents!==null,
  });
  const next=buildTpoLegacyNextUp({
   needsYou:[
@@ -122,7 +120,7 @@ export default async function TpoHome(){
    {label:"Import academic details",done:studentStats.summary.activeLearners>0,link:"/tpo/students"},
    {label:"Choose the placement rules",done:collegeRules.updatedAt!==null,link:"/tpo/settings/rules"},
    {label:"Invite a batch to register",done:batches.batches.some(batch=>Boolean(batch.invitedAt)),link:"/tpo/batches"},
-   {label:"Add your first recruiter",done:(recruiters?.length??0)>0,link:"/tpo/recruiters"},
+   {label:"Add your first recruiter",done:(crmCounts?.leads??0)>0,link:"/tpo/recruiters"},
    {label:"Pick your team",done:placementTeam.summary.total>1,link:"/tpo/settings/team"},
   ],
  });
