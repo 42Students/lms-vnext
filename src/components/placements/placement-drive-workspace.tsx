@@ -264,51 +264,51 @@ export async function PlacementDriveWorkspace({
         }
         actions={
           <details className="group relative w-full md:w-auto" aria-label="Drive actions">
-            <summary className="flex min-h-11 cursor-pointer items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:hidden">Actions</summary>
+            <summary className="flex min-h-11 cursor-pointer items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] md:hidden">Actions</summary>
             <div role="group" aria-label="Drive action choices"
               className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto rounded border border-border bg-surface p-3 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0">
             {nextStep ? (
               <Link href={nextStep.primary.href}
-                className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
                 {nextStep.primary.label}
               </Link>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applicants-pipeline"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Applicants
               </Link>
             ) : null}
             {isTpo && job.status === "PUBLISHED" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Close drive
               </Link>
             ) : null}
             {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Cancel drive
               </Link>
             ) : null}
             {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Extend deadline
               </Link>
             ) : null}
             {isTpo ? <details className="relative self-start">
-              <summary className="flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+              <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 More ▾
               </summary>
               <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
-                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  className="min-h-11 rounded-md px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-surface-subtle">
                   Export applicants
                 </Link>
                 {job.status!=="DRAFT"?<Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
-                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  className="min-h-11 rounded-md px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-surface-subtle">
                   Share with company
                 </Link>:null}
                 {["CLOSED","CANCELLED"].includes(job.status)
@@ -317,14 +317,14 @@ export async function PlacementDriveWorkspace({
             </details>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Edit draft
               </Link>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
                 Current shortlist &amp; CSV
               </Link>
@@ -332,7 +332,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/letters"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
                 Offer letter evidence
               </Link>
@@ -340,7 +340,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/closeout"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
                 Drive close-out report
               </Link>
@@ -348,7 +348,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/candidate-schedule"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
                 Candidate round schedule
               </Link>
@@ -356,7 +356,7 @@ export async function PlacementDriveWorkspace({
             {hasMembershipRole(context, "TPO") ? (
               <Link
                 href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/joining"}
-                className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
               >
                 Manage joining outcomes
               </Link>
@@ -365,7 +365,7 @@ export async function PlacementDriveWorkspace({
               href={isTpo
                 ? "/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/applications-export"
                 : "/api/placements/jobs/" + encodeURIComponent(jobId) + "/applicants/export"}
-              className="inline-flex min-h-9 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-primary bg-primary px-3 text-sm font-semibold text-on-primary transition hover:border-primary-hover hover:bg-primary-hover"
             >
               {isTpo ? "Review and export applicants" : "Export applicants (CSV)"}
             </Link>
@@ -399,7 +399,7 @@ export async function PlacementDriveWorkspace({
         <section id="drive-deadline-actions" aria-label="Set or extend deadline"
           className="rounded-xl border border-border bg-surface p-4">
           <details>
-            <summary className="cursor-pointer font-semibold text-primary-text">
+            <summary className="cursor-pointer font-semibold text-[var(--lms-link-text)]">
               {deadlineState.applicationDeadline?"Extend deadline":"Set deadline"}
             </summary>
             <div className="mt-4"><TpoDriveDeadlineForm job={deadlineState}/></div>
@@ -411,14 +411,14 @@ export async function PlacementDriveWorkspace({
           <h2 className="text-base font-semibold text-foreground">Next step</h2>
           <p className="mt-2 text-sm text-body">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
-            className="mt-3 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+            className="mt-3 inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (
             <div className="mt-4 grid gap-2 sm:grid-cols-3">
               {nextStep.more.map(step => (
                 <Link key={step.href} href={step.href}
-                  className="rounded-md border border-border bg-surface p-3 text-sm text-primary-text hover:underline">
+                  className="rounded-md border border-border bg-surface p-3 text-sm text-[var(--lms-link-text)] hover:underline">
                   <span className="block font-semibold">{step.label}</span>
                   <span className="mt-1 block text-xs text-body">{step.description}</span>
                 </Link>
@@ -464,15 +464,15 @@ export async function PlacementDriveWorkspace({
                       <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":(round.mode??"").replaceAll("_"," ")}
                         {" · "}{round.venue??(round.meetingUrl?"Online":"Venue to be told")}
                         {round.meetingUrl&&/^https:\/\//i.test(round.meetingUrl)?<a href={round.meetingUrl}
-                          target="_blank" rel="noopener noreferrer"
-                          className="ml-2 font-semibold text-primary-text underline">Meeting link</a>:null}
+                          
+                          className="ml-2 font-semibold text-[var(--lms-link-text)] underline">Meeting link</a>:null}
                       </dd>
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
                     <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
                       {rescheduleRequests>0?<Link href="#drive-request-actions"
-                        className="ml-2 font-semibold text-primary-text underline">Review pending →</Link>:null}
+                        className="ml-2 font-semibold text-[var(--lms-link-text)] underline">Review pending →</Link>:null}
                     </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
@@ -481,15 +481,15 @@ export async function PlacementDriveWorkspace({
                   </dl>
                   {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
                   {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<a href={round.testUrl}
-                    target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                     className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
                     Open test instructions →
                   </a>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
-                      className="font-semibold text-primary-text underline">See who reached this round →</Link>
+                      className="font-semibold text-[var(--lms-link-text)] underline">See who reached this round →</Link>
                     {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                      className="font-semibold text-primary-text underline">Enter results →</Link> : null}
+                      className="font-semibold text-[var(--lms-link-text)] underline">Enter results →</Link> : null}
                   </div>
                 </article>
               );
@@ -504,7 +504,7 @@ export async function PlacementDriveWorkspace({
             {driveDay.rounds.filter(round=>round.kind!=="TALK").map(round=>
               <Link key={round.id}
                 href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
                 {round.name}
               </Link>)}
           </div>
@@ -527,13 +527,13 @@ export async function PlacementDriveWorkspace({
           <div className="mt-3 flex flex-wrap gap-4 text-sm">
             <Link
               href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist"}
-              className="font-semibold text-primary-text hover:underline"
+              className="font-semibold text-[var(--lms-link-text)] hover:underline"
             >
               View persisted shortlist →
             </Link>
             <a
               href={"/api/placements/jobs/" + encodeURIComponent(jobId) + "/shortlist/export"}
-              className="font-semibold text-primary-text hover:underline"
+              className="font-semibold text-[var(--lms-link-text)] hover:underline"
             >
               Download formula-safe shortlist CSV
             </a>
