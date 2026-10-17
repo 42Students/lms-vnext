@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 
 type Choices = {
@@ -13,6 +14,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const router=useRouter();
   const [pending,start]=useTransition();
   const [result,setResult]=useState<string|null>(null);
+  const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
   const [error,setError]=useState("");
   const [programId,setProgramId]=useState("");
   const [cohortId,setCohortId]=useState("");
@@ -28,7 +30,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [address,setAddress]=useState("");
   const field="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground";
   function submit(event:FormEvent<HTMLFormElement>) {
-    event.preventDefault();setError("");setResult(null);
+    event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
     if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
     if(!programId||!cohortId||!displayName.trim()||!phoneE164.trim()){
       setError("Name, phone, program and batch are required.");return;
@@ -45,6 +47,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
           {error?:string;status?:string;membershipId?:string;failures?:string[]}|null;
         if(!response.ok && response.status!==207)throw Error(body?.error??"Student registration failed");
         const isPartial=body?.status==="PARTIAL";
+        setSavedMemberId(body?.membershipId??null);
         setResult(isPartial
           ? "Partially registered. Student membership "+(body?.membershipId??"")+"; "+(body?.failures??[]).join("; ")
           : "Student registered and enrolled successfully.");
@@ -108,6 +111,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {pending?"Registering…":"Register student"}
       </button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </div>
   </form>;
