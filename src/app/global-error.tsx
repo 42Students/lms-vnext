@@ -9,7 +9,7 @@ export default function GlobalError({ error, reset }: {
 }) {
   return (
     <html lang="en">
-      <body><GracefulErrorBoundary error={error} reset={reset} /></body>
+      <body><GracefulErrorBoundary error={error} reset={reset} homeHref="/" /></body>
     </html>
   );
 }
