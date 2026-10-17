@@ -90,6 +90,12 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      if(next==="HIRED"&&!offers.some(o=>o.status==="ACCEPTED"&&o.joining==="JOINED"))
       throw Error("Confirm an accepted offer's joining outcome before marking Hired.");
     }
+    if(next==="REJECTED"){
+     const live=await tx.select({id:placementOffers.id}).from(placementOffers)
+      .where(and(eq(placementOffers.applicationId,applicationId),
+       inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+     if(live.length)throw Error("Resolve active offers before rejecting this application.");
+    }
     let screeningStatus=screening.status;
     if(input.action==="REINSTATE"){
      if(screeningStatus!=="REJECTED")
@@ -127,8 +133,10 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     const target=input.action==="REINSTATE"?null:
      next==="SHORTLISTED"?"SHORTLISTED":next==="REJECTED"?"REJECTED":null;
     if(target&&screeningStatus!==target){
-     const allowed=(screeningStatus==="PENDING"||screeningStatus==="HOLD")&&
-      (target==="SHORTLISTED"||target==="REJECTED");
+     // COL-placements-01: a shortlisted application may be rejected later (Mark Failed).
+     const allowed=((screeningStatus==="PENDING"||screeningStatus==="HOLD")&&
+      (target==="SHORTLISTED"||target==="REJECTED"))||
+      (screeningStatus==="SHORTLISTED"&&target==="REJECTED");
      if(!allowed)throw Error("The screening decision cannot be changed from its current state.");
      await tx.update(placementApplicationScreenings).set({
       status:target,decidedAt:new Date(),decidedByUserId:context.user.id,

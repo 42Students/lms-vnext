@@ -1169,6 +1169,8 @@ export const placementApplicationScreeningHistory = pgTable(
           and ${table.toStatus} in ('HOLD', 'SHORTLISTED', 'REJECTED'))
         or (${table.fromStatus} = 'HOLD'
           and ${table.toStatus} in ('SHORTLISTED', 'REJECTED'))
+        or (${table.fromStatus} = 'SHORTLISTED'
+          and ${table.toStatus} = 'REJECTED')
         or (${table.fromStatus} = 'REJECTED'
           and ${table.toStatus} = 'PENDING')`,
     ),

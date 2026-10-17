@@ -47,11 +47,11 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
   kind:placementJobRounds.kind,start:interviews.startsAt,
   duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
   status:sql<string>`case when exists(select 1 from activity_events ae
-      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}
+      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}::text
        and ae.college_id=${placementJobs.collegeId}
        and ae.event_type='PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW') then 'NO_SHOW'
     when exists(select 1 from activity_events ae
-      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}
+      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}::text
        and ae.college_id=${placementJobs.collegeId}
        and ae.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED') then 'COMPLETED'
     else 'SCHEDULED' end`.as("interview_status"),
