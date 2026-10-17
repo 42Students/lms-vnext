@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {listTpoTeamAsks} from "@/modules/placements/tpo-team-asks-service";
+import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAskPanel} from "@/components/tpo/tpo-team-ask-panel";
 import {createHash} from "node:crypto";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
@@ -39,6 +40,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  </main>;
  const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  const asks=await listTpoTeamAsks(context,parsed.data).catch(()=>({status:"FAILED" as const,items:[]}));
+ const otherMembershipId=result.thread.startedByMembershipId===context.membership?.id?
+  result.thread.invitedMembershipId:result.thread.startedByMembershipId;
+ const away=await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]}));
+ const awayUntil=away.items.find(row=>row.membershipId===otherMembershipId)?.awayUntil??null;
+ const awayLabel=awayUntil?new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
+ }).format(awayUntil):null;
  const rawAsk=Array.isArray(query.ask)?query.ask[0]:query.ask;
  const highlightAskId=rawAsk&&tpoThreadIdSchema.safeParse(rawAsk).success?rawAsk:undefined;
  const serverNow=new Date();
@@ -55,8 +63,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    decisions={result.messages.filter(message=>message.decision&&!message.removed).length}/>
   {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
    actorId={context.membership?.id??""}
-   recipientId={result.thread.startedByMembershipId===context.membership?.id?
-    result.thread.invitedMembershipId:result.thread.startedByMembershipId}
+   recipientId={otherMembershipId}
+   recipientAwayLabel={awayLabel}
    recipientName={result.thread.counterpartName}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
    highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?

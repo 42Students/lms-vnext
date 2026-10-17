@@ -307,3 +307,7 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 
 | TPO-inbox-team-18 | PARTIAL — OPEN | Team inbox has persisted Asks and **@ Me** (assigned asks only, not mentions) chips, visible only when ask storage is registered; `tests/unit/tpo-team-filter-round4.test.ts` names **TPO-inbox-team-22**. |
 | TPO-inbox-team-22 | PARTIAL — OPEN | Asks and ask-only @ Me counts are explicitly scoped to member/thread/college, no fabricated references. Home Needs-you integration still open. |
+
+## Round 6 — ask away warning
+
+| TPO-inbox-team-34 | PARTIAL — OPEN | Scoped away-until is now checked when composing an ask to the other private-conversation participant. A legacy-format first-name warning appears without silently preventing an ask; the named **TPO-inbox-team-34** test in `tests/unit/tpo-team-away-chat2.test.ts` verifies the UI and source. Ask-to-self and multi-member asks remain. |
