@@ -1,7 +1,7 @@
 import { and, asc, eq, inArray, isNull, ne, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  courseAssignments, courseLearningPaths, courseLessons, courseQuizzes, lessonContents,
+  assignmentSubmissions, courseAssignments, courseLearningPaths, courseLessons, courseQuizzes, lessonContents,
 } from "@/db/schema";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
 import { facultyAssessmentVisibleToDelivery } from "./faculty-assessment-batch-model";
@@ -27,7 +27,7 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
     assignments: [] as Array<typeof courseAssignments.$inferSelect & {
       kind: "ASSIGNMENT"; authoredDeliveryId: string | null;
       courseName: string; courseCode: string; sectionName: string; sectionCode: string;
-      academicPeriodName: string; lessonName: string; facultyOwned: boolean;
+      academicPeriodName: string; lessonName: string; facultyOwned: boolean;hasSubmissions:boolean;
     } & {deliveryId: string}>,
     quizzes: [] as Array<typeof courseQuizzes.$inferSelect & {
       kind: "QUIZ"; authoredDeliveryId: string | null;
@@ -79,6 +79,16 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
         contentAudience, ne(lessonContents.status,"ARCHIVED"))),
   ]);
 
+  // FAC-assessments-15: one scoped aggregate read, no per-card submission query.
+  // The faculty editor can display the lock *before* a rejected save.
+  const assignmentIds=[...new Set(assignmentRows.map(row=>row.id))];
+  const submittedRows=assignmentIds.length?await getDb().select({
+    assignmentId:assignmentSubmissions.assignmentId,
+  }).from(assignmentSubmissions)
+    .where(inArray(assignmentSubmissions.assignmentId,assignmentIds))
+    .groupBy(assignmentSubmissions.assignmentId):[];
+  const submittedIds=new Set(submittedRows.map(row=>row.assignmentId));
+
   const lessonByPath = new Map<string, typeof lessons>();
   for (const lesson of lessons) {
     const group = lessonByPath.get(lesson.learningPathId) ?? [];
@@ -126,6 +136,7 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
         courseCode:course.courseCode, sectionName:course.sectionName,
         sectionCode:course.sectionCode, academicPeriodName:course.academicPeriodName,
         lessonName:lesson.name, facultyOwned:item.deliveryId===course.deliveryId,
+        hasSubmissions:submittedIds.has(item.id),
       });
       for (const item of quizzes) empty.quizzes.push({
         ...item, kind:"QUIZ", deliveryId:course.deliveryId,

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { updateCourseAssignmentInputSchema } from "./assignment-validation";
-import {assignmentMethodsSchema} from "./assignment-submission-methods";
+import {assignmentMethodsSchema,normalizeAssignmentMethods} from "./assignment-submission-methods";
 
 export const facultyAssignmentParamsSchema=z.object({
   deliveryId:z.string().uuid(),
@@ -47,6 +47,13 @@ export function assignmentFieldsChanged(
   if((current.dueAt?.getTime()??null)!==(next.dueAt?new Date(next.dueAt).getTime():null))changed.push("dueAt");
   if(current.maxPoints!==next.maxPoints)changed.push("maxPoints");
   return changed;
+}
+
+/** Submission-method order has no policy meaning: do not treat an identical
+ * selection as a forbidden history-changing edit after a learner submits. */
+export function facultyAssignmentMethodsChanged(current:unknown,next:unknown) {
+ const a=normalizeAssignmentMethods(current),b=normalizeAssignmentMethods(next);
+ return a.length!==b.length||a.some(method=>!b.includes(method));
 }
 
 /** SQL now() is microsecond-precise, but JS Date snapshots use milliseconds. */
