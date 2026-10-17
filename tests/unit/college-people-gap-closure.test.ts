@@ -203,4 +203,19 @@ describe("College People legacy audited page contracts",()=>{
   expect(learner).not.toContain("Delete Student");
  });
 
+ it("COL-people-20 Super Admin permission guards COLLEGE_ADMIN grant and revoke before writes",()=>{
+  const service=src("src/modules/people/membership-service.ts");
+  const panel=src("src/components/admin/person-membership-actions.tsx");
+  const grant=service.slice(service.indexOf("export async function addMembershipRole("));
+  const remove=service.slice(service.indexOf("export async function removeMembershipRole("));
+  const guard='if (input.role === "COLLEGE_ADMIN") {\n    requirePermission(context, "admin-scope.select");';
+  expect(grant).toContain(guard);
+  expect(remove).toContain(guard);
+  expect(panel).toContain("Only a Super Admin can change the College Admin role.");
+  expect(panel).toContain("The College Admin role can only be assigned or removed by a Super Admin.");
+  const policy=src("src/modules/permissions/policy.ts");
+  expect(policy).toContain('permission === "admin-scope.select"');
+  expect(policy).toContain("return isSuperAdmin(context);");
+ });
+
 });

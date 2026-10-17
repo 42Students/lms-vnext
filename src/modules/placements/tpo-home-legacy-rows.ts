@@ -29,13 +29,13 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const batch=d.batch;
  const batchStatus=batch?(batch.eligible!==null&&batch.registered!==null
   ? `${batch.name} · ${batch.registered} of ${batch.eligible} registered${batch.placed===null?"":`, ${batch.placed} placed`}${d.moreBatches?` · +${d.moreBatches} more`:""}`
-  :batch.name+" · Registration summary unavailable"):"No batch in placements yet";
+  :batch.name):"No batch in placements yet";
  const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
   (d.driveDetail?" · "+d.driveDetail:"");
  const requests=d.pendingRequests,messages=d.messages;
  const inboxStatus=requests||messages
   ?[requests?plural(requests,"request"):null,messages?plural(messages,"message")+" to answer":null].filter(Boolean).join(" · ")
-  :messages===0?"No requests or messages waiting":"Open requests and messages";
+  :messages===0?"No requests or messages waiting":"";
  const next=d.upcoming[0];
  const showWhen=(date:Date)=>{
   const day=new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Asia/Kolkata"}).format(date);
@@ -52,12 +52,13 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
    needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
   {key:"drives",title:"Drives",status:drives,href:d.driveHref??"/tpo/placements",
    needsAttention:d.driveAttention>0},
-  {key:"students",title:"Students",status:d.registered===null?"Open student roster":
+  {key:"students",title:"Students",status:d.registered===null?"":
    d.registered?d.registered+" registered · "+(d.placedUnique??0)+" placed":"Nobody registered yet",
    href:"/tpo/students",needsAttention:false},
-  {key:"engage",title:"Engage",status:d.recruiterLeads===null?"Open recruiter relationships":
-   [plural(d.recruiterLeads,"recruiter"),d.followUps===null?"Follow-ups unavailable":
-    d.followUps?plural(d.followUps,"follow-up")+" today":"no follow-ups today"].join(" · "),
+  {key:"engage",title:"Engage",status:d.recruiterLeads===null?"":
+   [plural(d.recruiterLeads,"recruiter"),d.followUps===null?null:
+    d.followUps?plural(d.followUps,"follow-up")+" today":"no follow-ups today",
+    (d.recruiterAccess??0)>0?plural(d.recruiterAccess!,"new account")+" to approve":null].filter(Boolean).join(" · "),
    href:d.followUps?"/tpo/recruiters?due=1":"/tpo/recruiters",
    needsAttention:(d.followUps??0)>0||(d.recruiterAccess??0)>0},
   {key:"inbox",title:"Inbox",status:inboxStatus,href:requests?"/tpo/requests":"/tpo/messages",
@@ -65,7 +66,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   {key:"team",title:"Team",status:(d.teamAsks??0)>0?plural(d.teamAsks!,"ask")+" for you":
    (d.teamMentions??0)>0?plural(d.teamMentions!,"mention"):
    (d.teamUnread??0)>0?plural(d.teamUnread!,"new message"):
-   d.teamAsks===null?"Open team":"Nothing waiting on you",
+   d.teamAsks===null?"":"Nothing waiting on you",
    href:(d.teamAsks??0)+(d.teamMentions??0)>0?"/tpo/team?filter=me":"/tpo/team",
    needsAttention:(d.teamAsks??0)+(d.teamMentions??0)>0},
   {key:"week",title:"This week",status:next?showWhen(next.startsAt)+" · "+next.title+

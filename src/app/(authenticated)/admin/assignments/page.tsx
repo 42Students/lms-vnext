@@ -11,7 +11,8 @@ export default async function SuperAdminAssignmentsPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const query = adminAssessmentQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
+  const query = adminAssessmentQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,
+    courseCode:raw.courseCode,scope:raw.scope,results:raw.results });
   if (!query.success || query.data.status === "CLOSED") return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
     <ErrorState title="Invalid assignment filters" description="Check search, status and page."
