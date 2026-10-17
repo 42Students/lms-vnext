@@ -469,10 +469,11 @@ export async function PlacementCalendarWorkspace({
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company||state.kinds.length)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
-   })
+   }).catch(()=>null)
    :response;
+  const countSourceEvents=eventTypeCountsSource?.events??[];
   const eventTypeCounts=new Map<string,number>();
-  for(const item of eventTypeCountsSource.events)
+  for(const item of countSourceEvents)
    eventTypeCounts.set(item.kind,(eventTypeCounts.get(item.kind)??0)+1);
 
   // The shared read service supports event-kind and
@@ -496,8 +497,9 @@ export async function PlacementCalendarWorkspace({
     from:placementCalendarDayKey(new Date(now.getTime()-90*86400000)),
     to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
     tpoLegacyScope:true,
-  }):null;
-  const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
+  }).catch(()=>null):null;
+  const blockedDays=audience==="TPO"?await getTpoBlockedDates(context).catch(()=>null):null;
+  const partialCalendar=audience==="TPO"&&(!needsWindow||!eventTypeCountsSource||!blockedDays?.ready);
   const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(state.kinds.length ? state.kinds.includes("BLOCKED") : (!state.kind||state.kind==="BLOCKED"))?
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
   const selectedEvents=state.kind==="BLOCKED" && !state.kinds.length ? blockedEvents : [...audienceEvents,...blockedEvents];
@@ -587,6 +589,11 @@ export async function PlacementCalendarWorkspace({
         }
       />
 
+      {partialCalendar?<section role="alert" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-warning-border bg-warning-subtle p-4 text-sm">
+        <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
+        <Link href={calendarHref(basePath,audience,state,{})} className="min-h-10 rounded-md border border-border bg-surface px-4 py-2 font-semibold text-primary-text">Retry</Link>
+      </section>:null}
+
       {calendarFollowupsWritable ? (
         <div className="inline-flex rounded-lg border border-border bg-surface p-2">
          <TpoNewFollowupModal collegeId={collegeId}/>
@@ -600,29 +607,30 @@ export async function PlacementCalendarWorkspace({
 
       {isTpo?<section aria-label="Today and next 7 days" className="rounded-xl border border-border bg-surface p-4">
        <h2 className="text-base font-semibold">Today</h2>
-       {todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
+       {needsWindow?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
          {event.status==="DONE"?<span className="ml-2 text-success-text">Done</span>:null}
-        </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>}
-       <p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>
+        </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>:
+         <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
+       {needsWindow?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 rounded-xl border border-border bg-surface p-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid gap-3 sm:grid-cols-3">
         <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
          className="rounded-md border border-border p-3 text-sm text-primary-text">
-         <strong className="block text-lg">{overdue.length}</strong>Follow-ups overdue (last 90 days)
+         <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
         </Link>
         <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
          className="rounded-md border border-border p-3 text-sm text-primary-text">
-         <strong className="block text-lg">{blockedRounds.length}</strong>Rounds on a blocked date
+         <strong className="block text-lg">{needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"}</strong>Rounds on a blocked date
         </Link>
         <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
          className="rounded-md border border-border p-3 text-sm text-primary-text">
-         <strong className="block text-lg">{busyDays.length}</strong>Busy days (3 or more)
+         <strong className="block text-lg">{needsWindow?busyDays.length:"Unavailable"}</strong>Busy days (3 or more)
         </Link>
        </div>
-       {blockedDays&&!blockedDays.ready?<p role="status" className="text-xs text-warning-text">
+       {!blockedDays?.ready?<p role="status" className="text-xs text-warning-text">
         Blocked-day storage is unavailable; conflict counts cannot be verified.</p>:null}
       </section>:null}
       <section
@@ -784,9 +792,9 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          {isTpo&&eventTypeCountsSource.events.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
+          {isTpo&&countSourceEvents.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
     <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
-    {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
+    {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
       .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
       <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
        aria-current={state.company===name?"page":undefined}
@@ -796,7 +804,7 @@ export async function PlacementCalendarWorkspace({
        className="inline-flex min-h-9 items-center text-xs text-primary-text underline">All companies</Link>:null}
    </div>:null}
    {isTpo?<datalist id="tpo-calendar-company-choices">
-           {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
+           {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
           </datalist>:null}
           {isTpo ? (
@@ -869,10 +877,10 @@ export async function PlacementCalendarWorkspace({
  <Link href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
   aria-current={!state.kind&&!state.kinds.length?"page":undefined}
   className={!state.kind&&!state.kinds.length?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":"inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
-  All events ({eventTypeCountsSource.events.length+(blockedDays?.ready?toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:0)})
+  All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
  </Link>
  {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
-  const count=filter.value==="BLOCKED"?(eventTypeCounts.get("BLOCKED")??0):tpoCalendarChipCount(eventTypeCountsSource.events,filter.value);
+  const count=filter.value==="BLOCKED"?(blockedDays?.ready?eventTypeCounts.get("BLOCKED")??0:"unavailable"):(eventTypeCountsSource?tpoCalendarChipCount(countSourceEvents,filter.value):"unavailable");
   const active=state.kinds.includes(filter.value)||(!state.kinds.length&&state.kind===filter.value);
   const currently=state.kinds.length?state.kinds:parseTpoCalendarChips(state.kind);
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);

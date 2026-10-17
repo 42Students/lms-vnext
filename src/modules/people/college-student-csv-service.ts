@@ -159,7 +159,12 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const runId=randomUUID();
   await getDb().insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
-   actorUserId:context.user.id,actorMembershipId:"id" in member ? member.id : null,
+   actorUserId: context.user.id,
+   // A Super Admin may act in a different college; never attribute the event
+   // to an unrelated membership (and keep the UUID insert type precise).
+   actorMembershipId: context.membership?.collegeId === member.collegeId &&
+     context.membership.organizationId === member.organizationId
+       ? context.membership.id : null,
    module:"IDENTITY",eventType:"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT",
    subjectType:"college_student_import",subjectId:runId,
    summary:"College Student CSV import completed",
