@@ -27,7 +27,7 @@ export function recruiterLeadsCsv(rows:readonly RecruiterExportRow[]){
 /** The columns currently shown in the Engage table; exclude selection/actions. */
 export const RECRUITER_TABLE_HEADERS=[
  "Contact","Company","Status","Stage","Owner","Last activity",
- "Next follow-up","Invite","Added","Flags","Source","Email","Phone",
+ "Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone",
 ] as const;
 export type RecruiterTableExportRow=RecruiterExportRow&{
  recruiterUserId?:string|null;unsubscribedAt?:string|null;
