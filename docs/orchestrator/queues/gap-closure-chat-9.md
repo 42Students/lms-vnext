@@ -75,9 +75,9 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-03 | S2 | COPY | DONE-BRANCH |
 | TPO-settings-audit-05 | S2 | PERMISSION | NOT-A-GAP |
 | TPO-settings-audit-12 | S2 | MISSING-FIELD | NOT-A-GAP |
-| TPO-settings-audit-20 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-settings-audit-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-settings-audit-22 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-settings-audit-20 | S2 | MISSING-FIELD | DONE-BRANCH |
+| TPO-settings-audit-21 | S2 | MISSING-FIELD | DONE-BRANCH |
+| TPO-settings-audit-22 | S2 | MISSING-COLUMN | DONE-BRANCH |
 | TPO-settings-audit-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-31 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -87,7 +87,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-41 | S2 | SIDE-EFFECT | OPEN |
 | TPO-settings-audit-43 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-44 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-settings-audit-50 | S2 | MISSING-FIELD | OPEN |
+| TPO-settings-audit-50 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-settings-audit-51 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-settings-audit-52 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-54 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -106,7 +106,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-13 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
+| TPO-settings-audit-24 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-settings-audit-42 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-45 | S3 | COPY | FIXED-ON-MAIN |
