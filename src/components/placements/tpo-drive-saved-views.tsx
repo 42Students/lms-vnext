@@ -40,6 +40,13 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
    </button>
   </div>
   {error?<p role="alert" className="mt-2 text-xs text-error">{error}</p>:null}{copied?<p role="status" className="mt-2 text-xs text-body">Link copied for {copied}.</p>:null}
+  {views.length>1?<button type="button" onClick={()=>{
+   if(!window.confirm("Delete all "+views.length+" saved drive views from this browser?"))return;
+   try{localStorage.removeItem(key);setViews([]);setCopied("");setError("");}
+   catch{setError("Browser storage is unavailable.");}
+  }} className="mt-2 min-h-10 text-sm font-semibold text-error underline">
+    Clear all saved views
+  </button>:null}
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded border border-border">
     <button type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
