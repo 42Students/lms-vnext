@@ -2,7 +2,7 @@ import "server-only";
 import {outboundFetch} from "@/lib/outbound";
 import {canContactRecipientAtRuntime} from "@/modules/messaging/runtime-safety";
 import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
-import {safeRecruiterDigestMessages} from "./recruiter-message-email-model";
+import {safeRecruiterDigestMessages,safeRecruiterEmailMergeText} from "./recruiter-message-email-model";
 
 export type RecruiterMailDigest={
  recipient:string;recipientName:string;companyName:string;collegeName:string;
@@ -30,8 +30,9 @@ export async function sendRecruiterMessageDigest(
     template_key:key,from:{address:config.fromAddress,name:config.fromName},
     to:[{email_address:{address:digest.recipient,name:digest.recipientName}}],
     reply_to:[{address:digest.replyTo}],
-    merge_info:{name:digest.recipientName,college:digest.collegeName,
-      company:digest.companyName,
+    merge_info:{name:safeRecruiterEmailMergeText(digest.recipientName,160),
+      college:safeRecruiterEmailMergeText(digest.collegeName,160),
+      company:safeRecruiterEmailMergeText(digest.companyName,160),
       message1:safeRecruiterDigestMessages(digest.messages)[0]??"",
       message2:safeRecruiterDigestMessages(digest.messages)[1]??"",
       message3:safeRecruiterDigestMessages(digest.messages)[2]??"",
