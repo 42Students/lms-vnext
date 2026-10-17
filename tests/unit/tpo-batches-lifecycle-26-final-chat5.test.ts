@@ -8,7 +8,7 @@ describe("TPO batches lifecycle legacy parity",()=>{
   expect(service).toContain('z.literal("none")');
   expect(service).toContain('if(input.action!=="FINISH"||input.expectedVersion!=="none")');
   expect(service).toContain("invitedAt:null,finishedAt:now");
-  expect(service).toContain("await auditTpoJobChange").toBe(false); // cohort audit uses activity_events
+  expect(service).not.toContain("await auditTpoJobChange"); // cohort audit uses activity_events
   expect(service).toContain('eventType:"placements.batch.finished"');
   expect(ui).toContain("It leaves the working set: hidden from Placement eligibility by default");
   expect(ui).toContain("It comes back into the working set");
