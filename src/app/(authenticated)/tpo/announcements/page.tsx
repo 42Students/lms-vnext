@@ -152,6 +152,18 @@ export default async function TpoAnnouncements({searchParams}:Props){
         <textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
          className="rounded-md border border-border bg-surface p-3"/>
        </label>
+       <fieldset className="grid gap-2 rounded-md border border-border p-3">
+        <legend className="text-sm font-semibold">Button (optional)</legend>
+        <label className="grid gap-1 text-sm">Button label
+         <input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
+          className="min-h-10 rounded-md border border-border bg-surface px-3"/>
+        </label>
+        <label className="grid gap-1 text-sm">Button link
+         <input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
+          defaultValue={row.buttonUrl??""} title="The link has to start with https://"
+          className="min-h-10 rounded-md border border-border bg-surface px-3"/>
+        </label>
+       </fieldset>
        <label className="grid gap-1 text-sm text-body">Send at (IST)
         <input type="datetime-local" name="sendAt"
          defaultValue={row.scheduledAt?new Date(new Date(row.scheduledAt).getTime()+330*60000).toISOString().slice(0,16):""}
