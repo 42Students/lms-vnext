@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
 } from "@/modules/placements/tpo-public-join-link-model";
@@ -20,16 +21,12 @@ export function TpoPublicJoinLinkCard({
   const [busy, setBusy] = useState(false);
   const [domainDraft,setDomainDraft]=useState("");
   const [feedback, setFeedback] = useState("");
+  const [replaceOpen,setReplaceOpen] = useState(false);
   const isCompany = scope === "COMPANY";
   const title = isCompany ? PUBLIC_JOIN_LINK_COPY.company : PUBLIC_JOIN_LINK_COPY.college;
 
   async function makeLink() {
     const action = status.link ? "REPLACE" : "CREATE";
-    if (action === "REPLACE" && !window.confirm(
-      PUBLIC_JOIN_LINK_COPY.replaceTitle + "\n" +
-      PUBLIC_JOIN_LINK_COPY.replaceExplanation + "\n" +
-      PUBLIC_JOIN_LINK_COPY.replaceConfirm,
-    )) return;
     setFeedback("");
     setBusy(true);
     try {
@@ -149,7 +146,7 @@ export function TpoPublicJoinLinkCard({
           </label>:null}
           <button
             type="button" disabled={busy || (isCompany && !status.domain)}
-            onClick={makeLink}
+            onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
             className="mt-4 min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
@@ -172,6 +169,10 @@ export function TpoPublicJoinLinkCard({
           {feedback ? <p role="status" className="mt-2 text-sm text-body">{feedback}</p> : null}
         </>
       )}
+      <ConfirmDialog open={replaceOpen} onOpenChange={setReplaceOpen}
+        title={PUBLIC_JOIN_LINK_COPY.replaceTitle} description={PUBLIC_JOIN_LINK_COPY.replaceExplanation}
+        confirmVariant="primary" confirmLabel={PUBLIC_JOIN_LINK_COPY.replaceConfirm}
+        pending={busy} onConfirm={()=>{setReplaceOpen(false);void makeLink();}} />
     </section>
   );
 }
