@@ -441,6 +441,7 @@ export async function getLearnerCourseWorkspace(
   deliveryIdInput: string,
 ) {
   // Capture once for consistent deadline/availability and UI-activity decisions.
+  const stateWarnings:string[]=[];
   const snapshotNowMs = Date.now();
   const membership =
     requireLearnerMembership(context);
@@ -512,6 +513,7 @@ export async function getLearnerCourseWorkspace(
 
   if (!path) {
     return {
+      stateWarnings,
       playbackSettings:await readLearnerPlaybackSettings(membership.collegeId),
       course: {
         id: course.id,
@@ -803,7 +805,7 @@ export async function getLearnerCourseWorkspace(
   );
 
   if (lessonIds.length > 0) {
-    const assignments = await getDb()
+    const assignments = await Promise.resolve(getDb()
       .select({
         id: courseAssignments.id,
         lessonId: courseAssignments.lessonId,
@@ -876,7 +878,7 @@ export async function getLearnerCourseWorkspace(
         asc(courseAssignments.sequence),
         asc(courseAssignments.createdAt),
         asc(courseAssignments.id),
-      );
+      )).catch(()=>{stateWarnings.push("assignment completion");return [];});
 
     for (const row of assignments) {
       const lesson = lessons.get(
@@ -923,7 +925,7 @@ export async function getLearnerCourseWorkspace(
       });
     }
 
-    const quizzes = await getDb()
+    const quizzes = await Promise.resolve(getDb()
       .select({
         id: courseQuizzes.id,
         lessonId: courseQuizzes.lessonId,
@@ -963,14 +965,14 @@ export async function getLearnerCourseWorkspace(
         asc(courseQuizzes.sequence),
         asc(courseQuizzes.createdAt),
         asc(courseQuizzes.id),
-      );
+      )).catch(()=>{stateWarnings.push("quiz list");return [];});
 
     const quizIds = quizzes.map(
       (quiz) => quiz.id,
     );
     const quizAttemptRows =
       quizIds.length > 0
-        ? await getDb()
+        ? await Promise.resolve(getDb()
             .select({
               quizId: quizAttempts.quizId,
               id: quizAttempts.id,
@@ -996,7 +998,7 @@ export async function getLearnerCourseWorkspace(
             )
             .orderBy(
               asc(quizAttempts.submittedAt),
-            )
+            )).catch(()=>{stateWarnings.push("quiz attempts");return [];})
         : [];
 
     const attemptsByQuiz = new Map<
@@ -1226,6 +1228,7 @@ export async function getLearnerCourseWorkspace(
     }) ?? null;
 
   return {
+    stateWarnings,
     playbackSettings:await readLearnerPlaybackSettings(membership.collegeId),
     course: {
       id: course.id,
