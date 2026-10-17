@@ -5,7 +5,7 @@ export const unplacedFilteredExportQuerySchema=z.object({
 }).strict();
 export type UnplacedFilteredCsvRow={
  displayName:string;rollNumber:string|null;batch:string;branch:string;
- applications:number;stillInDrive:boolean;
+ applications:number;stillInDrive:boolean;lastApplied:string|null;
 };
 function escapeCell(value:unknown){
  const data=String(value??"");
@@ -14,9 +14,9 @@ function escapeCell(value:unknown){
 }
 /** No sensitive raw notes/identifiers, spreadsheet formulas or unbounded columns. */
 export function tpoUnplacedFilteredCsv(rows:readonly UnplacedFilteredCsvRow[]){
- const columns=["Student","Roll no.","Batch","Branch","Applications","Still in a drive"];
+ const columns=["Student","Roll no.","Batch","Branch","Applications","Still in a drive","Last applied (IST)"];
  const lines=rows.map(row=>[
-  row.displayName,row.rollNumber,row.batch,row.branch,row.applications,row.stillInDrive?"Yes":"No",
+  row.displayName,row.rollNumber,row.batch,row.branch,row.applications,row.stillInDrive?"Yes":"No",row.lastApplied??"Not recorded",
  ].map(escapeCell).join(","));
  return [columns.map(escapeCell).join(","),...lines].join("\r\n")+"\r\n";
 }
