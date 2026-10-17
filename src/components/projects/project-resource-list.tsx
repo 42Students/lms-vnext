@@ -179,7 +179,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </div>
       <div className="flex flex-wrap gap-2">
        <StatusBadge tone="neutral">{resource.resourceType??(safe?"Link":"Other")}</StatusBadge>
-       <StatusBadge tone="neutral">{resource.status==="ARCHIVED"?"Archived":"Active"}</StatusBadge>
+       <StatusBadge tone="neutral">{resource.status==="ARCHIVED"?"Archived":resource.status==="DRAFT"?"Draft":"Active"}</StatusBadge>
        {resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"?<StatusBadge tone="neutral">Mentors only</StatusBadge>:null}
        {resource.required?<StatusBadge tone="warning">Required</StatusBadge>:null}
        {resource.pinned?<StatusBadge tone="warning">Pinned</StatusBadge>:null}
