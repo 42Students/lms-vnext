@@ -574,14 +574,14 @@ export function ProjectWorkspace({
                   readiness.finalSubmission.latest?.status === "SUBMITTED" ? "info" : "warning"}>
                   {readiness.finalSubmission.latest?.status === "APPROVED" ? "Accepted" :
                     readiness.finalSubmission.latest?.status === "SUBMITTED" ? "Submitted" :
-                    "Waiting for completion"}
+                    readiness.finalSubmission.canSubmitDraft ? "Ready for review" : "Waiting for completion"}
                 </StatusBadge>
               </div>
               <p className="mt-2 text-sm text-body">{readiness.finalSubmission.latest
                 ? "Latest submission: " + label(readiness.finalSubmission.latest.status)
-                : "Complete project work to prepare your final submission."}</p>
+                : readiness.finalSubmission.canSubmitDraft?"Ready for review. Submit final work on behalf of your team.":"What’s left: complete all tasks, sign off each sprint and ship releases before submitting."}</p>
               {workspace.finalDelivery.reviews.at(-1)?.feedback ? (
-                <p className="mt-2 text-sm text-body">Mentor left feedback: {
+                <p className="mt-2 text-sm text-body">Mentor left feedback ({workspace.finalDelivery.reviews.at(-1)?.decision?.replaceAll("_"," ")}) — open Final submission to read it. {
                   workspace.finalDelivery.reviews.at(-1)?.feedback
                 }</p>
               ) : null}
