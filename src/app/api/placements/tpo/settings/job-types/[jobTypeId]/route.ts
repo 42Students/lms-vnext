@@ -17,7 +17,7 @@ export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
-   status:error.code==="TPO_SETTINGS_STALE"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+   status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_LAST_ACTIVE"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
   return apiErrorResponse(error);
  }
 }
