@@ -10,6 +10,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { loadAcademicPeriodScope, loadProgramScope } from "@/modules/academics/scope";
 import { postgresConstraintName } from "@/modules/academics/errors";
 import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
+import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 
 const uuid = z.string().uuid();
 const slotInput = z.object({
@@ -59,6 +60,7 @@ export async function createElectiveSlot(context: RequestContext, raw: unknown) 
   requirePermission(context, "academics.manage", {
     organizationId: program.organizationId, collegeId: input.collegeId,
   });
+  await assertCollegeElectivesEnabled(context);
   if (program.collegeId !== input.collegeId) {
     throw new ElectivesServiceError("ELECTIVE_PROGRAM_COLLEGE_MISMATCH");
   }
@@ -96,6 +98,7 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
       throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
     }
     requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertCollegeElectivesEnabled(context);
     await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
     // Lock the slot first, then the group, matching the group kernel's order.
     // An unlinked course can be offered without requiring admins to create an
@@ -245,6 +248,7 @@ export async function updateCollegeElectiveOffering(
     if (!slot || slot.status !== "ACTIVE" || slot.deletedAt)
       throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
     requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertCollegeElectivesEnabled(context);
     await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
     const [offering] = await tx.select().from(electiveOfferings)
       .where(and(eq(electiveOfferings.id, offeringId), eq(electiveOfferings.slotId, slot.id),
@@ -333,6 +337,7 @@ export async function archiveCollegeElectiveOffering(
     if (!slot || slot.status !== "ACTIVE" || slot.deletedAt)
       throw new ElectivesServiceError("ELECTIVE_SLOT_NOT_ACTIVE");
     requirePermission(context, "academics.manage", { collegeId: slot.collegeId });
+    await assertCollegeElectivesEnabled(context);
     await assertPersistedGroupActor(tx, context, { collegeId: slot.collegeId, mode: "MANUAL" });
     const [offering] = await tx.select().from(electiveOfferings)
       .where(and(eq(electiveOfferings.id, offeringId),

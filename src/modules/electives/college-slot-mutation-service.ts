@@ -12,6 +12,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { assertPersistedGroupActor } from "@/modules/groups/actor-access";
 import type { RequestContext } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
+import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 import {
   createCollegeElectiveSlotSchema, editCollegeElectiveSlotSchema,
   normalizeSlotYear, slotSelectionChanged,
@@ -31,7 +32,9 @@ export class CollegeElectiveSlotMutationError extends Error {
 }
 
 async function currentCollege(context: RequestContext) {
-  return resolveActingCollege(context, "academics.manage");
+  const acting=await resolveActingCollege(context, "academics.manage");
+  await assertCollegeElectivesEnabled(context);
+  return acting;
 }
 
 function academicYear(value: string | null) {
