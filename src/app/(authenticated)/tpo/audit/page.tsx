@@ -153,6 +153,14 @@ export default async function TpoAuditPage({
         title="Audit log"
         description="Read-only college-wide placement event history. Times are shown in IST. Duplicate canonical and domain-history records may describe the same underlying action."
         actions={<div className="flex flex-wrap gap-2">
+          <a href={"/api/placements/tpo/audit/export?"+new URLSearchParams({
+            ...(query.kind!=="ALL"?{kind:query.kind}:{}),
+            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
+            ...(query.q?{q:query.q}:{}),
+           }).toString()}
+           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+           Export audit-log CSV
+          </a>
           <a href={"/api/placements/tpo/audit/actors/export?"+new URLSearchParams({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
