@@ -109,6 +109,8 @@ export function HrDriveDraftForm({
     try{
       const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey),Date.now());
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
+      if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
+        !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
       setDraft(saved);setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
