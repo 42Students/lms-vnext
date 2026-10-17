@@ -99,7 +99,7 @@ export default async function TpoHome(){
  // the visible batch. Never substitute the all-college placed count.
  const shownPlaced=firstBatch
   ?(await getTpoStudentsIntelligence(ctx,{collegeId,batchId:firstBatch.id,
-      page:1,pageSize:1})).summary.placed
+      page:1,pageSize:1}).catch(()=>null))?.summary.placed??null
   :null;
  const teamAsks=teamThreads.status==="READY"&&teamThreads.asksReady&&!teamThreads.hasMore
   ?teamThreads.items.reduce((sum,item)=>sum+Number(item.asksForMe),0):null;
