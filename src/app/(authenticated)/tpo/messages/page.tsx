@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoNewRecruiterConversation } from "@/components/tpo/tpo-new-recruiter-conversation";
+import {TpoInboxSearch} from "@/components/tpo/tpo-inbox-search";
 import { listTpoMessageRecruiters } from "@/modules/placements/tpo-recruiter-message-recipients-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -322,18 +323,11 @@ export default async function TpoMessagesPage({
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             Search
-            <input
-              type="search"
-              name="q"
-              maxLength={120}
-              defaultValue={query.q}
-              placeholder={
-                isRecruiterInbox
-                  ? "Recruiter, subject or message"
-                  : "TPO name or event type"
-              }
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
-            />
+            {isRecruiterInbox?<TpoInboxSearch
+              value={query.q} placeholder="Recruiter, subject or message"/>:
+              <input type="search" name="q" maxLength={120} defaultValue={query.q}
+                placeholder="TPO name or event type"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>}
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
