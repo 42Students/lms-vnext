@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,desc,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,placementCompanyRelationships,placementCompanies,users,
+import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,placementCompanyRelationships,placementCompanies,users,
  placementTpoCompanyTeamMessages as messages,placementTpoCompanyTeamFollows as follows} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -125,6 +125,47 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
     askDueAt:input.dueAt?new Date(input.dueAt):null,
     askStatus:input.assigneeId?"OPEN":null,
    }).returning({id:messages.id});
+   // Bell notifications stay inside the same transaction, to verified active
+   // college placement team members only. Followers, @team and assignee are
+   // deduplicated; arbitrary @name text never grants notification access.
+   const [event]=await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId:college.id,
+    actorUserId:context.user.id,actorMembershipId:membership.id,
+    module:"PLACEMENTS",eventType:"placements.tpo_company_team.message_sent",
+    subjectType:"company",subjectId:companyId,
+    summary:"Private company placement team message",
+    metadata:{messageId:message.id,hasAsk:Boolean(input.assigneeId),
+      decision:input.decision,bodyLength:input.body.length},
+   }).returning({id:activityEvents.id});
+   const subscribers=await tx.select({membershipId:follows.membershipId})
+     .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)));
+   const notifyIds=new Set(subscribers.map(f=>f.membershipId));
+   if(input.assigneeId)notifyIds.add(input.assigneeId);
+   if(/(?:^|\\s)@team(?:\\b|$)/i.test(input.body)){
+    const colleagues=await tx.selectDistinct({id:collegeMemberships.id}).from(collegeMemberships)
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+       inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+      .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
+      .limit(250);
+    for(const member of colleagues)notifyIds.add(member.id);
+   }
+   notifyIds.delete(membership.id);
+   if(event&&notifyIds.size>0){
+    const targets=await tx.selectDistinct({id:collegeMemberships.id,userId:users.id})
+      .from(collegeMemberships)
+      .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+      .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE"),
+        inArray(collegeMemberships.id,[...notifyIds].slice(0,250))))
+      .limit(250);
+    if(targets.length)await tx.insert(inAppNotifications).values(targets.map(member=>({
+      eventId:event.id,userId:member.userId,
+      title:input.assigneeId===member.id?"A teammate asked you":"Company Team update",
+      body:input.body.slice(0,120),
+      actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+    })));
+   }
    return {changed:true,id:message.id};
   }
   const [message]=await tx.select().from(messages).where(and(
