@@ -41,9 +41,11 @@ export type TpoStudentSource = {
   registrationNumber: string | null;
   branchId: string;
   branchName: string;
+  programId: string;
   programName: string;
   cohortId: string;
   cohortName: string;
+  classIds:readonly string[];
   fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   participation: ResolvedPlacementParticipation;
@@ -73,9 +75,11 @@ export type TpoStudentRow = {
   registrationNumber: string | null;
   branchId: string;
   branchName: string;
+  programId: string;
   programName: string;
   cohortId: string;
   cohortName: string;
+  classIds:readonly string[];
   fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
@@ -119,6 +123,8 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   branchId?: string;
+  programId?: string;
+  classId?:string;
   search?: string;
   page: number;
   pageSize: number;
@@ -266,9 +272,11 @@ export function deriveTpoStudent(
     registrationNumber: source.registrationNumber,
     branchId: source.branchId,
     branchName: source.branchName,
+    programId:source.programId,
     programName: source.programName,
     cohortId: source.cohortId,
     cohortName: source.cohortName,
+    classIds:source.classIds,
     fromFinishedBatch: Boolean(source.fromFinishedBatch),
     registrationChoice: source.registrationChoice,
     registeredForPlacements,
@@ -406,6 +414,8 @@ export function filterTpoStudentRoster(
         !filter.branchId ||
         row.branchId === filter.branchId,
     )
+    .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
     .filter((row) => {
       if (!search) return true;
 

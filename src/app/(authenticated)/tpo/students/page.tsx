@@ -5,7 +5,10 @@ import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet"
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
+import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
+import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
+import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
@@ -34,6 +37,9 @@ import {
 type SearchParams = {
   journeyState?: string | string[];
   branchId?: string | string[];
+  programId?: string | string[];
+  afterCollege?:string|string[];
+  classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -58,6 +64,9 @@ function studentsHref(
   filters: {
     journeyState?: string;
     branchId?: string;
+    programId?:string;
+    afterCollege?:string;
+    classId?:string;
     batchId?: string;
     search?: string;
     page?: number;
@@ -75,6 +84,9 @@ function studentsHref(
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
   }
+  if(filters.programId)params.set("programId",filters.programId);
+  if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
+  if(filters.classId)params.set("classId",filters.classId);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
   if (filters.search) {
@@ -138,6 +150,9 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
     branchId: first(raw.branchId) || undefined,
+    programId:first(raw.programId)||undefined,
+    afterCollege:first(raw.afterCollege)||undefined,
+    classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -194,9 +209,18 @@ export default async function TpoStudentsPage({
     title: item.job.title,
     companyName: item.company.name,
   }));
+  const programChoices=[...new Map(batchDirectory.batches.map(item=>[item.programId,item.program] as const))];
   const summary = data.summary;
   const roster = data.roster;
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
+  const rosterIds=roster.items.map(row=>row.membershipId);
+  const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:1,pageSize:100,
+  },rosterIds):null;
+  const nextRosterReviews=rosterVerifications?.hasMore?await getTpoVerificationQueue(context,{
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:2,pageSize:100,
+  },rosterIds):null;
+  const waitingRosterRows=[...(rosterVerifications?.rows??[]),...(nextRosterReviews?.rows??[])];
 
   const counts: Record<TpoStudentJourneyState, number> = {
     NOT_REGISTERED: summary.notRegistered,
@@ -207,11 +231,14 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
+      programId:query.programId,
+      afterCollege:query.afterCollege,
+      classId:query.classId,
       search: query.search,
     },
     true,
@@ -221,6 +248,9 @@ export default async function TpoStudentsPage({
     columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     branchId: query.branchId,
+    programId:query.programId,
+    afterCollege:query.afterCollege,
+    classId:query.classId,
     batchId: query.batchId,
     search: query.search,
     pageSize: query.pageSize,
@@ -267,6 +297,28 @@ export default async function TpoStudentsPage({
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
+        <label className="text-sm font-semibold">Program
+          <select name="programId" defaultValue={query.programId??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All programs</option>
+            {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold">Class
+          <select name="classId" defaultValue={query.classId??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All classes</option>
+            {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold">After college
+          <select name="afterCollege" defaultValue={query.afterCollege??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All outcomes</option>
+            {AFTER_COLLEGE_OUTCOMES.map(outcome=>
+              <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
+          </select>
+        </label>
         <label className="text-sm font-semibold">Batch
           <select name="batchId" defaultValue={query.batchId??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -318,6 +370,11 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
+      {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
+        <Link href="/tpo/students" className="ml-2 text-primary-text underline">Clear outcome filter</Link>
+      </section>:null}
       {!data.definitions.externalOffersAvailable ? (
         <section
           role="status"
@@ -624,10 +681,12 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches}
+          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
+        {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
+          <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
         {manageAllowed?<TpoStudentNudgePanel
           key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
           rows={roster.items.map(student=>({
