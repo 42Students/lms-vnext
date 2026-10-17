@@ -33,6 +33,10 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const season = filters.seasonId
     ? seasons.find((s) => s.id === filters.seasonId)
     : null;
+  const owners=await db.selectDistinct({id:users.id,name:users.displayName})
+    .from(placementJobs).innerJoin(users,eq(users.id,placementJobs.createdByUserId))
+    .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
+    .orderBy(users.displayName);
   const companies=await db.select({id:placementCompanies.id,name:placementCompanies.name})
     .from(placementCompanyRelationships)
     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
@@ -59,7 +63,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   if (filters.view === "REQUESTS") {
     const available = await placementTableExists("placement_recruiter_drive_requests");
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
-    const common = {seasons,season,companies,companyId:filters.companyId,view:filters.view,search:filters.search,
+    const common = {seasons,season,companies,owners,ownerUserId:filters.ownerUserId,
+      companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
@@ -126,6 +131,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const scope=and(eq(placementJobs.collegeId,collegeId),
     season?eq(placementJobs.seasonId,season.id):undefined,
     filters.companyId?eq(placementCompanies.id,filters.companyId):undefined,
+    filters.ownerUserId?eq(placementJobs.createdByUserId,filters.ownerUserId):undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
@@ -215,7 +221,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
-    ...projection, seasons, season,companies,companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
+    ...projection, seasons, season,companies,owners,ownerUserId:filters.ownerUserId,
+    companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
