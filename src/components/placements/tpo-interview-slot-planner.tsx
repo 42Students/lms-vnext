@@ -75,6 +75,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <label className="grid gap-1 text-sm">New room<input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
      className="min-h-11 rounded border border-border bg-surface px-3"/></label>
    </div>
+   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-error">The ending roll must be after the starting roll.</p>:null}
    {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
