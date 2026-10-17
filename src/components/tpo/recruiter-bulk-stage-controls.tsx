@@ -209,7 +209,7 @@ export function RecruiterBulkStageControls({
               {busy ? "Applying…" : reviewOpen ? "Confirm stage changes" : "Review and confirm"}
             </button>
           </div>
-          {reviewOpen?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
             Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":"Not now"}.
             {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
             <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit selection</button>
