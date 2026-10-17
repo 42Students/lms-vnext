@@ -458,6 +458,8 @@ export function RecruiterLeadsWorkspace({
     catch{setActionToast("Couldn't copy. Select the link and copy it.");}
   }
   function field(name: keyof NewLead, value: string) {
+    contactCheckSeq.current++;
+    setChecking(false);
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
     setSaveError("");setReviewingCreate(false);
