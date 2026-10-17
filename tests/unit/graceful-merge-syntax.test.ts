@@ -47,6 +47,8 @@ describe("graceful merge syntax and integration contracts", () => {
       requestId: "00000000-0000-4000-8000-0000abcd1234",
     };
     expect(browserErrorSchema.safeParse(report).success).toBe(true);
-    expect(browserErrorSchema.safeParse({ ...report, kind: "render" }).success).toBe(false);
+    expect(browserErrorSchema.safeParse({ ...report, kind: "render" }).success).toBe(true);
+    expect(browserErrorSchema.safeParse({ ...report, kind: "unknown_kind" }).success).toBe(false);
+    expect(browserErrorSchema.safeParse({ ...report, exception: "private details" }).success).toBe(false);
   });
 });
