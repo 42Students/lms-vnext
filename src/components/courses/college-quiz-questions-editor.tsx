@@ -59,7 +59,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   finally{setBusy(false);}
  }
  return <section className="space-y-2">
-  <button type="button" disabled={busy||loading} onClick={()=>open?setOpen(false):void load()}
+  <button type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
    {loading?"Loading…":open?"Close questions":"Edit questions"}</button>
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
@@ -91,11 +91,11 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
       className="text-primary-text">+ Option</button>
      {questions.length>1?<button type="button" disabled={busy} className="text-error"
-      onClick={()=>setQuestions(prev=>prev.filter((_,k)=>k!==i))}>Remove question</button>:null}
+      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}}>Remove question</button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy||questions.length>=100} onClick={()=>setQuestions(rows=>[...rows,empty()])}
+    <button type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
      className="min-h-10 rounded border border-border px-3 text-xs">+ Add question</button>
     <button type="button" disabled={busy} onClick={()=>void save()}
      className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
