@@ -1,10 +1,21 @@
 import {describe,expect,it} from "vitest";
 import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterReplyAddress,
- recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread}
+ recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread,safeRecruiterEmailMergeText}
  from "@/modules/placements/recruiter-message-email-model";
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 HTML-escapes all email template fields",()=>{
+  expect(safeRecruiterEmailMergeText('<b>College & "Company" \'Hiring\'</b>'))
+   .toBe('&lt;b&gt;College &amp; &quot;Company&quot; &#39;Hiring&#39;&lt;/b&gt;');
+ });
+ it("REC-calendar-messages-profile-R01 strips control characters from digest titles",()=>{
+  expect(safeRecruiterEmailMergeText("Hi\\nWorld\\r",100)).toBe("Hi\\nWorld\\r".replace(/[\\u0000-\\u001f\\u007f]/g," ").trim());
+ });
+ it("REC-calendar-messages-profile-R01 bounds untrusted recruiter college names",()=>{
+  expect(safeRecruiterEmailMergeText("x".repeat(300),160)).toHaveLength(160);
+ });
+
  it("REC-calendar-messages-profile-R01 preserves Reply-To aliases across digest deliveries",()=>{
   const secret="unit-test-dedicated-opaque-token-secret-more-than-32";
   const id="11111111-2222-4333-8444-555555555555";
