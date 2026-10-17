@@ -55,6 +55,19 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(fallback).toContain("router.refresh()");
     expect(fallback).toContain("Retry");
   });
+  it("MEN-projects-meetings-65 confirms each final submission decision and preserves stale-review guidance",()=>{
+    const control=read("src/components/projects/project-final-delivery-controls.tsx");
+    const reopen=read("src/components/projects/project-delivery-reopen-control.tsx");
+    expect(control).toContain('title="Review submission"');
+    expect(control).toContain("Accept this submission?");
+    expect(control).toContain("The learner will be notified their submission was accepted.");
+    expect(control).toContain("Request changes?");
+    expect(control).toContain("This submission may have changed since you opened this review.");
+    expect(control).toContain("expectedUpdatedAt,confirmed:true");
+    expect(control).toContain("Submission accepted.");
+    expect(reopen).toContain("Reopen for revision");
+    expect(reopen).toContain("Reopen this submission for revision?");
+  });
   it("MEN-projects-meetings-74 preserves redirect-only legacy Mentor URLs",()=>{
     const redirects=[
       ["profile/page.tsx","/mentor/projects"],
