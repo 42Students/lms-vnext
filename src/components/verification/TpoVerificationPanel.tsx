@@ -32,7 +32,7 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
   setSequenceIndex(sequenceIndex+1);
  }
  function saved(action?:"VERIFY"|"SEND_BACK"){
-  showToast({tone:"success",title:action==="VERIFY"?"Verification completed. The student has been told.":"Sent back. The student sees your reason."});
+  showToast({tone:"success",title:action==="VERIFY"?(active?.section==="EDUCATION"?"Education":"Identity")+" verified. The student has been told.":"Sent back. The student sees your reason."});
   if(sequenceIndex!==null)nextSequential();else setSelected(null);
   router.refresh();
  }

@@ -108,5 +108,9 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 ## Notes (blockers, one line each)
 
+- TPO-requests-verification-01 BLOCKED: adding legacy off-campus, registration, correction, absence and after-placement request kinds requires widening the three-kind database constraint and wiring transactional effects; migration proposal at `docs/orchestrator/proposals/chat-12-requests-schema.md`. Do not simulate kinds with existing states.
+- TPO-requests-verification-37 BLOCKED: recruiter request auto-approval decisions depend on a real recruiter drive REQUEST lifecycle and per-college approval settings; schema/orchestrator prerequisite described in the same proposal.
+- TPO-requests-verification-38 BLOCKED: recruiter request bell/email and counts depend on the request lifecycle and recruiter-email template being available; do not send unsupported notifications for ordinary draft jobs.
+
 ## Needs shell (chat-9 only)
 
