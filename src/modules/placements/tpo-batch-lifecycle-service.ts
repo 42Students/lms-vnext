@@ -29,7 +29,25 @@ export async function changeTpoBatchLifecycle(ctx:RequestContext,raw:unknown){
   const [current]=await tx.select().from(placementBatchLifecycles)
    .where(and(eq(placementBatchLifecycles.cohortId,input.batchId),
     eq(placementBatchLifecycles.collegeId,collegeId))).for("update").limit(1);
-  if(!current)throw new TpoBatchLifecycleError("BATCH_NOT_STARTED");
+  if(!current){
+   if(input.action!=="FINISH"||input.expectedVersion!=="none")
+    throw new TpoBatchLifecycleError("BATCH_ACTION_STALE");
+   const now=new Date();
+   const [created]=await tx.insert(placementBatchLifecycles).values({
+    cohortId:input.batchId,collegeId,invitedAt:null,finishedAt:now,
+    createdByUserId:ctx.user.id,updatedByUserId:ctx.user.id,updatedAt:now,
+   }).onConflictDoNothing().returning();
+   if(!created)throw new TpoBatchLifecycleError("BATCH_ACTION_STALE");
+   await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId,
+    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,
+    module:"PLACEMENTS",eventType:"placements.batch.finished",
+    subjectType:"COHORT",subjectId:input.batchId,
+    summary:"TPO marked placement batch finished",
+    metadata:{action:input.action,invitationNeverSent:true},
+   });
+   return {changed:true,version:created.updatedAt.toISOString()};
+  }
   const plan=planTpoBatchLifecycle(current,input.action,input.expectedVersion);
   if(!plan.changed)return {changed:false,version:current.updatedAt.toISOString()};
   const [updated]=await tx.update(placementBatchLifecycles).set({
