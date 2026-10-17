@@ -52,7 +52,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   eq(departments.collegeId,collegeId)))
  .where(and(eq(lessonContents.contentType,kind),
   ne(lessonContents.status,"ARCHIVED")))
- .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title)).limit(251);
+ .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id)).limit(251);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
