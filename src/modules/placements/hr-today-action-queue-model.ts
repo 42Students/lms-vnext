@@ -25,7 +25,7 @@ export function buildRecruiterActionQueue(input:{
     description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
     href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
-   row.job.status==="PUBLISHED"&&row.job.archivedAt===null).slice(0,3);
+   row.job.status==="PUBLISHED"&&row.job.archivedAt===null);
  const deadlines = input.now ? live
   .filter(row=>row.job.applicationDeadline instanceof Date &&
     Number.isFinite(row.job.applicationDeadline.getTime()))
@@ -40,7 +40,7 @@ export function buildRecruiterActionQueue(input:{
     description:"Review the published deadline and available shared applications.",
     href:"/recruiter/drives/"+encodeURIComponent(row.job.id)+"?tab=overview",
   })) : [];
- const reviews=live.map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
+ const reviews=live.slice(0,3).map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
    label:"Review shared applicants · "+row.job.title,
    description:"Open the employer-visible shortlist and notes. No unshared applications are included.",
    href:recruiterTodayHref({kind:"REVIEW_APPLICANTS",jobId:row.job.id})}));
