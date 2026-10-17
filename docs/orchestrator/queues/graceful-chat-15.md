@@ -81,3 +81,5 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/81: [big-round phone/code] `tests/e2e/graceful-unexpected-phone-code.spec.ts` adds 10 real phone login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
 
 - GR-80/81: [big-round phone/message] `tests/e2e/graceful-unexpected-phone-message.spec.ts` adds 10 real phone login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
+
+- GR-80/81: [big-round email/known-code] `tests/e2e/graceful-known-auth-email.spec.ts` adds 10 real customer-copy scenarios; asserts exact legacy wording, preserved form and intercepted start POST (not executed).
