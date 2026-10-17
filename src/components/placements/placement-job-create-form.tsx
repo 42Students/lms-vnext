@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -115,6 +116,7 @@ export function PlacementJobCreateForm({
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
     Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
+  const {run:guardRun}=useGuardedAction({timeoutMs:45000});
   const [pending, setPending] =
     useState(false);
   const [
@@ -150,6 +152,7 @@ export function PlacementJobCreateForm({
     event.preventDefault();
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
+    await guardRun(async()=>{
     setPending(true);
 
     try {
@@ -461,6 +464,7 @@ export function PlacementJobCreateForm({
     } finally {
       setPending(false);
     }
+    });
   }
 
   return (
