@@ -20,14 +20,17 @@ export function CollegeAssignmentReview({
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
+ const [failedIds,setFailedIds]=useState<string[]>([]);
  const [progress,setProgress]=useState("");
  const router=useRouter();
- async function publishAllGrades(selectedDeliveryId:string){
+ async function publishAllGrades(selectedDeliveryId:string,retryOnly:readonly string[]|null=null){
   if(bulkBusy||!window.confirm(
+    retryOnly?"Retry publication of "+retryOnly.length+" failed grades for this Section?":
     "Publish grades for every graded submission in this Section? Published results become visible to learners."
   ))return;
-  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setProgress("Loading graded submissions…");
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setProgress("Loading graded submissions…");
   let published=0,failed=0;
+  const failedRows=new Set<string>();
   try{
    const base="/api/courses/college/assignments/"+encodeURIComponent(selectedDeliveryId)+
     "/submissions?assignmentId="+encodeURIComponent(assignmentId);
@@ -39,18 +42,21 @@ export function CollegeAssignmentReview({
     pages=result.totalPages;
     setProgress("Reviewing Section page "+page+" of "+pages+"…");
     for(const item of result.items){
-     if(item.gradingStatus!=="GRADED"||item.gradePublished)continue;
-     const saved=await fetch(
-      "/api/courses/assignment-submissions/"+encodeURIComponent(item.id)+"/publish",{
-       method:"POST",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({expectedVersion:item.version}),
-      });
-     if(saved.ok)published++;
-     else failed++;
+     if(item.gradingStatus!=="GRADED"||item.gradePublished||
+       (retryOnly&&!retryOnly.includes(item.id)))continue;
+     try{
+      const saved=await fetch(
+       "/api/courses/assignment-submissions/"+encodeURIComponent(item.id)+"/publish",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({expectedVersion:item.version}),
+       });
+      if(saved.ok)published++;
+      else{failed++;failedRows.add(item.id);}
+     }catch{failed++;failedRows.add(item.id);}
      setProgress(published+" published, "+failed+" failed");
     }
    }
-   setRetryAllowed(failed>0);
+   setFailedIds([...failedRows]);setRetryAllowed(failed>0);
    setBulkStatus(published+" grade(s) published"+
     (failed?"; "+failed+" failed. Review and retry the remaining grades.":"."));
    router.refresh();
@@ -68,7 +74,7 @@ export function CollegeAssignmentReview({
  return <div className="space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">
    Section
-   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);}}
+   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);}}
     className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
     {options.map(item=><option key={item.deliveryId} value={item.deliveryId}>
      {item.sectionName} ({item.sectionCode})
@@ -87,9 +93,9 @@ export function CollegeAssignmentReview({
   {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. {progress} Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
   {retryAllowed&&status==="PUBLISHED"?<button type="button" disabled={bulkBusy}
-   onClick={()=>void publishAllGrades(selected.deliveryId)}
+   onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
-   Retry failed
+   {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </button>:null}
  </div>;
 }
