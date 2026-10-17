@@ -10,16 +10,20 @@ import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-r
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
 import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model";
+import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional()}).strict();
+const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=tabSchema.safeParse({tab:Array.isArray(raw.tab)?raw.tab[0]:raw.tab});
+ const parsed=tabSchema.safeParse({tab:Array.isArray(raw.tab)?raw.tab[0]:raw.tab,
+  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
+ const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
+ const people=sortTpoPeople(team.members,peopleSort);
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context):null;
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
@@ -32,9 +36,19 @@ export default async function TpoTeamPage({searchParams}:{
    </Link>)}
   </nav>
   {tab==="people"?<section className="space-y-4">
-    <p role="status" className="text-sm text-body">{team.summary.total} active placement-team members</p>
-    {team.members.length?<ul className="grid gap-3 sm:grid-cols-2">
-      {team.members.map(member=><li key={member.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
+    <p role="status" className="text-sm text-body">{team.summary.total} people in the active placement team</p>
+    <nav aria-label="Sort team people" className="flex flex-wrap items-center gap-2 text-sm">
+      <span className="font-semibold">Sort:</span>
+      {([["WORK","Most assigned duties"],["NAME","Name"]] as const).map(([value,label])=>
+       <Link key={value} href={"/tpo/team?tab=people&sort="+value}
+        aria-current={peopleSort===value?"page":undefined}
+        className={peopleSort===value?"rounded-md bg-primary px-3 py-2 text-on-primary":"rounded-md border border-border px-3 py-2 text-body"}>
+        {label}
+       </Link>)}
+      <span className="text-xs text-muted-foreground">Overdue asks are not yet recorded in this roster.</span>
+    </nav>
+    {people.length?<ul className="grid gap-3 sm:grid-cols-2">
+      {people.map(member=><li key={member.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
        <h2 className="break-words font-semibold text-foreground">{member.displayName}</h2>
        <p className="mt-2 text-sm text-body">{member.roles.map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
