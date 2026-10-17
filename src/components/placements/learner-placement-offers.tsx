@@ -542,6 +542,26 @@ export function LearnerPlacementOffers({
             <p>Annual CTC: {formatMoney(preview.annualCtcInr) ?? "Not specified"}</p>
             <p>Planned joining: {preview.joiningDate ?? "Not specified"}</p>
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
+            {acceptImpactBusy?<p role="status" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
+            {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
+              <button type="button" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}} className="ml-2 font-semibold underline">Retry impact preview</button>
+            </p>:null}
+            {acceptImpact?<div className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3">
+              <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
+              {([
+                ["Withdrawn",acceptImpact.withdrawn],
+                ["Other offers declined",acceptImpact.declined],
+                ["You stay in",acceptImpact.stayed],
+              ] as const).map(([label,rows])=><div key={label}>
+                <p className="font-semibold">{label} ({rows.length})</p>
+                {rows.length?<ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>:
+                <p className="text-xs text-muted-foreground">None</p>}
+              </div>)}
+              {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
+                Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.
+              </p>:null}
+              <p className="text-xs text-muted-foreground">These are current records only. The final transaction rechecks the impacts before changing anything.</p>
+            </div>:null}
             {preview.expired ? (
               <p role="alert" className="font-semibold text-error">This offer has expired. Acceptance is disabled.</p>
             ) : null}
