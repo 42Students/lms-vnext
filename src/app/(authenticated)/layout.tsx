@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {PortalAccessNotice} from "@/components/auth/portal-access-notice";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { safeReturnTo } from "@/lib/return-to";
@@ -140,6 +142,7 @@ export default async function AuthenticatedLayout({
       adminScopeChoices={shellData.adminScopeChoices}
     >
       <SessionResponseGuard />
+      <Suspense fallback={null}><PortalAccessNotice/></Suspense>
       {children}
     </AppShell>
   );
