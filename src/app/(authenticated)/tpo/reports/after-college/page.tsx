@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -25,6 +27,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
   <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text underline">← All reports</Link>
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId}/></Suspense>
   {!data.available?<p role="status" className="rounded border border-border p-4">
     After-college outcomes storage is unavailable. This page does not infer destinations.
    </p>:<>
