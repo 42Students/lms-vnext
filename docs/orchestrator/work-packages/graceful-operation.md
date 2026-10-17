@@ -29,7 +29,7 @@ Shared helper + `apiFetch`; no raw codes, stack traces or database text anywhere
 
 ## F. Know first, recover fast (owner: orchestrator, not lanes)
 1. Request id on every response and log line; support can search it.
-2. Cloud Logging alert: `api.unhandled_error` rate and any `severity=ERROR` burst emails the owner; uptime check on `/ready` and the login page from outside the cluster.
+2. Telegram alerts (no email: owner decision): new error signatures, spikes, a daily digest and a health watch, built by chat-16 (queue alerting-chat-16.md, GR-111 to GR-125).
 3. Maintenance page and a one-command switch; deploys gated on `/ready`; migrations stay backward compatible for one release so a rollback is safe; written rollback runbook in `docs/operations/`.
 4. Weekly review of the top 10 error references.
 
