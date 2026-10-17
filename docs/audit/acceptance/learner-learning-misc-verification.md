@@ -83,3 +83,10 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-25 | NOT-A-GAP | Do not render arbitrary rich HTML in quiz prompts or fabricate short-answer grading when the authored schema only validates choice questions. `tests/unit/chat15-unconfirmed-decisions.test.ts` has ID-named test; acceptance decision by chat-15 retained. |
 | LEARNER-learning-misc-34 | DONE (source) | `src/app/(authenticated)/learn/attendance/page.tsx` bounds the query by a validated IST month; calendar and schedule use bounded windows, avoiding whole-history reads. `tests/unit/chat15-calendar-window-bounds.test.ts` named test. |
 | LEARNER-learning-misc-41 | NOT-A-GAP | Preserve authorized delivery-ID URLs, not legacy arbitrary slug redirects that might resolve to someone else's course. `tests/unit/chat15-unconfirmed-decisions.test.ts` ID-named test. |
+
+## Chat-3 round 13 — safe legacy empty and load-error text (still partial)
+
+| ID | Status | Source and test |
+| --- | --- | --- |
+| LEARNER-learning-misc-33 | OPEN (improved) | Unassigned class matches exact legacy message, week-empty now says "No scheduled classes this week.", route-level failure says "Unable to load class schedule. Please try again." and offers retry. Distinct partial data-source failures remain unmodeled; `tests/unit/learner-learning-misc-gap-closure.test.ts` ID-named additional regression. |
+| LEARNER-learning-misc-38 | OPEN (improved) | An unselected course, selected course with no sessions in this IST month, and route loading error now have distinct legacy titles/explanations, plus Retry. Source-specific course-list failure and independently retained stale rows require more domain work; new ID-named regression in `tests/unit/learner-learning-misc-gap-closure.test.ts`. |
