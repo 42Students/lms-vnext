@@ -32,6 +32,8 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [blockerReason,setBlockerReason]=useState(props.blockerReason??"");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
+  const estimateValid=estimate===""||
+    (Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000);
   const changed=title.trim()!==props.title ||
     (description.trim()||null)!==(props.description??null) ||
     (approach.trim()||null)!==(props.approach??null) ||
@@ -52,7 +54,9 @@ export function MentorTaskDetailsEdit(props:Props) {
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(!title.trim()||title.trim().length>200||
-      description.trim().length>4000||approach.trim().length>4000||criteria.trim().length>4000||!changed) {
+      description.trim().length>4000||approach.trim().length>4000||
+      criteria.trim().length>4000||blockerReason.trim().length>4000||
+      !estimateValid||!changed) {
       setError("Change a task field within its allowed length.");
       return;
     }
@@ -74,7 +78,7 @@ export function MentorTaskDetailsEdit(props:Props) {
         },
       );
       setConfirmOpen(false);
-      showToast({tone:"success",title:"Task details updated"});
+      showToast({tone:"success",title:"Task updated."});
       router.refresh();
     } catch(caught) {
       const message=caught instanceof Error?caught.message:"Task update failed";
@@ -114,6 +118,9 @@ export function MentorTaskDetailsEdit(props:Props) {
           <Input type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
         </label>
+        {!estimateValid?<p role="alert" className="text-xs text-error">
+          Estimate must be a whole number from 0 to 1000.
+        </p>:null}
         <label className="grid gap-1 text-xs font-semibold text-body">Type
           <select className="rounded border border-border p-2" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
@@ -132,7 +139,9 @@ export function MentorTaskDetailsEdit(props:Props) {
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>Cancel</Button>
-          <Button type="submit" disabled={!changed||!title.trim()}>Review changes</Button>
+          <Button type="submit" disabled={!changed||!title.trim()||!estimateValid}>
+            Review changes
+          </Button>
         </div>
       </form>
     </Dialog>

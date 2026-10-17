@@ -11,9 +11,11 @@ import {collegeCourseCatalogueExportQuerySchema,COLLEGE_COURSE_EXPORT_CAP} from 
 
 async function authorizedCollege(context:RequestContext){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!membership||membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
+    !hasMembershipRole(context,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.read");
  const college=await loadAcademicCollegeScope(membership.collegeId);
+ if(membership.organizationId!==college.organizationId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
   organizationId:college.organizationId,collegeId:college.id,
  });

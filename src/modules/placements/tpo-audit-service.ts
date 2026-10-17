@@ -139,7 +139,7 @@ function auditSources(
           case
            when ae.subject_type in ('placement_job','placement_season')
              then coalesce(nullif(trim(ae.subject_label),''),'Placement activity')
-           else 'Placement activity'
+           else coalesce(nullif(trim(ae.subject_label),''),nullif(trim(ae.summary),''),'Placement activity')
           end::text as title,
           case
            when ae.event_type = 'PLACEMENTS_COLLEGE_RULES_UPDATED'
@@ -148,6 +148,19 @@ function auditSources(
               ' · Uplift: ',coalesce(ae.metadata->'to'->>'upliftPct','unknown'),
               '% · Response hours: ',
               coalesce(ae.metadata->'to'->>'minResponseHours','unknown'))
+           when ae.event_type = 'placements.tpo_college_rules.changed'
+             then concat(
+              'Placed at: ',coalesce(ae.metadata->>'countsAsPlacedAt','not recorded'),
+              ' · Held offers: ',coalesce(ae.metadata->>'maxHeldOffers','not recorded'),
+              ' · Uplift: ',coalesce(ae.metadata->>'upliftPct','not recorded'),
+              '% · Response hours: ',coalesce(ae.metadata->>'minResponseHours','not recorded'))
+           when ae.event_type = 'placements.tpo_company_visibility.changed'
+             then concat(
+              'Exact CGPA: ',coalesce(ae.metadata->>'showCgpaExact','not recorded'),
+              ' · 10th/12th: ',coalesce(ae.metadata->>'showTenthTwelfth','not recorded'),
+              ' · Project links: ',coalesce(ae.metadata->>'showProjectLinks','not recorded'),
+              ' · Assessment scores: ',coalesce(ae.metadata->>'showAssessmentScores','not recorded'),
+              ' · Attendance: ',coalesce(ae.metadata->>'showAttendance','not recorded'))
            when ae.event_type = 'PLACEMENTS_SEASON_DETAILS_UPDATED'
              then concat('Season: ',coalesce(ae.metadata->'after'->>'name','unknown'),
               ' · Ends: ',coalesce(ae.metadata->'after'->>'endDate','unknown'))

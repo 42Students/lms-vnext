@@ -1251,6 +1251,13 @@ export async function getLearnerPlacementRequestWorkspace(
         .select({
           applicationId:
             placementApplications.id,
+          // Learner-specific confirmed booking is not the same as a
+          // drive-wide scheduled round. Keep planned rounds for schedule
+          // context, but make the withdrawal rule depend on the booking.
+          booked: sql<boolean>`exists(select 1 from placement_round_candidate_slots cs
+            where cs.application_id = ${placementApplications.id}
+              and cs.round_id = ${placementJobRounds.id}
+              and cs.status = 'BOOKED')`,
           roundId: placementJobRounds.id,
           roundName: placementJobRounds.name,
           roundKind: placementJobRounds.kind,

@@ -20,7 +20,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  async function beginEdit(){
   if(busy||loading)return;
   if(editing){setEditing(false);return;}
-  setError("");setNotice("");setLoading(true);
+  setError("");setNotice("");setExpectedUpdatedAt("");setLoading(true);
   try{
    const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quiz.id),{cache:"no-store"});
    const payload=await response.json().catch(()=>null);
@@ -46,7 +46,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    }
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
-   body={title:title.trim(),dueAt:deadline?.toISOString()??null,description:description.trim()||null,
+   body={title:title.trim(),
+    ...(quiz.status==="DRAFT"||istInput(quiz.dueAt)!==due?{dueAt:deadline?.toISOString()??null}:{}),
+    description:description.trim()||null,
     expectedUpdatedAt,
     ...(quiz.status==="DRAFT"?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
@@ -57,7 +59,14 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   try{
    const response=await fetch(url,{method,headers:{"content-type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Unable to update quiz.");
+   if(!response.ok)throw new Error(
+    data?.error==="QUIZ_HAS_ATTEMPTS"?
+     "Learners have attempted this Quiz or it is closed. Its deadline, questions, attempt limit and shuffle rules cannot be changed.":
+    data?.error==="QUIZ_MAX_ATTEMPTS_REACHED"?
+     "The maximum attempts cannot be lower than attempts already recorded.":
+    data?.error==="FACULTY_QUIZ_STALE_VERSION"?
+     "Another author changed this Quiz. Close the editor and reload its latest revision.":
+    typeof data?.error==="string"?data.error:"Unable to update quiz.");
    setEditing(false);setExpectedUpdatedAt("");setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update quiz.");}
@@ -98,7 +107,8 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      Shuffle answer options per learner</label>
    </div>:null}
    {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
-    Learner attempts lock the deadline; other immutable quiz fields stay unchanged.
+    Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
+    Other immutable quiz fields stay unchanged.
    </p>:null}
    <button type="button" disabled={busy} onClick={()=>void act("EDIT")}
     className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">

@@ -2,9 +2,11 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
- approach:string|null;
- priority:string;estimatePoints:number|null;};
+ priority:string;estimatePoints:number|null;
+ description:string|null;approach:string|null;acceptanceCriteria:string|null;
+ dueDate:string|null;blockerReason:string|null;taskType:string|null;};
 type Sprint={id:string;title:string;status:string};
 export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
@@ -27,6 +29,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   }catch(e){setError(e instanceof Error?e.message:"Cannot move task.");}finally{setBusy(false);}
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
+ const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
@@ -119,6 +122,15 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
     {task.carriedFromSprintId?<span className="mt-1 inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Carried over</span>:null}
+    {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
+      <div className="mt-2">
+        <MentorTaskDetailsEdit projectId={projectId} taskId={task.id}
+          title={task.title} description={task.description} approach={task.approach}
+          acceptanceCriteria={task.acceptanceCriteria} priority={task.priority}
+          updatedAt={new Date(task.updatedAt).toISOString()}
+          taskType={task.taskType} estimatePoints={task.estimatePoints}
+          dueDate={task.dueDate} blockerReason={task.blockerReason}/>
+      </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
      <select disabled={busy} defaultValue="" onChange={e=>{const id=e.target.value;if(id)void move(task,id);}}
       className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
@@ -129,11 +141,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
   </div>
-  {!readOnly&&targets.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
+  {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
-     {tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status))
-       .map(task=><button key={task.id} type="button" disabled={busy}
+     {returnable.map(task=><button key={task.id} type="button" disabled={busy}
         onClick={()=>void move(task,null)}
         className="block min-h-10 w-full rounded-md border border-border p-2 text-left text-sm">
         {task.title} · Return to backlog

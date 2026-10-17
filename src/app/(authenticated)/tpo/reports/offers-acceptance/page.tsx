@@ -61,7 +61,7 @@ export default async function TpoOffersAcceptanceReportPage({
         }
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/offers-acceptance" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/offers-acceptance" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters

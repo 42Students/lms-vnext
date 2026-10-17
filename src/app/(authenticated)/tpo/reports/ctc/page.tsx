@@ -68,7 +68,7 @@ export default async function TpoCtcReportPage({
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} path="/tpo/reports/ctc" />

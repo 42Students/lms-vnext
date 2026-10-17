@@ -23,7 +23,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const [error, setError] = useState<string | null>(null);
   const [reason, setReason] = useState("");
   const rows = [
-    ["Submitted applications (informed)", preview.impact.submittedApplications],
+    ["Submitted applications (reviewed for closure)", preview.impact.submittedApplications],
     ["Open rounds that will be cancelled", preview.impact.openRounds],
     ["Issued offers that will be withdrawn", preview.impact.issuedOffers],
     ["Accepted offers (kept)", preview.impact.acceptedOffers],
@@ -36,7 +36,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
       setError("Please explain the cancellation in at least 10 characters.");
       return;
     }
-    if (!window.confirm("Cancel this drive? New applications stop, pending rounds are cancelled, and issued offers are withdrawn. Accepted offers are kept.")) return;
+    if (!window.confirm("Cancel this drive? Open applicants will be marked Not selected and informed; pending rounds will be cancelled, issued offers withdrawn, and pending withdrawal requests settled. Accepted offers remain valid.")) return;
     setPending(true);
     setError(null);
     try {
@@ -71,7 +71,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
     <form onSubmit={(e) => void submit(e)} className="space-y-4 rounded-xl border border-border bg-surface p-5">
       <h2 className="text-lg font-semibold text-foreground">Review consequences</h2>
       <p className="text-sm text-body">
-        Cancelling stops new applications, cancels pending or scheduled rounds, withdraws issued offers and keeps accepted offers. Records are never deleted.
+        Cancelling stops new applications. Open applicants are marked Not selected and notified, pending or scheduled rounds are cancelled, and issued offers are withdrawn. Pending withdrawal requests are settled, the recruiter is notified when linked, and accepted offers remain valid. History is retained.
       </p>
       <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {rows.map(([label, n]) => (

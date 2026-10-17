@@ -100,10 +100,22 @@ function roundOutcomeLabel(outcome:string){
   return humanize(outcome);
 }
 
+export type LearnerJourneyScheduledRound = {
+  applicationId: string;
+  roundId: string;
+  roundName: string;
+  scheduledAt: string | null;
+  mode: string;
+  venue: string | null;
+  isRescheduled: boolean;
+  booked: boolean;
+};
+
 export function LearnerPlacementJourney({
-  items,
+  items, scheduledRounds = [],
 }: {
   items: readonly LearnerPlacementJourneyItem[];
+  scheduledRounds?: readonly LearnerJourneyScheduledRound[];
 }) {
   if (items.length === 0) {
     return (
@@ -227,6 +239,29 @@ export function LearnerPlacementJourney({
                   }
                 </p>
               </div>
+            ) : null}
+
+            {scheduledRounds.some(round=>round.applicationId===item.applicationId) ? (
+              <section aria-label="Your selection process" className="mt-4 rounded-lg border border-border p-3">
+                <h4 className="font-semibold text-foreground">Selection process</h4>
+                <p className="mt-1 text-xs text-body">Scheduled rounds and your individual booking are different records.</p>
+                <ol className="mt-3 space-y-2">
+                  {scheduledRounds.filter(round=>round.applicationId===item.applicationId).map(round=>(
+                    <li key={round.roundId} className="flex flex-wrap items-center justify-between gap-2 rounded-md bg-surface-subtle p-3 text-sm">
+                      <div>
+                        <p className="font-semibold text-foreground">{round.roundName}</p>
+                        <p className="text-xs text-body">{round.scheduledAt
+                          ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(round.scheduledAt))+" IST"
+                          : "Date to be told"} · {round.mode.replaceAll("_"," ").toLowerCase()}</p>
+                        <p className="text-xs text-body">{round.venue??"Venue to be told"}
+                          {round.isRescheduled?" · You asked to reschedule":""}</p>
+                      </div>
+                      <StatusBadge tone={round.booked?"success":"neutral"}>{round.booked?"Booked":"Up next"}</StatusBadge>
+                    </li>
+                  ))}
+                </ol>
+                <Link href="/learn/my-placements/schedule" className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View schedule</Link>
+              </section>
             ) : null}
 
             {item.results.length > 0 ? (

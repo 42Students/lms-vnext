@@ -6,6 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
 import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
+import { getTpoNonApplicantReminderPreview } from "@/modules/placements/tpo-remind-not-applied-service";
 import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
@@ -230,6 +231,9 @@ export async function PlacementDriveWorkspace({
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+  const reminderPreview=isTpo&&job.status==="PUBLISHED"
+    ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
+    : null;
 
   const nextStep = isTpo && lifecycleReadiness
     ? projectTpoDriveNextStep({
@@ -239,6 +243,8 @@ export async function PlacementDriveWorkspace({
         closeAllowed: lifecycleReadiness.close.allowed,
         shortlistCount: shortlist?.total ?? null,
         pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
+        nonApplicantCount: reminderPreview?.count ?? 0,
+        canRemindNonApplicants: Boolean(reminderPreview?.allowed && !reminderPreview.alreadySent),
         deadlineMissing: job.applicationDeadline===null,
         stagedRounds: driveDay.rounds.map(round => ({
           id: round.id,
@@ -289,8 +295,24 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
-            {isTpo && ["CLOSED","CANCELLED"].includes(job.status) ?
-              <TpoDriveCloneAction jobId={jobId} label="Run it again as a draft"/>:null}
+            {isTpo ? <details className="relative self-start">
+              <summary className="flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                More ▾
+              </summary>
+              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
+                <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
+                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  Export applicants
+                </Link>
+                {job.status!=="DRAFT"?<Link
+                  href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
+                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  Share with company
+                </Link>:null}
+                {["CLOSED","CANCELLED"].includes(job.status)
+                  ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
+              </div>
+            </details>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
@@ -413,6 +435,9 @@ export async function PlacementDriveWorkspace({
             {driveDay.rounds.map(round => {
               const staged = round.participants.filter(p => p.result?.status === "STAGED").length;
               const applied = round.participants.filter(p => p.result?.status === "APPLIED").length;
+              const rescheduleRequests=placementRequests.filter(row=>
+                row.request.status==="PENDING"&&row.request.requestType==="ROUND_RESCHEDULE"&&
+                row.request.roundId===round.id).length;
               return (
                 <article key={round.id} className="rounded-lg border border-border bg-surface-subtle p-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -423,9 +448,20 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
                       : "Date to be decided"}</dd></div>
-                    <div><dt className="font-semibold">Mode and place</dt><dd>{round.mode} · {round.venue ?? (round.meetingUrl ? "Online" : "Venue to be told")}</dd></div>
+                    <div><dt className="font-semibold">Mode and place</dt>
+                      <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":round.mode.replaceAll("_"," ")}
+                        {" · "}{round.venue??(round.meetingUrl?"Online":"Venue to be told")}
+                        {round.meetingUrl&&/^https:\/\//i.test(round.meetingUrl)?<a href={round.meetingUrl}
+                          target="_blank" rel="noopener noreferrer"
+                          className="ml-2 font-semibold text-primary-text underline">Meeting link</a>:null}
+                      </dd>
+                    </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
                     <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply</dd></div>
+                    <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
+                      {rescheduleRequests>0?<Link href="#drive-request-actions"
+                        className="ml-2 font-semibold text-primary-text underline">Review pending →</Link>:null}
+                    </dd></div>
                     <div><dt className="font-semibold">Results expected</dt><dd>{round.resultsDueAt
                       ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.resultsDueAt)+" IST"
                       : "Not set"}</dd></div>
@@ -611,10 +647,12 @@ export async function PlacementDriveWorkspace({
           }))}
         />
       ) : null}
-      {job.status==="PUBLISHED"?<section aria-label="Registered students who have not applied"
+      {job.status==="PUBLISHED"?<section id="drive-registered-not-applied" aria-label="Registered students who have not applied"
         className="rounded-xl border border-border bg-surface p-5">
         <h2 className="mb-2 font-semibold text-foreground">Registered, not applied</h2>
-        <p className="mb-3 text-sm text-body">Remind eligible registered students who have not applied. Once per day, and only before the deadline.</p>
+        <p className="mb-3 text-sm text-body">{reminderPreview && reminderPreview.allowed
+          ? reminderPreview.count+" eligible registered students have not applied. Remind once per day, before the deadline."
+          : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
         <TpoRemindNonApplicants jobId={jobId}/>
       </section>:null}
       <section id="drive-request-actions">

@@ -1,4 +1,4 @@
-> **FAST MODE ACTIVE: read docs/orchestrator/FAST-MODE.md first. Push directly to main, no tests or checks. It overrides any instruction below about branches, tests or CI.**
+> **FAST v2 ACTIVE:** follow `docs/orchestrator/FAST-MODE.md`; push **only** to `chatgpt/chat-5-b`, never to `main`. Reassignment rules in `docs/orchestrator/queues/reassignments.md` override old ownership entries. No tests, typecheck, lint or CI waits.
 
 # Queue for lane chat-5
 
@@ -181,3 +181,22 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - BLOCKED TPO-drive-workspace-28: durable 48-hour apply-on-behalf opt-out model and corresponding notice/consent decision remain unresolved.
 - WP-chat-5-02 scheduler and all WPs reassigned in docs/orchestrator/queues/reassignments.md remain with their new owners. No edits to other lanes or src/components/shell.
 - WPs 01, 03, 06, 07 and 13 remain IN-PROGRESS: additional nonblocked parity and acceptance work remains. No tests/typecheck/lint/build/CI were run under FAST v2.
+
+## FAST v2 branch continuation — 2026-10-17, source-only batch after 0132
+
+- WP-01 / TPO-drive-workspace-33: expanded college-scoped applicant CSV and preview with active batch/branch/year, withdrawal, no-show, accepted elsewhere and college-added markers; all matching CSV pages remain uncapped. Source-level; large-dataset/runtime acceptance not run.
+- WP-01 / TPO-drive-workspace-02/28: Next step now shows the persisted reminder-eligible not-applied count and jumps to the once-per-day reminder action when available.
+- WP-01 / TPO-drive-workspace-17/18: close/cancel preview copy now discloses the implemented learner screening, request settlement, notifications and accepted-offer preservation effects.
+- WP-03 / LEARNER-placements-29/R05: self-withdraw checks candidate-specific BOOKED slots and approved scheduled exceptions, not another learner's drive-wide round; learner request chooser uses the same saved signals.
+- WP-03 / LEARNER-placements-27/37: applications now show candidate round schedules and booked versus shared scheduled state; no-dated-round schedule no longer reports a false empty.
+- WP-03 / LEARNER-placements-47: show an Updated tag and time only for a genuinely persisted post-publication announcement revision.
+- WP-06 / TPO-drive-workspace-01/04/05: compact primary route tabs, More navigation, authorized ?tab= deep-link redirect, applicant export, recruiter-visible share preview and archived drive cloning remain reachable. No fabricated discussion or deletion.
+- WP-06 / TPO-drive-workspace-35/45: round cards show safe meeting URL, human-readable mode and saved pending candidate reschedule request count.
+- WP-06 / TPO-drive-workspace-16: reject past or non-increasing IST deadlines in the form before submit; DB lock remains authoritative.
+- WP-07 / TPO-drive-workspace-49/50: offer CSV includes rule-check, expiry state and time-to-answer using one consistent snapshot; calculated disclosure is not college-policy verification.
+- BLOCKED TPO-drive-workspace-01: Discussion tab still lacks a drive-scoped persistent discussion reader; do not label an activity feed as discussion.
+- BLOCKED TPO-drive-workspace-04: destructive Delete draft has no approved TPO retention/deletion contract; archive is not deletion.
+- BLOCKED TPO-drive-workspace-28: 48-hour opt-out needs registered consent/notice persistence and policy; do not simulate it.
+- BLOCKED TPO-drive-workspace-54 / LEARNER-placements-20: authorized private resume/offer-letter storage and sharing consent not implemented.
+- SKIP TPO-drive-workspace-65: OD-09 disclosure security decision pending; do not widen recruiter visibility.
+- Ownership: WPs 02,09,10,14,15 chat-3; 04,05,11,16 chat-6. No work in reassigned WPs or shared shell. Owned WPs 01,03,06,07,08,12,13 remain IN-PROGRESS due outstanding nonblocked parity/runtime acceptance; no test, typecheck, lint, build or CI executed (FAST v2).
