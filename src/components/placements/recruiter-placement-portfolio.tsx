@@ -7,12 +7,29 @@ type RecruiterJobs = Awaited<
   ReturnType<typeof listOwnRecruiterPlacementJobs>
 >;
 
+function deadlineRelative(deadline:Date|null,now:Date):string{
+ if(!deadline)return "Application deadline not recorded";
+ const day=(value:Date)=>{
+  const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+    year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(value);
+  const get=(name:string)=>Number(parts.find(item=>item.type===name)?.value??0);
+  return Date.UTC(get("year"),get("month")-1,get("day"))/86400000;
+ };
+ const delta=day(deadline)-day(now);
+ if(delta===0)return deadline>=now?"Applications close today":"Application deadline passed today";
+ if(delta===1)return "Applications close tomorrow";
+ if(delta>1)return "Applications close in "+delta+" days";
+ if(delta===-1)return "Application deadline passed yesterday";
+ return "Application deadline passed "+Math.abs(delta)+" days ago";
+}
+
 export function RecruiterPlacementPortfolio({
-  jobs, returnTo, counts,
+  jobs, returnTo, counts, now,
 }: {
   jobs: RecruiterJobs;
   returnTo?: string;
   counts?:Record<string,{sharedApplicants:number;offers:number}>;
+  now:Date;
 }) {
   if (jobs.length === 0) {
     return (
@@ -67,9 +84,7 @@ export function RecruiterPlacementPortfolio({
                   : "CTC not specified"}
               </p>
               <p className="mt-1 text-xs text-muted-foreground">
-                {item.job.applicationDeadline
-                  ? "Applications close "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.job.applicationDeadline)+" IST"
-                  : "Application deadline not recorded"}
+                {deadlineRelative(item.job.applicationDeadline,now)}
               </p>
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
