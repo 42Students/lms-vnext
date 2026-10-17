@@ -368,9 +368,9 @@ export function RecruiterLeadsWorkspace({
   function exportRows(selection:"shown"|"selected",format:"csv"|"xlsx"){
     const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
-    const grid=recruiterTableExportGrid(chosen);
+    const grid=recruiterTableExportGrid(chosen,visibleColumns);
     const blob=format==="xlsx"?recruiterLeadsXlsx(grid.headers,grid.values):
-      new Blob([recruiterTableExportCsv(chosen)],{type:"text/csv;charset=utf-8"});
+      new Blob([recruiterTableExportCsv(chosen,visibleColumns)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
     link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
@@ -381,7 +381,7 @@ export function RecruiterLeadsWorkspace({
   async function copyRows(){
     const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
-    try{await navigator.clipboard.writeText(recruiterTableExportTsv(chosen));
+    try{await navigator.clipboard.writeText(recruiterTableExportTsv(chosen,visibleColumns));
       setExportFeedback(chosen.length+" recruiter leads copied");
     }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
   }
