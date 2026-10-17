@@ -1,11 +1,11 @@
-export type TpoExportRequestRow={id:string;studentName:string;requestType:string;status:string;jobTitle:string;companyName:string;requestedAt:Date;reason?:string;decisionNote?:string|null;decidedAt?:Date|null;decidedBy?:string|null};
+export type TpoExportRequestRow={id:string;studentName:string;rollNumber?:string|null;requestType:string;status:string;jobTitle:string;companyName:string;requestedAt:Date;reason?:string;decisionNote?:string|null;decidedAt?:Date|null;decidedBy?:string|null};
 function csvCell(value:string){
  const safe=/^[\s\uFEFF]*[=+\-@\t\r]/u.test(value)?"'"+value:value;
  return '"'+safe.replaceAll('"','""')+'"';
 }
 export function toTpoRequestsPageCsv(rows:readonly TpoExportRequestRow[]):string{
- const columns=["Request ID","Student","Type","Status","Job","Company","Requested at (UTC)","What they asked","Why","Decided by","Decided on (UTC)"];
- return [columns,...rows.map(r=>[r.id,r.studentName,r.requestType,r.status,r.jobTitle,r.companyName,r.requestedAt.toISOString(),r.reason??"",r.decisionNote??"",r.decidedBy??"",r.decidedAt?.toISOString()??""])]
+ const columns=["Request ID","Student","Student number","Type","Status","Job","Company","Requested at (UTC)","What they asked","Why","Decided by","Decided on (UTC)"];
+ return [columns,...rows.map(r=>[r.id,r.studentName,r.rollNumber??"",r.requestType,r.status,r.jobTitle,r.companyName,r.requestedAt.toISOString(),r.reason??"",r.decisionNote??"",r.decidedBy??"",r.decidedAt?.toISOString()??""])]
   .map(row=>row.map(v=>csvCell(v)).join(",")).join("\r\n")+"\r\n";
 }
 export function tpoRequestsExportHref(query:{status:string;requestType:string;sort:string;age:string;search:string;page:number;pageSize:number}):string{
