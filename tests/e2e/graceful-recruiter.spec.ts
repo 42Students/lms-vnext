@@ -24,7 +24,7 @@ test.describe("GR-80 Recruiter messaging preserves unsent replies", () => {
 
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 Recruiter failed conversation reply ${kind} keeps draft`, async ({ page, context }) => {
       test.setTimeout(40_000);

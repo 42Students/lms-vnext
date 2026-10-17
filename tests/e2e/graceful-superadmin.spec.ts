@@ -8,7 +8,7 @@ test.describe("GR-80 Super Admin college setup failure recovery", () => {
 
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 Super Admin college creation ${kind} retains all fields`, async ({ page, context }) => {
       test.setTimeout(40_000);

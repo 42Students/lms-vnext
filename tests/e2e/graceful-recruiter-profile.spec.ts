@@ -22,7 +22,7 @@ test.describe("GR-80 Recruiter profile mutations", () => {
   for (const operation of operations) {
     for (const kind of [
       "backend-down", "html-502", "json-500", "forbidden",
-      "missing-record", "conflict", "rate-limit", "slow", "session-expired",
+      "missing-record", "conflict", "rate-limit", "maintenance", "slow", "session-expired",
     ] as FailureKind[]) {
       test(`GR-80 Recruiter ${operation.name} ${kind} retains input and recovers`, async ({ page, context }) => {
         test.setTimeout(35_000);

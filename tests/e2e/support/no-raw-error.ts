@@ -36,7 +36,7 @@ export async function expectNoRawErrors(page: Page): Promise<void> {
 export type FailureKind =
   | "backend-down" | "html-502" | "json-500" | "forbidden"
   | "missing-record" | "conflict" | "rate-limit"
-  | "slow" | "session-expired";
+  | "slow" | "maintenance" | "session-expired";
 
 /** Intercepts real /api requests. The calling test MUST assert hits() > 0. */
 export async function failApi(
@@ -71,6 +71,7 @@ export async function failApi(
       "rate-limit": { status: 429, code: "RATE_LIMITED" },
       "session-expired": { status: 401, code: "SESSION_EXPIRED" },
       slow: { status: 504, code: "GATEWAY_TIMEOUT" },
+      maintenance: { status: 503, code: "SERVICE_UNAVAILABLE" },
     }[kind];
     const requestId = "ab12cd34";
     await route.fulfill({
@@ -124,6 +125,7 @@ export const GR02_TEXT: Record<FailureKind, string> = {
   conflict: FRIENDLY_MESSAGES.conflict,
   "rate-limit": FRIENDLY_MESSAGES.rateLimit,
   slow: FRIENDLY_MESSAGES.timeout,
+  maintenance: FRIENDLY_MESSAGES.maintenance,
   "session-expired": FRIENDLY_MESSAGES.session,
 };
 export async function expectFriendlyFailure(

@@ -8,7 +8,7 @@ test.describe("GR-80 Mentor notifications and calendar failure behaviour", () =>
 
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 Mentor marking unread notifications ${kind} stays usable`, async ({ page, context }) => {
       test.setTimeout(35_000);
