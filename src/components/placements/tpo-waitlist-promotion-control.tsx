@@ -9,6 +9,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");const [success,setSuccess]=useState("");
  async function promote(){
   if(!preview.next||busy||reason.trim().length<3)return;
+  if(!window.confirm("Verify and release one offer to "+preview.next.name+" (waitlist rank "+preview.next.rank+")? This issues a real offer and records the seat."))return;
   setBusy(true);setError("");setSuccess("");
   try{const res=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/waitlist-promote",{
    method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
