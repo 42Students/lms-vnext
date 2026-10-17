@@ -7,8 +7,7 @@ import { projectInstances, projectReleases, projectSprints, projectTasks } from 
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
-import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
-import { requireProjectLifecycleAccess } from "./access";
+import { requireProjectLifecycleMutationAccess } from "./access";
 import { ProjectsServiceError } from "./errors";
 import {
   mentorTaskDetailsParamsSchema,mentorTaskDetailsInputSchema,taskDetailsChangedFields,
