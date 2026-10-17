@@ -113,10 +113,18 @@ export default async function TpoTeamPage({searchParams}:{
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
        </p>:null}
        {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
-        {([["Live drives",member.liveDrives],["Draft drives",member.draftDrives],
-          ["Companies",member.companies],["Overdue follow-ups",member.overdueFollowups],
-          ["Waiting on teammates",member.waitingOnOthers]] as const).map(([label,count])=><div key={label}>
-         <dt className="text-muted-foreground">{label}</dt><dd className="font-semibold">{label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":count}</dd>
+        {([["Live drives",member.liveDrives,"/tpo/placements"],
+          ["Draft drives",member.draftDrives,"/tpo/placements"],
+          ["Companies",member.companies,"/tpo/recruiters?view=companies"],
+          ["Overdue follow-ups",member.overdueFollowups,"/tpo/recruiters?due=1"],
+          ["Waiting on teammates",member.waitingOnOthers,"/tpo/team?tab=conversations&filter=ASKS"]] as const)
+         .map(([label,count,href])=><div key={label}>
+         <dt className="text-muted-foreground">{label}</dt>
+         <dd className="font-semibold">
+          {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
+           <Link href={href} title={"Open "+label.toLowerCase()+" records"}
+            className="text-primary-text underline underline-offset-2">{count}</Link>}
+         </dd>
         </div>)}
        </dl>:null}
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
