@@ -7,6 +7,13 @@ import type {RequestContext} from "@/modules/identity/context";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("chat-4 College academic and people gap closure",()=>{
+ it("COL-courses-content-R01 keeps context for the next teaching assignment",()=>{
+  const s=source("src/components/college/college-faculty-assignment-actions.tsx");
+  expect(s).toContain("Created ${successes} teaching assignments for this class.");
+  expect(s).toContain("setSelected(failures.map(item => item.deliveryId))");
+  expect(s).not.toContain('setMembershipId("")');
+  expect(s).not.toContain('setRole("PRIMARY")');
+ });
  it("COL-academic-setup-R05 bounds semesters and mapping credits",async()=>{
   const {createCollegeSemesterSchema,canCreateSemesterTerm}=await import("@/modules/academics/semester-mutation-model");
   const {collegeTermCourseAddSchema}=await import("@/modules/academics/college-term-mapping-model");

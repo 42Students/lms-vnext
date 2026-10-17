@@ -12,3 +12,5 @@ Authoritative audit: `docs/audit/pages/college/academic-people-review.md`. Tests
 | COL-academic-setup-R02 | DONE | `src/modules/electives/college-elective-lifecycle-service.ts` archives active offerings and elective groups transactionally with the slot without deleting learner membership history; prompt matches legacy cascade wording and UI renders friendly errors. `tests/unit/chat4-college-academic-people-gap-closure.test.ts` and `tests/integration/college-elective-lifecycle.test.ts` contain `COL-academic-setup-R02` coverage. |
 
 | COL-academic-setup-R05 | DONE | Semester 1–12, mapped credits 1–10; tests/unit/chat4-college-academic-people-gap-closure.test.ts test COL-academic-setup-R05. |
+
+| COL-courses-content-R01 | DONE | Teaching assignment retains class/faculty/role, clears succeeded course selection and states exact creation total; tests/unit/chat4-college-academic-people-gap-closure.test.ts test COL-courses-content-R01. |
