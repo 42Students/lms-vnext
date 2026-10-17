@@ -1,46 +1,56 @@
 import {sql} from "drizzle-orm";
-import {check,index,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
+import {check,foreignKey,index,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
 import {colleges} from "./colleges";
 import {collegeMemberships} from "./memberships";
 import {users} from "./users";
 
-/** Proposed learner-to-TPO request taxonomy; register migration before enabling writes. */
+/** Registered 0134: first CREATE TABLE definition is effective; later IF NOT EXISTS
+ * statements cannot modify its widths or constraints. Do not widen in Drizzle
+ * before a separately registered corrective migration. */
 export const placementLearnerGeneralRequests=pgTable("placement_learner_general_requests",{
  id:uuid("id").defaultRandom().primaryKey(),
  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
- membershipId:uuid("membership_id").notNull().references(()=>collegeMemberships.id,{onDelete:"restrict"}),
+ membershipId:uuid("membership_id").notNull(),
  kind:varchar("kind",{length:40}).notNull(),
- targetKey:text("target_key").notNull(),
- status:varchar("status",{length:16}).notNull().default("PENDING"),
+ targetKey:varchar("target_key",{length:150}).notNull(),
  reason:text("reason").notNull(),
- payload:jsonb("payload").$type<Record<string,unknown>>().notNull().default(sql`'{}'::jsonb`),
+ payload:jsonb("payload").$type<Record<string,unknown>>().notNull(),
+ status:varchar("status",{length:20}).notNull().default("PENDING"),
  requestedByUserId:uuid("requested_by_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  requestedAt:timestamp("requested_at",{withTimezone:true}).notNull().defaultNow(),
- version:uuid("version").notNull().defaultRandom(),
- updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
  decidedByUserId:uuid("decided_by_user_id").references(()=>users.id,{onDelete:"restrict"}),
  decidedAt:timestamp("decided_at",{withTimezone:true}),
  decisionNote:text("decision_note"),
+ version:uuid("version").notNull().defaultRandom(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
- uniqueIndex("placement_learner_general_pending_target_uq").on(t.collegeId,t.membershipId,t.kind,t.targetKey)
-  .where(sql`${t.status} = 'PENDING'`),
- index("placement_learner_general_college_status_idx").on(t.collegeId,t.status,t.requestedAt),
- index("placement_learner_general_member_idx").on(t.collegeId,t.membershipId,t.requestedAt),
- check("placement_learner_general_kind_ck",sql`${t.kind} in
-  ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE')`),
- check("placement_learner_general_status_ck",sql`${t.status} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
- check("placement_learner_general_reason_ck",sql`length(trim(${t.reason})) between 3 and 2000`),
+ foreignKey({name:"placement_general_request_member_college_fk",
+  columns:[t.membershipId,t.collegeId],
+  foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
+ uniqueIndex("placement_general_request_one_pending_target_uq")
+  .on(t.membershipId,t.kind,t.targetKey).where(sql`${t.status}='PENDING'`),
+ index("placement_general_request_college_queue_idx").on(t.collegeId,t.status,t.requestedAt),
+ index("placement_general_request_member_idx").on(t.collegeId,t.membershipId,t.requestedAt),
+ check("placement_general_request_kind_ck",sql`${t.kind} in
+  ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')`),
+ check("placement_general_request_status_ck",sql`${t.status} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
+ check("placement_general_request_reason_ck",sql`length(btrim(${t.reason})) between 3 and 2000`),
+ check("placement_general_request_payload_ck",sql`jsonb_typeof(${t.payload})='object'`),
+ check("placement_general_request_decision_ck",sql`(
+  (${t.status}='PENDING' and ${t.decidedByUserId} is null and ${t.decidedAt} is null) or
+  (${t.status}<>'PENDING' and ${t.decidedByUserId} is not null and ${t.decidedAt} is not null)
+ )`),
 ]);
 
 export const placementLearnerGeneralRequestEvents=pgTable("placement_learner_general_request_events",{
  id:uuid("id").defaultRandom().primaryKey(),
  requestId:uuid("request_id").notNull().references(()=>placementLearnerGeneralRequests.id,{onDelete:"restrict"}),
- priorStatus:varchar("prior_status",{length:16}),
- nextStatus:varchar("next_status",{length:16}).notNull(),
+ priorStatus:varchar("prior_status",{length:20}),
+ nextStatus:varchar("next_status",{length:20}).notNull(),
  actorUserId:uuid("actor_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  note:text("note"),
  occurredAt:timestamp("occurred_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
- index("placement_learner_general_events_request_idx").on(t.requestId,t.occurredAt),
- check("placement_learner_general_events_status_ck",sql`${t.nextStatus} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
+ index("placement_general_request_events_parent_idx").on(t.requestId,t.occurredAt),
+ check("placement_general_request_events_status_ck",sql`${t.nextStatus} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
 ]);
