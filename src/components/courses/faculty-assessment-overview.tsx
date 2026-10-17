@@ -78,17 +78,13 @@ export function FacultyAssessmentOverview({
   return (
     <div className="space-y-5">
       <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
-      <div className="grid gap-3 sm:grid-cols-3">
-        {[
-          { label: kind === "QUIZ" ? "Quizzes" : "Assignments", value: items.length },
-          { label: "Courses", value: new Set(items.map(item=>item.courseCode)).size },
-          { label: "Sections", value: new Set(items.map((item) => item.deliveryId)).size },
-        ].map((metric) => (
-          <div key={metric.label} className="rounded-xl border border-border bg-surface p-4">
-            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{metric.label}</p>
-            <p className="mt-1 text-2xl font-semibold text-foreground">{metric.value}</p>
-          </div>
-        ))}
+      <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
+        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+          {items.length} {kind === "QUIZ" ? (items.length === 1 ? "Quiz" : "Quizzes") : (items.length === 1 ? "Assignment" : "Assignments")}
+        </span>
+        <span className="rounded-full border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground">
+          {new Set(items.map(item => item.courseCode)).size} {new Set(items.map(item => item.courseCode)).size === 1 ? "Course" : "Courses"}
+        </span>
       </div>
 
       <details className="rounded-lg border border-border bg-surface p-3">
