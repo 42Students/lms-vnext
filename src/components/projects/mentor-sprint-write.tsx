@@ -55,7 +55,8 @@ export function MentorSprintCreate({
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!title.trim()||title.trim().length>200||
-          description.length>4000} onClick={()=>void create()}>
+          description.length>4000||!datesValid||!chosenReleaseId||
+          chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
           {busy?"Creating…":"Confirm create"}
         </Button>
       </>}>
