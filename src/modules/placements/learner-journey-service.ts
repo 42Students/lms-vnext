@@ -157,7 +157,7 @@ export async function getLearnerPlacementJourney(
       applicationStatus:
         row.application.status,
       offerStatus: offerStatusByApplication.get(row.application.id) ?? null,
-      channel: row.application.channel,
+      channel: row.application.submittedByUserId===context.user.id?row.application.channel:"PLACEMENT_CELL",
       submittedAt:
         row.application.submittedAt,
       withdrawnAt:
