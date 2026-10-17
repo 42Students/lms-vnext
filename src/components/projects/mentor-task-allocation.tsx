@@ -190,7 +190,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        <p className="mt-1 text-xs text-body">
          {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
        </p>
-       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:null}
+       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:
+         <p className="mt-1 text-xs text-body">Sprint: {
+           sprints.find(item=>item.id===task.sprintId)?.title??"Unknown sprint"
+         }</p>}
        {group.membershipId===null&&task.status!=="DONE"&&task.status!=="IN_REVIEW"?
          <p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
        {group.membershipId!==null&&!activeMemberIds.has(group.membershipId)?
