@@ -117,13 +117,13 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-51 | S3 | MISSING-ACTION | DONE |
 | SA-academics-people-54 | S3 | MISSING-FILTER | OPEN |
 | SA-academics-people-55 | S3 | COPY | OPEN |
-| SA-academics-people-57 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-academics-people-57 | S3 | MISSING-ACTION | DONE |
 | SA-academics-people-60 | S3 | MISSING-ACTION | BLOCKED |
 | SA-academics-people-61 | S3 | MISSING-FILTER | DONE |
 | SA-academics-people-62 | S3 | MISSING-COLUMN | OPEN |
 | SA-academics-people-66 | S3 | MISSING-FILTER | DONE |
-| SA-academics-people-68 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-69 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| SA-academics-people-68 | S3 | MISSING-FILTER | DONE |
+| SA-academics-people-69 | S3 | MISSING-EXPORT | DONE |
 | SA-academics-people-73 | S3 | STATE | DONE |
 | SA-academics-people-74 | S3 | STATE | DONE |
 | SA-academics-people-63 | S4 | COPY | DONE |
@@ -138,8 +138,8 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-placements-01 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-placements-04 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-placements-01 | S1 | MISSING-ACTION | DONE |
+| COL-placements-04 | S1 | MISSING-ACTION | DONE |
 | COL-placements-02 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
 | COL-placements-03 | S2 | MISSING-ACTION | OPEN |
 | COL-placements-05 | S2 | MISSING-FILTER | DONE |
