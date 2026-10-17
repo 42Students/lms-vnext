@@ -1,11 +1,15 @@
 import "server-only";
 
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, gt, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   placementApplications,
   placementApplicationStatusHistory,
+  placementApplicationScreenings,
+  placementCompanyApplicantShares,
+  placementCompanyShareSelections,
+  users,
   placementCompanies,
   placementCompanyRelationships,
   placementJobRoleOptions,
@@ -39,6 +43,7 @@ async function loadOwnedApplication(
   const [row] = await getDb()
     .select({
       applicationId: placementApplications.id,
+      jobId: placementApplications.jobId,
       applicationStatus: placementApplications.status,
       jobTitle: placementJobs.title,
       roleTitle: placementJobRoleOptions.title,
@@ -130,8 +135,49 @@ export async function getOwnLearnerApplicationCompany(
   const application = await loadOwnedApplication(context, rawApplicationId);
   if (!application) return null;
 
+  // Mirror the currently registered company-share projection: only shortlisted
+  // submitted applicants may appear, and selected-applicant filters apply.
+  // Share tokens, other learners and employer activity are never returned.
+  const [[screening],[principal],activeShares]=await Promise.all([
+    getDb().select({status:placementApplicationScreenings.status})
+      .from(placementApplicationScreenings)
+      .where(eq(placementApplicationScreenings.applicationId,application.applicationId)).limit(1),
+    getDb().select({displayName:users.displayName,email:users.email})
+      .from(users).where(eq(users.id,context.user.id)).limit(1),
+    getDb().select({id:placementCompanyApplicantShares.id})
+      .from(placementCompanyApplicantShares).where(and(
+        eq(placementCompanyApplicantShares.jobId,application.jobId),
+        eq(placementCompanyApplicantShares.collegeId,context.membership!.collegeId),
+        isNull(placementCompanyApplicantShares.revokedAt),
+        gt(placementCompanyApplicantShares.expiresAt,new Date()),
+      )),
+  ]);
+  const selected=activeShares.length?await getDb().select({
+    shareId:placementCompanyShareSelections.shareId,
+    applicationId:placementCompanyShareSelections.applicationId,
+  }).from(placementCompanyShareSelections).where(
+    inArray(placementCompanyShareSelections.shareId,activeShares.map(s=>s.id)),
+  ):[];
+  const sharedIds=new Map<string,string[]>();
+  for(const row of selected){
+    const list=sharedIds.get(row.shareId)??[];
+    list.push(row.applicationId);
+    sharedIds.set(row.shareId,list);
+  }
+  const currentlyShared=application.applicationStatus==="SUBMITTED" &&
+    screening?.status==="SHORTLISTED" && activeShares.some(share=>{
+      const limited=sharedIds.get(share.id)??[];
+      return limited.length===0||limited.includes(application.applicationId);
+    });
   return {
     applicationId: application.applicationId,
+    companySharePreview:{
+      currentlyShared,
+      fields:["Application ID","Learner","Email"] as const,
+      applicationId:application.applicationId,
+      learnerName:principal?.displayName??"Unnamed learner",
+      email:principal?.email??null,
+    },
     ...learnerCompanyPreview({
       companyName: application.companyName,
       companyStatus: application.companyStatus,
