@@ -53,6 +53,7 @@ export const createTpoLeadSchema = z.object({
   designation: z.string().trim().max(100).nullable().optional(),
   companyName: z.string().trim().max(150).nullable().optional(),
   source: tpoLeadSourceSchema.optional(),
+  followup: z.strictObject({dueAt:z.iso.datetime({offset:true}),note:z.string().trim().max(500).optional()}).optional(),
 }).strict().refine(
   value => Boolean(value.email || value.phone),
   "Provide at least an email or phone contact",
