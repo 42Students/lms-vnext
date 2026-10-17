@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { LearnerProfileDocument } from "./profile-validation";
+import {learnerProfileCareerCoverage} from "./learner-profile-career-coverage-model";
 
 /** The existing profile completion denominator, made explainable and actionable. */
 export const learnerProfileSectionSchema = z.enum([
@@ -10,18 +11,6 @@ export const learnerProfileSectionSchema = z.enum([
 ]);
 
 export type LearnerProfileSection = z.infer<typeof learnerProfileSectionSchema>;
-
-/** Legacy completion weights: key identity/career evidence counts more than
- * optional metadata. Keep section counts for the checklist UI, but never
- * mistake an equally weighted section count for profile completeness. */
-export const LEARNER_PROFILE_SECTION_WEIGHTS:ReadOnlyWeights={
- "profile-introduction":5,"contacts":10,"social-profiles":4,
- "address":4,"personal-details":15,"identity":2,
- "experiences":10,"education":15,"skills":10,"projects":10,
- "certifications":3,"achievements":3,"languages":2,
- "extracurriculars":2,"hobbies":2,"metadata":3,
-};
-type ReadOnlyWeights=Readonly<Record<LearnerProfileSection,number>>;
 
 export function learnerProfileChecklist(document: LearnerProfileDocument) {
   const hasText = (value: unknown) =>
@@ -51,7 +40,7 @@ export function learnerProfileChecklist(document: LearnerProfileDocument) {
     { section: "metadata", label: "Additional information", completed: document.metadata.length > 0 },
   ];
   const completed = items.filter(item => item.completed).length;
-  const totalWeight=items.reduce((sum,item)=>sum+LEARNER_PROFILE_SECTION_WEIGHTS[item.section],0);
-  const earned=items.reduce((sum,item)=>sum+(item.completed?LEARNER_PROFILE_SECTION_WEIGHTS[item.section]:0),0);
-  return { items, completed, total: items.length, percentage: totalWeight ? Math.round(100 * earned / totalWeight) : 0 };
+  // Use the same persisted, non-sensitive career weights as the on-page ring.
+  const percentage=learnerProfileCareerCoverage({items}).percentage??0;
+  return {items,completed,total:items.length,percentage};
 }
