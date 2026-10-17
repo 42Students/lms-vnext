@@ -73,7 +73,7 @@ export function CollegeFacultyAssignmentCreate({
       });
       const successes = data?.created?.length ?? 0;
       const failures = data?.failed ?? [];
-      setMessage(`Assigned ${successes} of ${selected.length} selected course(s).` +
+      setMessage(`Created ${successes} teaching assignments for this class.` +
         (failures.length ? " " + failures.map(item => {
           const option = deliveries.find(row => row.id === item.deliveryId);
           return (option?.courseName ?? "Selected course") + ": could not be assigned; review and retry.";

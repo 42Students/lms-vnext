@@ -4,7 +4,7 @@ export const collegeTermCourseAddSchema = z.object({
   programTermId: z.string().uuid(),
   courseId: z.string().uuid(),
   type: z.enum(["CORE", "ELECTIVE"]),
-  credits: z.number().int().min(0).max(30).nullable(),
+  credits: z.number().int().min(1).max(10),
 }).strict();
 export const collegeTermCourseUpdateSchema = z.object({
   credits: z.number().int().min(1).max(10),

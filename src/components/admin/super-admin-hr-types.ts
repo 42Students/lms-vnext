@@ -27,6 +27,7 @@ export type HrAccount = {
   status: HrAccountStatus;
   accountManageable:boolean;
   grants: HrGrant[];
+  grantHistory?: HrGrant[];
 };
 
 export type HrAccountsPageData = {

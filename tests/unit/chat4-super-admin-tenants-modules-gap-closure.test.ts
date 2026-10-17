@@ -121,6 +121,21 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
    expect(panel).toContain("Sent back. The student sees your reason.");
   }
  });
+ it("SA-tenants-modules-43 shows actor sentences and sanitized event details",async()=>{
+  const {activityEventSentence}=await import("@/components/activity/activity-center");
+  expect(activityEventSentence({eventType:"academics.batch.promoted",subjectType:"cohort",subjectLabel:"Cohort 2027"},
+    {displayName:"Ananya",email:null})).toBe("Ananya promoted cohort Cohort 2027");
+  const center=source("src/components/activity/activity-center.tsx");
+  expect(center).toContain("Object.entries(item.event.metadata)");
+  expect(center).toContain('"Today"');
+  expect(center).toContain('"Yesterday"');
+  expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("sanitizeActivityMetadata(group.latest.event.metadata)");
+ });
+ it("SA-tenants-modules-45 shows 50 events with older matching count",()=>{
+  expect(source("src/app/(authenticated)/activity/page.tsx")).toContain("limit: 50");
+  expect(source("src/modules/activity/service.ts")).toContain("remainingCount:hasMore?Math.max");
+  expect(source("src/components/activity/activity-center.tsx")).toContain("Load more ({nextRemaining} older)");
+ });
  it("SA-tenants-modules-44 tells Super Admin the current activity scope",()=>{
   const s=source("src/app/(authenticated)/activity/page.tsx");
   expect(s).toContain('aria-label="Activity scope"');

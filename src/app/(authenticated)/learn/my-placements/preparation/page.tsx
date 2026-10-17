@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {LearnerPrepAssignmentCards} from "@/components/placements/learner-prep-assignment-cards";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -33,6 +35,7 @@ export default async function LearnerPlacementPreparationPage({
         className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
         My Placements
       </Link>} />
+    {(await placementTableExists("placement_tpo_prep_assignments"))?<LearnerPrepAssignmentCards/>:null}
     <section aria-label="Recorded preparation summary"
       className="rounded-xl border border-border bg-surface p-4 sm:p-5">
       <p className="text-sm font-semibold text-foreground">

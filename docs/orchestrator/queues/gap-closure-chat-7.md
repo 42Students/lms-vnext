@@ -2,7 +2,7 @@
 
 Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-7-b`. 224 gaps on 4 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
 
-## learner/placements (65: FIXED-ON-MAIN 28, OPEN 30, UNCONFIRMED 6, WRONG 1)
+## learner/placements (65: FIXED-ON-MAIN 28, DONE 30, UNCONFIRMED 6, WRONG 1)
 
 Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/learner-placements-verification.md`.
 
@@ -12,11 +12,11 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-06 | S2 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| LEARNER-placements-20 | S2 | MISSING-FIELD | OPEN |
+| LEARNER-placements-20 | S2 | MISSING-FIELD | DONE |
 | LEARNER-placements-21 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
 | LEARNER-placements-24 | S2 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-27 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-placements-28 | S2 | MISSING-MODAL | OPEN |
+| LEARNER-placements-28 | S2 | MISSING-MODAL | DONE |
 | LEARNER-placements-29 | S2 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-placements-31 | S2 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-35 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -120,7 +120,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-49 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | MEN-projects-meetings-51 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | MEN-projects-meetings-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| MEN-projects-meetings-R02 | S3 | VALIDATION | OPEN |
+| MEN-projects-meetings-R02 | S3 | VALIDATION | DONE |
 | MEN-projects-meetings-R03 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R05 | S3 | STATE | FIXED-ON-MAIN |
@@ -231,7 +231,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-24 | S3 | STATE | FIXED-ON-MAIN |
 | FAC-courses-25 | S3 | STATE | FIXED-ON-MAIN |
 | FAC-courses-26 | S3 | COPY | FIXED-ON-MAIN |
-| FAC-courses-27 | S3 | STATE | OPEN |
+| FAC-courses-27 | S3 | STATE | DONE |
 | FAC-courses-31 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-courses-34 | S3 | RESPONSIVE | FIXED-ON-MAIN |
 | FAC-courses-R01 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -265,3 +265,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 
 ## Needs shell (chat-9 only)
 
+
+## Chat-7 ownership check, 2026-10-17
+- Reassignment policy: skip OPEN recruiter/home-drives (chat-14), learner/placements (chat-15) and mentor/projects-meetings-part2 (chat-16). Mentor part 1 and faculty/courses remain chat-7.
+- Unit failures on learner-contact, learner-course, learner-notification and learner-projects concern reassigned learner pages; avoid overlapping chat-15 code changes. Tests authored here are unrun; orchestrator owns CI.

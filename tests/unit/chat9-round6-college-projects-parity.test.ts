@@ -25,7 +25,7 @@ describe("College Admin Projects round 6",()=>{
  it("COL-projects-22 is NOT-A-GAP: mentor class and template filters were absent in the old Workspaces list",()=>{
   const filters=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(filters).toContain("Workspace status");
-  expect(filters).toContain('name="q"');
+  expect(filters).toContain('name={legacyWorkspaces ? "search" : "q"}');
   expect(filters).not.toContain('name="templateId"');
  });
 });
