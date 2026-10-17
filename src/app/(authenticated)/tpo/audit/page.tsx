@@ -1,4 +1,5 @@
 import {TpoAuditSavedViews} from "@/components/tpo/tpo-audit-saved-views";
+import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
 import {TpoAuditGrid} from "@/components/tpo/tpo-audit-grid";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -134,9 +135,7 @@ export default async function TpoAuditPage({
     pageSize,
   };
 
-  const toIstDate=(value:Date)=>new Intl.DateTimeFormat("en-CA",{
-   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-  }).format(value);
+  const toIstDate=tpoIndiaCalendarDay;
   const today=toIstDate(new Date());
   const quickLooks=[{label:"Today",from:today,to:today},
    {label:"7 days",from:toIstDate(new Date(Date.now()-6*86400000)),to:today},
