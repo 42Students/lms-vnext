@@ -36,31 +36,31 @@ export function deriveMentorProjectAttention(
       alerts.push({
         projectId:project.projectId,
         key:"review:"+project.submission.id,kind:"REVIEW",
-        title:"Delivery awaiting your review",
-        description:project.projectTitle+" has a learner submission to review.",
-        href:href+"?tab=delivery",
+        title:project.projectTitle+" — submission waiting for your review",
+        description:"A team member submitted work for this project.",
+        href:href+"?tab=overview",
         occurredAt:project.submission.submittedAt.toISOString(),
       });
     }
     // Avoid a stale alarm for records without any trustworthy activity signal.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    const stalled=project.projectStatus==="ACTIVE" && Number.isFinite(lastMillis) &&
+    const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) && Number.isFinite(lastMillis) &&
       timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,
         key:"stalled:"+project.projectId,kind:"STALLED",
-      title:"Project may be stalled",
-      description:project.projectTitle+" has no recent recorded activity.",
-      href,occurredAt:last.toISOString(),
+      title:project.projectTitle+" — no activity in 7+ days",
+      description:"This project hasn't had any recorded activity recently.",
+      href:href+"?tab=audit",occurredAt:last.toISOString(),
     });
     for (const meeting of project.meetings) {
       if (meeting.status==="REQUESTED") {
         alerts.push({
           projectId:project.projectId,
         key:"request:"+meeting.id,kind:"REQUESTED",
-          title:"Meeting request pending",
-          description:project.projectTitle+": "+meeting.title,
+          title:meeting.title+" — "+project.projectTitle,
+          description:"A team member requested this meeting — review and confirm the time.",
           href:href+"?tab=team",occurredAt:meeting.startsAt.toISOString(),
         });
       } else if (meeting.status==="SCHEDULED") {

@@ -87,9 +87,10 @@ export function DepartmentDirectory({
             <select id="department-directory-page-size" value={pageSize}
               onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
               className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
-              {[10, 20, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+              {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
             </select>
           </label>
+          {search.trim() ? <Button size="sm" variant="secondary" onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
           {filtered.length ? (
             <a
               href={exportHref}

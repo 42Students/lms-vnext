@@ -33,7 +33,7 @@ export default async function CollegeSemestersPage({
     <div className="flex flex-wrap items-center gap-3">
     <Link prefetch={false} download href={academicExportHref("SEMESTERS",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-      Export filtered semesters CSV
+      Export CSV
     </Link>
     <p className="text-xs text-muted-foreground">Exports up to {ACADEMIC_EXPORT_CAP} matching semesters; the CSV records when results are truncated. Filters and college scope also apply to the download.</p>
     </div>
