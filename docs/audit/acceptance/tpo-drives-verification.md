@@ -179,3 +179,11 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | --- | --- | --- |
 | TPO-drives-R05 | OPEN — safer partial implementation | `src/modules/placements/tpo-drive-form-error-copy.ts` maps recognized `FriendlyFetchError.fieldErrors` keys to predefined, readable field labels without echoing untrusted server text; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-R05 surfaces recognized offending fields, never raw Zod messages`. Inline per-field errors and the remaining exact legacy field rules are not yet complete. |
 | TPO-drives-44 | OPEN — safer partial implementation | Unknown machine-code messages are replaced by bounded friendly fallback, and known season/role/deadline failures are mapped to sentences; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-44 unknown short machine codes are never displayed from typed API errors`. Full legacy message inventory is not yet exhaustively mapped. |
+
+## Chat-3 round 13 — owner-delegated safer dispositions (source, tests unrun)
+
+| ID | Status | Reason and ID-named test |
+| --- | --- | --- |
+| TPO-drives-03 | NOT-A-GAP | Closed lifecycle intentionally includes CLOSED/CANCELLED jobs and rejected recruiter requests are labelled Declined separately rather than inventing a fictitious rejected job status. `src/modules/placements/tpo-drive-lifecycle-list-model.ts`; `tests/unit/tpo-drives-gap-closure.test.ts` test TPO-drives-03. |
+| TPO-drives-34 | NOT-A-GAP | Prefer explicit college-scoped cohort targeting and avoid ambiguous placement-batch names or automatic expansion to inactive cohorts. Decision already reached by chat-5 and tested in `tests/unit/chat5-delegated-policy-decisions.test.ts` case TPO-drives-34. |
+| TPO-drives-42 | OPEN (server safety significantly advanced) | Both lifecycle and direct publish require secure HTTPS employer link. Direct publish now reads the college-scoped locked draft and persisted evaluative-round/policy evidence inside the transaction before status change. `tests/unit/chat3-tpo-publish-readiness-round13.test.ts` and `tests/unit/tpo-drives-gap-closure.test.ts`. Exact legacy multi-field toast still needs acceptance; test execution pending. |
