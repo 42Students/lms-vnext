@@ -2,6 +2,7 @@
 
 import {
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -95,6 +96,7 @@ export function RecruiterResultControls({
     useState<string | null>(null);
   const [selected,setSelected]=useState<Record<string,string[]>>({});
   const [bulkPending,setBulkPending]=useState<string|null>(null);
+  const bulkSubmissionLock=useRef(false);
   const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
   const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
   function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
@@ -260,7 +262,7 @@ export function RecruiterResultControls({
 
 
   async function stageSelected(round:RecruiterRound){
-    if(bulkPending!==null||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
     const chosen=new Set(selected[round.id]??[]);
     const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
     if(!participants.length){showToast({tone:"error",title:"No candidates selected",description:"Select candidates who do not have applied results."});return;}
@@ -288,6 +290,7 @@ export function RecruiterResultControls({
     if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
       summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
       "\n\nNo result is final until the placement cell applies it."))return;
+    bulkSubmissionLock.current=true;
     setBulkPending(round.id);
     const succeeded:string[]=[];
     let failures=0;
@@ -314,6 +317,7 @@ export function RecruiterResultControls({
       description:succeeded.length+" sent to the placement cell to verify. "+failures+
         " failed; failed selections remain checked for retry.",
     });
+    bulkSubmissionLock.current=false;
     setBulkPending(null);
     if(succeeded.length)router.refresh();
   }
