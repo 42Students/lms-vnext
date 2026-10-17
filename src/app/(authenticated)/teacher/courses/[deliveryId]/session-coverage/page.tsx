@@ -10,7 +10,7 @@ export default async function FacultySessionCoveragePage({
   const data=await getFacultySessionCoverage(await getCurrentRequestContext(),{deliveryId});
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
   return <div className="space-y-5">
-    <Link href={base} className="text-sm font-semibold text-primary-text underline">← Attendance</Link>
+    <Link href={base} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">← Attendance</Link>
     <PageHeader title="Attendance session coverage"
       description={data.course.courseName+" · "+data.course.sectionName}/>
     <section aria-label="Session state counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
