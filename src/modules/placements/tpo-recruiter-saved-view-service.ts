@@ -8,6 +8,8 @@ import {requirePlacementManageScope} from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ENGAGE_COLUMNS} from "./tpo-recruiter-table-view-model";
 
+const SAVED_FILTER_KEYS=["q","stage","owner","status","invite","source","company","reach",
+ "designation","nextFollowup","lastActivity","added","need","attention"] as const;
 const viewBody=z.strictObject({
  action:z.enum(["CREATE","UPDATE","DELETE","PIN"]),
  id:z.string().uuid().optional(),
