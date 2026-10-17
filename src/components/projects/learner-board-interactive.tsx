@@ -19,6 +19,11 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ useEffect(()=>{
+  if(!undo)return;
+  const timeout=setTimeout(()=>setUndo(null),6000);
+  return ()=>clearTimeout(timeout);
+ },[undo]);
  const sprintState=new Map(sprints.map(sprint=>[sprint.id,sprint.status]));
  const lanes=groupLearnerBoardLanes(tasks,sprints);
  async function move(taskId:string,next:EditableStatus,restoreNote?:string|null,isUndo=false){
