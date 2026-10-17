@@ -8,6 +8,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {PlacementsServiceError} from "./errors";
+import {sameTpoBulkRequestRun} from "./tpo-request-bulk-run-model";
 
 const uuid=z.string().uuid();
 const schema=z.strictObject({
@@ -31,14 +32,7 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
   if(prior){
    // A caller must not reuse a run ID to mask a different action or set of
    // learners under an existing audit event.
-   const metadata=prior.metadata;
-   const priorIds=metadata&&typeof metadata==="object"&&!Array.isArray(metadata)?
-    (metadata as Record<string,unknown>).requestIds:null;
-   const priorAction=metadata&&typeof metadata==="object"&&!Array.isArray(metadata)?
-    (metadata as Record<string,unknown>).action:null;
-   if(priorAction!==input.action||!Array.isArray(priorIds)||
-      priorIds.length!==input.requestIds.length||
-      priorIds.some(id=>typeof id!=="string"||!input.requestIds.includes(id)))
+   if(!sameTpoBulkRequestRun(prior.metadata,input))
     throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    return {eventId:prior.id,replayed:true};
   }
