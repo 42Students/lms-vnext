@@ -64,8 +64,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   TOO_SOON: "A code was just sent. Wait a few seconds before asking for another.",
   OTP_DELIVERY_FAILED: "We couldn't send the text message just now. Try again, or get the code by email.",
   INCORRECT_OTP: "That code isn't right. Check it and try again.",
-  OTP_EXPIRED: "This code has expired. Ask for a new one.",
-  INVALID_ATTEMPT: "This code has expired. Ask for a new one.",
+  OTP_EXPIRED: "This code can't be used any more. Ask for a new one to continue.",
+  INVALID_ATTEMPT: "This code can't be used any more. Ask for a new one to continue.",
   OTP_ATTEMPTS_EXCEEDED:
     "Too many wrong codes. Ask for a new one.",
   WRONG_TENANT: "This code was asked for on another college's address. Start again here.",
@@ -83,7 +83,6 @@ const RESTART_ERRORS = new Set([
   "OTP_EXPIRED",
   "INVALID_ATTEMPT",
   "OTP_ATTEMPTS_EXCEEDED",
-  "WRONG_TENANT",
 ]);
 
 /**
@@ -174,6 +173,11 @@ export function LoginForm({
     setError(known ?? "Something went wrong. Try again in a moment.");
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
+      setCooldown(0);
+      setCode("");
+      setSecondCode("");
+      saveLoginAttempt(null);
+    } else if(errorCode==="WRONG_TENANT"){
       setAttempt(null);
       saveLoginAttempt(null);
       setCode("");
@@ -184,6 +188,7 @@ export function LoginForm({
   async function start(event?: React.FormEvent) {
     event?.preventDefault();
     if (busy) return;
+    if(attempt&&!contact.trim()){reset();setNotice("Enter your contact again to request a new code.");return;}
     if(!allowedChannels.includes(channel))return;
     const input = contact.trim();
     const phone = input.replace(/[\s()-]/g, "");
@@ -213,6 +218,7 @@ export function LoginForm({
       }));
       if (!result) return;
       if (!result.ok) { setNotice(null); return fail(result.data.error); }
+      setErrorCode(null);
       setNotice(channel === "PHONE" ? "Your code is on its way." : "Your email code is on its way.");
       setAttempt(result.data);
       saveLoginAttempt({
@@ -497,6 +503,7 @@ export function LoginForm({
             className="w-full"
             disabled={
               busy ||
+              Boolean(errorCode && RESTART_ERRORS.has(errorCode)) ||
               code.length < 6 ||
               (attempt.requiresSecondFactor === true && secondCode.length < 6)
             }
