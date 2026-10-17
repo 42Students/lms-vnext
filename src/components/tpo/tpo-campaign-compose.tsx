@@ -51,6 +51,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
     </select>
    </label>
+   {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
    <label className="block text-sm font-semibold">Subject
     <input value={subject} maxLength={200} required className={field}
      onChange={e=>setSubject(e.target.value)}/>
