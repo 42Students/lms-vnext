@@ -358,3 +358,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - COL-projects-10/-11 VERIFIED-ON-MAIN, -18/-23 DONE-BRANCH. Tests authored, not run; browser narrow-width acceptance outstanding.
 
 - Round 6 evidence: R02 DONE-BRANCH, R03/81 NOT-A-GAP, COL-projects-09/17 FIXED-ON-MAIN verified. Test file chat9-round6-reviewed-not-a-gaps.test.ts, not run.
+
+- Round 6: TPO-settings-audit-94/-96 and COL-projects-21 improved but OPEN. TPO-settings-audit-07 sticky left desktop layout refined. Source tests unrun.

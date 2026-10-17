@@ -49,3 +49,5 @@ Round 4: College workspace list now offers formula-safe visible-page CSV, table/
 
 | COL-projects-09 | VERIFIED-ON-MAIN | Existing primary mentor snapshot model and fallback; `tests/unit/chat9-round6-reviewed-not-a-gaps.test.ts` — `COL-projects-09 verifies recorded primary mentor is used before fallback teammate`. |
 | COL-projects-17 | VERIFIED-ON-MAIN | College audit range/importance and scoped export; `tests/unit/chat9-round6-reviewed-not-a-gaps.test.ts` — `COL-projects-17 verifies college audit filtered view and CSV route`. |
+
+| COL-projects-21 | OPEN | Restored Create workspace and Bulk reassign mentor CTA wording; distinct Deleted workspace semantics still not implemented, so Archived intentionally not renamed to Deleted. `tests/unit/chat9-round6-copy-polish.test.ts` — `COL-projects-21 restores Create workspace and Bulk reassign mentor CTA wording`. |

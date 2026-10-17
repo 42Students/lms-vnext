@@ -143,6 +143,12 @@ export function formatTpoAuditEventType(
    "placements.tpo_followup.moved":"Recruiter follow-up moved",
    "PLACEMENTS_RECRUITER_ACCESS_GRANTED":"Recruiter access granted",
    "PLACEMENTS_RECRUITER_ACCESS_REVOKED":"Recruiter access revoked",
+   "placements.tpo_recruiter_access.extended":"Recruiter access extended",
+   "placements.tpo_company_visibility.updated":"Company sharing settings changed",
+   "placements.tpo_public_placement.updated":"Public placements setting changed",
+   "placements.tpo_prep_readiness.updated":"Preparation readiness changed",
+   "placements.tpo_blocked_date.created":"Blocked dates changed",
+   "placements.tpo_blocked_date.deleted":"Blocked dates changed",
   };
   if(Object.prototype.hasOwnProperty.call(legacy,value))return legacy[value];
   return value

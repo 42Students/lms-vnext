@@ -103,7 +103,7 @@ export default async function CollegeProjectsPage({
       />
 
       <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
-      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk mentor reassignment</Link></div>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       <div className="flex flex-wrap items-center gap-3">
        <ProjectAdminWorkspacePageExport items={items}/>
