@@ -191,9 +191,9 @@ export function PlacementEmployerRelationships({
                   item.ownerMembershipId ??
                   "",
               };
-            const busy =
-              pendingId ===
-              item.relationshipId;
+            // COL-placements-15: serialize relationship edits and recovery;
+            // concurrent row writes otherwise race a shared refresh/pending state.
+            const busy = pendingId !== null;
 
             return (
               <div
