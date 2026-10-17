@@ -21,7 +21,7 @@ import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/mod
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -46,6 +46,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const query=tpoAudiencePreviewQuery.safeParse({
   audience:first(raw.audience)??"COLLEGE",
   targetId:first(raw.targetId)||undefined,
+  targetIds:raw.targetIds?(Array.isArray(raw.targetIds)?raw.targetIds:[raw.targetIds]):undefined,
  });
  const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
  const targetOptions=result.status==="READY"&&tab.data==="yours"?
@@ -64,7 +65,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   "/tpo/announcements?"+new URLSearchParams({
    tab:"yours",audience:query.data.audience,
    ...(query.data.targetId?{targetId:query.data.targetId}:{}),
-  }).toString():"/tpo/announcements";
+  }).toString()+(query.data.targetIds?.length?query.data.targetIds.map(id=>"&targetIds="+encodeURIComponent(id)).join(""):""):"/tpo/announcements";
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
@@ -81,7 +82,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <input type="hidden" name="tab" value="yours"/>
      <TpoNoticeAudiencePicker
       initialAudience={query.success?query.data.audience:"COLLEGE"}
-      initialTarget={first(raw.targetId)??""} options={targetOptions}/>
+      initialTarget={first(raw.targetId)??""}
+      initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Preview audience</button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
@@ -103,6 +105,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
     {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
+    {query.success?query.data.targetIds?.map(id=><input key={id} type="hidden" name="targetIds" value={id}/>):null}
     <label className="grid gap-1 text-sm font-semibold">Title
      <input name="title" required maxLength={200} className="min-h-11 rounded-md border border-border bg-surface px-3" />
     </label>
