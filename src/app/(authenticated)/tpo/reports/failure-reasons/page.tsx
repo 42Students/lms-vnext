@@ -108,6 +108,19 @@ export default async function TpoFailureReasonsPage({
 
       <ReportBarChart title="Recorded adverse outcomes by type" units="events"
        rows={failures.byKind.map(row=>({label:FAILURE_KIND_LABELS[row.kind],value:row.count}))}/>
+      <ReportBarChart title="Round failures by recorded round" units="failed decisions"
+       rows={workspace.roundFailureShares.map(row=>({
+        label:row.roundName,value:row.failed,
+       }))}/>
+      <ReportTable title="Round failures and share of the round"
+       headings={["Round","Failed decisions","Applied decisions","Share of the round"]}
+       rows={workspace.roundFailureShares.map(row=>[
+        row.roundName,row.failed,row.decisions,
+        row.shareOfRoundPercent===null?"Not recorded":row.shareOfRoundPercent+"%",
+       ])}
+       emptyDescription="No applied round decisions were recorded for the selected placement scope."/>
+      <p className="text-xs text-muted-foreground">Share of the round = applied FAIL decisions divided by all applied round decisions. It does not count candidates who have no recorded round result, and is not a share of registered students.</p>
+
       <ReportTable
         title="Outcomes by type"
         headings={["Outcome", "Recorded count"]}
