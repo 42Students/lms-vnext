@@ -8,14 +8,15 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
 import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
 import { getTpoGlobalRequestsInbox } from "@/modules/placements/tpo-global-requests-service";
+import {listPlacementJobs} from "@/modules/placements/job-service";
 import {tpoRequestAttentionOnPage} from "@/modules/placements/tpo-request-attention-model";
 
 export const dynamic = "force-dynamic";
-type Params = { age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
+type Params = { urgentOnly?:string|string[]; jobId?:string|string[]; age?:string|string[]; sort?:string|string[]; requestType?:string|string[]; status?: string | string[]; search?: string | string[]; page?: string | string[]; pageSize?: string | string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
-function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number }) {
+function href(input: { status: string; age:string; sort:string; requestType:string; search: string; page: number; pageSize: number; urgentOnly?:boolean;jobId?:string }) {
   const p = new URLSearchParams();
-  p.set("status", input.status);if(input.age!=="ALL")p.set("age",input.age);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);
+  p.set("status", input.status);if(input.age!=="ALL")p.set("age",input.age);p.set("sort",input.sort);if(input.requestType!=="ALL")p.set("requestType",input.requestType); if (input.search) p.set("search", input.search);if(input.urgentOnly)p.set("urgentOnly","true");if(input.jobId)p.set("jobId",input.jobId);
   p.set("page", String(input.page)); p.set("pageSize", String(input.pageSize));
   return "/tpo/requests?" + p.toString();
 }
@@ -28,6 +29,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const parsed=parseGlobalTpoRequestFilters({
     status:first(raw.status),age:first(raw.age),sort:first(raw.sort),
     requestType:first(raw.requestType),search:first(raw.search),
+    urgentOnly:first(raw.urgentOnly),jobId:first(raw.jobId),
     page:first(raw.page),pageSize:first(raw.pageSize),
   });
   if(!parsed.success)return <main className="space-y-5">
@@ -41,7 +43,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       </Link>
     </section>
   </main>;
-  const data = await getTpoGlobalRequestsInbox(context, parsed.data);
+  const [data,jobChoices]=await Promise.all([
+    getTpoGlobalRequestsInbox(context, parsed.data),
+    listPlacementJobs(context,context.membership.collegeId),
+  ]);
   const statusCounts=tpoRequestStatusCounts(data.summary);
   const asOf=new Date();
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
