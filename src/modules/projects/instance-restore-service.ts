@@ -45,7 +45,7 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
         eq(projectInstances.status,"ARCHIVED"),sql`date_trunc('milliseconds', ${projectInstances.updatedAt}) = ${new Date(input.expectedUpdatedAt).toISOString()}::timestamptz`))
       .returning();
     if(!restored)throw new ProjectsServiceError("PROJECT_INVALID_STATE");
-    await recordActivityEventInTransaction(tx,context,{
+    const restoredEvent=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_RESTORED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_instance",subjectId:restored.id,subjectLabel:restored.title,
@@ -53,6 +53,12 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
       metadata:{projectId:restored.id,previousStatus:"ARCHIVED",status:restored.status},
       groupKey:"projects:instance:"+restored.id,
       dedupeKey:"projects:instance:"+restored.id+":restored:"+now.toISOString(),
+    });
+    await notifyActiveProjectMembers(tx,restoredEvent.id,{
+      projectId:restored.id,collegeId:scope.collegeId,roles:["LEARNER"],
+      exceptUserId:context.user.id,title:"Project restored",
+      body:restored.title+" has been restored.",
+      actionHref:"/learn/projects/"+restored.id,
     });
     return restored;
   });
