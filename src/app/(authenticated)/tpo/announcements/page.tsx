@@ -93,6 +93,18 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-1 text-sm font-semibold">Message
      <textarea name="message" required maxLength={8000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
+    <fieldset className="grid gap-2 rounded-md border border-border p-3">
+     <legend className="text-sm font-semibold">Button (optional)</legend>
+     <label className="grid gap-1 text-sm">Button label
+      <input name="buttonLabel" maxLength={60} placeholder="Register"
+       className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+     </label>
+     <label className="grid gap-1 text-sm">Button link
+      <input name="buttonUrl" type="url" pattern="https://.*" maxLength={500}
+       placeholder="https://forms.gle/…" title="The link has to start with https://"
+       className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+     </label>
+    </fieldset>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
