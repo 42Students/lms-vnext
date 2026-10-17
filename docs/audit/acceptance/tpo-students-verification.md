@@ -50,3 +50,6 @@ TPO-students-36: the authorized filtered CSV is now downloaded through a guarded
 
 | TPO-students-14 | OPEN (remaining ineligible include override / whole-view cap) | Dialog confirmation, no native confirm, per-row eligibility; `tests/unit/chat12-students-bulk-drive-round3.test.ts` `TPO-students-14` |
 | TPO-students-15 | OPEN (remaining 48-hour opt-out, TPO summary bell) | New additions notify each affected learner transactionally, with activity-linked idempotent notification; `tests/unit/chat12-students-bulk-drive-round3.test.ts` `TPO-students-15` |
+
+| TPO-students-39 | OPEN (partial implementation) | Column chooser now reorders displayed columns with keyboard Earlier/Later, Reset columns; width, pin and browser persistence remain; `tests/unit/chat12-grid-columns-round3.test.ts` `TPO-students-39` |
+| TPO-students-51 | OPEN (partial implementation) | Mobile cards contain collapsible Actions picker; desktop spreadsheet preserved; mobile bottom-sheet filters still needed; `tests/unit/chat12-grid-columns-round3.test.ts` `TPO-students-51` |
