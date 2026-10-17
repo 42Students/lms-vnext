@@ -455,6 +455,8 @@ export function FinalReviewControl({
     pending,discardDraft);
 
   async function review() {
+    // A failed optimistic version check must be refreshed before either action.
+    if (pending || staleReview) return;
     if (
       decision === "CHANGES_REQUESTED" &&
       !feedback.trim()
@@ -536,10 +538,10 @@ export function FinalReviewControl({
             >
               Cancel
             </Button>
-            <Button disabled={pending} onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}>
+            <Button disabled={pending||staleReview} onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}>
               Accept submission
             </Button>
-            <Button variant="secondary" disabled={pending||!feedback.trim()}
+            <Button variant="secondary" disabled={pending||staleReview||!feedback.trim()}
               onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}>
               Request changes
             </Button>
