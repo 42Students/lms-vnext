@@ -11,7 +11,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {readOutboundProviderConfig,createOutboundProvider} from "./providers";
-import {issueTpoCampaignRecipientToken} from "./tpo-campaign-recipient-token";
+import {issueTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
 import {campaignRecipientDisposition} from "./tpo-campaign-send-policy";
 import {tpoCampaignDraftStorageReady,getTpoCampaignDraft} from "./tpo-campaign-draft-service";
 import {previewTpoCampaignText} from "./tpo-campaign-draft-model";
@@ -23,7 +23,7 @@ export class TpoCampaignDispatchError extends Error{
 }
 function configuration(){
  const provider=process.env.TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY??"";
- const key=process.env.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET??"";
+ const key=resolveTpoCampaignRecipientSecret(process.env);
  const origin=process.env.APP_PUBLIC_URL??"";
  let url:URL;
  try{url=new URL(origin);}catch{throw new TpoCampaignDispatchError("NOT_READY");}
