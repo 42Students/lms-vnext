@@ -6,6 +6,8 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
+import {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 import { getAdminCourseDisplayContent } from "@/modules/courses/course-display-service";
@@ -21,11 +23,13 @@ export async function AdminOfferingLearningPage({
   offeringId,
   eyebrow,
   backHref,
+  deliveryId=null,
 }: {
   context: RequestContext;
   offeringId: string;
   eyebrow: string;
   backHref: string;
+  deliveryId?:string|null;
 }) {
   const workspace =
     await getAdminOfferingLearningWorkspace(
@@ -41,7 +45,10 @@ export async function AdminOfferingLearningPage({
       }
       throw error;
     });
-  const roster=await listOfferingTeachingOverview(context,offeringId);
+  const [roster,sectionPreview]=await Promise.all([
+   listOfferingTeachingOverview(context,offeringId),
+   listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons),
+  ]);
   const displayEnabled =
     courseDisplayRuntimeEnabled();
   const display = displayEnabled
