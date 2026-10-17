@@ -92,7 +92,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-98 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-99 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-84 | S4 | MISSING-ACTION | NOT-A-GAP |
-| SA-academics-people-86 | S4 | MISSING-ACTION | OPEN |
+| SA-academics-people-86 | S4 | MISSING-ACTION | NOT-A-GAP |
 | SA-academics-people-92 | S4 | VALIDATION | OPEN |
 
 ## superadmin/academics-people-2-courses-content (30: FIXED-ON-MAIN 5, UNCONFIRMED 5, OPEN 20)
