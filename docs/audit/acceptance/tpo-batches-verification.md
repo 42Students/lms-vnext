@@ -36,3 +36,10 @@ All names below appear in `tests/unit/tpo-batches-chat5-round3.test.ts`. Tests h
 The underlying sources examined in this batch include `src/app/(authenticated)/tpo/batches/page.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`, `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx`, `src/modules/placements/tpo-batch-workspace-read-service.ts`, `src/modules/placements/tpo-eligibility-sheet-model.ts`, `src/modules/placements/tpo-participation-service.ts`, and `src/modules/placements/tpo-batch-state-label-model.ts`.
 
 Pending graceful-operation dependency: `src/lib/friendly-error.ts`, `src/lib/api-fetch.ts` and guarded-action hook are not on origin/main this round; no fake import of those helpers. `src/components/tpo/tpo-batch-eligibility-import.tsx` now suppresses raw server error codes and action UUIDs and retains the import on 409.
+
+## Round 3 — exact legacy card copy additions
+
+| ID | Status | Evidence (file + named test) |
+|---|---|---|
+| TPO-batches-13 | DONE | `src/modules/placements/tpo-batch-deadline-label-model.ts` and `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-chat5-round3.test.ts` — `TPO-batches-13: shows register-by date only while a batch is not finished`. |
+| TPO-batches-14 | DONE | `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-chat5-round3.test.ts` — `TPO-batches-14: uses the exact legacy placement-eligibility subtitle`. |
