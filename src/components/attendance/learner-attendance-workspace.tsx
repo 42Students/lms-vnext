@@ -527,8 +527,8 @@ export function LearnerAttendanceWorkspace({
       ) : null}
       {historyRows.length === 0 ? (
         <EmptyState
-          title={monthRows.length ? "No sessions match this status" : "Select a course"}
-          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : "Choose a course from the dropdown above to view your attendance records. If a course is selected, try another month."}
+          title={monthRows.length ? "No sessions match this status" : deliveryId ? "No attendance records" : "Select a course"}
+          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes scheduled for this month. Try selecting a different period." : "Choose a course from the dropdown above to view your attendance records."}
         />
       ) : (
         <>

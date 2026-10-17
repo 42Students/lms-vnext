@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
 import Link from "next/link";
-import {knownErrorSafeSummary} from "@/modules/log-alerts/known-error-safe-summary";
+import {knownErrorSafeSummary,knownErrorSafeSql} from "@/modules/log-alerts/known-error-safe-summary";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
@@ -118,6 +118,17 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           })).then(()=>showToast({tone:"success",title:"Sanitized diagnostic summary copied"}))
             .catch(()=>showToast({tone:"error",title:"Could not copy diagnostic summary"}))}>
           Copy for Claude
+        </Button>
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={()=>{const sql=knownErrorSafeSql({
+            signatureHash:item.signatureHash,environment:item.environment,
+          });
+          if(!sql){showToast({tone:"error",title:"Diagnostic signature is invalid"});return;}
+          void navigator.clipboard.writeText(sql)
+            .then(()=>showToast({tone:"success",title:"Read-only diagnostic SQL copied"}))
+            .catch(()=>showToast({tone:"error",title:"Could not copy diagnostic SQL"}));
+          }}>
+          Copy SQL to check the data
         </Button>
         <Link href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
           signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,

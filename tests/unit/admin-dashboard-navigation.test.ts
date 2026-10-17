@@ -34,7 +34,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
       .toBe(11);
   });
 
-  it("preserves all 14 legacy College Admin setup steps by phase", () => {
+  it("COL-dashboard-12 preserves 14 legacy steps plus the required academic period prerequisite", () => {
     const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap<SetupStep>((phase) => [...phase.steps]);
     expect(COLLEGE_ADMIN_SETUP_PHASES.map((phase) => phase.title)).toEqual([
       "Structure", "Courses", "Academic Structure", "People",
@@ -42,10 +42,12 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     ]);
     expect(steps.map((item) => item.key)).toEqual([
       "departments", "course-list", "lessons", "lesson-content",
-      "programs", "semesters", "semester-courses", "batches", "classes",
+      "programs", "semesters", "semester-courses", "academic-periods", "batches", "classes",
       "faculty", "faculty-assignment", "students", "lecture-halls", "jobs",
     ]);
-    expect(new Set(steps.map((item) => item.key)).size).toBe(14);
+    expect(new Set(steps.map((item) => item.key)).size).toBe(15);
+    expect(steps.find(item => item.key === "academic-periods")?.href).toBe("/college/academics");
+    expect(steps.find(item => item.key === "academic-periods")?.label).toBe("Set up Academic Periods");
   });
 
   it("links only actual vNext workspace routes; never invents missing legacy screens", () => {
@@ -69,10 +71,10 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
 
   it("does not erroneously restore a full setup guide to Super Admin", () => {
     expect(SUPER_ADMIN_GLOBAL_LINKS.map((item) => item.label)).toEqual([
-      "Tenant Setup", "Feature Controls", "Activity Log",
+      "Tenant Setup", "Recruiter accounts", "Feature Controls", "Activity Log",
     ]);
     expect(SUPER_ADMIN_GLOBAL_LINKS.map(item => item.href)).toEqual([
-      "/admin/tenants/setup", "/admin/features", "/admin/audit",
+      "/admin/tenants", "/admin/recruiters", "/admin/features", "/admin/audit",
     ]);
     expect(SUPER_ADMIN_COLLEGE_LINKS.map(item => item.href)).toEqual([
       "/admin/tenants/setup?tab=setup", "/admin/academics", "/admin/courses",
@@ -90,7 +92,7 @@ describe("W06 legacy admin Dashboard navigation fidelity", () => {
     const steps = COLLEGE_ADMIN_SETUP_PHASES.flatMap<{ label: string; desc: string }>((p) => [...p.steps]);
     expect(steps.map((s) => s.label)).toEqual([
       "Create Departments", "Create Courses", "Add Lessons", "Add Lesson Content",
-      "Set up Programs", "Create Semesters", "Map courses to semesters", "Create Batches", "Create Classes",
+      "Set up Programs", "Create Semesters", "Map courses to semesters", "Set up Academic Periods", "Create Batches", "Create Classes",
       "Add Faculty", "Assign Faculty", "Add Students", "Add Lecture Halls", "Jobs & Placements",
     ]);
     expect(steps.find((s) => s.label === "Set up Programs")?.desc).toBe("Degree programs (B.Tech, MBA)");

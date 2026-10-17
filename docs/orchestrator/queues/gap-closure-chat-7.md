@@ -288,3 +288,11 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 - Updated stale `MEN-projects-meetings-R02` source test to require overlap checks for both SCHEDULED and RESCHEDULED (current implemented behaviour). The 2026-10-17 typecheck/failure inventories are stale; fresh CI is still required.
 - UNCONFIRMED ownership: no chat-7 section in `docs/orchestrator/queues/unconfirmed-decisions.md`. Items still shown under learner/placements and recruiter/home-drives are assigned exclusively to chat-15 and chat-14 by reassignments.md. No competing decisions made.
 - Remaining chat-7 OPEN count in queue: 1 (MEN-projects-meetings-27; migration and runtime gate). Other listed OPEN gaps belong to reassigned lanes. Page UI/UX excellence pass has not begun.
+
+## Chat-7 round 4 — source-level final queue triage
+- Pulled latest main (fast-forward). The queue still has exactly one owned OPEN ID: `MEN-projects-meetings-27`, not 30; all other OPEN/UNCONFIRMED lines are recruiter/learner work formally reassigned to chat-14/chat-15.
+- Closed two real MEN27 privacy defects: cancelled unsent drafts could leak to learners, and structured mentor-only facilitation was returned in learner/observer payloads despite hidden UI. These are now filtered/redacted server-side.
+- Mentor decision service now fails closed for COMPLETED/ARCHIVED projects and disabled Projects module. Source/unit regressions expanded. Added `tests/integration/chat7-mentor-meeting-facilitation.test.ts` for tenant-scoped draft, cancel and completion lifecycle on PostgreSQL.
+- Registration of `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql` in numbered Drizzle migrations remains exclusively with orchestrator per `docs/orchestrator/briefs/gap-closure-lane.md`. The integration test skips when the column is absent, and must be rerun **without a skip** once registered.
+- Neither the current TypeScript report nor the unit-failures-r1 inventory has fresh run output. Previous chat-7 source errors were repaired in earlier rounds; do not claim green CI without orchestrator execution.
+- UNCONFIRMED decisions file has no chat-7-owned section. No page UI/UX restyling occurred.

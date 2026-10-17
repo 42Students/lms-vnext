@@ -27,7 +27,8 @@ export function recruiterRequestStage(status:RecruiterRequestStatus):"WAITING"|"
  return status==="REJECTED"||status==="CANCELLED"?"CLOSED":"WAITING";
 }
 export function recruiterRequestLegacyLabel(status:RecruiterRequestStatus){
- return status==="REJECTED"||status==="CANCELLED"?"Cancelled":"Sent for review";
+ return status==="REJECTED"||status==="CANCELLED"?"Cancelled":
+  status==="DRAFT"?"Approved — awaiting publication":"Sent for review";
 }
 
 /** Optimistic request edit token and real 0101 REQUEST/SENT_BACK transitions. */

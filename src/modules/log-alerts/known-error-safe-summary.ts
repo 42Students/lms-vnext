@@ -27,3 +27,24 @@ export function knownErrorSafeSummary(input:KnownErrorSafeSummaryInput):string {
   "Investigate via authorized logging tools; do not paste production logs or account data.",
  ].join("\n");
 }
+
+
+/** SA-placements-projects-115: administrator clipboard read-only inspection.
+ * SQL is limited to aggregate triage state, never sample_message, sample_path,
+ * account-key hashes, raw logging tables, or dynamic identifiers.
+ * Strict validation prevents malicious fragments from entering executable SQL.
+ */
+export function knownErrorSafeSql(input:{signatureHash:string;environment:string}):string|null {
+  const hash=input.signatureHash.trim().toLowerCase();
+  const environment=input.environment.trim();
+  if(!/^[a-f0-9]{64}$/.test(hash)||!/^[a-zA-Z0-9_-]{1,32}$/.test(environment))return null;
+  return [
+    "-- Read-only aggregate triage; authorized administrators only.",
+    "SELECT environment, signature_hash, occurrence_count, first_seen_at, last_seen_at,",
+    "       fix_status, muted, issue_public_id",
+    "FROM log_alert_signatures",
+    "WHERE environment = '"+environment+"'",
+    "  AND signature_hash = '"+hash+"'",
+    "LIMIT 1;",
+  ].join("\n");
+}
