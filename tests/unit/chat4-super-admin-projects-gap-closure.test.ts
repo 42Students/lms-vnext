@@ -352,4 +352,23 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(view).toContain("Retry failed workspaces");
    expect(view).toContain("selectedMentorName");
  });
+
+ it("SA-placements-projects-93 replaces learner roster atomically with exact removal confirmation and mentor dialog",()=>{
+   const team=source("src/components/projects/college-project-student-roster-dialog.tsx");
+   const mentor=source("src/components/projects/college-project-mentor-dialog.tsx");
+   const workspace=source("src/components/projects/project-workspace.tsx");
+   expect(workspace).toContain("<CollegeProjectStudentRosterDialog");
+   expect(workspace).toContain("<CollegeProjectMentorDialog");
+   expect(team).toContain("Manage students");
+   expect(team).toContain("Search learners");
+   expect(team).toContain("Role label (optional)");
+   expect(team).toContain("learnerMembershipIds:selected");
+   expect(team).toContain("expectedUpdatedAt:version");
+   expect(team).toContain("Remove "+removeCount+" learner(s) from this workspace?");
+   expect(team).toContain('confirmLabel="Replace roster"');
+   expect(team).toContain("setConfirmOpen(true)");
+   expect(team).not.toContain("window.confirm");
+   expect(mentor).toContain("Reassign mentor");
+   expect(mentor).toContain("New primary mentor");
+ });
 });
