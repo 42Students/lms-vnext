@@ -147,7 +147,7 @@ export default async function SuperAdminTenantSetup({
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
   </>:<section role="status" className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold">No college selected</h2>
-    <p className="mt-2 text-sm text-body">Select a college using the Super Admin safety scope switcher. Launch setup never guesses a tenant.</p>
+    <p className="mt-2 text-sm text-body">No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant.</p>
     <Link href={tabLink("STRUCTURE")} className="mt-3 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Create or select a college →</Link>
   </section>}
  </div>;
