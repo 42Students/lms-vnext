@@ -107,6 +107,8 @@ function tone(status: string) {
     case "SCHEDULED":
     case "SUBMITTED":
       return "info" as const;
+    case "MISSED":
+      return "error" as const;
     case "BLOCKED":
     case "CHANGES_REQUESTED":
     case "REQUESTED":
