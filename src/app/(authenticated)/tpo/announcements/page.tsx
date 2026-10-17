@@ -147,8 +147,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
     {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeReadProgress id={row.id}/>:null}
     {tab.data==="yours" && row.senderUserId===context.user.id ?
-     <details className="mt-4 rounded-lg border border-border p-3">
-      <summary className="cursor-pointer text-sm font-semibold text-primary-text">Edit notice</summary>
+     <TpoNoticeComposerDialog mode="EDIT">
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
        <input type="hidden" name="expectedVersion" value={row.version}/>
        <label className="grid gap-1 text-sm text-body">Title
@@ -187,7 +186,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
       </form>
-     </details>:null}
+     </TpoNoticeComposerDialog>:null}
     {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
     {tab.data==="deleted"?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
