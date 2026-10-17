@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
+type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -27,6 +27,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
     ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
     ...(first(params.attention)?{attention:first(params.attention)}:{}),
+    ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
   const exportParams=new URLSearchParams({
@@ -34,6 +35,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(data.companyId?{companyId:data.companyId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
+   display:data.display,
+    display:data.display,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
@@ -93,6 +96,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="DUE_SOON">Live · next 7 days</option>
           <option value="LATER">Later than 7 days</option>
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
+        </select>
+      </label>
+      <label className="min-w-36 flex-1 text-sm font-semibold text-body">Card columns
+        <select name="display" defaultValue={data.display} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="DETAILED">Detailed</option><option value="COMPACT">Compact</option>
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Work mode
@@ -219,7 +227,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 </label>
                 <h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
                 <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
-                <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
+                {data.display==="DETAILED"?<dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
                   <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
                   <div className="flex gap-1"><dt>Job type:</dt><dd>{job.employmentType.replaceAll("_"," ")}</dd></div>
@@ -234,7 +242,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                     {job.isDream ? " · Dream" : " · Regular"}
                     {job.stipendPerMonthInr!=null?" · Stipend ₹"+job.stipendPerMonthInr.toLocaleString("en-IN")+"/month":""}
                   </dd></div>
-                </dl>
+                </dl>:null}
                 <p className="mt-2 text-sm font-semibold text-foreground">
                   Where it is: {tpoDriveWhereItIs(job,data.asOf)}
                 </p>
