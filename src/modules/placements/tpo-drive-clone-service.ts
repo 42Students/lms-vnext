@@ -38,6 +38,11 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   .where(and(eq(placementJobRoleOptions.jobId,source.id),
    eq(placementJobRoleOptions.status,"ACTIVE")));
  await getDb().transaction(async tx=>{
+  await tx.update(placementJobs).set({
+    isDream:source.isDream,stipendPerMonthInr:source.stipendPerMonthInr,
+    ctcLpa:source.ctcLpa,fixedCtcLpa:source.fixedCtcLpa,
+    variableCtcLpa:source.variableCtcLpa,updatedAt:new Date(),
+  }).where(and(eq(placementJobs.id,draft.id),eq(placementJobs.status,"DRAFT")));
   const [primary]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
     .where(and(eq(placementJobRoleOptions.jobId,draft.id),
       eq(placementJobRoleOptions.isPrimary,true))).limit(1);
