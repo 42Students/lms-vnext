@@ -4,6 +4,7 @@ import { useState, useTransition, useSyncExternalStore, type FormEvent } from "r
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch} from "@/lib/api-fetch";
+import {deriveSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
 import { ProgramActions } from "@/components/academics/academics-actions";
 import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { Button } from "@/components/ui/button";
@@ -36,7 +37,7 @@ function rememberSize(size: number) {
   window.dispatchEvent(new Event("lms-program-size"));
 }
 
-const columns: DataTableColumn<AdminProgramRow>[] = [
+const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
     key: "name", header: "Program",
     cell: (item) => (
@@ -66,7 +67,8 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
       name: item.name,
       code: item.code,
       durationTerms: item.durationTerms,
-    }} contents={item.contents ?? null} />,
+      departmentId: item.departmentId,
+    }} departments={departments} contents={item.contents ?? null} />,
   },
 ];
 
@@ -95,8 +97,11 @@ export function AdminProgramDirectory({
 
   function create(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!validLegacyProgramYears(durationYears)) {
+      showToast({tone:"error",title:"Check program details",description:"Duration must be a whole number from 1 to 10 years."});return;
+    }
     const parsed = createCollegeProgramSchema.safeParse({
-      departmentId, name, code, durationTerms: legacyDurationYearsToTerms(Number(durationYears)),
+      departmentId, name, code:code.trim() || deriveSuperAdminProgramCode(name), durationTerms: legacyDurationYearsToTerms(Number(durationYears)),
     });
     if (!parsed.success) {
       showToast({
@@ -114,8 +119,7 @@ export function AdminProgramDirectory({
         });
         setName("");
         setCode("");
-        showToast({ tone: "success", title: "Program created",
-          description: "Next, add semesters or map courses to this program." });
+        showToast({ tone: "success", title: `Created program “${name.trim()}”. Next, create its semesters and batches.` });
         router.refresh();
       } catch (error) {
         showToast({
@@ -129,16 +133,13 @@ export function AdminProgramDirectory({
   return (
     <div className="space-y-5">
       <form onSubmit={create} className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-base font-semibold text-foreground">Create program</h2>
+        <h2 className="text-base font-semibold text-foreground">Create New Program</h2>
         <p className="mt-1 text-sm text-muted-foreground">
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            Create a department before adding programs.{" "}
-            <Link href="/college/departments" className="font-semibold text-primary-text underline">
-              Go to Departments
-            </Link>
+            No departments in this college yet. <Link href="/admin/departments" className="font-semibold text-primary-text underline">Go to Departments</Link>
           </p>
         ) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -156,18 +157,18 @@ export function AdminProgramDirectory({
             </Select>
           </div>
           <div>
-            <label htmlFor="admin-program-name" className="mb-1 block text-xs font-semibold text-body">Program name</label>
+            <label htmlFor="admin-program-name" className="mb-1 block text-xs font-semibold text-body">Program Name</label>
             <Input id="admin-program-name" value={name} maxLength={255} required
               onChange={(event) => setName(event.target.value)}
               placeholder="e.g. Computer Science Engineering" />
           </div>
           <div>
-            <label htmlFor="admin-program-code" className="mb-1 block text-xs font-semibold text-body">Program code</label>
-            <Input id="admin-program-code" value={code} maxLength={64} required
+            <label htmlFor="admin-program-code" className="mb-1 block text-xs font-semibold text-body">Program code (optional)</label>
+            <Input id="admin-program-code" value={code} maxLength={64}
               onChange={(event) => setCode(event.target.value)} placeholder="CSE" />
           </div>
           <div>
-            <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (years)</label>
+            <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (Years)</label>
             <Input id="admin-program-duration" type="number" value={durationYears}
               onChange={(event) => setDurationYears(event.target.value)}
               min={1} max={10} step={1} required />
@@ -175,11 +176,11 @@ export function AdminProgramDirectory({
         </div>
         <div className="mt-4">
           <Button type="submit" disabled={pending || departments.length === 0}>
-            {pending ? "Creating…" : "Create program"}
+            {pending ? "Creating…" : "Create Program"}
           </Button>
         </div>
       </form>
-      <section className="space-y-3" aria-label="Existing programs">
+      <section className="space-y-3" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div className="min-w-56 flex-1">
             <label htmlFor="admin-program-search" className="mb-1 block text-xs font-semibold text-body">Search programs or departments</label>
@@ -208,7 +209,7 @@ export function AdminProgramDirectory({
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
           {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
         </p>
-        <DataTable columns={columns} rows={result.items}
+        <DataTable columns={columns(departments)} rows={result.items}
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
             {search

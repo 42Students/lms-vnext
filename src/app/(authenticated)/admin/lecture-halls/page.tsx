@@ -21,7 +21,7 @@ export default async function SuperAdminLectureHallsPage({
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
   if (!collegeId) return <div className="space-y-6">
-    <PageHeader eyebrow="Super Admin · Academics" title="Lecture Halls"
+    <PageHeader  title="Lecture Halls"
       description="Lecture hall administration requires an exact college safety scope." />
     <EmptyState title="Select a college to continue"
       description="Choose a college in the header above to see its lecture halls." />
@@ -29,7 +29,7 @@ export default async function SuperAdminLectureHallsPage({
 
   const query = parseSuperAdminLectureHallFilters(await searchParams);
   if (!query) return <div className="space-y-6">
-    <PageHeader eyebrow="Super Admin · Academics" title="Lecture Halls" />
+    <PageHeader  title="Lecture Halls" />
     <ErrorState title="Invalid lecture hall filters"
       description="Search, status, capacity or page selection is invalid. No records were loaded."
       action={<Link href="/admin/lecture-halls" className="font-semibold text-primary-text">Clear filters</Link>} />
@@ -60,7 +60,7 @@ export default async function SuperAdminLectureHallsPage({
   );
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Super Admin · Academics" title="Lecture Halls"
+    <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
     <section aria-label="Lecture hall filters" className="space-y-4 rounded-xl border border-border bg-surface p-4">
       <form action="/admin/lecture-halls" method="get" className="flex flex-wrap items-end gap-3">

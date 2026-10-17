@@ -635,8 +635,8 @@ export function SuperAdminHrAccounts({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Industry access"
-        title="Recruiter account lifecycle"
+        eyebrow="Super Admin"
+        title="Recruiter accounts"
         description="Manage employer recruiters, their college access and signed-in devices. Results follow the current platform or selected tenant safety scope."
         actions={
           <Button onClick={openCreate}>

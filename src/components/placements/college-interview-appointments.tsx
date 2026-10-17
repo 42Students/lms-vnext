@@ -1,6 +1,8 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Round={id:string;name:string;status:string;kind:string};
 type Candidate={applicationId:string;name:string|null;screening:string};
@@ -26,6 +28,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [interviewer,setInterviewer]=useState("");const [reason,setReason]=useState("");
  const [busy,setBusy]=useState(false);const [error,setError]=useState("");
  const [success,setSuccess]=useState("");
+ const [decision,setDecision]=useState<{row:Appointment;action:"CANCEL"|"COMPLETED"|"NO_SHOW"}|null>(null);
+ const [decisionReason,setDecisionReason]=useState("");
  function open(row?:Appointment){
   setEditing(row??null);setRoundId(row?.roundId??rounds[0]?.id??"");
   setApplicationId(row?.applicationId??candidates.find(c=>c.applicationId===preferredApplicationId)?.applicationId??candidates[0]?.applicationId??"");
@@ -39,13 +43,12 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   if(busy)return false;
   setBusy(true);setError("");setSuccess("");
   try{
-   const response=await fetch("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews",{
+   const data=await apiFetch<{status?:string}>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify({...body,confirmed:true}),
    });
-   const data=await response.json() as {error?:string;issues?:Array<{message:string}>;status?:string};
-   if(!response.ok)throw Error(data.issues?.[0]?.message??data.error??"Could not update the interview");
-   setSuccess("Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
+   setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
+    "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
    router.refresh();return true;
   }catch(e){setError(e instanceof Error?e.message:"Interview action failed");return false;}
   finally{setBusy(false);}
@@ -63,12 +66,15 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   }:{action:"SCHEDULE",appointment});
   if(result)setShow(false);
  }
- async function decide(row:Appointment,action:"CANCEL"|"COMPLETED"|"NO_SHOW"){
-  const note=window.prompt(action==="CANCEL"?"Why is the interview being cancelled?":
-   action==="COMPLETED"?"Confirm the completed interview and enter an outcome note":
-    "Why is the learner marked as No Show?");
-  if(!note||note.trim().length<3)return;
-  await post({action,interviewId:row.id,expectedVersion:row.version,reason:note.trim()});
+ function decide(row:Appointment,action:"CANCEL"|"COMPLETED"|"NO_SHOW"){
+  if(busy)return;
+  setDecision({row,action});setDecisionReason("");setError("");
+ }
+ async function confirmDecision(){
+  if(!decision||decisionReason.trim().length<3||busy)return;
+  const updated=await post({action:decision.action,interviewId:decision.row.id,
+   expectedVersion:decision.row.version,reason:decisionReason.trim()});
+  if(updated)setDecision(null);
  }
  const available=rounds.filter(r=>["SCHEDULED","PENDING"].includes(r.status));
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
@@ -149,5 +155,14 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     </div>
    </div>
   </div>:null}
+  <ConfirmDialog open={decision!==null} onOpenChange={open=>{if(!open&&!busy)setDecision(null);}}
+   title={decision?.action==="CANCEL"?"Cancel interview?":decision?.action==="NO_SHOW"?"Mark No Show?":"Mark interview completed?"}
+   description="This action is recorded and the learner will be notified."
+   confirmLabel="Save decision" pending={busy} confirmDisabled={decisionReason.trim().length<3}
+   onConfirm={()=>void confirmDecision()}>
+   <label className="grid gap-1 text-sm font-semibold">Reason or outcome note
+    <textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
+     className="rounded border border-border bg-surface p-3" /></label>
+  </ConfirmDialog>
  </section>;
 }

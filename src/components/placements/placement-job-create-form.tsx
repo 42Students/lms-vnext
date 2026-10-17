@@ -55,12 +55,10 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
-async function requestJson(url:string,method:"POST"|"PUT",body:unknown){
-  // Errors from HTML proxies, provider replies, and unknown server codes
-  // are converted to customer-facing messages with a 30-second timeout.
-  return apiFetch<Record<string,unknown>>(url,{
-    method,headers:{"content-type":"application/json"},body:JSON.stringify(body),
-  });
+async function requestJson(url:string,method:"POST"|"PUT"|"PATCH",body:unknown){
+ return await apiFetch<Record<string,unknown>>(url,{
+  method,headers:{"content-type":"application/json"},body:JSON.stringify(body),
+ });
 }
 
 function nullableDecimal(value: string) {
@@ -116,9 +114,7 @@ export function PlacementJobCreateForm({
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
     Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
-  const {run:guardRun}=useGuardedAction({timeoutMs:45000});
-  const [pending, setPending] =
-    useState(false);
+  const {pending,run}=useGuardedAction({timeoutMs:45000});
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -152,9 +148,7 @@ export function PlacementJobCreateForm({
     event.preventDefault();
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
-    await guardRun(async()=>{
-    setPending(true);
-
+    await run(async()=>{
     try {
       if (!activeSeason) {
         throw new Error(
@@ -461,8 +455,6 @@ export function PlacementJobCreateForm({
             ? error.message
             : "Please try again.",
       });
-    } finally {
-      setPending(false);
     }
     });
   }
