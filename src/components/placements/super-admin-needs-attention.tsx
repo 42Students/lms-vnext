@@ -23,7 +23,7 @@ export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attent
     return <div key={category.code} className="space-y-2 p-5">
      <h3 className="text-sm font-semibold">{category.label} ({category.rows.length})</h3>
      {visible.map(item=><Link key={item.jobId} href={basePath+"/jobs/"+
-      encodeURIComponent(item.jobId)"+/applications?stage="+category.tab}
+      encodeURIComponent(item.jobId)+"/applications?stage="+category.tab}
       className="block min-h-10 rounded border border-border p-3 text-sm text-primary-text hover:bg-primary-subtle">
        {item.companyName} · {item.jobTitle}
        <span className="ml-2 text-xs text-muted-foreground">{item.count} affected</span>
