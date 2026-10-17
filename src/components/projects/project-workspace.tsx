@@ -300,8 +300,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        title={workspace.project.title}
-        description={workspace.project.summary ?? undefined}
+        title={mode==="LEARNER"?"Projects":workspace.project.title}
+        description={mode==="LEARNER"?workspace.project.title:(workspace.project.summary ?? undefined)}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge
