@@ -293,3 +293,8 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 | TPO-inbox-team-22 | PARTIAL — OPEN | New `placement_tpo_team_asks` schema/SQL proposal, authorized/idempotent create, optional bounded due date, overdue classification, assignee Done (+ reply note), asker Cancel, guarded UI and row-locked lifecycle. `tests/unit/tpo-team-asks-chat2.test.ts` tests named **TPO-inbox-team-22**. The orchestrator must register `docs/proposed-migrations/tpo-team-asks.sql` and execute DB integration acceptance; Home and cross-thread filters remain. |
 | TPO-inbox-team-29 | PARTIAL — OPEN | Ask-created/done/cancelled persisted activity and single-recipient in-app notifications with `?ask=<id>` links. Named **TPO-inbox-team-29** test in same suite. Mentions and ownership assignment notices remain. |
 | TPO-inbox-team-30 | PARTIAL — OPEN | `?ask=<uuid>` deep-links within authorized thread and scrolls to the requested ask. Named **TPO-inbox-team-30** test. Object `?about=` context remains. |
+
+## Round 6 — persisted ask workload in People
+
+| TPO-inbox-team-31 | PARTIAL — OPEN | People now displays member-scoped OPEN/overdue ask counts from `readTpoTeamAskWorkload`, guarded by persisted placement permission and college scoping; `tests/unit/tpo-team-workload-chat2.test.ts` names this gap. Drive/company/recruiter-lead workload still outstanding. |
+| TPO-inbox-team-32 | PARTIAL — OPEN | Most assigned duties, **Overdue first**, and Name sorts are backed by known student duties and open/overdue asks, with stable member-ID tie breaks. The full legacy five-workload sorting remains open. Named **TPO-inbox-team-32** unit test. |
