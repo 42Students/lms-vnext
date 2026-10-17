@@ -242,5 +242,20 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 ## Notes (blockers, one line each)
 
+- FAC-assessments-01: PDF/file assignment resource uploads require the private object-storage bucket/scanner; existing text/method controls do not close full resource parity.
+- FAC-assessments-22: inline private PDF submission preview requires a scoped storage download grant and scanner-ready files; do not expose permanent URLs.
+- SA-academics-people-59: Super Admin binary video actor/grants require the private object-storage bucket; retain link-only content until provisioned.
+- SA-academics-people-60: import video from arbitrary HTTPS URL requires private storage/scanner and anti-SSRF ingestion infrastructure.
+
+### Chat-6 verified gap-closure progress, 2026-10-17
+
+- Synced branch `chatgpt/chat-6-b` with the latest `main` (was 269 behind and 0 ahead; branch was fast-forwarded before edits). No pushes to `main`.
+- Faculty Assessments: 21 dispositions (18 DONE, 3 NOT-A-GAP) across 2 source-contract test files and `faculty-assessments-verification.md`, including the course→lesson→Continue create entry; other S1/S2/S3 differences remain on this page.
+- Super Admin People/Recruiters: 5 dispositions (3 DONE, 2 NOT-A-GAP), with scoped roles, legacy empty-state copy, faculty bulk importer and student program/class registration as evidence. Extra wording changes -91/-100/-103/-114 are partial and not certified as closed.
+- Super Admin Courses/Content: 1 DONE (-69 four CSV routes). Binary video uploads/import remain BLOCKED on private storage.
+- College Placements: 4 DONE (-01/-04/-05/-06) from persisted college pipeline and interview actions, with source-contract unit acceptance tests. Additional parity remains.
+- Five unit test files total, each named case includes its gap ID; authored but NOT RUN (orchestrator executes). Acceptance records live under `docs/audit/acceptance/`.
+
+
 ## Needs shell (chat-9 only)
 
