@@ -38,6 +38,19 @@ describe("Company Team tenant enforcement and source contract",()=>{
   expect(src("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx"))
    .toContain("Open in Team · Company discussion");
  });
+ it("TPO-companies-05 treats a retried draft UUID as one transaction and never repeats notifications",()=>{
+  const service=src("src/modules/placements/tpo-company-team-service.ts");
+  const schema=src("src/db/schema/tpo-company-team.ts");
+  const sql=src("docs/proposed-migrations/chat3-tpo-company-team.sql");
+  const route=src("src/app/api/placements/tpo/companies/[companyId]/team/route.ts");
+  expect(schema).toContain('uniqueIndex("tpo_company_team_message_send_dedupe_uq")');
+  expect(sql).toContain("CREATE UNIQUE INDEX IF NOT EXISTS tpo_company_team_message_send_dedupe_uq");
+  expect(route).toContain("idempotencyKey:parsed.data.idempotencyKey");
+  expect(service).toContain("idempotencyKey:uuid.optional()");
+  expect(service).toContain(".onConflictDoNothing().returning({id:messages.id})");
+  expect(service).toContain("eq(messages.idempotencyKey,input.idempotencyKey)");
+  expect(service).toContain("return {changed:false,id:original.id}");
+ });
  it("TPO-inbox-team-16 retains archived company history while all writes still demand ACTIVE relationships",()=>{
   const service=src("src/modules/placements/tpo-company-team-service.ts");
   const page=src("src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx");
