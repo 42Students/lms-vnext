@@ -135,3 +135,5 @@ This reconciliation is not a claim that all 41 gaps are closed. Final VERIFIED d
 - LEARNER-placements-28: SOURCE-DONE after the ledger entry; `tests/unit/chat15-company-shared-preview.test.ts` is new and ID-named. Runtime verification outstanding.
 - LEARNER-placements-30: PARTIAL improvement; staff-sourced application now has a direct safe route to confirmed withdrawal or request, but an explicit opt-out deadline remains unresolved.
 - LEARNER-placements-43: SOURCE-DONE with externally reported acceptance-dispute window; the companion `-43/-51/-52` general-request migration is proposed, not registered or replayed.
+
+- LEARNER-learning-misc-04: SOURCE-DONE after ledger. See `tests/unit/chat15-multipart-no-file.test.ts`, `assignment-submission-file-service.ts`, `assignment-method-policy.ts` and the one-shot learner control. Runtime tests not executed in this connector session.
