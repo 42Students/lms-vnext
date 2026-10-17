@@ -24,7 +24,7 @@ export function TpoFindShortcut(){
  const inputRef=useRef<HTMLInputElement>(null);
 
  useEffect(()=>{
-  const handler=(event:KeyboardEvent)=>{
+  const handler=(event:globalThis.KeyboardEvent)=>{
    if(!isTpoFindShortcut(event)||event.repeat)return;
    event.preventDefault();
    setOpen(true);

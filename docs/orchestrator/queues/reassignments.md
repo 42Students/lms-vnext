@@ -27,3 +27,8 @@ To run ten chats, pages were moved off the heaviest queues. The old queue files 
 - superadmin/placements-projects-a-placements and superadmin/academics-people-1-academic-setup: chat-9 -> chat-13 (queue: gap-closure-chat-13.md)
 
 If you already committed work on one of these pages, say so in your next summary and leave it in place; the new lane will verify it instead of redoing it.
+
+## Reassigned 2026-10-17 20:30 (rebalance: chat-7/chat-9 had 150+ OPEN each; graceful lanes 14/15/16 finished)
+- chat-14 now owns OPEN gaps on: recruiter/home-drives, recruiter/calendar-messages-profile (32 gaps). Previous owners skip these pages.
+- chat-15 now owns OPEN gaps on: learner/learning-misc, learner/placements, learner/course-detail (41 gaps). Previous owners skip these pages.
+- chat-16 now owns OPEN gaps on: mentor/projects-meetings-part2, superadmin/placements-projects-c-tracker (32 gaps). Previous owners skip these pages.
