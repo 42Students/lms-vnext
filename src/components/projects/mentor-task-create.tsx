@@ -47,7 +47,7 @@ export function MentorTaskCreate({
         expectedSprintUpdatedAt:chosenSprint?.updatedAt??null,
         title:title.trim(),description:description.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
-        priority,expectedSprintUpdatedAt:updatedAt,
+        priority,status,assigneeMembershipId:assigneeMembershipId||null,
         estimatePoints:estimate!==""?Number(estimate):null,
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
