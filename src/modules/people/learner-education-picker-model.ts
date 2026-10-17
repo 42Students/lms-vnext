@@ -11,6 +11,18 @@ export const LEARNER_QUALIFYING_EXAMS=[
  "SSC","CBSE 10th","ICSE","Intermediate","CBSE 12th","Diploma",
  "B.Tech","B.E.","B.Sc.","B.Com.","B.A.","M.Tech","M.E.","MBA","M.Sc.",
 ] as const;
+/** Catalog suggestions only: colleges may use their own exam names. Do not
+ * coerce imported or manually entered exam names into these display options. */
+export function learnerQualifyingExamSuggestions(educationType:string):readonly string[]{
+ switch(educationType){
+  case "10th":return ["SSC","CBSE 10th","ICSE"];
+  case "12th":return ["Intermediate","CBSE 12th"];
+  case "Diploma":return ["Diploma"];
+  case "UG":return ["B.Tech","B.E.","B.Sc.","B.Com.","B.A."];
+  case "PG":return ["M.Tech","M.E.","MBA","M.Sc."];
+  default:return LEARNER_QUALIFYING_EXAMS;
+ }
+}
 /** Keep historical free-text institutions/exams, but validate numeric grade range
  * and impossible year order both in UI and server Zod writes. */
 export function learnerEducationValidationProblem(input:{
