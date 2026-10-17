@@ -148,3 +148,22 @@ This reconciliation is not a claim that all 41 gaps are closed. Final VERIFIED d
 - 9 remain OPEN: LEARNER-course-detail-03/05/19; LEARNER-learning-misc-02/07/11/12/15; LEARNER-placements-R04.
 
 The SOURCE-DONE label does not replace test, DB replay or deployment verification. The general request schema proposal for LEARNER-placements-43/51/52 still requires registered migration and full PostgreSQL acceptance. No unexecuted test has been recorded as passing.
+
+## Chat-15 follow-up after migration 0134
+
+Registered on origin/main: `drizzle/0133_*`, `drizzle/0134_lanes_round_2.sql`. Do not treat previous `LEARNER-placements-43/51/52` general-request **table** as unavailable. Source/test remain unexecuted and request categories without implemented specialist effects must never auto-approve.
+
+- LEARNER-course-detail-12: SOURCE-DONE, see `tests/unit/chat15-learner-playback-settings.test.ts`; configurable threshold and save interval used by server and both players.
+- LEARNER-course-detail-19: SOURCE-DONE, see `tests/unit/chat15-course-state-and-staff-optout.test.ts`; lessons persist across optional assessment state read failures.
+- LEARNER-course-detail-05 and LEARNER-learning-misc-11: PARTIAL, see `tests/unit/chat15-learner-rich-response.test.ts`; formatted text editing and safe display, not full HTML WYSIWYG/Drive or attachment parity.
+- LEARNER-learning-misc-34: SOURCE-DONE, `tests/unit/chat15-calendar-window-bounds.test.ts`; attendance detail and calendar each bounded to selected IST month.
+- LEARNER-placements-30: PARTIAL, `tests/unit/chat15-course-state-and-staff-optout.test.ts`; persisted staff-origin and 48-hour IST deadline now shown, cutoff-enforced opt-out service remains.
+- LEARNER-learning-misc-07: OPEN; needs owner of `src/modules/storage/file-policy.ts` (this lane may not modify storage) to align source-code/notebook/archive allowance with malware scanning.
+- LEARNER-learning-misc-12: BLOCKED: Google Drive OAuth/provider credentials plus private scan-backed import. Do not silently substitute a Drive URL.
+- LEARNER-course-detail-03, LEARNER-learning-misc-02: OPEN: instructor assignment material authoring/attachments need dedicated relation and safe learner read-grants; existing lesson RESOURCE materials cannot be misrepresented as assignment-scoped files.
+- LEARNER-learning-misc-15: OPEN: replace all-course workspace fanout with server-side course-filtered paginated SQL.
+- LEARNER-placements-41: OPEN: no authoritative assessment submission deadline in the current placement round schema; `resultsDueAt` is the *results* deadline and must not be mislabeled `Take it by`.
+- LEARNER-placements-R04: OPEN: 27 placement learner event families require durable recipient-scoped notification writes in the corresponding mutators, not GET-time invented notices.
+- LEARNER-course-detail-05: remaining Google Drive/assignment resource gaps noted above. LEARNER-learning-misc-01 remains BLOCKED on private bucket+malware scanner.
+
+Gap-register additional learner OPEN rows not assigned to chat-15 are `LEARNER-home-courses-02/03/18/22`, `LEARNER-course-detail-R03/R04` under learner/home-courses, and `LEARNER-profile-misc-02/08` (chat-7 owns those pages; do not duplicate). The current gap register shows 47 OPEN learner IDs, of which 41 are in this lane's reassigned page list.
