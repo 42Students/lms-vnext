@@ -28,7 +28,7 @@ describe("chat-7 project merge-regression coverage", () => {
     const editor = read("src/components/projects/mentor-sprint-details-edit.tsx");
     expect(workspace).toContain('estimationUnit={workspace.project.estimationUnit}');
     expect(editor).toContain('status,estimationUnit,');
-    expect(editor).toMatch(/estimationUnit\\??:string\\|null;/);
+    expect(editor).toMatch(/estimationUnit\??:string\|null;/);
     expect(editor).toContain('Project estimation unit:');
     for (const field of ["goal:originalGoal", "definitionOfDone:originalDone", "expectedUpdatedAt:updatedAt"]) {
       expect(editor).toContain(field);
