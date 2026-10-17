@@ -18,6 +18,13 @@ test.describe("GR-82 production failure smoke", () => {
     expect(errors).toEqual([]);
   });
 
+  test("GR-82 unknown public URL has a home link and no framework error", async ({ page }) => {
+    await page.goto(new URL("/this-is-not-an-lms-page-gr82", productionBase!).toString());
+    await expect(page.getByRole("heading", { name: /Page not found/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /go to home/i })).toBeVisible();
+    await expectNoRawErrors(page);
+  });
+
   test("GR-82 production does not serve JavaScript source maps", async ({ page, request }) => {
     await page.goto(productionBase!);
     const javascript = await page.locator("script[src]").evaluateAll((scripts) =>
