@@ -44,3 +44,13 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 - `COL-people-04`: Student registration now uses `apiFetch` and in-flight action guard, preserving draft on failure. Test `COL-people-04 student register uses guarded network calls and keeps the form after failed submit`.
 - `COL-people-05`: Student CSV preview/import is guarded and still exports its per-row report. Test `COL-people-05 learner CSV preview and import use safe JSON, with per-row report retained`.
 - `COL-people-25` remains **OPEN**: partial-registration failures are now summarized rather than leaking raw server codes, but exact identity duplicate/field validation parity is not yet complete. Test `COL-people-25 untrusted partial registration failures are never shown verbatim to learners`.
+
+
+## Round 6 — October 17, source-level (unexecuted tests)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| COL-people-15 | DONE | Primary Faculty filters are search, status, Department, Employment type; primary Student filters are search, status, Class, Program, Batch. Technical filters remain under a native accessible Advanced filters disclosure, preserving deep links and server scopes. `college-role-directory-workspace.tsx`; `tests/unit/college-people-gap-closure.test.ts`, case COL-people-15. |
+| COL-people-27 | DONE (source verified) | Mobile card list at widths below md, bounded desktop overflow and responsive advanced filter grid remain; `college-role-directory-workspace.tsx`; named COL-people-27 test. Browser viewport measurement unexecuted. |
+| COL-people-12 | NOT-A-GAP | vNext OTP lockout is per short-lived sign-in attempt (`ATTEMPT_LIFETIME_SECONDS = 300`, `verificationAttempts`), not a persistent user-account lock. No unsafe account-unlock mutation is introduced. `src/modules/auth/login-service.ts`; named COL-people-12 test. |
+| COL-people-13 | OPEN | Headings now use person-facing language; legacy Mobile, Gender, and live presence metrics require authorized source data and are not fabricated. |
