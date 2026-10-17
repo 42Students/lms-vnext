@@ -27,3 +27,13 @@ describe("SA-placements-projects-56 truthful per-student creation results",()=>{
   expect(ui).toContain("Student membership,Result,Workspace,Project ID");
  });
 });
+
+describe("SA-placements-projects-56 version-bound preflight",()=>{
+ it("SA-placements-projects-56 cannot confirm an old college, class, template or roster preview",()=>{
+  const ui=read("src/components/projects/class-team-workspace-creator.tsx");
+  expect(ui).toContain('preflight?.scopeKey===preflightScopeKey?preflight:null');
+  expect(ui).toContain('collegeId+":"+classId+":"+templateId+":"+(roster?.revision??"")');
+  expect(ui).toContain("if(!currentPreflight)return;");
+  expect(ui).toContain("setPreflight({...data,scopeKey:preflightScopeKey})");
+ });
+});
