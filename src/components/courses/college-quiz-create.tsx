@@ -105,6 +105,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      <textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
    </div>
+   <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
+    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
+    "All currently eligible Sections in the Course Offering"} · Draft quiz is hidden until published.</p>
    <div className="flex flex-wrap gap-4 text-sm">
     <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
       onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle question order per learner</label>
