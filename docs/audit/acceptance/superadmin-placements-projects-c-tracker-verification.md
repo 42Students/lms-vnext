@@ -20,3 +20,10 @@
 
 | SA-placements-projects-106 | DONE (source verified; workflow/database pending) | `src/components/tracker/tracker-issue-bulk-actions.tsx`, `src/app/(authenticated)/tracker/issues/page.tsx`; `tests/unit/chat6-tracker-bulk-saved-views-verification.test.ts` → `SA-placements-projects-106 bulk status changes preserve per-issue version guards and partial failure reporting`. Each selected issue uses the authorized version-checked PATCH; failed IDs remain visible for retry. |
 | SA-placements-projects-107 | DONE (browser-local; multi-device sync not offered) | `src/components/tracker/tracker-issue-saved-views.tsx`, `src/app/(authenticated)/tracker/issues/page.tsx`; `tests/unit/chat6-tracker-bulk-saved-views-verification.test.ts` → `SA-placements-projects-107 safely saves, applies and removes bounded browser-only filter presets`. Only filter parameters persist; no report data or credentials stored. |
+
+## Provider-dependent and intentional policy dispositions
+
+| SA-placements-projects-103 | BLOCKED | Screenshot paste/upload/remove, post-submit retry and private image preview require a provisioned private scanned object-store, scoped upload receipts and signed delivery. An unsigned object key is not equivalent evidence. |
+| SA-placements-projects-113 | BLOCKED | A real multi-filter Cloud Logging explorer and pagination need a configured GCP Logging read identity/provider integration; Known Errors is a distinct durable internal view and is not represented as live Cloud Logging. |
+| SA-placements-projects-120 | BLOCKED | Synchronizing `42Students/lms-findings` with last-run reconciliation/refused-file report requires verified GitHub findings-import credentials. No fake sync status or importer run was added. |
+| SA-placements-projects-118 | NOT-A-GAP | Owner OD-27 reserves logs and audit findings for Super Admin; a legacy non-SA manager password gate would weaken central permissions. `src/app/(authenticated)/tracker/logs/page.tsx`; `tests/unit/chat6-tracker-log-scope-policy.test.ts` → `SA-placements-projects-118 NOT-A-GAP manager password bypass is disallowed by OD-27; log access remains Super Admin scoped`. |
