@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { burstOverflowText, formatDailyDigest, istDayAndHour } from "@/modules/log-alerts/scheduler";
+import { burstOverflowText, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
 import { isValidTickSecret } from "@/app/api/internal/alerts/tick/route";
 
 describe("scheduled Telegram alerts", () => {
@@ -14,6 +14,14 @@ describe("scheduled Telegram alerts", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
     expect(burstOverflowText(Number.NaN, "PRODUCTION")).toContain("0 more");
   });
+  it("GR-120 includes reliable health status and detects a stopped watcher", () => {
+    const now = new Date("2099-07-01T03:30:00Z");
+    expect(healthWatchStatus(undefined, now)).toBe("not configured");
+    expect(healthWatchStatus({ lockedBy: "HEALTHY", updatedAt: now }, now)).toBe("healthy");
+    expect(healthWatchStatus({ lockedBy: "DOWN", updatedAt: now }, now)).toBe("not responding");
+    expect(healthWatchStatus({ lockedBy: "FAILING", updatedAt: now }, now)).toBe("degraded");
+    expect(healthWatchStatus({ lockedBy: "HEALTHY", updatedAt: new Date("2099-07-01T03:00:00Z") }, now)).toBe("watcher stale");
+  });
   it("GR-119 digest uses 09:00 IST rather than UTC and lists top recurring", () => {
     expect(istDayAndHour(new Date("2099-07-01T03:30:00Z")))
       .toEqual({ day: "2099-07-01", hour: 9 });
@@ -24,6 +32,7 @@ describe("scheduled Telegram alerts", () => {
     expect(msg).toContain("New signatures: 3");
     expect(msg).toContain("Recurring occurrences: 97");
     expect(msg).toContain("Deploy: not recorded");
+    expect(msg).toContain("Health watch: not configured");
     expect(msg).toContain("123456789abc: 90");
   });
 });

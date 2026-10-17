@@ -13,7 +13,7 @@ Branch: `chatgpt/chat-16-b`. All tests below are **authored but NOT RUN**. DONE 
 | GR-117 | DONE | `src/app/api/client-errors/route.ts`, `src/lib/report-client-error.ts`; `tests/unit/graceful-client-error.test.ts` and `tests/unit/graceful-client-errors-route.test.ts` GR-117; root boundary `graceful-error-boundary.tsx` posts the accepted `{requestId,kind}` schema (source-verified); actual response test unrun |
 | GR-118 | BLOCKED (migration / secret) | `src/modules/log-alerts/scheduler.ts`, `src/app/api/internal/alerts/tick/route.ts`, `deploy/k8s/dev/alerting/vnext-alert-tick.yaml`; `tests/unit/graceful-alert-scheduler.test.ts` GR-118 |
 | GR-119 | BLOCKED (migration / runtime evidence) | `src/modules/log-alerts/scheduler.ts`, daily counts; `tests/unit/graceful-alert-scheduler.test.ts` GR-119 |
-| GR-120 | BLOCKED (cluster prerequisites) | `deploy/k8s/dev/alerting/vnext-health-watch.yaml`; `tests/unit/graceful-alert-ops-contract.test.ts` GR-120 |
+| GR-120 | BLOCKED (cluster prerequisites) | `deploy/k8s/dev/alerting/vnext-health-watch.yaml`; `tests/unit/graceful-alert-ops-contract.test.ts` and `tests/unit/graceful-alert-scheduler.test.ts` GR-120 |
 | GR-121 | DONE | `scripts/ops/deploy-health-check.sh`; `tests/unit/graceful-alert-ops-contract.test.ts` GR-121 |
 | GR-122 | BLOCKED (production webhook secret) | `src/app/api/webhooks/telegram/route.ts`, `src/modules/log-alerts/telegram-webhook.ts`; `tests/unit/graceful-telegram-webhook.test.ts` GR-122 |
 | GR-123 | DONE | `src/modules/log-alerts/admin-service.ts`, `src/components/tracker/known-errors-workspace.tsx`; `tests/unit/graceful-telegram-webhook.test.ts` GR-123, `tests/unit/graceful-logs-ui-contract.test.ts` GR-123; preexisting `tests/integration/db10-log-alert-admin.test.ts` |
