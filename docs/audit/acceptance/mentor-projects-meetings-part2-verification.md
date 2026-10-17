@@ -46,3 +46,26 @@ MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses
 | MEN-projects-meetings-66 | DONE | src/modules/projects/mentor-final-delivery-decision-service.ts and submission-service.ts; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-66 persists mentor decisions and same-transaction learner notices")` |
 
 | MEN-projects-meetings-64 | DONE | src/components/projects/project-workspace.tsx, project-delivery-evidence-download.tsx; tests/unit/chat11-mentor-final-evidence.test.ts — `it("MEN-projects-meetings-64 shows author, submitted time, learner notes, typed links, and all recorded version events")` and `it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant")` |
+
+## Chat-16 reassignment checkpoint — 2026-10-17 (source/test authored, tests not run)
+
+The entries below supersede earlier PARTIAL/DONE claims for this 32-gap reassignment when their disposition differs. A test name is source-level evidence only until CI and browser/database acceptance execute.
+
+| ID | Disposition | Evidence / remaining work |
+|---|---|---|
+| MEN-projects-meetings-53 | DONE (source authored) | `src/components/projects/project-resource-controls.tsx`, `src/modules/projects/resource-service.ts`, registered 0133 resource metadata; `tests/unit/chat16-reassigned-mentor-parity.test.ts` and `tests/unit/chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-53. Verify registered SQL on disposable PostgreSQL. |
+| MEN-projects-meetings-55 | PARTIAL | Resource search, metadata/status/sprint/task filters and reset exist in `project-resource-list.tsx`; source test MEN-projects-meetings-55 in `chat16-mentor-tracker-contract-round2.test.ts`. Files tile and unified uploaded-file rows still differ from legacy. |
+| MEN-projects-meetings-56 | DONE (source authored) | `resource-service.ts` validates owned active set and collision-safe sequence reorder, `project-resource-list.tsx` supports drag and accessible move; source tests MEN-projects-meetings-56 in `chat16-reassigned-mentor-parity.test.ts` and round2. |
+| MEN-projects-meetings-57 | PARTIAL | Draft now labels Draft rather than Active; type, pinned, link and updated metadata displayed in `project-resource-list.tsx`; source test MEN-projects-meetings-57 in round2. File metadata and unified open-file row remain open. |
+| MEN-projects-meetings-58 | OPEN | Attached files remain separate from resource records and their delete/archive semantics differ; do not claim unified file records. |
+| MEN-projects-meetings-60 | DONE (source authored) | Cursor pagination and deduplication in `project-activity-filtered-list.tsx`; ID-named tests in `mentor-activity-pagination-round5.test.ts`. |
+| MEN-projects-meetings-61 | DONE (source authored) | Humanized activities in `mentor-activity-display-model.ts`; ID-named tests in `mentor-activity-round4.test.ts`. |
+| MEN-projects-meetings-65 | DONE (source authored) | Separate final-delivery decision confirms and stale-review guidance, `project-final-delivery-controls.tsx`, ID-named `chat11-mentor-delivery-decision-round3.test.ts`. |
+| MEN-projects-meetings-67 | DONE (source authored) | Calendar copy and links, `mentor-meetings-round4.test.ts` and `chat16-reassigned-mentor-parity.test.ts`. |
+| MEN-projects-meetings-69 | PARTIAL | Inline calendar Retry is implemented and ID-tested in `chat16-reassigned-mentor-parity.test.ts`, but RESCHEDULED and DRAFT meeting states are not fully represented. |
+| MEN-projects-meetings-70 | DONE (source authored) | Legacy attention copy and notification labels in `mentor-meetings-round4.test.ts` and reassigned tests. |
+| MEN-projects-meetings-72 | PARTIAL | Transactional mentor notices exist in `project-notification-service.ts`, meeting/comment/task/member/resource decision services, ID-named `mentor-notifications-round5.test.ts` and round2. Verify project-updated, member-removed and end-to-end recipient coverage on database. |
+| MEN-projects-meetings-73 | PARTIAL | PLANNED idle project rule source-tested by MEN-projects-meetings-73 in round2, but the page still splits priority-ordered notice types into separate sections. |
+| MEN-projects-meetings-74 | DONE (source authored) | Legacy mentor bookmark redirects in `next.config.ts` and redirect page shims; `mentor-navigation-confirmations-round5.test.ts`. |
+| MEN-projects-meetings-75 | PARTIAL | Resources warn before discarding drafts, `mentor-resource-dirty-round5.test.ts`; analogous task/sprint/meeting/delivery leave protections remain incomplete. |
+| MEN-projects-meetings-76 | PARTIAL | Closeout and sprint `ConfirmDialog` controls, closeout now displays customer-safe retry guidance (no internal exception text), `chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-76. Confirmations and recovery across the remaining mentor actions are incomplete. |
