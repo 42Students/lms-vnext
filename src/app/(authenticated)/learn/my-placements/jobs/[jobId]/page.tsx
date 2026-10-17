@@ -21,6 +21,7 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       applicationMode: row.job.applicationMode,
       externalApplicationUrl: row.job.externalApplicationUrl,
       applicationDeadline: row.job.applicationDeadline?.toISOString() ?? null,
+      publishedAt: row.job.publishedAt?.toISOString() ?? null,
       stipendPerMonthInr:row.job.stipendPerMonthInr,
     },
     roleOption: {
