@@ -1,5 +1,5 @@
 "use client";
-import {useState,type FormEvent} from "react";
+import {useEffect,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {splitHrRecruiterName,hrRecruiterNameFieldsSchema,joinHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
@@ -12,6 +12,12 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  const [version,setVersion]=useState(updatedAt);
  const [saving,setSaving]=useState(false);
  const [message,setMessage]=useState("");
+ useEffect(()=>{
+  if(firstName===savedName.firstName&&lastName===savedName.lastName)return;
+  const onUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",onUnload);
+  return ()=>window.removeEventListener("beforeunload",onUnload);
+ },[firstName,lastName,savedName]);
  async function save(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(saving)return;
