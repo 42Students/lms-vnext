@@ -73,7 +73,7 @@ export default async function SuperAdminLessonsPage({
         </div>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
           className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
-          Open offering to add lessons, content, assignments or quizzes →
+          Open offering →
         </Link>
       </article>)}
     </div> : <EmptyState title="No lessons found" description="The current college and filters have no recorded lessons." />}

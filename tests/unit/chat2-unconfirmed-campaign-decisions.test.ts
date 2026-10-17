@@ -27,6 +27,9 @@ describe("TPO public campaign ambiguous lifecycle decisions",()=>{
   expect(join).toContain('grantSource:"VERIFIED_RECRUITER_SELF_SERVICE"');
   expect(join).toContain("bypassesDriveReview:false");
   expect(join).toContain('capabilities: ["DRIVES"]');
-  expect(request).toContain("No auto-approval until the shared TPO-side policy is registered");
+  expect(request).toContain("recruiterDriveApprovalPolicy({");
+  expect(request).toContain("if(policy.autoApprove)");
+  expect(request).toContain("createRecruiterApprovedDraftJob(tx,created,context.user.id)");
+  expect(request).toContain('status:"DRAFT",approvedJobId');
  });
 });

@@ -376,7 +376,7 @@ export function LearnerCourseDiscussion({
         <p className="mt-1 text-xs text-muted-foreground">Students can post questions here anytime.</p>
       </div>
 
-      {loadError && loadedOnce.current && messages.length > 0 ? (
+      {loadError && messages.length > 0 && loadedOnce.current ? (
         <div role="alert" className="flex flex-wrap items-center gap-3 rounded-md border border-warning p-3">
           <p className="m-0 flex-1 text-sm text-warning-text">
             Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
