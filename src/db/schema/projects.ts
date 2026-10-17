@@ -1187,7 +1187,7 @@ export const projectMeetings = pgTable(
     ),
     check(
       "project_meetings_status_ck",
-      sql`${table.status} in ('REQUESTED', 'SCHEDULED', 'COMPLETED', 'CANCELLED')`,
+      sql`${table.status} in ('DRAFT', 'REQUESTED', 'SCHEDULED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED')`,
     ),
     check(
       "project_meetings_type_ck",
@@ -1203,7 +1203,7 @@ export const projectMeetings = pgTable(
     ),
     check(
       "project_meetings_schedule_shape_ck",
-      sql`${table.status} not in ('SCHEDULED', 'COMPLETED') or (${table.scheduledByUserId} is not null and ${table.meetingUrl} is not null)`,
+      sql`${table.status} not in ('SCHEDULED', 'RESCHEDULED', 'COMPLETED') or (${table.scheduledByUserId} is not null and ${table.meetingUrl} is not null)`,
     ),
   ],
 );

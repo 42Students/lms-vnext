@@ -10,6 +10,6 @@ export const mentorMeetingDecisionSchema=z.object({
  if(v.action==="CANCEL"&&v.outcome!==undefined)ctx.addIssue({code:"custom",path:["outcome"],message:"Only completed meetings accept an outcome"});
 });
 export function mentorMeetingDecisionStatus(action:"COMPLETE"|"CANCEL",current:string){
- return action==="COMPLETE"?current==="SCHEDULED":
-   current==="REQUESTED"||current==="SCHEDULED";
+ return action==="COMPLETE"?["SCHEDULED","RESCHEDULED"].includes(current):
+   ["REQUESTED","SCHEDULED","RESCHEDULED"].includes(current);
 }

@@ -15,7 +15,7 @@ export const mentorMeetingRescheduleSchema=z.object({
       message:"Meeting duration must be positive and at most 12 hours"});
 });
 export function mentorMeetingCanReschedule(status:string,projectStatus:string){
-  return status==="SCHEDULED"&&
+  return (status==="SCHEDULED"||status==="RESCHEDULED")&&
     projectStatus!=="ARCHIVED"&&projectStatus!=="COMPLETED";
 }
 export function toIstLocalInput(iso:string){
