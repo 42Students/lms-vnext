@@ -17,6 +17,8 @@ export const mentorTaskCreateSchema=z.object({
 }).strict().superRefine((input,context)=>{
   if(input.sprintId!==null&&!input.expectedSprintUpdatedAt)
     context.addIssue({code:"custom",path:["expectedSprintUpdatedAt"],message:"Choose a valid sprint before saving."});
+  if(input.sprintId===null&&input.expectedSprintUpdatedAt!==null)
+    context.addIssue({code:"custom",path:["expectedSprintUpdatedAt"],message:"Backlog tasks have no sprint version."});
   if(input.sprintId===null&&input.status!=="TODO")
     context.addIssue({code:"custom",path:["status"],message:"Backlog tasks must start To Do."});
   if(input.status==="BLOCKED"&&!input.blockerReason?.trim())
