@@ -72,3 +72,30 @@ Tests were authored but not run in this builder session.
 | TPO-recruiters-34 | **Intentional restricted permission.** Mutations require explicit scoped placement permission, not merely being a college user. No silent widening during UX freeze. |
 
 No e-mail was sent and no CI tests were executed by this builder.
+
+## Chat-4 final sprint — 2026-10-18
+
+The following 18 gaps were assigned as FIXED-ON-MAIN in `docs/orchestrator/queues/final-sprint.md`. The implementation was inspected against each ID. The named source/model tests are authored but **not run**. `DONE — source verified` is not end-to-end sign-off; `PARTIAL` retains outstanding acceptance instead of overstating parity.
+
+| Gap ID | Decision / status | Implementation evidence and outstanding work |
+| --- | --- | --- |
+| TPO-recruiters-05 | PARTIAL — source verified; full board parity pending | Board supports guarded NEW→CONTACTED drag/drop plus keyboard-friendly Move to… / Actions; not all seven legacy columns are drag targets. Named `TPO-recruiters-05` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-06 | DONE — source verified | Recruiters view recognizes campaigns and renders Emails; table/board/companies count-bearing views exist. Named `TPO-recruiters-06` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-10 | DONE — source verified | Recruiter detail renders company metrics, persisted drives and added date; links resolve within TPO scope. Named `TPO-recruiters-10` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-11 | PARTIAL — source verified | Invite/Resend, Create drive and Team talk present with opt-out guard; complete legacy More menu still needs acceptance. Named `TPO-recruiters-11` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-15 | PARTIAL — source verified | Bulk stage/owner per-row failure reasons and Send an email entry exist; all legacy skip-specific copy still requires acceptance. Named `TPO-recruiters-15` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-16 | DONE — source verified | Inline stage and owner edit controls POST expected values to scoped bulk endpoints with Not now reason. Named `TPO-recruiters-16` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-18 | DONE — source verified | Saved view creation, pin cap of five, update, delete, filter and persisted column choices are wired. Named `TPO-recruiters-18` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-20 | DONE — source verified | Column chooser, persisted columns, sortable Last activity/Next follow-up and display choices are wired. Named `TPO-recruiters-20` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-21 | PARTIAL — source verified | Company-required add, known-company suggestions, future follow-up and discard confirmation exist; duplicate conflict open-link confirmation needs browser check. Named `TPO-recruiters-21` test in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts`. |
+| TPO-recruiters-25 | DONE — intentional safer decision | Attention uses last activity, suppresses No next step for RECRUITED and never marks a mere sent invitation UNVERIFIED without verified state. Named `TPO-recruiters-25` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-26 | PARTIAL — source verified | Typed interaction and five call outcomes implemented; legacy automatic follow-up for No answer still needs confirmation. Named `TPO-recruiters-26` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-27 | DONE — source verified | Overdue indication, future date validation and quick follow-up shortcuts implemented. Named `TPO-recruiters-27` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-28 | DONE — source verified | System vs user timeline styling, readable Call outcome and empty timeline copy present. Named `TPO-recruiters-28` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-29 | PARTIAL — source verified | NotFound, Retry and loading recovery present; complete draft-navigation discard coverage still needs browser acceptance. Named `TPO-recruiters-29` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-31 | DONE — source verified | Not now reason required; revisit date rendered in IST locale. Named `TPO-recruiters-31` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-32 | DONE — source verified | Deep-link q, due, view campaigns, add and company prefill are interpreted. Named `TPO-recruiters-32` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-33 | DONE — source verified | Unsubscribed warning and server/UI invitation opt-out guards present. Named `TPO-recruiters-33` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+| TPO-recruiters-37 | PARTIAL — source verified | Board has native Move menu; dialogs trap focus and support Escape; comprehensive accessibility browser test remains. Named `TPO-recruiters-37` test in `tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts`. |
+
+Source implementations: `src/app/(authenticated)/tpo/recruiters/page.tsx`, `src/components/tpo/recruiter-leads-workspace.tsx`, `recruiter-lead-detail-workspace.tsx`, `recruiter-inline-stage.tsx`, `recruiter-inline-owner.tsx`, `recruiter-saved-view-controls.tsx`, `recruiter-roster-display-controls.tsx`, `src/modules/placements/tpo-recruiter-attention-model.ts`, and `/tpo/recruiters/[leadId]` error/loading boundaries. No UI restyling was introduced for this verification batch.
