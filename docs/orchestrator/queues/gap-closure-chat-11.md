@@ -55,17 +55,17 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | PUB-auth-public-01 | S2 | MISSING-FIELD | DONE |
-| PUB-auth-public-03 | S2 | COPY | OPEN |
-| PUB-auth-public-04 | S2 | COPY | OPEN |
-| PUB-auth-public-05 | S2 | COPY | OPEN |
-| PUB-auth-public-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| PUB-auth-public-10 | S2 | STATE | OPEN |
-| PUB-auth-public-12 | S2 | STATE | FIXED-ON-MAIN |
-| PUB-auth-public-17 | S2 | COPY | OPEN |
-| PUB-auth-public-19 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| PUB-auth-public-03 | S2 | COPY | DONE |
+| PUB-auth-public-04 | S2 | COPY | DONE |
+| PUB-auth-public-05 | S2 | COPY | DONE |
+| PUB-auth-public-06 | S2 | MISSING-FIELD | DONE |
+| PUB-auth-public-10 | S2 | STATE | DONE |
+| PUB-auth-public-12 | S2 | STATE | DONE |
+| PUB-auth-public-17 | S2 | COPY | DONE |
+| PUB-auth-public-19 | S2 | MISSING-ACTION | DONE |
 | PUB-auth-public-26 | S2 | MISSING-PAGE | UNCONFIRMED |
-| PUB-auth-public-02 | S3 | STATE | FIXED-ON-MAIN |
-| PUB-auth-public-07 | S3 | VALIDATION | FIXED-ON-MAIN |
+| PUB-auth-public-02 | S3 | STATE | DONE |
+| PUB-auth-public-07 | S3 | VALIDATION | DONE |
 | PUB-auth-public-08 | S3 | STATE | OPEN |
 | PUB-auth-public-09 | S3 | STATE | OPEN |
 | PUB-auth-public-11 | S3 | COPY | OPEN |
