@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -936,18 +936,38 @@ export function PlacementJobCreateForm({
             />
             <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Application deadline
-            </span>
-            <input
-              className={inputClass}
-              name="applicationDeadline"
-              type="datetime-local"
-              aria-describedby="drive-deadline-ist-help"
-            />
-            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Choose 11:59 PM if applications close at the end of the day.</span>
-          </label>
+          <div>
+            <label>
+              <span className="mb-1.5 block text-xs font-semibold text-body">
+                Application deadline
+              </span>
+              <input id="tpo-drive-application-deadline"
+                className={inputClass}
+                name="applicationDeadline"
+                type="datetime-local"
+                aria-describedby="drive-deadline-ist-help"
+              />
+            </label>
+            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Select a date and time, or use the end-of-day action for 11:59 PM.</span>
+            <button type="button" aria-controls="tpo-drive-application-deadline"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+              onClick={()=>{
+                const form=formRef.current;
+                const field=form?.elements.namedItem("applicationDeadline");
+                if(!(field instanceof HTMLInputElement)||!form||!field.value){
+                  showToast({tone:"error",title:"Choose a date first",description:"Select a date in IST before using the 11:59 PM deadline."});
+                  return;
+                }
+                try{
+                  field.value=driveDeadlineIstEndOfDay(field.value);
+                  clearedBackup.current=false;
+                  saveBrowserDraft(form);
+                  markDirty();
+                }catch{
+                  showToast({tone:"error",title:"Deadline not updated",description:"Enter a valid application deadline in IST."});
+                }
+              }}>Use 11:59 PM IST</button>
+          </div>
         </div>
       </section>
 
