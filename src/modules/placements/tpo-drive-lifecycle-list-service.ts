@@ -41,6 +41,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .innerJoin(departments,eq(departments.id,programs.departmentId))
     .where(eq(departments.collegeId,collegeId))
     .orderBy(cohorts.name,cohorts.id);
+  if(filters.cohortId&&!batches.some(batch=>batch.id===filters.cohortId))
+   throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
   const companies=await db.select({id:placementCompanies.id,name:placementCompanies.name})
     .from(placementCompanyRelationships)
     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
