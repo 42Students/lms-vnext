@@ -15,7 +15,7 @@ const viewBody=z.strictObject({
  id:z.string().uuid().optional(),
  name:z.string().trim().min(1).max(100).optional(),
  note:z.string().trim().max(500).nullable().optional(),
- query:z.record(z.string().max(64),z.string().max(250)).optional(),
+ query:z.record(z.enum(SAVED_FILTER_KEYS),z.string().max(250)).optional(),
  columns:z.array(z.enum(ENGAGE_COLUMNS)).max(ENGAGE_COLUMNS.length).optional(),
  pinned:z.boolean().optional(),
 });
