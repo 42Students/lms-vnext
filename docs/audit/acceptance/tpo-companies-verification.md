@@ -29,3 +29,4 @@
 | TPO-companies-22 | DONE (source; tests unrun) | Company numbers heading and no-activity label source contracts verified in `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-22 retains verified company numbers…**. |
 
 Builder did not run tests, lint, typecheck, or PostgreSQL integration.
+| TPO-companies-29 | PARTIAL — OPEN | `src/app/(authenticated)/tpo/companies/page.tsx` now shows mobile company cards with actual contact/drive/offer/confirmed-join counts and Create drive, while preserving the detailed desktop table; named `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-29 offers a non-scrolling mobile directory…**. Canonical company hiring-history table and other views still need mobile layout acceptance. |
