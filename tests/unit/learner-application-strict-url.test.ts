@@ -7,6 +7,6 @@ it("rejects ambiguous repeated and non-decimal application selectors",()=>{
  expect(readLearnerApplicationUrl("page=01").page).toBe(1);
  expect(readLearnerApplicationUrl("page=10").page).toBe(10);
  expect(readLearnerApplicationUrl("applicationId="+id+"&applicationId="+id).applicationId).toBeUndefined();
- expect(readLearnerApplicationUrl("view=progress&view=completed").view).toBe("all");
+ expect(readLearnerApplicationUrl("view=progress&view=completed").view).toBe("progress");
  expect(updateLearnerApplicationUrl("page=99&view=progress",{sort:"company"})).toBe("view=progress&sort=company");
 });

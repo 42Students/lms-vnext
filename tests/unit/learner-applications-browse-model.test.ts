@@ -32,7 +32,7 @@ describe("Learner placement application browser", () => {
       .toEqual(["d","c"]);
   });
   it("filters by company, position and exact screening stage",()=>{
-    expect(browseLearnerApplications(records,{...defaults,search:"acme",stage:"REJECTED"})
+    expect(browseLearnerApplications(records,{...defaults,search:"acme",view:"all",stage:"REJECTED"})
       .map(x=>x.applicationId)).toEqual(["c"]);
     expect(learnerApplicationStage(records[3]!)).toBe("WITHDRAWN");
   });
@@ -48,8 +48,8 @@ describe("Learner placement application browser", () => {
     const changed=records.map(x=>({...x}));
     changed[0]!.screening.decidedAt=new Date("2026-10-14T00:00:00Z");
     expect(browseLearnerApplications(changed,defaults)[0]?.applicationId).toBe("a");
-    expect(browseLearnerApplications(records,{...defaults,sort:"oldest"})[0]?.applicationId).toBe("a");
-    expect(browseLearnerApplications(records,{...defaults,sort:"company"}).map(x=>x.applicationId))
+    expect(browseLearnerApplications(records,{...defaults,view:"all",sort:"oldest"})[0]?.applicationId).toBe("a");
+    expect(browseLearnerApplications(records,{...defaults,view:"all",sort:"company"}).map(x=>x.applicationId))
       .toEqual(["a","c","b","d"]);
   });
   it("sorts company titles naturally, case-insensitively and without mutating original rows",()=>{
@@ -63,9 +63,9 @@ describe("Learner placement application browser", () => {
     expect(named.map(x=>x.applicationId)).toEqual(["x","y","z"]);
   });
     it("sorts by persisted screening stage with stable recent-activity and ID tie breaks",()=>{
-    expect(browseLearnerApplications(records,{...defaults,sort:"stage"}).map(x=>x.applicationId))
+    expect(browseLearnerApplications(records,{...defaults,view:"all",sort:"stage"}).map(x=>x.applicationId))
       .toEqual(["c","b","a","d"]);
-    expect(browseLearnerApplications(records,{...defaults,sort:"stage",stage:"SHORTLISTED"})
+    expect(browseLearnerApplications(records,{...defaults,view:"all",sort:"stage",stage:"SHORTLISTED"})
       .map(x=>x.applicationId)).toEqual(["b"]);
   });
   it("derives only stages actually present in the learner's journeys",()=>{

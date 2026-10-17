@@ -10,7 +10,7 @@ describe("Learner application withdrawal validation", () => {
       { ...valid, action: "ACCEPT" },
       { action: "WITHDRAW", reason: valid.reason },
       { ...valid, reason: "   " },
-      { ...valid, reason: "abc" },
+      { ...valid, reason: "ab" },
       { ...valid, userId: "other-user" },
       { ...valid, membershipId: "other-membership" },
     ]) {
@@ -21,8 +21,9 @@ describe("Learner application withdrawal validation", () => {
   it("trims reason length and rejects oversized text", () => {
     expect(learnerWithdrawalReasonSchema.parse("  Moving to another opportunity  "))
       .toBe("Moving to another opportunity");
+    expect(learnerWithdrawalReasonSchema.parse("x".repeat(900))).toHaveLength(900);
     expect(learnerApplicationWithdrawalSchema.safeParse({
-      ...valid, reason: "x".repeat(501),
+      ...valid, reason: "x".repeat(901),
     }).success).toBe(false);
   });
 });

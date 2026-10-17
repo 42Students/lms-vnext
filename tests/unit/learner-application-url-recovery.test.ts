@@ -7,7 +7,7 @@ it("recovers valid application filters without admitting duplicated or forged se
  expect(r.page).toBe(1);
  expect(r.applicationId).toBe(id);
  const d=readLearnerApplicationUrl("view=all&view=completed&stage=SHORTLISTED");
- expect(d.view).toBe("all");
+ expect(d.view).toBe("progress");
  expect(d.stage).toBe("SHORTLISTED");
  const changed=updateLearnerApplicationUrl("view=all&view=completed&stage=SHORTLISTED",{sort:"company"});
  expect(changed).toBe("stage=SHORTLISTED&sort=company");
