@@ -41,6 +41,10 @@ export function LearnerSkillCatalogInput({value,onChange}:{value:string;onChange
    aria-controls={id+"-choices"}
    aria-activedescendant={activeIndex>=0?`${id}-choice-${activeIndex}`:undefined}
    className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>
+  {status==="loading"?<p role="status" className="mt-1 text-xs text-muted-foreground">Searching skills…</p>:null}
+  {status==="ready"&&items.length===0?<p role="status" className="mt-1 text-xs text-muted-foreground">
+    No catalog suggestions found. You can still save your own skill name.
+  </p>:null}
   {status==="unavailable"?<p role="status" className="mt-1 text-xs text-body">
    Skill catalog temporarily unavailable. You can save the entered skill name.
   </p>:null}
