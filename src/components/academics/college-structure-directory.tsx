@@ -394,9 +394,6 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                     <td className="px-4 py-4 text-body">{item.activeLearners}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
                     <td className="px-4 py-4"><div className="flex flex-wrap items-start gap-2">
-                      <Link href={"/college/classes/recurring-preview?classId=" + encodeURIComponent(item.id)}
-                        className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text"
-                        aria-label={"Schedule recurring sessions for " + item.name}>Schedule</Link>
                       <CollegeClassRowActions row={item} />
                       <CollegeSectionLifecycleAction row={{
                         id:item.id,name:item.name,status:item.status,

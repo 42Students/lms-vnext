@@ -5,7 +5,7 @@ import { cohorts, programs, departments, placementCompanies, placementCompanyRel
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
-import { defaultTpoDriveView, tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive-lifecycle-list-model";
+import { tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive-lifecycle-list-model";
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
@@ -66,33 +66,14 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     isNull(placementJobs.archivedAt),season?eq(placementJobs.seasonId,season.id):undefined));
   const attentionCounts=attention??{noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
 
-  // TPO-drives-04: persistent college-scoped counts power tab badges.
-  const [pendingRequestCount]=await db.select({total:count()})
-    .from(placementRecruiterDriveRequests)
-    .innerJoin(placementCompanyRelationships,and(
-      eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
-      eq(placementCompanyRelationships.collegeId,collegeId)))
-    .where(and(eq(placementRecruiterDriveRequests.collegeId,collegeId),
-      inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK"])));
-  const needsReviewCount=pendingRequestCount?.total??0;
-  const [aggregate]=await db.select({
-    all:sql<number>`count(*)::int`,
-    drafts:sql<number>`count(*) filter(where ${placementJobs.status}='DRAFT')::int`,
-    live:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED')::int`,
-    closed:sql<number>`count(*) filter(where ${placementJobs.status} in ('CLOSED','CANCELLED'))::int`,
-  }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
-    isNull(placementJobs.archivedAt),season?eq(placementJobs.seasonId,season.id):undefined));
-  const statusCounts=aggregate??{all:0,drafts:0,live:0,closed:0};
-  const selectedView=defaultTpoDriveView(needsReviewCount,
-    typeof raw==="object"&&raw!==null&&"view" in raw?filters.view:undefined);
-  if (selectedView === "REQUESTS") {
+  if (filters.view === "REQUESTS") {
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
-      companyId:filters.companyId,view:selectedView,search:filters.search,
+      companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
-      attentionCounts,needsReviewCount,statusCounts,asOf:now.toISOString()};
+      attentionCounts,asOf:now.toISOString()};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
@@ -134,7 +115,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     }));
     return {...pagination,counts:{...counts,total:tally?.total??0},rows:[],requestRows,requestsAvailable:true as const,...common};
   }
-  const target=selectedView==="DRAFT"?"DRAFT":selectedView==="LIVE"?"PUBLISHED":selectedView==="CLOSED"?"CLOSED":null;
+  const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
   const projection=await db.transaction(async tx=>{
    const end=new Date(now.getTime()+7*86400000);
@@ -216,8 +197,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
     .where(scope);
    const totals=counts??emptyCounts;
-   const totalMatching=selectedView==="DRAFT"?totals.drafts:selectedView==="LIVE"?totals.live:
-    selectedView==="CLOSED"?totals.closed:totals.total;
+   const totalMatching=filters.view==="DRAFT"?totals.drafts:filters.view==="LIVE"?totals.live:
+    filters.view==="CLOSED"?totals.closed:totals.total;
    const pagination=tpoDriveLifecyclePage(totalMatching,filters.page);
    const rows = await tx.select({
     id: placementJobs.id, title: placementJobs.title,
@@ -248,7 +229,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .innerJoin(placementCompanies,
       eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(users,eq(users.id,placementJobs.createdByUserId))
-    .where(and(scope,selectedView==="CLOSED"?
+    .where(and(scope,filters.view==="CLOSED"?
       inArray(placementJobs.status,["CLOSED","CANCELLED"]):
       target?eq(placementJobs.status,target):undefined))
     .orderBy(filters.sort==="DEADLINE_ASC"?sql`${placementJobs.applicationDeadline} asc nulls last`:
@@ -262,9 +243,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
     ...projection, seasons, season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
-    companyId:filters.companyId, view: selectedView,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
+    companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
-    attentionCounts,needsReviewCount,statusCounts,asOf: now.toISOString(),
+    attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
   };

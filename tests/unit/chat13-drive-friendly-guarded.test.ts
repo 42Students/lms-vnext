@@ -4,7 +4,7 @@ const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 const files=["placement-job-create-form.tsx","placement-draft-edit-form.tsx"].map(p=>"src/components/placements/"+p);
 describe("Chat13 drive create/edit resilience",()=>{
  it("GR-30 both drive forms use the synchronous guarded-action lock and busy button",()=>{
-  for(const file of files){const code=source(file);expect(code).toMatch(/useGuardedAction\((?:\{timeoutMs:\d+\})?\)/);
+  for(const file of files){const code=source(file);expect(code).toContain("useGuardedAction()");
    expect(code).toContain("await run(async()=>{");expect(code).toContain("pending");}
  });
  it("GR-31 drive POST PATCH and PUT mutations use the guarded apiFetch helper",()=>{

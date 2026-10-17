@@ -12,11 +12,9 @@ type Result = { slots: Array<{ startsAt: string; endsAt: string; localDate: stri
   ready: number; blocked: number; notice: string };
 
 export function CollegeRecurringPreview({
-  classes, halls, faculty, deliveries, defaultSectionId = "",
-}: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
-  defaultSectionId?: string }) {
-  const chosen = classes.find(item => item.id === defaultSectionId);
-  const [sectionId, setSectionId] = useState(chosen?.id ?? "");
+  classes, halls, faculty, deliveries,
+}: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[] }) {
+  const [sectionId, setSectionId] = useState("");
   const [title, setTitle] = useState("Class session");
   const [deliveryId, setDeliveryId] = useState("");
   const [skipped, setSkipped] = useState<Array<{localDate:string;reasons:string[]}>>([]);
@@ -25,8 +23,8 @@ export function CollegeRecurringPreview({
   function previewKey() {
     return JSON.stringify({sectionId,from,to,weekdays,startTime,endTime,title,facultyId,hallId,deliveryId});
   }
-  const [from, setFrom] = useState(chosen?.periodStart ?? "");
-  const [to, setTo] = useState(chosen?.periodEnd ?? "");
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
   const [startTime, setStartTime] = useState("09:00");
   const [endTime, setEndTime] = useState("10:00");
   const [weekdays, setWeekdays] = useState<number[]>([1, 2, 3, 4, 5]);

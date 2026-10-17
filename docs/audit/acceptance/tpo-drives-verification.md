@@ -25,17 +25,3 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 
 **Remaining unaddressed Drives IDs:** `-04`, `-13`, `-25`, `-27`, `-28`, `-29`, `-30`, `-31`, `-34`, `-35`, `-36`, `-37`, `-38`, `-39`, `-41`, `-42`, `-43`, `-44`, `-45`, `-47`, `-48`, `-49`, `-50`, `-51`, `-52`, `-R03`, `-R04`. `TPO-drives-27` requires private bucket and scanner readiness for real file uploads; never invent signed URLs.
 
-
-## Round 4 — review-first Drives tabs
-
-| ID | Status | Evidence |
-| --- | --- | --- |
-| TPO-drives-04 | DONE | `src/modules/placements/tpo-drive-lifecycle-list-service.ts`: default Requests when pending reviews else Live, explicit All preserved; persistent college-scoped counts. `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`: clickable count badges and active view. Named test `TPO-drives-04 review-first default and persistent badge counts` in `tests/unit/tpo-drives-chat-3-round4.test.ts` (written, not run). |
-
-| TPO-drives-45 | OPEN | `tpo-drive-deadline-ist.ts` parses valid IST wall time and rejects impossible days before the first creation write; Create form uses the converted ISO and explains IST. 11:59 PM prefill still outstanding. `tests/unit/tpo-drives-chat-3-round4.test.ts`, two TPO-drives-45 tests (not run). |
-
-| TPO-drives-37 | OPEN | Legacy retired backlog/gap-year filters are now absent from Create and its submitted policy. Other policy APIs can still set them; `tests/unit/tpo-drives-chat-3-round4.test.ts` test TPO-drives-37. |
-| TPO-drives-49 | OPEN | Non-editable edit page points operators to Clone a past drive; complete frozen detail/hydration behavior remains; test TPO-drives-49. |
-
-| TPO-drives-35 | OPEN | Create now sends `minPctThroughout` and `requireVerifiedEvidence` and validates percentage bounds; PG/gender/branch parity remains. Test TPO-drives-35 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
-| TPO-drives-36 | OPEN | Five legacy eligibility presets populate actual policy values with a college conversion caution. Dynamic CGPA-to-percentage hint remains. Test TPO-drives-36. |

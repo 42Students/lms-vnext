@@ -76,83 +76,33 @@ export function parseCloudErrorEntry(value: unknown): CloudErrorRecord | null {
   };
 }
 
-export async function readCloudProviderJsonLimited(response: Response, signal?: AbortSignal): Promise<unknown> {
-  const reader = response.body?.getReader();
-  if (!reader) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");
-  const chunks: Uint8Array[] = [];
-  let size = 0;
-  const cancel = () => { void reader.cancel().catch(() => undefined); };
-  if (signal?.aborted) cancel();
-  else signal?.addEventListener("abort", cancel, { once: true });
-  try {
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      size += value.byteLength;
-      if (size > 1_000_000) {
-        await reader.cancel().catch(() => undefined);
-        throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
-      }
-      chunks.push(value);
-    }
-  } catch {
-    throw new Error(signal?.aborted ? "LOG_PROVIDER_UNAVAILABLE" : "LOG_PROVIDER_RESPONSE_TOO_LARGE");
-  } finally {
-    signal?.removeEventListener("abort", cancel);
-  }
-  if (signal?.aborted) throw new Error("LOG_PROVIDER_UNAVAILABLE");
-  const bytes = new Uint8Array(size);
-  let offset = 0;
-  for (const chunk of chunks) {
-    bytes.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  try { return JSON.parse(new TextDecoder().decode(bytes)) as unknown; }
+async function readJsonLimited(response: Response): Promise<unknown> {
+  const text = await response.text();
+  if (text.length > 1_000_000) throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+  try { return JSON.parse(text) as unknown; }
   catch { throw new Error("LOG_PROVIDER_INVALID_RESPONSE"); }
 }
 
-/** One deadline covers headers AND streamed response JSON. */
-export async function boundedCloudJsonRequest(
+async function boundedFetch(
   url: string,
   init: RequestInit,
   transport: Transport,
   timeoutMs = 5_000,
-): Promise<{ ok: boolean; status: number; payload: unknown }> {
+): Promise<Response> {
   const controller = new AbortController();
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const deadline = new Promise<never>((_, reject) => {
-    timer = setTimeout(() => {
-      controller.abort();
-      reject(new Error("LOG_PROVIDER_UNAVAILABLE"));
-    }, timeoutMs);
-  });
-  try {
-    const request = async () => {
-      const response = await transport(url, { ...init, signal: controller.signal });
-      if (!response.ok) return { ok: false, status: response.status, payload: null };
-      const payload = await readCloudProviderJsonLimited(response, controller.signal);
-      return { ok: true, status: response.status, payload };
-    };
-    return await Promise.race([request(), deadline]);
-  } catch (error) {
-    // Only our safe constant error names can leave this boundary.
-    if (error instanceof Error && /^LOG_PROVIDER_(?:INVALID_RESPONSE|RESPONSE_TOO_LARGE|UNAVAILABLE)$/.test(error.message)) {
-      throw error;
-    }
-    throw new Error("LOG_PROVIDER_UNAVAILABLE");
-  } finally {
-    if (timer !== undefined) clearTimeout(timer);
-    controller.abort();
-  }
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try { return await transport(url, { ...init, signal: controller.signal }); }
+  catch { throw new Error("LOG_PROVIDER_UNAVAILABLE"); }
+  finally { clearTimeout(timer); }
 }
 
 export async function cloudLoggingAccessToken(transport: Transport = fetch): Promise<string> {
-  const response = await boundedCloudJsonRequest(
+  const response = await boundedFetch(
     "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
     { headers: { "Metadata-Flavor": "Google" } }, transport, 2_500,
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
-  const result = asObject(response.payload);
+  const result = asObject(await readJsonLimited(response));
   if (typeof result.access_token !== "string" || !result.access_token ||
       result.access_token.length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
   return result.access_token;
@@ -173,10 +123,10 @@ export async function readCloudLogErrorPage(input: {
     resourceNames: ["projects/" + input.project],
     filter: buildCloudErrorFilter(input.start, input.end, input.namespace),
     orderBy: "timestamp asc",
-    pageSize: 12,
+    pageSize: 100,
     ...(input.pageToken ? { pageToken: input.pageToken } : {}),
   };
-  const response = await boundedCloudJsonRequest(
+  const response = await boundedFetch(
     "https://logging.googleapis.com/v2/entries:list",
     { method: "POST", headers: {
       "content-type": "application/json",
@@ -184,12 +134,9 @@ export async function readCloudLogErrorPage(input: {
     }, body: JSON.stringify(body) },
     input.transport ?? fetch,
   );
-  if (response.status === 400 && input.pageToken) {
-    throw new Error("LOG_PROVIDER_CURSOR_EXPIRED");
-  }
   if (!response.ok) throw new Error("LOG_PROVIDER_UNAVAILABLE");
-  const raw = asObject(response.payload);
-  const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 12) : [];
+  const raw = asObject(await readJsonLimited(response));
+  const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 100) : [];
   const errors = entries.map(parseCloudErrorEntry).filter((item): item is CloudErrorRecord => item !== null);
   const nextPageToken = optionalText(raw.nextPageToken);
   if (nextPageToken && nextPageToken.length > 1024) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");

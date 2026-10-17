@@ -29,7 +29,7 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 
 ## Notes (blockers, one line each)
 - RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
-- BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including daily counts, observed-event deduplication, and resumable Cloud Logging page-window columns before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.
+- BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including the daily table before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.
 - RESOLVED GR-117: chat-14 root boundary sends `{ requestId, kind }`; this endpoint accepts 8-character references and the two approved crash kinds (one route only).
 - BLOCKED GR-118 (Cloud Logging backup): orchestrator must set `LOG_ALERT_CLOUD_POLL_ENABLED=true`, `GOOGLE_CLOUD_PROJECT`, `LOG_ALERT_K8S_NAMESPACE`, and grant Workload Identity `logging.logEntries.list` in the selected project; verify real poll and cursor.
 - BLOCKED GR-118/GR-120/GR-122: provision external `INTERNAL_ALERT_TICK_SECRET`, production `TELEGRAM_ALERT_WEBHOOK_SECRET`, and independently reachable `DATABASE_URL` for health-watch; verify the cluster service DNS and webhook registration.

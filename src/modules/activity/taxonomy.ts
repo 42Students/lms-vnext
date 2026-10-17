@@ -180,7 +180,6 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.job.draft_created",
   PLACEMENTS_JOB_PUBLISHED:
     "placements.job.published",
-  PLACEMENTS_JOB_REOPENED: "placements.job.reopened",
   PLACEMENTS_JOB_CLOSED:
     "placements.job.closed",
   PLACEMENTS_APPLICATION_SUBMITTED:
@@ -215,13 +214,6 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.candidate_preferences.updated",
   PLACEMENTS_NOTIFICATION_PREFERENCES_UPDATED:
     "placements.notification_preferences.updated",
-  PLACEMENTS_RECRUITER_CREATED: "placements.recruiter.created",
-  PLACEMENTS_RECRUITER_UPDATED: "placements.recruiter.updated",
-  PLACEMENTS_RECRUITER_SUSPENDED: "placements.recruiter.suspended",
-  PLACEMENTS_RECRUITER_REACTIVATED: "placements.recruiter.reactivated",
-  PLACEMENTS_RECRUITER_SESSIONS_REVOKED: "placements.recruiter.sessions_revoked",
-  PLACEMENTS_RECRUITER_COLLEGE_GRANTED: "placements.recruiter.college_granted",
-  PLACEMENTS_RECRUITER_COLLEGE_REVOKED: "placements.recruiter.college_revoked",
   PLACEMENTS_RECRUITER_PROFILE_UPDATED:
     "placements.recruiter.profile_updated",
 } as const;

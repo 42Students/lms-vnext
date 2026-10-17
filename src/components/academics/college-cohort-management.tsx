@@ -72,7 +72,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         setCode("");
         setAcademicYear("");setStartDate("");setEndDate("");
         setExpectedEndPeriodId("");
-        setNotice(`Created batch “${parsed.data.name}”. Next, create its classes/sections.`);
+        setNotice("Batch created.");
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Batch creation failed."));
@@ -180,7 +180,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         });
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.error ?? "Graduation failed");
-        setNotice(`Marked “${row.name}” as graduated (Completed).`);
+        setNotice("Batch marked graduated.");
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Unable to graduate batch."));
@@ -225,7 +225,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false);setDiscardConfirm(false);
-        setNotice(`Updated batch “${parsed.data.name}”.`);
+        setNotice("Batch updated.");
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Batch update failed."));
@@ -246,11 +246,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Mark graduated
     </button>}
-    <button type="button" disabled={pending || row.status!=="PLANNED" ||
-        row.activeSections>0 || row.activeEnrolledLearners>0} onClick={retire}
-      title={row.activeSections>0 || row.activeEnrolledLearners>0
-        ? `Move or remove its ${row.activeSections} classes and ${row.activeEnrolledLearners} students before deleting.`
-        : row.status!=="PLANNED" ? "Only planned batches can be removed." : "Remove this unlinked planned batch"}
+    <button type="button" disabled={pending || row.status!=="PLANNED"} onClick={retire}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Remove
     </button>

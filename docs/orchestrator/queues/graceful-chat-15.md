@@ -30,10 +30,3 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 
 - GR-80: HTTP 503 maintenance injection added to every role matrix with the exact shared customer message; still requires orchestrator runtime execution.
 - GR-80/GR-34: New delayed duplicate-send tests for Recruiter conversation replies and TPO confirmed recruiter creation cover high-risk non-idempotent actions without a real send.
-
-### Round-4 source handoff (2026-10-17)
-
-- GR-80/81: `tests/e2e/graceful-leak-matrix.spec.ts` adds 42 leak negative controls, two valid-copy controls, and nine real intercepted POST contract probes; probe success does not certify application recovery.
-- GR-80/82: `tests/e2e/graceful-production-faults.spec.ts` adds four branded production sign-in failure cases and exhaustive initial-chunk sourcemap denial, included in the no-dev-server production config.
-- GR-81: `expectNoRawErrors` recognizes arbitrary underscore-style API codes inside alerts and more runtime/driver/network internals. Regular role/status badges remain allowed.
-- GR-80/82/83: Browser, helper and fake-provider integration executions are still orchestrator-owned and not run by chat-15; never mark the authored tests as passes.

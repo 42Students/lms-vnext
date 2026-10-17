@@ -40,7 +40,3 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 
 | SA-academics-people-109 | DONE with OD-23 no-hard-delete deviation (source authored; runtime pending) | `src/components/admin/super-admin-hr-accounts.tsx`, `src/components/admin/super-admin-hr-account-dialog.tsx`; `tests/unit/chat6-recruiter-lifecycle-round3.test.ts` → `SA-academics-people-109 offers suspend and reactivate with confirmation and session-safe archive` |
 | SA-academics-people-114 | DONE (source authored; browser parity pending) | `src/components/admin/super-admin-hr-accounts.tsx`, `src/components/admin/super-admin-hr-detail-drawer.tsx`; `tests/unit/chat6-recruiter-lifecycle-round3.test.ts` → `SA-academics-people-114 restores recruiter accounts page search and college access copy` |
-
-## Round 4 source verification (tests authored, not run)
-
-| SA-academics-people-79 | DONE (source authored; PostgreSQL/runtime pending) | `src/components/admin/admin-scoped-read-page.tsx`, `src/app/(authenticated)/admin/faculty/page.tsx`, `src/app/(authenticated)/admin/students/page.tsx`; `tests/unit/chat6-cross-page-verification-round4.test.ts` → `SA-academics-people-79 renders selected-college faculty and student overview metrics from scoped directory counts` |

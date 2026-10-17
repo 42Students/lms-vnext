@@ -3,7 +3,7 @@
  * keeps it on failure; this helper never clears input state.
  * Usage: await uploadWithProgress(url, file, percent => setProgress(percent)).
  */
-import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error";
+import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 export function uploadWithProgress(url: string, file: File,
   onProgress: (percentage: number) => void, field = "file"): Promise<void> {
   return new Promise<void>((resolve, reject) => {
@@ -20,10 +20,10 @@ export function uploadWithProgress(url: string, file: File,
     xhr.addEventListener("abort", () => reject(new Error(FRIENDLY_MESSAGES.offline)));
     xhr.addEventListener("load", () => {
       if (xhr.status >= 200 && xhr.status < 300) resolve();
-      else reject(new Error(friendlyApiError({
-        status: xhr.status || undefined,
-        network: xhr.status === 0,
-      })));
+      else reject(new Error(xhr.status === 413 ? FRIENDLY_MESSAGES.tooLarge :
+        xhr.status === 415 ? FRIENDLY_MESSAGES.fileType :
+        xhr.status === 503 ? FRIENDLY_MESSAGES.maintenance :
+        FRIENDLY_MESSAGES.unexpected));
     });
     const payload = new FormData();
     payload.append(field, file);

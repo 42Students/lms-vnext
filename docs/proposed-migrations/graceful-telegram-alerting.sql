@@ -32,9 +32,7 @@ CREATE INDEX IF NOT EXISTS db10_log_alert_signature_accounts_hash_idx
 CREATE TABLE IF NOT EXISTS log_alert_states (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   state_key varchar(64) NOT NULL UNIQUE CHECK (length(trim(state_key)) > 0),
-  poll_cursor_at timestamptz, poll_page_token varchar(1024),
-  poll_window_start_at timestamptz, poll_window_end_at timestamptz,
-  admin_last_viewed_at timestamptz,
+  poll_cursor_at timestamptz, admin_last_viewed_at timestamptz,
   burst_minute_at timestamptz, burst_count bigint NOT NULL DEFAULT 0,
   overflow_count bigint NOT NULL DEFAULT 0, last_digest_day varchar(10)
 );
@@ -78,9 +76,3 @@ CREATE TABLE IF NOT EXISTS log_alert_observed_events (
 );
 CREATE INDEX IF NOT EXISTS db10_log_alert_observed_at_idx
   ON log_alert_observed_events (observed_at);
-
--- Cloud Logging may return many errors sharing one timestamp. Checkpoint an
--- entire page with a stable query window, never part of a page by timestamp.
-ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS poll_page_token varchar(1024);
-ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS poll_window_start_at timestamptz;
-ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS poll_window_end_at timestamptz;

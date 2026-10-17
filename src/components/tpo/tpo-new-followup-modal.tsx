@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 type LeadChoice={id:string;name:string;companyName:string|null};
@@ -15,27 +15,6 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const [toast,setToast]=useState("");
- const hasDraft=open&&Boolean(leadId||when||note.trim());
- useEffect(()=>{
-  if(!hasDraft)return;
-  const protectUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
-  const protectLinks=(event:MouseEvent)=>{
-   const target=event.target;
-   if(!(target instanceof Element))return;
-   const link=target.closest("a[href]");
-   if(link&&!window.confirm("Discard this unfinished follow-up?")){
-    event.preventDefault();event.stopPropagation();
-   }
-  };
-  window.addEventListener("beforeunload",protectUnload);
-  document.addEventListener("click",protectLinks,true);
-  return ()=>{window.removeEventListener("beforeunload",protectUnload);document.removeEventListener("click",protectLinks,true);};
- },[hasDraft]);
- function dismiss(){
-  if(saving)return;
-  if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;
-  setOpen(false);
- }
  async function show(){
   if(loading||saving)return;
   setOpen(true);setLoading(true);setError("");setToast("");
@@ -78,7 +57,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   </button>
   {toast?<p role="status" className="px-2 py-1 text-xs text-body">{toast}</p>:null}
   {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-3"
-    onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();dismiss();}}}>
+    onKeyDown={event=>{if(event.key==="Escape"&&!saving)setOpen(false);}}>
    <section role="dialog" aria-modal="true" aria-labelledby="tpo-new-followup-title"
     className="w-full max-w-lg space-y-4 rounded-xl border border-border bg-surface p-5 shadow-xl">
     <h2 id="tpo-new-followup-title" className="text-lg font-semibold">New follow-up</h2>
@@ -103,7 +82,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
      </label>
      {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
      <div className="flex justify-end gap-2">
-      <button type="button" disabled={saving} onClick={dismiss}
+      <button type="button" disabled={saving} onClick={()=>setOpen(false)}
        className="min-h-11 rounded-md border border-border px-4 text-sm">Cancel</button>
       <button type="submit" disabled={saving||loading} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
        {saving?"Adding…":"Add"}
