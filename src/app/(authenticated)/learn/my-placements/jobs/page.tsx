@@ -24,6 +24,7 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       externalApplicationUrl: row.job.externalApplicationUrl,
       applicationDeadline: row.job.applicationDeadline?.toISOString() ?? null,
       publishedAt: row.job.publishedAt?.toISOString() ?? null,
+      stipendPerMonthInr:row.job.stipendPerMonthInr,
     },
     roleOption: {
       id: row.roleOption.id,
@@ -35,6 +36,9 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
       minimumAnnualCtcInr: row.roleOption.minimumAnnualCtcInr,
       maximumAnnualCtcInr: row.roleOption.maximumAnnualCtcInr,
       isPrimary: row.roleOption.isPrimary,
+      fixedLpa:row.roleOption.fixedLpa,
+      variableLpa:row.roleOption.variableLpa,
+      joiningBonusLpa:row.roleOption.joiningBonusLpa,
     },
     company: row.company,
     application: row.application
