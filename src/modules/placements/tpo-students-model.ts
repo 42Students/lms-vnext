@@ -45,6 +45,7 @@ export type TpoStudentSource = {
   programName: string;
   cohortId: string;
   cohortName: string;
+  classIds:readonly string[];
   fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   participation: ResolvedPlacementParticipation;
@@ -78,6 +79,7 @@ export type TpoStudentRow = {
   programName: string;
   cohortId: string;
   cohortName: string;
+  classIds:readonly string[];
   fromFinishedBatch?: boolean;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
@@ -122,6 +124,7 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   branchId?: string;
   programId?: string;
+  classId?:string;
   search?: string;
   page: number;
   pageSize: number;
@@ -273,6 +276,7 @@ export function deriveTpoStudent(
     programName: source.programName,
     cohortId: source.cohortId,
     cohortName: source.cohortName,
+    classIds:source.classIds,
     fromFinishedBatch: Boolean(source.fromFinishedBatch),
     registrationChoice: source.registrationChoice,
     registeredForPlacements,
@@ -411,6 +415,7 @@ export function filterTpoStudentRoster(
         row.branchId === filter.branchId,
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
     .filter((row) => {
       if (!search) return true;
 
