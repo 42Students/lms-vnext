@@ -119,7 +119,7 @@ export default async function TpoActorAuditPage({
         <div className="overflow-x-auto rounded-xl border border-border bg-surface">
           <table className="w-full min-w-[56rem] text-left text-sm">
             <thead className="bg-surface-subtle">
-              <tr>{["Recorded (IST)", "Actor user ID", "Action", "Entity type", "Entity ID"].map(
+              <tr>{["Recorded (IST)", "Actor", "Action", "Entity type", "Entity ID"].map(
                 (heading) => <th key={heading} scope="col" className="border-b border-border p-3">{heading}</th>,
               )}</tr>
             </thead>
@@ -127,7 +127,7 @@ export default async function TpoActorAuditPage({
               <td className="p-3"><time dateTime={row.occurredAt}>
                 {dateTime.format(new Date(row.occurredAt))}
               </time></td>
-              <td className="p-3 font-mono text-xs">{row.actorId ?? "System / unknown"}</td>
+              <td className="p-3 text-sm">{row.actorName?.trim()||"System / unknown"}</td>
               <td className="p-3">{row.eventType}</td>
               <td className="p-3">{row.entityType}</td>
               <td className="p-3 font-mono text-xs">{row.entityId}</td>
