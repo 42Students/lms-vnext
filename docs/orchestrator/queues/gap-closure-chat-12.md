@@ -185,3 +185,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 44 (source-only): TPO-students-47 DONE for current exact header/search, filtered empty state, counts and recoverable route error (browser stale-success fallback still requires acceptance); TPO-requests-verification-13 OPEN (partial): failed-row copying now formula-safe; bulk-run audit and proof-aware skips remain. `tests/unit/chat12-requests-bulk-copy-failed.test.ts` named `TPO-requests-verification-13` (authored, unrun). Round 44 reconciled existing selection tests to filtered cross-page behavior.
 
 - Round 45: TPO-students-12 OPEN (partial) now supports a bounded page-scoped Show/Hide/Clear action backed by tenant-checked PUT/DELETE with named tests; exact optimistic undo and audit still require work.
+
+- Round 46: TPO-students-34 OPEN (runtime acceptance): implemented transactionally scoped academic-import application recheck and NOW_INELIGIBLE notifications; real-Postgres before/after, concurrency and notifications tests must still execute.
