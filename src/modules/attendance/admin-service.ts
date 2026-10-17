@@ -156,6 +156,7 @@ export async function getAdminAttendanceOptions(
           courseId: courses.id,
           courseName: courses.name,
           courseCode: courses.code,
+          offeringType:courseOfferings.type,
           academicPeriodId:
             academicPeriods.id,
           academicPeriodName:
