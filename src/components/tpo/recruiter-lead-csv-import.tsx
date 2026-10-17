@@ -214,6 +214,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
                 <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <nav aria-label="Import preview groups" className="flex flex-wrap gap-2">
+                  {([["ALL","All"],["NEW","New"],["EXISTING","Already recruiters"],
+                    ["INVALID","To fix"],["SKIPPED","Skipped"]] as const).map(([value,label])=>
+                    <button key={value} type="button" aria-pressed={rowGroup===value}
+                      className={rowGroup===value?primaryClass:buttonClass}
+                      onClick={()=>setRowGroup(value)}>{label}</button>)}
+                </nav>
                 <div className="max-h-56 overflow-auto rounded-lg border border-border">
                   <table className="w-full text-left text-sm">
                     <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
@@ -225,7 +232,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       </tr>
                     </thead>
                     <tbody>
-                      {preview.rows.map(item => (
+                      {previewRows.map(item => (
                         <tr key={item.row} className="border-t border-border">
                           <td className="px-3 py-2">{item.row}</td>
                           <td className="px-3 py-2">{item.name || "Unnamed"}</td>
