@@ -15,6 +15,8 @@ function unpackXlsx(bytes:Buffer):Map<string,string>{
  for(let i=0;i<count;i++){
   if(offset+46>bytes.length||bytes.readUInt32LE(offset)!==0x02014b50)throw Error("Invalid workbook directory.");
   const compression=bytes.readUInt16LE(offset+10);
+  const flags=bytes.readUInt16LE(offset+8);
+  if((flags&1)!==0)throw Error("Password-protected Excel workbooks are not supported.");
   const packed=bytes.readUInt32LE(offset+20),raw=bytes.readUInt32LE(offset+24);
   const nameLen=bytes.readUInt16LE(offset+28),extra=bytes.readUInt16LE(offset+30),comment=bytes.readUInt16LE(offset+32);
   const local=bytes.readUInt32LE(offset+42);
@@ -28,6 +30,7 @@ function unpackXlsx(bytes:Buffer):Map<string,string>{
   const zip=bytes.subarray(pos,pos+packed);
   const unzipped=compression===0?zip:compression===8?inflateRawSync(zip,{maxOutputLength:12_000_000}):null;
   if(!unzipped||unzipped.length>12_000_000)throw Error("Unsupported workbook compression.");
+  if(entries.has(name))throw Error("Workbook contains duplicate worksheet or shared-string entries.");
   entries.set(name,unzipped.toString("utf8"));
  }
  if(!entries.has("xl/worksheets/sheet1.xml"))throw Error("First worksheet was not found.");
@@ -50,20 +53,35 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
  }
  const sheet=files.get("xl/worksheets/sheet1.xml")!;
  const rows:string[][]=[];
- for(const rowMatch of sheet.matchAll(/<row\b[^>]*>([\s\S]*?)<\/row>/g)){
+ let expectedSheetRow=1;
+ for(const rowMatch of sheet.matchAll(/<row\b([^>]*)>([\s\S]*?)<\/row>/g)){
+  const observed=/\br="([0-9]+)"/.exec(rowMatch[1]??"");
+  const rowNumber=observed?Number(observed[1]):expectedSheetRow;
+  if(!Number.isSafeInteger(rowNumber)||rowNumber!==expectedSheetRow)
+   throw Error("Worksheet contains skipped, reordered or duplicate row numbers. Keep a continuous header and student list.");
+  expectedSheetRow++;
   if(rows.length>=1001)throw Error("Import at most 1,000 worksheet rows.");
   const values:string[]=[];
-  for(const c of rowMatch[1]!.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){
+  for(const c of rowMatch[2]!.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){
    const attr=c[1]??"",body=c[2]??"";
+   if(/<f(?:\s|>|\/)/i.test(body))
+    throw Error("Formula cells are not accepted for company results. Paste values first.");
    const ref=/\br="([^"]+)"/.exec(attr)?.[1]??"";
+   if(!/^[A-Z]{1,3}[1-9][0-9]*$/i.test(ref))throw Error("Worksheet cell coordinate is missing or invalid.");
+   if(Number(/([0-9]+)$/.exec(ref)![1])!==rowNumber)
+    throw Error("A worksheet cell has a row coordinate different from its learner row.");
    const position=cellIndex(ref);
-   if(position<0||position>39)continue;
+   if(position<0||position>39)throw Error("Each worksheet cell must have a valid column from A to AN.");
+   if(values[position]!==undefined)throw Error("Duplicate worksheet cell coordinate. Export a clean sheet before importing.");
    const type=/\bt="([^"]+)"/.exec(attr)?.[1];
    const inline=[...body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)].map(x=>decodeXml(x[1]??"")).join("");
    const raw=/<v\b[^>]*>([\s\S]*?)<\/v>/.exec(body)?.[1]??"";
-   values[position]=type==="s"?shared[Number(raw)]??"":type==="inlineStr"?inline:decodeXml(raw);
+   if(type==="s"&&(!/^\d+$/.test(raw)||!Number.isSafeInteger(Number(raw))||shared[Number(raw)]===undefined)) throw Error("An Excel cell references an unknown shared string.");
+   values[position]=type==="s"?shared[Number(raw)]!:type==="inlineStr"?inline:decodeXml(raw);
   }
-  if(values.some(Boolean))rows.push(values.map(x=>x??""));
+  if(!values.some(value=>value!==undefined&&value.trim()!==""))
+   throw Error("A blank worksheet row would shift the learner-to-result mapping. Remove it before import.");
+  rows.push(values.map(x=>x??""));
  }
  return rows;
 }

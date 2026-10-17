@@ -1,3 +1,5 @@
+import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
+import {listTpoBatchRecentCohortActions} from "@/modules/placements/tpo-batch-recent-decision-service";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -36,9 +38,10 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
  const batches=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
- const [eligibility,journey]=await Promise.all([
+ const [eligibility,journey,recent]=await Promise.all([
   listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)),
   listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)),
+  listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)),
  ]);
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data};
  const programs=listTpoBatchPrograms(data.batches);
@@ -119,6 +122,11 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         {summary.needsReview>0?<p className="text-xs text-warning">Ambiguous class membership requires review.</p>:null}
       </div>;
     })()}
+    {recent.get(b.id)?<section className="rounded-md border border-border p-3 text-xs">
+     <p className="font-semibold">Last batch decision</p>
+     <p className="text-muted-foreground">By {recent.get(b.id)!.actor} · {new Date(recent.get(b.id)!.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+     {recent.get(b.id)!.canUndo&&!b.finishedAt?<TpoBatchUndoControl batchId={b.id} actionId={recent.get(b.id)!.actionId}/>:null}
+    </section>:null}
     <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility.get(b.id),journey.get(b.id))} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold">{tpoBatchNextAction(b,data.ready,eligibility.get(b.id),journey.get(b.id))}</Link>
    </li>)}</ul>}
  </main>;

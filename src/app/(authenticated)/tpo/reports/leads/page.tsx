@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import {filterCompanyEngagement,companyEngagementHref} from "@/modules/placements/tpo-company-engagement-filter-model";
 import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-drives-service";
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -22,6 +23,7 @@ import { getPlacementReportWorkspace } from "@/modules/placements/report-service
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  companyId?:string|string[];
 };
 
 function first(
@@ -62,6 +64,8 @@ export default async function TpoLeadsReportPage({
   const ranDrives=await getTpoRecordedRanDrives(context,{collegeId,
    seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
   const companyEngagement=joinTpoCompanyEngagementWithPlacement(result.companyEngagement,workspace.report.byCompany,ranDrives);
+  const selectedCompanyId=first(query.companyId)??null;
+  const companyFilter=filterCompanyEngagement(companyEngagement,selectedCompanyId);
 
   const metrics = [
     ["Recruiter leads", leads.totals.leads],
@@ -117,13 +121,29 @@ export default async function TpoLeadsReportPage({
       <section aria-label="Recruiter engagement by company" className="space-y-3">
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
        <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A drive counts as run only when it has a completed round in the selected season/drive. Zero means no completed round is recorded, not proof that nothing occurred.</p>
+       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
+        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+        {workspace.selectedJobId?<input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+        <label className="grid min-w-60 flex-1 gap-1 text-sm font-semibold">Company
+         <select name="companyId" defaultValue={selectedCompanyId??""} className="min-h-11 rounded border border-border bg-surface px-3">
+          <option value="">All companies</option>
+          {companyEngagement.filter(row=>row.companyId).map(row=>
+           <option key={row.companyId!} value={row.companyId!}>{row.companyName}</option>)}
+         </select>
+        </label>
+        <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        {selectedCompanyId?<Link href={companyEngagementHref({seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId})}
+         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear company</Link>:null}
+       </form>
+       {!companyFilter.valid?<p role="alert" className="text-sm text-warning-text">This company is not in the authorized college report. Clear the company filter.</p>:null}
        <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
         ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
         ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+        ...(selectedCompanyId?{companyId:selectedCompanyId}:{}),
        }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
-        rows={companyEngagement.map(row=>{
+        rows={companyFilter.rows.map(row=>{
          return [row.companyName,row.contacts,row.invited,row.joined,row.ranDrives,row.placed];
         })}
         emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>

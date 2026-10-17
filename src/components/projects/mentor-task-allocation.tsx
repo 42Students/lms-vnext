@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useMemo,useState} from "react";
 import Link from "next/link";
-import {useRouter} from "next/navigation";
+import {useRouter,useSearchParams} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Task={id:string;title:string;sprintId:string|null;carriedFromSprintId?:string|null;assigneeMembershipId:string|null;
  updatedAt:Date;status:string;priority:string;estimatePoints:number|null};
@@ -11,17 +11,41 @@ type Release={id:string;title:string};
 export function MentorTaskAllocation({projectId,initialTasks,members,sprints,releases,readOnly=false}:{
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
- const router=useRouter();
- const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),[sprint,setSprint]=useState("");
+ const router=useRouter(),searchParams=useSearchParams();
+ const [tasks,setTasks]=useState(initialTasks),
+   [release,setRelease]=useState(searchParams.get("release")??""),
+   [sprint,setSprint]=useState(searchParams.get("sprint")??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [filtersOpen,setFiltersOpen]=useState(false);
+ const [assignmentScope,setAssignmentScope]=useState(searchParams.get("assignment")??"");
+ const [priority,setPriority]=useState(searchParams.get("priority")??"");
+ const [status,setStatus]=useState(searchParams.get("status")??"");
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ function remember(name:string,value:string){
+  const query=new URLSearchParams(window.location.search);
+  if(value)query.set(name,value);else query.delete(name);
+  query.delete("page");
+  window.history.replaceState(null,"",window.location.pathname+
+    (query.toString()?"?"+query.toString():""));
+ }
  const learners=members.filter(member=>member.role==="LEARNER");
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
-  return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release);
- }),[tasks,release,sprint,sprints]);
- const groups=[{membershipId:null,displayName:"Unassigned"},...learners];
+  return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release)&&
+   (!priority||task.priority===priority)&&(!status||task.status===status)&&
+   (!assignmentScope||(assignmentScope==="UNASSIGNED"?task.assigneeMembershipId===null:
+     assignmentScope==="ASSIGNED"?task.assigneeMembershipId!==null:
+     task.assigneeMembershipId===assignmentScope));
+ }),[tasks,release,sprint,sprints,priority,status,assignmentScope]);
+ const activeMemberIds=new Set(learners.map(row=>row.membershipId));
+ const previousAssignees=[...new Set(tasks.map(row=>row.assigneeMembershipId)
+   .filter((id):id is string=>Boolean(id)&&!activeMemberIds.has(id)))];
+ const groups=[{membershipId:null,displayName:"Unassigned"},...learners,
+   ...previousAssignees.map(id=>({membershipId:id,displayName:"Former member"}))];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
+ const projectUnassigned=tasks.filter(t=>t.assigneeMembershipId===null &&
+   !["DONE","IN_REVIEW"].includes(t.status)).length;
+ const activeFilterCount=[release,sprint,priority,status,assignmentScope].filter(Boolean).length;
  async function assign(id:string,membershipId:string|null){
   const task=tasks.find(row=>row.id===id);
   if(!task||busy||readOnly||["DONE","IN_REVIEW"].includes(task.status)||
@@ -46,10 +70,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-primary-text underline">Back to project</Link>
     <h1 className="mt-2 text-xl font-semibold">Task Allocation</h1>
-    <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} tasks</p>
+    <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
+    <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
+    {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text">
+      {previousAssignees.length} former assignee(s) have tasks that need review.
+    </p>:null}
    </div>
   </div>
-  {!readOnly?<button type="button" disabled={busy||unassigned===0||!learners.length}
+  {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
      className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
      onClick={async()=>{
        if(!window.confirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
@@ -60,24 +88,66 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
-     }}>Auto-assign {unassigned} unassigned task(s)</button>:null}
-  <div className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
+     }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null>
+  <button type="button" aria-expanded={filtersOpen}
+    aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
+    onClick={()=>setFiltersOpen(open=>!open)}
+    className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    Filters{activeFilterCount?" ("+activeFilterCount+")":""}
+  </button>
+  {filtersOpen?<div id="mentor-allocation-filters"
+    className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
-    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
+    <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
+      remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
      <option value="">All releases</option>
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprint} onChange={e=>setSprint(e.target.value)}
+    <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
       <option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
-  </div>
+   <label className="text-sm font-semibold">Priority
+    <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">All priorities</option>
+     {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
+    </select>
+   </label>
+   <label className="text-sm font-semibold">Status
+    <select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">All statuses</option>
+     {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
+      <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
+    </select>
+   </label>
+   <label className="text-sm font-semibold">Assignment
+    <select value={assignmentScope}
+      onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">Everyone</option>
+     <option value="UNASSIGNED">Unassigned</option>
+     <option value="ASSIGNED">Assigned</option>
+     {learners.map(member=><option value={member.membershipId} key={member.membershipId}>
+      {member.displayName??"Learner"}</option>)}
+    </select>
+   </label>
+   <button type="button" onClick={()=>{
+    setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
+    ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
+   }} className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
+  </div>:null}
+  {activeFilterCount>0?<p role="status" className="text-xs text-body">
+    {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
+    {" "}{filtered.length} matching {filtered.length===1?"task":"tasks"}
+  </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   <section className="overflow-x-auto rounded-xl border border-border p-3">
@@ -101,6 +171,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       })}</tbody>
     </table>
   </section>
+  {filtered.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+    {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
+  </p>:null}
   <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
@@ -108,21 +181,40 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className="flex justify-between text-sm font-semibold">
-      <span>{group.displayName}</span><span>{cards.length}</span></h2>
+      <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
+     <p className="mt-1 text-xs text-muted-foreground">
+      {cards.filter(task=>task.status==="DONE").length} done ·
+      {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·
+      {" "}{cards.reduce((sum,task)=>sum+(task.estimatePoints??0),0)} pts
+     </p>
      <ul className="mt-3 space-y-3">{cards.map(task=><li key={task.id}
        draggable={!readOnly&&!busy&&!["DONE","IN_REVIEW"].includes(task.status)}
        onDragStart={event=>event.dataTransfer.setData("text/plain",task.id)}
        className="rounded-lg border border-border bg-surface p-3 text-sm">
-       <p className="font-semibold">{task.title}</p>
+       <p className="break-words font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
-       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:null}
-       {group.membershipId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
+       <p className="mt-1 text-xs text-body">
+         {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
+       </p>
+       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:
+         <p className="mt-1 text-xs text-body">Sprint: {
+           sprints.find(item=>item.id===task.sprintId)?.title??"Unknown sprint"
+         }</p>}
+       {group.membershipId===null&&task.status!=="DONE"&&task.status!=="IN_REVIEW"?
+         <p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
+       {group.membershipId!==null&&!activeMemberIds.has(group.membershipId)?
+         <p className="mt-1 text-xs font-semibold text-warning-text">
+           Reassign from former member
+         </p>:null}
        {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
-        <select aria-label={"Assign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
+        <select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2 text-sm">
-         <option value="">Unassigned</option>{learners.map(member=>
+         <option value="">Unassigned</option>
+         {task.assigneeMembershipId&&!activeMemberIds.has(task.assigneeMembershipId)?
+           <option value={task.assigneeMembershipId} disabled>Former member (reassign)</option>:null}
+         {learners.map(member=>
           <option key={member.membershipId} value={member.membershipId}>{member.displayName??"Learner"}</option>)}
         </select></label>:null}
       </li>)}

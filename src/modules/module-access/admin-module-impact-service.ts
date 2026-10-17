@@ -1,9 +1,9 @@
 import "server-only";
 import {moduleDisableImpactSummary} from "./admin-module-impact-model";
-import {and,count,eq,isNull} from "drizzle-orm";
+import {and,count,countDistinct,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {colleges,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
+import {colleges,collegeMemberships,membershipRoles,projectInstances,projectMembers,placementJobs,placementApplications,placementOffers} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 const id=z.uuid();
@@ -16,13 +16,21 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
  if(!college)throw new AuthorizationError("college.read");
  requirePermission(ctx,"college.read",{collegeId,organizationId:college.organizationId});
  const db=getDb();
+ const [population]=await db.select({total:countDistinct(collegeMemberships.id)})
+  .from(collegeMemberships)
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE")));
+ const students=population?.total??0;
  if(moduleName==="projects"){
   const [row]=await db.select({total:count()}).from(projectMembers)
    .innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
    .where(and(eq(projectInstances.collegeId,collegeId),eq(projectInstances.status,"ACTIVE"),
      eq(projectMembers.role,"MENTOR"),eq(projectMembers.isPrimary,true),isNull(projectMembers.endedAt)));
   const counts=[row?.total??0];
-  return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
+  return {module:moduleName,students,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
  if(moduleName==="placements"){
   const [drives,applications,offers]=await Promise.all([
@@ -39,5 +47,5 @@ export async function readModuleDisableImpact(ctx:RequestContext,collegeRaw:stri
   const counts=[drives[0]?.total??0,applications[0]?.total??0,offers[0]?.total??0];
   return {module:moduleName,counts,summary:moduleDisableImpactSummary(moduleName,counts)};
  }
- return {module:moduleName,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
+ return {module:moduleName,students,counts:[],summary:moduleDisableImpactSummary(moduleName,[])};
 }
