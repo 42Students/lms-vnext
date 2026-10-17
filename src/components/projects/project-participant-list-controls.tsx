@@ -30,6 +30,10 @@ const statusOptions = [
   ["COMPLETED", "Completed"],
   ["ARCHIVED", "Archived"],
 ] as const;
+const mentorStatusOptions = [
+ ["CURRENT","Current only"],["ACTIVE","Active"],["IN_PROGRESS","In progress"],
+ ["READY","Ready"],["BLOCKED","Blocked"],["ARCHIVED","Archived"],
+] as const;
 
 export function ProjectParticipantListControls({
   basePath,
@@ -68,7 +72,7 @@ export function ProjectParticipantListControls({
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
           <option value="">All statuses</option>
-          {statusOptions.map(
+          {(mentor?mentorStatusOptions:statusOptions).map(
             ([value, label]) => (
               <option
                 key={value}
@@ -172,7 +176,7 @@ export function ProjectParticipantListControls({
           )}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
-          {(learner?[10,25,50]:[25,50,100]).map((size) => (
+          {(learner||mentor?[10,25,50]:[25,50,100]).map((size) => (
             <option
               key={size}
               value={size}
@@ -250,7 +254,7 @@ export function ProjectParticipantPagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
       <p className="m-0">
-        {basePath==="/learn/projects"
+        {(basePath==="/learn/projects"||basePath==="/mentor/projects")
           ? ((total===0?0:(page-1)*(query.pageSize??25)+1)+"–"+
              Math.min(total,page*(query.pageSize??25))+" of "+total+" projects")
           : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
