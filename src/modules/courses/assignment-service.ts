@@ -178,6 +178,21 @@ export async function listCourseAssignments(
     );
 }
 
+/** Read editable settings only after the same tenant-wide mutation authorization. */
+export async function getCourseAssignmentForAdmin(context:RequestContext,assignmentIdInput:string){
+ const assignmentId=courseAssignmentIdSchema.parse(assignmentIdInput);
+ const scope=await loadCourseAssignmentScope(assignmentId);
+ await authorizeAssignmentMutation(context,scope);
+ const [row]=await getDb().select({
+  id:courseAssignments.id,
+  title:courseAssignments.title,
+  description:courseAssignments.description,
+  allowedMethods:courseAssignments.allowedSubmissionMethods,
+ }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
+ if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+ return row;
+}
+
 export async function createCourseAssignment(
   context: RequestContext,
   rawInput: CreateCourseAssignmentInput,
