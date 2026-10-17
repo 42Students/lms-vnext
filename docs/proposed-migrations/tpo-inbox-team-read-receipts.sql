@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS placement_tpo_internal_reads (
  thread_id uuid NOT NULL,
  membership_id uuid NOT NULL,
  read_through timestamptz NOT NULL,
+ following boolean NOT NULL DEFAULT true,
+ muted_at timestamptz,
  CONSTRAINT tpo_internal_reads_pk PRIMARY KEY(thread_id,membership_id),
  CONSTRAINT tpo_internal_reads_thread_college_fk
   FOREIGN KEY(thread_id,college_id)
