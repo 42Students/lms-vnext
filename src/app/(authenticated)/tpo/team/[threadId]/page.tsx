@@ -37,7 +37,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
-  <ol role="log" aria-live="polite" aria-label="Private team messages" className="space-y-3">
+  <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="space-y-3">
    {result.messages.map(message=><li id={"team-message-"+message.id} key={message.id}
     className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <p className="text-xs text-muted-foreground">{message.authorMembershipId===context.membership?.id?"You":"Team member"} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
