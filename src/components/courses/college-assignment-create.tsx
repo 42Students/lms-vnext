@@ -2,6 +2,8 @@
 
 import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
+import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 
@@ -16,6 +18,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState("");
  const [points,setPoints]=useState("10");
+ const [allowedMethods,setAllowedMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [pending,setPending]=useState(false);
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
@@ -49,7 +52,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:chosen.id,deliveryId:delivery?.deliveryId??null,
       title:title.trim(),description:description.trim()||null,
-      dueAt:due?.toISOString()??null,maxPoints,sequence:chosen.nextSequence}),
+      dueAt:due?.toISOString()??null,maxPoints,sequence:chosen.nextSequence,allowedMethods}),
    });
    const payload=await response.json().catch(()=>null);
    if(!response.ok||!payload?.assignment?.id)throw new Error(
@@ -102,6 +105,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="rounded border border-border bg-surface p-2"/></label>
+   <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
     <button type="button" disabled={pending||!title.trim()} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
