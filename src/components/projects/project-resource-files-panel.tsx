@@ -48,13 +48,15 @@ function putWithProgress(file:File,url:string,headers:Record<string,string>,
     xhr.send(file);
   });
 }
-export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canUpload=canManage}:{
+export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],canManage,canUpload=canManage}:{
   projectId:string;initialFiles:ProjectResourceFile[];canManage:boolean;canUpload?:boolean;
+  resources?:readonly {id:string;title:string}[];
 }){
   const [files,setFiles]=useState(initialFiles);
   const [selected,setSelected]=useState<File|null>(null);
   const [uploadTitle,setUploadTitle]=useState("");
   const [uploadDescription,setUploadDescription]=useState("");
+  const [linkedResourceId,setLinkedResourceId]=useState("");
   const [progress,setProgress]=useState<number|null>(null);
   const [busy,setBusy]=useState(false);
   const [feedback,setFeedback]=useState<string|null>(null);
@@ -84,7 +86,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
     try{
       const response=await jsonRequest<GrantResponse>(endpoint,"POST",{
         originalName:declaration.originalName,contentType:declaration.contentType,
-        sizeBytes:declaration.sizeBytes,...(uploadTitle.trim()?{title:uploadTitle.trim()}:{}),
+        sizeBytes:declaration.sizeBytes,...(linkedResourceId?{resourceId:linkedResourceId}:{}),
+        ...(uploadTitle.trim()?{title:uploadTitle.trim()}:{}),
         ...(uploadDescription.trim()?{description:uploadDescription.trim()}:{}),
       });
       if(!validProjectResourceUploadGrant(response.grant)||
@@ -98,7 +101,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
       const completed=await jsonRequest<FileResponse>(fileEndpoint(response.file.id)+"/complete","POST");
       setFiles(current=>current.map(row=>row.id===completed.file.id?completed.file:row));
       await refresh();
-      setSelected(null);setUploadTitle("");setUploadDescription("");
+      setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
       setFeedback(completed.file.status==="READY"?"Attached":fileStatusDescriptor(completed.file.status).label);
     }catch(error){
       problem(error);
@@ -167,6 +170,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
             disabled={busy} placeholder="Short note about this resource"/>
         </label>
       </div>
+      {resources.length>0?<label className="block text-sm font-medium text-body">Related resource (optional)
+        <select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
+          className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
+          <option value="">New standalone file</option>
+          {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+        </select>
+      </label>:null}
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
@@ -199,6 +209,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
               {file.description&&<p className="mt-1 text-sm text-body">{file.description}</p>}
+              {file.resourceId&&resources.some(item=>item.id===file.resourceId)?
+                <p className="mt-1 text-xs font-semibold text-body">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
               <p className="mt-1 text-xs text-muted-foreground">
                 Last updated: <time dateTime={file.completedAt??file.createdAt}>
                   {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
