@@ -171,7 +171,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view">
+    Pick<CalendarState, "anchor" | "view" | "kind">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -191,9 +191,8 @@ function calendarHref(
   }
 
   if (audience === "TPO") {
-    if (state.kind) {
-      params.set("kind", state.kind);
-    }
+    const requestedKind="kind" in overrides?overrides.kind:state.kind;
+    if (requestedKind) params.set("kind", requestedKind);
   } else {
     params.set(
       "roundKind",
@@ -451,6 +450,15 @@ export async function PlacementCalendarWorkspace({
         roundKind: state.roundKind,
       },
     );
+
+  const eventTypeCountsSource=audience==="TPO"&&state.kind
+   ?await listPlacementCalendarEvents(context,{
+    collegeId,from:window.from,to:window.to,company:state.company||undefined,
+   })
+   :response;
+  const eventTypeCounts=new Map<string,number>();
+  for(const item of eventTypeCountsSource.events)
+   eventTypeCounts.set(item.kind,(eventTypeCounts.get(item.kind)??0)+1);
 
   // The shared read service supports event-kind and
   // company filtering. The College Admin and Super Admin
