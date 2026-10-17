@@ -7,6 +7,7 @@ import {
   type AdminAttendanceWorkspaceData,
 } from "@/components/attendance/admin-attendance-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
 import {
   getAdminAttendanceGrid,
   getAdminAttendanceOptions,
@@ -36,15 +37,17 @@ export default async function CollegeAttendancePage({
     context.membership?.collegeId ??
     (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
   if (!collegeId) {
-    throw new Error("Select an active college to view attendance.");
+    return <ErrorState title="Choose a college to view attendance" description="Select an active college in your scope switcher, then try again." action={<Link href="/college" className="font-semibold text-primary-text underline">Return to college dashboard</Link>}/>;
   }
-  const query = z.object({
+  const parsed = z.object({
     deliveryId: z.uuid().optional(),
     sectionId: z.uuid().optional(),
     courseId: z.uuid().optional(),
     allCourses: z.enum(["1"]).optional(),
     month: z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/).optional(),
-  }).parse(await searchParams);
+  }).safeParse(await searchParams);
+  if (!parsed.success) return <ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="font-semibold text-primary-text underline">Reset attendance filters</Link>}/>;
+  const query=parsed.data;
   const month = query.month ?? currentMonth();
   const options = await getAdminAttendanceOptions(context, collegeId);
   const requestedDelivery = options.deliveries.find(
