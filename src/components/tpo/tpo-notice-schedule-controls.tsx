@@ -2,7 +2,7 @@
 import {useState} from "react";
 
 export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
- count:number|null;enabled:boolean;minDateTime:string;
+ count:number|null;enabled:boolean;minDateTime?:string;
 }){
  const [mode,setMode]=useState<"NOW"|"LATER">("NOW");
  return <div className="space-y-3">
