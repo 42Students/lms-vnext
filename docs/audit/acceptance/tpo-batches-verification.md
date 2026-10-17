@@ -163,3 +163,9 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 |---|---|---|
 | TPO-batches-40 | DONE (copy regression repair) | `src/components/tpo/tpo-batch-eligibility-import.tsx`: modal title `Import eligibility`, action `Confirm import`, and preserved draft/recovery. `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-40 uses the expected legacy import heading and confirm button`. |
 | TPO-batches-43 | DONE (test evidence corrected) | `src/components/tpo/tpo-batch-inline-decision.tsx` retains reviewed save, 3-character validation, six legacy reason chips and friendly errors. `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason` checks the six legacy strings, not invented alternatives; `tests/unit/tpo-batches-chat5-next-round.test.ts` verifies review gating and guarded save. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-batches-64 | DONE | Decision: Use college-scoped placements.manage for active TPO or College Admin with persisted role and active account checks; a Faculty role alone never grants batch management. Source: tpo-batch-workspace-read-service.ts. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-batches-64` (source/policy regression; executable CI pending). |
