@@ -115,7 +115,7 @@ export default async function HrPlacementJobPage({
     ? focusedReviewNavigation({candidateIds: focusedIds, currentId: selectedId})
     : null;
   const focusedHref = (id:string) => "/recruiter/drives/"+workspace.job.id+
-    "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id;
+    "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id+returnQuery;
   // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
   const now = new Date();
 
