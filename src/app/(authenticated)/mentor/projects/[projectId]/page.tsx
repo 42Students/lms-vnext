@@ -34,7 +34,7 @@ export default async function MentorProjectPage({
           : selectedTab === "team" ||
               selectedTab === "sprints" ||
               selectedTab === "resources"
-            ? tab
+            ? selectedTab
             : "overview";
   const access = await requireProjectReadAccess(
     context,
