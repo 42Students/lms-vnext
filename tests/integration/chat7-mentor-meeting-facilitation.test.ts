@@ -6,7 +6,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {createProjectTemplate,publishProjectTemplate,assignProjectTemplateToCollege}
   from "@/modules/projects/template-service";
-import {createProjectInstance} from "@/modules/projects/instance-service";
+import {createProjectInstance,getProjectInstanceWorkspace} from "@/modules/projects/instance-service";
 import {addProjectMember} from "@/modules/projects/member-service";
 import {listProjectMeetings,scheduleProjectMeeting} from "@/modules/projects/meeting-service";
 import {decideMentorProjectMeeting} from "@/modules/projects/mentor-meeting-decision-service";
@@ -120,9 +120,11 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
  it("MEN-projects-meetings-27 persists facilitator notes without leaking them into learner workspace",async({skip})=>{
   if(!(await migrationReady()))skip();
   const project=await fixture();
+  const workspace=await getProjectInstanceWorkspace(mentor,project.id);
   const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
    ...window,status:"SCHEDULED",outcome:"Work reviewed",meetingUrl:"https://meet.example.edu/room",
    expectedProjectUpdatedAt:await projectToken(project.id),
+   linkedSprintId:workspace.sprints[0]!.id,linkedTaskId:workspace.tasks[0]!.id,
    facilitation:{...emptyMentorMeetingFacilitation,notes:"Private reviewer preparation",
     actionItems:"Follow up after review",followUpStatus:"OPEN"},
   });
@@ -133,11 +135,28 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
    .toBe("Private reviewer preparation");
   expect(learnerRows.find(row=>row.id===meeting.id)?.facilitation)
    .toEqual(emptyMentorMeetingFacilitation);
+  const activityCount=async()=>Number((await pool.query<{count:string}>(`
+   select count(*)::text as count from activity_events where subject_id=$1
+    and event_type='projects.meeting.decided'`,[meeting.id])).rows[0]?.count??0);
+  const before=await activityCount();
+  const updated=await scheduleProjectMeeting(admin,project.id,meeting.id,{
+   ...window,status:"SCHEDULED",meetingUrl:"https://meet.example.edu/room",
+   expectedUpdatedAt:meeting.updatedAt.toISOString(),
+   // API note edits deliberately omit ceremony, linked sprint and linked task.
+   facilitation:{...emptyMentorMeetingFacilitation,notes:"Revised mentor-only notes"},
+  });
+  expect(updated.scheduledByUserId).toBe(mentor.user.id);
+  expect(updated.linkedSprintId).toBe(workspace.sprints[0]!.id);
+  expect(updated.linkedTaskId).toBe(workspace.tasks[0]!.id);
+  expect(updated.facilitation.notes).toBe("Revised mentor-only notes");
+  expect(await activityCount()).toBe(before);
+  expect((await listProjectMeetings(learner,project.id)).find(row=>row.id===meeting.id)?.facilitation)
+   .toEqual(emptyMentorMeetingFacilitation);
   await expect(decideMentorProjectMeeting(learner,project.id,meeting.id,{
-   action:"CANCEL",confirmed:true,expectedUpdatedAt:meeting.updatedAt.toISOString(),
+   action:"CANCEL",confirmed:true,expectedUpdatedAt:updated.updatedAt.toISOString(),
   })).rejects.toBeDefined();
   const completed=await decideMentorProjectMeeting(mentor,project.id,meeting.id,{
-   action:"COMPLETE",confirmed:true,expectedUpdatedAt:meeting.updatedAt.toISOString(),
+   action:"COMPLETE",confirmed:true,expectedUpdatedAt:updated.updatedAt.toISOString(),
   });
   expect(completed.status).toBe("COMPLETED");
   expect((await listProjectMeetings(learner,project.id)).find(row=>row.id===meeting.id))
