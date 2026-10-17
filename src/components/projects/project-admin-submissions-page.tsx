@@ -9,6 +9,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
+import {ProjectSubmissionsPageExport} from "@/components/projects/project-submissions-page-export";
 import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
@@ -163,6 +164,20 @@ export async function ProjectAdminSubmissionsPage({
         query={query}
         includeSubmissionStatus
       />
+      <ProjectSubmissionsPageExport rows={result.items.map(submission=>({
+        workspace:submission.projectTitle,
+        version:submission.version,
+        status:submission.lockedAt?"Locked":submission.reopenedAt?"Draft (revising)":submission.status,
+        submissionType:submission.attachments.some(entry=>entry && typeof entry==="object" && "kind" in entry && entry.kind==="FILE")?"File upload":
+          submission.sourceUrl||submission.demoUrl?"Link":"Text",
+        pendingDays:submission.status==="SUBMITTED"&&submission.submittedAt?
+          Math.max(0,Math.floor((renderedAt.getTime()-submission.submittedAt.getTime())/86400000)):null,
+        submittedAt:submission.submittedAt?.toISOString()??null,
+        revisions:Math.max(0,submission.version-1),
+        reviewedBy:submission.reviewedBy,
+        sourceUrl:safeProjectExternalHref(submission.sourceUrl),
+        demoUrl:safeProjectExternalHref(submission.demoUrl),
+      }))}/>
 
       {!result.items.length ? (
         <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
