@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq,inArray,sql} from "drizzle-orm";
+import {and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,users} from "@/db/schema";
 import {placementTpoTeamEveryoneMessages as messages,
