@@ -65,7 +65,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-09 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-13 | S2 | MISSING-FIELD | DONE |
 | TPO-home-26 | S2 | STATE | DONE |
-| TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
+| TPO-home-27 | S2 | PERMISSION | NOT-A-GAP |
 | TPO-home-28 | S2 | MISSING-MODAL | DONE |
 | TPO-home-42 | S2 | MISSING-FIELD | DONE |
 | TPO-home-43 | S2 | RESPONSIVE | DONE |
@@ -102,10 +102,10 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-tenants-modules-46 | S2 | MISSING-ACTION | OPEN |
+| SA-tenants-modules-46 | S2 | MISSING-ACTION | BLOCKED |
 | SA-tenants-modules-47 | S2 | MISSING-ACTION | OPEN |
 | SA-tenants-modules-51 | S2 | MISSING-ACTION | DONE |
-| SA-tenants-modules-54 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| SA-tenants-modules-54 | S2 | SIDE-EFFECT | BLOCKED |
 | SA-tenants-modules-57 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-tenants-modules-63 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-65 | S2 | MISSING-ACTION | DONE |
@@ -119,14 +119,14 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-55 | S3 | PERMISSION | DONE |
 | SA-tenants-modules-58 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-59 | S3 | MISSING-COLUMN | DONE |
-| SA-tenants-modules-60 | S3 | STATE | UNCONFIRMED |
+| SA-tenants-modules-60 | S3 | STATE | NOT-A-GAP |
 | SA-tenants-modules-62 | S3 | SIDE-EFFECT | DONE |
 | SA-tenants-modules-64 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-tenants-modules-66 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-67 | S3 | COPY | DONE |
-| SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
+| SA-tenants-modules-68 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-45 | S4 | STATE | DONE |
-| SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-49 | S4 | MISSING-ACTION | DONE |
 | SA-tenants-modules-50 | S4 | MISSING-FILTER | DONE |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | DONE |
 | SA-tenants-modules-61 | S4 | VALIDATION | DONE |
@@ -138,21 +138,21 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | LEARNER-course-detail-R02 | S2 | VALIDATION | FIXED-ON-MAIN |
-| LEARNER-home-courses-01 | S2 | COPY / MISSING-PAGE (landing) | UNCONFIRMED |
+| LEARNER-home-courses-01 | S2 | COPY / MISSING-PAGE (landing) | NOT-A-GAP |
 | LEARNER-home-courses-14 | S2 | MISSING-FIELD / SIDE-EFFECT | UNCONFIRMED |
 | LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | DONE |
 | LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
 | LEARNER-course-detail-R04 | S3 | PERFORMANCE | DONE |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
 | LEARNER-home-courses-03 | S3 | STATE / COPY | DONE |
-| LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | FIXED-ON-MAIN |
+| LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | DONE |
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | LEARNER-home-courses-09 | S3 | COPY / STATE | DONE |
 | LEARNER-home-courses-12 | S3 | COPY | DONE |
 | LEARNER-home-courses-16 | S3 | COPY | DONE |
-| LEARNER-home-courses-19 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-home-courses-21 | S3 | STATE | FIXED-ON-MAIN |
+| LEARNER-home-courses-19 | S3 | COPY | DONE |
+| LEARNER-home-courses-21 | S3 | STATE | DONE |
 | LEARNER-home-courses-R01 | S3 | STATE | DONE |
 | LEARNER-home-courses-06 | S4 | COPY | DONE |
 | LEARNER-home-courses-07 | S4 | MISSING-FILTER | DONE |
@@ -161,7 +161,7 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-13 | S4 | COPY | DONE |
 | LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | FIXED-ON-MAIN |
 | LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
-| LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | FIXED-ON-MAIN |
+| LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | DONE |
 | LEARNER-home-courses-22 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-23 | S4 | COPY | DONE |
 
@@ -185,11 +185,11 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-17 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-14 | S3 | MISSING-ACTION | DONE |
-| COL-course-tabs-15 | S3 | STATE | UNCONFIRMED |
+| COL-course-tabs-15 | S3 | STATE | DONE |
 | COL-course-tabs-18 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-course-tabs-19 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| COL-course-tabs-19 | S3 | MISSING-EXPORT | DONE |
 | COL-course-tabs-22 | S3 | STATE | DONE |
-| COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
+| COL-course-tabs-23 | S3 | STATE | NOT-A-GAP |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
 | COL-course-tabs-25 | S4 | PERMISSION | NOT-A-GAP |
@@ -333,3 +333,10 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Remaining queue items include `SA-placements-projects-56` (standalone creator), `SA-placements-projects-77` (audit taxonomy), `SA-tenants-modules-46/47/48` (independent findings), `COL-people-R03` (atomic dry-run CSV), `COL-attendance-R02` (approved SMS credentials/side effects), `LEARNER-home-courses-02/18/22` (semester/attendance/polling). `TPO-home-40/44` require chat-9 shell ownership. The UX playbook freeze remains absolute.
 
 - Owner-delegated decisions: `TPO-home-25` NOT-A-GAP (college-wide team workload, college scoped) and `COL-course-tabs-25` NOT-A-GAP (central validated global/college policy override; no College Admin mutation). Both documented in acceptance with ID-named source tests, **not executed**.
+
+### 2026-10-18 accepted status reconciliation
+
+- DONE: SA-tenants-modules-68, SA-tenants-modules-49, LEARNER-home-courses-04, LEARNER-home-courses-19, LEARNER-home-courses-20, LEARNER-home-courses-21, COL-course-tabs-15, COL-course-tabs-19.
+- NOT-A-GAP: SA-tenants-modules-60, LEARNER-home-courses-01, COL-course-tabs-23, TPO-home-27.
+- BLOCKED: SA-tenants-modules-54, SA-tenants-modules-46.
+- Source or explicit previously accepted owner decisions, each with a named regression test in acceptance; test execution remains **unverified**. SA-tenants-modules-46 requires GitHub provider access to 42Students/lms-findings (current connection returns 404), SA-tenants-modules-54 requires verified inbound mail provider credentials. No page restyling done.
