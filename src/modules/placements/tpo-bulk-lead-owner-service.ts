@@ -124,6 +124,7 @@ export async function bulkAssignTpoLeadOwner(
         eq(placementTpoLeads.collegeId, collegeId),
       )).returning({ id: placementTpoLeads.id });
       if (!updated) throw new Error("TPO_OWNER_UPDATE_CONFLICT");
+      changed.push({leadId:selected.id,beforeOwnerId:current.ownerMembershipId,afterOwnerId:target.id});
       await tx.insert(placementTpoLeadActivities).values({
         leadId: current.id,
         collegeId,
