@@ -122,6 +122,15 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
     {task.carriedFromSprintId?<span className="mt-1 inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Carried over</span>:null}
+    {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
+      <div className="mt-2">
+        <MentorTaskDetailsEdit projectId={projectId} taskId={task.id}
+          title={task.title} description={task.description} approach={task.approach}
+          acceptanceCriteria={task.acceptanceCriteria} priority={task.priority}
+          updatedAt={new Date(task.updatedAt).toISOString()}
+          taskType={task.taskType} estimatePoints={task.estimatePoints}
+          dueDate={task.dueDate} blockerReason={task.blockerReason}/>
+      </div>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
      <select disabled={busy} defaultValue="" onChange={e=>{const id=e.target.value;if(id)void move(task,id);}}
       className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
