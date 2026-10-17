@@ -6,12 +6,12 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - MEN-projects-meetings-55 (S3) — DONE
 - MEN-projects-meetings-56 (S4) — DONE
 - MEN-projects-meetings-57 (S3) — PARTIAL
-- MEN-projects-meetings-58 (S4) — OPEN
+- MEN-projects-meetings-58 (S4) — PARTIAL
 - MEN-projects-meetings-60 (S3) — DONE
 - MEN-projects-meetings-61 (S3) — DONE
 - MEN-projects-meetings-65 (S3) — DONE
 - MEN-projects-meetings-67 (S3) — DONE
-- MEN-projects-meetings-69 (S4) — PARTIAL
+- MEN-projects-meetings-69 (S4) — DONE
 - MEN-projects-meetings-70 (S3) — DONE
 - MEN-projects-meetings-72 (S2) — DONE
 - MEN-projects-meetings-73 (S4) — PARTIAL
@@ -48,3 +48,15 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - SA-placements-projects-114 authored-source closure: scoped live log signatures correlate with persisted Known Errors by the same redacted canonical hash and environment; known record opens directly and mute/unmute PATCH uses confirmation. Tests: `tests/unit/chat16-tracker-known-error-link-round4.test.ts`. Provider/database runtime validation still required.
 - MEN-projects-meetings-72 project-brief edits now send active mentor + learner inbox notices in the event transaction; MEN-75/76 additionally cover release drafts/deletion and meeting outcome notes. Tests: `chat16-mentor-draft-recovery-round3.test.ts`.
 - MEN-projects-meetings-72 authored-source DONE: current upstream includes transaction-based project notices with an ID-named PostgreSQL integration test, and this lane now includes workspace-brief updates. Actual migration/database test run remains the release gate.
+
+## Chat-16 current compiler and reconciliation round (2026-10-17)
+
+- Fast-forwarded `chatgpt/chat-16-b` to `main` before modifications; no lane-specific divergent commits were discarded. Migrations 0133 and 0134 remain authoritative.
+- Typecheck repair: `MEN-projects-meetings-27` learner meeting requests no longer reference the mentor facilitation state; `MEN-projects-meetings-R09` sprint editor accepts and displays project estimation units. The mentor schedule form still owns and persists its notes.
+- `MEN-projects-meetings-69` source DONE: the mentor calendar models persisted DRAFT and RESCHEDULED statuses, renders read-only MISSED for elapsed scheduled meetings, prevents draft/cancelled/past meeting joins and retains inline failure Retry. Tests: `tests/unit/chat16-mentor-calendar-status-r5.test.ts`; other sources may need browser validation.
+- `MEN-projects-meetings-75` remains PARTIAL: sprint details now protects unsaved drafts across edit and confirmation dialogs, including beforeunload via the shared hook. Existing resource, meeting and delivery guards remain. Full client-side route interception/coverage of every editor remains unverified.
+- `MEN-projects-meetings-58` remains PARTIAL: permanent file removal now uses a named confirmation with the original destructive warning. Separate persisted resource-link and private-file records are not yet unified into one resource row; do not declare full legacy parity.
+- `MEN-projects-meetings-76` remains PARTIAL: file deletion now uses ConfirmDialog; other confirmation/error transitions need page-wide audit.
+- Existing regression tests `graceful-telegram-foundations` and `graceful-logs-ui-contract` were re-read against current implementations; no claim of passing execution. Stale string/path expectations in `chat16-reassigned-mentor-parity` and `chat16-reassigned-tracker-parity` were reconciled with current secure UX and registered schema.
+- BLOCKED unchanged: `SA-placements-projects-103` private scanned storage, `SA-placements-projects-113` Cloud Logging IAM, `SA-placements-projects-120` findings sync credentials. `SA-placements-projects-116` provider validation remains partial pending configured Telegram bot/chat.
+- Source-level checks were performed; TypeScript, Vitest, integration tests and browser tests could not run through the GitHub connector. Do not interpret this checkpoint as CI sign-off.
