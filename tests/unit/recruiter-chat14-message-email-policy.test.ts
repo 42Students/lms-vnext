@@ -30,6 +30,8 @@ describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
  it("REC-calendar-messages-profile-R01 extracts reply without duplicating quoted TPO conversation",()=>{
   expect(extractRecruiterEmailReply("Yes, Thursday works.\nOn Tue, Oct 18 someone wrote:\n> Confidential history"))
    .toBe("Yes, Thursday works.");
+  expect(extractRecruiterEmailReply("Accepted\n-- \nSent from my phone"))
+   .toBe("Accepted");
   expect(extractRecruiterEmailReply("Okay\n-----Original Message-----\nFrom: TPO"))
    .toBe("Okay");
  });
