@@ -11,7 +11,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const first=(key:string)=>Array.isArray(params[key])?params[key][0]:params[key];
  const parsed=tpoVerificationQuerySchema.safeParse({
   tab:first("tab"),kind:first("kind"),waitingState:first("waitingState"),
-  page:first("page"),pageSize:first("pageSize"),
+  page:first("page"),pageSize:first("pageSize"),search:first("search"),
  });
  if(!parsed.success)return <main className="space-y-3 p-5">
   <h1 className="text-lg font-semibold">Invalid verification filters</h1>
@@ -45,6 +45,9 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     <select name="waitingState" defaultValue={query.waitingState} className="min-h-11 rounded border border-border bg-surface px-2">
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
     </select>
+   </label>
+   <label className="grid gap-1 text-sm">Student or roll number
+    <input name="search" type="search" defaultValue={query.search} maxLength={100} placeholder="Search name or student number" className="min-h-11 rounded border border-border bg-surface px-2"/>
    </label>
    <label className="grid gap-1 text-sm">Page size
     <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded border border-border bg-surface px-2">
