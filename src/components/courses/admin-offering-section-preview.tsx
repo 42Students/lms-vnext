@@ -15,7 +15,7 @@ function ItemList({items}:{items:readonly {
  </li>)}</ul>;
 }
 export function AdminOfferingSectionPreview({data}:{data:Preview}){
- return <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5"
+ return <section id="section-content" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5"
   aria-label="Section course content">
   <div className="space-y-1">
    <h2 className="text-lg font-semibold text-foreground">Section content</h2>
