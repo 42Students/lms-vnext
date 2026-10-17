@@ -60,3 +60,16 @@ Remaining unverified / still open: FAC-assessments-13, FAC-assessments-27, FAC-a
 | FAC-assessments-28 | NOT-A-GAP (legacy headings present) | `teacher/report/quiz/[quizId]/page.tsx`, `teacher/report/assignment/[contentId]/page.tsx`, `faculty-report-download.tsx`. Same test file: `FAC-assessments-28 WRONG: distinct quiz and assignment report sections have the requested copy`. |
   
 Tests added but not executed in this GitHub connector session; orchestrator to run them.
+
+## Chat-6 2026-10-18 re-audit: source-level evidence for queue FIXED-ON-MAIN
+
+Earlier 'Remaining unverified' list predates these source inspections and tests. The cases below cite actual source contracts, **not executed tests or database/browser signoff**.
+
+| Gap ID | Source disposition | Named unit test and acceptance evidence |
+|---|---|---|
+| FAC-assessments-R01 | FIXED-ON-MAIN — source verified; runtime pending | `tests/unit/chat6-faculty-evidence-r01-r02-27-r05-r07.test.ts` test `FAC-assessments-R01`; Published assignment metadata-edit path permits PUBLISHED; after submissions, field-lock model rejects unsafe changes and keeps title correction. |
+| FAC-assessments-R02 | FIXED-ON-MAIN — source verified; runtime pending | `tests/unit/chat6-faculty-evidence-r01-r02-27-r05-r07.test.ts` test `FAC-assessments-R02`; Quiz deadline lock checks attempts and CLOSED status under a transactional edit path. |
+| FAC-assessments-27 | FIXED-ON-MAIN — source verified; runtime pending | `tests/unit/chat6-faculty-evidence-r01-r02-27-r05-r07.test.ts` test `FAC-assessments-27`; Unified faculty assessment overview exposes the typed create action for assignments and quizzes; full cross-page UI parity still needs browser walkthrough. |
+| FAC-assessments-R05 | FIXED-ON-MAIN — source verified; runtime pending | `tests/unit/chat6-faculty-evidence-r01-r02-27-r05-r07.test.ts` test `FAC-assessments-R05`; /teacher/allQuizzes accepts a bounded legacy content query and opens only a quiz present in the actor-scoped overview. |
+| FAC-assessments-R07 | FIXED-ON-MAIN — source verified; runtime pending | `tests/unit/chat6-faculty-evidence-r01-r02-27-r05-r07.test.ts` test `FAC-assessments-R07`; Quiz report shows learner names/scores only within score-distribution buckets using authorized report rows. |
+| FAC-attendance-grades-R02 | FIXED-ON-MAIN scope/overlap guard source-verified; historical scheduling decision remains open for runtime acceptance | `tests/unit/chat6-faculty-schedule-and-tracker-evidence-round17.test.ts` test `FAC-attendance-grades-R02`; `faculty-schedule-mutation-service.ts` checks active faculty scope, period bounds, per-section locked scheduling and marked attendance before rescheduling. This does **not** prove legacy past-booking grace semantics or lecture-hall occupancy; follow-up must not claim these were added. |
