@@ -98,3 +98,9 @@ Do not count a skipped role test or authored source as product release certifica
 ## Round 7: sign-in continuation without a provider
 
 `graceful-otp-flows.spec.ts` extends the matrix past the first Continue click. Its fixture intercepts the real `POST /api/auth/login/start` and supplies a synthetic schema-shaped pending attempt; no SMS or email is sent. Each of ten faults (network abort, HTML 502, JSON 500, 403, 404, 409, 429, 503, delayed 504, 401) is used against Email/Phone verification (20 tests), administrator two-factor verification (10 tests) and phone-to-email fallback (10 tests). Assertions include a real intercepted target POST, a customer error notice, retained codes, released controls and no raw error or uncaught browser exception. These are not release certification or fake-provider outbox evidence.
+
+## Round 8: production navigation and connectivity
+
+`graceful-production-navigation.spec.ts` runs **32** separate production-build acceptance cases: public and seven authenticated roles × desktop/mobile viewports × offline/reconnect and unknown record recovery. Signed-in roles require externally generated first-party session files in `GRACEFUL_PRODUCTION_AUTH_STORAGE_DIR`; the suite never creates E2E bypass cookies. Each test first proves it reached the intended staging role route, verifies that the offline announcement visibly appears then clears on reconnect, or that an unknown record displays a safe message and a functioning internal home/back link. All cases use `expectNoRawErrors`; browser runtime exceptions are disallowed. No requests mutate business data.
+
+Run with `tests/e2e/playwright.graceful-production.config.ts` against a disposable, separately built production-origin deployment; missing role-state files produce SKIP, not PASS. These tests remain unexecuted by chat-15.
