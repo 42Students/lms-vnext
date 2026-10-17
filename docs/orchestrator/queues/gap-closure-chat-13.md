@@ -139,3 +139,19 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-37 — OPEN: course watched threshold, in-progress threshold, chat polling and progress save intervals persist as typed settings but runtime readers still use source constants. Wire and integration-test course consumers before closure.
 - SA-tenants-modules-39 — OPEN: operational cap overrides persist in the settings editor, but bulk-status, progress bulk, identity JSON, and announcement page-size consumers still enforce their source limits. Do not advertise a change in active caps.
 - The independent audit gap register still has stale OPEN rows for SA-tenants-modules-32/40 and earlier chat-13 Super Admin work despite branch acceptance/test evidence; orchestrator must reconcile only after verifying tests on main.
+
+## 2026-10-18 chat-13 register sweep A — 13 records
+- SA-academics-people-R03 — DONE in reviewed source: Protected legacy-bookmark routing to canonical pages.
+- SA-academics-people-R05 — DONE in reviewed source: Attendance correction uses drawer/guarded action.
+- SA-placements-projects-11 — DONE in reviewed source: Bulk drive open/close with retry-only-failures.
+- SA-placements-projects-12 — DONE in reviewed source: Archival with cancellation and learner notifications.
+- SA-placements-projects-13 — PARTIAL in reviewed source: Published job metadata edit exists; complete audience edit remains to verify.
+- SA-placements-projects-18 — DONE in reviewed source: Persisted drive pipeline and attention summary.
+- SA-placements-projects-24 — PARTIAL in reviewed source: Company verify control exists; migration registration/runtime outstanding.
+- SA-placements-projects-26 — PARTIAL in reviewed source: Company editor source exists; migration registration/runtime outstanding.
+- SA-placements-projects-27 — PARTIAL in reviewed source: Company domain guard source exists; migration registration/runtime outstanding.
+- SA-placements-projects-28 — PARTIAL in reviewed source: Alias edit source exists; migration registration/runtime outstanding.
+- SA-placements-projects-30 — PARTIAL in reviewed source: College company actions source exists; detailed contacts and full parity outstanding.
+- SA-placements-projects-37 — DONE in reviewed source: Recruiter create handles canonical free-text company and college relationships.
+- SA-placements-projects-39 — DONE in reviewed source: Recruiter lifecycle records audited events.
+- Acceptance uses source-only verification. No migration registration or database execution is claimed.
