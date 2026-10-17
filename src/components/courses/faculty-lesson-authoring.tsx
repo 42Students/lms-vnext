@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -648,13 +649,11 @@ export function FacultyLessonAuthoring({
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("QUIZ")) ? (
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() =>
-              setMode("QUIZ")
-            }
-          >
+          deliveryId?<Link
+            href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            + Quiz · Full builder
+          </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
           </Button>
           ) : null}
