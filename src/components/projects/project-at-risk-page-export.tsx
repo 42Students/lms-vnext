@@ -9,7 +9,9 @@ type Row={
 export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:string}){
  function save(){
   const cells=(values:(string|number|null)[])=>values.map(value=>{
-   const text=String(value??"");return '"'+text.replaceAll('"','""')+'"';
+   const text=String(value??"");
+   const safe=/^[\s]*[=+@-]/.test(text)?"'"+text:text;
+   return '"'+safe.replaceAll('"','""')+'"';
   }).join(",");
   const header=cells(["Workspace ID","Workspace","Mentor","Severity","Risk reasons",
    "Inactive days","Blocker","Last activity (UTC)"]);
