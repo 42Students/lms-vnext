@@ -49,3 +49,18 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - TPO-drives-17: CSV for matching/visible pages is live in source; Excel, selected-only export and named saved-view export remain.
 - TPO-drives-10/11: min applied/offers, pay category and needs-doing filters now wired; remaining legacy batch/company/owner filters and per-shortcut count badges remain.
 - TPO-drive-workspace-44/45: registered 0116 slots plus round-card proposal/booking/request counts are connected; independent recruiter proposals still use their own persisted table.
+
+## FAST v2 — chat-5-b implementation batch (2026-10-17)
+
+- TPO-drive-workspace-40: import overrides now reject duplicate row/student matches, conflicting skips and invalid waitlist rank. Explicit skip means LEAVE PENDING even with a mark-missing-not-cleared import. Portal IDs are not falsely matched.
+- TPO-drive-workspace-42: consequence preview now identifies next evaluative stage per PASS; applying already uses registered 0108 stages and auditable per-learner results.
+- TPO-drive-workspace-44: future-only candidate booking and future-only slot moves.
+- TPO-drive-workspace-47/48: VERIFIED selection can reconcile its exact matching persisted offer after timeout, without issuing a duplicate.
+- TPO-drive-workspace-53: RELEASED promotion skipped when choosing the next candidate; rank order remains deterministic.
+- TPO-drive-workspace-R03/41: bulk staged HOLD/ABSENT support, ordered waitlist ranks, duplicate/rank-taken checks; unmarked-to-fail policy remains available in round import, not yet in this bulk picker.
+- TPO-drive-workspace-29: pending withdrawal, no-show, placed-elsewhere and eligibility flags added to applicant sheet.
+- TPO-drive-workspace-68: activity deep link into About tab's existing persisted event feed.
+- Blocked COL-placements-04: candidate appointment migration not registered in 0108–0121; leave gated and move on.
+- Blocked COL-placements-01: screening reinstatement history constraint not registered in 0108–0121; leave gated and move on.
+- Blocked TPO-requests-verification-05: production scheduler configuration; delegated per reassignments (chat-3 owns WP-02).
+- Blocked TPO-drive-workspace-65: owner security decision OD-09; SKIP.
