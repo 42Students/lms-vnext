@@ -681,7 +681,7 @@ export function AdminAttendanceWorkspace({
               </p>
             </div>
             <p className="text-xs text-muted-foreground">
-              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception.
+              The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
             </p>
             {target.record?.note ? (
               <p className="text-sm text-body">Note: {target.record.note}</p>
