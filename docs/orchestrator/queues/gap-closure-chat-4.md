@@ -16,14 +16,14 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-65 | S2 | MISSING-FIELD | DONE |
 | SA-placements-projects-69 | S2 | MISSING-TAB | DONE |
 | SA-placements-projects-70 | S2 | STATE | DONE |
-| SA-placements-projects-77 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| SA-placements-projects-77 | S2 | SIDE-EFFECT | OPEN |
 | SA-placements-projects-81 | S2 | MISSING-FIELD | OPEN |
 | SA-placements-projects-82 | S2 | MISSING-FIELD | OPEN |
 | SA-placements-projects-85 | S2 | MISSING-TAB | DONE |
 | SA-placements-projects-88 | S2 | MISSING-ACTION | OPEN |
 | SA-placements-projects-89 | S2 | MISSING-FIELD | OPEN |
 | SA-placements-projects-90 | S2 | MISSING-FIELD | DONE |
-| SA-placements-projects-91 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-placements-projects-91 | S2 | MISSING-ACTION | OPEN |
 | SA-placements-projects-52 | S3 | COPY | DONE |
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | OPEN |
 | SA-placements-projects-54 | S3 | MISSING-EXPORT | DONE |
@@ -190,7 +190,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-19 | S3 | MISSING-EXPORT | DONE |
 | COL-course-tabs-22 | S3 | STATE | DONE |
 | COL-course-tabs-23 | S3 | STATE | NOT-A-GAP |
-| COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-course-tabs-26 | S3 | MISSING-ACTION | OPEN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
 | COL-course-tabs-25 | S4 | PERMISSION | NOT-A-GAP |
 | COL-course-tabs-27 | S4 | RESPONSIVE | DONE |
@@ -213,7 +213,7 @@ Audit: `docs/audit/pages/college/verification-misc.md` (and `verification-misc-r
 | COL-verification-misc-06 | S3 | COPY | DONE |
 | COL-verification-misc-08 | S3 | MISSING-COLUMN | OPEN |
 | COL-verification-misc-12 | S3 | MISSING-ACTION | DONE |
-| COL-verification-misc-13 | S3 | STATE | FIXED-ON-MAIN |
+| COL-verification-misc-13 | S3 | STATE | OPEN |
 | COL-verification-misc-15 | S3 | STATE | DONE |
 | COL-verification-misc-16 | S3 | PERMISSION | NOT-A-GAP |
 | COL-verification-misc-18 | S3 | PERMISSION | NOT-A-GAP |
@@ -379,3 +379,18 @@ The following previously `FIXED-ON-MAIN` assertions remain **OPEN**, not DONE, b
 
 - The latest compiler report narrowed to an interview CSV export type mismatch in chat-4 plus files owned by chat-11, chat-14, and chat-17. Fixed `COL-placements-R01` export input type to accept persisted nullable `users.displayName` (`student:string|null`) without fabricating a candidate name; added a null-case named regression assertion. No source settings or unrelated lane-owned types were modified.
 - Tests/typecheck cannot be executed via the connected GitHub source editor, so the patch remains unverified until CI. The UX page freeze remains in force.
+
+## Chat-4 current round — gap closure and 18-ID final sprint, 2026-10-18
+
+**No page UI/UX restyling** (playbook not signed off). All source changes and tests are in `chatgpt/chat-4-b`, not `main`; test execution not available in GitHub connector.
+
+- FIRST typecheck triage: `docs/orchestrator/typecheck-errors.md` is the 01:15 main snapshot. Corrected `COL-placements-R01` company model/service mismatch (typed `DirectoryQuery.status`, active/archived rules, name/industry filters), full URL state and `tests/integration/chat11-college-company-restore.test.ts` typed membership and archived-recovery assertion; previously corrected nullable interview CSV export input remains intact. Other errors listed for chat-14 and chat-17 were not changed.
+- FIRST unit-failure triage: existing `chat4-super-admin-projects-gap-closure.test.ts` cases `SA-placements-projects-58` and `SA-placements-projects-63` already have their 150%-of-average mentor overload / at-risk read contracts. No new test run, so do not mark CI as passing.
+- Gap `SA-placements-projects-77`: new transaction-bound PROJECTS template create/revise/publish/unpublish/duplicate/archive/assign/unassign events, global Super Admin audit scope and idempotent transition rules; FULL legacy 37-action producer coverage remains **OPEN**. `tests/unit/chat4-project-template-audit-77.test.ts`.
+- Gap `TPO-home-R07`: college-scoped roll/department learner finder, 2+ character search and 5-result group caps; `tests/unit/chat4-tpo-finder-roll-lookup-r07.test.ts`; complete recently opened/status hints remain OPEN.
+- Gap `TPO-home-09` / `TPO-home-R04`: persisted team asks and unread are counted separately; urgent asks go to the My asks filter and unread does not fake team mentions. `tests/unit/chat4-tpo-home-team-asks-09.test.ts`.
+- Gap `SA-tenants-modules-48`: fixed malformed facet SQL, added persisted source path search and correctly scoped independent facet counts; `tests/unit/chat4-independent-findings-filters.test.ts`. `SA-tenants-modules-47`: no chained duplicates; reasoned reopen clears stale relation; `tests/unit/chat4-independent-findings-transition.test.ts`. Both remain partial.
+- Additional source verified (not full acceptance): `SA-placements-projects-91`, `SA-placements-projects-53`, `SA-placements-projects-75`, `COL-course-tabs-26`, `COL-verification-misc-13`; `tests/unit/chat4-remaining-queue-revalidation-round.test.ts`. Keep incomplete behaviors OPEN.
+- FINAL SPRINT: `docs/orchestrator/queues/final-sprint.md` assigns chat-4 exactly 18 TPO-recruiters FIXED-ON-MAIN IDs: 05,06,10,11,15,16,18,20,21,25,26,27,28,29,31,32,33,37. All 18 have an ID-named `it` in `tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts` or `...-b.test.ts` and ID-specific acceptance in `docs/audit/acceptance/tpo-recruiters-verification.md`, with source-complete vs partial explicitly separated. **Tests written, NOT RUN**.
+
+Remaining blockers: unavailable 42Students/lms-findings GitHub source (SA-tenants-modules-46) and missing verified SMS provider / external identity-enrolment atomicity for COL-people-R03 and COL-attendance-R02. Do not claim these DONE.
