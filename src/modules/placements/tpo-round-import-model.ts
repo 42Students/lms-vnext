@@ -33,9 +33,20 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const grid=ext.endsWith(".xlsx")?parseResultXlsx(bytes):
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8")):
   (()=>{throw Error("Use a .xlsx or .csv file.");})();
- const heads=(grid.shift()??[]).map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
+ const header=grid.shift()??[];
+ if(header.length>80||grid.some(row=>row.length>80))
+  throw Error("The result file is too wide; keep at most 80 columns.");
+ const heads=header.map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
  if(new Set(heads.filter(Boolean)).size!==heads.filter(Boolean).length)
   throw Error("Duplicate column headers make this result import ambiguous. Keep one column of each type.");
+ const groups=[["applicationid","applicantid"],["email","studentemail"],
+  ["roll","rollnumber","studentroll"],["companyid","portalid","candidateid"],
+  ["result","outcome","status","decision"],["waitlistrank","rank"],
+  ["reason","message","studentmessage","comment"]];
+ for(const aliases of groups){
+  if(heads.filter(head=>aliases.includes(head)).length>1)
+   throw Error("This result file contains more than one column for the same field. Keep only one.");
+ }
  const locate=(...words:string[])=>heads.findIndex(x=>words.includes(x));
  const app=locate("applicationid","applicantid"),email=locate("email","studentemail"),
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
@@ -43,13 +54,15 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   message=locate("reason","message","studentmessage","comment"),name=locate("student","studentname","name");
  if(status<0||Math.max(app,email,roll)<0)throw Error("Include Result and an Application ID, Email or Roll number column. Company portal IDs are not mapped to internal applicants.");
  if(grid.length>1000)throw Error("Import up to 1,000 student rows per file.");
+ if(grid.length===0)throw Error("The results file has no student rows.");
+ if(grid.some(parts=>parts.every(value=>!value.trim())))throw Error("Remove blank data rows from the result file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
   const value=(col:number)=>col>=0?parts[col]?.trim()??"":"";
   const rankText=value(rank),rankValue=rankText?Number(rankText):null;
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
+   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isSafeInteger(rankValue)||rankValue<1||rankValue>100000),
    rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
