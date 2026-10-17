@@ -38,6 +38,20 @@ describe("Telegram alert fundamentals", () => {
     expect(safeAlertPath("/tracker/logs/sensitive-person-name")).toEqual("/tracker/logs/[id]");
   });
 
+  it("GR-114 preserves the shared eight-character request ID after notification sanitization", async () => {
+    process.env.APP_ENV = "development";
+    process.env.TELEGRAM_ALERT_BOT_TOKEN = "fixture";
+    process.env.TELEGRAM_ALERT_CHAT_ID = "fixture";
+    const requestId = "af02b19c";
+    expect(await sendTelegramAlert("Time: 2099-01-01T01:02:03.000Z\nRequest ID: " + requestId, {
+      transport: (async (_url, init) => {
+        const payload = JSON.parse(String(init?.body)) as { text: string };
+        expect(payload.text).toContain("Request ID: " + requestId);
+        expect(payload.text).toContain("2099-01-01T01:02:03.000Z");
+        return new Response(JSON.stringify({ ok: true }));
+      }) as typeof fetch,
+    })).toBe(true);
+  });
   it("GR-111 never throws when unconfigured and sends no request", async () => {
     delete process.env.TELEGRAM_ALERT_BOT_TOKEN;
     delete process.env.TELEGRAM_ALERT_CHAT_ID;

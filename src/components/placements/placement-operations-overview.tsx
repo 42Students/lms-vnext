@@ -41,7 +41,7 @@ function FunnelMetric({
     <p className="mt-1 text-xs text-body">{previous === undefined ? "Season total" : `${conversion(value, previous)} from previous stage`}</p>
   </div>;
 }
-export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false }: { operations: Operations; basePath: string; showDriveSearch?: boolean }) {
+export function PlacementOperationsOverview({ operations, basePath, showDriveSearch = false, staleDays=7 }: { operations: Operations; basePath: string; showDriveSearch?: boolean; staleDays?: number }) {
   return <div className="space-y-6">
     {showDriveSearch ? <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Active drives" value={operations.jobs.filter(r=>r.job.status==="PUBLISHED").length} description="Currently published opportunities." />
@@ -72,6 +72,13 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <div className="border-b border-border px-5 py-4">
         <h2 className="m-0 text-base font-semibold text-foreground">Needs attention</h2>
         <p className="mt-1 text-sm text-body">Highest-impact placement work across jobs, ordered by urgency.</p>
+        {showDriveSearch?<form action="/admin/placements" method="get" className="mt-3 flex flex-wrap items-center gap-3 text-sm">
+          <label className="flex items-center gap-2">Stale after
+            <select name="staleDays" defaultValue={staleDays} className="min-h-10 rounded border border-border bg-surface px-3">
+              {[3,7,14,30].map(n=><option key={n} value={n}>{n} days</option>)}
+            </select></label>
+          <button type="submit" className="min-h-10 rounded border border-border px-4 font-semibold">Apply</button>
+        </form>:null}
       </div>
       {operations.workQueue.length === 0 ? <div className="p-5"><EmptyState title="No placement work is blocked" description="New screening, result, scheduling and draft actions will surface here automatically." /></div> :
         <div className="divide-y divide-border">{operations.workQueue.map((item, index) =>
@@ -81,7 +88,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
               <p className="mt-2 font-semibold text-foreground">{item.jobTitle}</p>
               <p className="mt-1 text-sm text-body">{item.companyName} · {item.code.toLowerCase().split("_").join(" ")}</p>
             </div>
-            <Link href={basePath + "/jobs/" + item.jobId} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Open drive</Link>
+            <Link href={basePath + "/jobs/" + item.jobId + (item.code==="STALE_APPLICATIONS" || item.code==="INTERVIEW_UNSCHEDULED" ? "/applications" : "")} className="inline-flex min-h-9 shrink-0 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text">Review {item.code==="STALE_APPLICATIONS"?"stale applicants":"drive"}</Link>
           </div>)}</div>}
     </section>
     <section className="rounded-xl border border-border bg-surface">

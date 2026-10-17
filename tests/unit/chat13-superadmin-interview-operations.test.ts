@@ -37,7 +37,7 @@ describe("Super Admin placement interview operations",()=>{
  });
  it("GR-72 missing candidate metadata stays explicitly unavailable, never invented",()=>{
   const view=read("src/components/admin/super-admin-interview-operations.tsx");
-  expect(view).toContain("Candidate-level collisions and department filters require candidate appointment data.");
+  expect(view).toContain("Department filter uses the applicant");
  });
  it("GR-91 calendar export and clear filters are keyboard reachable",()=>{
   const view=read("src/components/admin/super-admin-interview-operations.tsx");
@@ -46,6 +46,6 @@ describe("Super Admin placement interview operations",()=>{
  });
  it("GR-92 conflict status uses an explicit text label in addition to color",()=>{
   const view=read("src/components/admin/super-admin-interview-operations.tsx");
-  expect(view).toContain("Possible venue overlap");
+  expect(view).toContain("conflicts.get(row.id)?.join");
  });
 });

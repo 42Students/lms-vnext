@@ -10,3 +10,8 @@ export const tpoCalendarUrlSchema=z.object({
  kind:z.enum(["","ROUND","APPLICATION_DEADLINE","FOLLOW_UP","BLOCKED"]).optional(),
 }).strict();
 export function parseTpoCalendarUrl(raw:unknown){return tpoCalendarUrlSchema.safeParse(raw);}
+
+/** Legacy adaptive start: narrow devices open Agenda, desktops Week. Explicit URL wins. */
+export function initialTpoCalendarView(userAgent:string):"agenda"|"week"{
+ return /Android|iPhone|iPad|iPod|Mobile|Mobi/i.test(userAgent)?"agenda":"week";
+}

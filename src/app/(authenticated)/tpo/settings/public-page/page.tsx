@@ -26,7 +26,7 @@ export default async function PublicPlacementSettingsPage({
   <section className="rounded-xl border border-border bg-surface p-5">
    <h1 className="text-xl font-semibold">Public placements</h1>
    <p className="mt-2 text-sm text-body">{view.label}</p>
-   {updated==="1"?<p role="status" className="mt-2 text-sm">Publication preference updated.</p>:null}
+   {updated==="1"?<p role="status" className="mt-2 text-sm">{view.enabled?"Your placements page is live":"Your placements page is off"}</p>:null}
    <p className="mt-2 text-sm text-body">
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
     Metrics below the publication threshold of five are not shown.

@@ -125,7 +125,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   }
   if(action==="CREATE" && publishNow){
     const due=authoringDueInstant(dueAt);
-    if(!due || !Number.isFinite(Date.parse(due)) || Date.parse(due)<=Date.now()){
+    if(!due || !Number.isFinite(Date.parse(due)) || Date.parse(due)<=new Date().getTime()){
       setError("Pick a due date and time in the future");return;
     }
   }
