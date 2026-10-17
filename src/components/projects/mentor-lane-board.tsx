@@ -204,6 +204,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </ul>
    </section>)}
   </div></div>
+  {matching.length>visible.length?<button type="button"
+    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+    onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
     sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}
