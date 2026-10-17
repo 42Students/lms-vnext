@@ -107,8 +107,8 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   </div>;
 }
 
-export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName}:{
- grantId:string;expectedUpdatedAt:string;displayName:string;
+export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=false}:{
+ grantId:string;expectedUpdatedAt:string;displayName:string;ended?:boolean;
 }){
  const router=useRouter();
  const [months,setMonths]=useState<3|6|12>(6);
@@ -127,7 +127,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName}:{
   finally{setBusy(false);}
  }
  return <div className="mt-2 flex flex-wrap items-center gap-2">
-  <label className="text-xs">Extend access
+  <label className="text-xs">{ended?"Give access again":"Extend access"}
    <select value={months} disabled={busy}
     onChange={e=>setMonths(Number(e.target.value) as 3|6|12)}
     className="ml-2 min-h-9 rounded border border-border bg-surface px-2">
@@ -136,7 +136,7 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName}:{
   </label>
   <button type="button" disabled={busy} onClick={()=>void extend()}
    className="min-h-9 rounded border border-border px-3 text-xs text-primary-text disabled:opacity-50">
-   {busy?"Saving…":"Extend"}
+   {busy?"Saving…":ended?"Give access again":"Extend"}
   </button>
   {error?<p role="alert" className="w-full text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="w-full text-xs text-success-text">{notice}</p>:null}
