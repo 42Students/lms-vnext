@@ -354,6 +354,7 @@ export function RecruiterLeadsWorkspace({
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
      "reach"|"nextFollowup"|"lastActivity"|"added"|"stage",value:string){
    const params=new URLSearchParams(window.location.search);
+   if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
    else params.delete(kind==="query"?"q":kind);
    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
@@ -688,6 +689,7 @@ export function RecruiterLeadsWorkspace({
                 <select className={inputStyle+" mt-1"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
                   <option value="ALL">Any date</option>
+                  <option value="DUE">Due now</option>
                   <option value="OVERDUE">Overdue</option>
                   <option value="TODAY">Today</option>
                   <option value="NEXT_7">In the next 7 days</option>
