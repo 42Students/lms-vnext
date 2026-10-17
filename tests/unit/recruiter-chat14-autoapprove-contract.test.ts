@@ -1,5 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
+import {recruiterRequestLegacyLabel} from "@/modules/placements/recruiter-drive-request-model";
 import {recruiterDriveApprovalPolicy,trustedRecruiterDomain}
  from "@/modules/placements/recruiter-drive-autoapproval-policy";
 
@@ -9,6 +10,12 @@ const baseline={approvalRequired:true,grantVerified:true,
  trustedDomains:[] as string[],relationshipTrusted:false};
 
 describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
+ it("REC-home-drives-33 tells recruiters an autoapproved draft awaits publication, not review",()=>{
+  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved — awaiting publication");
+  expect(recruiterRequestLegacyLabel("REQUEST")).toBe("Sent for review");
+  expect(recruiterRequestLegacyLabel("REJECTED")).toBe("Cancelled");
+ });
+
  it("REC-home-drives-33 defaults untrusted requests to placement-cell review",()=>{
   expect(recruiterDriveApprovalPolicy(baseline)).toEqual({
    autoApprove:false,reason:"REVIEW_REQUIRED",
