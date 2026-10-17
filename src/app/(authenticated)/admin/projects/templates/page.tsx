@@ -5,6 +5,8 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import {SuperAdminTemplatePageExport} from "@/components/projects/super-admin-template-page-export";
+import {SuperAdminTemplateArchiveControl} from "@/components/projects/super-admin-template-archive-control";
 
 import { can } from "@/modules/permissions/policy";
 import { templateDirectoryHref, templateDirectoryQuerySchema } from "@/modules/projects/super-admin-template-directory-model";
@@ -31,7 +33,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    description="Global template metadata with active college-assignment counts limited to your current administrative scope. No publishing or editing when scoped."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">New template →</Link>:undefined}/>
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
-   <label className="grid gap-1 text-sm font-semibold text-body">Template title
+   <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label>
@@ -42,6 +44,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    </label>
    <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
   </form>
+  <SuperAdminTemplatePageExport items={data.items}/>
   <p className="text-xs text-muted-foreground">{data.total} templates · page {data.query.page} of {data.totalPages} · assignment counts: {data.assignmentScope.toLowerCase()} scope</p>
   {data.items.length?<div className="grid gap-4 md:grid-cols-2">
    {data.items.map(item=><article key={item.id} className="min-w-0 rounded-xl border border-border bg-surface p-5">
@@ -51,9 +54,19 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     </div>
     <p className="mt-1 text-xs text-muted-foreground">{item.slug}</p>
     {item.summary?<p className="mt-2 text-sm text-body">{item.summary}</p>:null}
+    {item.sectionCounts?<div className="mt-3 flex flex-wrap gap-2 text-xs text-body">
+      <span className="rounded border border-border px-2 py-1">Overview</span>
+      <span className="rounded border border-border px-2 py-1">Sprints {item.sectionCounts.sprints}</span>
+      <span className="rounded border border-border px-2 py-1">Tasks {item.sectionCounts.tasks}</span>
+      <span className="rounded border border-border px-2 py-1">Resources {item.sectionCounts.resources}</span>
+    </div>:null}
     <p className="mt-3 text-sm text-body">Version {item.currentVersion} · published {item.publishedVersion??"Not yet"} · {item.activeAssignments} active assignments in scope</p>
-    <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
-     className="mt-3 inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+    <div className="mt-3 flex flex-wrap items-center gap-3">
+      <Link href={`/admin/projects/templates/${encodeURIComponent(item.id)}`}
+       className="inline-flex min-h-10 items-center font-semibold text-primary-text">Inspect template →</Link>
+      {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
+        templateId={item.id} title={item.title} status={item.status}/>:null}
+    </div>
    </article>)}
   </div>:<EmptyState title="No matching templates" description="No global template metadata matches these filters."/>}
   <nav aria-label="Template pages" className="flex flex-wrap gap-3 text-sm">

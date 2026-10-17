@@ -1,17 +1,20 @@
 import "server-only";
-import { and, asc, count, eq, ilike, inArray, isNull } from "drizzle-orm";
+import { and, or, asc, count, eq, ilike, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, projectTemplates, projectTemplateCollegeAssignments } from "@/db/schema";
+import { colleges, projectTemplates, projectTemplateVersions, projectTemplateCollegeAssignments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { templateDirectoryQuerySchema,templateDirectoryPages,TEMPLATE_DIRECTORY_PAGE_SIZE } from "./super-admin-template-directory-model";
+import {countTemplateBlueprintItems} from "./template-subview-model";
 /** Scope affects assignment counts, not global template metadata. No assignments from foreign colleges are returned. */
 export async function listSuperAdminTemplateDirectory(context:RequestContext,raw:unknown) {
  requirePermission(context,"project-template.read");
  const query=templateDirectoryQuerySchema.parse(raw);
  const conditions=and(
   query.status==="ALL"?undefined:eq(projectTemplates.status,query.status),
-  query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,
+  query.q?or(
+   ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%"),
+   ilike(projectTemplates.slug,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%")):undefined,
  );
  const db=getDb();
  const [totals,items]=await Promise.all([
@@ -34,9 +37,15 @@ export async function listSuperAdminTemplateDirectory(context:RequestContext,raw
    selected?.collegeId?eq(colleges.id,selected.collegeId):undefined,
    !selected?.collegeId&&selected?.organizationId?eq(colleges.organizationId,selected.organizationId):undefined,
   )).groupBy(projectTemplateCollegeAssignments.templateId):[];
+ const versions=items.length?await db.select({templateId:projectTemplateVersions.templateId,
+   version:projectTemplateVersions.version,blueprint:projectTemplateVersions.blueprint})
+   .from(projectTemplateVersions).where(inArray(projectTemplateVersions.templateId,items.map(x=>x.id))):[];
+ const versionByTemplate=new Map(versions.map(v=>[v.templateId+":"+v.version,v.blueprint]));
  const byId=new Map(counts.map(row=>[row.templateId,row.activeAssignments]));
  const total=totals[0]?.total??0;
- return {query,items:items.map(item=>({...item,activeAssignments:byId.get(item.id)??0})),
+ return {query,items:items.map(item=>({...item,activeAssignments:byId.get(item.id)??0,
+  sectionCounts:versionByTemplate.has(item.id+":"+item.currentVersion)?
+    countTemplateBlueprintItems(versionByTemplate.get(item.id+":"+item.currentVersion)!):null})),
   total,totalPages:templateDirectoryPages(total),assignmentScope:selected?.collegeId?"COLLEGE" as const:
   selected?.organizationId?"ORGANIZATION" as const:"GLOBAL" as const};
 }

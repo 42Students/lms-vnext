@@ -8,6 +8,7 @@ import {
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
+import {ProjectWorkspacePageExport} from "@/components/projects/project-workspace-page-export";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
@@ -56,6 +57,7 @@ export default async function SuperAdminProjectsPage({
   }
 
   const params = await searchParams;
+  const view=one(params.view)==="cards"?"cards":"table";
   const query: ProjectAdminCollectionQuery = {
     q: one(params.q),
     status: one(
@@ -107,7 +109,20 @@ export default async function SuperAdminProjectsPage({
 
       <ProjectAdminFilters query={query} />
 
+      <nav className="flex gap-2 text-sm font-semibold" aria-label="Workspace display mode">
+        <Link href={"/admin/projects?view=table"+(query.q?"&q="+encodeURIComponent(query.q):"")+
+          (query.status?"&status="+query.status:"")} aria-current={view==="table"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Table</Link>
+        <Link href={"/admin/projects?view=cards"+(query.q?"&q="+encodeURIComponent(query.q):"")+
+          (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Cards</Link>
+      </nav>
+      <ProjectWorkspacePageExport items={result.items.map(item=>({
+        id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
+        memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
+      }))}/>
       <ProjectAdminWorkspaceList
+        view={view}
         items={result.items.map((project) => ({
           id: project.id,
           title: project.title,

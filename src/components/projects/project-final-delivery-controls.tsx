@@ -43,11 +43,13 @@ export function LearnerFinalDeliveryControl({
   canCreateDraft,
   canSubmitDraft,
   review,
+  lastEditedBy,
   readinessDetail,
 }: {
   projectId: string;
   readinessDetail?:{tasksRemaining:number;sprintsRemaining:number;releasesRemaining:number};
   review?:{status:string;feedback:string|null}|null;
+  lastEditedBy?:string|null;
   latest: Submission | null;
   canCreateDraft: boolean;
   canSubmitDraft: boolean;
@@ -201,6 +203,7 @@ export function LearnerFinalDeliveryControl({
 
       <div className="w-full space-y-2 text-sm text-body">
         <p>Team submission · The final delivery is shared with your project team.</p>
+        {lastEditedBy?<p>Last edited by <strong>{lastEditedBy}</strong></p>:null}
         <p>Mentor review: <strong>{review?.status?.replaceAll("_"," ")??"Waiting for review"}</strong></p>
         {review?.feedback?<p className="whitespace-pre-wrap rounded-lg border border-border p-3">
           Mentor feedback: {review.feedback}
