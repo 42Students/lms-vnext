@@ -66,8 +66,9 @@ function zip(parts:readonly {name:string;content:string}[]):Uint8Array{
 export function exportTpoStudentsXlsx(rows:readonly TpoStudentRow[],selectedColumns:readonly string[],viewName:string):Uint8Array{
  if(rows.length>5000)throw Error("Export limit is 5,000 scoped students");
  const cols=selectTpoExcelColumns(selectedColumns);
+ const col=(index:number):string=>index<26?String.fromCharCode(65+index):col(Math.floor(index/26)-1)+String.fromCharCode(65+index%26);
  const line=(values:readonly unknown[],number:number,italic=false)=>
-  `<row r="${number}">${values.map((value,index)=>`<c r="${String.fromCharCode(65+index%26)}${number}" t="inlineStr"${italic?' s="1"':""}><is><t xml:space="preserve">${xml(value)}</t></is></c>`).join("")}</row>`;
+  `<row r="${number}">${values.map((value,index)=>`<c r="${col(index)}${number}" t="inlineStr"${italic?' s="1"':""}><is><t xml:space="preserve">${xml(value)}</t></is></c>`).join("")}</row>`;
  const sheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${line(["How this list was made: "+viewName],1,true)}${line(cols.map(key=>TPO_STUDENT_EXCEL_COLUMNS[key][0]),2)}${rows.map((row,i)=>line(cols.map(key=>TPO_STUDENT_EXCEL_COLUMNS[key][1](row)),i+3)).join("")}</sheetData></worksheet>`;
  const parts=[
   {name:"[Content_Types].xml",content:'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
