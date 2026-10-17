@@ -79,9 +79,9 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom} onClick={()=>void action({
+   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom} onClick={()=>{if(window.confirm("Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"? Collision checks will skip blocked moves."))void action({
     action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom,
-   })} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   });}} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
     Previewed · Assign room
    </button>
   </div>
