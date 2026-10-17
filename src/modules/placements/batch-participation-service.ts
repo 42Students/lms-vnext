@@ -498,6 +498,19 @@ export async function upsertPlacementBatchSettings(
         updatedAt: new Date(),
       },
     }).returning();
+    if(JSON.stringify(current?.rulesOverride??{})!==JSON.stringify(input.rulesOverride??{})){
+      const [college]=await tx.select({organizationId:colleges.organizationId})
+        .from(colleges).where(eq(colleges.id,input.collegeId)).limit(1);
+      if(!college)throw new PlacementBatchError("DB08_SCOPE_COLLEGE_MISMATCH");
+      await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId:input.collegeId,
+        actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+        module:"PLACEMENTS",eventType:"placements.batch.rules.changed",
+        subjectType:"COHORT",subjectId:input.cohortId,
+        summary:"TPO updated batch-specific placement rules",
+        metadata:{changedKeys:Object.keys(input.rulesOverride??{})},
+      });
+    }
     if (reopenAndTell) {
       const recipientUserIds = await findUnchosenEligibleBatchStudents(
         tx, input.collegeId, input.cohortId,
