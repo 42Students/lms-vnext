@@ -74,10 +74,12 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
 ] as const;
 
 /** Legacy Super Admin dropped the big setup guide by deliberate decision. */
+/** SA-tenants-modules-04: four unscoped platform choices, not college-specific setup. */
 export const SUPER_ADMIN_GLOBAL_LINKS = [
-  { label: "Tenant Setup", href: "/admin/tenants/setup" },
-  { label: "Feature Controls", href: "/admin/features" },
-  { label: "Activity Log", href: "/admin/audit" },
+  { label: "Tenant Setup", href: "/admin/tenants", subtitle: "Create and manage organizations and colleges before choosing a scope." },
+  { label: "Recruiter accounts", href: "/admin/recruiters", subtitle: "Inspect recruiter access and account records across the platform." },
+  { label: "Feature Controls", href: "/admin/features", subtitle: "Review platform features and access controls." },
+  { label: "Activity Log", href: "/admin/audit", subtitle: "Review activity across the platform within your permissions." },
 ] as const;
 
 export const SUPER_ADMIN_COLLEGE_QUICK_ACTIONS=[
