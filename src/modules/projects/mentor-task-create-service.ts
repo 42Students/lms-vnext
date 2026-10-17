@@ -55,6 +55,19 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
           throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       }
 
+      if(input.assigneeMembershipId){
+        const [eligible]=await tx.select({id:projectMembers.id}).from(projectMembers)
+          .innerJoin(collegeMemberships,eq(collegeMemberships.id,projectMembers.membershipId))
+          .innerJoin(users,eq(users.id,collegeMemberships.userId))
+          .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+            eq(membershipRoles.role,"LEARNER")))
+          .where(and(eq(projectMembers.projectId,scope.project.id),
+            eq(projectMembers.membershipId,input.assigneeMembershipId),
+            eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt),
+            eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE"),
+            eq(users.platformStatus,"ACTIVE"))).limit(1);
+        if(!eligible)throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
+      }
       const [last]=await tx.select({sequence:projectTasks.sequence})
         .from(projectTasks).where(and(eq(projectTasks.projectId,scope.project.id),
           sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
