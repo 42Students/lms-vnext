@@ -40,11 +40,11 @@ describe("chat-16 SA-placements-projects-113 GR-123/124 Logs UI and safeguards",
       .toContain("Cloud Logging backup is not configured.");
   });
   it.each([
-    [400,"INVALID_REQUEST"],
-    [403,"FORBIDDEN"],
-    [404,"KNOWN_ERROR_NOT_FOUND"],
-    [503,"DATABASE_UNAVAILABLE"],
-  ])("SA-placements-projects-113 returns customer-safe text for %s/%s",(status,error)=>{
+    {status:400,code:"INVALID_REQUEST"},
+    {status:403,code:"FORBIDDEN"},
+    {status:404,code:"KNOWN_ERROR_NOT_FOUND"},
+    {status:503,code:"DATABASE_UNAVAILABLE"},
+  ])("SA-placements-projects-113 returns customer-safe text for $status/$code",({status,code:error})=>{
     const message=friendlyApiError({status,code:error});
     expect(message).not.toBe(error);
     expect(message).not.toMatch(/^[A-Z][A-Z0-9_]{5,}$/);
