@@ -196,7 +196,7 @@ export function LearnerFinalDeliveryControl({
     if (!draft) return;
     const hasEvidence=Boolean(draft.sourceUrl||draft.demoUrl||
       draft.attachments?.some(item=>Boolean(item)&&typeof item==="object"&&
-        ((item as {kind?:unknown}).kind==="FILE"||(item as {kind?:unknown}).kind==="LINK")));
+        (item as {kind?:unknown}).kind==="FILE"));
     if(!draft.summary.trim()||!hasEvidence){
       showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
       return;
