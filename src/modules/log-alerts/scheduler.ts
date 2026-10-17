@@ -15,6 +15,7 @@ export function formatDailyDigest(input: {
   day: string; total: number; firstSeen: number;
   muted: number; spikes: number; top: { hash: string; count: number }[];
   deploy?: string;
+  health?: string;
 }): string {
   return [
     "vNext daily error digest (" + input.day + ", IST)",
@@ -27,7 +28,19 @@ export function formatDailyDigest(input: {
     ...(input.top.length ? input.top.map((item) =>
       item.hash.slice(0, 12) + ": " + item.count + " occurrences") : ["None"]),
     "Deploy: " + (input.deploy ?? "not recorded"),
+    "Health watch: " + (input.health ?? "not configured"),
   ].join("\n");
+}
+
+export function healthWatchStatus(
+  row: { lockedBy: string; updatedAt: Date } | undefined,
+  now: Date,
+): string {
+  if (!row) return "not configured";
+  if (now.getTime() - row.updatedAt.getTime() > 5 * 60_000) return "watcher stale";
+  if (row.lockedBy === "HEALTHY") return "healthy";
+  if (row.lockedBy === "DOWN") return "not responding";
+  return "degraded";
 }
 
 export async function withScheduledLease(jobName: string, now: Date, task: () => Promise<void>): Promise<boolean> {
@@ -113,8 +126,13 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       .orderBy(desc(daily.occurrenceCount)).limit(1000);
     const start = new Date(Date.parse(previousDay + "T00:00:00Z") - 330 * 60_000);
     const end = new Date(start.getTime() + 86_400_000);
+    const [health] = await db.select({
+      lockedBy: leases.lockedBy,
+      updatedAt: leases.updatedAt,
+    }).from(leases).where(eq(leases.jobName, "vnext-health-watch")).limit(1);
     const message = formatDailyDigest({
       day: previousDay,
+      health: healthWatchStatus(health, now),
       deploy: /^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT ?? "")
         ? process.env.DEPLOY_COMMIT : undefined,
       total: rows.reduce((sum, row) => sum + row.dayOccurrences, 0),
