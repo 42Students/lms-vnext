@@ -33,6 +33,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const data=await loader(parsed.data);
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
+  {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
