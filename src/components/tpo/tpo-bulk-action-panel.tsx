@@ -198,7 +198,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    {target==="STUDENTS"?<button type="button" disabled={busy||safeSelected.length===0}
     onClick={async()=>{
       try{
-       await navigator.clipboard.writeText(safeSelected.map(id=>labelsById.get(id)??id).join("\\n"));
+       await navigator.clipboard.writeText(safeSelected.map(id=>labelsById.get(id)??id).join("\n"));
        setCopyFeedback(safeSelected.length+" selected student rows copied.");
       }catch{setCopyFeedback("Could not copy selected student rows. Check browser clipboard permission.");}
     }}
