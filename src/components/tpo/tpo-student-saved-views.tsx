@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-import {usePathname,useRouter,useSearchParams} from "next/navigation";
+import {useRouter,useSearchParams} from "next/navigation";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
  pageSize:number;columns?:string};
 type View={id:string;name:string;query:Selection;pinned:boolean;createdAt:string;
@@ -22,7 +22,7 @@ function hrefFor(query:Selection){
  return "/tpo/students"+(p.size?"?"+p.toString():"");
 }
 export function TpoStudentSavedViews(){
- const router=useRouter(),path=usePathname(),params=useSearchParams();
+ const router=useRouter(),params=useSearchParams();
  const [open,setOpen]=useState(false);
  const [rows,setRows]=useState<View[]>([]);
  const [name,setName]=useState("");
@@ -91,8 +91,7 @@ export function TpoStudentSavedViews(){
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
      <strong className="min-w-28 text-sm">{view.name}</strong>
      {view.pinned?<span className="text-xs">Pinned</span>:null}
-     {view.lastUsedAt && Date.now()-new Date(view.lastUsedAt).getTime()>60*86400000?
-       <span className="text-xs text-warning-text">Unused 60+ days</span>:null}
+
      <button type="button" disabled={busy} onClick={()=>void use(view)}
       className="min-h-9 rounded border border-border px-3 text-xs">Open</button>
      <button type="button" disabled={busy} onClick={()=>{
