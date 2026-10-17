@@ -201,3 +201,13 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 - Blocked — `SA-academics-people-60`: video import from arbitrary URL requires registered storage ownership and external binary pipeline; move on.
 - All six chat-6 WPs and four moved batches WPs remain IN-PROGRESS. None qualifies for DONE because unblocked assigned parity requirements remain open. This round prioritised current service/API/UI workflows over premature closure.
 - No tests, typecheck, lint, build or CI wait performed under FAST MODE v2.
+
+## Chat-6 FAST v2 round — synchronized lane merges (2026-10-17, later pass)
+
+- Branch-only: synchronized chatgpt/chat-6-b with the latest main before work, again after the orchestrator merged our commits into main. No direct push to main and no PR.
+- `SA-placements-projects-19`: application list now uses existing selected-college filter options for Job, Department, Program and Batch and persisted 0112 current stage; stage/academic filters are used server-side and kept in bounded CSV links. Source/contact visibility policy remains unchanged.
+- `SA-placements-projects-35`, `SA-academics-people-113`: recruiter desktop/mobile row controls use existing scoped APIs for Archive, Reactivate and Sign out; account-wide actions stay disabled if active recruiter grants exist outside selected college/organization. No invented hard-delete semantics.
+- `SA-academics-people-80/93`, `COL-people-25`: named faculty/student onboarding supports legacy first/last input and normalizes Indian ten-digit mobile to canonical +91 E.164. Other legacy profile fields are intentionally post-onboard editor work and remain open.
+- BLOCKED: `SA-academics-people-84/87` hard-delete/impersonation owner policy; `PUB-auth-public-35` auth refresh-token architecture; `SA-placements-projects-25` cross-tenant company merge approval; `SA-placements-projects-49` grouped broadcast identity; `SA-academics-people-60` private binary video import infra. Continue elsewhere.
+- WPs remain IN-PROGRESS; not DONE because unblocked gaps in course content, onboarding detail, offer administration, and batch decisions are still pending.
+- No tests, lint, typecheck, build, or CI waiting; runtime not verified.

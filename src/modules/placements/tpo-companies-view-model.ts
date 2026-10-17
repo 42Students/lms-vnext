@@ -213,6 +213,7 @@ export function filterTpoCompanyRows(
   rows: readonly TpoCompanyRow[],
   filter: {
     search?: string;
+    sort?: "NAME" | "CONTACTS" | "DRIVES" | "JOINS";
     page: number;
     pageSize: number;
   },
@@ -227,6 +228,10 @@ export function filterTpoCompanyRows(
     ),
   );
 
+  const numericKey=filter.sort==="CONTACTS"?"contacts":filter.sort==="DRIVES"?"drives":
+    filter.sort==="JOINS"?"confirmedJoinedLearners":null;
+  if(numericKey)filtered.sort((a,b)=>(b[numericKey]??-1)-(a[numericKey]??-1)
+    ||a.name.localeCompare(b.name)||(a.companyId??"").localeCompare(b.companyId??""));
   const start = (filter.page - 1) * filter.pageSize;
 
   return {
@@ -323,7 +328,7 @@ export function buildTpoCompanyTimeline(input: {
       type: "OFFER_ISSUED",
       description:
         `Offer issued: ${offer.roleTitle} · ` +
-        (offer.candidateName || "Learner"),
+        "Learner",
       href,
     });
 
@@ -334,7 +339,7 @@ export function buildTpoCompanyTimeline(input: {
         type: "OFFER_RESPONSE",
         description:
           `Current offer status: ${offer.status} · ` +
-          (offer.candidateName || "Learner"),
+          "Learner",
         href,
       });
     }
@@ -350,7 +355,7 @@ export function buildTpoCompanyTimeline(input: {
         type: "JOINING_RECORDED",
         description:
           `Joining outcome: ${offer.joiningStatus} · ` +
-          (offer.candidateName || "Learner"),
+          "Learner",
         href,
       });
     }

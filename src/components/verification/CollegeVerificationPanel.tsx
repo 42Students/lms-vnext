@@ -95,6 +95,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    setReviewFeedback(action==="VERIFY"
     ? `${data.summary.succeeded} verified. The students have been told.`
     : `${data.summary.succeeded} sent back. The students see your reason.`);
+   if(data.summary.failed)setBulkError(`${data.summary.failed} item(s) could not be completed; review the row outcomes.`);
    setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(safeCollegeBulkReviewFailure(error));}
   finally{setBulkBusy(false);}
@@ -197,7 +198,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    </li>)}</ul>
    <button type="button" className="rounded-md border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh queue</button>
   </section>}
-  {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review failed: {bulkError}. No blanket success is assumed; refresh to inspect persisted decisions.</p>}
+  {bulkError&&<p role="alert" className="rounded-md border p-3 text-sm">Bulk review issue: {bulkError}. Check the per-row outcome before retrying; earlier successful decisions remain recorded.</p>}
   <nav aria-label="Verification pagination" className="flex flex-wrap items-center gap-4 text-sm">
    <label>Sort by <select value={query.sort??"OLDEST"} onChange={event=>navigate({sort:event.target.value,page:"1"})} className="ml-2 rounded-md border bg-background p-2">
     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option><option value="NAME">Learner name A–Z</option>
@@ -216,7 +217,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     onFinish={sequential?()=>{setSelected(null);setSequential(null);
       setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length));}:undefined}
     onClose={()=>{if(sequential)setReviewFeedback(
-      `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
+      verificationSessionStopped(sequential.index,sequential.keys.length));
       setSelected(null);setSequential(null);}}
     onSaved={savedReview}/>}
 

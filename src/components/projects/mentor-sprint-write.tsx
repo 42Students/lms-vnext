@@ -10,8 +10,8 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
 export function MentorSprintCreate({
-  projectId, releaseId,
-}: {projectId:string;releaseId:string}) {
+  projectId, releaseId,releases=[],
+}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[]}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
@@ -20,19 +20,25 @@ export function MentorSprintCreate({
   const [description,setDescription]=useState("");
   const [goal,setGoal]=useState(""),[done,setDone]=useState("");
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
+  const [chosenReleaseId,setChosenReleaseId]=useState(releaseId);
+  const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const datesValid=(!startDate||!endDate||endDate>=startDate)&&
+    (!dueDate||!startDate||dueDate>=startDate);
 
   async function create() {
     if(!title.trim() || title.trim().length>200 || description.length>4000||
-      goal.length>4000||done.length>4000||(startDate&&endDate&&endDate<startDate)) return;
+      goal.length>4000||done.length>4000||!datesValid||!chosenReleaseId||
+      chosenRelease?.status==="SHIPPED") return;
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
-        releaseId,title:title.trim(),description:description.trim()||null,
+        releaseId:chosenReleaseId,title:title.trim(),description:description.trim()||null,
         goal:goal.trim()||null,definitionOfDone:done.trim()||null,
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
       showToast({tone:"success",title:"Sprint created"});
-      setOpen(false);setTitle("");setDescription("");
+      setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
+      setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
       router.refresh();
     } catch(error) {
       showToast({tone:"error",title:"Could not create sprint",
@@ -49,11 +55,21 @@ export function MentorSprintCreate({
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!title.trim()||title.trim().length>200||
-          description.length>4000} onClick={()=>void create()}>
+          description.length>4000||!datesValid||!chosenReleaseId||
+          chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
           {busy?"Creating…":"Confirm create"}
         </Button>
       </>}>
       <div className="grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Ships in release
+          <select value={chosenReleaseId} disabled={busy}
+            onChange={event=>setChosenReleaseId(event.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            {releases.length?releases.filter(release=>release.status!=="SHIPPED").map(release=>
+              <option key={release.id} value={release.id}>{release.title}</option>):
+              <option value={releaseId}>Current release</option>}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Sprint title
           <Input maxLength={200} value={title}
             onChange={e=>setTitle(e.target.value)} required />
@@ -75,6 +91,9 @@ export function MentorSprintCreate({
           <label className="text-xs font-semibold">Due date
             <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
         </div>
+        {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
+          Sprint end and due dates must not come before the start date.
+        </p>:null}
       </div>
     </Dialog>
   </>;

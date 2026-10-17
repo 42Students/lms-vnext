@@ -155,6 +155,8 @@ export function CollegeCohortRowActions({ row, periods }: {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
+  const [discardConfirm,setDiscardConfirm]=useState(false);
+  const [pendingLifecycleAction,setPendingLifecycleAction]=useState<"GRADUATE"|"RETIRE"|null>(null);
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [expectedEndPeriodId, setExpectedEndPeriodId] = useState(row.expectedEndPeriodId ?? "");
@@ -173,8 +175,8 @@ export function CollegeCohortRowActions({ row, periods }: {
   const endDateLocked = row.activeSections > 0 || row.activeEnrolledLearners > 0;
 
   function graduate() {
-    if (!window.confirm(`Mark "${row.name}" graduated? This completes the batch after its final registered semester.`)) return;
-    setNotice("");
+    if(pendingLifecycleAction!=="GRADUATE") {setPendingLifecycleAction("GRADUATE");return;}
+    setPendingLifecycleAction(null);setNotice("");
     startTransition(async () => {
       try {
         const response = await fetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate", {
@@ -192,8 +194,8 @@ export function CollegeCohortRowActions({ row, periods }: {
   }
   function retire() {
     if(row.status!=="PLANNED")return;
-    if(!window.confirm(`Remove planned batch "${row.name}"? The batch will be archived, not physically deleted. Historical or linked records block this.`))return;
-    setNotice("");
+    if(pendingLifecycleAction!=="RETIRE") {setPendingLifecycleAction("RETIRE");return;}
+    setPendingLifecycleAction(null);setNotice("");
     startTransition(async()=>{
       try {
         const response=await fetch("/api/college/batches/"+encodeURIComponent(row.id),{
@@ -210,9 +212,8 @@ export function CollegeCohortRowActions({ row, periods }: {
     });
   }
   function close() {
-    if (hasUnsavedCollegeCohortEdit(original, draft) &&
-      !window.confirm("Discard unsaved batch changes?")) return;
-    setEditing(false);
+    if (hasUnsavedCollegeCohortEdit(original, draft) && !discardConfirm) {setDiscardConfirm(true);return;}
+    setDiscardConfirm(false);setEditing(false);
     setNotice("");
   }
 
@@ -228,7 +229,7 @@ export function CollegeCohortRowActions({ row, periods }: {
     startTransition(async () => {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
-        setEditing(false);
+        setEditing(false);setDiscardConfirm(false);
         setNotice("Batch updated.");
         router.refresh();
       } catch (error) {
@@ -240,7 +241,7 @@ export function CollegeCohortRowActions({ row, periods }: {
   return <div className="min-w-28">
     <div className="flex flex-wrap gap-2">
     <button type="button" disabled={pending || blocked}
-      onClick={() => { setEditing(true); setNotice(""); }}
+      onClick={() => { setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);setNotice(""); }}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </button>
@@ -255,6 +256,17 @@ export function CollegeCohortRowActions({ row, periods }: {
       Remove
     </button>
     </div>
+    {pendingLifecycleAction?<div role="group" aria-label="Confirm batch lifecycle" className="mt-2 space-y-2 rounded border border-border bg-muted p-3 text-xs">
+      <p>{pendingLifecycleAction==="GRADUATE"
+        ? `Mark "${row.name}" graduated? This completes the batch after its final registered semester.`
+        : `Remove planned batch "${row.name}"? The batch will be archived, not physically deleted. Historical or linked records block this.`}</p>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" disabled={pending} onClick={pendingLifecycleAction==="GRADUATE"?graduate:retire}
+          className="rounded bg-primary px-3 py-2 font-semibold text-on-primary">Confirm</button>
+        <button type="button" disabled={pending} onClick={()=>setPendingLifecycleAction(null)}
+          className="rounded border border-border px-3 py-2">Cancel</button>
+      </div>
+    </div>:null}
     {blocked ? <p className="mt-1 text-xs text-muted-foreground">
       "Archived batches cannot be edited."
     </p> : null}
@@ -293,6 +305,13 @@ export function CollegeCohortRowActions({ row, periods }: {
           End period is locked because the batch has enrolled learners or classes. Name and code remain editable.
         </p>}
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
+        {discardConfirm?<div role="group" aria-label="Discard unsaved batch changes?" className="space-y-2 rounded border border-border bg-muted p-3 text-sm">
+          <p>Discard unsaved batch changes?</p>
+          <div className="flex gap-2">
+            <button type="button" disabled={pending} onClick={close} className="rounded bg-primary px-3 py-2 font-semibold text-on-primary">Discard changes</button>
+            <button type="button" onClick={()=>setDiscardConfirm(false)} className="rounded border border-border px-3 py-2">Keep editing</button>
+          </div>
+        </div>:null}
         <div className="flex flex-wrap justify-end gap-3">
           <button disabled={pending} type="button" onClick={close}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

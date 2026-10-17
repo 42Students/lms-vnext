@@ -211,9 +211,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementLearnerRequests.status,"PENDING"))).for("update").limit(1);
    if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
    const [application]=await tx.select({id:placementApplications.id})
-    .from(placementApplications).where(and(
+    .from(placementApplications)
+    .innerJoin(placementApplicationScreenings,
+     eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .where(and(
      eq(placementApplications.id,request.applicationId),
-     eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"))).limit(1);
+     eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
+     eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
    const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
     .from(placementLearnerRequests).where(and(
@@ -281,6 +285,11 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.update(placementRoundCandidateSlots).set({
     room:input.room,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));
+   if(slot.applicationId&&slot.status==="BOOKED"&&info.round.mode!=="VIRTUAL")
+    await tx.update(placementApplicationRoundExceptions).set({
+     venue:input.room,updatedAt:new Date(),
+    }).where(and(eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
+     eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId&&slot.status==="BOOKED")await notice(tx,context,job,slot.applicationId,
     "PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED","Your interview for "+job.title+" has moved to room "+input.room+".");
    return {changed:1};
@@ -322,6 +331,9 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.update(placementRoundCandidateSlots).set({
     applicationId:null,status:"CANCELLED",updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));
+   if(slot.applicationId)await tx.delete(placementApplicationRoundExceptions).where(and(
+    eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
+    eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId)await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_CANCELLED",
     "Your interview slot was cancelled. Reason: "+input.reason);
    return {cancelled:1};
@@ -341,6 +353,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     status:"BOOKED",applicationId:slot.applicationId,confirmedAt:new Date(),
     updatedAt:new Date(),version:target.version+1,
    }).where(eq(placementRoundCandidateSlots.id,target.id));
+   await tx.update(placementApplicationRoundExceptions).set({
+    scheduledAt:target.startsAt,timezone:"Asia/Kolkata",
+    venue:info.round.mode==="VIRTUAL"?null:target.room,
+    meetingUrl:info.round.mode==="VIRTUAL"?info.round.meetingUrl:null,
+    updatedAt:new Date(),
+   }).where(and(eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
+    eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    await notice(tx,context,job,slot.applicationId,"PLACEMENTS_TPO_INTERVIEW_MOVED",
     "Your interview for "+job.title+" was moved to "+target.startsAt.toISOString()+" ("+target.room+"). "+input.reason);
    return {moved:1};
