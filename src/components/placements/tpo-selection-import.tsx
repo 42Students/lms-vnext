@@ -21,6 +21,7 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
  }
  async function confirm(){
   if(busy||!entries.length)return;
+  if(!window.confirm("Record "+entries.length+" matched company selections? "+unmatched.length+" unmatched rows will not be recorded. No offers will be released yet."))return;
   setBusy(true);setError("");setDone("");
   try{
    let count=0;
