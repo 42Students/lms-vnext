@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -72,6 +73,8 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </button>
+    <TpoStudentOutcomePill recorded={afterCollege[row.membershipId]?.outcome??null}
+      placed={row.placed} registered={row.registeredForPlacements}/>
     <TpoAfterCollegeEditor membershipId={row.membershipId} learnerName={row.displayName}
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
