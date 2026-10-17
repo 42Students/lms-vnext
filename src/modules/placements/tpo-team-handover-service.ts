@@ -73,8 +73,9 @@ export async function handoverTpoTeamWork(context:RequestContext,raw:unknown){
    .returning({id:placementTpoFollowups.id});
   const counts={drives:jobs.length,companies:companies.length,
    recruiterLeads:leads.length,followups:followups.length};
-  // Every successful handover is audited, even if another request already
-  // moved all rows; that case is explicit, not an implied role revocation.
+  // A retried request with no matching source-owned rows is harmless;
+  // do not flood the audit log or recipient bell with duplicate handovers.
+  if(!Object.values(counts).some(count=>count>0))return {counts,roleRevoked:false as const};
   const [event]=await tx.insert(activityEvents).values({
     organizationId:college.organizationId,collegeId:college.id,
     actorUserId:context.user.id,actorMembershipId:actor.id,
