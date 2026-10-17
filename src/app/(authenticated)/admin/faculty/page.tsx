@@ -5,11 +5,13 @@ import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {SuperAdminFacultyBulkImport} from "@/components/admin/super-admin-faculty-bulk-import";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
+import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
 const statuses=["ALL","ACTIVE","SUSPENDED","ENDED"] as const;
 export default async function SuperAdminFacultyPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
+ const peopleFilters=context.adminScope?.collegeId?await getSuperAdminPeopleFilterOptions(context):null;
  return <div className="space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
     <PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY"/>
@@ -18,7 +20,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
     </Link>
   </div>:null}
   {context.adminScope?.collegeId?<SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}/>:null}
-  <AdminScopedReadPage title="Faculty" path="/admin/faculty" statuses={statuses}
+  <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"FACULTY"}:undefined} title="Faculty" path="/admin/faculty" statuses={statuses}
   exportPath="/api/admin/faculty/export" exportFilename="super-admin-faculty-ist.csv"
   description="Read-only faculty memberships in the selected college. Contact details stay in the permission-checked membership detail."
   searchParams={searchParams} renderRowActions={row=><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>} loader={query=>listAdminScopedPeople(context,"FACULTY",query)}/></div>;
