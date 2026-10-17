@@ -72,7 +72,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
     onClick={()=>void (async()=>{
       if(editing){setEditing(false);return;}
-      setError("");setMethodsLoaded(false);
+      setError("");setNotice("");setMethodsLoaded(false);setExpectedUpdatedAt(null);
       try{
        const response=await fetch("/api/courses/assignments/"+encodeURIComponent(assignment.id),{cache:"no-store"});
        const data=await response.json().catch(()=>null);
