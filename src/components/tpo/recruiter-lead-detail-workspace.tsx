@@ -36,6 +36,7 @@ type Activity = {
   type: string;
   outcome: string | null;
   note: string | null;
+  isSystem?:boolean;
   createdAt: string;
 };
 type Followup = {
