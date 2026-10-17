@@ -28,21 +28,22 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const draftKey="tpo-team-start:"+actorUserId;
  const pending=useRef(false);
  const createKey=useRef<string|null>(null);
- const [recipient,setRecipient]=useState(""),[topic,setTopic]=useState("");
+ const [recipient,setRecipient]=useState(""),[topic,setTopic]=useState(""),[firstMessage,setFirstMessage]=useState("");
  useEffect(()=>{
   const handle=window.setTimeout(()=>{
    try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
-    const parsed=JSON.parse(raw) as {recipient?:string;topic?:string};
+    const parsed=JSON.parse(raw) as {recipient?:string;topic?:string;firstMessage?:string};
     createKey.current=sessionStorage.getItem(draftKey+":createKey");
     if(parsed.topic&&parsed.topic.length<=200)setTopic(parsed.topic);
+    if(parsed.firstMessage&&parsed.firstMessage.length<=4000)setFirstMessage(parsed.firstMessage);
     if(parsed.recipient&&members.some(member=>member.membershipId===parsed.recipient))setRecipient(parsed.recipient);
    }catch{/* Storage is optional. */}
   },0);
   return ()=>window.clearTimeout(handle);
  },[draftKey,members]);
- function updateDraft(nextRecipient:string,nextTopic:string){
-  setRecipient(nextRecipient);setTopic(nextTopic);createKey.current=null;
-  try{sessionStorage.setItem(draftKey,JSON.stringify({recipient:nextRecipient,topic:nextTopic}));
+ function updateDraft(nextRecipient:string,nextTopic:string,nextFirstMessage=firstMessage){
+  setRecipient(nextRecipient);setTopic(nextTopic);setFirstMessage(nextFirstMessage);createKey.current=null;
+  try{sessionStorage.setItem(draftKey,JSON.stringify({recipient:nextRecipient,topic:nextTopic,firstMessage:nextFirstMessage}));
    sessionStorage.removeItem(draftKey+":createKey");}catch{/* Optional. */}
  }
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -53,7 +54,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    if(!createKey.current){createKey.current=crypto.randomUUID();
     try{sessionStorage.setItem(draftKey+":createKey",createKey.current);}catch{/* Optional. */}}
    const result=await postForm("/api/placements/tpo/team/threads",{
-    recipientMembershipId:recipient,topic:topic.trim(),idempotencyKey:createKey.current,
+    recipientMembershipId:recipient,topic:topic.trim(),firstMessage:firstMessage.trim(),idempotencyKey:createKey.current,
    });
    if(!result.ok||!result.href){
     setError(result.code==="RECIPIENT_NOT_FOUND"||result.code==="SESSION_EXPIRED"||result.code==="STALE_MESSAGE"?
@@ -78,6 +79,11 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   <label className="grid gap-1 text-sm text-body">Topic
    <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3" placeholder="Drive coordination"/>
+  </label>
+  <label className="grid gap-1 text-sm text-body">First message (optional)
+   <textarea value={firstMessage} maxLength={4000} rows={3} disabled={busy}
+    onChange={event=>updateDraft(recipient,topic,event.target.value)}
+    className="rounded-md border border-border bg-surface p-3" placeholder="Tell the team what this is about"/>
   </label>
   <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}

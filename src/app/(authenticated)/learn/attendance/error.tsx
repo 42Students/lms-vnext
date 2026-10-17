@@ -14,7 +14,7 @@ export default function LearnerAttendanceError({
         Couldn&apos;t load attendance
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-        This is a data-load failure, not a zero-attendance state. Retry to load the actual records.
+        Something went wrong loading attendance for this month. This is a load failure, not a zero-attendance result.
       </p>
       <div className="mt-5 flex justify-center">
         <Button onClick={reset}>

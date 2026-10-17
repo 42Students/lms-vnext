@@ -6,12 +6,11 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 
-export default async function LearnerQuizzesPage() {
-  const context =
-    await getCurrentRequestContext();
+export default async function LearnerQuizzesPage({searchParams}:{searchParams:Promise<{course?:string|string[]}>}) {
+  const [context,query] = await Promise.all([getCurrentRequestContext(),searchParams]);
   const overview =
     await getLearnerAssessmentOverview(
-      context,
+      context,{courseId:query.course},
     );
 
   const items: LearnerQuizOverviewItem[] =
@@ -48,6 +47,8 @@ export default async function LearnerQuizzesPage() {
         title="All Quizzes"
       />
       <LearnerAssessmentOverview
+        key={overview.selectedCourseId??"all"}
+        initialCourseId={overview.selectedCourseId??""}
         courses={overview.courses}
         classScope={overview.classScope}
         items={items}

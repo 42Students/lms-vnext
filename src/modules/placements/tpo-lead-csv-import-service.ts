@@ -4,7 +4,7 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
+import { activityEvents, placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -115,6 +115,18 @@ export async function importTpoLeadsCsv(
       });
       rows.push({ row: item.row, status: "created", reason: null, leadId: created.id });
     }
+    // A single college-scoped immutable audit line represents the *actual*
+    // result. Never log raw CSV contents, email addresses or telephone numbers.
+    const counts=summarizeTpoLeadImport(rows);
+    const created=rows.filter(row=>row.status==="created");
+    if(created.length)await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:college.id,
+      actorUserId:context.user.id,actorMembershipId:ownerMembershipId,
+      module:"PLACEMENTS",eventType:"RECRUITER_LEADS_IMPORTED",
+      subjectType:"placement_tpo_lead",subjectId:created[0].leadId!,
+      summary:"Recruiter leads imported",
+      metadata:{counts,importedLeadIds:created.map(row=>row.leadId)},
+    });
     return rows;
   });
 

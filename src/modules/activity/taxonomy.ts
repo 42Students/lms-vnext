@@ -140,18 +140,18 @@ export const ACTIVITY_EVENT_TYPES = {
   COURSES_DISCUSSION_DELETED:
     "courses.discussion.deleted",
   PROJECTS_TEMPLATE_METADATA_UPDATED: "projects.template.metadata_updated",
-  PROJECTS_TEMPLATE_ROLLED_BACK: "projects.template.rolled_back",
-  PROJECTS_TEMPLATE_CREATED: "projects.template.created",
-  PROJECTS_TEMPLATE_REVISED: "projects.template.revised",
-  PROJECTS_TEMPLATE_PUBLISHED: "projects.template.published",
-  PROJECTS_TEMPLATE_UNPUBLISHED: "projects.template.unpublished",
-  PROJECTS_TEMPLATE_DUPLICATED: "projects.template.duplicated",
-  PROJECTS_TEMPLATE_ARCHIVED: "projects.template.archived",
-  PROJECTS_TEMPLATE_COLLEGE_ASSIGNED: "projects.template.college_assigned",
-  PROJECTS_TEMPLATE_COLLEGE_REVOKED: "projects.template.college_revoked",
-  PROJECTS_RELEASE_CREATED: "projects.release.created",
-  PROJECTS_RELEASE_UPDATED: "projects.release.updated",
   PROJECTS_RELEASE_DELETED: "projects.release.deleted",
+  PROJECTS_RELEASE_UPDATED: "projects.release.updated",
+  PROJECTS_RELEASE_CREATED: "projects.release.created",
+  PROJECTS_TEMPLATE_COLLEGE_REVOKED: "projects.template.college_revoked",
+  PROJECTS_TEMPLATE_COLLEGE_ASSIGNED: "projects.template.college_assigned",
+  PROJECTS_TEMPLATE_ARCHIVED: "projects.template.archived",
+  PROJECTS_TEMPLATE_DUPLICATED: "projects.template.duplicated",
+  PROJECTS_TEMPLATE_UNPUBLISHED: "projects.template.unpublished",
+  PROJECTS_TEMPLATE_PUBLISHED: "projects.template.published",
+  PROJECTS_TEMPLATE_REVISED: "projects.template.revised",
+  PROJECTS_TEMPLATE_CREATED: "projects.template.created",
+  PROJECTS_TEMPLATE_ROLLED_BACK: "projects.template.rolled_back",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
@@ -220,6 +220,7 @@ export const ACTIVITY_EVENT_TYPES = {
   PLACEMENTS_JOB_REOPENED: "placements.job.reopened",
   PLACEMENTS_JOB_CLOSED:
     "placements.job.closed",
+  PLACEMENTS_JOB_CANCELLED: "placements.job.cancelled",
   PLACEMENTS_APPLICATION_SUBMITTED:
     "placements.application.submitted",
   PLACEMENTS_APPLICATION_WITHDRAWN:

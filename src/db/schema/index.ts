@@ -14,6 +14,7 @@ export * from "./lecture-halls";
 export * from "./faculty-course-associations";
 export * from "./courses";
 export * from "./assessments";
+export * from "./course-assignment-materials";
 export * from "./quizzes";
 export * from "./projects";
 export * from "./placements";
