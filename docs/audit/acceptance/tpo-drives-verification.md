@@ -31,3 +31,5 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-drives-04 | DONE | `src/modules/placements/tpo-drive-lifecycle-list-service.ts`: default Requests when pending reviews else Live, explicit All preserved; persistent college-scoped counts. `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`: clickable count badges and active view. Named test `TPO-drives-04 review-first default and persistent badge counts` in `tests/unit/tpo-drives-chat-3-round4.test.ts` (written, not run). |
+
+| TPO-drives-45 | OPEN | `tpo-drive-deadline-ist.ts` parses valid IST wall time and rejects impossible days before the first creation write; Create form uses the converted ISO and explains IST. 11:59 PM prefill still outstanding. `tests/unit/tpo-drives-chat-3-round4.test.ts`, two TPO-drives-45 tests (not run). |
