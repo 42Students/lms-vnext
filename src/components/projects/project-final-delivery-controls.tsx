@@ -179,6 +179,7 @@ export function LearnerFinalDeliveryControl({
         failedSnapshot.current=null;
         setAutosaveStatus("saved");
       }catch{
+        failedSnapshot.current=snapshot;
         setAutosaveStatus("failed");
       }finally{
         setPending(false);
