@@ -132,6 +132,14 @@ async function loadRecruiterThreads(
       lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
          where m.thread_id=placement_tpo_message_threads.id
          order by m.created_at desc,m.id desc limit 1)`,
+      searchSnippet: sql<string|null>`(
+        select left(search_message.body,160)
+        from placement_tpo_messages search_message
+        where search_message.thread_id = placement_tpo_message_threads.id
+          and position(lower(${searchText}) in lower(search_message.body)) > 0
+        order by search_message.created_at desc, search_message.id desc
+        limit 1
+      )`,
       bodySearchMatch: sql<boolean>`exists (
         select 1 from placement_tpo_messages search_message
         where search_message.thread_id = placement_tpo_message_threads.id
@@ -234,6 +242,7 @@ async function loadRecruiterThreads(
       waitingForYou:row.lastSender==="RECRUITER",
       companyName:row.companyName,
       bodySearchMatch:row.bodySearchMatch,
+      searchSnippet:row.searchSnippet,
       accessEnded:row.accessEnded,
     };
   });
