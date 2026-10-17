@@ -6,6 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
 import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
+import { getTpoNonApplicantReminderPreview } from "@/modules/placements/tpo-remind-not-applied-service";
 import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
@@ -230,6 +231,9 @@ export async function PlacementDriveWorkspace({
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+  const reminderPreview=isTpo&&job.status==="PUBLISHED"
+    ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
+    : null;
 
   const nextStep = isTpo && lifecycleReadiness
     ? projectTpoDriveNextStep({
@@ -239,6 +243,8 @@ export async function PlacementDriveWorkspace({
         closeAllowed: lifecycleReadiness.close.allowed,
         shortlistCount: shortlist?.total ?? null,
         pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
+        nonApplicantCount: reminderPreview?.count ?? 0,
+        canRemindNonApplicants: Boolean(reminderPreview?.allowed && !reminderPreview.alreadySent),
         deadlineMissing: job.applicationDeadline===null,
         stagedRounds: driveDay.rounds.map(round => ({
           id: round.id,
@@ -611,10 +617,12 @@ export async function PlacementDriveWorkspace({
           }))}
         />
       ) : null}
-      {job.status==="PUBLISHED"?<section aria-label="Registered students who have not applied"
+      {job.status==="PUBLISHED"?<section id="drive-registered-not-applied" aria-label="Registered students who have not applied"
         className="rounded-xl border border-border bg-surface p-5">
         <h2 className="mb-2 font-semibold text-foreground">Registered, not applied</h2>
-        <p className="mb-3 text-sm text-body">Remind eligible registered students who have not applied. Once per day, and only before the deadline.</p>
+        <p className="mb-3 text-sm text-body">{reminderPreview && reminderPreview.allowed
+          ? reminderPreview.count+" eligible registered students have not applied. Remind once per day, before the deadline."
+          : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
         <TpoRemindNonApplicants jobId={jobId}/>
       </section>:null}
       <section id="drive-request-actions">
