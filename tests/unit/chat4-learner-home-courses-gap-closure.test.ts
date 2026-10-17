@@ -7,6 +7,19 @@ import {learnerCourseFilteredEmptyTitle} from "@/modules/courses/learner-course-
 import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
 const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-4 learner Home and Courses gap closure",()=>{
+ it("LEARNER-course-detail-R04 resolves one authorized resource and returns a 15-minute signed storage URL",()=>{
+  const service=source("src/modules/courses/learner-course-file-reference-service.ts");
+  const route=source("src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts");
+  expect(service).toContain("requireLearningReadAccess(context,delivery.offeringId,deliveryId");
+  expect(service).toContain('access!=="LEARNER"');
+  expect(service).toContain("eq(lessonContents.id,contentId)");
+  expect(service).toContain("eq(lessonContents.visibleToStudents,true)");
+  expect(route).toContain("getLearnerCourseFileReference(");
+  expect(route).not.toContain("getLearnerCourseWorkspace(");
+  expect(route).not.toContain("getObjectStream(");
+  expect(route).toContain('presignUrl(config,{method:"GET",key,expiresSeconds:900,query})');
+  expect(route).toContain('"Referrer-Policy":"no-referrer"');
+ });
  it("LEARNER-home-courses-06 legacy filtered results and empty titles",()=>{
   expect(learnerCourseResultSummary(48,60,100)).toBe("Showing 60 of 100 records · 48 currently displayed");
   expect(learnerCourseFilteredEmptyTitle({query:"",continueOnly:false,typeFilter:"elective",termState:"ALL",progressFilter:"ALL",periodCount:3}))

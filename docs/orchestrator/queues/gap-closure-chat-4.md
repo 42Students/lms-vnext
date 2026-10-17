@@ -142,7 +142,7 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-14 | S2 | MISSING-FIELD / SIDE-EFFECT | UNCONFIRMED |
 | LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | DONE |
 | LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
-| LEARNER-course-detail-R04 | S3 | PERFORMANCE | OPEN |
+| LEARNER-course-detail-R04 | S3 | PERFORMANCE | DONE |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
 | LEARNER-home-courses-03 | S3 | STATE / COPY | OPEN |
 | LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | FIXED-ON-MAIN |
