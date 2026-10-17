@@ -54,6 +54,7 @@ function label(value: string) {
 export function ProjectAdminFilters({
   query,
   includeSubmissionStatus = false,
+  includeRiskSort = false,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
