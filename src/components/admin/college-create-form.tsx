@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useFormDraft} from "@/hooks/use-form-draft";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -42,13 +43,13 @@ export function CollegeCreateForm({
   const setPostalCode=(value:string)=>setDraft(current=>({...current,postalCode:value}));
   const setCountry=(value:string)=>setDraft(current=>({...current,country:value}));
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const payload=await apiFetch<unknown>("/api/colleges",{
           method:"POST",headers:{"content-type":"application/json"},
