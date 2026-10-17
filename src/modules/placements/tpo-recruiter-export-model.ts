@@ -68,8 +68,8 @@ export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[],
  return "\uFEFF"+[grid.headers,...grid.values].map(row=>
   row.map(recruiterCsvCell).join(",")).join("\r\n")+"\r\n";
 }
-export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[]){
- const grid=recruiterTableExportGrid(rows);
+export function recruiterTableExportTsv(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
+ const grid=recruiterTableExportGrid(rows,columns);
  // Literal text clipboard, not formulas: sanitize spreadsheet trigger characters.
  return [grid.headers,...grid.values].map(row=>row.map(value=>{
   const safe=/^[\s]*[=+\-@]/.test(value)?"'"+value:value;
