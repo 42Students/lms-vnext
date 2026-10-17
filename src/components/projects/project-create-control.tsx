@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -21,14 +21,16 @@ export function CreateProjectControl({
   collegeId,
   basePath,
   templates,
+  standalone = false,
 }: {
   collegeId: string;
   basePath: string;
   templates: readonly AssignedProjectTemplateChoice[];
+  standalone?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(standalone);
   const [templateId, setTemplateId] = useState(
     templates[0]?.templateId ?? "",
   );
@@ -46,6 +48,7 @@ export function CreateProjectControl({
   const [roster,setRoster]=useState<{membershipId:string;displayName:string;rollNumber:string}[]>([]);
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
+  const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -139,6 +142,8 @@ export function CreateProjectControl({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
     setPending(true);
     setError(null);
 
@@ -175,6 +180,7 @@ export function CreateProjectControl({
           : "Could not create the Project.",
       );
     } finally {
+      submitLock.current = false;
       setPending(false);
     }
   }
@@ -187,17 +193,8 @@ export function CreateProjectControl({
     );
   }
 
-  return (
-    <>
-      <Button size="sm" onClick={openDialog}>
-        Create workspace
-      </Button>
-      <Dialog
-        open={open}
-        onOpenChange={setOpen}
-        title="Create workspace"
-        description="Create an independent Project workspace from the exact published template version assigned to this college."
-      >
+
+  const form = (
         <form onSubmit={submit} className="grid gap-4">
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -341,7 +338,7 @@ export function CreateProjectControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={() => standalone ? router.push(basePath) : setOpen(false)}
             >
               Cancel
             </Button>
@@ -358,7 +355,28 @@ export function CreateProjectControl({
             </Button>
           </div>
         </form>
-      </Dialog>
+  );
+  return (
+    <>
+      {!standalone ? (
+        <Button size="sm" onClick={openDialog}>Create workspace</Button>
+      ) : null}
+      {standalone ? (
+        <section aria-label="Create workspace" className="space-y-5 rounded-xl border border-border bg-surface p-5">
+          <h2 className="text-xl font-semibold text-foreground">Create workspace</h2>
+          <p className="text-sm text-body">Create an independent Project workspace from a published template assigned to this college.</p>
+          {form}
+        </section>
+      ) : (
+        <Dialog
+          open={open}
+          onOpenChange={setOpen}
+          title="Create workspace"
+          description="Create an independent Project workspace from the exact published template version assigned to this college."
+        >
+          {form}
+        </Dialog>
+      )}
     </>
   );
 }
