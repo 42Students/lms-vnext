@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { TpoTrustToggle } from "@/components/placements/tpo-trust-toggle";
+import {TpoTrustedDomainEditor} from "@/components/tpo/tpo-trusted-domain-editor";
 import {
   getTpoTrustedCompanies,
 } from "@/modules/placements/tpo-settings-people-service";
@@ -32,7 +33,7 @@ export default async function TpoTrustedCompaniesPage() {
       <PageHeader
         eyebrow="TPO · Settings"
         title="Trusted Companies"
-        description="Review and confirm changes to college-specific employer trust flags. Explicit recruiter-domain allowlist entries remain read-only and independent."
+        description="Review and confirm changes to college-specific employer trust flags. Trusted email domains are explicit college-scoped entries, separate from company trust flags."
         actions={
           <Link
             href="/tpo/settings/team"
@@ -180,53 +181,14 @@ export default async function TpoTrustedCompaniesPage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface">
-        <div className="border-b border-border px-5 py-4">
-          <h2 className="text-lg font-semibold text-foreground">
-            Explicit trusted email domains
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-body">
-            Only domains stored in the placement-specific
-            trusted-domains table appear here. College login
-            domains are intentionally excluded.
-          </p>
-        </div>
-
-        {!data.explicitDomainsAvailable ? (
-          <p className="p-6 text-sm text-body">
-            Explicit trusted-domain data is unavailable;
-            the source table has not been registered.
-          </p>
-        ) : data.trustedDomains.length === 0 ? (
-          <p className="p-6 text-sm text-body">
-            No explicit trusted domains are recorded for
-            this college.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {data.trustedDomains.map((entry) => (
-              <li
-                key={entry.domain}
-                className="flex flex-wrap items-center justify-between gap-3 px-5 py-4"
-              >
-                <span className="font-medium text-foreground">
-                  {entry.domain}
-                </span>
-                <StatusBadge tone="success">
-                  Explicitly trusted
-                </StatusBadge>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      {data.explicitDomainsAvailable?
+        <TpoTrustedDomainEditor domains={data.trustedDomains.map(entry=>entry.domain)}/>:
+        <p role="status" className="rounded-xl border border-border p-4 text-sm">
+         Trusted-domain editor is unavailable until the table is registered.
+        </p>}
 
       <p className="text-xs leading-5 text-muted-foreground">
-        This view does not create, normalize, approve or remove
-        trusted domains. It does not infer request-approval
-        consequences from trust flags or email-domain metadata.
-        Legacy trust-management actions and browser verification
-        remain open.
+        Explicit trusted domains are normalized and recorded by the server. Only future recruiter access decisions can use these values; prior grants are not silently expanded.
       </p>
     </div>
   );
