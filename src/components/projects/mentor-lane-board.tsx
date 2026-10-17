@@ -16,7 +16,7 @@ type Sprint={id:string;title:string;status:string;releaseId:string};
 type Release={id:string;title:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
-type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
+type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType?:string};
 const editable=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],readOnly=false}:{
  projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
