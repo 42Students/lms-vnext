@@ -116,4 +116,27 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(view).not.toContain("setError(data.error)");
  });
 
+ it("TPO-inbox-team-21 GR-34 reuses confirmed Team message keys under a thread lock",()=>{
+  const service=source("src/modules/placements/tpo-team-internal-reply-service.ts");
+  const form=source("src/components/tpo/tpo-team-forms.tsx");
+  expect(service).toContain('createHash("sha256").update(input.body)');
+  expect(service).toContain("eq(activityEvents.dedupeKey,key)");
+  expect(service).toContain("dedupeKey:key");
+  expect(service).toContain('.for("update")');
+  expect(form).toContain("crypto.randomUUID()");
+  expect(form).toContain('draftKey+":sendKey"');
+ });
+ it("TPO-inbox-team-39 GR-32 treats login redirects as failure and preserves draft on 409",()=>{
+  const form=source("src/components/tpo/tpo-team-forms.tsx");
+  const create=source("src/app/api/placements/tpo/team/threads/route.ts");
+  const reply=source("src/app/api/placements/tpo/team/threads/[threadId]/messages/route.ts");
+  expect(form).toContain('headers:{Accept:"application/json"}');
+  expect(form).toContain('if(response.redirected)return {ok:false,code:"SESSION_EXPIRED"}');
+  expect(create).toContain('request.headers.get("accept")');
+  expect(reply).toContain('request.headers.get("accept")');
+  const feedback=source("src/modules/placements/tpo-team-form-feedback-model.ts");
+  expect(feedback).toContain("Your draft is saved.");
+  expect(feedback).toContain("This changed while you were working.");
+ });
+
 });
