@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
-export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[]}>}){
+export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
@@ -15,7 +15,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const qterm=Array.isArray(q.q)?q.q[0]:q.q;
  const joiningRaw=Array.isArray(q.joining)?q.joining[0]:q.joining;
  const kindRaw=Array.isArray(q.kind)?q.kind[0]:q.kind;
- const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{})});
+ const expiryRaw=Array.isArray(q.expiry)?q.expiry[0]:q.expiry;
+ const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{}),...(expiryRaw?{expiry:expiryRaw}:{})});
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
