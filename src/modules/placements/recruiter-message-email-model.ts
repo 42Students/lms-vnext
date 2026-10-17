@@ -18,9 +18,13 @@ export function isRecruiterUnreadReminderDue(value:RecruiterReminderWindow){
 }
 /** Never pass uncontrolled HTML/control characters into ZeptoMail template variables. */
 export function safeRecruiterEmailMergeText(value:string,limit=4000){
- return value.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,limit)
+ const max=Math.min(4000,Math.max(0,Number.isFinite(limit)?Math.trunc(limit):4000));
+ const escaped=value.replace(/[\u0000-\u001f\u007f]/g," ").trim()
    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+ if(escaped.length<=max)return escaped;
+ // Never leave a cut-off HTML character entity at the excerpt boundary.
+ return escaped.slice(0,max).replace(/&(?:#[0-9]*|#x[0-9a-f]*|[a-z]*)?$/i,"");
 }
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
  return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
