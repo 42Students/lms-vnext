@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { NotificationListItem } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -64,10 +63,6 @@ export default async function NotificationsPage({searchParams}:{
       <PageHeader
         title="Notifications"
       />
-      <Link href="/learn/notifications/history"
-        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
-        Browse older personal notifications →
-      </Link>
       <LearnerNotificationsInbox
         key={query.data.category+":"+query.data.unread+":"+query.data.q}
         personal={items}
