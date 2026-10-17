@@ -19,7 +19,7 @@ export function TrackerAdminNav() {
         href="/tracker"
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle"
       >
-        Report issue
+        Report Issue
       </Link>
       <Link
         href="/tracker/logs"
