@@ -15,6 +15,7 @@ describe("TPO settings responsive navigation and course policy",()=>{
  it("TPO-settings-audit-07 offers vertical sticky grouped sections on desktop while retaining mobile wrapping and aria-current",()=>{
   const s=source("src/components/placements/tpo-settings-nav.tsx");
   expect(s).toContain("md:sticky md:top-4");
+  expect(s).toContain("md:float-left md:mr-6 md:w-56");
   expect(s).toContain("md:flex-col md:items-stretch");
   expect(s).toContain('aria-current={active===item.id?"page":undefined}');
   expect(s).toContain("flex flex-wrap gap-2");

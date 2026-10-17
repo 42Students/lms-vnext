@@ -25,7 +25,7 @@ export const TPO_SETTINGS_NAV_GROUPS=[
  ]},
 ] as const;
 export function TpoSettingsNav({active}:{active:SettingsKey}){
- return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4 md:sticky md:top-4">
+ return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4 md:sticky md:top-4 md:float-left md:mr-6 md:w-56">
   {TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
    <h2 className="text-sm font-semibold text-muted-foreground">{group.title}</h2>
    <div className="flex flex-wrap gap-2 md:flex-col md:items-stretch">{group.items.map(item=><Link key={item.id} href={item.href}
