@@ -1,6 +1,7 @@
 "use client";
 
 import {Button} from "@/components/ui/button";
+import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 export type AssignmentLinkPart={kind:"REPOSITORY_LINK"|"EXTERNAL_LINK";url:string;caption:string};
 
 export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksChange,disabled}:{
@@ -9,12 +10,7 @@ export function AssignmentMultipartPartsEditor({text,onTextChange,links,onLinksC
 }){
  return <section aria-label="Additional submission parts" className="space-y-3 rounded-lg border border-border bg-surface-subtle p-3">
   <h4 className="text-sm font-semibold">Written response and links (optional)</h4>
-  <label className="grid gap-1 text-sm font-semibold">Written response
-   <textarea rows={4} maxLength={50000} value={text} disabled={disabled}
-    className="w-full rounded border border-border bg-surface p-2"
-    onChange={e=>onTextChange(e.target.value)}
-    placeholder="Add written work alongside uploaded files"/>
-  </label>
+  <LearnerRichResponseEditor value={text} onChange={onTextChange} disabled={disabled}/>
   {links.map((link,index)=><div key={index} className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-sm">Link type
     <select value={link.kind} disabled={disabled}

@@ -32,6 +32,7 @@ type YouTubeNamespace = {
     element: HTMLElement,
     options: {
       videoId: string;
+      host?: string;
       width?: string;
       height?: string;
       playerVars?: Record<
@@ -114,6 +115,7 @@ export function LearnerYouTubePlayer({
   authoredDurationSeconds,
   completed,
   readOnly = false,
+  saveIntervalMs = 5000,
 }: {
   contentId: string;
   deliveryId: string;
@@ -122,6 +124,7 @@ export function LearnerYouTubePlayer({
   authoredDurationSeconds: number;
   completed: boolean;
   readOnly?: boolean;
+  saveIntervalMs?:number;
 }) {
   const router = useRouter();
   const hostRef =
@@ -192,6 +195,7 @@ export function LearnerYouTubePlayer({
           playerRef.current =
             new YT.Player(host, {
               videoId,
+              host: "https://www.youtube-nocookie.com",
               width: "100%",
               height: "100%",
               playerVars: {
@@ -259,7 +263,7 @@ export function LearnerYouTubePlayer({
         if (playingRef.current) {
           void persistProgress(false);
         }
-      }, 5000);
+      }, saveIntervalMs);
 
     function pageHide() {
       void persistProgress(true, true);

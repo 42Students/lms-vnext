@@ -9,7 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
+import {Dialog} from "@/components/ui/dialog";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
@@ -53,6 +54,7 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  const [discardHref,setDiscardHref]=useState<string|null>(null);
   const methodsKey=(methodsEnabled?"1|":"0|")+assignmentId+"|"+deliveryId;
   const [prevMethodsKey,setPrevMethodsKey]=useState(methodsKey);
   if(prevMethodsKey!==methodsKey){
@@ -90,6 +92,23 @@ export function AssignmentSubmissionControl({
     };
     window.addEventListener("beforeunload",guard);
     return ()=>window.removeEventListener("beforeunload",guard);
+  },[unsent,submitting]);
+
+  useEffect(()=>{
+    if(!unsent&&!submitting)return;
+    const onLink=(event:MouseEvent)=>{
+      if(event.defaultPrevented)return;
+      const node=event.target;
+      const link=node instanceof Element?node.closest("a[href]"):null;
+      if(!link)return;
+      const target=new URL((link as HTMLAnchorElement).href,window.location.href);
+      if(target.origin!==window.location.origin)return;
+      event.preventDefault();
+      if(submitting){setError("Wait for the upload to finish before closing this submission.");return;}
+      setDiscardHref(target.pathname+target.search+target.hash);
+    };
+    document.addEventListener("click",onLink,true);
+    return ()=>document.removeEventListener("click",onLink,true);
   },[unsent,submitting]);
 
   async function submit(
@@ -265,22 +284,10 @@ export function AssignmentSubmissionControl({
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
-          <label className="mt-4 block">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Written response
-            </span>
-            <Textarea
-              value={textContent}
-              onChange={(event) =>
-                setTextContent(
-                  event.target.value,
-                )
-              }
-              maxLength={50000}
-              placeholder="Write your assignment response…"
-              required
-            />
-          </label>
+          <section className="mt-4">
+            <h3 className="mb-1.5 text-xs font-semibold text-body">Written response</h3>
+            <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
+          </section>
         ) : (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -323,6 +330,19 @@ export function AssignmentSubmissionControl({
           </span>
         </div> : null}
       </fieldset>
+      <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
+        title="Discard this submission?" description="Your unsent answer will be lost."
+        footer={<>
+          <Button type="button" variant="secondary" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
+          <Button type="button" onClick={()=>{
+            if(submitting)return;
+            const href=discardHref;
+            setDiscardHref(null);setTextContent("");setSubmissionUrl("");
+            if(href)router.push(href);
+          }}>Discard</Button>
+        </>}>
+        <p className="text-sm text-body">You have unsent work. Keep editing to preserve your answer.</p>
+      </Dialog>
     </form>
   );
 }

@@ -49,6 +49,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { learnerWithdrawalReasonSchema } from "./learner-withdrawal-model";
+import {learnerStaffApplicationOptOut} from "./learner-staff-application-optout-model";
 import {learnerWithdrawalMode} from "./learner-withdrawal-mode-model";
 import { evaluatePlacementEligibility, isPlacementJobTargetCohort, placementApplyEligibilityDenial } from "./eligibility-service";
 import { PlacementsServiceError } from "./errors";
@@ -1166,6 +1167,27 @@ export async function withdrawPlacementApplication(
         .for("share")
         .limit(1);
       if (!liveRole) throw new AuthorizationError("placements.read");
+
+      // LEARNER-placements-30: staff-added applications have a persisted
+      // 48-hour opt-out window. Recheck under the same application lock as
+      // the withdrawal update so stale views cannot skip the cutoff.
+      const [liveApplication]=await tx.select({
+        status:placementApplications.status,
+        submittedAt:placementApplications.submittedAt,
+        submittedByUserId:placementApplications.submittedByUserId,
+      }).from(placementApplications)
+        .where(and(eq(placementApplications.id,applicationId),
+          eq(placementApplications.membershipId,membership.id)))
+        .for("update").limit(1);
+      if(!liveApplication||liveApplication.status!=="SUBMITTED")
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+      const optOut=learnerStaffApplicationOptOut({
+        submittedAt:liveApplication.submittedAt,
+        submittedByUserId:liveApplication.submittedByUserId,
+        learnerUserId:context.user.id,now,
+      });
+      if(optOut.staffApplied&&!optOut.canOptOut)
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
 
       // LEARNER-placements-29 / R05: a booking is candidate-specific.
       // A scheduled round elsewhere in the drive is not evidence this
