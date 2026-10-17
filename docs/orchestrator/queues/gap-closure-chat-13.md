@@ -119,7 +119,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
 - SA-academics-people-R04: nine period/cohort/section mutations now write audit events in their transactions; people repository and attendance-policy already audit; integration verification pending orchestrator.
 - SA-placements-projects-35: recruiter Suspend now preserves grants, blocks profile access and revokes signed-in sessions; unit test written, runtime sign-in denial to be verified by orchestrator.
-- SA-placements-projects-05: four legacy attention flags and attach-link evidence are implemented on this branch; orchestrator must register the proposed offer-letter migration before runtime verification.
+- SA-placements-projects-05: attention flags and offer-letter attachment use registered migration 0133; deployment/runtime verification remains outstanding.
 
 ## Needs shell (chat-9 only)
 
