@@ -20,12 +20,13 @@ export function CollegeAssignmentReview({
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
+ const [progress,setProgress]=useState("");
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string){
   if(bulkBusy||!window.confirm(
     "Publish grades for every graded submission in this Section? Learners will be notified."
   ))return;
-  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setProgress("Loading graded submissions…");
   let published=0,failed=0;
   try{
    const base="/api/courses/college/assignments/"+encodeURIComponent(selectedDeliveryId)+
@@ -36,6 +37,7 @@ export function CollegeAssignmentReview({
     if(!response.ok)throw Error("Could not load all submissions for this Section.");
     const result=facultySubmissionReviewResponseSchema.parse(await response.json());
     pages=result.totalPages;
+    setProgress("Reviewing Section page "+page+" of "+pages+"…");
     for(const item of result.items){
      if(item.gradingStatus!=="GRADED"||item.gradePublished)continue;
      const saved=await fetch(
@@ -45,6 +47,7 @@ export function CollegeAssignmentReview({
       });
      if(saved.ok)published++;
      else failed++;
+     setProgress(published+" published, "+failed+" failed");
     }
    }
    setRetryAllowed(failed>0);
@@ -55,7 +58,7 @@ export function CollegeAssignmentReview({
    setRetryAllowed(true);
    setBulkStatus((cause instanceof Error?cause.message:"Unable to publish all grades.")+
     (published?" "+published+" grade(s) were published; retry after refreshing.":""));
-  }finally{setBulkBusy(false);}
+  }finally{setBulkBusy(false);setProgress("");}
  }
  if(!["PUBLISHED","DRAFT"].includes(status))return null;
  if(!options.length)return <p className="text-xs text-muted-foreground">
@@ -81,7 +84,7 @@ export function CollegeAssignmentReview({
     {bulkBusy?"Publishing…":"Publish grades"}
    </button>:null}
   </div>
-  {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. Do not close this page.</p>:null}
+  {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. {progress} Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
   {retryAllowed&&status==="PUBLISHED"?<button type="button" disabled={bulkBusy}
    onClick={()=>void publishAllGrades(selected.deliveryId)}
