@@ -24,11 +24,12 @@ describe("chat-12 recruiter drive request safe review",()=>{
   expect(service).toContain("requireOwnGrant(context,collegeId)");
   expect(service).toContain('status:"REQUEST"');
  });
- it("TPO-requests-verification-01 stages schema changes without pretending kind-specific review effects exist",()=>{
-  const sql=src("docs/proposed-migrations/chat-12-learner-request-kinds.sql");
-  expect(sql).toContain("PROPOSAL ONLY");
+ it("TPO-requests-verification-01 recognizes the registered 0133 request kinds but refuses unsupported approval effects",()=>{
+  const sql=src("drizzle/0133_lanes_round_1.sql");
+  const service=src("src/modules/placements/tpo-general-request-service.ts");
+  expect(sql).toContain("learner_membership_id");
   expect(sql).toContain("OFF_CAMPUS_OFFER");
   expect(sql).toContain("CORRECTION_WITH_PROOF");
-  expect(sql).toContain("DO NOT APPLY");
+  expect(service).toContain('throw new TpoGeneralRequestError("EFFECT_UNSUPPORTED")');
  });
 });
