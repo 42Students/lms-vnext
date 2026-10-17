@@ -385,7 +385,7 @@ export default async function RecruiterCompanyReportsPage({
         {jobs.length === 0 ? (
           <EmptyState
             title="No matching drives"
-            description="There are no recruiter-visible published or closed hiring drives matching these filters for this company and college."
+            description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
           />
         ) : (
           <>
