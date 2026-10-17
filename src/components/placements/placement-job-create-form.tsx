@@ -116,6 +116,8 @@ export function PlacementJobCreateForm({
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const formRef=useRef<HTMLFormElement>(null);
   const clearedBackup=useRef(false);
+  // TPO-drives-45: apply the 11:59 PM IST default only to the first newly chosen date.
+  const deadlineTimeChosen=useRef(false);
   const [restoredBackup,setRestoredBackup]=useState(false);
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const [companyMode, setCompanyMode] =
@@ -1018,9 +1020,17 @@ export function PlacementJobCreateForm({
                 name="applicationDeadline"
                 type="datetime-local"
                 aria-describedby="drive-deadline-ist-help"
+                onFocus={event=>{if(event.currentTarget.value)deadlineTimeChosen.current=true;}}
+                onChange={event=>{
+                  const field=event.currentTarget;
+                  if(!deadlineTimeChosen.current&&/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(field.value)){
+                    try{field.value=driveDeadlineIstEndOfDay(field.value);deadlineTimeChosen.current=true;}
+                    catch{/* Invalid dates are rejected on submit, not while typing. */}
+                  }
+                }}
               />
             </label>
-            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Select a date and time, or use the end-of-day action for 11:59 PM.</span>
+            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). A newly selected date defaults to 11:59 PM; you can change the time.</span>
             <button type="button" aria-controls="tpo-drive-application-deadline"
               className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
               onClick={()=>{
@@ -1032,6 +1042,7 @@ export function PlacementJobCreateForm({
                 }
                 try{
                   field.value=driveDeadlineIstEndOfDay(field.value);
+                  deadlineTimeChosen.current=true;
                   clearedBackup.current=false;
                   saveBrowserDraft(form);
                   markDirty();
