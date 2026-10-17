@@ -41,6 +41,7 @@ export async function AdminOfferingLearningPage({
       }
       throw error;
     });
+  const roster=await listOfferingTeachingOverview(context,offeringId);
   const displayEnabled =
     courseDisplayRuntimeEnabled();
   const display = displayEnabled
