@@ -194,6 +194,10 @@ export function RecruiterResultControls({
       return;
     }
 
+    if (draft.candidateMessage.trim().length > 1000) {
+      showToast({tone:"error",title:"Candidate message too long",description:"Keep the candidate message under 1001 characters."});
+      return;
+    }
     const score = draft.scorePercent.trim();
     if (score && (!Number.isInteger(Number(score)) || Number(score) < 0 || Number(score) > 100)) {
       showToast({
@@ -286,6 +290,10 @@ export function RecruiterResultControls({
         showToast({tone:"error",title:"Complete candidate outcomes",description:"Every selected row needs a valid outcome, waitlist rank when held, and a message for non-pass results."});
         return;
       }
+    }
+    if(participants.some(p=>(drafts[round.id+":"+p.applicationId]?.candidateMessage.trim().length??0)>1000)){
+      showToast({tone:"error",title:"Candidate message too long",description:"Keep the candidate message under 1001 characters."});
+      return;
     }
     const ranks=participants.flatMap(p=>{
       const d=drafts[round.id+":"+p.applicationId];
@@ -743,7 +751,8 @@ export function RecruiterResultControls({
                                       }),
                                     )
                                   }
-                                  placeholder="Required for fail, hold or absent outcomes."
+                                  maxLength={1000}
+                                   placeholder="Required for fail, hold or absent outcomes."
                                 />
                               </label>
 
