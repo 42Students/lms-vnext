@@ -84,7 +84,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      onChange={e=>setName(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
     <input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
      onChange={e=>setNote(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
-    <button type="button" disabled={busy||!name.trim()} className={button}
+    <button type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
      onClick={()=>void apply("CREATE")}>Save current view</button>
    </div>
    {views.length?<div className="space-y-2">
