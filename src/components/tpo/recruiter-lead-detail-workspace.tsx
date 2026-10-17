@@ -63,6 +63,12 @@ const SOURCES = [
   ["COLD_OUTREACH", "Cold outreach"], ["COMPANY_REACHED_OUT", "Company reached out"],
 ] as const;
 const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
+function activityDayIst(value:string){
+ const time=new Date(value);
+ return Number.isNaN(time.getTime())?"Date unavailable":
+  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(time);
+}
+
 
 function messageFor(status: number, error?: string) {
   if (status === 503 && error === "DB09_MIGRATIONS_PENDING") {
