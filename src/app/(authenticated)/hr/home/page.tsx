@@ -12,6 +12,7 @@ import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
 import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import {recruiterVisiblePortfolioCounts} from "@/modules/placements/recruiter-portfolio-counts-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
@@ -26,6 +27,8 @@ import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-se
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
 import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
+import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -83,6 +86,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
+  const liveDriveCounts=await recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id));
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -116,6 +120,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Request a drive
       </Link>} />
+    <HrUnsentDriveAlert collegeId={selectedId}
+      storageKey={hrDriveSessionStorageKey(context.user.id,selectedId,null)}/>
     {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
@@ -193,12 +199,17 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </div>
       {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {liveDrives.map(row=><Link key={row.job.id}
-          href={"/hr/placements/jobs/"+encodeURIComponent(row.job.id)}
+          href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
+          <span className="mt-2 block text-sm font-semibold text-foreground">
+            {liveDriveCounts[row.job.id]?.sharedApplicants??0} shared applicants
+          </span>
+          {(liveDriveCounts[row.job.id]?.sharedApplicants??0)===0?
+            <span className="mt-1 block text-xs text-muted-foreground">No shortlisted applicants have been shared yet.</span>:null}
           <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
         </Link>)}
       </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
@@ -206,7 +217,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
-        <Link key={item.job.id} href={"/hr/placements/jobs/" + item.job.id}
+        <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
           className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{item.job.title}</span>
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
@@ -214,7 +225,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">This week · upcoming rounds</h2>
       {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.upcomingRounds.map(event =>
-        <Link key={event.id} href={"/hr/placements/jobs/" + event.jobId + "?tab=rounds"}
+        <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
           className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{event.title}</span>
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}

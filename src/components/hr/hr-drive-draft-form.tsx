@@ -390,8 +390,7 @@ export function HrDriveDraftForm({
             </ul>
           </div>
         ) : null}
-        { /* Live, locally held student-facing draft preview; never imply publication. */ }
-        {(
+        {/* Live locally held student-facing draft preview; never imply publication. */}
           <div className="mt-4 space-y-2 rounded-md bg-surface-secondary p-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
@@ -426,7 +425,6 @@ export function HrDriveDraftForm({
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
-        ) : null}
         {notice ? <p role="status" className="mt-3 text-sm text-body">{notice}</p> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.

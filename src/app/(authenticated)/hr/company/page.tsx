@@ -196,7 +196,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             </div>
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
-              {overview.recent.map(job=><Link key={job.id} href={"/hr/placements/jobs/"+job.id}
+              {overview.recent.map(job=><Link key={job.id} href={"/recruiter/drives/"+job.id+"?tab=overview"}
                 className="flex flex-wrap justify-between gap-2 rounded-md border border-border p-3 text-sm hover:border-primary">
                 <span className="font-medium text-primary-text">{job.title}</span>
                 <span className="text-muted-foreground">{job.status}</span>
