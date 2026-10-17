@@ -232,6 +232,20 @@ export function LearnerProfileWorkspace(props: {
     return ()=>window.document.removeEventListener("visibilitychange",onVisible);
   },[router,detailsOpen,contactOpen,collection,pending,contactPending]);
 
+  // Guard the whole page as well as dialog Cancel. A browser reload cannot
+  // safely preserve edits that exist only in local component state.
+  useEffect(()=>{
+    const dirty=(detailsOpen&&JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline))||
+      (contactOpen&&JSON.stringify(contactDraft)!==JSON.stringify(document.contacts))||
+      (collection!==null&&JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline))||
+      (jobPrefsEditing&&JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences));
+    if(!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[detailsOpen,detailsDraft,detailsBaseline,contactOpen,contactDraft,
+    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,document.contacts,document.jobPreferences]);
+
   useEffect(() => {
     if (!props.initialSection) return;
     const target = window.document.getElementById(props.initialSection);
