@@ -9,7 +9,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-drives-01 | S2 | MISSING-PAGE | DONE |
-| TPO-drives-03 | S2 | MISSING-TAB | WRONG |
+| TPO-drives-03 | S2 | MISSING-TAB | NOT-A-GAP |
 | TPO-drives-05 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-07 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -28,7 +28,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-31 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-32 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-33 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-drives-34 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drives-34 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-drives-40 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-42 | S2 | VALIDATION | OPEN |
 | TPO-drives-43 | S2 | STATE | OPEN |
@@ -70,8 +70,8 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 |---|---|---|---|
 | LEARNER-learning-misc-01 | S1 | STATE | OPEN |
 | LEARNER-learning-misc-02 | S2 | MISSING-FIELD | OPEN |
-| LEARNER-learning-misc-03 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-learning-misc-04 | S2 | MISSING-ACTION | OPEN |
+| LEARNER-learning-misc-03 | S2 | MISSING-FIELD | DONE |
+| LEARNER-learning-misc-04 | S2 | MISSING-ACTION | DONE |
 | LEARNER-learning-misc-07 | S2 | VALIDATION | OPEN |
 | LEARNER-learning-misc-09 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
 | LEARNER-learning-misc-10 | S3 | COPY | DONE |
@@ -84,7 +84,7 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-19 | S3 | STATE | DONE |
 | LEARNER-learning-misc-20 | S3 | MISSING-MODAL | DONE |
 | LEARNER-learning-misc-21 | S3 | COPY | DONE |
-| LEARNER-learning-misc-22 | S3 | VALIDATION | FIXED-ON-MAIN |
+| LEARNER-learning-misc-22 | S3 | VALIDATION | NOT-A-GAP |
 | LEARNER-learning-misc-24 | S3 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-25 | S3 | MISSING-FIELD | UNCONFIRMED |
 | LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | DONE |
