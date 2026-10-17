@@ -12,7 +12,10 @@ describe("known error triage UI resilience", () => {
     expect(source).toContain('status: "FIXED"');
     expect(source).toContain('action: "MUTE"');
     expect(source).not.toMatch(/\bawait fetch\(/);
-    expect(source).not.toContain("error.message :");
+    // A FriendlyFetchError is mapped by apiFetch and safe to show.
+    // An arbitrary Error instance can contain raw provider text.
+    expect(source).toContain("error instanceof FriendlyFetchError");
+    expect(source).not.toMatch(/error instanceof Error\s*\?\s*error\.message/);
   });
   it("GR-123 preserves legacy Known errors empty and mute confirmation wording", () => {
     const ui = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
