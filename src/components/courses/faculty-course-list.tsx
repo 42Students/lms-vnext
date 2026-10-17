@@ -41,13 +41,14 @@ function pathTone(
   return "neutral" as const;
 }
 
-export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sections}: {
+export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sections,assignmentChoices}: {
   rows: readonly FacultyCourseListRow[];
   query: FacultyCourseListQuery;
   pagination: {page:number;totalPages:number;total:number};
   scopeCount: number;
   periods: readonly {id:string;name:string}[];
   sections:readonly {id:string;name:string;count:number}[];
+  assignmentChoices:readonly {deliveryId:string;courseName:string;sectionName:string;academicPeriodName:string}[];
 }) {
   if (scopeCount === 0) {
     return (
@@ -61,12 +62,22 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
   return (
     <div className="space-y-5">
       <div className="flex flex-wrap items-center gap-3 text-sm text-body" role="status">
-        <span className="rounded-full border border-border bg-surface px-3 py-2 font-semibold">
-          {scopeCount} Teaching assignment(s)
-        </span>
-        <span className="rounded-full border border-border bg-surface px-3 py-2 font-semibold">
-          {new Set(rows.map(row=>row.course.sectionName)).size} Section(s) on this page
-        </span>
+        <details className="relative rounded-lg border border-border bg-surface px-3 py-2">
+          <summary className="cursor-pointer font-semibold">{scopeCount} Teaching assignment(s)</summary>
+          <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
+            {assignmentChoices.map(item=><li key={item.deliveryId}>
+              <Link className="text-primary-text underline" href={"/teacher/courses/"+encodeURIComponent(item.deliveryId)+"/home"}>
+                {item.courseName} · {item.sectionName} · {item.academicPeriodName}
+              </Link>
+            </li>)}
+          </ul>
+        </details>
+        <details className="rounded-lg border border-border bg-surface px-3 py-2">
+          <summary className="cursor-pointer font-semibold">{sections.length} Section(s)</summary>
+          <ul className="mt-2 max-h-48 space-y-1 overflow-auto text-xs">
+            {sections.map(section=><li key={section.id}>{section.name} · {section.count} teaching assignment(s)</li>)}
+          </ul>
+        </details>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
         className="space-y-3 rounded-xl border border-border bg-surface p-4">
