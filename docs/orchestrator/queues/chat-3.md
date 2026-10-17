@@ -1,3 +1,19 @@
+## FAST v2 chat-3 continuation — post-0132 merged lane batch
+
+- Synced lane branch to merged origin/main `d845a7a` at start (no unmerged chat-3 changes remained). All subsequent commits start `[chat-3]`, cite gap IDs and land only on `chatgpt/chat-3-b`.
+- **COL-placements-13**: Drive status confirmation state now distinguishes CLOSE and REOPEN; a stale confirmation for one cannot authorize the other. Full published-field edit and private-impact storage remain open.
+- **TPO-requests-verification-24**: Server-owned waiting/sent-back/verified and Education/Identity queue filtering before pagination, stable ordering, 25/50/100 page size, student name/roll search, active college-scoped batch and branch membership filters. Status/section tab changes update the route and synchronize the current server page; visible page keeps only document/attention local filters.
+- **TPO-requests-verification-32**: TPO verification CSV now applies scoped tab, section, student search, batch and branch in SQL before pagination. Bounded collector retrieves up to 1,001 rows to flag truncation, exports first 1,000 with formula-safe cells and explicit truncated footer/header; recorded reviewed-at and reviewer name included.
+- **TPO-students-18**: Scoped TPO batch directory returns department ID for branch selector; this is partial roster filter parity.
+- **TPO-settings-audit-91**: Persisted activity summary/subject title, recorded placement rule values and recruiter privacy visibility flags render as human-readable audit facts; audit grid clipboard TSV neutralizes formula prefixes.
+- **Already source-implemented on merged main**: TPO-students-R02 bulk-add component has a page/filter-keyed mount; TPO-settings-audit-14 already atomically audits both placement-rules and company-visibility settings writes in `tpo-policy-service.ts`. Do not reimplement these paths.
+- **Blocked — COL-people-02/07**: Canonical login email and phone changes require verified identity workflows; retain read-only identity fields.
+- **Blocked — COL-placements-02/03/10**: Private resume and offer-letter previews need registered protected document receipts; don't fabricate URLs.
+- **Blocked — TPO-requests-verification-01/33–36**: Institutional request kinds and recruiter drive REQUEST / SENT_BACK lifecycle require registered domain/schema and decision policy; only existing three authorized request kinds remain actionable.
+- **Blocked — COL-attendance-14**: No authoritative learner/session denominator for department attendance percentage; don't report status counts as percentages.
+- **SKIP — COL-verification-misc-17 and COL-people-18**: Security-sensitive OD-22 and contact-unmasking owner decisions remain restrictive.
+- WP-chat-3-02/03/04 and reassigned WP-chat-5-02/09/10/14/15 remain IN-PROGRESS because further gaps exist; do not mark DONE based only on new source changes. No runtime tests/typecheck/lint/build/CI under owner FAST v2.
+
 ## FAST v2 0132 continuation — new chat-3 source commits
 
 - Synced `chatgpt/chat-3-b` to origin/main `933c730` containing migration 0132 before edits; branch-only pushes, no main or PR writes.

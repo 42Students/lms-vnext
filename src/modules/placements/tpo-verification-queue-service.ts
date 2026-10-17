@@ -1,8 +1,8 @@
 import "server-only";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, users, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
+import { collegeMemberships, membershipRoles, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
 import { profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -14,10 +14,11 @@ import type { VerificationQueueCard } from "@/components/verification/Verificati
 import {submittedMarksheets} from "@/modules/verification/queue-mark-sheets";
 import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {verificationAttentionFlags} from "@/modules/verification/attention-flags";
+import {tpoVerificationStatuses,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
-export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
- available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];
+export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery):Promise<{
+ available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];hasMore?:boolean;
 }>{
  const collegeId=await requireTpoBatchActor(ctx);
  const names=["profile_verifications","profile_verification_settings","profile_verification_tpo_grants"];
@@ -36,20 +37,42 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
   collegeId,organizationId:college.organizationId,
   tpoVerificationAdministrator:true,tpoVerificationEnabled:true,
  });
+ const academicMembers=query&&(query.batchId||query.branchId)?getDb()
+  .select({membershipId:learnerProgramEnrollments.membershipId})
+  .from(learnerProgramEnrollments)
+  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),eq(programs.id,cohorts.programId)))
+  .innerJoin(departments,eq(departments.id,programs.departmentId))
+  .where(and(
+   eq(departments.collegeId,collegeId),
+   eq(learnerProgramEnrollments.status,"ACTIVE"),
+   ...(query.batchId?[eq(cohorts.id,query.batchId)]:[]),
+   ...(query.branchId?[eq(departments.id,query.branchId)]:[]),
+  )):null;
  const records=await getDb().select({
   id:profileVerifications.learnerMembershipId,status:profileVerifications.status,
   section:profileVerifications.section,submittedAt:profileVerifications.submittedAt,
   version:profileVerifications.rowVersion,name:users.displayName,
+  decidedAt:profileVerifications.decidedAt,decidedByName:profileVerifications.decidedByName,
   submittedSnapshot:profileVerifications.submittedSnapshot,
  }).from(profileVerifications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
-   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
-  .orderBy(desc(profileVerifications.submittedAt)).limit(100);
- const memberIds=[...new Set(records.map(row=>row.id))];
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+   ...(query?[
+    inArray(profileVerifications.status,tpoVerificationStatuses(query)),
+    ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
+    ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
+    ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
+   ]:[])))
+  .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
+  .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
+ const selected=query?records.slice(0,query.pageSize):records;
+ const memberIds=[...new Set(selected.map(row=>row.id))];
  const enrollments=memberIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
   batchName:cohorts.name,branchName:departments.name,
@@ -61,7 +84,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
    eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
  const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
  const evaluatedAt=new Date();
- const rows:VerificationQueueCard[]=records.flatMap(row=>{
+ const rows:VerificationQueueCard[]=selected.flatMap(row=>{
   const status=statusSchema.safeParse(row.status),section=sectionSchema.safeParse(row.section);
   if(!status.success||!section.success)return [];
   const marks=submittedMarksheets(row.submittedSnapshot);
@@ -75,7 +98,8 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
    batchName:byMember.get(row.id)?.batchName??null,branchName:byMember.get(row.id)?.branchName??null,
    status:status.data,section:section.data,
    submittedAt:row.submittedAt,version:row.version,missingMarksheet,missingIdentityProof,
+   decidedAt:row.decidedAt,decidedByName:row.decidedByName,
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},attention}];
  });
- return {available:true,enabled:true,permitted:true,rows};
+ return {available:true,enabled:true,permitted:true,rows,hasMore:Boolean(query&&records.length>query.pageSize)};
 }
