@@ -49,7 +49,10 @@ export async function getOwnLearnerPlacementRulesView(
     back,policyView,
     evidence,
     preferences,
-    ruleApplicability:learnerRuleChangeApplicability(applications),
+    ruleApplicability:policy?{
+      ...learnerRuleChangeApplicability(applications),
+      message:"Your college's current placement policy is recorded below. Any rule changes must be reviewed by the placement cell; this view does not infer retroactive changes to saved applications.",
+    }:learnerRuleChangeApplicability(applications),
     preparation: learnerPlacementPreparation({
       evidence: evidence
         ? {
