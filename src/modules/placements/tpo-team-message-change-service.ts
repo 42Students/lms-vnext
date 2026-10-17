@@ -1,10 +1,10 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq,or,sql} from "drizzle-orm";
+import {and,eq,inArray,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,inAppNotifications,users} from "@/db/schema";
+import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages} from "@/db/schema/tpo-internal";
 import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -98,6 +98,8 @@ export async function changeTpoTeamMessage(context:RequestContext,raw:unknown){
   const [recipient]=await tx.select({userId:collegeMemberships.userId})
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+    inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
    .where(and(eq(collegeMemberships.id,otherId),
     eq(collegeMemberships.collegeId,college.id),
     eq(collegeMemberships.status,"ACTIVE"),
