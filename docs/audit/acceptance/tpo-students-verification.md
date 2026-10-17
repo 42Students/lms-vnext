@@ -85,3 +85,5 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-48 | OPEN (cross-page selection remaining) | Live announced filter count and selected visible-page count retained; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-48` |
 
 | TPO-students-28 | OPEN (20-drive tooltip remains) | Authorized company for deepest applied round is shown only when no placed or offer outcome supersedes it; `tests/unit/chat12-company-depth-round5.test.ts` named `TPO-students-28` |
+
+| TPO-students-39 | OPEN (width and pin state pending) | Students-only column order restored safely from browser localStorage, URL remains authoritative; `tests/unit/chat12-column-preferences-round5.test.ts` `TPO-students-39` |
