@@ -62,6 +62,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
   const [task]=await tx.insert(projectTasks).values({
    projectId,sprintId:sprint?.id??null,templateKey:keyFor(membership.id),
    sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
+   approach:input.approach,
    acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,dueDate:input.dueDate,
    estimatePoints:input.estimatePoints,taskType:input.taskType,assigneeMembershipId:membership.id,
    status:"TODO",
