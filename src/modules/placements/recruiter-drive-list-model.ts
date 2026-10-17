@@ -46,7 +46,7 @@ export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
     (!query.collegeId || row.collegeId === query.collegeId) &&
     (query.view === "ALL" || (query.view === "LIVE" && row.job.status === "PUBLISHED") ||
       (query.view === "CLOSED" && row.job.status === "CLOSED")) &&
-    row.job.title.toLocaleLowerCase("en").includes(query.q.toLocaleLowerCase("en")) &&
+    row.job.title.toLocaleLowerCase("en").includes(query.q.trim().toLocaleLowerCase("en")) &&
     (query.employment === "ALL" || row.job.employmentType === query.employment) &&
     (query.mode === "ALL" || row.job.workMode === query.mode) &&
     (query.deadline === "ALL" || (query.deadline === "UNKNOWN" && !row.job.applicationDeadline) ||
