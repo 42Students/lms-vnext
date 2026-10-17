@@ -88,15 +88,9 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
    <Link href="/tpo/verification" className="self-center text-primary-text underline">Reset filters</Link>
   </form>
-  {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
-   <p role="status" className="text-sm text-body">
-    {queue.counts.WAITING} waiting · {queue.counts.SENT_BACK} sent back · {queue.counts.VERIFIED} verified
-    {queue.hasMore?" · More students on the next page":""}
-   </p>:null}
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
-   <p>Verification records are not available right now. Please try again or contact your college admin.</p>
-   <Link href="/tpo/verification" className="font-semibold text-primary-text underline">Retry</Link>
+   <p>Could not check your verification access</p>
   </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">You cannot verify profiles here</h1>
    <p className="text-sm">{!queue.enabled

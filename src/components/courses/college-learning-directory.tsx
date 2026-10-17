@@ -548,7 +548,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                 : "No course offerings match these filters. No completion or learner activity is inferred."
               : "No records exist on this page. Return to an earlier page."}
           </p>
-        ) : (<>
+        ) : (
           <div className="space-y-3 p-3 md:hidden" aria-label={title+" mobile records"}>
            {data.kind==="LESSONS"?
             data.items.map(item=><article key={item.id} className="space-y-2 rounded-lg border border-border p-3">
@@ -630,7 +630,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
             </tbody>
           </table>
           </div>
-        </>)}
+        )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>

@@ -7,8 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { apiFetch } from "@/lib/api-fetch";
-import { friendlyApiError } from "@/lib/friendly-error";
 
 type RequestItem = {
   id: string;
@@ -100,13 +98,28 @@ function localInput(value: string | null) {
   return local.toISOString().slice(0, 16);
 }
 
-async function mutate(url: string, body: unknown): Promise<void> {
-  // Learner placement requests must not expose raw API error codes or proxy HTML.
-  await apiFetch(url, {
+async function mutate(
+  url: string,
+  body: unknown,
+) {
+  const response = await fetch(url, {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: {
+      "content-type": "application/json",
+    },
     body: JSON.stringify(body),
   });
+  const payload = (await response
+    .json()
+    .catch(() => null)) as
+    | { error?: string }
+    | null;
+  if (!response.ok) {
+    throw new Error(
+      payload?.error ??
+        "PLACEMENT_REQUEST_FAILED",
+    );
+  }
 }
 
 export function LearnerPlacementRequests({
@@ -196,9 +209,10 @@ export function LearnerPlacementRequests({
     showToast({
       tone: "error",
       title: "Request not submitted",
-      description: error instanceof Error
-          ? error.message
-          : friendlyApiError({ network: true }),
+      description:
+        error instanceof Error
+          ? humanize(error.message)
+          : "Please try again.",
     });
   }
 
@@ -238,7 +252,7 @@ export function LearnerPlacementRequests({
       });
       setRoundReason("");
       success(
-        "Sent to the placement cell",
+        "Reschedule requested",
         "The original shared round remains unchanged until the placement team approves your candidate-specific exception.",
       );
     } catch (error) {
@@ -275,7 +289,7 @@ export function LearnerPlacementRequests({
       });
       setOfferReason("");
       success(
-        "Sent to the placement cell",
+        "Extension requested",
         "The offer deadline changes only if the placement team approves the request.",
       );
     } catch (error) {
@@ -315,7 +329,7 @@ export function LearnerPlacementRequests({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
-              New request
+              Your requests
             </h2>
             <p className="mt-1 text-sm text-body">
               Ask for schedule or offer exceptions without silently changing shared placement data. Approved requests apply their effect atomically.
@@ -550,7 +564,7 @@ export function LearnerPlacementRequests({
               <textarea
                 aria-label="Offer extension reason"
                 className={textareaClass}
-                placeholder="Tell the placement cell why"
+                placeholder="Why do you need more time?"
                 value={offerReason}
                 onChange={(event) =>
                   setOfferReason(

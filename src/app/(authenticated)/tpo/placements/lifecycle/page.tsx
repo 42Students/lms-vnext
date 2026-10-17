@@ -218,12 +218,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
     </nav>
     <nav aria-label="Drive status tabs" className="flex flex-wrap gap-2">
-      {([["REQUESTS","Requests",data.needsReviewCount],["LIVE","Live",data.statusCounts.live],["DRAFT","Drafts",data.statusCounts.drafts],["CLOSED","Closed",data.statusCounts.closed],["ALL","All jobs",data.statusCounts.all]] as const).map(([view,label,total])=>
+      {([["REQUESTS","Requests"],["LIVE","Live"],["DRAFT","Drafts"],["CLOSED","Closed"],["ALL","All jobs"]] as const).map(([view,label])=>
         <Link key={view} href={{pathname:"/tpo/placements/lifecycle",query:{view,search:"",page:1}}}
           aria-current={data.view===view?"page":undefined}
-          className={"inline-flex min-h-11 items-center gap-2 rounded border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary "+(data.view===view?"border-primary bg-primary-subtle text-primary-text":"border-border")}>
-          {label}<span className={"rounded-full px-2 py-0.5 tabular-nums "+(view==="REQUESTS"&&total>0?"bg-amber-100 text-amber-900":"bg-muted text-body")}>{total}</span>
-        </Link>)}
+          className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm">{label}</Link>)}
     </nav>
     {data.view==="REQUESTS" ? (!data.requestsAvailable ?
       <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}/> :

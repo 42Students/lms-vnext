@@ -12,7 +12,7 @@ describe("Super Admin create-college exact legacy labels",()=>{
  });
  it("retains scope-controlled organization ID and required fields",()=>{
   expect(source).toContain("organizationId, name, code");
-  expect(source).toContain('apiFetch<unknown>("/api/colleges"');
+  expect(source).toContain('fetch("/api/colleges"');
   expect(source).toContain("!organizationId");
   expect(source).toContain("!code.trim()");
  });

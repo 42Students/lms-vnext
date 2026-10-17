@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
-import {friendlyApiError} from "@/lib/friendly-error";
 import { groupNotificationsByDate } from "@/modules/activity/notification-groups";
 
 export type NotificationListItem = {
@@ -57,25 +55,28 @@ export function NotificationList({
     setPendingId(id);
     let acknowledged = false;
     try {
-      await apiFetch(readEndpoint + "/" + encodeURIComponent(id) + "/read", {
-        method: "POST",
-        credentials: "same-origin",
-        timeoutMs: 12000,
-        headers: { Accept: "application/json" },
-      });
+      const response = await fetch(
+        readEndpoint + "/" + id + "/read",
+        { method: "POST" },
+      );
+      if (!response.ok) {
+        throw new Error("Could not mark notification read");
+      }
       acknowledged = true;
-    } catch (reason) {
+    } catch (error) {
       showToast({
         tone: "error",
-        title: "Could not mark this notification as read",
-        description: reason instanceof FriendlyFetchError
-          ? reason.message : friendlyApiError({network: true}),
+        title: "Notification update failed",
+        description: error instanceof Error ? error.message : "Please try again.",
       });
     } finally {
       setPendingId(null);
-      // TPO-inbox-team-64: never navigate away on failed acknowledgement.
-      if (acknowledged && openHref) router.push(openHref);
-      else if (acknowledged) router.refresh();
+      if (openHref) {
+        // A failed acknowledgment must not trap users in this page.
+        router.push(openHref);
+      } else if (acknowledged) {
+        router.refresh();
+      }
     }
   }
 

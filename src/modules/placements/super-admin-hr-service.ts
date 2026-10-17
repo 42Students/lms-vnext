@@ -1,6 +1,4 @@
 import {superAdminHrLiteralSearchPattern} from "./super-admin-hr-search-model";
-import { recordActivityEvent, recordActivityEventInTransaction } from "@/modules/activity/service";
-import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   and,
   asc,
@@ -668,11 +666,6 @@ export async function createSuperAdminHrAccount(
   }
 
   const db = getDb();
-  let reusedExisting = false;
-  const grantTime = new Date();
-  // Explicit expiry for newly created and reused recruiter grants.
-  const grantExpiry = new Date(Date.UTC(grantTime.getUTCFullYear(),
-    grantTime.getUTCMonth() + 3, grantTime.getUTCDate(), grantTime.getUTCHours()));
 
   try {
     await db.transaction(async (tx) => {
@@ -759,56 +752,19 @@ export async function createSuperAdminHrAccount(
         });
 
       if (!profile) {
-        const [existing] = await tx.select({
-          companyId: placementRecruiterProfiles.companyId,
-          status: placementRecruiterProfiles.status,
-        }).from(placementRecruiterProfiles)
-          .where(eq(placementRecruiterProfiles.userId, identity.userId))
-          .for("update").limit(1);
-        if (!existing || existing.companyId !== relationship.companyId ||
-          existing.status !== "ACTIVE") {
-          throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
-        }
-        reusedExisting = true;
+        throw new PlacementsServiceError(
+          "PLACEMENT_RECRUITER_COMPANY_CONFLICT",
+        );
       }
 
-      const [newGrant] = await tx.insert(placementRecruiterCollegeGrants)
+      await tx
+        .insert(placementRecruiterCollegeGrants)
         .values({
           recruiterUserId: identity.userId,
-          companyRelationshipId: relationship.relationshipId,
+          companyRelationshipId:
+            relationship.relationshipId,
           grantedByUserId: context.user.id,
-          validUntil: grantExpiry,
-        }).onConflictDoNothing().returning({id: placementRecruiterCollegeGrants.id});
-      if (!newGrant) {
-        const [existingGrant] = await tx.select({
-          id: placementRecruiterCollegeGrants.id,
-          validUntil: placementRecruiterCollegeGrants.validUntil,
-        }).from(placementRecruiterCollegeGrants)
-          .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId, identity.userId),
-            eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.relationshipId),
-            eq(placementRecruiterCollegeGrants.status, "ACTIVE")))
-          .for("update").limit(1);
-        if (!existingGrant) {
-          throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
-        }
-        if (!existingGrant.validUntil || existingGrant.validUntil <= grantTime) {
-          await tx.update(placementRecruiterCollegeGrants)
-            .set({validUntil: grantExpiry, updatedAt: grantTime})
-            .where(eq(placementRecruiterCollegeGrants.id, existingGrant.id));
-        }
-      }
-      if (profile || newGrant) {
-        await recordActivityEventInTransaction(tx, context, {
-          eventType: profile ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED
-            : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
-          collegeId: relationship.collegeId,
-          organizationId: relationship.organizationId,
-          subjectType: "recruiter", subjectId: identity.userId,
-          summary: profile ? "Recruiter account created" : "Existing recruiter granted college access",
-          metadata: {companyRelationshipId: relationship.relationshipId,
-            validUntil: grantExpiry.toISOString()},
         });
-      }
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -819,8 +775,10 @@ export async function createSuperAdminHrAccount(
     throw error;
   }
 
-  const account = await getSuperAdminHrAccount(context, identity.userId);
-  return {...account, reusedExisting};
+  return getSuperAdminHrAccount(
+    context,
+    identity.userId,
+  );
 }
 
 export async function updateSuperAdminHrAccount(
@@ -975,22 +933,6 @@ export async function updateSuperAdminHrAccount(
             ),
           );
       }
-      const eventType = input.status === "ARCHIVED"
-        ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SUSPENDED
-        : input.status === "ACTIVE" && current.status === "ARCHIVED"
-          ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_REACTIVATED
-          : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_UPDATED;
-      await recordActivityEventInTransaction(tx, context, {
-        eventType,
-        collegeId: context.adminScope?.collegeId ?? null,
-        organizationId: context.adminScope?.organizationId ?? null,
-        subjectType: "recruiter", subjectId: userId,
-        summary: input.status === "ARCHIVED" ? "Recruiter suspended"
-          : input.status === "ACTIVE" && current.status === "ARCHIVED"
-            ? "Recruiter reactivated" : "Recruiter account updated",
-        metadata: {changedFields: Object.keys(input), previousStatus: current.status,
-          nextStatus: input.status ?? current.status},
-      });
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -1155,14 +1097,6 @@ export async function grantSuperAdminHrCollegeAccess(
       .returning();
 
     if (created) {
-      await recordActivityEventInTransaction(tx, context, {
-        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
-        collegeId: relationship.collegeId, organizationId: relationship.organizationId,
-        subjectType: "recruiter", subjectId: userId,
-        summary: "Recruiter college access granted",
-        metadata: {companyRelationshipId: relationship.relationshipId,
-          grantId: created.id, validUntil: expiration.toISOString()},
-      });
       return created;
     }
 
@@ -1198,14 +1132,6 @@ export async function grantSuperAdminHrCollegeAccess(
     const [renewed]=await tx.update(placementRecruiterCollegeGrants)
       .set({validUntil:expiration,updatedAt:new Date()})
       .where(eq(placementRecruiterCollegeGrants.id,existing.id)).returning();
-    await recordActivityEventInTransaction(tx, context, {
-      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
-      collegeId: relationship.collegeId, organizationId: relationship.organizationId,
-      subjectType: "recruiter", subjectId: userId,
-      summary: "Recruiter college access renewed",
-      metadata: {companyRelationshipId: relationship.relationshipId,
-        grantId: existing.id, validUntil: expiration.toISOString()},
-    });
     return renewed??existing;
   });
 }
@@ -1310,15 +1236,6 @@ export async function revokeSuperAdminHrCollegeAccess(
       )
       .returning();
 
-    if (revoked) {
-      await recordActivityEventInTransaction(tx, context, {
-        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_REVOKED,
-        collegeId: current.collegeId, organizationId: current.organizationId,
-        subjectType: "recruiter", subjectId: userId,
-        summary: "Recruiter college access revoked",
-        metadata: {grantId, companyRelationshipId: current.grant.companyRelationshipId},
-      });
-    }
     return revoked ?? current.grant;
   });
 }
@@ -1353,15 +1270,6 @@ export async function terminateSuperAdminHrSessions(
     context.user.id,
     "SUPER_ADMIN_HR_TERMINATE_ALL",
   );
-
-  await recordActivityEvent(context, {
-    eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SESSIONS_REVOKED,
-    collegeId: context.adminScope?.collegeId ?? null,
-    organizationId: context.adminScope?.organizationId ?? null,
-    subjectType: "recruiter", subjectId: userId,
-    summary: "Recruiter signed out everywhere",
-    metadata: {reason: "SUPER_ADMIN_HR_TERMINATE_ALL"},
-  });
 
   return {
     userId,

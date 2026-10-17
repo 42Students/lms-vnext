@@ -35,7 +35,6 @@ import {summarizeTpoCalendarNeeds} from "@/modules/placements/tpo-calendar-needs
 import {tpoLegacyCalendarEventTitle,TPO_CALENDAR_SUBTITLE,TPO_EMPTY_AGENDA} from "@/modules/placements/tpo-calendar-display-model";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
-import { TPO_CALENDAR_CHIP_CHOICES, filterTpoCalendarChipEvents, parseTpoCalendarChips, toggleTpoCalendarChip, tpoCalendarChipCount, type TpoCalendarChip } from "@/modules/placements/tpo-calendar-kind-chips";
 
 type CalendarAudience = "TPO" | "COLLEGE_ADMIN" | "SUPER_ADMIN";
 
@@ -44,7 +43,6 @@ type CalendarSearchParams = {
   view?: string | string[];
   company?: string | string[];
   kind?: string | string[];
-  kinds?: string | string[];
   roundKind?: string | string[];
   job?: string | string[];
 };
@@ -54,7 +52,6 @@ type CalendarState = {
   view: PlacementCalendarView;
   company: string;
   kind: PlacementCalendarKind | undefined;
-  kinds: TpoCalendarChip[];
   roundKind: (typeof placementRoundKinds)[number] | undefined;
   job: string;
 };
@@ -164,7 +161,6 @@ function normalizedState(
       audience === "TPO"
         ? kind
         : "ROUND",
-    kinds: audience === "TPO" ? parseTpoCalendarChips(first(searchParams.kinds)) : [],
     roundKind,
     job:
       audience !== "TPO"
@@ -180,7 +176,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view" | "kind" | "kinds" | "company">
+    Pick<CalendarState, "anchor" | "view" | "kind" | "company">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -200,9 +196,7 @@ function calendarHref(
 
   if (audience === "TPO") {
     const requestedKind="kind" in overrides?overrides.kind:state.kind;
-    const selectedKinds = "kinds" in overrides ? overrides.kinds : state.kinds;
-    if (selectedKinds?.length) params.set("kinds", selectedKinds.join(","));
-    else if (requestedKind && !("kinds" in overrides)) params.set("kind", requestedKind);
+    if (requestedKind) params.set("kind", requestedKind);
   } else {
     params.set(
       "roundKind",
@@ -458,7 +452,7 @@ export async function PlacementCalendarWorkspace({
         from: window.from,
         to: window.to,
         company: state.company || undefined,
-        kind: audience === "TPO" && state.kinds.length ? undefined : state.kind,
+        kind: state.kind,
         roundKind: state.roundKind,
         tpoLegacyScope:audience==="TPO",
       },
@@ -466,7 +460,7 @@ export async function PlacementCalendarWorkspace({
 
   const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
     .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
-  const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company||state.kinds.length)
+  const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
    })
@@ -498,10 +492,9 @@ export async function PlacementCalendarWorkspace({
     tpoLegacyScope:true,
   }):null;
   const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
-  const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(state.kinds.length ? state.kinds.includes("BLOCKED") : (!state.kind||state.kind==="BLOCKED"))?
+  const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(!state.kind||state.kind==="BLOCKED")?
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
-  const selectedEvents=state.kind==="BLOCKED" && !state.kinds.length ? blockedEvents : [...audienceEvents,...blockedEvents];
-  const visibleEvents=audience==="TPO" && state.kinds.length ? filterTpoCalendarChipEvents(selectedEvents,state.kinds) : selectedEvents;
+  const visibleEvents=state.kind==="BLOCKED"?blockedEvents:[...audienceEvents,...blockedEvents];
   if(audience==="TPO"&&blockedDays?.ready)
    eventTypeCounts.set("BLOCKED",toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length);
   const needsEvents=needsWindow?.events??[];
@@ -860,32 +853,26 @@ export async function PlacementCalendarWorkspace({
             </button>
           </div>
         </form>
-        {isTpo && (state.company || state.kind || state.kinds.length) ? (
+        {isTpo && (state.company || state.kind) ? (
           <Link href={basePath} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Show everything</Link>
         ) : null}
       </section>
 
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
- <Link href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
-  aria-current={!state.kind&&!state.kinds.length?"page":undefined}
-  className={!state.kind&&!state.kinds.length?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":"inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
-  All events ({eventTypeCountsSource.events.length+(blockedDays?.ready?toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:0)})
- </Link>
- {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
-  const count=filter.value==="BLOCKED"?(eventTypeCounts.get("BLOCKED")??0):tpoCalendarChipCount(eventTypeCountsSource.events,filter.value);
-  const active=state.kinds.includes(filter.value)||(!state.kinds.length&&state.kind===filter.value);
-  const currently=state.kinds.length?state.kinds:parseTpoCalendarChips(state.kind);
-  const nextKinds=toggleTpoCalendarChip(currently,filter.value);
-  return <Link key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
-   aria-current={active?"page":undefined}
-   aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}
-   className={active?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":"inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
-   <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
-   {filter.label} ({count})
-  </Link>;
- })}
- <p className="self-center text-xs text-muted-foreground">Select multiple event types to combine them · rounds, talks, deadlines, follow-ups and blocked days (IST).</p>
- {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
+       {EVENT_FILTERS.map(filter=>{
+        const count=filter.value?eventTypeCounts.get(filter.value)??0:eventTypeCountsSource.events.length;
+        const active=state.kind===(filter.value||undefined);
+        return <Link key={filter.value||"ALL"}
+         href={calendarHref(basePath,audience,state,{kind:filter.value||undefined})}
+         aria-current={active?"page":undefined}
+         className={active?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":
+          "inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
+         <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
+         {filter.label} ({count})
+        </Link>;
+       })}
+       <p className="self-center text-xs text-muted-foreground">Legend: rounds and talks · deadlines · follow-ups · blocked days (IST).</p>
+       {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
         {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
        </p>:null}
       </nav>:null}

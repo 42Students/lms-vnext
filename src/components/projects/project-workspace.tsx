@@ -661,10 +661,6 @@ export function ProjectWorkspace({
               {" "}{workspace.members.length} member(s)
             </p>:null}
           </div>
-          {mode === "ADMIN" && !readOnly ? (
-            <Link href={"/college/projects/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-              className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Reassign mentor</Link>
-          ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
               projectId={workspace.project.id}
@@ -1646,11 +1642,11 @@ export function ProjectWorkspace({
               Activity
             </h2>
             <p className="mt-1 text-sm text-body">
-              Task moves, sprint updates and resource changes from your project.
+              Persisted Project events visible inside this workspace.
             </p>
           </div>
 
-          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()}/>
+          <ProjectActivityFilteredList events={workspace.activity}/>
 
 
         </section>

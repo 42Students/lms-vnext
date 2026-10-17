@@ -47,25 +47,11 @@ export default async function TpoReportsPage({
       Clear search
     </Link>
   </section>;
-  // TPO-calendar-reports-55: do not mistake a failed snapshot for zero placements.
-  let workspace: Awaited<ReturnType<typeof getPlacementReportWorkspace>>;
-  try {
-    workspace = await getPlacementReportWorkspace(context, {
-      collegeId: context.membership.collegeId,
-      seasonId: first(query.seasonId) || undefined,
-      jobId: first(query.jobId) || undefined,
-    });
-  } catch {
-    return <div className="space-y-6">
-      <PageHeader eyebrow="TPO · Reports" title="Reports"
-        description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
-      <section role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-6">
-        <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
-        <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Retry</Link>
-      </section>
-    </div>;
-  }
+  const workspace = await getPlacementReportWorkspace(context, {
+    collegeId: context.membership.collegeId,
+    seasonId: first(query.seasonId) || undefined,
+    jobId: first(query.jobId) || undefined,
+  });
 
   const groups = [
     {

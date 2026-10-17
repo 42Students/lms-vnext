@@ -119,7 +119,6 @@ export async function listProjectAdminSnapshots(
       db
         .select({
           id: projectInstances.id,
-          templateId: projectInstances.templateId,
           slug: projectInstances.slug,
           title: projectInstances.title,
           summary: projectInstances.summary,

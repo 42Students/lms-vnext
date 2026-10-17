@@ -35,7 +35,7 @@ export default async function CollegeClassesPage({
     <div className="flex flex-wrap items-center gap-3">
       <a href={classesExportHref(classes.query)}
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-        Export CSV
+        Export filtered classes CSV
       </a>
       <span className="text-xs text-muted-foreground">Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.</span>
     </div>

@@ -18,6 +18,6 @@ export default async function TpoDriveEditPage({params}:{params:Promise<{jobId:s
  return <div className="space-y-5">
   <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drives" title="Edit drive" description={"Update "+job.title+" carefully. Save changes before returning to the drive."}/>
-  {job.editable?<TpoDriveEditForm job={job}/>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">This drive is not editable. To run a closed drive again, open Create drive and pick it under Clone a past drive.</p>}
+  {job.editable?<TpoDriveEditForm job={job}/>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">This drive is read-only. Only drafts in an active placement season are editable.</p>}
  </div>;
 }

@@ -23,8 +23,6 @@ export type ReportableError = {
   component?: string;
   userId?: string;
   collegeId?: string;
-  /** Cloud Logging insertId scoped to logName; never forwarded to Telegram. */
-  sourceEventId?: string;
 };
 const fallbackSeen = new Set<string>();
 let fallbackMinute = 0;
@@ -43,7 +41,7 @@ export function formatAlert(input: {
     "Route: " + safeAlertPath(input.path),
     "Component: " + safeAlertLabel(input.component),
     "Status: " + (input.status ?? "-"),
-    "Request ID: " + (input.requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(input.requestId) ? input.requestId : "-"),
+    "Request ID: " + (input.requestId && /^[0-9a-z-]{1,80}$/i.test(input.requestId) ? input.requestId : "-"),
     "Count: " + (input.count ?? 1),
     "Affected accounts: " + (input.affectedAccounts ?? 0),
     "Message: " + redactAlertText(input.message),
@@ -51,18 +49,10 @@ export function formatAlert(input: {
 }
 
 /** Same request + error is counted once, whether encountered in-process or in Cloud Logging. */
-export function observedEventHash(
-  environment: string, signatureHash: string, requestId?: string, sourceEventId?: string,
-): string | null {
-  // Prefer the shared request reference, so Cloud Logging and logError agree.
-  // A Cloud provider entry without a request ID still has a stable insert ID.
-  const key = requestId && /^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)
-    ? "request:" + requestId.toLowerCase()
-    : sourceEventId && sourceEventId.length <= 1024
-      ? "cloud:" + sourceEventId : null;
-  if (!key) return null;
+export function observedEventHash(environment: string, signatureHash: string, requestId?: string): string | null {
+  if (!requestId || !/^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)) return null;
   return createHash("sha256").update(
-    environment + ":" + signatureHash + ":" + key,
+    environment + ":" + signatureHash + ":" + requestId.toLowerCase(),
   ).digest("hex");
 }
 
@@ -99,7 +89,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
   const message = redactAlertText(input.error instanceof Error ? input.error.message : input.error);
   const path = safeAlertPath(input.path);
   const hash = errorSignatureHash({ environment, message, path });
-  const eventHash = observedEventHash(environment, hash, input.requestId, input.sourceEventId);
+  const eventHash = observedEventHash(environment, hash, input.requestId);
   const summary = formatAlert({
     kind: "new error", environment, time: now,
     event: input.event, path, message, requestId: input.requestId,
@@ -162,27 +152,21 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       if (decision === "NONE") { await rememberEvent(); return; }
       const slot = burstSlot(spent);
       if (slot === "SUPPRESS") {
-        // A NEW signature has not been delivered or stored: a source poller
-        // must retry it rather than checkpointing a silently lost incident.
-        outcome = Boolean(current);
         await tx.update(states).set({
           burstMinuteAt: minute, overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
         }).where(eq(states.stateKey, key));
-        if (current) await rememberEvent();
+        await rememberEvent();
         return;
       }
       if (slot === "SUMMARY") {
-        outcome = Boolean(current);
         if (await sendTelegramAlert("vNext alert burst: 1 more new or recurring error; see the Logs page. Environment: " + environment)) {
           await tx.update(states).set({
             burstMinuteAt: minute, burstCount: spent + 1,
+            overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
           }).where(eq(states.stateKey, key));
-          // The fifth post already summarized the overflow. Do not enqueue it
-          // again for a duplicate next-tick summary.
-          // New signatures must remain retryable even after the summary is sent.
-          if (current) await rememberEvent();
+          await rememberEvent();
         } else {
-          outcome = Boolean(current);
+          outcome = false;
         }
         return;
       }

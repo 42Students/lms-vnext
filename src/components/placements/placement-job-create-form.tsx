@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
-import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 export type PlacementAcademicTargetingChoice = {
@@ -112,7 +110,6 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
-  const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
@@ -163,9 +160,6 @@ export function PlacementJobCreateForm({
         event.currentTarget,
       );
       const title = String(data.get("title") ?? "").trim();
-      // TPO-drives-45: datetime-local is IST regardless of browser timezone.
-      const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
-      const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -179,7 +173,8 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       if(reviewPublish){
-        const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
+        const dueText=String(data.get("applicationDeadline")??"").trim();
+        const dueTime=dueText?new Date(dueText).getTime():Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
         const roleTitle=String(data.get("title")??"").trim();
@@ -210,7 +205,6 @@ export function PlacementJobCreateForm({
         ["minTwelfthPercentage", "Minimum 12th %", 100],
         ["minDiplomaPercentage", "Minimum diploma %", 100],
         ["minUndergraduatePercentage", "Minimum UG %", 100],
-        ["minPctThroughout", "Percentage throughout", 100],
       ];
       for (const [key, label, max] of checks) {
         const value = String(data.get(key) ?? "").trim();
@@ -275,7 +269,10 @@ export function PlacementJobCreateForm({
         data.get("applicationMode") ??
           "INTERNAL",
       );
-      
+      const deadlineRaw = String(
+        data.get("applicationDeadline") ??
+          "",
+      );
       const jobResult = await requestJson(
         "/api/placements/jobs",
         "POST",
@@ -337,7 +334,12 @@ export function PlacementJobCreateForm({
                     "externalApplicationUrl",
                   ) ?? "",
                 ).trim() || null,
-          applicationDeadline: deadlineIso,
+          applicationDeadline:
+            deadlineRaw
+              ? new Date(
+                  deadlineRaw,
+                ).toISOString()
+              : null,
         },
       );
 
@@ -364,6 +366,22 @@ export function PlacementJobCreateForm({
               data.get("minCgpa") ?? "",
             ),
           ),
+          maxActiveBacklogs:
+            nullableInteger(
+              String(
+                data.get(
+                  "maxActiveBacklogs",
+                ) ?? "",
+              ),
+            ),
+          maxPastBacklogs:
+            nullableInteger(
+              String(
+                data.get(
+                  "maxPastBacklogs",
+                ) ?? "",
+              ),
+            ),
           minTenthPercentage:
             nullableDecimal(
               String(
@@ -396,8 +414,11 @@ export function PlacementJobCreateForm({
                 ) ?? "",
               ),
             ),
-          minPctThroughout:nullableDecimal(String(data.get("minPctThroughout")??"")),
-          requireVerifiedEvidence:data.get("requireVerifiedEvidence")==="on",
+          maxGapYears: nullableInteger(
+            String(
+              data.get("maxGapYears") ?? "",
+            ),
+          ),
           allowedPassingYears:
             splitList(
               String(
@@ -811,9 +832,7 @@ export function PlacementJobCreateForm({
               className={inputClass}
               name="applicationDeadline"
               type="datetime-local"
-              aria-describedby="drive-deadline-ist-help"
             />
-            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Choose 11:59 PM if applications close at the end of the day.</span>
           </label>
         </div>
       </section>
@@ -927,22 +946,24 @@ export function PlacementJobCreateForm({
             </fieldset>
           </div>
 
-          <label className="block text-sm font-semibold text-body">Eligibility preset
-            <select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
-              <option value="OPEN">Open to all</option>
-              <option value="CGPA_6">CGPA 6.0+</option>
-              <option value="CGPA_7">CGPA 7.0+</option>
-              <option value="PCT_60">60% throughout</option>
-              <option value="PCT_70">70% throughout</option>
-            </select>
-            <span className="mt-1 block text-xs font-normal text-muted-foreground">Check your college CGPA-to-percentage rule before choosing a percentage threshold.</span>
-          </label>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["minCgpa", "Minimum CGPA", "0.01"],
-            
-            
-            
+            [
+              "maxActiveBacklogs",
+              "Max active backlogs",
+              "1",
+            ],
+            [
+              "maxPastBacklogs",
+              "Max past backlogs",
+              "1",
+            ],
+            [
+              "maxGapYears",
+              "Max gap years",
+              "1",
+            ],
             [
               "minTenthPercentage",
               "Minimum 10th %",
@@ -963,7 +984,6 @@ export function PlacementJobCreateForm({
               "Minimum UG %",
               "0.01",
             ],
-            ["minPctThroughout","Percentage throughout","0.01"],
           ].map(
             ([name, label, step]) => (
               <label key={name}>
@@ -975,10 +995,8 @@ export function PlacementJobCreateForm({
                   name={name}
                   type="number"
                   min={0}
-                  max={name === "minCgpa" ? 10 : name==="minPctThroughout" || name.startsWith("min") && name.includes("Percentage") ? 100 : name.startsWith("max") ? 100 : undefined}
+                  max={name === "minCgpa" ? 10 : name.startsWith("min") && name.includes("Percentage") ? 100 : name.startsWith("max") ? 100 : undefined}
                   step={step}
-                  key={eligibilityPreset+":"+name}
-                  defaultValue={driveEligibilityPresetValue(eligibilityPreset,name)}
                 />
               </label>
             ),
@@ -992,10 +1010,6 @@ export function PlacementJobCreateForm({
               name="passingYears"
               placeholder="2026, 2027"
             />
-          </label>
-          <label className="flex items-center gap-2 text-sm font-semibold text-body sm:col-span-2">
-            <input name="requireVerifiedEvidence" type="checkbox" className="h-4 w-4 accent-primary"/>
-            Only students whose marks are verified
           </label>
           <label className="sm:col-span-2">
             <span className="mb-1.5 block text-xs font-semibold text-body">

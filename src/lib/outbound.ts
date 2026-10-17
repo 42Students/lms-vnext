@@ -57,8 +57,7 @@ export async function outboundFetch(url: string, options: OutboundOptions = {}):
     } catch (error: unknown) {
       if (init.signal?.aborted) throw new OutboundUnavailableError(requestId);
       if (attempt === attempts) {
-        /** GR-50: never record raw provider exceptions (which may embed OTPs, credentials, or recipients). */
-        logError("outbound.unavailable", new Error("Upstream request failed"), { requestId, attempt,
+        logError("outbound.unavailable", error, { requestId, attempt,
           circuitBreaker: "provider unavailable; repeated failures should open the provider circuit" });
         throw new OutboundUnavailableError(requestId);
       }

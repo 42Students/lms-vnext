@@ -83,8 +83,8 @@ export function TpoParticipationDecisionForm({
       </label>
 
       {status === "INELIGIBLE" ? (
-        <div className="grid gap-2 text-sm font-semibold text-body">
-          <label htmlFor="tpo-participation-reason">Reason (required)</label>
+        <label className="grid gap-2 text-sm font-semibold text-body">
+          Reason (required)
           <div role="group" aria-label="Ineligibility reason presets" className="flex flex-wrap gap-2">
             {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
               disabled={pending} onClick={()=>setReason(preset)}
@@ -93,7 +93,6 @@ export function TpoParticipationDecisionForm({
               className="min-h-10 rounded border border-border px-2 text-xs">Other</button>
           </div>
           <input
-            id="tpo-participation-reason"
             type="text"
             required
             maxLength={200}
@@ -103,7 +102,7 @@ export function TpoParticipationDecisionForm({
             placeholder="Reason for restricting placement participation"
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"
           />
-        </div>
+        </label>
       ) : null}
 
       {status !== "NOT_DECIDED" ? (

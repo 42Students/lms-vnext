@@ -40,14 +40,3 @@ All GR IDs are **source-addressed but not runtime-certified**. No Playwright, li
 ### Required orchestrator evidence
 
 Record for each role and injection kind whether the target request was intercepted, whether the exact customer recovery copy appeared, whether the draft remained, whether pending cleared, and whether no framework/console error leaked. Supply the pinned merged SHA, Playwright trace paths, and passed/failed/skipped totals, including separate staging production smoke results. **All results remain NOT RUN by chat-15.**
-
-## Round-4 authored evidence (chat-15; NOT EXECUTED)
-
-| ID | Status | Additional authored proof and outstanding requirement |
-| --- | --- | --- |
-| GR-80 | BLOCKED | `tests/e2e/graceful-leak-matrix.spec.ts`: nine `GR-80 GR-81 ... interceptor` tests prove real intercepted POST methods, statuses, request-id propagation and 429 Retry-After; `graceful-production-faults.spec.ts`: four `GR-80 GR-82 production sign-in ...` tests for 403/429/503/504, exact approved text, editable draft and pending release. Product role matrices remain unexecuted. |
-| GR-81 | BLOCKED | `tests/e2e/support/no-raw-error.ts` stronger code/stack/driver/chunk rejection; `tests/e2e/graceful-leak-matrix.spec.ts`: 42 `GR-81 blocks ...` negative controls plus two positive controls. Browser execution required. |
-| GR-82 | BLOCKED | `tests/e2e/graceful-production-faults.spec.ts`: `GR-82 production denies source maps for every initial application chunk`; four additional production failure UI checks. Included by `tests/e2e/playwright.graceful-production.config.ts`. Still requires a separate production origin. |
-| GR-83 | BLOCKED | No newly claimed helper unit or disposable PostgreSQL integration certification; orchestrator must execute existing named suites and close the GR-51 fake-provider outbox witness. |
-
-**No Playwright, unit, integration, lint, typecheck or production checks were run by chat-15.** Counts here represent authored assertions, not verified passes. GR-80 through GR-83 stay BLOCKED pending runtime evidence and identified fixtures.

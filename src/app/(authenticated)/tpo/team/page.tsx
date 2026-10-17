@@ -37,10 +37,7 @@ export default async function TpoTeamPage({searchParams}:{
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
- // Deprecated faculty/student coordinator duties are not placement-team roles.
- const activeTeam=team.members.filter(member=>member.roles.includes("TPO")||
-  member.roles.includes("TPO_ADMIN"));
- const people=sortTpoPeople(activeTeam,peopleSort);
+ const people=sortTpoPeople(team.members,peopleSort);
  const search=parsed.success?(parsed.data.q??""):"";
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search)
   .catch(()=>({status:"FAILED" as const,items:[]})):null;
@@ -59,8 +56,7 @@ export default async function TpoTeamPage({searchParams}:{
    </Link>)}
   </nav>
   {tab==="people"?<section className="space-y-4">
-    <p role="status" className="text-sm text-body">{people.length} people</p>
-    <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
+    <p role="status" className="text-sm text-body">{team.summary.total} people in the active placement team</p>
     <nav aria-label="Sort team people" className="flex flex-wrap items-center gap-2 text-sm">
       <span className="font-semibold">Sort:</span>
       {([["WORK","Most assigned duties"],["NAME","Name"]] as const).map(([value,label])=>
@@ -74,7 +70,7 @@ export default async function TpoTeamPage({searchParams}:{
     {people.length?<ul className="grid gap-3 sm:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
        <h2 className="break-words font-semibold text-foreground">{member.displayName}</h2>
-       <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
+       <p className="mt-2 text-sm text-body">{member.roles.map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
        </p>:null}

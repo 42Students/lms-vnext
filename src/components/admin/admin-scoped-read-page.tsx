@@ -31,24 +31,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
  const data=await loader(parsed.data);
- const peopleSummary=peopleFilters?await Promise.all([
-  loader({...parsed.data,status:"ALL",page:1}),
-  loader({...parsed.data,status:"ACTIVE",page:1}),
-  loader({...parsed.data,status:"SUSPENDED",page:1}),
- ]):null;
  return <div className="min-w-0 space-y-5">
-  <PageHeader eyebrow={peopleFilters?"People":"Super Admin · Read-only"} title={title} description={description}/>
-  {peopleSummary?<section aria-label={title+" overview"} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-   {[
-    {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
-    {label:"Active",value:peopleSummary[1].total},
-    {label:"Suspended",value:peopleSummary[2].total},
-    {label:"Visible now",value:data.items.length},
-   ].map(stat=><article key={stat.label} className="rounded-xl border border-border bg-surface p-4">
-    <p className="text-xs font-semibold text-muted-foreground">{stat.label}</p>
-    <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
-   </article>)}
-  </section>:null}
+  <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
