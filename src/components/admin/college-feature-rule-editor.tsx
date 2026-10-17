@@ -13,6 +13,8 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [busy,setBusy]=useState(false);
  const [feedback,setFeedback]=useState("");
  const [impact,setImpact]=useState<string|null>(null);
+ const [students,setStudents]=useState<number|null>(null);
+ const [acknowledgedPopulation,setAcknowledgedPopulation]=useState(false);
  const [impactBusy,setImpactBusy]=useState(false);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
  const disabled=busy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
@@ -30,13 +32,14 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  }
  async function reviewChange(){
   if(busy)return;
-  setImpactBusy(true);setImpact(null);
+  setImpactBusy(true);setImpact(null);setStudents(null);setAcknowledgedPopulation(false);
   try{
    const response=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+
      "/impact?module="+encodeURIComponent(module),{cache:"no-store"});
    if(!response.ok)throw Error("impact not available");
-   const snapshot=await response.json() as {summary:string};
+   const snapshot=await response.json() as {summary:string;students:number};
    setImpact(snapshot.summary);
+   if(Number.isInteger(snapshot.students)&&snapshot.students>=0)setStudents(snapshot.students);
   }catch{setImpact("Blast-radius counts are unavailable. This is not a safety check.");}
   finally{setImpactBusy(false);setConfirm(true);}
  }
