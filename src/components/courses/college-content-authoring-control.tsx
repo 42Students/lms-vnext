@@ -174,7 +174,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
     <label className="text-sm">Time Zone
-     <select value={timeZone} onChange={event=>setTimeZone(event.target.value as MeetingZone)}
+     <select value={timeZone} onChange={event=>{
+       const next=event.target.value as MeetingZone;
+       if(next===timeZone)return;
+       try{
+        const startNext=start?dateInput(isoIst(start,timeZone),next):"";
+        const endNext=end?dateInput(isoIst(end,timeZone),next):"";
+        setStart(startNext);setEnd(endNext);setTimeZone(next);setError("");
+       }catch{setError("Fix the Start and End dates before changing Time Zone.");}
+      }}
       className="mt-1 w-full rounded border bg-background p-2">
       <option value="Asia/Kolkata">India Standard Time (IST)</option>
       <option value="UTC">UTC</option>
