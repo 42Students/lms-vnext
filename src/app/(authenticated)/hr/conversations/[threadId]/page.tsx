@@ -70,6 +70,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           {request.decisionNote?<p className="mt-2 break-words text-body">
             <strong>Placement-cell response:</strong> {request.decisionNote}
           </p>:null}
+          <p className="mt-1 text-xs text-muted-foreground">Discussion replies: {request.messages.length}</p>
           <p className="mt-1 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
           </p>
