@@ -53,4 +53,11 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-06 |");
  });
 
+ it("REC-calendar-messages-profile-07 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("roundEvent?\"?tab=rounds\"");
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("?\"?tab=rounds\"");
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("?tab=overview\"");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-07 |");
+ });
+
 });
