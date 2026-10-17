@@ -322,6 +322,8 @@ export function RecruiterLeadsWorkspace({
     [visible,rosterSort,sortAscending]);
   const filterChips=([
     {key:"stage",label:"Stage",value:stage},
+    {key:"need",label:"Needs doing",value:need},
+    {key:"attention",label:"Needs attention",value:attention},
     {key:"owner",label:"Owner",value:ownerFilter},
     {key:"invite",label:"Invite",value:inviteFilter},
     {key:"status",label:"Status",value:statusFilter},
@@ -723,7 +725,7 @@ export function RecruiterLeadsWorkspace({
               <button type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added"] as const)updateFilter(key,"ALL");
-                updateFilter("stage","ALL");setAttention("ALL");setNeed("ALL");
+                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
               }}>Clear filters</button>
             </div>:null}
           </div>
