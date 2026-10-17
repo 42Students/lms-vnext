@@ -52,7 +52,7 @@ export function FacultyCourseTabNavigation({
         </div>
         {teachingSections.length > 1 ? (
           <label htmlFor="faculty-course-section" className="text-xs font-semibold text-body">
-            Teaching Section
+            {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <select
               id="faculty-course-section"
               value={deliveryId}
