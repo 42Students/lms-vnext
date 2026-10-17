@@ -167,7 +167,7 @@ export async function moveCollegeStudentSection(
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_LEARNER_ENROLLED,
       organizationId: own.organizationId, collegeId: own.collegeId,
       subjectType: "learner_program_enrollment", subjectId: enrollment.id,
-      summary: "College Admin moved learner between classes",
+      summary: isSuperAdmin(context)?"Super Admin moved learner between classes":"College Admin moved learner between classes",
       metadata: { membershipId, fromSectionId: placement.sectionId,
         toSectionId: target.id, oldPlacementId: moved.id,
         newPlacementId: created.id, action: "SECTION_MOVE" },
