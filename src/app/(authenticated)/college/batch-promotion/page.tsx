@@ -48,7 +48,7 @@ export default async function CollegeBatchPromotionPage({
     ? await getPromotionFacultyReadiness(context, preview.batch.programId,
       parsed.data.cohortId, preview.plan.targetTermNumber)
     : null;
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<Link href="/college/batches"
