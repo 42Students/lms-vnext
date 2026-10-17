@@ -47,9 +47,22 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
  return output.sort((a,b)=>(a.name??"").localeCompare(b.name??"")||
   (a.rollNumber??"").localeCompare(b.rollNumber??"")||a.membershipId.localeCompare(b.membershipId));
 }
+export function accreditationOfferStatusLabel(status:string):string{
+ return ({ISSUED:"Released",ACCEPTED:"Accepted",DECLINED:"Declined",
+  WITHDRAWN:"Withdrawn",EXPIRED:"Expired"} as Record<string,string>)[status]??"Not recorded";
+}
+export function accreditationJoiningLabel(joining:string|null):string{
+ if(!joining)return "Not recorded";
+ return ({JOINED:"Joined",DEFERRED:"Deferred",DID_NOT_JOIN:"Did not join"} as Record<string,string>)[joining]??"Not recorded";
+}
+export function accreditationPackageLpa(amount:number|null):string{
+ if(amount===null||!Number.isFinite(amount))return "Not recorded";
+ return new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(amount/100000)+" LPA";
+}
 export function accreditationStudentCsv(rows:readonly AccreditationStudentRow[]):string{
  return placementReportCsv(ACCREDITATION_STUDENT_HEADINGS,rows.map(row=>[
    row.name,row.rollNumber,row.programme,row.branch,row.batch,
-   row.employer,row.employerContact,row.packageInr,row.offersHeld,row.offerStatus,row.joining,
+   row.employer,row.employerContact,accreditationPackageLpa(row.packageInr),row.offersHeld,
+   accreditationOfferStatusLabel(row.offerStatus),accreditationJoiningLabel(row.joining),
  ]));
 }
