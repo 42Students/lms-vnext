@@ -45,9 +45,9 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    ". Already recorded rows remain saved. Refresh before retrying.");}finally{setBusy(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
-  <h2 className="font-semibold text-foreground">Import the company's selection list</h2>
+  <h2 className="font-semibold text-foreground">Import the company&apos;s selection list</h2>
   <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
-   Rows are matched to this drive's eligible applicants. Unmatched and duplicate entries are never recorded.</p>
+   Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <label className="block text-sm font-semibold">Selection list (CSV)
    <input type="file" accept=".csv,text/csv" disabled={busy} onChange={e=>void read(e.target.files?.[0]??null)}
     className="mt-2 block w-full rounded border border-border p-3 text-sm"/>

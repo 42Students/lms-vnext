@@ -43,7 +43,7 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
      {Object.values(preview.offers).reduce((sum,n)=>sum+n,0)} offers will remain in history.</p>
     <p className="text-sm">{preview.note}</p>
     {awaitingConfirmation?<p role="alert" className="rounded-md border border-border bg-muted p-3 text-sm">
-      Archive "{preview.job.title}"? The drive stays in the audit history.
+      Archive &quot;{preview.job.title}&quot;? The drive stays in the audit history.
     </p>:null}
     <div className="flex flex-wrap gap-3">
      {awaitingConfirmation?<button type="button" disabled={busy||!preview.canArchive} onClick={()=>void archive()}

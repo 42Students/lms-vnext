@@ -26,7 +26,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
  }
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h3 className="font-semibold">Built-in job types</h3>
-  <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college's available choices; existing drives keep their type.</p>
+  <p className="text-sm text-muted-foreground">Their names and counts-as-placed answers are fixed. Switching off a type hides it from the college&apos;s available choices; existing drives keep their type.</p>
   <div className="overflow-x-auto"><table className="w-full min-w-[24rem] text-left text-sm">
    <thead><tr className="border-b border-border"><th scope="col" className="p-2">Job type</th><th scope="col" className="p-2">Counts as placed</th><th scope="col" className="p-2">In the drive form</th></tr></thead>
    <tbody>{rows.map(row=><tr className="border-b border-border" key={row.label}>

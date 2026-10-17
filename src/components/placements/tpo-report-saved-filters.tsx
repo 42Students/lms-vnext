@@ -13,7 +13,12 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
  const [name,setName]=useState(""),[picked,setPicked]=useState("");
  const [message,setMessage]=useState("");
  useEffect(()=>{
-  try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));setViews(stored?clean(JSON.parse(stored)):[]);}catch{setViews([]);setMessage("Browser storage is unavailable.");}
+  let live=true;
+  void Promise.resolve().then(()=>{
+   if(!live)return;
+   try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));setViews(stored?clean(JSON.parse(stored)):[]);}catch{setViews([]);setMessage("Browser storage is unavailable.");}
+  });
+  return ()=>{live=false;};
  },[path,collegeId,userId]);
  function persist(next:SavedView[]){
   try{localStorage.setItem(keyFor(path,collegeId,userId),JSON.stringify(next));setViews(next);return true;}
@@ -47,7 +52,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
  }
  return <details className="min-w-0 rounded-xl border border-border bg-surface p-4">
   <summary className="cursor-pointer text-sm font-semibold">Saved filters ({views.length}/12)</summary>
-  <p className="mt-2 text-xs text-muted-foreground">Save this report's active filters in this browser for your account. Nothing is sent to other users or devices.</p>
+  <p className="mt-2 text-xs text-muted-foreground">Save this report&apos;s active filters in this browser for your account. Nothing is sent to other users or devices.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
     <input value={name} onChange={e=>setName(e.target.value)} maxLength={50}

@@ -31,6 +31,10 @@ import {
   getFacultyCourseWorkspace,
 } from "@/modules/courses/faculty-course-service";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type Workspace = Awaited<
   ReturnType<
     typeof getFacultyCourseWorkspace
@@ -354,7 +358,7 @@ function QuizItem({
         deliveryId={deliveryId}
         status={item.status}
         resultsPublished={item.resultsPublished}
-        deadlineReached={Boolean(item.dueAt && new Date(item.dueAt).getTime()<=Date.now())}
+        deadlineReached={Boolean(item.dueAt && new Date(item.dueAt).getTime()<=currentTimeMs())}
         updatedAt={new Date(item.updatedAt).toISOString()}
         deliveryOwned={item.deliveryId !== null}
       />

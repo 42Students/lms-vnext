@@ -23,7 +23,14 @@ export function TpoAuditSavedViews({collegeId,userId,filters}:{collegeId:string;
  const [name,setName]=useState("");
  const [selected,setSelected]=useState("");
  const [message,setMessage]=useState("");
- useEffect(()=>{try{setViews(safeViews(JSON.parse(localStorage.getItem(key)??"[]")));}catch{setViews([]);}},[key]);
+ useEffect(()=>{
+  let live=true;
+  void Promise.resolve().then(()=>{
+   if(!live)return;
+   try{setViews(safeViews(JSON.parse(localStorage.getItem(key)??"[]")));}catch{setViews([]);}
+  });
+  return ()=>{live=false;};
+ },[key]);
  function persist(next:View[]){
   try{localStorage.setItem(key,JSON.stringify(next));setViews(next);return true;}
   catch{setMessage("This browser cannot store saved audit views.");return false;}

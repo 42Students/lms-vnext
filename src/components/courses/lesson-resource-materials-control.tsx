@@ -19,9 +19,10 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const [loading,setLoading]=useState(true);
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
+ const [prevUri,setPrevUri]=useState(uri);
+ if(prevUri!==uri){setPrevUri(uri);setLoading(true);setError(null);}
  useEffect(()=>{
   const controller=new AbortController();
-  setLoading(true);setError(null);
   void fetch(uri,{cache:"no-store",signal:controller.signal}).then(async response=>{
    if(!response.ok)throw new Error("Could not load resource materials.");
    return response.json();

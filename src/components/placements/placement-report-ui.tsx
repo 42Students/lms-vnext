@@ -141,7 +141,7 @@ export function ReportScopeNote({
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>
       <p className="mt-2">
-        A placed student is counted at most once using the college's active
+        A placed student is counted at most once using the college&apos;s active
         placement rule (selected, released or accepted). The exact rule is
         stated above when a season is available. Offer totals count individual
         offers, not unique students. Package statistics use the highest known

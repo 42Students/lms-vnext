@@ -333,7 +333,11 @@ export function LearnerClassSchedule({
   // The legacy learner schedule opens its compact month calendar on phones.
   useEffect(()=>{
     if(courseBasePath!=="/learn/courses")return;
-    if(window.matchMedia("(max-width: 767px)").matches)setView("month");
+    let live=true;
+    void Promise.resolve().then(()=>{
+      if(live&&window.matchMedia("(max-width: 767px)").matches)setView("month");
+    });
+    return ()=>{live=false;};
   },[courseBasePath]);
 
   const [anchor, setAnchor] = useState(

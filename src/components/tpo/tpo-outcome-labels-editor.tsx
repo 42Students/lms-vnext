@@ -44,7 +44,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h3 className="text-base font-semibold">Your own labels</h3>
-  <p className="text-sm text-body">For example "Family business" under Entrepreneurship. The student's record shows your label; reports count the choice it sits under.</p>
+  <p className="text-sm text-body">For example &quot;Family business&quot; under Entrepreneurship. The student&apos;s record shows your label; reports count the choice it sits under.</p>
   {labels.length===0?<p className="text-sm text-muted-foreground">No labels yet.</p>:null}
   <ul className="space-y-3">{labels.map((row,index)=><li key={row.id??"draft-"+index}
    className="flex flex-wrap items-start gap-2">

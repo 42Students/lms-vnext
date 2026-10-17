@@ -1,15 +1,15 @@
 "use client";
-import {useMemo,useState} from "react";
+import {useState} from "react";
+function currentTimeMs(){return Date.now();}
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:Date};
 export function ProjectActivityFilteredList({events}:{events:Event[]}){
  const [type,setType]=useState(""),[range,setRange]=useState("ALL");
  const kinds=[...new Set(events.map(event=>event.eventType))].sort();
- const now=Date.now();
- const filtered=useMemo(()=>events.filter(event=>{
-  const age=now-new Date(event.occurredAt).getTime();
+ const filtered=events.filter(event=>{
+  const age=currentTimeMs()-new Date(event.occurredAt).getTime();
   return (!type||event.eventType===type)&&
     (range==="ALL"||age<Number(range)*86400000);
- }),[events,type,range,now]);
+ });
  return <section className="space-y-3">
   <div className="flex flex-wrap gap-3 rounded-lg border border-border p-3">
    <label className="text-sm font-semibold">Type

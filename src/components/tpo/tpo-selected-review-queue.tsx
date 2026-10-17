@@ -15,7 +15,7 @@ export function TpoSelectedReviewQueue({jobId,rows}:{jobId:string;rows:readonly 
     <button type="button" onClick={()=>setOpen(false)} className="text-sm text-primary-text underline">Close</button>
    </div>
    <p className="break-words text-sm">{current.label}</p>
-   <p className="text-xs text-muted-foreground">Open the applicant's authorized detail to make a decision. Return to this tab to continue through the selected queue.</p>
+   <p className="text-xs text-muted-foreground">Open the applicant&apos;s authorized detail to make a decision. Return to this tab to continue through the selected queue.</p>
    <Link href={tpoReviewOneByOneHref(jobId,current.id)} target="_blank" rel="noopener noreferrer"
     className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
     Open selected applicant

@@ -176,7 +176,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
       <h1 className="text-xl font-semibold text-foreground">You now have access to {invite.collegeName}</h1>
-      <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We'll email you a code each time.</p>
+      <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
       <Link className={primary} href="/login">Sign in</Link>
     </div>);
   }
@@ -215,7 +215,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           <input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
             className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-body"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            From your invitation. You'll sign in with it.
+            {"From your invitation. You'll sign in with it."}
           </span>
         </label>
         <label className="block text-sm font-semibold text-foreground">Your name

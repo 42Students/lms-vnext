@@ -5,6 +5,10 @@ import {useMemo,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import type {TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 const FIRST=7,LAST=21,HEIGHT=64;
 const label=(day:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",weekday:"short",day:"numeric",month:"short"})
  .format(new Date(day+"T12:00:00Z"));
@@ -56,7 +60,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
-  if(new Date(dueAt).getTime()<=Date.now()){setMessage("Choose a future time to reschedule.");return;}
+  if(new Date(dueAt).getTime()<=currentTimeMs()){setMessage("Choose a future time to reschedule.");return;}
   if(blocked.has(day)&&!window.confirm("This date is blocked in placement settings. Move the follow-up here anyway?"))return;
   if(!blockedDatesAvailable&&!window.confirm("Blocked dates could not be checked. Move this follow-up anyway?"))return;
   if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;

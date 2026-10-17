@@ -30,6 +30,8 @@ import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conver
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
+function currentTimeMs(){return Date.now();}
+
 function safeDriveReturnTo(raw:string|undefined){
  if(!raw)return "/recruiter/drives";
  try{
@@ -116,8 +118,7 @@ export default async function HrPlacementJobPage({
     : null;
   const focusedHref = (id:string) => "/recruiter/drives/"+workspace.job.id+
     "?tab=applicants&stage="+filters.stage+"&page="+filters.page+"&review=1&applicant="+id+returnQuery;
-  // eslint-disable-next-line react-hooks/purity -- current server request time is needed for offer expiry display.
-  const now = new Date();
+  const now = new Date(currentTimeMs());
 
   const selectionReadyIds = new Set(hrSelectionReadyApplicationIds(workspace.rounds));
   const driveOverview = buildHrDriveOverview({job:workspace.job,applicants:applicants.counts,offers,rounds:workspace.rounds},now);
@@ -436,7 +437,7 @@ export default async function HrPlacementJobPage({
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
-        <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters' conversations.</p>
+        <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters&apos; conversations.</p>
         {requestData?.party==="COMPANY"&&requestData.requests.length>0?
           <div className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
             <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>

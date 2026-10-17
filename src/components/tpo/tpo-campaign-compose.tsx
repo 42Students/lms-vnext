@@ -21,13 +21,18 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
- const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">("idle");
+ const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">(selectedLeadIds.length?"loading":"idle");
  const [audienceRetry,setAudienceRetry]=useState(0);
  const selectionKey=selectedLeadIds.join(",");
+ const audienceKey=selectionKey+"|"+audienceRetry;
+ const [prevAudienceKey,setPrevAudienceKey]=useState(audienceKey);
+ if(prevAudienceKey!==audienceKey){
+  setPrevAudienceKey(audienceKey);
+  setAudience(null);setAudienceStatus(selectionKey?"loading":"idle");
+ }
  useEffect(()=>{
-  if(!selectionKey){setAudience(null);setAudienceStatus("idle");return;}
+  if(!selectionKey)return;
   const controller=new AbortController();
-  setAudience(null);setAudienceStatus("loading");
   void fetch("/api/placements/tpo/campaigns/preview-selected",{
    method:"POST",credentials:"same-origin",signal:controller.signal,
    headers:{"Content-Type":"application/json"},

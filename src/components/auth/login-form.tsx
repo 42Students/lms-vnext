@@ -117,12 +117,17 @@ export function LoginForm({
   const [emailCooldown, setEmailCooldown] = useState(0);
 
   useEffect(() => {
-    const stored = loadLoginAttempt();
-    if (!stored) return;
-    setAttempt(stored.attempt);
-    setChannel(stored.attempt.channel);
-    setCooldown(Math.max(0, Math.ceil((stored.nextResendAt - Date.now()) / 1000)));
-    setNotice("Your verification is still in progress. Use the code already sent or request another when available.");
+    let live = true;
+    void Promise.resolve().then(() => {
+      if (!live) return;
+      const stored = loadLoginAttempt();
+      if (!stored) return;
+      setAttempt(stored.attempt);
+      setChannel(stored.attempt.channel);
+      setCooldown(Math.max(0, Math.ceil((stored.nextResendAt - Date.now()) / 1000)));
+      setNotice("Your verification is still in progress. Use the code already sent or request another when available.");
+    });
+    return () => { live = false; };
   }, []);
 
   useEffect(() => {

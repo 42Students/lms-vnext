@@ -98,7 +98,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/>
       </label>
-      <label className="text-sm font-semibold sm:col-span-2">What's blocking this task?
+      <label className="text-sm font-semibold sm:col-span-2">What&apos;s blocking this task?
         <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-10 w-full rounded-md border border-border bg-background p-2"/>
       </label>

@@ -190,7 +190,7 @@ export default async function TpoReportsPage({
         </Link>
         <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="rounded-md border border-border p-3">
          <strong className="block">Placed</strong>
-         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college's placement rule</span>
+         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
         </Link>
         <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="rounded-md border border-border p-3">
          <strong className="block">Accepted</strong>

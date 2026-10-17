@@ -136,7 +136,7 @@ export default async function TpoFailureReasonsPage({
         row.shareOfRoundPercent===null?"Unavailable":row.shareOfRoundPercent+"%",
        ])}
        emptyDescription="No applied round decisions are available by current academic branch."/>
-      <p className="text-xs text-muted-foreground">Branch uses the learner's current active academic enrollment; past branch membership is not reconstructed. A missing branch is labelled Not recorded. Percentages use only applied round decisions for that round and branch.</p>
+      <p className="text-xs text-muted-foreground">Branch uses the learner&apos;s current active academic enrollment; past branch membership is not reconstructed. A missing branch is labelled Not recorded. Percentages use only applied round decisions for that round and branch.</p>
       
       <ReportTable
         title="Outcomes by type"

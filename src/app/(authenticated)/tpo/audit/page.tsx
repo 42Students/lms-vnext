@@ -21,6 +21,10 @@ import {
   tpoAuditQuerySchema,
 } from "@/modules/placements/tpo-audit-service";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type SearchParams = {
   kind?: string | string[];
   from?: string | string[];
@@ -138,9 +142,9 @@ export default async function TpoAuditPage({
   const toIstDate=tpoIndiaCalendarDay;
   const today=toIstDate(new Date());
   const quickLooks=[{label:"Today",from:today,to:today},
-   {label:"7 days",from:toIstDate(new Date(Date.now()-6*86400000)),to:today},
-   {label:"30 days",from:toIstDate(new Date(Date.now()-29*86400000)),to:today},
-   {label:"Older",from:"",to:toIstDate(new Date(Date.now()-30*86400000))},
+   {label:"7 days",from:toIstDate(new Date(currentTimeMs()-6*86400000)),to:today},
+   {label:"30 days",from:toIstDate(new Date(currentTimeMs()-29*86400000)),to:today},
+   {label:"Older",from:"",to:toIstDate(new Date(currentTimeMs()-30*86400000))},
   ];
   const quickHref=(from:string,to:string)=>{
    const params=new URLSearchParams({

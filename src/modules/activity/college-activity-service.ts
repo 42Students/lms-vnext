@@ -32,9 +32,9 @@ export async function listCollegeActivity(context: RequestContext, raw: unknown)
     TEACHING: "COURSES",
     PROJECTS: "PROJECTS",
   } as const;
-  const module = category ? categories[category] : filter.module;
+  const activityModule = category ? categories[category] : filter.module;
   const result = await listActivityEvents(context, {
-    ...filter, module,
+    ...filter, module: activityModule,
     importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
     limit: Number(pageSize ?? "25"),
   });

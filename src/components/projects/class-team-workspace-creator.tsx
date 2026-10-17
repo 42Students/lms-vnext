@@ -45,10 +45,10 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [notice,setNotice]=useState("");
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number}|null>(null);
   const [outcome,setOutcome]=useState<{created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number}|null>(null);
+  const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
+  if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
   useEffect(()=>{
     const controller=new AbortController();
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
-    setLoading(true);
     void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId),{signal:controller.signal})
       .then(async response=>{
         if(!response.ok)throw Error(await projectApiError(response));
@@ -58,11 +58,16 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
     return()=>controller.abort();
   },[collegeId]);
+  const rosterKey=collegeId+"|"+classId+"|"+rosterRefreshKey;
+  const [prevRosterKey,setPrevRosterKey]=useState(rosterKey);
+  if(prevRosterKey!==rosterKey){
+    setPrevRosterKey(rosterKey);
+    setRoster(null);setGroups([]);
+    if(classId){setRosterLoading(true);setError("");}
+  }
   useEffect(()=>{
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
-    if(!classId){setRoster(null);setGroups([]);return;}
+    if(!classId)return;
     const controller=new AbortController();
-    setRoster(null);setGroups([]);setRosterLoading(true);setError("");
     void fetch("/api/projects/class-team-roster?collegeId="+encodeURIComponent(collegeId)+"&classId="+encodeURIComponent(classId),{signal:controller.signal})
       .then(async response=>{
         if(!response.ok)throw Error(await projectApiError(response));
@@ -72,19 +77,25 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       .finally(()=>{if(!controller.signal.aborted)setRosterLoading(false);});
     return()=>controller.abort();
   },[collegeId,classId,rosterRefreshKey]);
-  useEffect(()=>{
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- derived/fetched state synchronised to props
-    if(!roster){setGroups([]);return;}
-    try {
-      setGroups(previewClassTeams({mode,order,teamSize:size,seed,students:roster.members.map(({membershipId,rollNumber})=>({membershipId,rollNumber}))}));
-      setNotice("");
-    } catch(e) {
-      setGroups([]);
-      setError(e instanceof Error?e.message:"Invalid team plan");
+  const [prevPlan,setPrevPlan]=useState({roster,mode,order,size,seed});
+  if(prevPlan.roster!==roster||prevPlan.mode!==mode||prevPlan.order!==order||prevPlan.size!==size||prevPlan.seed!==seed){
+    setPrevPlan({roster,mode,order,size,seed});
+    if(!roster){setGroups([]);}
+    else{
+      try {
+        setGroups(previewClassTeams({mode,order,teamSize:size,seed,students:roster.members.map(({membershipId,rollNumber})=>({membershipId,rollNumber}))}));
+        setNotice("");
+      } catch(e) {
+        setGroups([]);
+        setError(e instanceof Error?e.message:"Invalid team plan");
+      }
     }
-  },[roster,mode,order,size,seed]);
+  }
+  const preflightActive=mode==="INDIVIDUAL"&&Boolean(classId)&&Boolean(templateId);
+  const [prevPreflightActive,setPrevPreflightActive]=useState(preflightActive);
+  if(prevPreflightActive!==preflightActive){setPrevPreflightActive(preflightActive);if(!preflightActive)setPreflight(null);}
   useEffect(()=>{
-    if(mode!=="INDIVIDUAL"||!classId||!templateId){setPreflight(null);return;}
+    if(!preflightActive)return;
     const ctl=new AbortController();
     void fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
       "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),

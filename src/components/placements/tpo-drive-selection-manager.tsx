@@ -57,7 +57,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     Verify and release ({releasable.length})</button>
   </div>
   {lastRecorded>0?<p role="status" className="text-sm font-semibold">{lastRecorded} selection(s) recorded, not yet released.</p>:null}
-  <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company's selection list.</p>
+  <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company&apos;s selection list.</p>
   <div className="overflow-x-auto rounded border border-border bg-surface"><table className="min-w-full text-left text-sm">
    <thead><tr><th className="p-3">Student</th><th className="p-3">Role</th><th className="p-3">Package</th><th className="p-3">Stage</th></tr></thead>
    <tbody>{selections.length?selections.map(s=><tr key={s.id} className="border-t border-border">

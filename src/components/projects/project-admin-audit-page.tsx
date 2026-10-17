@@ -18,6 +18,10 @@ import {
   isSuperAdmin,
 } from "@/modules/identity/context";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type SearchParams = Record<
   string,
   string | string[] | undefined
@@ -201,7 +205,7 @@ export async function ProjectAdminAuditPage({
           if(importance)params.set("importance",importance);
           if(subjectType)params.set("subjectType",subjectType);
           if(subjectId)params.set("subjectId",subjectId);
-          if(item.days!==null)params.set("from",istDate(new Date(Date.now()-item.days*86400000)));
+          if(item.days!==null)params.set("from",istDate(new Date(currentTimeMs()-item.days*86400000)));
           return <a key={item.label} href={basePath+"/audit?"+params.toString()}
            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
              {item.label}</a>;

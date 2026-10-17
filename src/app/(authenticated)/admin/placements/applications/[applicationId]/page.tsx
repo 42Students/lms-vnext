@@ -12,7 +12,7 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
  return <div className="space-y-5">
   <SuperAdminPlacementDetailView data={detail}/>
   {detail.related?<div className="flex flex-wrap gap-3">
-   <Link href={detail.related.href+"/applications"} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Manage this drive's applications and stage decisions →</Link>
+   <Link href={detail.related.href+"/applications"} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Manage this drive&apos;s applications and stage decisions →</Link>
    <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Schedule candidate interview →</Link>
   </div>:null}
   <section aria-label="Application stage history" className="space-y-3 rounded-xl border border-border bg-surface p-5">

@@ -53,10 +53,15 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  const methodsKey=(methodsEnabled?"1|":"0|")+assignmentId+"|"+deliveryId;
+  const [prevMethodsKey,setPrevMethodsKey]=useState(methodsKey);
+  if(prevMethodsKey!==methodsKey){
+    setPrevMethodsKey(methodsKey);
+    if(methodsEnabled){setMethodsLoaded(false);setMethodsError(null);}
+  }
   useEffect(()=>{
     if(!methodsEnabled)return;
     const controller=new AbortController();
-    setMethodsLoaded(false);setMethodsError(null);
     void fetch("/api/courses/assignments/"+encodeURIComponent(assignmentId)+
       "/methods?deliveryId="+encodeURIComponent(deliveryId),{
       cache:"no-store",signal:controller.signal,

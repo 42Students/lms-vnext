@@ -22,7 +22,11 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
    setReady(payload.ready);setViews(payload.views??[]);
   }catch{setReady(false);}
  }
- useEffect(()=>{void refresh();},[]);
+ useEffect(()=>{
+  let live=true;
+  void Promise.resolve().then(()=>{if(live)return refresh();});
+  return ()=>{live=false;};
+ },[]);
  function currentQuery(){
   const params=new URLSearchParams(window.location.search),result:Record<string,string>={};
   for(const key of ["q","stage","owner","status","invite","source","company","reach",

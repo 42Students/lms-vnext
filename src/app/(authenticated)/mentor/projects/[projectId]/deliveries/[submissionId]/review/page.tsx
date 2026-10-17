@@ -105,7 +105,7 @@ export default async function MentorDeliveryVersionPage({params}:{
         <p className="mt-2 text-sm text-muted-foreground">No submission history recorded.</p>:null}
     </section>
     <p className="text-xs text-muted-foreground">
-      This version's evidence and history are visible only to authorized project mentors.
+      This version&apos;s evidence and history are visible only to authorized project mentors.
       External URLs open only after safety checks. Uploaded file metadata is shown
       without exposing storage identifiers or bypassing protected download permissions.
       Existing Delivery review controls remain the only write path.

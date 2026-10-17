@@ -7,12 +7,17 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
  const router=useRouter(),key="tpo-drive-views:"+scopeKey;
  const [views,setViews]=useState<Saved[]>([]),[name,setName]=useState(""),[error,setError]=useState(""),[copied,setCopied]=useState("");
  useEffect(()=>{
-  try{const raw=JSON.parse(localStorage.getItem(key)??"[]") as unknown;
-   if(Array.isArray(raw))setViews(raw.filter((item):item is Saved=>
-    typeof item==="object"&&item!==null&&
-    typeof item.name==="string"&&item.name.length<=50&&
-    typeof item.query==="string"&&item.query.length<=2000).slice(0,MAX));
-  }catch{setViews([]);}
+  let live=true;
+  void Promise.resolve().then(()=>{
+   if(!live)return;
+   try{const raw=JSON.parse(localStorage.getItem(key)??"[]") as unknown;
+    if(Array.isArray(raw))setViews(raw.filter((item):item is Saved=>
+     typeof item==="object"&&item!==null&&
+     typeof item.name==="string"&&item.name.length<=50&&
+     typeof item.query==="string"&&item.query.length<=2000).slice(0,MAX));
+   }catch{setViews([]);}
+  });
+  return ()=>{live=false;};
  },[key]);
  function save(){
   const label=name.trim();

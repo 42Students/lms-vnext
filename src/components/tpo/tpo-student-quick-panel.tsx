@@ -36,7 +36,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   if(next!=="Requests"&&next!=="Notes"&&next!=="History"&&next!=="Placement"||detail)return;
   await fetchDetail();
  }
- useEffect(()=>{void fetchDetail();},[student.membershipId]);
+ useEffect(()=>{
+  let live=true;
+  void Promise.resolve().then(()=>{if(live)return fetchDetail();});
+  return ()=>{live=false;};
+ },[student.membershipId]);
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
@@ -130,7 +134,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
           onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
-       className="inline-flex min-h-10 items-center text-primary-text underline">Review student's requests</Link>
+       className="inline-flex min-h-10 items-center text-primary-text underline">Review student&apos;s requests</Link>
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>

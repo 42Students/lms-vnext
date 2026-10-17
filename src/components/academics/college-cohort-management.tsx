@@ -268,7 +268,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       </div>
     </div>:null}
     {blocked ? <p className="mt-1 text-xs text-muted-foreground">
-      "Archived batches cannot be edited."
+      &quot;Archived batches cannot be edited.&quot;
     </p> : null}
     {editing ? <div role="dialog" aria-modal="true" aria-label={"Edit batch " + row.name}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">

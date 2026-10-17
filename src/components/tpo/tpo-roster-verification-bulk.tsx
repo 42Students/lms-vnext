@@ -99,7 +99,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    <h3 className="font-semibold">Review {eligible.length} eligible, {skipped.length} left out</h3>
    {skipped.length?<p className="text-sm text-warning-text">{skipped.map(row=>row.learnerName+" ("+row.section+")").join(", ")}: a required document is missing.</p>:null}
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><input type="checkbox" checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
-    I have checked their documents another way (for example the college's own records).
+    I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
    <button type="button" disabled={busy||eligible.length===0||action==="VERIFY"&&!ack}
     className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50" onClick={()=>void save()}>

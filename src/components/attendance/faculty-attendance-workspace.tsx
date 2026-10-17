@@ -578,7 +578,7 @@ export function FacultyAttendanceWorkspace({
               <div>
                 <h2 className="text-sm font-semibold text-body">Monthly Attendance</h2>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  See each student's attendance day by day for this month.
+                  See each student&apos;s attendance day by day for this month.
                 </p>
                 <p className="mt-2 text-3xl font-semibold text-foreground">
                   {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}

@@ -22,7 +22,7 @@ export function positionWeekEvents(events:readonly WeekGridEvent[],startHour=7,e
   const start=istMinute(e.startsAt);
   if(start===null)return [];
   const finish=e.endsAt?istMinute(e.endsAt):null;
-  let end=finish!==null&&finish>start?finish:start+30;
+  const end=finish!==null&&finish>start?finish:start+30;
   const outsideHours=start>=to||end<=from;
   return [{...e,startMinute:Math.max(from,start),endMinute:Math.min(to,Math.max(from+1,end)),
     column:0,columns:1,outsideHours}];
