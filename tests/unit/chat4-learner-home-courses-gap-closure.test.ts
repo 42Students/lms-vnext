@@ -74,4 +74,18 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(s).toContain("Copy meeting link");
  });
 
+ it("LEARNER-home-courses-04 shows Semester Details, All Courses and Credits Breakdown",()=>{
+  const s=source("src/components/courses/learner-course-list.tsx");
+  for(const title of ["Semester Details","All Courses","Credits Breakdown","Total "])expect(s).toContain(title);
+  expect(s).toContain("Showing first 100; search the full list below.");
+ });
+ it("LEARNER-home-courses-16 shows month summary and Day in Attendance History",()=>{
+  const s=source("src/components/courses/learner-course-attendance.tsx");
+  for(const title of ["Attendance this month","Attendance History","weekdayLabel(row.startsAt)","No classes held yet in this period."])expect(s).toContain(title);
+ });
+ it("LEARNER-home-courses-23 omits empty course About content",()=>{
+  const s=source("src/components/courses/learner-course-overview.tsx");
+  expect(s).toContain("aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0");
+ });
+
 });
