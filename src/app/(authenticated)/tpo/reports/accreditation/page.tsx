@@ -103,9 +103,9 @@ export default async function TpoAccreditationReportPage({
          <ul className="grid gap-1 text-sm sm:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
-         <a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-10 items-center text-primary-text underline">
+         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-10 items-center text-primary-text underline">
           Export anyway
-         </a>
+         </a>:null}
         </div>:null}
         <p className="text-sm">{studentReport.rows.length} placed students in this batch.</p>
         <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
