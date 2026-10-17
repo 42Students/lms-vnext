@@ -87,7 +87,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
   </button>
-  <div id="mentor-allocation-filters" hidden={!filtersOpen}
+  {filtersOpen?<div id="mentor-allocation-filters"
     className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
