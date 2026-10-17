@@ -77,16 +77,16 @@ export async function ProjectAdminAuditPage({
   }
 
   const eventType =
-    one(searchParams.action) ??
-    one(searchParams.status) ??
-    one(searchParams.eventType);
+    one(searchParams.action) ||
+    one(searchParams.status) ||
+    one(searchParams.eventType) || undefined;
   const importance =
-    one(searchParams.importance);
+    one(searchParams.importance)||undefined;
   const subjectType =
-    one(searchParams.subjectType);
-  const subjectId=one(searchParams.subjectId);
-  const from = one(searchParams.from);
-  const to = one(searchParams.to);
+    one(searchParams.subjectType)||undefined;
+  const subjectId=one(searchParams.subjectId)||undefined;
+  const from = one(searchParams.from)||undefined;
+  const to = one(searchParams.to)||undefined;
 
   const result =
     await listActivityEvents(
