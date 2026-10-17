@@ -22,6 +22,7 @@ import { PlacementsServiceError } from "./errors";
 import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 import { isDebarmentActive } from "./batch-registration-policy";
 import {notifyEligiblePublishedDrive} from "./tpo-drive-publish-effects";
+import {hasSecureEmployerPortalUrl} from "./tpo-drive-lifecycle-model";
 import {
   requirePlacementJobSeasonActive,
 } from "./season-service";
@@ -430,10 +431,7 @@ export async function publishPlacementJob(
     current.collegeId,
     current.companyRelationshipId,
   );
-  if (
-    current.applicationMode !== "INTERNAL" &&
-    !current.externalApplicationUrl
-  ) {
+  if (!hasSecureEmployerPortalUrl(current.applicationMode,current.externalApplicationUrl)) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_EXTERNAL_URL_REQUIRED",
     );
