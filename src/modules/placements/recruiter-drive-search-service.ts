@@ -12,7 +12,7 @@ import type {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 /** REC-home-drives-R08: page and filter the authorized job set in PostgreSQL. */
 export async function searchOwnRecruiterDrives(
  context:RequestContext,collegeId:string,query:RecruiterDriveListQuery,now:Date,
- options:{pageSize?:number;descendingDeadline?:boolean}={},
+ options:{pageSize?:number;descendingDeadline?:boolean;previewOnly?:boolean}={},
 ){
  if(!hasActiveRecruiter(context)||!context.recruiter)
   throw new AuthorizationError("placements.recruiter.read");
@@ -45,7 +45,7 @@ export async function searchOwnRecruiterDrives(
   isNull(placementJobs.archivedAt),
   inArray(placementJobs.status,["PUBLISHED","CLOSED"]),
  );
- const counts=await getDb().select({
+ const counts=options.previewOnly?[]:await getDb().select({
   status:placementJobs.status,
   count:sql<number>`count(*)::integer`,
  }).from(placementJobs)
@@ -80,7 +80,7 @@ export async function searchOwnRecruiterDrives(
    sql`(${placementJobs.applicationDeadline} at time zone 'Asia/Kolkata')::date =
     (${now.toISOString()}::timestamptz at time zone 'Asia/Kolkata')::date`):undefined,
  );
- const [totalResult]=await getDb().select({count:sql<number>`count(*)::integer`})
+ const [totalResult]=options.previewOnly?[]:await getDb().select({count:sql<number>`count(*)::integer`})
   .from(placementJobs)
   .innerJoin(placementCompanyRelationships,
    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
@@ -104,5 +104,6 @@ export async function searchOwnRecruiterDrives(
  for(const row of visible)requirePermission(context,"placements.recruiter.read",{
   collegeId:row.collegeId,placementCompanyRelationshipId:row.relationshipId,
  });
- return {rows:visible,total,page,pages,pageSize,totals};
+ return {rows:visible,total:options.previewOnly?visible.length:total,
+  page,pages:options.previewOnly?(visible.length?1:0):pages,pageSize,totals};
 }
