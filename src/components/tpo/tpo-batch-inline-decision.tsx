@@ -1,6 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -14,7 +14,6 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
  const [reason,setReason]=useState(expected.reason??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [actionId,setActionId]=useState<string|null>(null);
- useEffect(()=>{setDecision(expected.status??"NOT_DECIDED");setReason(expected.reason??"");},[expected.status,expected.reason,expected.updatedAt]);
  const valid=decision!=="INELIGIBLE"||(reason.trim().length>=3&&reason.trim().length<=200);
  async function save(){
   if(!valid||busy)return;
