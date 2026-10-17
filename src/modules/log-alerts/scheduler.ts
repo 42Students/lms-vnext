@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, lt } from "drizzle-orm";
+import { and, desc, eq, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
 import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
@@ -14,17 +14,19 @@ export function istDayAndHour(now: Date) {
 export function formatDailyDigest(input: {
   day: string; total: number; firstSeen: number;
   muted: number; spikes: number; top: { hash: string; count: number }[];
+  deploy?: string;
 }): string {
   return [
     "vNext daily error digest (" + input.day + ", IST)",
     "Errors: " + input.total,
+    "Recurring occurrences: " + Math.max(0, input.total - input.firstSeen),
     "New signatures: " + input.firstSeen,
     "Muted signatures: " + input.muted,
     "Spike signatures: " + input.spikes,
     "Top recurring:",
     ...(input.top.length ? input.top.map((item) =>
       item.hash.slice(0, 12) + ": " + item.count + " occurrences") : ["None"]),
-    "Deploy: check the rollout health report",
+    "Deploy: " + (input.deploy ?? "not recorded"),
   ].join("\n");
 }
 
@@ -37,7 +39,8 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
     jobName, lockedBy, lockedUntil,
   }).onConflictDoUpdate({
     target: leases.jobName,
-    set: { lockedBy, lockedUntil, updatedAt: now },
+    set: { lockedBy, lockedUntil, updatedAt: now,
+      fence: sql.raw("scheduled_job_leases.fence + 1") },
     setWhere: lt(leases.lockedUntil, now),
   }).returning({ lockedBy: leases.lockedBy });
   if (!acquired || acquired.lockedBy !== lockedBy) return false;
@@ -78,6 +81,8 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     const end = new Date(start.getTime() + 86_400_000);
     const message = formatDailyDigest({
       day: previousDay,
+      deploy: /^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT ?? "")
+        ? process.env.DEPLOY_COMMIT : undefined,
       total: rows.reduce((sum, row) => sum + row.dayOccurrences, 0),
       firstSeen: rows.filter(row => row.firstSeenAt >= start && row.firstSeenAt < end).length,
       muted: rows.filter(row => row.muted).length,
