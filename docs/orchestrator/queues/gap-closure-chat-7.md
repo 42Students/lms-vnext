@@ -36,7 +36,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-03 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-05 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-08 | S3 | MISSING-FIELD | UNCONFIRMED |
-| LEARNER-placements-09 | S3 | STATE | OPEN |
+| LEARNER-placements-09 | S3 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-11 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-12 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-14 | S3 | COPY | FIXED-ON-MAIN |
@@ -58,7 +58,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-46 | S3 | MISSING-TAB | OPEN |
 | LEARNER-placements-48 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-placements-54 | S3 | COPY | OPEN |
+| LEARNER-placements-54 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-55 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-R06 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-R07 | S3 | STATE | FIXED-ON-MAIN |
@@ -95,7 +95,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-05 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-06 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-08 | S3 | STATE | FIXED-ON-MAIN |
-| MEN-projects-meetings-14 | S3 | COPY | OPEN |
+| MEN-projects-meetings-14 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-15 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-18 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-19 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -123,10 +123,10 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-R02 | S3 | VALIDATION | OPEN |
 | MEN-projects-meetings-R03 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
-| MEN-projects-meetings-R05 | S3 | STATE | OPEN |
+| MEN-projects-meetings-R05 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R06 | S3 | STATE | OPEN |
 | MEN-projects-meetings-R07 | S3 | VALIDATION | OPEN |
-| MEN-projects-meetings-R08 | S3 | VALIDATION | OPEN |
+| MEN-projects-meetings-R08 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-02 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-07 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-09 | S4 | STATE | FIXED-ON-MAIN |
