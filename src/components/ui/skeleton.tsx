@@ -18,7 +18,7 @@ const shape = {
 export function Skeleton({ variant = "line", count = 1, label = "Loading…", className }: SkeletonProps) {
   const safeCount = Number.isFinite(count) ? Math.max(1, Math.min(20, Math.trunc(count))) : 1;
   return (
-    <div role="status" aria-live="polite" aria-label={label} data-slot="skeleton" className={cx("min-w-0 space-y-3", className)}>
+    <div role="status" aria-live="polite" data-slot="skeleton" className={cx("min-w-0 space-y-3", className)}>
       <span className="sr-only">{label}</span>
       <div aria-hidden="true" className="space-y-3">
         {Array.from({ length: safeCount }, (_, index) => (

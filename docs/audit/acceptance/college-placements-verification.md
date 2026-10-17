@@ -50,3 +50,9 @@ Real PostgreSQL acceptance names, authored but NOT RUN: `COL-placements-01 persi
 
 | COL-placements-19 | DONE (source-level; CI pending) | `src/modules/placements/college-directory-csv.ts` now accepts the persisted nullable candidate name from `listCollegeInterviewDirectory`, exporting an explicit `Unnamed learner` rather than crashing or inventing personal details. `tests/unit/chat11-college-interview-export-null-round11.test.ts` has named CSV and formula-injection regression tests. |
 | COL-placements-15 | DONE (source-level; DB acceptance pending) | `src/modules/placements/college-company-directory-service.ts` preserves main's `showDeleted`/sort/paging query (no unsupported `status` field); `tests/integration/chat11-college-company-restore.test.ts` now uses valid active membership and directory query objects. `tests/unit/chat11-company-directory-recovery-contract.test.ts` includes many bounded filter/URL scenarios. All tests remain unexecuted. |
+
+### Chat-6 canonical identity guard — COL-placements-14
+
+| ID | Status | Evidence and remaining acceptance |
+|---|---|---|
+| COL-placements-14 | OPEN (company identity create and validation, remaining contact/history editor) | `src/modules/placements/college-company-create-model.ts` reuses backend Zod model with stricter college checks: HTTPS website or canonical domain required, 2–150 char company name, no trusted-by-default grant. `college-company-create.tsx` sends only parsed payload through the same-origin scoped API. `tests/unit/chat6-college-company-identity-validation-14.test.ts` contains named cases. Shared global company metadata remains Super Admin controlled; college contact/drive history parity is still OPEN. |

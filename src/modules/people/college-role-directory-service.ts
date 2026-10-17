@@ -381,6 +381,19 @@ export async function listCollegeRoleDirectory(
       activeTeachingAssignments: teachingCount.get(person.membershipId) ?? 0,
     };
   });
+  // COL-people-13: exact scoped directory metrics, independent of page filters.
+  // Never fabricate "Visible now" from a login or membership timestamp.
+  const [roleMetrics] = await db.select({
+    registered:sql<number>`count(distinct ${collegeMemberships.id})::integer`,
+    active:sql<number>`count(distinct ${collegeMemberships.id}) filter(where
+      ${collegeMemberships.status} = 'ACTIVE' and ${users.platformStatus} = 'ACTIVE')::integer`,
+    suspended:sql<number>`count(distinct ${collegeMemberships.id}) filter(where
+      ${collegeMemberships.status} = 'SUSPENDED')::integer`,
+  }).from(collegeMemberships)
+    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+      eq(membershipRoles.role,kind)))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(eq(collegeMemberships.collegeId,collegeId));
   const total = counts[0]?.total ?? 0;
   const departmentRows = kind === "FACULTY" ? await db.select({id:departments.id,name:departments.name})
     .from(departments).where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
@@ -406,6 +419,7 @@ export async function listCollegeRoleDirectory(
   const employmentOptions=employmentRows.map(row=>row.employmentType).filter((value):value is string=>Boolean(value)).slice(0,100);
   return {
     kind, filter, items, total,
+    metrics:roleMetrics??{registered:0,active:0,suspended:0},
     employmentOptions,
     employmentOptionsTruncated:employmentRows.length>100,
     sectionOptions:sectionRows.slice(0,200),

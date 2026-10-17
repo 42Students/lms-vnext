@@ -5,13 +5,12 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementOffers,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
-import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import {tpoGeneralRequestInputSchema,tpoGeneralRequestDecisionSchema,tpoGeneralRequestTarget,
  tpoGeneralRequestPayload} from "./tpo-general-request-model";
 export class TpoGeneralRequestError extends Error{
@@ -106,6 +105,29 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
      !offer.acceptedDisputableUntil||offer.acceptedDisputableUntil.getTime()<=Date.now())
       throw new TpoGeneralRequestError("TARGET_CHANGED");
   }
+  if(input.kind==="ABSENCE_DISPUTE"){
+   // An arbitrary application/round pair must never be accepted as a tenant
+   // request. Validate the actual application owner and round's job together.
+   const [participation]=await tx.select({id:placementApplications.id})
+    .from(placementApplications)
+    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+    .innerJoin(placementJobRounds,and(
+      eq(placementJobRounds.id,input.roundId),
+      eq(placementJobRounds.jobId,placementJobs.id)))
+    .where(and(eq(placementApplications.id,input.applicationId),
+      eq(placementApplications.membershipId,member.id),
+      eq(placementJobs.collegeId,member.collegeId))).limit(1);
+   if(!participation)throw new TpoGeneralRequestError("SCOPE");
+  }
+  if(input.kind==="PLACEMENT_AFTER_PLACEMENT"){
+   // Job IDs are not proof of eligibility; refuse cross-college/nonexistent
+   // targets before a request can enter a placement cell's decision queue.
+   const [requestedJob]=await tx.select({id:placementJobs.id})
+    .from(placementJobs).where(and(
+      eq(placementJobs.id,input.requestedJobId),
+      eq(placementJobs.collegeId,member.collegeId))).limit(1);
+   if(!requestedJob)throw new TpoGeneralRequestError("SCOPE");
+  }
   if(input.kind==="REGISTRATION_CHANGE"){
    const rows=await tx.select({cohortId:learnerProgramEnrollments.cohortId})
     .from(learnerProgramEnrollments).where(and(eq(learnerProgramEnrollments.membershipId,member.id),
@@ -116,17 +138,24 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
     throw new TpoGeneralRequestError("TARGET_CHANGED");
   }
   const scope=tpoGeneralRequestTarget(input);
-  const [existing]=await tx.select({id:placementLearnerGeneralRequests.id})
+  const payload=tpoGeneralRequestPayload(input);
+  const [existing]=await tx.select({id:placementLearnerGeneralRequests.id,
+   reason:placementLearnerGeneralRequests.reason,
+   payloadMatches:sql<boolean>`${placementLearnerGeneralRequests.payload} = ${JSON.stringify(payload)}::jsonb`})
    .from(placementLearnerGeneralRequests).where(and(
     eq(placementLearnerGeneralRequests.collegeId,member.collegeId),
     eq(placementLearnerGeneralRequests.membershipId,member.id),
     eq(placementLearnerGeneralRequests.kind,input.kind),
     eq(placementLearnerGeneralRequests.targetKey,scope),
     eq(placementLearnerGeneralRequests.status,"PENDING"))).limit(1);
-  if(existing)return {id:existing.id,replayed:true};
+  if(existing){
+   if(existing.reason!==input.reason||!existing.payloadMatches)
+    throw new TpoGeneralRequestError("TARGET_CHANGED");
+   return {id:existing.id,replayed:true};
+  }
   const [request]=await tx.insert(placementLearnerGeneralRequests).values({
    collegeId:member.collegeId,membershipId:member.id,kind:input.kind,
-   targetKey:scope,reason:input.reason,payload:tpoGeneralRequestPayload(input),
+   targetKey:scope,reason:input.reason,payload,
    requestedByUserId:ctx.user.id,
   }).onConflictDoNothing().returning({id:placementLearnerGeneralRequests.id});
   if(!request)throw new TpoGeneralRequestError("TARGET_CHANGED");
@@ -261,11 +290,12 @@ export async function decideTpoGeneralRequest(ctx:RequestContext,rawId:unknown,r
   const [member]=await tx.select({userId:collegeMemberships.userId}).from(collegeMemberships)
    .where(and(eq(collegeMemberships.id,row.membershipId),eq(collegeMemberships.collegeId,college.id))).limit(1);
   if(!member||!event)throw new TpoGeneralRequestError("SCOPE");
-  await deliverRecordedLearnerPlacementEvent(tx,{
-   eventId:event.id,collegeId:college.id,membershipId:row.membershipId,
-   kind:"REQUEST_DECIDED",
-   subject:(nextStatus==="APPROVED"?"Approved: ":"Declined: ")+(decision.note||row.kind.replaceAll("_"," ").toLowerCase()),
-  });
+  await tx.insert(inAppNotifications).values({
+   userId:member.userId,eventId:event.id,
+   title:nextStatus==="APPROVED"?"Placement request approved":"Placement request declined",
+   body:decision.note||"The placement cell reviewed your request.",
+   actionHref:"/learn/my-placements",
+  }).onConflictDoNothing();
   return {id:row.id,status:nextStatus,effect};
  });
 }

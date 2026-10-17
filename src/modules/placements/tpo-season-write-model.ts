@@ -16,7 +16,7 @@ export const tpoSeasonChangeSchema = z.discriminatedUnion("action", [
 export const tpoRulesChangeSchema = z.object({
   confirmed: z.literal(true),
   expectedVersion: z.number().int().min(0),
-  countsAsPlacedAt: z.enum(["SELECTED", "OFFER_RELEASED", "OFFER_ACCEPTED"]),
+  countsAsPlacedAt: z.enum(["OFFER_RELEASED", "OFFER_ACCEPTED"]),
   maxHeldOffers: z.number().int().min(TPO_RULE_LIMITS.maxHeldOffers.min).max(TPO_RULE_LIMITS.maxHeldOffers.max),
   upliftPct: z.number().int().min(TPO_RULE_LIMITS.upliftPct.min).max(TPO_RULE_LIMITS.upliftPct.max),
   minResponseHours: z.number().int().min(TPO_RULE_LIMITS.minResponseHours.min).max(TPO_RULE_LIMITS.minResponseHours.max),

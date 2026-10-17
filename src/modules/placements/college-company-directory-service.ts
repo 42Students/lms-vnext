@@ -8,8 +8,8 @@ import {
   COLLEGE_COMPANIES_PAGE_SIZE,literalCompanySearch,type CollegeCompaniesQuery,
 } from "./college-company-directory-model";
 
-type DirectoryQuery=Pick<CollegeCompaniesQuery,"q"|"page">&
- Partial<Pick<CollegeCompaniesQuery,"pageSize"|"showDeleted"|"sort">>;
+export type DirectoryQuery=Pick<CollegeCompaniesQuery,"q"|"page">&
+ Partial<Pick<CollegeCompaniesQuery,"pageSize"|"showDeleted"|"sort"|"status">>;
 
 /** All filters, totals, and exports operate exclusively inside the caller's persisted college. */
 export async function listCollegeCompanyDirectory(
@@ -17,12 +17,14 @@ export async function listCollegeCompanyDirectory(
 ){
   const collegeId=await requireCollegePlacementAdmin(context);
   const showDeleted=query.showDeleted==="1";
+  const status=query.status??"ACTIVE";
   const search=query.q?literalCompanySearch(query.q):null;
   const where=and(
     eq(placementCompanyRelationships.collegeId,collegeId),
-    showDeleted?undefined:eq(placementCompanyRelationships.status,"ACTIVE"),
-    showDeleted?undefined:isNull(placementCompanyRelationships.archivedAt),
-    showDeleted?undefined:eq(placementCompanies.status,"ACTIVE"),
+    status==="ARCHIVED"?eq(placementCompanyRelationships.status,"ARCHIVED"):
+      showDeleted?undefined:eq(placementCompanyRelationships.status,"ACTIVE"),
+    !showDeleted&&status==="ACTIVE"?isNull(placementCompanyRelationships.archivedAt):undefined,
+    !showDeleted?eq(placementCompanies.status,"ACTIVE"):undefined,
     search?or(ilike(placementCompanies.name,search),
       ilike(placementCompanies.industry,search)):undefined,
   );

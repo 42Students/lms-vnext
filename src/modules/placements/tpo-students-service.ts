@@ -43,6 +43,8 @@ import {
   users,
 } from "@/db/schema";
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
+import {readTpoLearnerPrepOutcomes} from "./tpo-prep-readiness-derived-service";
+import type {TpoPrepCourseOutcome} from "./tpo-prep-readiness-derivation";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
 import {placementDebarments} from "@/db/schema/placement-debarments";
@@ -445,6 +447,7 @@ export async function getTpoStudentsIntelligence(
         registrationScope: "ACTIVE_COHORT",
         applicationScope: "ACTIVE_SEASON",
         readinessVerified: false,
+      prepCourseEvidenceAvailable:prep.available,
         placedVerified: false,
       },
     };
@@ -927,6 +930,17 @@ export async function getTpoStudentsIntelligence(
     return deriveTpoStudent(source, now);
   });
 
+  // TPO-settings-audit-41: the stored preparation-course rule now participates
+  // in the roster journey after reading real learner course completions. It is
+  // not employer eligibility, and unavailable records are not assumed failed.
+  const prep=await readTpoLearnerPrepOutcomes(context,college.id,
+    learners.map(row=>({membershipId:row.membershipId,cohortId:row.cohortId})))
+    .catch(()=>({available:false,outcomes:new Map<string,TpoPrepCourseOutcome>()}));
+  const prepStudentRows=studentRows.map(row=>
+    prep.outcomes.get(row.membershipId)==="NEEDS_PREP" &&
+      row.journeyState==="READY_NOT_APPLYING"
+      ? {...row,journeyState:"NEEDS_READINESS_SUPPORT" as const}:row);
+
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
   const debarmentAvailable=await placementTableExists("placement_debarments");
@@ -939,7 +953,7 @@ export async function getTpoStudentsIntelligence(
   }).from(placementDebarments).where(eq(placementDebarments.collegeId,college.id)):[];
   const debarredIds=new Set(debarmentRecords.filter(record=>
     isDebarmentActive(record,placementCollegeDateInIndia(now))).map(record=>record.membershipId));
-  const rowsWithDebarment=studentRows.map(row=>({...row,
+  const rowsWithDebarment=prepStudentRows.map(row=>({...row,
     debarred:debarmentAvailable?debarredIds.has(row.membershipId):null,
   }));
   const workingRows=selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));

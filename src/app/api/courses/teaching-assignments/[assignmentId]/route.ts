@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
   endCourseTeachingAssignment,
+  changeCourseTeachingAssignmentRole,
 } from "@/modules/courses/teaching-assignment-service";
 
 export const runtime = "nodejs";
@@ -36,4 +37,17 @@ export async function DELETE(
   } catch (error) {
     return apiErrorResponse(error);
   }
+}
+
+export async function PATCH(request:Request,{params}:RouteContext){
+  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+  try{
+    const context=await getCurrentRequestContext();
+    const {assignmentId}=await params;
+    const body:unknown=await request.json();
+    if(typeof body!=="object"||body===null||!("role" in body))
+      return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const assignment=await changeCourseTeachingAssignmentRole(context,assignmentId,body.role);
+    return NextResponse.json({assignment});
+  }catch(error){return apiErrorResponse(error);}
 }
