@@ -16,7 +16,7 @@ const forbidden = [
   // GR-81: status mappers must not leak previously unseen codes or runtime internals.
   /\b(?:TypeError|ReferenceError|SyntaxError|RangeError|ChunkLoadError|PrismaClient\w*Error|QueryFailedError)\b/,
   /\b(?:ETIMEDOUT|ENOTFOUND|EPIPE|ECONNRESET|ERR_[A-Z0-9_]+)\b/,
-  /\b(?:node:internal\/|webpack-internal:\/\/|file:\/\/|\/_next\/static\/chunks\/)\S*/i,
+  /\b(?:node:internal\/|webpack-internal:\/\/|file:\/\/)\S*|\/_next\/static\/chunks\/\S*/i,
   /\b(?:[Ee]rror|[Cc]ode|[Rr]eason|[Ff]ailed|[Ss]tatus)\s*[:=]\s*[A-Z][A-Z0-9_]{5,}\b/,
   /\{\s*"(?:error|code|stack)"\s*:/i,
 ];
