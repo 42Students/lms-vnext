@@ -61,6 +61,12 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
     body:input.action==="COMPLETE"?"Meeting completed.":"Meeting cancelled.",
     actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
   });
+  await notifyActiveProjectMembers(tx,event.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+    exceptUserId:context.user.id,title:"Project meeting",
+    body:input.action==="COMPLETE"?"Meeting completed.":"Meeting cancelled.",
+    actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+  });
   return updated;
  });
 }
