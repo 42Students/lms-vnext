@@ -45,7 +45,7 @@ export function deriveMentorProjectAttention(
     // Avoid a stale alarm for records without any trustworthy activity signal.
     const last=project.lastActivityAt ?? project.projectUpdatedAt;
     const lastMillis=last.getTime();
-    const stalled=["PLANNED","ACTIVE"].includes(project.projectStatus) && Number.isFinite(lastMillis) &&
+    const stalled=project.projectStatus==="ACTIVE" && Number.isFinite(lastMillis) &&
       timestamp-lastMillis >= 7*24*60*60*1000;
     if (stalled) alerts.push({
       projectId:project.projectId,

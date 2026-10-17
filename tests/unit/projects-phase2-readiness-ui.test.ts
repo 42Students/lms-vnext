@@ -11,7 +11,7 @@ describe("PR-S2-05 legacy College Admin override interface",()=>{
   it("replaces the disabled placeholder and wires manager action",()=>{
     expect(list).not.toContain("manual readiness override is not yet");
     expect(list).toContain("Manage");
-    expect(form).toMatch(/method:\\s*"POST"/);
+    expect(form).toMatch(/method:\s*"POST"/);
     expect(form).toContain("router.refresh()");
   });
 });
