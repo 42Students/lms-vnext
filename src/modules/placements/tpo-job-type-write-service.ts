@@ -96,6 +96,7 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.id,input.jobTypeId)))
    .for("update").limit(1);
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   const [existing]=await tx.select({id:placementTpoJobTypes.id}).from(placementTpoJobTypes)
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
