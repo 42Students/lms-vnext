@@ -19,3 +19,13 @@
 | TPO-companies-03 | DONE (source, tests unrun) | Canonical company detail has same-college optimistic Trusted switch with exact legacy help/status and existing audited management endpoint, no unsafeguarded global change. Named `tests/unit/chat2-company-trust-toggle.test.ts`. |
 
 | TPO-companies-06 | DONE (source; tests unrun) | College count-as-placed policy now counts distinct memberships from real offer ledger in grouped Company Memory + Engage Companies, with actual JOINED hiring-years; SELECTED requires separate selection ledger and displays unavailable rather than fabricated count. `tests/unit/chat2-company-placed-policy.test.ts`. |
+
+## Chat-2 follow-up — company trust and default entrypoint
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-companies-03 | DONE (source; tests unrun) | `src/components/placements/tpo-company-trust-switch.tsx` is an optimistic, bounded Trusted toggle with exact legacy help, on/off and failure text; `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-03 persists Trusted as a scoped, versioned toggle…**. |
+| TPO-companies-20 | PARTIAL — OPEN | Unfiltered `/tpo/companies` now redirects to the legacy Engage Companies view while named Company Memory and explicitly filtered directory deep links remain working; `src/app/(authenticated)/tpo/companies/page.tsx`; `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-20 defaults bare Companies…**. Parallel company detail representations still exist. |
+| TPO-companies-22 | DONE (source; tests unrun) | Company numbers heading and no-activity label source contracts verified in `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-22 retains verified company numbers…**. |
+
+Builder did not run tests, lint, typecheck, or PostgreSQL integration.
