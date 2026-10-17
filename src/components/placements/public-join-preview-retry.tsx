@@ -12,8 +12,7 @@ export function PublicJoinPreviewRetry({scope,token}:{
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}
     className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
-    Retry
-   </Link>
+   Retry</Link>
   </section>
  </main>;
 }
