@@ -13,7 +13,8 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  const id=tpoThreadIdSchema.safeParse(threadId);
  if(!id.success)return NextResponse.json({error:"NOT_FOUND"},{status:404});
  try{
-  await acknowledgeTpoInternalThread(await getCurrentRequestContext(),id.data);
+  const result=await acknowledgeTpoInternalThread(await getCurrentRequestContext(),id.data);
+  if(request.headers.get("accept")?.includes("application/json"))return NextResponse.json(result);
   return NextResponse.redirect(new URL("/tpo/team/"+id.data,request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)
