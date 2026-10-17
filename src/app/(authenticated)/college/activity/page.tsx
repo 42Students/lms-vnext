@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref } from "@/modules/activity/college-activity-model";
+import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 
@@ -38,11 +38,11 @@ export default async function CollegeActivityPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
-      actions={<a href={"/api/activity/college-export" +
+      actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Export filtered CSV (max 1,000)
-      </a>} />
+      </a></div>} />
     <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
       {([
         ["IMPORTANT", "Important"], ["ACADEMIC_SETUP", "Academic setup"],
@@ -72,12 +72,16 @@ export default async function CollegeActivityPage({
     </p>
     <div className="flex flex-wrap items-center gap-3 text-sm">
       <span className="text-muted-foreground">IST date shortcuts:</span>
+      <Link href={collegeActivityTodayHref(data.query,new Date())}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Today</Link>
       <Link href={collegeActivityRecentHref(data.query,7,new Date())}
         className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Last 7 days</Link>
       <Link href={collegeActivityRecentHref(data.query,30,new Date())}
         className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Last 30 days</Link>
-      <Link href={collegeActivityHref({...data.query,from:undefined,to:undefined})}
-        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Clear date range</Link>
+      <Link href={collegeActivityAllTimeHref(data.query)}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">All time</Link>
+      <Link href={collegeActivityHref({...data.query})}
+        className="rounded-md border border-border px-3 py-2 font-semibold text-primary-text">Refresh</Link>
     </div>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-5" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
