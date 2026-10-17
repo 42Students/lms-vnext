@@ -77,7 +77,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
-      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
+      <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search, age and drive filters</Link>
     </form>
     <section aria-label="Needs doing first" className="space-y-3 rounded-xl border border-border bg-surface p-4">
      <h2 className="font-semibold">Needs doing first</h2>
