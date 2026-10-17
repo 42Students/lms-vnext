@@ -18,3 +18,7 @@ These are scoped implementation contracts for the Super Admin placements intervi
 | GR-64 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-64 prevents an empty error export and caps long downloads with a plain notice` (page-scoped; not run) |
 | GR-91 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-91 provides a keyboard-reachable retry button with a visible focus ring` (page-scoped; not run) |
 | GR-92 | DONE | Super Admin interview card; `tests/unit/chat13-superadmin-interview-graceful.test.ts` → `GR-92 explains failures with text rather than color alone` (page-scoped; not run) |
+| GR-56 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-56 external assessment links are visible and copyable if opening fails` (page-scoped, unrun) |
+| GR-90 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-90 focuses an accessible error message following a failed application request` (page-scoped, unrun) |
+| GR-91 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-91 provides a keyboard-reachable, visibly focused Refresh and Copy link action` (page-scoped, unrun) |
+| GR-92 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-92 uses written messages for link-copy and application errors` (page-scoped, unrun) |
