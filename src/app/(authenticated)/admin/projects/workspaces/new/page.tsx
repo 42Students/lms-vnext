@@ -16,7 +16,7 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
   const requested=(await searchParams).templateId;
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6 px-3 py-4 sm:px-6">
-    <PageHeader eyebrow="Super Admin · Projects" title="Create workspaces from a class" description="Scope is locked to the selected college. Review balanced teams before saving." />
+    <PageHeader eyebrow="Super Admin · Projects" title="Create project workspace" description="Every workspace starts from a template — pick one below." />
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."/> :
       <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
   </main>;
