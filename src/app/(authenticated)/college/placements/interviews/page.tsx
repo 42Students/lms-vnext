@@ -20,13 +20,15 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  if(!valid.success)return <div className="space-y-4"><p role="alert">Invalid interview filters.</p>
   <Link href="/college/placements/interviews" className="text-primary-text underline">Clear filters</Link></div>;
  const data=await listCollegeInterviewDirectory(context,valid.data);
- const build=(page:number,ics=false)=>{
+ const build=(page:number,format:"html"|"ics"|"csv"="html")=>{
   const query=new URLSearchParams({q:valid.data.q,status:valid.data.status,
    mode:valid.data.mode,type:valid.data.type,sort:valid.data.sort,page:String(page),
    ...(valid.data.companyId?{companyId:valid.data.companyId}:{}),
    ...(valid.data.departmentId?{departmentId:valid.data.departmentId}:{}),
   });
-  return (ics?"/api/college/placements/interviews/calendar":"/college/placements/interviews")+"?"+query;
+  const route=format==="ics"?"/api/college/placements/interviews/calendar":
+   format==="csv"?"/api/college/placements/interviews/export":"/college/placements/interviews";
+  return route+"?"+query;
  };
  const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
  return <div className="space-y-5">
@@ -77,7 +79,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
    </form>
    <div className="flex flex-wrap items-center gap-3">
     <p role="status" className="text-sm">{data.total} matching appointments</p>
-    <a href={build(1,true)} className="min-h-10 text-primary-text underline">Download .ics</a>
+    <a href={build(1,"ics")} className="min-h-10 text-primary-text underline">Download .ics</a>
+    <a href={build(1,"csv")} className="min-h-10 text-primary-text underline">Export CSV</a>
    </div>
    {data.limited?<p role="status" className="text-sm text-warning-text">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</p>:null}
    <section aria-label="College interview appointments" className="overflow-x-auto rounded-xl border border-border">
