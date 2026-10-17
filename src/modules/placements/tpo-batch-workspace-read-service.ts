@@ -84,6 +84,7 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const cohort=find("COHORT",batch.id);const winner=sectionsFor.length>1?undefined:(direct??section??cohort);
  return {membershipId:r.membershipId,name:r.name??"Unnamed learner",rollNumber:r.rollNumber,
   className:sectionsFor.length===1?sectionsFor[0].sectionName:null,
+  classId:sectionsFor.length===1?sectionsFor[0].sectionId:null,
   branch:batch.department,program:batch.program,
   decision:winner?.status??"NOT_DECIDED",
   source:!winner?"NONE":winner===direct?"LEARNER":winner===section?"CLASS":"BATCH",
