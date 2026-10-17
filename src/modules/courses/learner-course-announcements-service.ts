@@ -1,7 +1,7 @@
 import "server-only";
 import {and,desc,eq,inArray,isNull,lte,gt,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10Announcements,users} from "@/db/schema";
+import {db10Announcements,learnerProgramEnrollments,sectionEnrollments,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {CoursesServiceError} from "./errors";
@@ -14,7 +14,12 @@ export async function listLearnerCourseClassAnnouncements(
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||!member.roles.includes("LEARNER")||
     context.user.platformStatus!=="ACTIVE")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
- if(!await placementTableExists("announcements"))return [];
+  const [section]=await getDb().select({id:sectionEnrollments.id})
+   .from(sectionEnrollments)
+   .innerJoin(learnerProgramEnrollments,eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+   .where(and(eq(learnerProgramEnrollments.membershipId,member.id),eq(sectionEnrollments.sectionId,sectionId)))
+   .limit(1);
+ if(!section||!await placementTableExists("announcements"))return [];
  return getDb().select({
   id:db10Announcements.id,title:db10Announcements.title,messageText:db10Announcements.message,
   createdAt:db10Announcements.createdAt,senderName:users.displayName,
