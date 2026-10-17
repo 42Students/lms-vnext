@@ -11,7 +11,7 @@ import {
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
 import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboarding-model";
-import {legacyPersonName} from "@/modules/people/college-onboard-mobile-model";
+import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -63,6 +63,7 @@ export function PersonOnboardDialog({
   }
 
   function submit() {
+    if(forcedRole&&!indianMobileToE164(phoneE164)){showToast({tone:"error",title:"Check mobile number",description:"Mobile number must be 10 digits"});return;}
     startTransition(async () => {
       const response = await fetch("/api/people/onboard", {
         method: "POST",
@@ -70,7 +71,7 @@ export function PersonOnboardDialog({
         body: JSON.stringify({
           collegeId,
           displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
-          phoneE164,
+          phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
           roles: onboardingRoleSelection(forcedRole, roles),
         }),
@@ -173,9 +174,10 @@ export function PersonOnboardDialog({
               onChange={(event) =>
                 setPhoneE164(event.target.value)
               }
-              placeholder="+919876543210"
+              placeholder={forcedRole?"9876543210":"+919876543210"}
               inputMode="tel"
             />
+            {forcedRole?<p className="mt-1 text-xs text-muted-foreground">Mobile number must be 10 digits</p>:null}
           </div>
           <div>
             <label
