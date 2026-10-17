@@ -21,6 +21,8 @@ export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
   screening: string; submittedAt: Date; email: string | null;
   rollNumber?: string | null;
+  ugPercentage?: string | null; tenthPercentage?: string | null;
+  twelfthOrDiplomaPercentage?: string | null;
 };
 export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: "ALL" | "SHORTLISTED" | "WITHDRAWN") {
   const counts = {
