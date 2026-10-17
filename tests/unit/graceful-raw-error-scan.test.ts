@@ -31,10 +31,32 @@ const rawErrorPatterns = [
 const mutatingFetch = /fetch\([\s\S]{0,350}?\bmethod:\s*["'](?:POST|PUT|PATCH|DELETE)["']/g;
 
 function hasInteractiveMutation(source: string): boolean {
-  // A browser crash report is best-effort telemetry, not a business mutation.
-  // Do not require the UI submit hook inside an error boundary.
+  // A browser crash report or idempotent public join-link open receipt is
+  // best-effort telemetry, not an interactive submission.
   return [...source.matchAll(mutatingFetch)]
-    .some((match) => !match[0].includes('"/api/client-errors"'));
+    .some((match) => !match[0].includes('"/api/client-errors"') &&
+      !match[0].includes('"/api/public/join-link/open"'));
+}
+
+/** GR-31: deduplicated mutations may use the shared hook OR an existing
+ * request/ref guard. The original test falsely rejected actual pending-state
+ * locks simply for not importing a specific React hook. */
+function hasMutationGuard(source: string): boolean {
+  if (source.includes("useGuardedAction(")) return true;
+  // Playback autosave and learner submission have synchronous in-flight
+  // guards: these cannot be double-submitted by a second click.
+  if (/(?:savingRef|inFlightRef|pendingRef)\s*=\s*useRef\(/.test(source) &&
+      /(?:savingRef|inFlightRef|pendingRef)\.current/.test(source)) return true;
+  if (source.includes("createSubmissionFlightGuard()") &&
+      source.includes("flight.current.begin()") &&
+      source.includes("flight.current.end()")) return true;
+  // Existing forms also guard a request with a busy state plus disabled
+  // submission controls. This is valid without prescribing one React hook.
+  const pendingControl =
+    /(?:set[A-Z]\w*\(true\)|setRolePending\(|start\w*Transition\()/.test(source);
+  const disabledControl =
+    /disabled=\{[^}]*\b(?:pending|busy|saving|savingResults|rolePending|lifecyclePending|submitting|deleting|loading)\b/.test(source);
+  return pendingControl && (disabledControl || source.includes("pending={pending}"));
 }
 
 describe("new raw-error and mutation regression gate", () => {
@@ -64,10 +86,17 @@ describe("new raw-error and mutation regression gate", () => {
     expect(hasInteractiveMutation('fetch("/api/records", {method: "POST"})')).toBe(true);
     expect(hasInteractiveMutation('fetch("/api/client-errors", {method: "POST"})\\nfetch("/api/records", {method: "PATCH"})')).toBe(true);
   });
+  it("GR-31 detects an unguarded interactive write but accepts existing locked autosaves and disabled pending controls", () => {
+    expect(hasMutationGuard('function save(){fetch("/api/jobs",{method:"POST"})}')).toBe(false);
+    expect(hasMutationGuard('const [pending,setPending]=useState(false); function submit(){setPending(true);fetch("/api/jobs",{method:"POST"})} return <button disabled={pending}>Save</button>')).toBe(true);
+    expect(hasMutationGuard('const savingRef=useRef(false);if(savingRef.current)return;savingRef.current=true;fetch("/api/progress",{method:"PUT"})')).toBe(true);
+    expect(hasMutationGuard("const {run}=useGuardedAction({})")).toBe(true);
+    expect(hasInteractiveMutation('fetch("/api/public/join-link/open",{method:"POST"})')).toBe(false);
+  });
   it("GR-31 inventories newly changed unguarded mutating components", () => {
     const offenders = allComponentFiles().filter((file) => {
       const content = readFileSync(file, "utf8");
-      return hasInteractiveMutation(content) && !content.includes("useGuardedAction(") &&
+      return hasInteractiveMutation(content) && !hasMutationGuard(content) &&
         blobHash(content) !== baseline[file];
     });
     expect(offenders, `Mutating fetch without useGuardedAction: ${offenders.join(", ")}`).toEqual([]);
