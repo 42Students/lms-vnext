@@ -1,5 +1,5 @@
 "use client";
-import {useRef,useState,type FormEvent} from "react";
+import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
@@ -8,6 +8,16 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
+ useEffect(()=>{
+  if(!body.trim()&&!sending)return;
+  const warn=(event:BeforeUnloadEvent)=>{
+    event.preventDefault();
+    event.returnValue="";
+  };
+  window.addEventListener("beforeunload",warn);
+  return ()=>window.removeEventListener("beforeunload",warn);
+ },[body,sending]);
+
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(sending)return;
