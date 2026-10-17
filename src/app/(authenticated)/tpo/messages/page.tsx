@@ -179,7 +179,7 @@ export default async function TpoMessagesPage({
             }
           >
             {isRecruiterInbox
-              ? "Conversation tables available"
+              ? "Conversations ready"
               : "Notification fallback"}
           </StatusBadge>
         </div>
