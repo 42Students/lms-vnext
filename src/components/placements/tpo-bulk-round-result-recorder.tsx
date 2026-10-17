@@ -44,6 +44,8 @@ export function TpoBulkRoundResultRecorder({
     (round.status !== "SCHEDULED" && round.status !== "COMPLETED")) return null;
 
   const available = rows.filter((row) => row.resultStatus === null);
+  const unselected=available.filter(row=>!selected.includes(row.applicationId));
+  const pendingTotal=selected.length+(failUnselected?unselected.length:0);
   const visible=available.filter(row=>!search.trim()||row.displayName.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))||row.applicationId.includes(search.trim()));
 
   function toggle(id: string, checked: boolean) {
