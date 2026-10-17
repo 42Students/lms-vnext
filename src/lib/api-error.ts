@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { SessionAuthenticationError } from "@/auth/session";
@@ -350,12 +351,10 @@ export function apiErrorResponse(error: unknown) {
     );
   }
 
-  logError("api.unhandled_error", error, {
-    component: "api",
-  });
-
+  const requestId = randomUUID();
+  logError("api.unhandled_error", error, { component: "api", requestId, status: 500 });
   return NextResponse.json(
-    { error: "INTERNAL_ERROR" },
-    { status: 500 },
+    { error: "INTERNAL_ERROR", requestId, message: "Something went wrong. Please try again." },
+    { status: 500, headers: { "X-Request-Id": requestId } },
   );
 }
