@@ -135,6 +135,7 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     const params={projectId:project.id,sprintId:sprint.id};
     const edited=await updateMentorSprintDetails(mentor,params,{
       title:"Sprint reviewed by Mentor",description:"An explicit persisted change",
+      goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
       expectedUpdatedAt:original,
     });
     expect(edited).toMatchObject({
@@ -175,6 +176,7 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     expect(audited.rows[0]?.metadata).not.toHaveProperty("feedback");
 
     const next={title:"Malicious overwrite",description:null,
+      goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
       expectedUpdatedAt:edited.updatedAt.toISOString()};
     const forged:RequestContext={
       ...learner,membership:{...learner.membership!,roles:["MENTOR"]},
@@ -241,6 +243,7 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     const created=await createMentorProjectSprint(mentor,params,{
       releaseId:original.releaseId,title:"Mentor Created Sprint",
       description:"Source-backed sprint",
+      goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
     });
     expect(created).toMatchObject({
       projectId:project.id,releaseId:original.releaseId,
@@ -251,14 +254,16 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     expect(byMentor.sprints.some(row=>row.id===created.id)).toBe(true);
     const sprintParams={projectId:project.id,sprintId:created.id};
     await expect(createMentorProjectSprint(mentor,params,{
-      releaseId:original.releaseId,title:"Fake dated sprint",
-      description:null,startDate:"2026-10-14",endDate:"2026-10-15",
+      releaseId:original.releaseId,title:"Backwards dated sprint",
+      description:null,goal:null,definitionOfDone:null,dueDate:null,
+      startDate:"2026-10-15",endDate:"2026-10-14",
     })).rejects.toBeDefined();
     const forged:RequestContext={
       ...learner,membership:{...learner.membership!,roles:["MENTOR"]},
     };
     await expect(createMentorProjectSprint(forged,params,{
       releaseId:original.releaseId,title:"Forged sprint",description:null,
+      goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
     })).rejects.toBeDefined();
     const foreign:RequestContext={
       ...mentor,membership:{...mentor.membership!,collegeId:SEED_IDS.collegeB,
@@ -266,6 +271,7 @@ describe("Mentor sprint details PATCH: fresh PostgreSQL positive, audit, denial"
     };
     await expect(createMentorProjectSprint(foreign,params,{
       releaseId:original.releaseId,title:"Foreign sprint",description:null,
+      goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
     })).rejects.toBeDefined();
 
     const started=await transitionMentorProjectSprint(mentor,sprintParams,{

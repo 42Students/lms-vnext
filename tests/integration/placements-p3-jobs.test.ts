@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
@@ -85,6 +86,7 @@ afterAll(async () => {
 describe("Placement jobs", () => {
   it("creates a tenant-owned draft and runs the publish/close/archive lifecycle", async () => {
     const draft = await createPlacementJob(tpo, {
+    ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId: ids.relationshipA,
       title: "Software Engineer",
@@ -130,6 +132,7 @@ describe("Placement jobs", () => {
   it("rejects cross-college company relationship substitution", async () => {
     await expect(
       createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId: ids.relationshipB,
         title: "Wrong tenant",
@@ -143,6 +146,7 @@ describe("Placement jobs", () => {
   it("requires an external URL for external-only jobs", async () => {
     await expect(
       createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId: ids.relationshipA,
         title: "External role",

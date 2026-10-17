@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -148,6 +149,7 @@ async function createPublishedJob(
   const draft = await createPlacementJob(
     context,
     {
+    ...publishableJobTerms,
       collegeId,
       companyRelationshipId:
         company.relationship.id,

@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -139,6 +140,14 @@ async function cleanup() {
     "delete from placement_companies",
   );
   await pool.query(
+    "delete from in_app_notifications where user_id = $1",
+    [recruiterUserId],
+  );
+  await pool.query(
+    "delete from activity_events where actor_user_id = $1",
+    [recruiterUserId],
+  );
+  await pool.query(
     "delete from users where id = $1",
     [recruiterUserId],
   );
@@ -203,6 +212,7 @@ describe("Placement P7 recruiter identity and grants", () => {
     const jobA = await createPlacementJob(
       tpo,
       {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           companyA.relationship.id,
@@ -364,6 +374,7 @@ describe("Placement P7 recruiter identity and grants", () => {
     const job = await createPlacementJob(
       tpo,
       {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,

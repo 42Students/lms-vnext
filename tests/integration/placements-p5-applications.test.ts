@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -146,6 +147,7 @@ async function createJob(options?: {
   );
 
   return createPlacementJob(tpo, {
+    ...publishableJobTerms,
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId:
       company.relationship.id,
@@ -159,7 +161,7 @@ async function createJob(options?: {
     externalApplicationUrl:
       options?.externalApplicationUrl,
     applicationDeadline:
-      options?.applicationDeadline,
+      options?.applicationDeadline ?? publishableJobTerms.applicationDeadline,
   });
 }
 
@@ -423,14 +425,14 @@ describe("Placement P5 applications", () => {
   });
 
   it("blocks expired jobs and cross-college learner substitution", async () => {
-    const expired = await createJob({
-      applicationDeadline: new Date(
-        Date.now() - 60_000,
-      ),
-    });
+    const expired = await createJob();
     await publishPlacementJob(
       tpo,
       expired.id,
+    );
+    await pool.query(
+      "update placement_jobs set application_deadline = $1 where id = $2",
+      [new Date(Date.now() - 60_000), expired.id],
     );
 
     await expect(

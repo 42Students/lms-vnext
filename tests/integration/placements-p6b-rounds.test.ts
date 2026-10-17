@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -116,6 +117,7 @@ async function createJob() {
     },
   );
   return createPlacementJob(tpo, {
+    ...publishableJobTerms,
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId:
       company.relationship.id,

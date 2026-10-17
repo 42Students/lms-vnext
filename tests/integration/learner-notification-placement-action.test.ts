@@ -48,7 +48,7 @@ describe("own learner persisted placement notification destination",()=>{
     expect(item).toBeDefined();
     expect(learnerNotificationPlacementAction(item?.notification.actionHref))
       .toEqual({href:"/learn/my-placements/applications?applicationId="+f.applicationId,
-        label:"View your application"});
+        label:"View in My Applications"});
   },30000);
   it("resolves exact application history through the persisted own learner scope",async()=>{
     const f=owned!,ctx=f.drive.learner.context;
