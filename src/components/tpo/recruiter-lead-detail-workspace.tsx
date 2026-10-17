@@ -335,7 +335,7 @@ export function RecruiterLeadDetailWorkspace({
               </p>
               <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
                <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
               <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
               <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
