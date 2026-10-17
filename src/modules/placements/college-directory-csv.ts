@@ -22,7 +22,7 @@ export function collegeCompanyCsv(rows:readonly {
  );
 }
 export function collegeInterviewCsv(rows:readonly {
- id:string;job:string;student:string;kind:string;status:string;start:Date;venue:string|null;mode:string;
+ id:string;job:string;student:string|null;kind:string;status:string;start:Date;venue:string|null;mode:string;
 }[]):string {
  return collegeDirectoryCsv(["id","job","candidate","type","status","scheduled date (IST)","interviewer","location","mode"],
   rows.map(row=>[row.id,row.job,row.student,row.kind,row.status,
