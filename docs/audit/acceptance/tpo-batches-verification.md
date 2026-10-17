@@ -169,3 +169,11 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 | ID | Result | Decision and evidence |
 |---|---|---|
 | TPO-batches-64 | DONE | Decision: Use college-scoped placements.manage for active TPO or College Admin with persisted role and active account checks; a Faculty role alone never grants batch management. Source: tpo-batch-workspace-read-service.ts. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-batches-64` (source/policy regression; executable CI pending). |
+
+## [chat-5] Reverified FIXED-ON-MAIN source contracts
+
+The following DONE statuses are limited to the named source/model behavior. Their existing integration contracts must still pass orchestrator CI; no database test was run in this builder.
+
+| ID | Status | Named regression evidence |
+|---|---|---|
+| TPO-batches-29 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-batches-29` contract; see earlier code evidence in this file. |
