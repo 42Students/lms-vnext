@@ -7,6 +7,17 @@ import type {RequestContext} from "@/modules/identity/context";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("chat-4 College academic and people gap closure",()=>{
+ it("COL-people-R01 guards live mentor projects, not teaching assignments",async()=>{
+  const {mentorSuspensionMessage}=await import("@/modules/people/active-mentor-project-guard");
+  expect(mentorSuspensionMessage(2)).toBe("Cannot suspend this faculty member: they mentor 2 active project workspace(s). Reassign those projects to another mentor first.");
+  const repo=source("src/modules/people/repository.ts");
+  const faculty=source("src/modules/people/college-faculty-lifecycle-service.ts");
+  expect(repo).toContain('input.action==="SUSPEND"||input.action==="END"');
+  expect(repo).toContain("activeMentorProjectCount(tx,membershipId)");
+  expect(faculty).toContain('input.action==="DEACTIVATE"');
+  expect(faculty).toContain("activeMentorProjectCount(tx,membershipId)");
+  expect(faculty).not.toContain("if (teaching || advising)");
+ });
  it("COL-people-R02 prevents self-lockout and protected College Admin/TPO mutations",()=>{
   const admin:RequestContext={user:{id:"actor",identityUid:"actor",platformStatus:"ACTIVE",systemRoles:[]},
     membership:{id:"actor-m",collegeId:"college",organizationId:"org",
