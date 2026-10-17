@@ -430,6 +430,7 @@ export function AdminCourseOverview({
       </div>
 
       <AdminCourseCreatePanel
+        key={duplicateCourseId??"new-course"}
         duplicateCourseId={duplicateCourseId}
         departments={workspace.departments}
         periods={workspace.periods}
