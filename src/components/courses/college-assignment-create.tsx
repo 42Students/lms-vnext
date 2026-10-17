@@ -4,6 +4,7 @@ import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 
@@ -12,6 +13,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
 }){
  const router=useRouter();
  const [opened,setOpened]=useState(false);
+ const [keepOpen,setKeepOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState("");
@@ -29,9 +31,12 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    [deliveries,chosen?.offeringId]);
  function close(){
   if(pending)return;
-  if((title.trim()||description.trim()||dueAt)&&
-   !window.confirm("Discard unsaved assignment changes?"))return;
-  setOpened(false);
+  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="10"||
+   allowedMethods.length!==ALL_ASSIGNMENT_METHODS.length||
+   ALL_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
+  if(dirty&&!window.confirm("Discard unsaved assignment changes?"))return;
+  setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
+  setDeliveryId("");setAllowedMethods(ALL_ASSIGNMENT_METHODS);setError("");
  }
  async function create(){
   if(lock.current||!chosen)return;
@@ -39,14 +44,15 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if(!title.trim()||!Number.isInteger(maxPoints)||maxPoints<1||maxPoints>10000){
    setError("Enter an assignment title and 1–10000 points.");return;
   }
+  if(description.length>10000){setError("Instructions must be at most 10,000 characters.");return;}
   if(allowedMethods.length===0){setError("Select at least one allowed submission method.");return;}
   if((nextOverride[chosen.id]??chosen.nextSequence)>10000){
    setError("This lesson has reached the assignment ordering limit.");return;
   }
   const delivery=sections.find(x=>x.deliveryId===deliveryId);
   if(deliveryId&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
-  const due=dueAt?new Date(dueAt+":00+05:30"):null;
-  if(due&&(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dueAt)||Number.isNaN(due.getTime()))){
+  const dueIso=dueAt?parseCollegeIstLocal(dueAt):null;
+  if(dueAt&&!dueIso){
    setError("Enter a valid deadline.");return;
   }
   if(!window.confirm("Create assignment as a draft? Learners cannot submit until published."))return;
@@ -56,13 +62,14 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:chosen.id,deliveryId:delivery?.deliveryId??null,
       title:title.trim(),description:description.trim()||null,
-      dueAt:due?.toISOString()??null,maxPoints,sequence:nextOverride[chosen.id]??chosen.nextSequence,allowedMethods}),
+      dueAt:dueIso,maxPoints,sequence:nextOverride[chosen.id]??chosen.nextSequence,allowedMethods}),
    });
    const payload=await response.json().catch(()=>null);
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
-   setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
+   if(!keepOpen)setOpened(false);
+   setTitle("");setDescription("");setDueAt("");setPoints("10");
    setMessage("Assignment draft created. Publish it to let learners submit.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
@@ -75,7 +82,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    </div>
    <button type="button" disabled={!lessons.length||pending}
     className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
-    onClick={()=>setOpened(true)}>Create New Assignment</button>
+    onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
@@ -102,7 +109,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <input type="number" min={1} max={10000} value={points} disabled={pending}
      onChange={e=>setPoints(e.target.value)}
      className="min-h-10 rounded border border-border bg-surface px-2"/></label>
-   <label className="grid gap-1 text-sm font-semibold">Deadline (IST)
+   <label className="grid gap-1 text-sm font-semibold">Deadline (IST, optional until publishing)
     <input type="datetime-local" value={dueAt} disabled={pending}
      onChange={e=>setDueAt(e.target.value)}
      className="min-h-10 rounded border border-border bg-surface px-2"/></label>
@@ -110,9 +117,17 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="rounded border border-border bg-surface p-2"/></label>
+   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
+    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
+    "All currently eligible Sections in the selected Course Offering"}.
+    Draft assignments are hidden until they are published.</p>
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
+   <label className="flex items-center gap-2 text-sm sm:col-span-2">
+    <input type="checkbox" checked={keepOpen} disabled={pending}
+     onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
+   </label>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
-    <button type="button" disabled={pending||!title.trim()} onClick={()=>void create()}
+    <button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
      {pending?"Creating…":"Create draft"}</button>
     <button type="button" disabled={pending} onClick={close}
