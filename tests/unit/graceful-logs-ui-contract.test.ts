@@ -14,6 +14,19 @@ describe("known error triage UI resilience", () => {
     expect(source).not.toMatch(/\bawait fetch\(/);
     expect(source).not.toContain("error.message :");
   });
+  it("GR-124 does not imply Cloud Logging backup is active when unconfigured", async () => {
+    const { cloudLogPollConfigured } = await import("@/modules/log-alerts/readiness");
+    const original = process.env.LOG_ALERT_CLOUD_POLL_ENABLED;
+    try {
+      delete process.env.LOG_ALERT_CLOUD_POLL_ENABLED;
+      expect(cloudLogPollConfigured()).toBe(false);
+    } finally {
+      if (original === undefined) delete process.env.LOG_ALERT_CLOUD_POLL_ENABLED;
+      else process.env.LOG_ALERT_CLOUD_POLL_ENABLED = original;
+    }
+    const source = readFileSync("src/app/(authenticated)/tracker/logs/page.tsx", "utf8");
+    expect(source).toContain("Cloud Logging backup is not configured.");
+  });
   it("GR-124 shows plain errors rather than raw codes for expected admin failures", () => {
     for (const [status, code] of [[400, "INVALID_REQUEST"], [403, "FORBIDDEN"], [404, "KNOWN_ERROR_NOT_FOUND"]] as const) {
       expect(friendlyApiError({ status, code })).not.toBe(code);
