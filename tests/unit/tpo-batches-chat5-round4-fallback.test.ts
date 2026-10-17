@@ -41,4 +41,14 @@ describe("TPO Batches resilient working set",()=>{
   expect(ui).toContain("The batch list is still available.");
   expect(ui).toContain("batchPage.items.map");
  });
+ it("TPO-batches-27 shows academic years, a placement-eligibility back link, and effective status",()=>{
+  const reader=readFileSync("src/modules/placements/tpo-batch-workspace-read-service.ts","utf8");
+  const overview=readFileSync("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx","utf8");
+  expect(reader).toContain("startYear:sql<number|null>");
+  expect(reader).toContain("endYear:sql<number|null>");
+  expect(overview).toContain("← Placement eligibility");
+  expect(overview).toContain("tpoBatchPlacementState");
+  expect(overview).toContain("batch.endYear");
+ });
+
 });
