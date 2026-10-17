@@ -60,9 +60,12 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(current.active===input.active)return {changed:false,updatedAt:current.updatedAt.toISOString()};
   if(!input.active){
-   const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
-    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.active,true)));
-   if(count<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
+   const all=await tx.select({label:placementTpoJobTypes.label,active:placementTpoJobTypes.active})
+    .from(placementTpoJobTypes).where(eq(placementTpoJobTypes.collegeId,collegeId));
+   const activeCustom=all.filter(row=>!isTpoBuiltinJobType(row.label)&&row.active).length;
+   const activeFixed=TPO_BUILTIN_JOB_TYPES.filter(fixed=>
+    all.find(row=>row.label===fixed.label)?.active??true).length;
+   if(activeCustom+activeFixed<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
   }
   const [updated]=await tx.update(placementTpoJobTypes).set({active:input.active,updatedAt:new Date()})
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId))).returning();
