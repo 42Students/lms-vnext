@@ -130,6 +130,7 @@ export type TpoStudentRosterFilter = {
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   minApplications?:number;maxApplications?:number;
+  minCgpa?:number;maxCgpa?:number;
   minOffers?:number;maxOffers?:number;
   offerWaiting?:boolean;
   classId?:string;
@@ -434,6 +435,8 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.minOffers===undefined||row.offerCount>=filter.minOffers)
     .filter(row=>filter.maxOffers===undefined||row.offerCount<=filter.maxOffers)
     .filter(row=>filter.offerWaiting===undefined||(row.offersAwaitingAnswer>0)===filter.offerWaiting)
+    .filter(row=>filter.minCgpa===undefined||(row.cgpa!==null&&row.cgpa>=filter.minCgpa))
+    .filter(row=>filter.maxCgpa===undefined||(row.cgpa!==null&&row.cgpa<=filter.maxCgpa))
     .filter((row) => {
       if (!search) return true;
 
