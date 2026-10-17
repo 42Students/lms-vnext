@@ -220,3 +220,5 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 | ID | Result | Decision and evidence |
 |---|---|---|
 | TPO-drive-workspace-51 | OPEN | Decision: Employer-reported acceptance must remain provisional during a 48-hour dispute window and require source evidence; do not silently turn it into an acknowledged learner acceptance or joining record. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drive-workspace-51` (source/policy regression; executable CI pending). |
+
+| TPO-drive-workspace-12 | OPEN (additional delegated decision) | Use one audited recruiter drive-request decision workflow in the existing TPO drive-request list, with drive deep links; do not duplicate approve/publish logic inside the drive until it can share the exact decision service. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-drive-workspace-12`. Tests authored, CI pending. |
