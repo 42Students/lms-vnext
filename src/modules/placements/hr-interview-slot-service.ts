@@ -48,6 +48,7 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,
    startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt,
    mode:hrInterviewSlots.mode,panelLabel:hrInterviewSlots.panelLabel,
+   meetingLocation:hrInterviewSlots.meetingLocation,
    capacity:hrInterviewSlots.capacity,bookedCount:hrInterviewSlots.bookedCount,
    status:hrInterviewSlots.status,version:hrInterviewSlots.version,
    createdByUserId:hrInterviewSlots.createdByUserId,
@@ -59,7 +60,7 @@ export async function listHrInterviewSlots(context:RequestContext,rawJobId:unkno
   const now=new Date();
   return {status:"READY" as const,items:rows.map(row=>({
    id:row.id,roundId:row.roundId,startAt:row.startAt,endAt:row.endAt,
-   mode:row.mode,panelLabel:row.panelLabel,capacity:row.capacity,
+   mode:row.mode,panelLabel:row.panelLabel,meetingLocation:row.meetingLocation,capacity:row.capacity,
    bookedCount:row.bookedCount,status:row.status,version:row.version,
    isOwn:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id),
    canEdit:canRecruiterMutateOwnSlot(row.createdByUserId,context.user.id)&&row.startAt>now,
