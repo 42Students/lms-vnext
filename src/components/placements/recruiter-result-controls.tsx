@@ -237,6 +237,51 @@ export function RecruiterResultControls({
     }
   }
 
+
+  async function stageSelected(round:RecruiterRound){
+    if(bulkPending!==null||pendingKey!==null)return;
+    const chosen=new Set(selected[round.id]??[]);
+    const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
+    if(!participants.length){showToast({tone:"error",title:"No candidates selected",description:"Select candidates who do not have applied results."});return;}
+    for(const participant of participants){
+      const draft=drafts[round.id+":"+participant.applicationId];
+      if(!draft||draft.outcome!=="PASS"&&!draft.candidateMessage.trim()||
+        draft?.outcome==="HOLD"&&(!draft.waitlistRank||Number(draft.waitlistRank)<=0)){
+        showToast({tone:"error",title:"Complete candidate outcomes",description:"Every selected row needs a valid outcome, waitlist rank when held, and a message for non-pass results."});
+        return;
+      }
+    }
+    if(!window.confirm("Send "+participants.length+" results? These candidate outcomes will be staged for the placement cell to verify."))return;
+    setBulkPending(round.id);
+    const succeeded:string[]=[];
+    let failures=0;
+    for(const participant of participants){
+      const draft=drafts[round.id+":"+participant.applicationId]!;
+      try{
+        const response=await fetch("/api/placements/rounds/"+encodeURIComponent(round.id)+"/results",{
+          method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+          body:JSON.stringify({
+            applicationId:participant.applicationId,outcome:draft.outcome,
+            waitlistRank:draft.outcome==="HOLD"?Number(draft.waitlistRank):null,
+            scorePercent:draft.scorePercent?Number(draft.scorePercent):null,
+            reasonCategory:draft.reasonCategory||null,candidateMessage:draft.candidateMessage.trim()||null,
+          }),
+        });
+        if(response.ok)succeeded.push(participant.applicationId);
+        else failures++;
+      }catch{failures++;}
+    }
+    setSelected(current=>({...current,
+      [round.id]:(current[round.id]??[]).filter(id=>!succeeded.includes(id))}));
+    showToast({tone:failures?"warning":"success",
+      title:failures?"Some results could not be sent":"Results staged",
+      description:succeeded.length+" sent to the placement cell to verify. "+failures+
+        " failed; failed selections remain checked for retry.",
+    });
+    setBulkPending(null);
+    if(succeeded.length)router.refresh();
+  }
+
   return (
     <div className="space-y-5">
       {rounds.length === 0 ? (
@@ -282,6 +327,12 @@ export function RecruiterResultControls({
                 </div>
                 {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
                   <span>{(selected[round.id]??[]).length} selected for results</span>
+                  <button type="button" disabled={bulkPending!==null||(selected[round.id]??[]).length===0}
+                    className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
+                    onClick={()=>void stageSelected(round)}>
+                    {bulkPending===round.id?"Sending results…":
+                      "Send "+(selected[round.id]??[]).length+" results"}
+                  </button>
                   <button type="button" disabled={bulkPending!==null}
                     className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
                     onClick={()=>setSelected(old=>({...old,[round.id]:
