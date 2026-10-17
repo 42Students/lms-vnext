@@ -35,8 +35,7 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  const facetsWhere=and(
   query.q?or(ilike(db10AuditFindings.title,pattern),
     ilike(db10AuditFindings.summary,pattern),ilike(db10AuditFindings.externalId,pattern)):undefined,
-  query.area?ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\ if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
- const where=and(...predicates);")+"%"):undefined,
+  query.area?ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"):undefined,
   query.kinds.length?inArray(db10AuditFindings.kind,query.kinds):undefined,
   query.view!=="ALL"?inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]):undefined,
   query.view==="RELEASE"?inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]):undefined,
