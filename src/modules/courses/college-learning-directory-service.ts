@@ -76,6 +76,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
   const scoped = db.select({
     id: aliased(courseLessons.id, "lesson_id_alias"),
     name: aliased(courseLessons.name, "lesson_name_alias"),
+    description:courseLessons.description,learningPathId:courseLessons.learningPathId,
     sequence: courseLessons.sequence,
     status: aliased(courseLessons.status, "lesson_status_alias"),
     visibleToStudents: courseLessons.visibleToStudents,
