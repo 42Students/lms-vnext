@@ -31,7 +31,7 @@ export default async function CollegeVideosPage({
   }
   const authoring=await getCollegeContentAuthoringOptions(context,"YOUTUBE");
   return <div className="space-y-4">
-    <CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} existing={authoring.existing} />
+    <CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} />
     <Link prefetch={false} download href={collegeContentCsvHref("VIDEO",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered video metadata CSV
