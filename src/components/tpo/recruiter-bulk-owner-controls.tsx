@@ -119,6 +119,8 @@ export function RecruiterBulkOwnerControls({
       }
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
+      setUndoRunId(data.results.some(row=>row.status==="updated")?(data.runAuditId??""):"");
+      setUndoReview(false);
       setChosen([]);
       setReviewOpen(false);setReviewSignature("");
       onUpdated();
