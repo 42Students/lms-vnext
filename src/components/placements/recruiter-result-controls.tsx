@@ -159,6 +159,7 @@ export function RecruiterResultControls({
     roundId: string,
     applicationId: string,
   ) {
+    if(bulkSubmissionLock.current||pendingKey!==null)return;
     const key =
       roundId + ":" + applicationId;
     const draft = drafts[key];
