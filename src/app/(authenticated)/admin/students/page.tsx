@@ -1,6 +1,7 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
+import {StudentClassMoveAction} from "@/components/college/student-class-move-action";
 import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
 import Link from "next/link";
 import {CollegeStudentRegisterForm} from "@/components/college/college-student-register-form";
@@ -48,5 +49,5 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
   renderBulkActions={rows=><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/>}
-  renderRowActions={row=><div className="flex flex-wrap items-start gap-3"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<CollegePersonEditAction membershipId={row.id} kind="LEARNER"/>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
+  renderRowActions={row=><div className="flex flex-wrap items-start gap-3"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }

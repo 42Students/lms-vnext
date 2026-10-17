@@ -16,6 +16,8 @@ export const placementRoundCandidateSlots=pgTable("placement_round_candidate_slo
  status:varchar("status",{length:16}).notNull().default("AVAILABLE"),
  source:varchar("source",{length:16}).notNull().default("TPO"),
  confirmedAt:timestamp("confirmed_at",{withTimezone:true}),
+ /** Learner attendance acknowledgment, NOT the TPO booking confirmation. */
+ learnerConfirmedAt:timestamp("learner_confirmed_at",{withTimezone:true}),
  changedByUserId:uuid("changed_by_user_id").notNull().references(()=>users.id),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
