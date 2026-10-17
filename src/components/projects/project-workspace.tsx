@@ -1444,8 +1444,7 @@ export function ProjectWorkspace({
                 Meetings
               </h2>
               <p className="mt-1 text-sm text-body">
-                Requested, scheduled and completed Project
-                conversations.
+                {mode==="LEARNER"?"Upcoming meetings and recent history.":"Requested, scheduled and completed Project conversations."}
               </p>
             </div>
             {!readOnly && mode === "LEARNER" ? (
@@ -1497,10 +1496,13 @@ export function ProjectWorkspace({
                 }))}/>
             </section>;
           })():null}
+          {mode==="LEARNER"&&workspace.meetings.length>0?<h3 className="text-sm font-semibold">
+            Meeting history
+          </h3>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                {mode==="LEARNER"?"No upcoming meetings or recent meeting history.":"No meetings yet."}
+                {mode==="LEARNER"?"No meetings yet.":"No meetings yet."}
               </div>
             ) : (
               workspace.meetings.map((meeting) => {
