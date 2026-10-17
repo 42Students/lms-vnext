@@ -720,6 +720,16 @@ export function LearnerCourseWorkspace({
 
   return (
     <div className="space-y-5">
+      {workspace.stateWarnings.length>0 ? (
+        <aside role="alert" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+          <p className="font-semibold">Some course state could not be loaded</p>
+          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
+          <button type="button" onClick={()=>window.location.reload()}
+            className="mt-3 min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text">
+            Retry state
+          </button>
+        </aside>
+      ) : null}
       {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
       {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
         ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
