@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -96,6 +97,12 @@ export default async function TpoLeadsReportPage({
       />
 
       <ReportNavigation workspace={workspace} />
+      <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
+       <p className="min-w-0 flex-1 text-sm text-body">This report uses recorded Engage recruiter leads and their invitation/account-linkage history. Compare the same lead records in Engage; an unrecorded contact is not counted as engagement.</p>
+       <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Open Engage →</Link>
+       <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Company memory →</Link>
+      </nav>
+
 
       <section
         aria-label="Lead reporting scope"
