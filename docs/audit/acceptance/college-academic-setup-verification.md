@@ -31,7 +31,12 @@
 | COL-academic-setup-36 | DONE | src/modules/academics/college-batch-promotion-model.ts, src/app/(authenticated)/college/batch-promotion/page.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-36 accepts consecutive YYYY-YY overrides and rejects invalid years")` |
 | COL-academic-setup-40 | DONE | src/app/(authenticated)/college/departments/error.tsx, loading.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-40 provides department retry and safe loading feedback")` |
 
+| COL-academic-setup-23 | DONE | src/components/admin/admin-program-directory.tsx, src/components/academics/academics-actions.tsx, src/modules/admin-ui/super-admin-program-input.ts; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-23 derives optional program code and preserves 1–10 integer year duration and editable department")` |
+| COL-academic-setup-29 | DONE | src/components/academics/college-cohort-management.tsx, src/components/academics/college-academic-directory.tsx; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-29 disables dependent batch removal with explicit student and class counts")` |
+| COL-academic-setup-32 | DONE | src/components/academics/college-structure-directory.tsx, src/app/(authenticated)/college/classes/recurring-preview/page.tsx, src/components/academics/college-recurring-preview.tsx; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-32 launches a selected class schedule from its list row")` |
+| COL-academic-setup-39 | DONE | src/app/(authenticated)/college/{classes,batches,semesters,lecture-halls}/page.tsx; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-39 uses Export CSV labels and keeps intentional capped server export")` |
+
 ## Outstanding and partial
-COL-academic-setup-15/16/19/23/28/29/32/39/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
+COL-academic-setup-15/16/19/28/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
 
 Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integration coverage for S1/S2 behavior.
