@@ -106,4 +106,18 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(source("src/components/courses/learner-course-tabs.tsx")).toContain("persistentQuery");
  });
 
+ it("LEARNER-home-courses-19 uses an in-page Delete this message dialog",()=>{
+  const s=source("src/components/courses/learner-course-discussion.tsx");
+  expect(s).toContain('role="dialog" aria-modal="true" aria-label="Delete this message?"');
+  expect(s).toContain("This cannot be undone.");
+  expect(s).toContain("setDeleteTarget");
+  expect(s).not.toContain('window.confirm("Delete this message?")');
+ });
+ it("LEARNER-home-courses-21 preserves an unsent discussion draft during route changes",()=>{
+  const s=source("src/components/courses/learner-course-discussion.tsx");
+  expect(s).toContain("beforeunload");
+  expect(s).toContain('document.addEventListener("click",guard,true)');
+  expect(s).toContain("Discard your unsent discussion message?");
+ });
+
 });
