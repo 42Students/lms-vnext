@@ -13,7 +13,7 @@ describe("Learner notification and placement UI source guards", () => {
     expect(page).toContain("LearnerNotificationsInbox");
     expect(inbox).toContain("Browse older personal notifications");
     expect(inbox).toContain("/learn/notifications/history");
-    expect(page).toContain("/learn/notifications/history");
+    expect(inbox).toContain("/learn/notifications/history");
     expect(history).toContain("getOwnLearnerNotificationHistory");
     expect(history).toContain("learnerNotificationHistoryQuerySchema");
     expect(history).toContain("NotificationList");
