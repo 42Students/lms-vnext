@@ -149,6 +149,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(placementCandidateAcademicEvidence,
+      eq(placementCandidateAcademicEvidence.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
       eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,

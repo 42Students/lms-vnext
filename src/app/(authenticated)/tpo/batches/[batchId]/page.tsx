@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoBatchReturnHref} from "@/modules/placements/tpo-batch-return-model";
 import { redirect } from "next/navigation";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {TpoBatchLifecycleControl} from "@/components/tpo/tpo-batch-lifecycle-control";
@@ -14,9 +15,11 @@ import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-mo
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
-export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{tab?:string|string[]}>}){
+export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{tab?:string|string[];returnTo?:string|string[]}>}){
  const {batchId}=await params;
- const rawTab=(await searchParams).tab;
+ const query=await searchParams;
+ const rawTab=query.tab;
+ const backHref=tpoBatchReturnHref(query.returnTo);
  const selected=Array.isArray(rawTab)?rawTab[0]:rawTab;
  const aliases:Record<string,string>={classes:"classes",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
  if(selected && aliases[selected])redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]);const context=await getCurrentRequestContext();
@@ -25,7 +28,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
- <Link href="/tpo/batches" className="text-sm text-primary-text underline">← Placement eligibility</Link>
+ <Link href={backHref} className="text-sm text-primary-text underline">← Placement eligibility</Link>
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
  <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-lg border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">

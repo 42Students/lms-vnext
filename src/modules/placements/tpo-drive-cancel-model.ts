@@ -41,7 +41,7 @@ export function evaluateTpoDriveCancellation(
   current: TpoDriveCancelImpact,
   expected: TpoDriveCancelImpact,
 ): TpoDriveCancelDecision {
-  if (status !== "PUBLISHED" || seasonStatus !== "ACTIVE") return "READ_ONLY";
+  if (status !== "DRAFT" && (status !== "PUBLISHED" || seasonStatus !== "ACTIVE")) return "READ_ONLY";
   if (
     current.submittedApplications !== expected.submittedApplications ||
     current.openRounds !== expected.openRounds ||

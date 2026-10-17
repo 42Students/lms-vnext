@@ -141,3 +141,57 @@ Source areas: `src/modules/placements/tpo-delete-draft-{model,service}.ts`, `src
 | TPO-drive-workspace-09 | OPEN (copy partial) | `src/components/placements/placement-drive-workspace.tsx`, `src/components/placements/tpo-delete-draft-action.tsx`; `tests/unit/tpo-drive-workspace-chat5-round6.test.ts` — `TPO-drive-workspace-09 partial or implemented scope is recorded without inferring unsupported parity`. Exact legacy Delete draft, Applicants, Close drive and company/job heading restored; remaining workspace headings not all checked. |
 
 This test file uses `DB09_ISOLATED_TEST_DATABASE` and `TEST_DATABASE_URL` and follows the existing disposable-database guard. The test was not executed by chat-5.
+
+## Chat-5 draft cancellation (2026-10-17)
+
+| TPO-drive-workspace-R06 | DONE | `src/modules/placements/tpo-drive-cancel-model.ts`, `src/modules/placements/tpo-drive-cancel-service.ts` permit audited, versioned draft cancellation without an active season while published drives still require an active season; UI opens existing impact/confirmation page for either; `tests/unit/tpo-drive-workspace-r06-chat5.test.ts` — `TPO-drive-workspace-R06 can cancel drafts with audited preview while published drives respect season`. |
+
+## Chat-5 verified upstream drive-workspace reconciliation (2026-10-17)
+
+These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests and the page's prior acceptance evidence marked DONE. The queue is synchronized to that evidence; no fresh runtime execution is claimed. `TPO-drive-workspace-18`'s test now preserves legacy-supported draft cancellation without relaxing accepted-offer safeguards.
+
+- `TPO-drive-workspace-17` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-42` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-44` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-47` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-48` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-53` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-60` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-62` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-R01` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-05` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-14` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-16` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-20` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-29` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-41` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-68` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-R02` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-R03` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-07` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-19` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-36` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-58` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-R04` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+- `TPO-drive-workspace-R05` — existing named verification in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, or the existing per-gap acceptance row.
+
+## Chat-5 additional verified existing drive-workspace closures (2026-10-17)
+
+| TPO-drive-workspace-18 | DONE (source-verified; tests not run by lane) | Versioned cancellation preview, accepted-offer preservation and audit are implemented; model/regression already present. | 
+| TPO-drive-workspace-28 | DONE (source-verified; tests not run by lane) | Same-day deduplicated non-applicant reminder preview tokens and confirmed send gate already tested. | 
+| TPO-drive-workspace-40 | DONE (source-verified; tests not run by lane) | 1000-result CSV import strict review, missing outcome and duplicate protection already tested. | 
+| TPO-drive-workspace-01 | DONE (source-verified; tests not run by lane) | Shared TPO tab model and route navigation to Applicants, Rounds, Offers, Drive day, About already tested. | 
+| TPO-drive-workspace-04 | DONE (source-verified; tests not run by lane) | The reviewed More menu supports applicant export, company share and run-again actions; existing test checks menu copy. | 
+| TPO-drive-workspace-45 | DONE (source-verified; tests not run by lane) | Round facts project staged/applied counts with venue fallback; existing test checks status and outcome. | 
+| TPO-drive-workspace-52 | DONE (source-verified; tests not run by lane) | Persisted cascade undo uses a transaction and is routed from offer lifecycle; existing regression test. | 
+| TPO-drive-workspace-71 | DONE (source-verified; tests not run by lane) | Focused applicant modal already implements S/R decision keys, arrows between applicants, Ctrl+Enter reviewed submit; TPO keyboard Drawer (?) lists these shortcuts. | 
+
+`TPO-drive-workspace-71` named regression: `tests/unit/tpo-drive-workspace-71-chat5.test.ts`. Other named tests predate this reconciliation in `tests/unit/tpo-drive-workspace-s1-gap-closure.test.ts`, `tests/unit/tpo-drive-workspace-s2-round2.test.ts`, and `tests/unit/tpo-drive-workspace-s2-evidence-contracts.test.ts`.
+
+## Chat-5 applicant spreadsheet resiliency (2026-10-17)
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-drive-workspace-22 | OPEN (runtime join fixed) | `src/modules/placements/tpo-applicant-pipeline-service.ts` now joins the academic evidence table used by the selected marks and backlog columns, avoiding an invalid unbound SQL table. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-22 joins candidate academic evidence before selecting marks`. Class, gender, resumes and company IDs remain incomplete. |
+| TPO-drive-workspace-23 | OPEN (additional URL filters) | Spreadsheet filters now expose server-backed flag and rolling application-window filters and remember selected column layouts locally. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-23 exposes server validated flag and applied window filters`. Full saved views and legacy specialist filters remain open. |
+| TPO-drive-workspace-72 | OPEN (mobile improvements) | Small-screen spreadsheet now uses the existing bottom-sheet filter treatment and collapsible row actions/detail cards. `tests/unit/tpo-drive-applicant-partials-chat5.test.ts` — `TPO-drive-workspace-72 collapses mobile actions and filters`. Entire drive actions window remains open. |
