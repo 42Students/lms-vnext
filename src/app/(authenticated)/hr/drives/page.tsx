@@ -73,9 +73,9 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
   const deadlineBase={...query.data,collegeId:selectedCollege,view:"LIVE" as const,
     q:"",employment:"ALL" as const,mode:"ALL" as const,page:1,sort:"DEADLINE" as const};
   const [soon,past]=await Promise.all([
-    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5}),
+    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5,previewOnly:true}),
     searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"PAST"},now,{
-      pageSize:5,descendingDeadline:true,
+      pageSize:5,descendingDeadline:true,previewOnly:true,
     }),
   ]);
   const attention={soon:soon.rows,past:past.rows};
