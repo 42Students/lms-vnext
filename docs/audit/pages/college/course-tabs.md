@@ -128,3 +128,10 @@ Headline finding: in legacy every one of these seven tabs is a working managemen
 - `COL-course-tabs-06` source improvements: College Admin Section Quiz submissions drawer displays authorized saved learner answer snapshots, selected options, correct options and awarded scores. Search by Student and Retry for failed load. These are not claims of verified runtime parity.
 - `COL-course-tabs-17`: private content preview/Join remains owner security SKIP; editor hides published URLs. `COL-course-tabs-01/03` private binary-video/material FILE authoring still depends on storage/scanner/DB05 integration; Section-specific delivery ordering remains gated by DB05 (`COL-course-tabs-16`). These are not closed.
 - No tests, lint, typecheck, build or CI were run under FAST v2. WP-01 and later WPs remain IN-PROGRESS pending nonblocked parity gaps.
+
+## FAST v2 chat-4 follow-up after migration 0130 (2026-10-17)
+
+- Source work `COL-course-tabs-06`: College Quiz metadata editor now reads saved description, maximum attempts, shuffle settings and optimistic version from an authorized GET before editing; published quizzes expose metadata-only edits; draft quiz creation/editor guard multiple-choice answer balance, aggregate points <=10000, repeated sequence conflict, load failure and unsaved draft switch. No runtime acceptance was run.
+- Source work `COL-course-tabs-04`: College assignment creation requires at least one permitted submission method, guards repeated same-session sequence collision and rejects malformed deadline dates.
+- Source work `COL-course-tabs-13`: tenant authorization is checked before bulk visibility per-item failure aggregation; stale updates still report individual failures.
+- Remaining WP-01 nonblocked gaps: complete attachments/rich-text/instructor material parity, end-to-end learner/instructor semantics and live operations. File upload/scanner remains blocked; `COL-course-tabs-16` per-Section content-order writer still requires DB05; `COL-course-tabs-17` secure previews remain owner SKIP. No tests/typecheck/lint/build/CI per FAST v2.
