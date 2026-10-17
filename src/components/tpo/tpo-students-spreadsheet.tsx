@@ -45,7 +45,14 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
  const [noteSelection,setNoteSelection]=useState<string[]>([]);
- const active=rows.find(row=>row.membershipId===selected)??null;
+ const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
+ const sortedRows=[...rows].sort((a,b)=>{
+  const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
+   pageSort.startsWith("OFFERS")?a.offerCount-b.offerCount:0;
+  return pageSort==="NAME"?a.displayName.localeCompare(b.displayName):
+   (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
+ });
+ const active=sortedRows.find(row=>row.membershipId===selected)??null;
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
@@ -76,8 +83,16 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
    <p className="text-sm">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </details>
+  <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
+   <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
+    className="min-h-10 rounded border border-border bg-surface px-3">
+    <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
+    <option value="APPLICATIONS_ASC">Applications · fewest</option>
+    <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
+   </select>
+  </label>
   <TpoGridFilterPanel fields={filters}/>
-  <TpoSpreadsheetGrid rows={rows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
@@ -93,7 +108,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
       aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
-  {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={rows}
+  {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
