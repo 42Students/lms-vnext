@@ -895,6 +895,15 @@ export async function PlacementCalendarWorkspace({
         </div>
       </section>
 
+      {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
+        aria-label="All-day blocked dates" className="rounded-xl border border-border bg-surface-subtle p-4">
+        <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
+        <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
+         <li key={event.id} className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-body">
+          <strong>{dateLabel(placementCalendarDayKey(event.startsAt))} · Blocked</strong>
+          {event.note?<p className="text-xs">{event.note}</p>:null}
+         </li>)}</ul>
+       </section>:null}
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
