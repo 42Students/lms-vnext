@@ -291,17 +291,23 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     // Digest covers the completed prior IST calendar date.
     const previous = new Date(Date.parse(day + "T00:00:00Z") - 86_400_000);
     const previousDay = previous.toISOString().slice(0, 10);
-    const rows = await db.select({
-      hash: signatures.signatureHash, firstSeenAt: signatures.firstSeenAt,
-      muted: signatures.muted, dayOccurrences: daily.occurrenceCount,
-      spikeCount: daily.spikeCount,
-    }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
-      .where(and(eq(daily.dayKey, previousDay), eq(signatures.environment,
-        process.env.APP_ENV === "production" ? "PRODUCTION" :
-        process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT")))
-      .orderBy(desc(daily.occurrenceCount)).limit(1000);
+    const predicate = and(eq(daily.dayKey, previousDay), eq(signatures.environment,
+      process.env.APP_ENV === "production" ? "PRODUCTION" :
+      process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT"));
     const start = new Date(Date.parse(previousDay + "T00:00:00Z") - 330 * 60_000);
     const end = new Date(start.getTime() + 86_400_000);
+    // Aggregate over ALL daily rows, not just the five displayed signatures.
+    const [counts] = await db.select({
+      total: sql<string>`coalesce(sum(${daily.occurrenceCount}), 0)::text`,
+      firstSeen: sql<string>`count(*) filter (where ${signatures.firstSeenAt} >= ${start} and ${signatures.firstSeenAt} < ${end})::text`,
+      muted: sql<string>`count(*) filter (where ${signatures.muted})::text`,
+      spikes: sql<string>`count(*) filter (where ${daily.spikeCount} > 0)::text`,
+    }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
+      .where(predicate);
+    const top = await db.select({
+      hash: signatures.signatureHash, count: daily.occurrenceCount,
+    }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
+      .where(predicate).orderBy(desc(daily.occurrenceCount)).limit(5);
     const [health] = await db.select({
       lockedBy: leases.lockedBy,
       updatedAt: leases.updatedAt,
@@ -311,11 +317,11 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       health: healthWatchStatus(health, now),
       deploy: /^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT ?? "")
         ? process.env.DEPLOY_COMMIT : undefined,
-      total: rows.reduce((sum, row) => sum + row.dayOccurrences, 0),
-      firstSeen: rows.filter(row => row.firstSeenAt >= start && row.firstSeenAt < end).length,
-      muted: rows.filter(row => row.muted).length,
-      spikes: rows.filter(row => row.spikeCount > 0).length,
-      top: rows.slice(0, 5).map(row => ({ hash: row.hash, count: row.dayOccurrences })),
+      total: Number(counts?.total ?? 0),
+      firstSeen: Number(counts?.firstSeen ?? 0),
+      muted: Number(counts?.muted ?? 0),
+      spikes: Number(counts?.spikes ?? 0),
+      top: top.map(row => ({ hash: row.hash, count: row.count })),
     });
     if (!await sendTelegramAlert(message)) return;
     await db.update(states).set({ lastDigestDay: day })
