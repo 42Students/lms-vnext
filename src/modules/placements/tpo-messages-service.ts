@@ -3,7 +3,6 @@ import "server-only";
 import {
   and,
   eq,
-  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 
@@ -13,13 +12,9 @@ import {
   collegeMemberships,
   inAppNotifications,
   membershipRoles,
-  placementJobs,
   users,
 } from "@/db/schema";
-import {
-  placementTpoMessageThreads,
-  placementTpoMessages,
-} from "@/db/schema/tpo-collaboration";
+
 
 import {
   parseActivityDateBoundary,
@@ -31,7 +26,6 @@ import {
 import { AuthorizationError } from "@/modules/permissions/policy";
 
 import {
-  deriveRecruiterThreadStatus,
   getTpoMessagesPage,
   safePlacementNotificationSubject,
   summarizeTpoMessages,
@@ -40,6 +34,7 @@ import {
 } from "./tpo-messages-model";
 import { requirePlacementManageScope } from "./scope";
 import { placementTableExists } from "./staged-tables";
+import {getTpoRecruiterThreadSqlPage} from "./tpo-messages-sql-page-service";
 
 export const tpoMessagesQuerySchema = z
   .object({
@@ -100,153 +95,6 @@ export const tpoMessagesQuerySchema = z
 
 export type TpoMessagesQuery =
   z.infer<typeof tpoMessagesQuerySchema>;
-
-/**
- * Read actual recruiter conversation metadata only.
- *
- * Every conversation is owned by a specific college.
- * Job metadata is left-joined with an additional college
- * predicate, so even an inconsistent cross-tenant job FK
- * cannot disclose another college's job title.
- *
- * Message bodies, contact identifiers and recipient addresses
- * are neither selected nor returned.
- */
-async function loadRecruiterThreads(
-  collegeId: string,
-  searchText: string,
-): Promise<TpoInboxRecord[]> {
-  const db = getDb();
-
-  const rows = await db
-    .select({
-      id: placementTpoMessageThreads.id,
-      recruiterName: users.displayName,
-      jobId: placementJobs.id,
-      jobTitle: placementJobs.title,
-      createdAt:
-        placementTpoMessageThreads.createdAt,
-      lastMessageAt: sql<Date | null>`
-        max(${placementTpoMessages.createdAt})
-      `,
-      lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
-         where m.thread_id=placement_tpo_message_threads.id
-         order by m.created_at desc,m.id desc limit 1)`,
-      searchSnippet: searchText ? sql<string|null>`(
-        select left(search_message.body,160)
-        from placement_tpo_messages search_message
-        where search_message.thread_id = placement_tpo_message_threads.id
-          and position(lower(${searchText}) in lower(search_message.body)) > 0
-        order by search_message.created_at desc, search_message.id desc
-        limit 1
-      )` : sql<string|null>`null`,
-      bodySearchMatch: searchText ? sql<boolean>`exists (
-        select 1 from placement_tpo_messages search_message
-        where search_message.thread_id = placement_tpo_message_threads.id
-          and position(lower(${searchText}) in lower(search_message.body)) > 0
-      )` : sql<boolean>`false`,
-      accessEnded: sql<boolean>`not exists (
-        select 1 from placement_recruiter_college_grants grant_row
-        inner join placement_company_relationships relation
-          on relation.id = grant_row.company_relationship_id
-        inner join placement_recruiter_profiles recruiter_profile
-          on recruiter_profile.user_id = grant_row.recruiter_user_id
-          and recruiter_profile.company_id = relation.company_id
-        where relation.college_id = ${collegeId}::uuid
-          and relation.status = 'ACTIVE'
-          and recruiter_profile.status = 'ACTIVE'
-          and grant_row.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
-          and grant_row.status = 'ACTIVE'
-          and grant_row.verification_status = 'VERIFIED'
-          and grant_row.valid_until > now()
-      )`,
-      companyName: sql<string|null>`(
-        select lead.company_name from placement_tpo_leads lead
-        where lead.college_id = ${collegeId}::uuid
-          and lead.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
-        order by lead.updated_at desc, lead.id desc limit 1
-      )`,
-      lastSender:sql<string|null>`(select m.sender_type from placement_tpo_messages m
-         where m.thread_id=placement_tpo_message_threads.id
-         order by m.created_at desc,m.id desc limit 1)`,
-      messageCount: sql<number>`
-        count(${placementTpoMessages.id})::integer
-      `,
-      unreadRecruiterMessages: sql<number>`
-        count(${placementTpoMessages.id})
-        filter (
-          where
-            ${placementTpoMessages.senderType} = 'RECRUITER'
-            and ${placementTpoMessages.readAt} is null
-        )::integer
-      `,
-    })
-    .from(placementTpoMessageThreads)
-    .innerJoin(
-      users,
-      eq(
-        users.id,
-        placementTpoMessageThreads.recruiterUserId,
-      ),
-    )
-    .leftJoin(
-      placementJobs,
-      and(
-        eq(
-          placementJobs.id,
-          placementTpoMessageThreads.jobId,
-        ),
-        eq(placementJobs.collegeId, collegeId),
-      ),
-    )
-    .leftJoin(
-      placementTpoMessages,
-      eq(
-        placementTpoMessages.threadId,
-        placementTpoMessageThreads.id,
-      ),
-    )
-    .where(
-      eq(placementTpoMessageThreads.collegeId, collegeId),
-    )
-    .groupBy(
-      placementTpoMessageThreads.id,
-      users.displayName,
-      placementJobs.id,
-      placementJobs.title,
-    );
-
-  return rows.map((row) => {
-    const messageCount = Number(row.messageCount);
-    const unreadRecruiterMessages = Number(
-      row.unreadRecruiterMessages,
-    );
-
-    return {
-      id: row.id,
-      source: "RECRUITER_THREADS" as const,
-      participantName:
-        row.recruiterName?.trim() || "Unnamed recruiter",
-      subject:
-        row.jobTitle || "General recruiter conversation",
-      status: deriveRecruiterThreadStatus({
-        messageCount,
-        unreadRecruiterMessages,
-      }),
-      occurredAt:
-        row.lastMessageAt ?? row.createdAt,
-      jobId: row.jobId,
-      messageCount,
-      unreadCount: unreadRecruiterMessages,
-      lastPreview:row.lastPreview,
-      waitingForYou:row.lastSender==="RECRUITER",
-      companyName:row.companyName,
-      bodySearchMatch:row.bodySearchMatch,
-      searchSnippet:row.searchSnippet,
-      accessEnded:row.accessEnded,
-    };
-  });
-}
 
 /**
  * Honest fallback while recruiter conversation tables
@@ -392,9 +240,16 @@ export async function getTpoMessagesInbox(
     ? "RECRUITER_THREADS" as const
     : "PLACEMENT_NOTIFICATIONS" as const;
 
-  const records = recruiterConversationsAvailable
-    ? await loadRecruiterThreads(collegeId, query.q.trim().length >= 2 ? query.q.trim() : "")
-    : await loadTpoPlacementNotifications(collegeId);
+  const disclosure={
+    messageBodiesExposed:false,notificationBodiesExposed:false,
+    recipientContactsExposed:false,outboundDeliveryDataAvailable:false,
+  };
+  if(recruiterConversationsAvailable){
+   const result=await getTpoRecruiterThreadSqlPage(collegeId,query);
+   return {collegeId,query,source,recruiterConversationsAvailable,
+    ...result,disclosure};
+  }
+  const records=await loadTpoPlacementNotifications(collegeId);
 
   const from = query.from
     ? parseActivityDateBoundary(
@@ -426,11 +281,6 @@ export async function getTpoMessagesInbox(
     recruiterConversationsAvailable,
     summary: summarizeTpoMessages(records),
     ...page,
-    disclosure: {
-      messageBodiesExposed: false,
-      notificationBodiesExposed: false,
-      recipientContactsExposed: false,
-      outboundDeliveryDataAvailable: false,
-    },
+    disclosure,
   };
 }
