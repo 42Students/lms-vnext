@@ -105,6 +105,13 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       <option key={item.id} value={item.id}>{item.title}</option>)}
     </select>
    </label>
+   <label className="text-sm font-semibold">Priority
+    <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">All priorities</option>
+     {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
+    </select>
+   </label>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
