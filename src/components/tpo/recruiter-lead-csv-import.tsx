@@ -80,6 +80,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     }
     try {
       const content = /\.xlsx$/i.test(file.name)?await recruiterXlsxToCsv(file):await file.text();
+      if(content.length>TPO_LEAD_CSV_MAX_CHARACTERS)
+        throw new Error("CSV_SIZE_LIMIT_EXCEEDED");
       const parsed = previewTpoLeadCsv(content);
       if(sequence!==previewSeq.current)return;
       setPreview(parsed);
