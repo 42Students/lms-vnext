@@ -71,7 +71,7 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
       (async () => stalled) as typeof fetch,
       20,
     )).rejects.toThrow("LOG_PROVIDER_UNAVAILABLE");
-    await stalled.body?.cancel().catch(() => undefined);
+    // Cancellation is propagated to the locked response reader on timeout.
   });
   it("GR-118 rejects malformed provider JSON without echoing the provider response", async () => {
     await expect(readCloudProviderJsonLimited(new Response("not-json")))

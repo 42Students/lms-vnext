@@ -76,11 +76,14 @@ export function parseCloudErrorEntry(value: unknown): CloudErrorRecord | null {
   };
 }
 
-export async function readCloudProviderJsonLimited(response: Response): Promise<unknown> {
+export async function readCloudProviderJsonLimited(response: Response, signal?: AbortSignal): Promise<unknown> {
   const reader = response.body?.getReader();
   if (!reader) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");
   const chunks: Uint8Array[] = [];
   let size = 0;
+  const cancel = () => { void reader.cancel().catch(() => undefined); };
+  if (signal?.aborted) cancel();
+  else signal?.addEventListener("abort", cancel, { once: true });
   try {
     while (true) {
       const { done, value } = await reader.read();
@@ -93,8 +96,11 @@ export async function readCloudProviderJsonLimited(response: Response): Promise<
       chunks.push(value);
     }
   } catch {
-    throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+    throw new Error(signal?.aborted ? "LOG_PROVIDER_UNAVAILABLE" : "LOG_PROVIDER_RESPONSE_TOO_LARGE");
+  } finally {
+    signal?.removeEventListener("abort", cancel);
   }
+  if (signal?.aborted) throw new Error("LOG_PROVIDER_UNAVAILABLE");
   const bytes = new Uint8Array(size);
   let offset = 0;
   for (const chunk of chunks) {
@@ -124,7 +130,7 @@ export async function boundedCloudJsonRequest(
     const request = async () => {
       const response = await transport(url, { ...init, signal: controller.signal });
       if (!response.ok) return { ok: false, status: response.status, payload: null };
-      const payload = await readCloudProviderJsonLimited(response);
+      const payload = await readCloudProviderJsonLimited(response, controller.signal);
       return { ok: true, status: response.status, payload };
     };
     return await Promise.race([request(), deadline]);
