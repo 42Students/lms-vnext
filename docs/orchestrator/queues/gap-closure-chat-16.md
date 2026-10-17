@@ -118,3 +118,16 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - `docs/audit/gap-register.md` now records COL-placements-12 source DONE and explicit LEARNER-learning-misc-07/-25 safer-policy decisions; LEARNER-learning-misc-01/-12 remain OPEN because unconfigured provider-integrated uploads cannot be claimed complete.
 - The two unfinished provider items are not reported as a successful end-to-end file upload or Google OAuth import. Other code is source-reviewed but has not passed a local TypeScript/Vitest/browser/DB run in this GitHub-only lane.
 - Do not restyle any page until UX signoff; changes were scoped to error copy, upload fallback text, tests, gap statuses and acceptance notes.
+
+## Round 2 unit failures — 2026-10-18
+
+Seven reported failures reviewed against merged source:
+- chat16-gap-register-reconciliation-r7: central register has new VERIFIED statuses and chat-7/chat-9 ownership after the earlier chat-16 queue. Updated obsolete test expectations; no registry rollback.
+- chat16-mentor-final-review-r6 / MEN-projects-meetings-65: the safer action first sets a specific decision and then opens confirmation. Updated the stale bare-opener test only.
+- chat16-reassigned-mentor-parity / MEN-projects-meetings-57: restored blocked-tab wording and kept secure fallback link.
+- chat16-tracker-known-error-link / SA-placements-projects-114: fixed UUID versus opaque-value scrubbing order, added signature-idempotency regression.
+- hr-drive-round-presets: reinstated four named FULL_PROCESS rounds, including initial company TALK.
+- rec-notification-bell / REC-calendar-messages-profile-21: current source already retains 30-second polling and scoped mark-read; no edit.
+- recruiter-drive-request-model / REC-home-drives-21: corrected old DRAFT label test; approved draft awaits publication rather than another review.
+
+Source and tests reviewed, but not executed in this GitHub connector session.
