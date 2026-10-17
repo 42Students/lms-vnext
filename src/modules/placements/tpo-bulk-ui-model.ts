@@ -37,7 +37,13 @@ export function canActOnEntireTpoView(viewCount:number,allRows:readonly TpoBulkU
 /** Only IDs already returned by the authorized roster may be selected. */
 export function matchTpoBulkRollNumbers(rows:readonly TpoBulkUiRow[],raw:string){
  const tokens=[...new Set(raw.split(/[\s,;]+/).map(value=>value.trim().toUpperCase()).filter(Boolean))].slice(0,5000);
- const index=new Map(rows.filter(row=>row.rollNumber).map(row=>[row.rollNumber!.trim().toUpperCase(),row.id]));
- const ids=tokens.map(token=>index.get(token)).filter((id):id is string=>Boolean(id));
- return {ids:selectTpoBulkPage(ids),requested:tokens.length,unmatched:tokens.filter(token=>!index.has(token))};
+ const index=new Map<string,string|null>();
+ for(const row of rows){
+  if(!row.rollNumber?.trim())continue;
+  const key=row.rollNumber.trim().toUpperCase();
+  index.set(key,index.has(key)?null:row.id);
+ }
+ const ids=tokens.map(token=>index.get(token)).filter((id):id is string=>typeof id==="string");
+ return {ids:selectTpoBulkPage(ids),requested:tokens.length,
+  unmatched:tokens.filter(token=>!index.get(token))};
 }

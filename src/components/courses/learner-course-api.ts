@@ -1,3 +1,5 @@
+import {friendlyApiError} from "@/lib/friendly-error";
+
 export type CourseApiErrorBody = {
   error?: string;
   issues?: Array<{
@@ -131,20 +133,14 @@ export async function courseApiError(
     body =
       (await response.json()) as CourseApiErrorBody;
   } catch {
-    return "Something went wrong. Please try again.";
+    return friendlyApiError({status:response.status});
   }
 
-  const issue = body.issues?.find(
-    (candidate) =>
-      typeof candidate.message === "string" &&
-      candidate.message.length > 0,
-  )?.message;
-
-  if (issue) return issue;
-
+  // Provider-authored issues and validation payloads can contain internal text.
+  // Keep known course-domain labels, otherwise use the central safe catalog.
   if (body.error && errorLabels[body.error]) {
     return errorLabels[body.error];
   }
 
-  return "Something went wrong. Please try again.";
+  return friendlyApiError({status:response.status,code:body.error});
 }

@@ -35,6 +35,8 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
  it("PUB-auth-public-46 errors loading a valid invitation show Retry, not invalid token",()=>{
   expect(invite()).toContain('"load_error"');
   expect(invite()).toContain("Retry");
+  expect(invite()).toContain("apiFetch<{invite?:Invite}>");
+  expect(invite()).toContain("FriendlyFetchError");
   expect(invite()).toContain("This link is no longer valid");
  });
  it("PUB-auth-public-47 invite context identifies the company and college",()=>{

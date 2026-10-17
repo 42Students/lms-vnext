@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {nextHrProposalAttempt} from "@/modules/placements/hr-drive-proposal-attempt-model";
 import type { HrDriveDraft } from "@/modules/placements/hr-drive-draft-model";
 import { emptyHrDriveDraft, hrDriveDraftSchema } from "@/modules/placements/hr-drive-draft-model";
@@ -146,7 +147,7 @@ export function HrDriveDraftForm({
     setSubmitting(true);
     setNotice(fixRequestId?(editMode==="EDIT"?"Saving changes...":"Resubmitting your updated request..."):"Sending to the placement cell for review...");
     try{
-      const response=await fetch("/api/placements/recruiter/drives/requests",{
+      const raw:unknown=await apiFetch("/api/placements/recruiter/drives/requests",{
         method:fixRequestId?"PATCH":"POST",
         credentials:"same-origin",
         headers:{"Content-Type":"application/json"},
@@ -158,17 +159,6 @@ export function HrDriveDraftForm({
           submissionId:next.submissionId,draft:valid.data,
         }),
       });
-      const raw:unknown=await response.json().catch(()=>null);
-      if(!response.ok){
-        const code=raw&&typeof raw==="object"&&"error" in raw
-          ? String((raw as {error:unknown}).error):"REQUEST_FAILED";
-        setNotice(code==="FORBIDDEN"?"Your access to this college has ended. Ask the placement cell to restore it.":
-          code==="STALE"||code==="INVALID_STATE"?
-          "This request has changed. Refresh Drives before trying again.":
-          code==="STORAGE_NOT_READY"?"Requests are temporarily unavailable. Your draft was not sent.":
-          "Your request was not sent. Please try again. ("+code+")");
-        return;
-      }
       if(!raw||typeof raw!=="object"||!("request" in raw)||
          typeof (raw as {request?:{id?:unknown}}).request?.id!=="string"){
         setNotice("Could not verify the saved request. Check Drives before retrying.");
@@ -184,8 +174,16 @@ export function HrDriveDraftForm({
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
       window.location.assign("/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING");
-    }catch{
-      setNotice("Request status could not be confirmed. Your draft is preserved; check Drives before resending.");
+    }catch(error){
+      if(error instanceof FriendlyFetchError && (error.code==="STALE"||error.code==="INVALID_STATE")){
+        setNotice("This request has changed. Refresh Drives before trying again.");
+      }else if(error instanceof FriendlyFetchError && error.status===403){
+        setNotice("Your access to this college has ended. Ask the placement cell to restore it.");
+      }else if(error instanceof FriendlyFetchError && error.status>=400 && error.status<500){
+        setNotice(error.message);
+      }else{
+        setNotice("Request status could not be confirmed. Your draft is preserved; check Drives before resending.");
+      }
     }finally{
       setSubmitting(false);
     }

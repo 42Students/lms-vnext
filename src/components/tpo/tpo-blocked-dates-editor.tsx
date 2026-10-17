@@ -1,4 +1,6 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
@@ -20,15 +22,15 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  async function request(url:string,method:"POST"|"DELETE",body:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch(url,{method,credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-   const data=await response.json() as {error?:string};
-   if(!response.ok)throw Error(data.error==="DATE_IN_PAST"?"Past dates cannot be blocked.":
-     data.error==="DATE_RANGE_INVALID"?"Pick a range of up to 90 days.":
-     data.error==="DATE_EXISTS"?"A day in this range is already blocked.":
-     response.status===409?"This date changed. Refresh and try again.":data.error??"Unable to save date.");
+   await apiFetch(url,{method,credentials:"same-origin",
+    headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
    setNotice("Blocked dates saved");if(method==="POST"){setStartDay("");setEndDay("");setReason("");}
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Blocked dates could not be updated.");}finally{setBusy(false);}
+  }catch(e){const code=e instanceof FriendlyFetchError?e.code:null;
+   setError(code==="DATE_IN_PAST"?"Past dates cannot be blocked.":
+    code==="DATE_RANGE_INVALID"?"Pick a range of up to 90 days.":
+    code==="DATE_EXISTS"?"A day in this range is already blocked.":
+    e instanceof Error?e.message:"Blocked dates could not be updated.");}finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4">
   <form className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_2fr_auto]"
@@ -80,7 +82,7 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
      if(!window.confirm("Remove "+item.day+" from blocked dates?"))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
     }} className="min-h-9 rounded border border-border px-2 text-xs disabled:opacity-50">Remove {item.day}</button>)}</div></details></li>)}</ul>}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
 }

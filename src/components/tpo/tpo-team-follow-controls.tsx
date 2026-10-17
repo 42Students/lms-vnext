@@ -1,6 +1,8 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  threadId:string;following:boolean;muted:boolean;ready:boolean;
 }){
@@ -12,19 +14,15 @@ export function TpoTeamFollowControls({threadId,following,muted,ready}:{
  async function change(action:"FOLLOW"|"UNFOLLOW"|"MUTE"|"UNMUTE"){
   if(pending.current||!ready)return;
   pending.current=true;setBusy(true);setError("");
-  const controller=new AbortController();
-  const timer=window.setTimeout(()=>controller.abort(),30000);
   try{
-   const response=await fetch("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/preferences",{
-    method:"POST",credentials:"same-origin",
-    headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
-    signal:controller.signal,
-   });
-   if(!response.ok)throw new Error("Team preferences could not be changed. Please try again.");
-   const result=await response.json() as {following:boolean;muted:boolean};
+   const result=await apiFetch<{following:boolean;muted:boolean}>(
+    "/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/preferences",{
+     method:"POST",credentials:"same-origin",timeoutMs:30000,
+     headers:{"Content-Type":"application/json"},body:JSON.stringify({action}),
+    });
    setState(result);router.refresh();
-  }catch{setError("Team preferences could not be changed. Please try again.");}
-  finally{window.clearTimeout(timer);pending.current=false;setBusy(false);}
+  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));}
+  finally{pending.current=false;setBusy(false);}
  }
  return <section className="flex flex-wrap items-center gap-2" aria-label="Conversation preferences">
   <button type="button" disabled={busy||!ready} onClick={()=>void change(state.following?"UNFOLLOW":"FOLLOW")}

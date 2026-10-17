@@ -34,6 +34,8 @@ describe("Telegram alert fundamentals", () => {
       expect(safe).not.toContain(secret);
     }
     expect(safeAlertPath("/api/users/12345?token=secret")).toEqual("/api/users/[id]");
+    expect(safeAlertPath("/api/users/jane.smith%40example.com")).toEqual("/api/users/[id]");
+    expect(safeAlertPath("/tracker/logs/sensitive-person-name")).toEqual("/tracker/logs/[id]");
   });
 
   it("GR-111 never throws when unconfigured and sends no request", async () => {
@@ -64,6 +66,19 @@ describe("Telegram alert fundamentals", () => {
     expect(limitTelegramAlert("a".repeat(4000))).toHaveLength(3500);
   });
 
+  it("GR-113 GR-125 does not print provider failures or the configured bot token", async () => {
+    process.env.APP_ENV = "development";
+    process.env.TELEGRAM_ALERT_BOT_TOKEN = "synthetic-test-placeholder";
+    process.env.TELEGRAM_ALERT_CHAT_ID = "synthetic-chat";
+    const stderr = vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+    const accepted = await sendTelegramAlert("Error person@example.com", {
+      transport: (async () => {
+        throw new Error("request failed at private provider endpoint");
+      }) as typeof fetch,
+    });
+    expect(accepted).toBe(false);
+    expect(stderr.mock.calls.flat().join(" ")).not.toContain("synthetic-test-placeholder");
+  });
   it("GR-111 returns false for provider errors and enables Acknowledge only in production", async () => {
     process.env.APP_ENV = "production";
     process.env.TELEGRAM_ALERT_BOT_TOKEN = "fake";

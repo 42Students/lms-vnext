@@ -138,7 +138,7 @@ export default async function CollegeElectiveAllocatePage({
         added++;
       } catch (error) {
         failed++;
-        if (!reason) reason = error instanceof Error ? error.message : "Allocation failed";
+        if (!reason) reason = "Some students could not be allocated. Review their eligibility and the available seats.";
       }
     }
     redirect(base(slotId) + "?added=" + added + "&failed=" + failed +

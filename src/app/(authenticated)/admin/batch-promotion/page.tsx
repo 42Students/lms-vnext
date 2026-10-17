@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
+import { SuperAdminBatchGraduateAction } from "@/components/admin/super-admin-batch-graduate-action";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -16,14 +17,14 @@ export default async function SuperAdminBatchPromotionPage({
   const input = readAdminPromotionParams(raw);
   const showCompleted = raw.showCompleted==="1";
   if (!input.success) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview" />
+    <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
       action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview" />
-    <EmptyState title="Select a college scope" description="Choose the exact college before inspecting promotion eligibility. No batch is selected automatically." />
+    <PageHeader  title="Batch Promotion" />
+    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its batch promotion." />
   </div>;
   const options = await listCollegePromotionOptions(context, input.data);
   const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>!["COMPLETED","ARCHIVED"].includes(item.status));
@@ -42,8 +43,8 @@ export default async function SuperAdminBatchPromotionPage({
   }
   const summary = preview ? summarizeAdminPromotion(preview) : null;
   return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion"
-      description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Graduation and class moves remain unavailable." />
+    <PageHeader  title="Batch Promotion"
+      description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <select name="programId" defaultValue={input.data.programId ?? ""}
@@ -109,7 +110,10 @@ export default async function SuperAdminBatchPromotionPage({
           </div>)}
         </dl>
         {!summary.completePreview ? <p role="alert" className="text-sm text-error">Preview is truncated at 2,000 enrollments and cannot prove readiness.</p> : null}
-        <p className="text-xs text-muted-foreground">This is a preview, not a committed promotion. Confirmation independently rechecks every learner and the recorded version. Graduation is unavailable.</p>
+        <p className="text-xs text-muted-foreground">This is a preview, not a committed promotion. Confirmation independently rechecks every learner and the recorded version. Graduation is available when the batch reaches its final term.</p>
+        {preview.batch.status === "ACTIVE" && preview.batch.currentTermNumber !== null &&
+         preview.batch.currentTermNumber >= preview.batch.durationTerms ?
+          <SuperAdminBatchGraduateAction cohortId={preview.batch.id} name={preview.batch.name} /> : null}
         {preview.simulatedReadiness && preview.plan.action === "PROMOTE" &&
           preview.batch.version !== null && preview.plan.targetTermNumber !== null &&
           preview.plan.academicYearStart !== null ? (

@@ -5,16 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-drive-lifecycle-service";
 import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecycle-model";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
 
 export function TpoDriveLifecycleControls({ readiness, initialPublish = false }: { readiness: Readiness; initialPublish?: boolean }) {
   const router = useRouter();
+  const {run}=useGuardedAction({timeoutMs:35000});
   const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
   const [notifyByEmail,setNotifyByEmail]=useState(false);
+  const [acknowledged,setAcknowledged]=useState(false);
   const [success,setSuccess]=useState("");
   const [error, setError] = useState<string | null>(null);
   const available = [
@@ -25,16 +30,13 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
   const selected = available.find((item) => item.action === action) ?? null;
 
   async function submit() {
-    if (!selected?.decision.allowed || reason.trim().length < 10 || pending) return;
-    if (!window.confirm(
-      "Confirm " + selected.action.toLowerCase() + " for this drive? " +
-      "This changes learner availability and is permanently audited.",
-    )) return;
+    if (!selected?.decision.allowed || reason.trim().length < 10 || pending || !acknowledged) return;
+    await run(async()=>{
     setPending(true);
     setError(null);
     setSuccess("");
     try {
-      const response = await fetch(
+      const result = await apiFetch<{notifiedCount?:number;debarmentCounted?:number;emailSent?:boolean}>(
         "/api/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/tpo-lifecycle",
         {
           method: "POST",
@@ -49,30 +51,22 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           }),
         },
       );
-      if (!response.ok) {
-        const body = await response.json().catch(() => null) as { error?: string } | null;
-        const errors: Record<string, string> = {
-          EMAIL_DELIVERY_UNAVAILABLE: "Email delivery is not configured. Choose app notifications only.",
-          PLACEMENT_JOB_STALE: "This drive changed. Refresh the page before retrying.",
-          PLACEMENT_JOB_READ_ONLY: "This drive is not ready for that action. Review the setup and try again.",
-          PLACEMENT_JOB_NOT_FOUND: "This drive is no longer available.",
-          INVALID_REQUEST: "Please check your reason and try again.",
-        };
-        throw new Error(errors[body?.error ?? ""] ??
-          "This action could not be completed. Refresh and review the drive.");
-      }
-      const result=await response.json() as {notifiedCount?:number;debarmentCounted?:number;emailSent?:boolean};
+
       setSuccess(selected.action==="PUBLISH"?
         "Published. "+(result.notifiedCount??0)+" eligible learners notified in the app. No email sent.":
         "Drive updated.");
       setAction(null);
       setReason("");
+      setAcknowledged(false);
       router.refresh();
     } catch (failure) {
-      setError(failure instanceof Error ? failure.message : "Lifecycle action failed.");
+      setError(failure instanceof FriendlyFetchError && failure.code==="EMAIL_DELIVERY_UNAVAILABLE"?
+        "Email delivery is not configured. Choose app notifications only.":
+        failure instanceof Error?failure.message:friendlyApiError({}));
     } finally {
       setPending(false);
     }
+    });
   }
 
   return (
@@ -100,7 +94,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           <button
             key={item.action}
             type="button"
-            onClick={() => { setAction(item.action); setError(null); }}
+            onClick={() => { setAction(item.action); setError(null); setAcknowledged(false); }}
             disabled={pending || !item.decision.allowed}
             className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground disabled:opacity-50"
           >
@@ -140,10 +134,16 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
               checked={false} disabled/>
               App and email (email delivery not configured)</label>
           </fieldset>:null}
+          <label className="flex items-start gap-2 text-sm text-body">
+            <input type="checkbox" checked={acknowledged}
+              onChange={event=>setAcknowledged(event.target.checked)} disabled={pending}
+              className="mt-1 h-4 w-4 accent-primary"/>
+            I reviewed the learner visibility and drive state consequences. This decision is audited.
+          </label>
           <div className="flex gap-3">
             <button
               type="button"
-              disabled={pending || reason.trim().length < 10}
+              disabled={pending || reason.trim().length < 10 || !acknowledged}
               onClick={() => void submit()}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
             >

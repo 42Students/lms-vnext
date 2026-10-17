@@ -10,9 +10,7 @@ export default async function CollegeSemesterCoursesPage() {
   if (!context.membership) redirect("/dashboard");
   const curriculumData = await listCollegeTermMappings(context);
   return <div className="space-y-6">
-    <PageHeader eyebrow="College Admin · Academic Setup"
-      title="Semester–Course Mapping"
-      description="Map courses to a numbered program semester and manage their credits and order."
+    <PageHeader title="Semester–Course Mapping"
       actions={<Link href="/college/courses"
         className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Course offerings

@@ -14,10 +14,11 @@ import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-serv
 import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
 import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model";
 import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
+import {filterTpoTeamConversations,tpoTeamConversationCounts,tpoTeamConversationFilterSchema} from "@/modules/placements/tpo-team-conversation-filter-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional()}).strict();
+const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional(),filter:tpoTeamConversationFilterSchema.optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];c?:string|string[];m?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];filter?:string|string[];c?:string|string[];m?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
@@ -31,7 +32,8 @@ export default async function TpoTeamPage({searchParams}:{
  const tabInput=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
  const parsed=tabSchema.safeParse({tab:tabInput==="members"?"people":tabInput,
   sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
-  q:Array.isArray(raw.q)?raw.q[0]:raw.q});
+  q:Array.isArray(raw.q)?raw.q[0]:raw.q,
+  filter:Array.isArray(raw.filter)?raw.filter[0]:raw.filter});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
@@ -39,6 +41,9 @@ export default async function TpoTeamPage({searchParams}:{
  const search=parsed.success?(parsed.data.q??""):"";
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search)
   .catch(()=>({status:"FAILED" as const,items:[]})):null;
+ const filter=parsed.success?(parsed.data.filter??"ALL"):"ALL";
+ const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
+ const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
  return <div className="space-y-6">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
@@ -74,6 +79,15 @@ export default async function TpoTeamPage({searchParams}:{
   </section>:<section className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
+    {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the first 100 conversations currently loaded.</p>:null}
+    {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
+     {(["ALL","FOLLOWING","UNREAD","TOPICS"] as const).map(key=><Link key={key}
+      href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
+      aria-current={filter===key?"page":undefined}
+      className={filter===key?"rounded-md bg-primary px-3 py-2 text-sm text-on-primary":"rounded-md border border-border px-3 py-2 text-sm text-body"}>
+      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":"Topics"} ({conversationCounts[key]})
+     </Link>)}
+    </nav>:null}
     <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
       member=>member.membershipId!==context.membership?.id&&member.roles.includes("TPO"))
@@ -85,7 +99,7 @@ export default async function TpoTeamPage({searchParams}:{
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
       conversations?.status==="FAILED"?null:
-      conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
+      visibleConversations.length?<ul className="mt-3 space-y-2">{visibleConversations.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
          <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
@@ -98,7 +112,7 @@ export default async function TpoTeamPage({searchParams}:{
         {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
-       <p role="status" className="mt-2 text-sm text-body">No private team conversations yet. Everyone is always available.</p>}
+       <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:null}</div>}
     <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-primary-text">
       Open existing recruiter communications
     </Link>

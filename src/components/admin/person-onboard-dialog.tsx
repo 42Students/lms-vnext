@@ -42,6 +42,7 @@ export function PersonOnboardDialog({
   const [lastName,setLastName]=useState("");
   const [phoneE164, setPhoneE164] = useState("");
   const [email, setEmail] = useState("");
+  const [registerAsMentor,setRegisterAsMentor]=useState(false);
   const [roles, setRoles] = useState<MembershipRole[]>(
     onboardingRoleSelection(forcedRole),
   );
@@ -50,7 +51,7 @@ export function PersonOnboardDialog({
   function reset() {
     setDisplayName("");setFirstName("");setLastName("");
     setPhoneE164("");
-    setEmail("");
+    setEmail("");setRegisterAsMentor(false);
     setRoles(onboardingRoleSelection(forcedRole));
   }
 
@@ -73,7 +74,7 @@ export function PersonOnboardDialog({
           displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
           phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
-          roles: onboardingRoleSelection(forcedRole, roles),
+          roles:forcedRole==="FACULTY"&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -201,9 +202,18 @@ export function PersonOnboardDialog({
               placeholder="name@example.com"
             />
           </div>
-          {forcedRole ? <p className="sm:col-span-2 text-sm text-body">
-            Membership role: <strong>{roleLabel(forcedRole)}</strong>. This form does not grant additional roles.
-          </p> : <fieldset className="sm:col-span-2">
+          {forcedRole==="FACULTY" ? <fieldset className="sm:col-span-2 space-y-2 rounded-lg border border-border p-3">
+            <legend className="text-xs font-semibold text-body">Faculty Type</legend>
+            <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
+              <input type="checkbox" checked={registerAsMentor} disabled={pending}
+                onChange={event=>setRegisterAsMentor(event.target.checked)}/>
+              Mentor
+            </label>
+            <p className="text-xs text-muted-foreground">A mentor receives the Mentor membership role in addition to Faculty.</p>
+          </fieldset> : null}
+          {forcedRole && forcedRole!=="FACULTY" ? <p className="sm:col-span-2 text-sm text-body">
+            Membership role: <strong>{roleLabel(forcedRole)}</strong>.
+          </p> : !forcedRole ? <fieldset className="sm:col-span-2">
             <legend className="mb-2 text-xs font-semibold text-body">
               Membership roles
             </legend>
@@ -230,7 +240,7 @@ export function PersonOnboardDialog({
                 Select at least one membership role.
               </p>
             ) : null}
-          </fieldset>}
+          </fieldset> : null}
         </div>
       </Dialog>
     </>

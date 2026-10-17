@@ -38,7 +38,7 @@ export async function getTpoNoticeReadSummary(context:RequestContext,rawId:unkno
  ]);
  return {delivered:Number(counts[0]?.delivered??0),
   read:Number(counts[0]?.read??0),unread:unread.map(item=>item.name),
-  notDelivered:false};
+  notDelivered:Number(counts[0]?.delivered??0)===0};
 }
 /** Only a user's own delivered notification is acknowledged; no arbitrary membership ID. */
 export async function markOwnTpoNoticeRead(context:RequestContext,rawId:unknown){

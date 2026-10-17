@@ -1,4 +1,6 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
@@ -31,15 +33,13 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   if(busy||invalid>=0||labels.length>30)return;
   setBusy(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/placements/tpo/settings/outcome-labels",{
+   const data=await apiFetch<{version?:string;labels?:Label[]}>("/api/placements/tpo/settings/outcome-labels",{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({labels:labels.map(row=>({...row,label:row.label.trim()})),expectedVersion:currentVersion}),
    });
-   const data=await response.json() as {error?:string;version?:string;labels?:Label[]};
-   if(!response.ok)throw Error(data.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh and try again.":
-    data.error??"Could not save the labels");
    setLabels(data.labels??[]);setCurrentVersion(data.version??null);setNotice("After college labels saved");router.refresh();
-  }catch(caught){setError(caught instanceof Error?caught.message:"Could not save the labels");}
+  }catch(caught){setError(caught instanceof FriendlyFetchError&&caught.code==="TPO_SETTINGS_STALE"?
+   "Settings changed. Refresh and try again.":caught instanceof Error?caught.message:"Could not save the labels");}
   finally{setBusy(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
@@ -84,7 +84,7 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   <p className="text-xs text-muted-foreground">{labels.length}/30 labels. Changing a mapping affects how future student choices are grouped; existing recorded outcomes are not silently rewritten.</p>
   <button type="button" onClick={()=>void save()} disabled={busy||!dirty||invalid>=0}
    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {notice?<p role="status" className="text-sm text-success-text">{notice}</p>:null}
  </section>;
 }

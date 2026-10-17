@@ -280,3 +280,21 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 - BLOCKED TPO-calendar-reports-43: resume availability/verification requires private object-storage and malware-scanner integration.
 - Shared graceful helpers `src/lib/friendly-error.ts` and `src/lib/api-fetch.ts` were absent from main when this round began; adopt when chat-14 merges them. `docs/orchestrator/queues/graceful-needs-shell.md` was absent; reviewed other available lane "Needs shell" sections and found no populated requests.
 - Reassigned Super Admin placements and academic setup belong to chat-13: no edits by chat-9.
+
+## Round 3 handoff (2026-10-17)
+- Main bda21e4d6e8637e19f795ce205efb0f52d3c04e7 fast-forwarded into chatgpt/chat-9-b first. Only chat-9 branch was pushed.
+- Shell GR-16/70/75, TPO-inbox-team-28/63, TPO-requests-verification-06/21, LEARNER-profile-misc-R01, TPO-home-40/44, PUB-auth-public-20/21/22/24: standalone widget boundaries and Retry, connectivity banner, validated unread counters, accessible eight-item learner drawer, TPO global messages badge and cross-tab sign-out. Tests and status in docs/audit/acceptance/graceful-shell-verification.md and docs/audit/acceptance/shell-dependencies-verification.md. Other lanes' Needs shell sections were reviewed.
+- TPO-settings-audit-04/14/20/21/22/24/25/30/31/32/43/44/45/52/53/54/56/57/58/59/70/71/72/74/76/82/92/93/97: 29 gap-ID cases batched in tests/unit/chat9-tpo-settings-source-closure.test.ts; 15 source-level DONE and 14 partial OPEN, documented in docs/audit/acceptance/tpo-settings-audit-verification.md.
+- TPO-settings-audit-21/31/43/72 and GR-32/70: shared apiFetch + InlineNotice now wired to those four save paths; tests/unit/chat9-tpo-settings-friendly-saves.test.ts. Editor drafts remain after failed saves.
+- OPEN: TPO-settings-audit-22 removal/in-use drives, 31 student-side label display, 44 warnings on all other scheduling paths, 52 No end date, 57 remaining profile columns, 74 about/number configurator, 93 Excel; status intentionally remains OPEN for these partial implementations.
+- OPEN: PUB-auth-public-29/31 outstanding cross-role shell journeys, TPO calendar-reports 14 nonverified gaps, and college/projects queue page still require work; do not claim all 225 complete.
+- BLOCKED TPO-calendar-reports-23: live provider credentials required for delivered evening-before round reminder verification.
+- BLOCKED TPO-calendar-reports-43: verified private resume storage and malware scanning integration not available to this lane.
+- Chat-13 reassigned Super Admin placements and academic pages were not changed. Tests authored but never executed by chat-9.
+
+## Round 3 college/projects continuation and precise open items
+- COL-projects-03 OPEN (admin Overview/Resources edits are available; sprint/task plan edits remain Mentor-gated); COL-projects-06/07/12/13 DONE source-evidence, tests/unit/chat9-college-projects-s2-closure.test.ts and docs/audit/acceptance/college-projects-verification.md. Tests not run by builder.
+- TPO-calendar-reports-15 DONE source-level: legacy TPO query scope for any status round on DRAFT/PUBLISHED drive, PUBLISHED-only deadlines and OPEN follow-ups; verified independently from admin calendar scope. Test tests/unit/chat9-calendar-legacy-event-scope.test.ts.
+- TPO-inbox-team-28 OPEN: Team and Messages count producers exist, but Announcements requires its own authoritative unread count, not the personal Notifications total. No false count displayed.
+- TPO-settings-audit-56 OPEN: extending timed grants works, but No end date is not offered. TPO-settings-audit-70 OPEN: optional SMS cap works, usage-this-month figure is not sourced.
+- All source verification DONE entries still require orchestrator's tests, typecheck, lint and browser acceptance; none were run in this lane.

@@ -187,7 +187,9 @@ export function FacultyCourseHomeSignals({
             ))}
           </ul>
         </section>
-      ) : null}
+      ) : <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+        No major learner risk signals
+      </p>}
 
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
@@ -196,9 +198,13 @@ export function FacultyCourseHomeSignals({
         <p className="mt-1 text-sm text-muted-foreground">
           Current learner averages across graded assignments.
         </p>
+        <Link href="/teacher/allAssignments"
+          className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+          View all assessments
+        </Link>
         {signals.performance.studentAverages.length<3?
           <p className="mt-2 text-xs text-muted-foreground">
-            Grade a few submissions to see more useful performance insights.
+            Grade a few submissions to see the class&apos;s score spread here.
           </p>:<p className="mt-2 text-xs text-muted-foreground">
             {signals.performance.studentAverages.length} students have a graded average.
             Select a score range below to review the corresponding students.

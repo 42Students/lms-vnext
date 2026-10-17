@@ -48,6 +48,10 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
         </dl>
+        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+          className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          Open offering →
+        </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
     <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">

@@ -1,4 +1,6 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 const labels={
@@ -18,14 +20,14 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   if(busy||!window.confirm("Save what companies can see? These choices control the college's recruiter-visible information policy."))return;
   setBusy(true);setMessage("");
   try{
-   const response=await fetch("/api/placements/tpo/company-visibility",{
+   await apiFetch("/api/placements/tpo/company-visibility",{
     method:"PUT",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({collegeId,expectedVersion:version,...values}),
    });
-   if(!response.ok)throw Error(response.status===409?"Sharing policy changed elsewhere. Refresh before retrying.":
-    response.status===503?"Sharing settings API is waiting for DB09 readiness.":"Could not save company visibility.");
    setMessage("Saved");router.refresh();
-  }catch(error){setMessage(error instanceof Error?error.message:"Could not save.");}
+  }catch(error){setMessage(error instanceof FriendlyFetchError&&error.status===409?
+    "Sharing policy changed elsewhere. Refresh before retrying.":
+    error instanceof Error?error.message:"Could not save.");}
   finally{setBusy(false);}
  }
  return <section aria-label="Edit company visibility" className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -38,6 +40,6 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
   </label>)}
   <button type="button" disabled={busy} onClick={()=>void save()}
    className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":"Save"}</button>
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message} onDismiss={()=>setMessage("")}/>:null}
  </section>;
 }

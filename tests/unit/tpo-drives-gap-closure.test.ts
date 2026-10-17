@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {describe,expect,it} from "vitest";
 import {
- projectTpoDriveLifecycle,tpoDriveLifecycleQuerySchema,tpoDriveStatusLabel,
+ projectTpoDriveLifecycle,tpoDriveLifecycleQuerySchema,tpoDriveStatusLabel,tpoDriveStatusTone,driveRequestStatusTone,
  tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel,
  driveRequestStatusLabel,TPO_REQUESTS_COPY,
 } from "@/modules/placements/tpo-drive-lifecycle-list-model";
@@ -53,6 +53,11 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(driveRequestStatusLabel("REQUEST")).toBe(TPO_REQUESTS_COPY.needsReview);
   expect(tpoDriveEmploymentLabel("FULL_TIME")).toBe("Full-time");
   expect(tpoDriveWorkModeLabel("HYBRID")).toBe("Hybrid");
+  expect(tpoDriveStatusTone("PUBLISHED")).toBe("success");
+  expect(tpoDriveStatusTone("CANCELLED")).toBe("error");
+  expect(driveRequestStatusTone("REQUEST")).toBe("warning");
+  expect(driveRequestStatusTone("SENT_BACK")).toBe("info");
+  expect(page()).toContain("<StatusBadge tone={tpoDriveStatusTone(job.status)}");
  });
  it("TPO-drives-10 rejects invalid drive ranges and preserves scoped filters",()=>{
   expect(tpoDriveLifecycleQuerySchema.safeParse({minApplied:"4",maxApplied:"2"}).success).toBe(false);
@@ -146,9 +151,22 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(create()).toContain("Eligibility reach is checked");
  });
  it("TPO-drives-R05 validation explicitly identifies the offending field",()=>{
-  expect(create()).toContain("Please check the highlighted requirements");
+  expect(create()).toContain("apiFetch<Record<string,unknown>>");
   expect(create()).toContain("Minimum CGPA");
   expect(create()).toContain('max={name === "minCgpa" ? 10');
+ });
+ it("TPO-drives-42 future deadline pay and HTTPS preflight happen before creating a company",()=>{
+  const body=create();
+  expect(body).toContain("if(reviewPublish){");
+  expect(body).toContain("Set a future application deadline before publishing.");
+  expect(body).toContain("Add a CTC figure or stipend for at least one role before publishing.");
+  expect(body).toContain("Add a valid HTTPS employer application link before publishing.");
+  expect(body.indexOf("if(reviewPublish){")).toBeLessThan(body.indexOf('if (companyMode === "NEW")'));
+ });
+ it("TPO-drives-43 JSON provider errors and network failures cannot display machine codes during draft creation",()=>{
+  const body=create();
+  expect(body).toContain("apiFetch<Record<string,unknown>>");
+  expect(body).not.toContain('code.toLowerCase().replaceAll("_", " ")');
  });
  it("TPO-drives-R06 empty-state and header both link to Create drive",()=>{
   expect(page()).toContain('href="/tpo/placements/new"');

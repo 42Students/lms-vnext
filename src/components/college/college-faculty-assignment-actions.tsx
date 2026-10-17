@@ -1,7 +1,7 @@
 "use client";
 
 import { FACULTY_ASSIGNMENT_COPY, FACULTY_ASSIGNMENT_ROLE_LABELS } from "@/modules/courses/college-courses-copy";
-import {courseApiError} from "@/components/courses/learner-course-api";
+import {apiFetch} from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -9,9 +9,10 @@ import { useState, type FormEvent } from "react";
 type Option = { id: string; label: string };
 type CourseTeachingRole = "PRIMARY" | "CO_TEACHER" | "TA";
 
-async function mutationError(response: Response) {
-  return courseApiError(response);
-}
+type BulkResult={
+  created?:string[];
+  failed?:Array<{deliveryId:string;reason:string}>;
+};
 
 type DeliveryOption = Option & {
   programId: string; programName: string; cohortId: string; cohortName: string;
@@ -66,20 +67,16 @@ export function CollegeFacultyAssignmentCreate({
     if (!window.confirm(`Assign ${teacher} to ${selected.length} selected course(s)? Existing assignments and duplicate primary lecturers will be refused.`)) return;
     setSaving(true);
     try {
-      const response = await fetch("/api/college/teaching-assignments/bulk", {
-        method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ deliveryIds: selected, membershipId, role }),
+      const data=await apiFetch<BulkResult>("/api/college/teaching-assignments/bulk",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({deliveryIds:selected,membershipId,role}),
       });
-      const data = await response.json().catch(() => null) as {
-        created?: string[]; failed?: Array<{ deliveryId: string; reason: string }>; error?: string;
-      } | null;
-      if (!response.ok) throw new Error(data?.error ?? "Faculty assignment failed");
       const successes = data?.created?.length ?? 0;
       const failures = data?.failed ?? [];
       setMessage(`Assigned ${successes} of ${selected.length} selected course(s).` +
         (failures.length ? " " + failures.map(item => {
           const option = deliveries.find(row => row.id === item.deliveryId);
-          return (option?.courseName ?? item.deliveryId) + ": " + item.reason;
+          return (option?.courseName ?? "Selected course") + ": could not be assigned; review and retry.";
         }).join("; ") : ""));
       setSelected(failures.map(item => item.deliveryId));
       router.refresh();
@@ -189,11 +186,10 @@ export function CollegeFacultyAssignmentEnd({
     setError(null);
     setSaving(true);
     try {
-      const response = await fetch(
+      await apiFetch<void>(
         "/api/courses/teaching-assignments/" + encodeURIComponent(assignmentId),
-        { method: "DELETE" },
+        {method:"DELETE"},
       );
-      if (!response.ok) throw new Error(await mutationError(response));
       setSuccess("Deleted assignment. Teaching history is retained.");setConfirming(false);
       router.refresh();
     } catch (cause) {

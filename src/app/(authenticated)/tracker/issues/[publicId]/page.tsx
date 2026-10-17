@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TrackerIssueCopyActions} from "@/components/tracker/tracker-issue-copy-actions";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
@@ -24,6 +25,10 @@ function when(value: Date) {
   });
 }
 
+export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
+ const {publicId}=await params;
+ return {title:publicId+" · 42 Tracker"};
+}
 export default async function TrackerIssueDetailPage({
   params,
   searchParams,
@@ -98,6 +103,7 @@ export default async function TrackerIssueDetailPage({
           {issue.resolution ? <StatusBadge>{issue.resolution}</StatusBadge> : null}
         </div>
         <p className="m-0 whitespace-pre-wrap text-sm leading-6 text-body">{issue.description}</p>
+        <TrackerIssueCopyActions publicId={issue.publicId} description={issue.description} page={issue.page}/>
         <dl className="grid gap-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
           <div><dt className="font-semibold text-muted-foreground">Reporter</dt><dd className="m-0">{issue.reporterName} · {issue.accountRole}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Location</dt><dd className="m-0">{[issue.page, issue.screen, issue.section].filter(Boolean).join(" · ")}</dd></div>
@@ -108,7 +114,10 @@ export default async function TrackerIssueDetailPage({
         </dl>
         {issue.evidenceLink ? (
           <p className="text-sm">
-            Evidence: <span className="break-all text-body">{issue.evidenceLink}</span>
+            Evidence: {/^(https:\/\/)[^\s]+$/i.test(issue.evidenceLink) ?
+              <a href={issue.evidenceLink} target="_blank" rel="noopener noreferrer"
+                className="break-all font-semibold text-primary-text underline">Open linked evidence ↗</a>:
+              <span className="break-all text-body">{issue.evidenceLink}</span>}
           </p>
         ) : null}
       </section>

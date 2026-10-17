@@ -64,6 +64,10 @@ export default async function SuperAdminCourseProgressPage({
           <div><dt className="text-xs text-muted-foreground">Completed content rows</dt><dd className="text-lg font-semibold tabular-nums">{item.completedRows}</dd></div>
           <div className="col-span-2"><dt className="text-xs text-muted-foreground">Learners with recorded activity</dt><dd className="text-lg font-semibold tabular-nums">{item.learnersWithRecords}</dd></div>
         </dl>
+        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+          className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+          Open offering →
+        </Link>
       </article>)}
     </div> : <EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />}
     <nav aria-label="Course progress pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">

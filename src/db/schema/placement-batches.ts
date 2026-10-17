@@ -54,7 +54,7 @@ export const placementBatchLifecycles = pgTable(
     ),
     check(
       "placement_batch_lifecycles_timeline_ck",
-      sql`${t.finishedAt} is null or (${t.invitedAt} is not null and ${t.finishedAt} >= ${t.invitedAt})`,
+      sql`${t.finishedAt} is null or ${t.invitedAt} is null or ${t.finishedAt} >= ${t.invitedAt}`,
     ),
     check(
       "placement_batch_lifecycles_rules_object_ck",

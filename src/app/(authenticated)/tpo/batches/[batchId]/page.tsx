@@ -11,6 +11,7 @@ import { getTpoBatchEligibilitySummary } from "@/modules/placements/tpo-batch-el
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
 import {getTpoBatchInvitationPreview} from "@/modules/placements/tpo-batch-invitation-service";
 import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-model";
+import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{tab?:string|string[]}>}){
@@ -23,8 +24,8 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
- return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department}/>
- <Link href="/tpo/batches" className="text-sm text-primary-text underline">All batches</Link>
+ return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
+ <Link href="/tpo/batches" className="text-sm text-primary-text underline">← Placement eligibility</Link>
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
  <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-lg border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -38,7 +39,10 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   </div>
   {decision.status==="INELIGIBLE"?<p className="text-sm text-warning">The batch is ineligible: {decision.reason??"No reason recorded"}. Classes or students set to Eligible are still in placements.</p>:null}
  </section>
- <p className="text-sm">Status: {!ready?"Lifecycle unavailable":lifecycle?.finishedAt?"Finished":lifecycle?.invitedAt?"Invited":"Preparing"}</p>
+ <p className="inline-flex rounded-md border border-border px-3 py-1 text-sm font-semibold" role="status">
+  {ready?tpoBatchPlacementState({finishedAt:lifecycle?.finishedAt??null,
+   eligible:summary.complete?summary.eligible:null}):"Status unavailable"}
+ </p>
  {ready && registrations.available ? <TpoBatchInvitationControl
   batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
   finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}

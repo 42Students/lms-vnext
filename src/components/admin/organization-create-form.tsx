@@ -1,18 +1,23 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {useFormDraft} from "@/hooks/use-form-draft";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { Input } from "@/components/ui/input";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organization-step";
 
 export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
   const router = useRouter();
   const {showToast}=useToast();
-  const [name, setName] = useState("");
+  const {draft,setDraft,restored,clearDraft}=useFormDraft("admin-create-organization",{name:""});
+  const name=draft.name;
+  const setName=(value:string)=>setDraft({...draft,name:value});
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -20,34 +25,30 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
 
     const cleanName=name.trim().replace(/\s+/g," ");
     if(!cleanName){setError("Please enter organization name");return;}
-    startTransition(async () => {
-      const response = await fetch("/api/organizations", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ name:cleanName }),
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        setError(payload?.error==="ORGANIZATION_NAME_CONFLICT"?"Organization name already exists":payload?.error ?? "Could not create organization");
-        return;
-      }
-
-      showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
-      if (advanceToCollege) {
-        const payload:unknown=await response.json().catch(()=>null);
-        const href=createdOrganizationStepHref(payload);
-        if (!href) {
-          setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
-          router.refresh();
-          return;
+    void guardedRun(async () => {
+      try {
+        const payload=await apiFetch<unknown>("/api/organizations",{
+          method:"POST",
+          headers:{"content-type":"application/json"},
+          body:JSON.stringify({name:cleanName}),
+        });
+        showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
+        clearDraft();
+        if(advanceToCollege){
+          const href=createdOrganizationStepHref(payload);
+          if(!href){
+            setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
+            router.refresh();return;
+          }
+          router.push(href);router.refresh();return;
         }
-        router.push(href);
-        router.refresh();
-        return;
+        setName("");clearDraft();router.refresh();
+      } catch(cause) {
+        setError(cause instanceof FriendlyFetchError && cause.status===409
+          ? "Organization name already exists"
+          :cause instanceof Error ? cause.message
+          : "Could not create organization. Please try again.");
       }
-      setName("");
-      router.refresh();
     });
   }
 
@@ -75,6 +76,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       <Button type="submit" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : "Create Organization"}
       </Button>
+      {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
           {error}
