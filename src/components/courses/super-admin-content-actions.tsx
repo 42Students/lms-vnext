@@ -67,12 +67,13 @@ export function SuperAdminContentActions({item}:{item:Content}){
       !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(endsAt)){
     setError("Enter a valid date and time.");return;
    }
-   const startTime=new Date(startsAt+":00+05:30"),endTime=new Date(endsAt+":00+05:30");
+   const offset=timeZone==="UTC"?"+00:00":"+05:30";
+   const startTime=new Date(startsAt+":00"+offset),endTime=new Date(endsAt+":00"+offset);
    if(!Number.isFinite(startTime.getTime())||!Number.isFinite(endTime.getTime())){
     setError("Enter a valid date and time.");return;
    }
    if(endTime.getTime()<=startTime.getTime()){setError("End time must be after start time");return;}
-   const start=toInstant(startsAt),end=toInstant(endsAt);
+   const start=toInstant(startsAt,timeZone),end=toInstant(endsAt,timeZone);
    changes={...changes,startsAt:start,endsAt:end};
   }
   if(!window.confirm("Save changes?"))return;
