@@ -85,5 +85,8 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(directory).toContain("query.showDeleted");
   expect(restore).toContain("isSameOriginRequest(request)");
   expect(ui).toContain('title="Restore this company?"');
+  expect(ui).toContain("const busy = pendingId !== null;");
+  expect(ui).toContain('item.companyStatus!=null && item.companyStatus!=="ACTIVE"');
+  expect(service).toContain('.for("update").limit(1)');
  });
 });

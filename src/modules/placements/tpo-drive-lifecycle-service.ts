@@ -21,6 +21,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { PlacementsServiceError } from "./errors";
 import {
   evaluateTpoDriveLifecycle,
+  hasSecureEmployerPortalUrl,
   tpoDriveLifecycleSchema,
   type TpoDriveReadinessFacts,
 } from "./tpo-drive-lifecycle-model";
@@ -112,8 +113,7 @@ async function loadFacts(
     payPresent: job.minimumAnnualCtcInr !== null || job.maximumAnnualCtcInr !== null ||
       job.stipendPerMonthInr !== null ||
       roles.some(role => role.minimum !== null || role.maximum !== null),
-    externalUrlPresent: job.applicationMode === "INTERNAL" ||
-      Boolean(job.externalApplicationUrl?.trim()),
+    externalUrlPresent: hasSecureEmployerPortalUrl(job.applicationMode,job.externalApplicationUrl),
     appliedResultCount: results[0]?.count ?? 0,
     acceptedOfferCount: offers[0]?.count ?? 0,
   };

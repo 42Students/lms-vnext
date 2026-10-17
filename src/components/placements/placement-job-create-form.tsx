@@ -327,6 +327,27 @@ export function PlacementJobCreateForm({
           }
         }
       }
+      // TPO-drives-29/30/38: validate informational metadata before writing the draft.
+      const skillsWanted=splitList(String(data.get("skillsWanted")??""));
+      if(skillsWanted.length>30||skillsWanted.some(skill=>skill.length>50)||
+        new Set(skillsWanted.map(skill=>skill.toLocaleLowerCase("en"))).size!==skillsWanted.length)
+        throw new Error("Enter no more than 30 unique skills, each at most 50 characters.");
+      const studentsRegisterSeparately=data.get("studentsRegisterSeparately")==="on";
+      const portalName=String(data.get("portalName")??"").trim();
+      const portalUrl=String(data.get("portalUrl")??"").trim();
+      if(studentsRegisterSeparately){
+        let valid=false;
+        try{const u=new URL(portalUrl);valid=u.protocol==="https:"&&!u.username&&!u.password;}
+        catch{}
+        if(!portalName||portalName.length>160||!valid)
+          throw new Error("Enter the separate employer portal name and a valid HTTPS link.");
+      }
+      const hostCollege=String(data.get("poolHostCollege")??"").trim();
+      const travelNote=String(data.get("poolTravelNote")??"").trim();
+      if(hostCollege.length>160||travelNote.length>1000)
+        throw new Error("Check the host college and travel instructions.");
+      const reportingRaw=String(data.get("poolReportingTime")??"").trim();
+      const reportingTime=reportingRaw?driveDeadlineIstToIso(reportingRaw):null;
       const importantDates=parseLegacyPairs(String(data.get("importantDates")??""),"date")
        .map(entry=>({label:entry.label,at:driveDeadlineIstToIso(entry.value)}));
       const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
@@ -437,6 +458,10 @@ export function PlacementJobCreateForm({
             data.get("description") ?? "",
           ).trim(),
           legacyPostingDetails:{
+            campusPool:{hostCollege,reportingTime,travelNote},
+            portal:{studentsRegisterSeparately,name:studentsRegisterSeparately?portalName:"",
+              url:studentsRegisterSeparately?portalUrl:""},
+            skillsWanted,
             responsibilities:String(data.get("responsibilities")??"").trim(),
             assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null,
             assessmentDeadline,importantDates,customEligibilityRules,
@@ -1070,6 +1095,36 @@ export function PlacementJobCreateForm({
           <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
         </div>
         <div className="grid gap-4 p-5 sm:grid-cols-2">
+          <fieldset className="sm:col-span-2 grid gap-3 rounded-lg border border-border p-3">
+            <legend className="px-1 text-sm font-semibold">Pool drive logistics (optional, staff-reviewed)</legend>
+            <label className="grid gap-1 text-sm">Host college
+              <input name="poolHostCollege" maxLength={160} className={inputClass} />
+            </label>
+            <label className="grid gap-1 text-sm">Reporting time (IST)
+              <input name="poolReportingTime" type="datetime-local" className={inputClass} />
+            </label>
+            <label className="grid gap-1 text-sm">Travel instructions
+              <textarea name="poolTravelNote" maxLength={1000} rows={2} className={inputClass} />
+            </label>
+            <p className="text-xs text-muted-foreground">Pool logistics are informational and do not create a round, venue booking or student travel authorization.</p>
+          </fieldset>
+          <fieldset className="sm:col-span-2 grid gap-3 rounded-lg border border-border p-3">
+            <legend className="px-1 text-sm font-semibold">Separate employer registration</legend>
+            <label className="flex items-center gap-2 text-sm">
+              <input name="studentsRegisterSeparately" type="checkbox" /> Students also register on the company's portal
+            </label>
+            <label className="grid gap-1 text-sm">Portal name
+              <input name="portalName" maxLength={160} className={inputClass} />
+            </label>
+            <label className="grid gap-1 text-sm">Portal link (HTTPS)
+              <input name="portalUrl" type="url" maxLength={2000} placeholder="https://..." className={inputClass} />
+            </label>
+            <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
+          </fieldset>
+          <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Skills the company wants (up to 30, comma-separated; 50 characters each)
+            <textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
+            <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
+          </label>
           <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Responsibilities
             <textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
           </label>

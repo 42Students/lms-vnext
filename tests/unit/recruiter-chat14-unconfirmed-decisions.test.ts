@@ -25,6 +25,8 @@ describe("chat-14 UNCONFIRMED recruiter owner decisions",()=>{
    screening:"SHORTLISTED",submittedAt:new Date("2099-03-01T00:00:00Z"),email:null}],1);
   expect(result.csv).toContain("'=HYPERLINK(1)");
   expect(result.exported).toBe(1);
+  const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/export/route.ts");
+  expect(route).toContain("const total = first.stageCounts[filters.stage]");
  });
  it("REC-home-drives-09 treats pending invitations as unverified until an OTP-secured join",()=>{
   const join=source("src/modules/placements/public-join/join-service.ts");
