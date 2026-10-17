@@ -289,6 +289,12 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!candidate)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [alreadyBooked]=await tx.select({id:placementRoundCandidateSlots.id})
+    .from(placementRoundCandidateSlots).where(and(
+     eq(placementRoundCandidateSlots.applicationId,input.applicationId),
+     eq(placementRoundCandidateSlots.roundId,info.round.id),
+     eq(placementRoundCandidateSlots.status,"BOOKED"))).limit(1);
+   if(alreadyBooked)throw Error("This learner already has a booked interview in this round. Use Move to reschedule.");
    const [pendingWithdrawal]=await tx.select({id:placementLearnerRequests.id})
     .from(placementLearnerRequests).where(and(
      eq(placementLearnerRequests.applicationId,input.applicationId),
