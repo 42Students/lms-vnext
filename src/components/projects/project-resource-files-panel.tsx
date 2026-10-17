@@ -199,6 +199,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
               {file.description&&<p className="mt-1 text-sm text-body">{file.description}</p>}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Last updated: <time dateTime={file.completedAt??file.createdAt}>
+                  {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
+                    .format(new Date(file.completedAt??file.createdAt))} IST
+                </time>
+              </p>
               <p role="status" className="mt-1 text-xs text-body" title={descriptor.detail}>
                 {descriptor.label}
               </p>
