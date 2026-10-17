@@ -59,7 +59,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
     })} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
      Generate day</button>
-    <button type="button" disabled={busy||!free.length} onClick={()=>void action({action:"CLEAR_AVAILABLE"})}
+    <button type="button" disabled={busy||!free.length} onClick={()=>{if(window.confirm("Remove "+free.length+" unbooked interview slots? Existing bookings stay unchanged."))void action({action:"CLEAR_AVAILABLE"});}}
      className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">
      Clear {free.length} unbooked slot(s)</button>
    </div>
