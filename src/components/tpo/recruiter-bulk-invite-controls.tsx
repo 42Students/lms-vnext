@@ -10,7 +10,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [notice,setNotice]=useState("");
  const [reviewSnapshot,setReviewSnapshot]=useState<string|null>(null);
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
- const eligibleSnapshot=eligible.map(row=>row.id).sort().join("|");
+ const eligibleSnapshot=eligible.map(row=>[row.id,row.emailNorm??"",row.manualStage,row.inviteSentAt??""].join(":")).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
   if(!retryOnly&&reviewSnapshot!==eligibleSnapshot){
