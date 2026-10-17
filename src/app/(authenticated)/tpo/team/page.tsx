@@ -1,6 +1,7 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import Link from "next/link";
+import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -29,6 +30,7 @@ export default async function TpoTeamPage({searchParams}:{
  const search=parsed.success?(parsed.data.q??""):"";
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search):null;
  return <div className="space-y-6">
+  <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
    description="People are taken from active college memberships and recorded coordinator assignments, not employer conversations." />
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
