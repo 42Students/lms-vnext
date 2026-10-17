@@ -97,6 +97,7 @@ export function RecruiterResultControls({
   const [selected,setSelected]=useState<Record<string,string[]>>({});
   const [bulkPending,setBulkPending]=useState<string|null>(null);
   const bulkSubmissionLock=useRef(false);
+  const singleSubmissionLock=useRef(false);
   const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
   const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
   function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
@@ -159,7 +160,7 @@ export function RecruiterResultControls({
     roundId: string,
     applicationId: string,
   ) {
-    if(bulkSubmissionLock.current||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||singleSubmissionLock.current||pendingKey!==null)return;
     const key =
       roundId + ":" + applicationId;
     const draft = drafts[key];
@@ -180,8 +181,10 @@ export function RecruiterResultControls({
 
     if (
       draft.outcome === "HOLD" &&
-      (!draft.waitlistRank ||
-        Number(draft.waitlistRank) <= 0)
+      (!draft.waitlistRank.trim() ||
+        !Number.isInteger(Number(draft.waitlistRank)) ||
+        Number(draft.waitlistRank) <= 0 ||
+        Number(draft.waitlistRank) > 100000)
     ) {
       showToast({
         tone: "error",
@@ -192,6 +195,21 @@ export function RecruiterResultControls({
       return;
     }
 
+    if (draft.candidateMessage.trim().length > 1000) {
+      showToast({tone:"error",title:"Candidate message too long",description:"Keep the candidate message under 1001 characters."});
+      return;
+    }
+    const score = draft.scorePercent.trim();
+    if (score && (!Number.isInteger(Number(score)) || Number(score) < 0 || Number(score) > 100)) {
+      showToast({
+        tone: "error",
+        title: "Invalid score",
+        description: "Every selected score must be between 0 and 100.",
+      });
+      return;
+    }
+
+    singleSubmissionLock.current=true;
     setPendingKey(key);
     try {
       const response = await fetch(
@@ -257,23 +275,28 @@ export function RecruiterResultControls({
             : "Please try again.",
       });
     } finally {
+      singleSubmissionLock.current=false;
       setPendingKey(null);
     }
   }
 
 
   async function stageSelected(round:RecruiterRound){
-    if(bulkSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||singleSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
     const chosen=new Set(selected[round.id]??[]);
     const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
     if(!participants.length){showToast({tone:"error",title:"No candidates selected",description:"Select candidates who do not have applied results."});return;}
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId];
       if(!draft||draft.outcome!=="PASS"&&!draft.candidateMessage.trim()||
-        draft?.outcome==="HOLD"&&(!draft.waitlistRank||!Number.isInteger(Number(draft.waitlistRank))||Number(draft.waitlistRank)<=0||Number(draft.waitlistRank)>10000)){
+        draft?.outcome==="HOLD"&&(!draft.waitlistRank||!Number.isInteger(Number(draft.waitlistRank))||Number(draft.waitlistRank)<=0||Number(draft.waitlistRank)>100000)){
         showToast({tone:"error",title:"Complete candidate outcomes",description:"Every selected row needs a valid outcome, waitlist rank when held, and a message for non-pass results."});
         return;
       }
+    }
+    if(participants.some(p=>(drafts[round.id+":"+p.applicationId]?.candidateMessage.trim().length??0)>1000)){
+      showToast({tone:"error",title:"Candidate message too long",description:"Keep the candidate message under 1001 characters."});
+      return;
     }
     const ranks=participants.flatMap(p=>{
       const d=drafts[round.id+":"+p.applicationId];
@@ -292,7 +315,7 @@ export function RecruiterResultControls({
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       const raw=draft.scorePercent.trim();
-      if(raw && (!Number.isFinite(Number(raw))||Number(raw)<0||Number(raw)>100)){
+      if(raw && (!Number.isInteger(Number(raw))||Number(raw)<0||Number(raw)>100)){
         showToast({tone:"error",title:"Invalid score",description:"Every selected score must be between 0 and 100."});
         return;
       }
@@ -335,7 +358,7 @@ export function RecruiterResultControls({
   return (
     <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
       onKeyDown={event=>{
-        if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey)return;
+        if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey||pendingKey!==null||bulkPending!==null)return;
         const target=event.target as HTMLElement;
         if(target.closest("input,textarea,select,button,[contenteditable=true]"))return;
         const key=event.key.toLowerCase();
@@ -393,11 +416,11 @@ export function RecruiterResultControls({
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
                   ] as const).map(([outcome,label])=><button key={outcome} type="button"
                     onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,outcome);}}
-                    disabled={bulkPending!==null||!(selected[round.id]??[]).length}
+                    disabled={bulkPending!==null||pendingKey!==null||!(selected[round.id]??[]).length}
                     className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     {label}
                   </button>)}
-                  <button type="button" disabled={bulkPending!==null||undoHistory.length===0}
+                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||undoHistory.length===0}
                     onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     Undo draft
                   </button>
@@ -407,7 +430,7 @@ export function RecruiterResultControls({
                     {bulkPending===round.id?"Sending results…":
                       "Send "+(selected[round.id]??[]).length+" results"}
                   </button>
-                  <button type="button" disabled={bulkPending!==null}
+                  <button type="button" disabled={bulkPending!==null||pendingKey!==null}
                     className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
@@ -589,6 +612,7 @@ export function RecruiterResultControls({
                                   type="number"
                                   min="0"
                                   max="100"
+                                  step="1"
                                   value={
                                     draft.scorePercent
                                   }
@@ -626,6 +650,8 @@ export function RecruiterResultControls({
                                     }
                                     type="number"
                                     min="1"
+                                    max="100000"
+                                    step="1"
                                     value={
                                       draft.waitlistRank
                                     }
@@ -728,7 +754,8 @@ export function RecruiterResultControls({
                                       }),
                                     )
                                   }
-                                  placeholder="Required for fail, hold or absent outcomes."
+                                  maxLength={1000}
+                                   placeholder="Required for fail, hold or absent outcomes."
                                 />
                               </label>
 
@@ -737,7 +764,7 @@ export function RecruiterResultControls({
                                   size="sm"
                                   disabled={
                                     pendingKey !==
-                                    null
+                                    null || bulkPending !== null
                                   }
                                   onClick={() =>
                                     stage(
