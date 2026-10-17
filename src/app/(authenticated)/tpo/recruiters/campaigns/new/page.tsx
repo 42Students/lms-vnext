@@ -19,6 +19,11 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
    validIds.length!==candidateIds.length||selectedLeadIds.length===0));
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ if(unsafeSelection)return <main className="space-y-4">
+  <PageHeader eyebrow="Engage · Campaigns" title="Review recipients"/>
+  <p role="alert">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</p>
+  <Link href="/tpo/recruiters" className="text-primary-text underline">Return to Engage</Link>
+ </main>;
  const ready=await tpoCampaignDraftStorageReady();
  const deliveryReady=ready&&await tpoCampaignDispatchReady();
  return <main className="space-y-5">
