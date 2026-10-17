@@ -60,6 +60,10 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       accepted: sql<number>`count(*) filter (where ${placementOffers.status}='ACCEPTED')::integer`,
       declined: sql<number>`count(*) filter (where ${placementOffers.status}='DECLINED')::integer`,
       withdrawn: sql<number>`count(*) filter (where ${placementOffers.status}='WITHDRAWN')::integer`,
+      selected: sql<number>`count(*) filter (where ${placementOffers.status}='SELECTED')::integer`,
+      verification: sql<number>`count(*) filter (where ${placementOffers.status}='PENDING_VERIFICATION')::integer`,
+      expired: sql<number>`count(*) filter (where ${placementOffers.status}='EXPIRED')::integer`,
+      revoked: sql<number>`count(*) filter (where ${placementOffers.status}='REVOKED')::integer`,
       joined: sql<number>`count(*) filter (where ${placementOffers.status}='ACCEPTED'
         and ${placementJoiningOutcomes.status}='JOINED')::integer`,
       awaitingReply: sql<number>`count(*) filter (where ${placementOffers.status}='ISSUED'
@@ -121,6 +125,10 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       filters.offerState === "ACCEPTED" ? Number(offerCounts[0]?.accepted ?? 0) :
       filters.offerState === "DECLINED" ? Number(offerCounts[0]?.declined ?? 0) :
       filters.offerState === "WITHDRAWN" ? Number(offerCounts[0]?.withdrawn ?? 0) :
+      filters.offerState === "SELECTED" ? Number(offerCounts[0]?.selected ?? 0) :
+      filters.offerState === "PENDING_VERIFICATION" ? Number(offerCounts[0]?.verification ?? 0) :
+      filters.offerState === "EXPIRED" ? Number(offerCounts[0]?.expired ?? 0) :
+      filters.offerState === "REVOKED" ? Number(offerCounts[0]?.revoked ?? 0) :
       Number(offerCounts[0]?.total ?? 0)),
     offersTotal: Number(offerCounts[0]?.total ?? 0),
   };
