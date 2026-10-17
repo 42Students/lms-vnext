@@ -93,6 +93,8 @@ export function RecruiterResultControls({
   const { showToast } = useToast();
   const [pendingKey, setPendingKey] =
     useState<string | null>(null);
+  const [selected,setSelected]=useState<Record<string,string[]>>({});
+  const [bulkPending,setBulkPending]=useState<string|null>(null);
 
   const initial = useMemo(() => {
     const entries: Array<
@@ -278,6 +280,16 @@ export function RecruiterResultControls({
                     )}
                   </StatusBadge>
                 </div>
+                {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
+                  <span>{(selected[round.id]??[]).length} selected for results</span>
+                  <button type="button" disabled={bulkPending!==null}
+                    className="rounded-md border border-border px-3 py-2 text-primary-text disabled:opacity-50"
+                    onClick={()=>setSelected(old=>({...old,[round.id]:
+                      old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
+                        []:round.participants.filter(p=>p.result?.status!=="APPLIED").map(p=>p.applicationId)}))}>
+                    {(selected[round.id]??[]).length?"Clear selection":"Select all eligible"}
+                  </button>
+                </div>:null}
                 <p className="mt-1 text-sm text-body">
                   {humanize(round.kind)} ·{" "}
                   {formatWhen(
@@ -343,6 +355,16 @@ export function RecruiterResultControls({
                           className="grid gap-4 px-5 py-4 xl:grid-cols-[minmax(12rem,1fr)_minmax(0,2fr)]"
                         >
                           <div>
+                            {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
+                              <input type="checkbox" checked={(selected[round.id]??[]).includes(participant.applicationId)}
+                                onChange={event=>setSelected(old=>{
+                                  const current=old[round.id]??[];
+                                  return {...old,[round.id]:event.target.checked?
+                                    [...new Set([...current,participant.applicationId])]:
+                                    current.filter(id=>id!==participant.applicationId)};
+                                })}/>
+                              Select for bulk results
+                            </label>:null}
                             <p className="m-0 font-semibold text-foreground">
                               {participant.displayName ??
                                 "Candidate"}
