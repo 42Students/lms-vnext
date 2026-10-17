@@ -21,7 +21,8 @@ export async function listCollegeCompanyDirectory(
   const search=query.q?literalCompanySearch(query.q):null;
   const where=and(
     eq(placementCompanyRelationships.collegeId,collegeId),
-    eq(placementCompanyRelationships.status,status),
+    status==="ARCHIVED"?eq(placementCompanyRelationships.status,"ARCHIVED"):
+      showDeleted?undefined:eq(placementCompanyRelationships.status,"ACTIVE"),
     !showDeleted&&status==="ACTIVE"?isNull(placementCompanyRelationships.archivedAt):undefined,
     !showDeleted?eq(placementCompanies.status,"ACTIVE"):undefined,
     search?or(ilike(placementCompanies.name,search),
