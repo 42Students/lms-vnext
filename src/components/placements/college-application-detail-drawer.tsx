@@ -146,7 +146,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           {check.criterion}: {check.status} · {check.detail}
          </li>)}</ul>:<p>No individual policy checks were recorded.</p>}
         <p className="text-xs text-muted-foreground">Reviewed {when(rescreenResult.reviewedAt)}</p>
-       </div>:null>
+       </div>:null}
       </section>
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Assessment Link</h3>
