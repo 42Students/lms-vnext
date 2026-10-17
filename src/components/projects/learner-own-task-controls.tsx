@@ -88,6 +88,12 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    <label className="text-sm font-semibold">Due date
     <input type="date" value={due} onChange={e=>setDue(e.target.value)}
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+   <label className="text-sm font-semibold sm:col-span-2">What's blocking this task?
+    <textarea maxLength={4000} value={blockerReason} onChange={e=>setBlockerReason(e.target.value)}
+      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+   {status==="BLOCKED"&&!blockerReason.trim()?
+     <p role="alert" className="text-sm text-error sm:col-span-2">
+       Explain what's blocking this task before saving.</p>:null}
    {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
    <div className="flex flex-wrap gap-2 sm:col-span-2">
     <button type="submit" disabled={busy||!title.trim()}
