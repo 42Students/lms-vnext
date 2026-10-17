@@ -103,7 +103,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 |---|---|---|---|
 | SA-academics-people-58 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-59 | S1 | PERMISSION | FIXED-ON-MAIN |
-| SA-academics-people-49 | S2 | MISSING-FIELD | UNCONFIRMED |
+| SA-academics-people-49 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-50 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-52 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-53 | S2 | PERMISSION | OPEN |
@@ -184,7 +184,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-110 | S3 | COPY | DONE |
 | SA-placements-projects-112 | S3 | COPY | DONE |
 | SA-placements-projects-114 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-115 | S3 | MISSING-ACTION | UNCONFIRMED |
+| SA-placements-projects-115 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-117 | S3 | MISSING-EXPORT | OPEN |
 | SA-placements-projects-121 | S3 | MISSING-ACTION | DONE |
@@ -239,6 +239,10 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 | COL-dashboard-15 | S3 | STATE | DONE |
 | COL-dashboard-16 | S4 | A11Y | DONE |
 | COL-dashboard-17 | S4 | RESPONSIVE | DONE |
+
+## Chat-6 unconfirmed decisions (18, resolved as choices; not all functionally complete)
+
+See `docs/audit/acceptance/chat-6-unconfirmed-decisions.md` and `tests/unit/chat6-unconfirmed-decisions-round13.test.ts`. Decisions: SA-academics-people-R04, -49, -75, -111; SA-placements-projects-14, -37, -39, -58, -68, -72, -77, -115; SA-tenants-modules-30, -31, -38, -54, -60, -68. OPEN decisions deliberately stay OPEN if behavior is missing; DONE indicates verified existing source. In particular, SA-academics-people-49 still lacks independent min-progress computation, SA-placements-projects-115 still lacks server-side issue creation/log detail, and SA-placements-projects-72 still lacks durable Lock.
 
 ## Notes (blockers, one line each)
 
