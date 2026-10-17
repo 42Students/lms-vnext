@@ -4,9 +4,9 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {
  colleges,collegeMemberships,organizations,placementApplications,placementApplicationScreenings,
- placementCompanies,placementCompanyRelationships,placementJobs,users,
+ placementCompanies,placementCompanyRelationships,placementJobs,users,learnerProfiles,
 } from "@/db/schema";
-import {projectRecruiterVisibleShortlist} from "../tpo-shareable-shortlist-model";
+import {projectCompanyShareRows} from "./column-model";
 import {companyShareTablesReady} from "./readiness";
 import {placementTableExists} from "../staged-tables";
 import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
@@ -19,7 +19,7 @@ export type PublicCompanyApplicantShare =
  | {kind:"UNAVAILABLE"}
  | {kind:"CODE_REQUIRED"}
  | {kind:"READY";title:string;companyName:string;collegeName:string;
-    sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectRecruiterVisibleShortlist>;
+    sharedAt:string;expiresAt:string;rows:ReturnType<typeof projectCompanyShareRows>;
     total:number;page:number;totalPages:number;truncated:boolean;search:string;
     selectedColumns:string[];shortlistBy:string|null};
 
@@ -82,12 +82,21 @@ export async function getPublicCompanyApplicantShare(
   );
   const source=()=>tx.select({
    applicationId:placementApplications.id,displayName:users.displayName,email:users.email,
+   phone:users.phoneE164,rollNumber:learnerProfiles.rollNumber,
+   profileDocument:learnerProfiles.profileDocument,
+   stage:placementApplicationScreenings.status,
+   branch:sql<string|null>`(SELECT p.name FROM learner_program_enrollments lpe
+      JOIN programs p ON p.id=lpe.program_id
+      WHERE lpe.membership_id=${collegeMemberships.id} AND lpe.status='ACTIVE'
+      ORDER BY p.name,p.id LIMIT 1)`,
   }).from(placementApplications)
    .innerJoin(placementApplicationScreenings,
      eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,
      eq(collegeMemberships.id,placementApplications.membershipId))
-   .innerJoin(users,eq(users.id,collegeMemberships.userId)).where(filter);
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+   .where(filter);
   const [counter]=await tx.select({total:count()}).from(placementApplications)
    .innerJoin(placementApplicationScreenings,
      eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -106,7 +115,7 @@ export async function getPublicCompanyApplicantShare(
    kind:"READY" as const,title:grant.title,companyName:grant.companyName,
    collegeName:grant.collegeName,sharedAt:grant.sharedAt.toISOString(),
    expiresAt:grant.expiresAt.toISOString(),
-   rows:projectRecruiterVisibleShortlist(records),
+   rows:projectCompanyShareRows(records,grant.selectedColumns),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
    selectedColumns:grant.selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
