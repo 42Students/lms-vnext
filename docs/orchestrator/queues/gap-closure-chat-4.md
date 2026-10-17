@@ -144,7 +144,7 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
 | LEARNER-course-detail-R04 | S3 | PERFORMANCE | DONE |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
-| LEARNER-home-courses-03 | S3 | STATE / COPY | OPEN |
+| LEARNER-home-courses-03 | S3 | STATE / COPY | DONE |
 | LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
