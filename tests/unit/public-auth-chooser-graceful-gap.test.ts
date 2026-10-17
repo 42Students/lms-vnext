@@ -46,6 +46,6 @@ describe("public account chooser and failure handling",()=>{
   const list=source("src/components/projects/project-participant-list-controls.tsx");
   expect(list).toContain('params.set("search"');
   expect(list).toContain('params.set("status"');
-  expect(list).toContain('params.set("attention"');
+  expect(list).toMatch(/params\\.set\\(\\s*"attention"/);
  });
 });
