@@ -72,6 +72,10 @@ export async function bulkChangeTpoLeadStages(
         ))
         .returning({ id: placementTpoLeads.id });
       if (!updated) throw new Error("TPO_CRM_BULK_STAGE_CONFLICT");
+      if (!current) throw new Error("TPO_CRM_BULK_STAGE_MISSING_ORIGINAL");
+      changed.push({leadId:selected.id,beforeStage:current.manualStage,afterStage:input.action,
+       beforeReason:current.notNowReason,afterReason:input.action==="NOT_NOW"?input.reason:null,
+       beforeUntil:current.notNowUntil,afterUntil:input.action==="NOT_NOW"?input.revisitDate:null});
       await tx.insert(placementTpoLeadActivities).values({
         collegeId: college.id,
         leadId: updated.id,
