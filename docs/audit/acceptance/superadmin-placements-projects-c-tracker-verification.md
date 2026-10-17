@@ -43,3 +43,7 @@
 | SA-placements-projects-114 | PARTIAL | Log record detail offers Copy permalink, Copy for Claude and Report this. Known Errors cards expose mute/unmute, but not all actions are bound to a selected log signature; `chat16-mentor-tracker-contract-round2.test.ts` — SA-placements-projects-114. |
 | SA-placements-projects-116 | PARTIAL (delivery credentials pending) | Daily digest preview, Send to Telegram now and Send test alert use origin-guarded rate-limited route; `tracker-telegram-manual-panel.tsx` and round2 test — SA-placements-projects-116. Provider validation requires configured bot/chat in deployment. |
 | SA-placements-projects-117 | DONE (provider-gated UI) | Redacted, bounded CSV and Claude markdown reports, paging and download notices in `tracker-live-logs-explorer.tsx`; round2 test — SA-placements-projects-117. Real provider access remains the SA-113 infrastructure dependency. |
+
+### Chat-16 SA-placements-projects-114 linked live log triage (authored, provider unverified)
+
+| SA-placements-projects-114 | DONE (source; integration pending) | `tracker-cloud-logs.ts` matches redacted live errors against persisted Known Error signatures by canonical hash and environment only when DB10 Log Alerts is verified; `tracker-live-logs-explorer.tsx` opens matched detail or prompts before muting/unmuting via authorized origin-checked PATCH; `known-errors-workspace.tsx` adds permalink targets. `tests/unit/chat16-tracker-known-error-link-round4.test.ts` — SA-placements-projects-114. No raw samples or account identities returned by this mapping. |

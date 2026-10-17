@@ -117,6 +117,7 @@ export function RecruiterLeadDetailWorkspace({
   const [error, setError] = useState("");
   const [actionError, setActionError] = useState("");
   const [actionToast,setActionToast]=useState("");
+  const [duplicateLead,setDuplicateLead]=useState<{id:string;name:string}|null>(null);
   const [saving, setSaving] = useState(false);
   const [editing, setEditing] = useState(false);
   const [edit, setEdit] = useState<EditValues>({
@@ -200,6 +201,7 @@ export function RecruiterLeadDetailWorkspace({
     setSaving(true);
     setActionError("");
     setActionToast("");
+    setDuplicateLead(null);
     try {
       await readResponse(await fetch(url, {
         method, credentials: "same-origin",
@@ -211,6 +213,22 @@ export function RecruiterLeadDetailWorkspace({
       return true;
     } catch (cause) {
       setActionError(cause instanceof Error ? cause.message : "Save failed.");
+      if(url===base&&method==="PATCH"&&cause instanceof Error&&
+       cause.message.startsWith("Another recruiter already")){
+       for(const contact of [edit.email.trim(),edit.phone.trim()].filter(Boolean)){
+        try{
+         const response=await fetch("/api/placements/tpo/leads/check?collegeId="+
+          encodeURIComponent(collegeId)+"&contact="+encodeURIComponent(contact),{
+           credentials:"same-origin",cache:"no-store",
+         });
+         if(!response.ok)continue;
+         const value=await response.json() as {lead?:{id:string;name:string}};
+         if(value.lead?.id&&value.lead.id!==leadId){
+          setDuplicateLead(value.lead);break;
+         }
+        }catch{/* A lookup failure must not hide the original conflict. */}
+       }
+      }
       return false;
     } finally {
       setSaving(false);
@@ -227,7 +245,7 @@ export function RecruiterLeadDetailWorkspace({
       companyName: lead.companyName ?? "",
       source: SOURCES.some(([code]) => code === lead.source) ? lead.source ?? "" : "",
     });
-    setActionError("");
+    setActionError("");setDuplicateLead(null);
     setEditing(true);
   }
 
@@ -646,6 +664,10 @@ export function RecruiterLeadDetailWorkspace({
                   </select>
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
+                {duplicateLead?<p role="status" className="text-sm">
+                 Contact already exists: <Link href={"/tpo/recruiters/"+encodeURIComponent(duplicateLead.id)}
+                  className="font-semibold text-primary-text underline">Open {duplicateLead.name}</Link>
+                </p>:null}
                 <div className="flex justify-end gap-2">
                   <button className={button} type="button" disabled={saving} onClick={() => setEditing(false)}>Cancel</button>
                   <button className={primary} type="submit" disabled={saving}>Save</button>

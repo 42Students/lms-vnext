@@ -17,6 +17,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
+import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 import { isDebarmentActive } from "./batch-registration-policy";
 import {notifyEligiblePublishedDrive} from "./tpo-drive-publish-effects";
 import {
@@ -308,12 +309,13 @@ export async function updatePlacementJob(
     );
   }
 
-  const legacyAssessmentDeadline=input.legacyPostingDetails?.assessmentDeadline;
-  if(legacyAssessmentDeadline){
-    const applicationDeadline=input.applicationDeadline??current.applicationDeadline;
-    if(!applicationDeadline||Date.parse(legacyAssessmentDeadline)<applicationDeadline.getTime())
-      throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
-  }
+  const legacyAssessmentDeadline=input.legacyPostingDetails===undefined
+    ?current.legacyPostingDetails?.assessmentDeadline
+    :input.legacyPostingDetails?.assessmentDeadline;
+  const nextApplicationDeadline=input.applicationDeadline===undefined
+    ?current.applicationDeadline:input.applicationDeadline;
+  if(!isLegacyAssessmentDeadlineAfterApplication(legacyAssessmentDeadline,nextApplicationDeadline))
+    throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   const db = getDb();
   return db.transaction(async (tx) => {
     const nextTitle =

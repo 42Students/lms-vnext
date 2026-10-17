@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-49 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-50 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
 | TPO-inbox-team-51 | S3 | MISSING-FIELD | OPEN |
-| TPO-inbox-team-52 | S3 | STATE | OPEN |
+| TPO-inbox-team-52 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-53 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-inbox-team-56 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-57 | S3 | PERMISSION | IN-BRANCH |
@@ -155,7 +155,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-37 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-recruiters-38 | S3 | VALIDATION | IN-BRANCH |
 | TPO-recruiters-39 | S3 | COPY | IN-BRANCH |
-| TPO-recruiters-40 | S3 | COPY | OPEN |
+| TPO-recruiters-40 | S3 | COPY | IN-BRANCH |
 | TPO-recruiters-41 | S3 | MISSING-ACTION | IN-BRANCH |
 | TPO-recruiters-R05 | S3 | SIDE-EFFECT | OPEN |
 | TPO-recruiters-42 | S4 | STATE | IN-BRANCH |
@@ -197,7 +197,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-14 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-companies-23 | S4 | COPY | IN-BRANCH |
 | TPO-companies-28 | S4 | PERMISSION | FIXED-ON-MAIN |
-| TPO-companies-29 | S4 | RESPONSIVE | OPEN |
+| TPO-companies-29 | S4 | RESPONSIVE | IN-BRANCH |
 
 ## tpo/campaigns-public (29: FIXED-ON-MAIN 9, OPEN 17, UNCONFIRMED 3)
 
@@ -221,18 +221,18 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-R08 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-campaigns-public-08 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-campaigns-public-09 | S3 | STATE | IN-BRANCH |
-| TPO-campaigns-public-10 | S3 | COPY | OPEN |
+| TPO-campaigns-public-10 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-24 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-25 | S3 | STATE | UNCONFIRMED |
 | TPO-campaigns-public-27 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-campaigns-public-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-campaigns-public-30 | S3 | COPY | IN-BRANCH |
-| TPO-campaigns-public-36 | S3 | COPY | OPEN |
+| TPO-campaigns-public-36 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-37 | S3 | STATE | OPEN |
 | TPO-campaigns-public-R04 | S3 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-R09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-11 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-campaigns-public-12 | S4 | MISSING-FIELD | OPEN |
+| TPO-campaigns-public-12 | S4 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-R10 | S4 | PERFORMANCE | IN-BRANCH |
 
 ## Notes (blockers, one line each)
@@ -280,3 +280,9 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Remaining hard gaps include multiperson/object threads, mentions, announcement recipient delivery/receipts, college team handover, bell event producers, and company experience consolidation. Nothing marked DONE is claimed runtime-certified; CI and PostgreSQL were not run.
 
 - Source evidence already on main and re-verified this round, now marked IN-BRANCH (not runtime-certified): TPO-recruiters-R01 (`tests/unit/chat2-engage-company-communication.test.ts`), TPO-campaigns-public-22 (`tests/unit/chat2-business-email-safety.test.ts`), -33/34 (`tests/unit/chat2-public-content-metrics.test.ts`, proposed migration not registered), -R04 (`tests/unit/chat2-public-join-known-company.test.ts`), -R10 (`tests/unit/chat2-engage-sql-audience-preview.test.ts`). Remain subject to orchestrator CI, migration registration, and deployment verification.
+
+
+## Chat-2 large continuation — campaign history, company phone layouts, exact copy
+- Checked latest main and fast-forwarded lane branch before edits. The branch's GitHub commits persist directly on `chatgpt/chat-2-b`; no writes to main.
+- TPO-campaigns-public-04 remains OPEN for full campaign/non-campaign provider history. Campaign dispatch now creates an opaque delivery batch and records actual receipt outcomes. TPO-companies-21 remains OPEN for independent count-retry behavior.
+- IN-BRANCH source closure this round: TPO-inbox-team-52, TPO-recruiters-40, TPO-companies-29, TPO-campaigns-public-10/12/36. Tests and paths in acceptance files; unit/integration and typecheck have NOT been run by builder.

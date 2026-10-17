@@ -1,9 +1,9 @@
 import "server-only";
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
-  learnerProfiles,placementCompanyRelationships } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
@@ -30,6 +30,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1):[];
   const shareRoll=Boolean(share?.columns?.includes("roll"));
   const shareEmail=Boolean(share?.columns?.includes("email"));
+  const shareUg=Boolean(share?.columns?.includes("cgpa"));
+  const shareTenth=Boolean(share?.columns?.includes("tenth"));
+  const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
   const stageCondition=filters.stage === "ALL"
     ? where
     : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
@@ -47,7 +50,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(where),
     db.select({
-      id: placementApplications.id, name: users.displayName, email: users.email,
+      id: placementApplications.id, membershipId:placementApplications.membershipId,
+      name: users.displayName, email: users.email,
       rollNumber: learnerProfiles.rollNumber,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
@@ -109,10 +113,44 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     shortlisted: Number(totals?.active ?? 0),
     withdrawn: Number(totals?.withdrawn ?? 0),
   };
-  const projected = projectSharedApplicants(applications.map(row=>({...row,
-    rollNumber:shareRoll?row.rollNumber:null,
-    email:shareEmail?row.email:null,
-  })), filters.stage);
+  // REC-home-drives-38: read only already-verified academic marks for
+  // this authorized 25-row page. Raw learner JSON is never sent to employers.
+  type AcademicLevel="UG"|"10TH"|"12TH"|"DIPLOMA";
+  const memberIds=[...new Set(applications.map(row=>row.membershipId))];
+  const grades=(memberIds.length&&(shareUg||shareTenth||shareTwelfth))
+   ?await db.select({
+     membershipId:profileVerificationAcademicMarks.learnerMembershipId,
+     level:profileVerificationAcademicMarks.level,
+     percentage:profileVerificationAcademicMarks.percentageBasisPoints,
+    }).from(profileVerificationAcademicMarks)
+     .innerJoin(profileVerifications,and(
+      eq(profileVerifications.id,profileVerificationAcademicMarks.verificationId),
+      eq(profileVerifications.section,"EDUCATION"),
+      inArray(profileVerifications.status,["VERIFIED","UPDATE_PENDING"])))
+     .where(and(inArray(profileVerificationAcademicMarks.learnerMembershipId,memberIds),
+      inArray(profileVerificationAcademicMarks.level,["UG","10TH","12TH","DIPLOMA"])))
+   :[];
+  const byMember=new Map<string,Partial<Record<AcademicLevel,number>>>();
+  for(const mark of grades){
+   if(mark.percentage===null)continue;
+   if(mark.level!=="UG"&&mark.level!=="10TH"&&mark.level!=="12TH"&&mark.level!=="DIPLOMA")continue;
+   const row=byMember.get(mark.membershipId)??{};
+   row[mark.level]=mark.percentage;
+   byMember.set(mark.membershipId,row);
+  }
+  const percentage=(points:number|undefined)=>
+   points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
+  const projected = projectSharedApplicants(applications.map(({membershipId,...row})=>{
+    const marks=byMember.get(membershipId);
+    return {...row,
+      rollNumber:shareRoll?row.rollNumber:null,
+      email:shareEmail?row.email:null,
+      ugPercentage:shareUg?percentage(marks?.UG):null,
+      tenthPercentage:shareTenth?percentage(marks?.["10TH"]):null,
+      twelfthOrDiplomaPercentage:shareTwelfth?
+        percentage(marks?.["12TH"]??marks?.DIPLOMA):null,
+    };
+  }), filters.stage);
   const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
     : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
   return {

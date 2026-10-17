@@ -91,4 +91,3 @@ export * from "./placement-company-share-selection";
 export * from "./lesson-content-materials";
 
 export * from "./placement-public-page-content";
-export * from "./placement-recruiter-candidate-ratings";

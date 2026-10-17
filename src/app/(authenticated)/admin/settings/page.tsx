@@ -30,8 +30,10 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     await getSuperAdminPlatformSettings(context);
   const sections=filterPlatformInventory(allSections,parsed);
   const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
-  const editorData=editorScope==="GLOBAL"&&!context.adminScope?.organizationId
-   ?await listAdminTenantSettings(context,"GLOBAL"):null;
+  const editorData=editorScope==="COLLEGE"&&context.adminScope?.collegeId
+   ?await listAdminTenantSettings(context,"COLLEGE",context.adminScope.collegeId)
+   :editorScope==="GLOBAL"&&!context.adminScope?.organizationId
+    ?await listAdminTenantSettings(context,"GLOBAL"):null;
   const attendancePolicy=context.adminScope?.collegeId
     ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
 
@@ -60,11 +62,11 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         </p>
       </section>
 
-      {editorData?<TenantSettingsEditor scopeType={editorScope}
+      {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
        <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
-        The two college-scoped attendance values are edited below. Clear the Super Admin safety scope to access global setting overrides.
+        Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings.
        </p>)}
       {attendancePolicy?<SuperAdminAttendanceSettingsEditor
         collegeId={attendancePolicy.college.id}

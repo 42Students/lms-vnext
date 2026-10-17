@@ -30,3 +30,8 @@
 
 Builder did not run tests, lint, typecheck, or PostgreSQL integration.
 | TPO-companies-29 | PARTIAL — OPEN | `src/app/(authenticated)/tpo/companies/page.tsx` now shows mobile company cards with actual contact/drive/offer/confirmed-join counts and Create drive, while preserving the detailed desktop table; named `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-29 offers a non-scrolling mobile directory…**. Canonical company hiring-history table and other views still need mobile layout acceptance. |
+
+## Chat-2 continuation — mobile company history and errors
+
+| TPO-companies-29 | DONE (source; tests not run) | `src/app/(authenticated)/tpo/companies/page.tsx` and `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` display phone-friendly list and hiring/drive cards while preserving detailed tables at md breakpoint; `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-29 offers a non-scrolling mobile directory…**. Name-based memory page uses an unfixed width table. |
+| TPO-companies-21 | PARTIAL — OPEN | Name-based Company Memory now has a Retry button on migration/unavailable failures and a truthful counts-as-placed unavailable explanation instead of internal W04 wording; `src/components/tpo/tpo-company-memory-workspace.tsx`; `tests/unit/chat2-company-memory-gap-parity.test.ts` **TPO-companies-21 never exposes DB migration identifiers…**. Independent counts-only retry still open. |
