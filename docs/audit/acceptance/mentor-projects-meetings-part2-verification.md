@@ -32,5 +32,9 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 
 | MEN-projects-meetings-72 | DONE | src/modules/projects/project-notification-service.ts, meeting-service.ts, task-comment-service.ts, task-assignment-service.ts, member-service.ts, resource-service.ts, mentor-final-delivery-decision-service.ts; tests/unit/mentor-notifications-round5.test.ts — `it("MEN-projects-meetings-72 persists transactional mentor project notices for meeting, comment, task, delivery, team and resource events")`. In-app delivery checks active same-college membership. |
 
+## Partial editor recovery
+
+- MEN-projects-meetings-75: Resource create/edit dialogs now confirm dirty discards and protect page unload; task, sprint, meeting, and delivery editors still need matching recovery. Test: `it("MEN-projects-meetings-75 keeps dirty project resource drafts on close or unload")` in `tests/unit/mentor-resource-dirty-round5.test.ts`.
+
 ## Remaining
 MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
