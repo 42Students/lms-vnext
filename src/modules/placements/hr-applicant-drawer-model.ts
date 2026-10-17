@@ -14,6 +14,7 @@ export function buildHrApplicantDrawer(
     rollNumber:selected.rollNumber??null,
     branch:selected.branch??null,
     phone:selected.phone??null,
+    resumeShared:selected.resumeShared??false,
     githubUrl:selected.githubUrl??null,portfolioUrl:selected.portfolioUrl??null,
     sharedSkills:selected.sharedSkills??[],sharedProjects:selected.sharedProjects??[],
     ugPercentage:selected.ugPercentage??null,
