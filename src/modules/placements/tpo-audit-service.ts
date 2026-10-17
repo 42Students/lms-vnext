@@ -139,7 +139,7 @@ function auditSources(
           case
            when ae.subject_type in ('placement_job','placement_season')
              then coalesce(nullif(trim(ae.subject_label),''),'Placement activity')
-           else 'Placement activity'
+           else coalesce(nullif(trim(ae.subject_label),''),nullif(trim(ae.summary),''),'Placement activity')
           end::text as title,
           case
            when ae.event_type = 'PLACEMENTS_COLLEGE_RULES_UPDATED'
