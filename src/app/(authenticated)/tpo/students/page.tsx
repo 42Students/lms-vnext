@@ -413,6 +413,11 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
+      {query.profileStatus&&!data.definitions.verificationAvailable?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        Profile-verification records are unavailable. A missing source must not be mistaken for Not verified.
+        <Link href="/tpo/students" className="ml-2 text-primary-text underline">Clear profile filter</Link>
+      </section>:null}
       {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
         className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
         Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
