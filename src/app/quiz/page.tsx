@@ -9,12 +9,12 @@ export default function LearnerQuizAttemptPage() {
       <div className="mx-auto max-w-6xl">
         <Link
           href="/learn/allQuizzes"
-          className="text-sm font-semibold text-[var(--lms-link-text)] hover:text-primary-hover"
+          className="text-sm font-semibold text-[var(--lms-link-text)] hover:underline"
         >
           ← All Quizzes
         </Link>
         <div className="mt-5">
-          <Suspense fallback={<div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>}>
+          <Suspense fallback={<PageLoading label="Loading quiz…" variant="form" count={4}/>}>
             <LearnerQuizAttempt />
           </Suspense>
         </div>

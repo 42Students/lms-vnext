@@ -49,3 +49,11 @@ the selection and return plain retry guidance.
 | COL-course-tabs-15 | DONE | Keep archive rather than permanent delete, but restore archived lessons from the college catalogue with a confirmation; history is preserved, active-parent/unique-conflict checks and tenant permission are enforced. `src/modules/courses/lesson-service.ts`, `src/app/api/courses/lessons/[lessonId]/restore/route.ts`, `src/components/courses/college-archived-lesson-restore.tsx`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-course-tabs-15 restores archived lessons without erasing progress or bypassing permission` (PostgreSQL execution pending). |
 | COL-course-tabs-23 | PARTIAL — OPEN | Decision: preserve verified records on a refresh failure and present an inline Retry on the affected list, rather than portraying stale records as current. Existing four route-level error boundaries have Retry and avoid false empty results, but do not retain last-good per-tab rows or isolate failed refreshes. `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-course-tabs-23 uses bounded route Retry and avoids showing stale progress as current`. Full partial refresh remains open; no completion is claimed. |
 | COL-course-tabs-25 | NOT-A-GAP | Keep watched-threshold 90% platform-wide and hidden from College Admin editing, as approved in OD-34. `src/modules/courses/progress-service.ts` and `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-course-tabs-25 keeps watched threshold platform-wide and hidden from college editors`. |
+
+### Chat-4 follow-up acceptance, 2026-10-18
+
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
+| COL-course-tabs-26 | PARTIAL (source reverified) | college-content-aggregate.tsx retains existing content visibility controls; college-assessment-aggregate.tsx exposes assignment and quiz authoring but publish/archive is not a substitute for per-item visibility. tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests COL-course-tabs-26. Keep gap open until actual assessment/live-class visibility action exists. |
+
+Source inspections and regression tests authored, **not executed**. No UX page restyling is part of these records.

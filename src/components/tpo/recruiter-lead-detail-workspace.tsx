@@ -136,6 +136,19 @@ export function RecruiterLeadDetailWorkspace({
   const [invitePersonalNote,setInvitePersonalNote]=useState("");
   const [inviteMessage,setInviteMessage]=useState("");
   const [inviteExpiresAt,setInviteExpiresAt]=useState("");
+  useEffect(()=>{
+    if(!editing&&!notNowOpen)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[editing,notNowOpen]);
+  function confirmLeave(){
+    if(!editing&&!notNowOpen)return true;
+    return window.confirm("Leave this recruiter? Unsaved changes will be lost.");
+  }
 
   const base = "/api/placements/tpo/leads/" + encodeURIComponent(leadId);
   const params = "?collegeId=" + encodeURIComponent(collegeId);
@@ -235,6 +248,29 @@ export function RecruiterLeadDetailWorkspace({
     }
   }
 
+  function closeEdit(){
+    if(saving)return;
+    if(editing&&lead&&(
+      edit.name!==lead.name||edit.email!==(lead.emailNorm??"")||
+      edit.phone!==(lead.phoneNorm??"")||edit.designation!==(lead.designation??"")||
+      edit.companyName!==(lead.companyName??"")
+    )&&!window.confirm("Discard unsaved recruiter changes?"))return;
+    setEditing(false);
+  }
+  function closeNotNow(){
+    if(saving)return;
+    if((notNowReason.trim()||revisitDate)&&
+      !window.confirm("Discard your Not now reason and revisit date?"))return;
+    setNotNowOpen(false);
+  }
+  function dialogKeyDown(event:React.KeyboardEvent<HTMLFormElement>,kind:"EDIT"|"NOT_NOW"){
+    if(event.key==="Escape"){
+      event.preventDefault();
+      if(kind==="EDIT")closeEdit();else closeNotNow();
+      return;
+    }
+    keepRecruiterDialogFocus(event);
+  }
   function openEdit() {
     if (!lead) return;
     setEdit({
@@ -370,7 +406,7 @@ export function RecruiterLeadDetailWorkspace({
 
   return (
     <section className="space-y-6">
-      <Link href="/tpo/recruiters" className="text-sm font-medium text-primary-text hover:underline">
+      <Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="text-sm font-medium text-primary-text hover:underline">
         ← Recruiter leads
       </Link>
       {phase === "loading" ? (
@@ -647,13 +683,14 @@ export function RecruiterLeadDetailWorkspace({
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
               <form className="max-h-[90vh] w-full max-w-lg space-y-3 overflow-y-auto rounded-xl bg-surface p-6 shadow-xl"
                 role="dialog" aria-modal="true" aria-label="Edit contact details"
+                onKeyDown={event=>dialogKeyDown(event,"EDIT")}
                 onSubmit={e => void saveEdit(e)}>
                 <h2 className="text-lg font-semibold">Edit contact details</h2>
                 {(["name", "email", "phone", "designation", "companyName"] as const).map(name => (
                   <label key={name} className="block text-sm">
                     {name === "companyName" ? "Company name" : name[0].toUpperCase() + name.slice(1)}
                     <input className={input + " mt-1"} value={edit[name]}
-                      required={name === "name"}
+                      autoFocus={name==="name"} required={name === "name"}
                       onChange={e => setEdit(current => ({ ...current, [name]: e.target.value }))} />
                   </label>
                 ))}
@@ -669,7 +706,7 @@ export function RecruiterLeadDetailWorkspace({
                   className="font-semibold text-primary-text underline">Open {duplicateLead.name}</Link>
                 </p>:null}
                 <div className="flex justify-end gap-2">
-                  <button className={button} type="button" disabled={saving} onClick={() => setEditing(false)}>Cancel</button>
+                  <button className={button} type="button" disabled={saving} onClick={closeEdit}>Cancel</button>
                   <button className={primary} type="submit" disabled={saving}>Save</button>
                 </div>
               </form>
@@ -680,11 +717,12 @@ export function RecruiterLeadDetailWorkspace({
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
               <form className="w-full max-w-md space-y-4 rounded-xl bg-surface p-6 shadow-xl"
                 role="dialog" aria-modal="true" aria-label="Not now"
+                onKeyDown={event=>dialogKeyDown(event,"NOT_NOW")}
                 onSubmit={e => void markNotNow(e)}>
                 <h2 className="text-lg font-semibold">Not now</h2>
                 <label className="block text-sm">Reason
                   <textarea className={input + " mt-1"} maxLength={255} rows={3}
-                    value={notNowReason} onChange={e => setNotNowReason(e.target.value)} />
+                    value={notNowReason} autoFocus onChange={e => setNotNowReason(e.target.value)} />
                 </label>
                 <label className="block text-sm">Revisit on
                   <input className={input + " mt-1"} type="date" value={revisitDate}
@@ -692,7 +730,7 @@ export function RecruiterLeadDetailWorkspace({
                 </label>
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 <div className="flex justify-end gap-2">
-                  <button className={button} type="button" disabled={saving} onClick={() => setNotNowOpen(false)}>Cancel</button>
+                  <button className={button} type="button" disabled={saving} onClick={closeNotNow}>Cancel</button>
                   <button className={primary} type="submit" disabled={saving}>Mark not now</button>
                 </div>
               </form>

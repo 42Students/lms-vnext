@@ -70,3 +70,9 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 | ID | Disposition | Evidence |
 | --- | --- | --- |
 | COL-people-26 | DONE (source, browser test pending) | Accessible, explicit two-step `ConfirmDialog` and pending state for faculty lifecycle changes, with success notices and no browser `window.confirm`. `src/components/college/college-faculty-lifecycle-action.tsx` and `tests/unit/college-people-gap-closure.test.ts` case COL-people-26. |
+
+## Chat-3 round 14 — COL-people-13 corrected metrics without leaking PII
+
+| ID | Disposition | Evidence |
+| --- | --- | --- |
+| COL-people-13 | PARTIAL | Registered, active and suspended counts are now derived from persisted membership/role/user rows scoped to the same college, independently of visible paginated results. `Visible now` is explicitly `Not tracked`; the app does not fabricate presence or expose unmasked mobile numbers to every directory viewer. Remaining missing roll/gender/class columns need role-scoped access review. `tests/unit/chat3-people-metrics-round14.test.ts`. |

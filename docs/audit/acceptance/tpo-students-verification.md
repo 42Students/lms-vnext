@@ -120,3 +120,10 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 - TPO-students-44: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
 - TPO-students-45: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
 - TPO-students-52: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+
+
+## Round 60 — TPO-students-10 schema contract verification
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-students-10 | OPEN (partial; runtime and optional due-date decision outstanding) | `src/db/schema/placement-tpo-prep-assignments.ts` already exports `placementTpoPrepAssignments` matching the first effective registered 0134 table (composite same-college membership FK, NOT NULL due date, due-after-created CHECK, member/offering unique key). `tests/unit/chat12-0134-schema-parity-r60.test.ts` contains named `TPO-students-10` assertions against 0134 and Drizzle. No DDL edited. Tests written but not executed. |

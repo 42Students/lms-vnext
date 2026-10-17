@@ -315,6 +315,7 @@ function ContentCard({
             "COMPLETED"
           }
           readOnly={readOnly}
+          saveIntervalMs={saveIntervalMs}
         />
       ) : content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?(
          <LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!}/>

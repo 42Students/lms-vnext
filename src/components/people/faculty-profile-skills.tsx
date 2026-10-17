@@ -1,5 +1,6 @@
 "use client";
 import { useState, type FormEvent } from "react";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
@@ -14,6 +15,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
  const [rows,setRows]=useState<Skill[]>(initial);
  const [changed,setChanged]=useState(false);
  const [search,setSearch]=useState("");
+ const { askConfirm, dialog } = useConfirmFlow();
  const visibleSkills=rows.map((skill,index)=>({skill,index})).filter(({skill})=>facultyProfileSkillMatches(skill,facultyProfileActiveSearch(search,rows.length)));
  const skillsIssue=facultyProfileSkillsIssue(rows);
  useFacultyProfileUnsavedWarning(changed);
@@ -53,13 +55,13 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     </label>
     <div className="flex flex-wrap gap-2 sm:col-span-3">
       <button type="button" disabled={pending||index===0||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
-       onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
-       className="min-h-10 rounded-md border border-border px-3 text-sm">Move up</button>
+       onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index-1));setChanged(true);}}
+       className="min-h-11 rounded-md border border-border px-3 text-sm">Move up</button>
       <button type="button" disabled={pending||index===rows.length-1||!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)}
-       onClick={()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
-       className="min-h-10 rounded-md border border-border px-3 text-sm">Move down</button>
+       onClick={async()=>{setRows(current=>facultyMoveSkillRecord(current,skill.id,index+1));setChanged(true);}}
+       className="min-h-11 rounded-md border border-border px-3 text-sm">Move down</button>
     </div>
-    <button type="button" disabled={pending} onClick={()=>{if(!window.confirm("Remove skill "+(index+1)+" from the unsaved draft?"))return;
+    <button type="button" disabled={pending} onClick={async()=>{if(!(await askConfirm("Remove skill "+(index+1)+" from the unsaved draft?")))return;
       setRows(current=>removeFacultySkillDraft(current,skill.id));setChanged(true);}}
      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">Remove</button>
    </div>)}
@@ -67,19 +69,20 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={pending||rows.length>=100}
     className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-foreground"
-    onClick={()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);
+    onClick={async()=>{setRows(current=>[...current,{id:crypto.randomUUID(),skill:"",proficiency:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);}}>
     Add skill
    </button>
-   {changed?<button type="button" disabled={pending} onClick={()=>{
-     if(!window.confirm("Discard unsaved skill edits and restore saved skills?"))return;
+   {changed?<button type="button" disabled={pending} onClick={async()=>{
+     if(!(await askConfirm("Discard unsaved skill edits and restore saved skills?")))return;
      setRows(restoreFacultySkills(initial));setChanged(false);
     }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved skill edits</button>:null}
    {changed&&skillsIssue?<p role="alert" className="text-sm text-error">Review Skills: {skillsIssue}</p>:null}
    <button type="submit" disabled={pending||!changed||Boolean(skillsIssue)}
-    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {pending?"Saving…":"Save skills"}
    </button>
   </div>
+ {dialog}
  </form>;
 }

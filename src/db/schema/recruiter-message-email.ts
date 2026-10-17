@@ -1,5 +1,5 @@
 import {sql} from "drizzle-orm";
-import {check,index,pgTable,text,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
+import {check,index,pgTable,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
 import {placementTpoMessages,placementTpoMessageThreads} from "./tpo-collaboration";
 import {users} from "./users";
 
@@ -14,6 +14,8 @@ export const placementRecruiterMessageMailState=pgTable("placement_recruiter_mes
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
  index("recruiter_message_mail_owner_idx").on(t.recruiterUserId),
+ uniqueIndex("recruiter_message_mail_token_uq").on(t.replyTokenHash)
+   .where(sql`${t.replyTokenHash} is not null`),
  check("recruiter_message_mail_token_pair_ck",sql`(${t.replyTokenHash} is null and ${t.replyTokenExpiresAt} is null)
  or (${t.replyTokenHash} ~ '^[a-f0-9]{64}$' and ${t.replyTokenExpiresAt} is not null)`),
 ]);

@@ -13,7 +13,7 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
  portal:z.strictObject({
   studentsRegisterSeparately:z.boolean().default(false),
   name:z.string().trim().max(160).default(""),
-  url:z.union([z.url().refine(v=>v.startsWith("https://"),"Use HTTPS"),z.literal("")]).default(""),
+  url:z.union([z.url().refine(v=>{try{const url=new URL(v);return url.protocol==="https:"&&!url.username&&!url.password;}catch{return false;}},"Use an HTTPS URL without embedded credentials"),z.literal("")]).default(""),
  }).prefault({}),
  skillsWanted:z.array(z.string().trim().min(1).max(50)).max(30).default([]),
 

@@ -85,6 +85,7 @@ export default async function TpoCompanyMemoryPage({
       <TpoCompanyMemoryWorkspace
         collegeId={context.membership.collegeId}
         companyName={name}
+        actorMembershipId={context.membership.id}
       />
     );
   }
