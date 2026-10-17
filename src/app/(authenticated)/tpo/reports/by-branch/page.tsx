@@ -1,4 +1,5 @@
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -14,8 +15,6 @@ import {
   ReportNavigation,
   ReportScopeNote,
   ReportTable,
-  reportCurrency,
-  reportPercent,
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
@@ -51,7 +50,7 @@ export default async function TpoByBranchReportPage({
     <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Placement by branch"
+        title="By branch"
         description="Department-wise registered pool, applicants, offers, placed learners and accepted full-time packages."
         actions={
           <ReportCsvLink workspace={workspace} kind="by-branch" />
@@ -88,30 +87,8 @@ export default async function TpoByBranchReportPage({
       ) : (
         <ReportTable
           title="Branch performance"
-          headings={[
-            "Branch",
-            "Registered",
-            "Unique applicants",
-            "Applications",
-            "Offers",
-            "Accepted offers",
-            "Placed learners",
-            "Placement rate",
-            "Average annual CTC",
-            "Highest annual CTC",
-          ]}
-          rows={workspace.report.byBranch.map((row) => [
-            row.departmentName,
-            row.registered,
-            row.applicants,
-            row.applications,
-            row.offers,
-            row.acceptedOffers,
-            row.placed,
-            reportPercent(row.placementRatePercent),
-            reportCurrency(row.averagePackageInr),
-            reportCurrency(row.highestPackageInr),
-          ])}
+          headings={[...LEGACY_TPO_BRANCH_COLUMNS]}
+          rows={workspace.report.byBranch.map(legacyTpoBranchReportRow)}
           emptyDescription="No registered, applying or placed learners match the selected filters."
         />
       )}

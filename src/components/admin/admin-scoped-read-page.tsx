@@ -28,7 +28,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin" title={title}/>
-  <EmptyState title="Select a college" description="Choose an explicit college in the Super Admin scope selector. This read-only directory does not infer another college."/>
+  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
  </div>;
  const data=await loader(parsed.data);
  return <div className="min-w-0 space-y-5">

@@ -1,5 +1,5 @@
 import "server-only";
-import { and, desc, eq, gte, lte, ilike, inArray, or } from "drizzle-orm";
+import { and, asc, desc, eq, gte, lte, ilike, inArray, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { collegeMemberships, membershipRoles, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
@@ -19,6 +19,7 @@ const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"])
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
 export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery,memberIds?:readonly string[]):Promise<{
  available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];hasMore?:boolean;
+ counts?:{WAITING:number;SENT_BACK:number;VERIFIED:number};
 }>{
  const collegeId=await requireTpoBatchActor(ctx);
  if(memberIds&&memberIds.length>100)throw Error("VERIFICATION_SELECTION_TOO_LARGE");
@@ -57,6 +58,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   version:profileVerifications.rowVersion,name:users.displayName,
   decidedAt:profileVerifications.decidedAt,decidedByName:profileVerifications.decidedByName,
   submittedSnapshot:profileVerifications.submittedSnapshot,
+  rollNumber:learnerProfiles.rollNumber,decisionNote:profileVerifications.note,
  }).from(profileVerifications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -74,7 +76,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
     ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
     ...(memberIds?[inArray(profileVerifications.learnerMembershipId,[...memberIds])]:[]),
    ]:[])))
-  .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
+  .orderBy(query?.tab==="WAITING"?asc(profileVerifications.submittedAt):desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
  const selected=query?records.slice(0,query.pageSize):records;
  const selectedMemberIds=[...new Set(selected.map(row=>row.id))];
@@ -104,7 +106,33 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
    status:status.data,section:section.data,
    submittedAt:row.submittedAt,version:row.version,missingMarksheet,missingIdentityProof,
    decidedAt:row.decidedAt,decidedByName:row.decidedByName,
+   rollNumber:row.rollNumber,decisionNote:row.decisionNote,
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},attention}];
  });
- return {available:true,enabled:true,permitted:true,rows,hasMore:Boolean(query&&records.length>query.pageSize)};
+ // Authoritative counts are computed across the college's authorized filtered queue,
+ // before pagination. Never infer tab totals from a truncated page.
+ const counts:{WAITING:number;SENT_BACK:number;VERIFIED:number}={WAITING:0,SENT_BACK:0,VERIFIED:0};
+ if(query&&!memberIds){
+  const totals=await getDb().select({
+   status:profileVerifications.status,total:sql<number>`count(*)::integer`,
+  }).from(profileVerifications)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
+   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),
+    eq(users.platformStatus,"ACTIVE"),
+    ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
+    ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
+    ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
+   )).groupBy(profileVerifications.status);
+  for(const item of totals){
+   if(item.status==="SUBMITTED"||item.status==="UPDATE_PENDING")counts.WAITING+=item.total;
+   else if(item.status==="SENT_BACK")counts.SENT_BACK+=item.total;
+   else if(item.status==="VERIFIED")counts.VERIFIED+=item.total;
+  }
+ }
+ return {available:true,enabled:true,permitted:true,rows,hasMore:Boolean(query&&records.length>query.pageSize),
+  ...(query&&!memberIds?{counts}:{}),
+ };
 }

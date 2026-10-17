@@ -22,7 +22,7 @@ export default async function SuperAdminCourseProgressPage({
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
-    <EmptyState title="Choose a college" description="Select a college scope to inspect recorded learner content activity." />
+    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
   </div>;
   const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed.data),getSuperAdminLearningFilterOptions(context)]);
   const summary = adminProgressStats(data.items);

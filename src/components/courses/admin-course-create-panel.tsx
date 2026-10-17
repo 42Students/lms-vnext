@@ -83,7 +83,7 @@ export function AdminCourseCreatePanel({
   courses,
   offerings,
   deliveries,
-  faculty,facultyTruncated=false,duplicateCourseId,
+  faculty,facultyTruncated=false,duplicateCourseId,courseBasePath="/college/courses",
 }: {
   departments: readonly Option[];
   periods: readonly PeriodOption[];
@@ -95,6 +95,7 @@ export function AdminCourseCreatePanel({
   faculty: readonly FacultyOption[];
   facultyTruncated?:boolean;
   duplicateCourseId?:string;
+  courseBasePath?:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -191,7 +192,7 @@ export function AdminCourseCreatePanel({
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");if(copy)router.replace("/college/courses"); },
+        setCourseName("");setCourseCode("");setCourseDescription("");if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -272,7 +273,7 @@ export function AdminCourseCreatePanel({
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
-          <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace("/college/courses")}>Cancel copy</button>
+          <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
         </div>:null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">

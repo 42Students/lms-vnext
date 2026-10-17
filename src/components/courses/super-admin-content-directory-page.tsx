@@ -31,13 +31,13 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
-  <EmptyState title="Choose a college scope" description="Select a college before browsing persisted course content."/>
+  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
  const [data, lessons]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context)]);
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
-   description="Manage lesson content in the selected college. Uploaded files and private meeting links remain access controlled."/>
+   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
   <SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false} />
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
@@ -72,7 +72,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
      className="inline-flex min-h-10 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
-  </div>:<EmptyState title="No content records" description="No matching authored content exists in this college or filter."/>}
+  </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."/>}
   <nav aria-label={title+" pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages}</span>
    <div className="flex gap-3">

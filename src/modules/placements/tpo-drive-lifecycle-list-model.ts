@@ -111,3 +111,18 @@ export function tpoDriveWhereItIs(job:{
  if(job.offersMade>0)return "Offers · "+job.offersMade+" issued/accepted";
  return "Applications closed";
 }
+
+/** Human-readable display: preserve persisted work-mode semantics rather than
+ * mapping HYBRID to legacy Pool or REMOTE to Off-campus without evidence. */
+export function tpoDriveEmploymentLabel(value:string):string{
+ if(value==="FULL_TIME")return "Full-time";
+ if(value==="INTERNSHIP")return "Internship";
+ if(value==="CONTRACT")return "Contract";
+ return "Not chosen";
+}
+export function tpoDriveWorkModeLabel(value:string):string{
+ if(value==="ONSITE")return "On-site";
+ if(value==="REMOTE")return "Remote";
+ if(value==="HYBRID")return "Hybrid";
+ return "Not chosen";
+}

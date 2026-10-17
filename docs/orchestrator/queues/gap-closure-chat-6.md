@@ -242,5 +242,29 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 ## Notes (blockers, one line each)
 
+- LEARNER-profile-misc-01: resume upload/replace/Drive-import remains BLOCKED until a private bucket, malware scanner and signed learner upload receipts are provisioned; links alone are not resume files.
+- LEARNER-profile-misc-03: Aadhaar/PAN and marksheet binary uploads remain BLOCKED until the same private storage/scanner and verified upload receipts exist; never store IDs or file URLs publicly.
+- LEARNER-profile-misc-04: record/upload video intro remains BLOCKED on the private video bucket, scanner and safe camera-upload receipt workflow.
+
+- FAC-assessments-01: PDF/file assignment resource uploads require the private object-storage bucket/scanner; existing text/method controls do not close full resource parity.
+- FAC-assessments-22: inline private PDF submission preview requires a scoped storage download grant and scanner-ready files; do not expose permanent URLs.
+- SA-academics-people-59: Super Admin binary video actor/grants require the private object-storage bucket; retain link-only content until provisioned.
+- SA-academics-people-60: import video from arbitrary HTTPS URL requires private storage/scanner and anti-SSRF ingestion infrastructure.
+
+### Chat-6 verified gap-closure progress, 2026-10-17
+
+- Synced branch `chatgpt/chat-6-b` with the latest `main` (was 269 behind and 0 ahead; branch was fast-forwarded before edits). No pushes to `main`.
+- Faculty Assessments: 21 dispositions (18 DONE, 3 NOT-A-GAP) across 2 source-contract test files and `faculty-assessments-verification.md`, including the course→lesson→Continue create entry; other S1/S2/S3 differences remain on this page.
+- Super Admin People/Recruiters: 5 dispositions (3 DONE, 2 NOT-A-GAP), with scoped roles, legacy empty-state copy, faculty bulk importer and student program/class registration as evidence. Extra wording changes -91/-100/-103/-114 are partial and not certified as closed.
+- Super Admin Courses/Content: 1 DONE (-69 four CSV routes). Binary video uploads/import remain BLOCKED on private storage.
+- College Placements: 4 DONE (-01/-04/-05/-06) from persisted college pipeline and interview actions, with source-contract unit acceptance tests. Additional parity remains.
+- Five unit test files total, each named case includes its gap ID; authored but NOT RUN (orchestrator executes). Acceptance records live under `docs/audit/acceptance/`.
+
+
+### Chat-6 verified follow-up, 2026-10-17
+
+- 25 gap-specific tests authored, NOT RUN, across four new source-contract test files. Faculty: FAC-assessments-11/14 DONE, -20 NOT-A-GAP. Super Admin People: SA-academics-people-89/98/102/104/105/107/113/116 DONE. College dashboard: COL-dashboard-03/04/05/06/07/08/09/14/15/16 DONE. College placements: COL-placements-07/08/09/21 DONE.
+- New learner profile S1 blockers documented as LEARNER-profile-misc-01/03/04; private upload/preview must not be simulated. Larger open gaps and DB/browser-only acceptance remain for the orchestrator.
+
 ## Needs shell (chat-9 only)
 

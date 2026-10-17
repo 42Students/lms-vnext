@@ -72,6 +72,11 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <p className="mt-2 text-sm text-body">Read-only notices visible to your own college membership. Notices without a valid saved publication date are not shown.</p>
         {hadInvalidNoticeFilters ? <p role="status" className="mt-2 text-sm text-warning">Some notice filters were invalid and have been reset to safe defaults.</p> : null}
       </div>
+      <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
+        <a href="#college-notices" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Announcements</a>
+        <a href="#personal-updates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Updates about you ({personalAlerts.items.length})</a>
+      </nav>
+      <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">
         {alertQ?<input type="hidden" name="alertQ" value={alertQ}/>:null}
         {source==="placement-cell"?<input type="hidden" name="source" value={source}/>:null}
@@ -201,6 +206,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
         <span aria-current="page">Page {pages.page} of {pages.pages}</span>
         {pages.page<pages.pages ? <Link href={noticePageUrl(pages.page+1)} className="inline-flex min-h-11 items-center border border-border rounded-md px-3 text-primary-text">Next</Link> : null}
       </nav> : null}
+      <div id="personal-updates" className="scroll-mt-24"/>
       <nav aria-label="Personal alert filter" className="flex flex-wrap items-center gap-3 text-sm">
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:false,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={!unreadOnly?"page":undefined}>All personal alerts</Link>
         <Link href={learnerNoticeFilterHref({pinned:pinnedOnly,unread:true,recent:recentOnly,q:queryText,sort:sortKey,alertQ,source})} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text" aria-current={unreadOnly?"page":undefined}>Unread personal alerts</Link>

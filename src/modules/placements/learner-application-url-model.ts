@@ -1,7 +1,7 @@
 import {z} from "zod";
 export const learnerApplicationUrlSchema=z.object({
 q:z.string().trim().max(100).optional().default(""),
-view:z.enum(["all","progress","completed"]).optional().default("all"),
+view:z.enum(["all","progress","completed"]).optional().default("progress"),
 stage:z.string().max(64).optional().default("all"),
 sort:z.enum(["activity","company","oldest","stage"]).optional().default("activity"),
 page:z.string().regex(/^(?:[1-9][0-9]{0,3}|10000)$/).transform(Number).optional().default(1),
@@ -25,7 +25,7 @@ const query=new URLSearchParams(),old=new URLSearchParams(current);
 for(const key of allowed){const values=old.getAll(key);if(values.length===1&&values[0]&&learnerApplicationUrlSchema.safeParse({[key]:values[0]}).success)query.set(key,values[0]);}
 for(const [key,value] of Object.entries(changes)){
 if(!allowed.includes(key))continue;
-if(!value||value==="all")query.delete(key);
+if(!value||(value==="all"&&key!=="view"))query.delete(key);
 else if(learnerApplicationUrlSchema.safeParse({[key]:value}).success)query.set(key,value);
 else query.delete(key);
 }

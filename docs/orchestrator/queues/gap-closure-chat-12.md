@@ -108,5 +108,15 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 ## Notes (blockers, one line each)
 
+- TPO-requests-verification-01 OPEN: expand Drizzle schema and stage proposed SQL under docs/proposed-migrations for the five missing learner kinds, then add transactional effects and tests; see docs/orchestrator/proposals/chat-12-requests-schema.md. Not a valid external-dependency BLOCKED.
+- TPO-requests-verification-37 OPEN: implement persisted recruiter REQUEST workflow and trusted-company auto-approval, not merely a draft-state label. Not externally blocked.
+- TPO-requests-verification-38 OPEN: drive-request bells, counts, and recruiter decision email follow the persisted approval lifecycle; no notification for ordinary drafts.
+- TPO-requests-verification-05 OPEN: new-request TPO notifications exist, but 24-hour undecided-withdrawal escalation still requires the scheduled-job integration.
+- TPO-students-33 OPEN: CSV preview/commit works, but legacy XLSX support and the full academic import aliases still need closing.
+- GR-30/GR-31 adoption pending: chat-14's shared guarded-action and friendly-api-fetch helpers were not on origin/main at this round's merge; local guarded controls and safe messages are in place.
+
 ## Needs shell (chat-9 only)
+
+- TPO-requests-verification-06, -21: chat-9 owns Requests sidebar pending-count badge and conditional Verification sidebar visibility; consult queue/access flags, never leak a denied preview.
+
 
