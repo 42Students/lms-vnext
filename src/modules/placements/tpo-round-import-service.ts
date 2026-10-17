@@ -150,6 +150,7 @@ export async function stageTpoRoundImport(
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
+  if(rejected.length)throw Error("Resolve or explicitly skip every unmatched/invalid source row before auto-marking missing learners not cleared.");
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
      !explicitlySkippedApplications.has(candidate.applicationId)&&
