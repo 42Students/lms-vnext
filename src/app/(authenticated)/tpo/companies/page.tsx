@@ -16,6 +16,7 @@ import type { TpoCompanyRow } from "@/modules/placements/tpo-companies-view-mode
 type PageProps = {
   searchParams: Promise<{
     name?: string | string[];
+    directory?: string | string[];
     search?: string | string[];
     page?: string | string[];
     pageSize?: string | string[];
@@ -70,6 +71,13 @@ export default async function TpoCompanyMemoryPage({
 
   const raw = await searchParams;
   const name = first(raw.name)?.trim() ?? "";
+
+  // Preserve named Company Memory deep links, but keep the legacy Engage
+  // Companies view as the default without losing bookmarked directory filters.
+  if (!name && first(raw.directory)!=="1" && !first(raw.search) &&
+      !first(raw.sort) && !first(raw.page) && !first(raw.pageSize)) {
+    redirect("/tpo/recruiters?view=companies");
+  }
 
   // Preserve the existing Company Memory URL and its behavior.
   if (name) {
