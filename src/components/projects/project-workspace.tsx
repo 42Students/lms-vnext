@@ -486,6 +486,33 @@ export function ProjectWorkspace({
             <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
+          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 rounded-lg border border-border p-4">
+            <h3 className="text-sm font-semibold">Task completion</h3>
+            {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
+              <svg viewBox="0 0 42 42" role="img"
+                aria-label={Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total)+"% tasks completed"}
+                className="size-28 shrink-0">
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="currentColor"
+                  className="text-muted" strokeWidth="6"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="currentColor"
+                  className="text-primary" strokeWidth="6"
+                  strokeDasharray={String(100*readiness.execution.tasks.done/readiness.execution.tasks.total)+" "+String(100*(readiness.execution.tasks.total-readiness.execution.tasks.done)/readiness.execution.tasks.total)}
+                  transform="rotate(-90 21 21)"/>
+                <text x="21" y="23" textAnchor="middle" fontSize="7" fill="currentColor">
+                  {Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total)}%
+                </text>
+              </svg>
+              <div className="min-w-0 text-sm text-body">
+                {readiness.execution.tasks.done} of {readiness.execution.tasks.total} tasks completed
+              </div>
+            </div>:<p className="mt-2 text-sm text-body">
+              No tasks on the board yet. Add your first task to start tracking progress.
+            </p>}
+            {readiness.execution.sprints.total>0?
+              <p className="mt-3 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
+                {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>:
+              <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
+          </section>:null}
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
