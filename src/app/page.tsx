@@ -1,5 +1,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LoginForm } from "@/components/auth/login-form";
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
@@ -65,6 +66,7 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{
     auth?: string | string[];
+    returnTo?: string | string[];
   }>;
 }) {
   const params = await searchParams;
@@ -75,7 +77,8 @@ export default async function HomePage({
     ? messages[authValue] ?? null
     : null;
 
-  if (await isSignedIn()) redirect("/dashboard");
+  const requested = Array.isArray(params.returnTo) ? params.returnTo[0] : params.returnTo;
+  if (await isSignedIn()) redirect(safeReturnTo(requested) ?? "/dashboard");
 
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
