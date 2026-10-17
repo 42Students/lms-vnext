@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
+import {TpoCompanyTrustSwitch} from "@/components/placements/tpo-company-trust-switch";
+import {getTpoCompanyLifecycle} from "@/modules/placements/tpo-company-lifecycle-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
@@ -60,6 +62,7 @@ export default async function TpoCompanyDetailPage({
 
   if (!detail) notFound();
   const companyLink = await getTpoPublicJoinLinkStatus(context, "COMPANY", route.companyId);
+  const lifecycle = await getTpoCompanyLifecycle(context,route.companyId);
 
   const {
     company,
@@ -117,6 +120,9 @@ export default async function TpoCompanyDetailPage({
             Updated {relationship?.updatedAt ? dateLabel(new Date(relationship.updatedAt)) + " IST" : "not recorded"}
           </span>
         </div>
+        {lifecycle?.status==="ACTIVE"?
+         <TpoCompanyTrustSwitch companyId={route.companyId}
+           initialTrusted={lifecycle.isTrusted} updatedAt={lifecycle.updatedAt}/>:null}
       </section>
 
       <nav aria-label="Company CRM views" className="flex flex-wrap gap-3">
