@@ -137,9 +137,12 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
       }
       if(input.startDate&&input.endDate&&input.endDate<input.startDate)throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       await ensureUnique(tx, input.programId, input.name, input.code);
+      const resolvedStart=input.startDate??start.startDate;
+      const resolvedEnd=input.endDate??expected?.endDate??null;
+      if(resolvedEnd&&resolvedEnd<resolvedStart)throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       const [created] = await tx.insert(cohorts).values({...input,
-       startDate:start.startDate,endDate:expected?.endDate??null,
-       academicYear:batchAcademicYearFromDates(start.startDate,expected?.endDate??null),
+       startDate:resolvedStart,endDate:resolvedEnd,
+       academicYear:input.academicYear??batchAcademicYearFromDates(resolvedStart,resolvedEnd),
       }).returning();
       // Registered DB-0051 trigger initializes the cohort progression row.
       await recordActivityEventInTransaction(tx, context, {

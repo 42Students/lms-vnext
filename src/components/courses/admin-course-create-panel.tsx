@@ -16,6 +16,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
+import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 
 type Option = { id: string; name: string; code?: string };
 type CohortOption = Option & {
@@ -30,7 +31,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { departmentName: string };
+type CourseOption = Option & { departmentName: string; departmentId:string;description:string|null };
 type OfferingOption = {
   id: string;
   courseName: string;
@@ -75,7 +76,7 @@ export function AdminCourseCreatePanel({
   courses,
   offerings,
   deliveries,
-  faculty,
+  faculty,duplicateCourseId,
 }: {
   departments: readonly Option[];
   periods: readonly PeriodOption[];
@@ -85,16 +86,18 @@ export function AdminCourseCreatePanel({
   offerings: readonly OfferingOption[];
   deliveries: readonly DeliveryOption[];
   faculty: readonly FacultyOption[];
+  duplicateCourseId?:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
 
-  const [courseDepartmentId, setCourseDepartmentId] = useState("");
-  const [courseName, setCourseName] = useState("");
-  const [courseCode, setCourseCode] = useState("");
-  const [courseDescription, setCourseDescription] = useState("");
+  const copy=collegeCourseDuplicatePrefill(courses,duplicateCourseId);
+  const [courseDepartmentId, setCourseDepartmentId] = useState(copy?.departmentId??"");
+  const [courseName, setCourseName] = useState(copy?.name??"");
+  const [courseCode, setCourseCode] = useState(copy?.code??"");
+  const [courseDescription, setCourseDescription] = useState(copy?.description??"");
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
   const [offeringCohortId, setOfferingCohortId] = useState("");
@@ -178,7 +181,7 @@ export function AdminCourseCreatePanel({
         description: courseDescription.trim() || null,
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
-      () => { setCourseName(""); setCourseCode(""); setCourseDescription(""); },
+      () => { setCourseName(""); setCourseCode(""); setCourseDescription(""); if(copy)router.replace("/college/courses"); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -240,6 +243,11 @@ export function AdminCourseCreatePanel({
     <section className="grid gap-4 xl:grid-cols-2">
       <form onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
+        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
+          <strong>Duplicating “{copy.name}”</strong>
+          <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace("/college/courses")}>Cancel copy</button>
+          <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
+        </div>:null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>

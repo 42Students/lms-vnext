@@ -414,6 +414,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                   <th scope="col" className="px-4 py-3">Program / semester</th>
                   <th scope="col" className="px-4 py-3">Year / academic period</th>
                   <th scope="col" className="px-4 py-3">Credits / choices</th>
+                  <th scope="col" className="px-4 py-3">Students</th>
                   <th scope="col" className="px-4 py-3">Active offerings</th>
                   <th scope="col" className="px-4 py-3">Status</th>
                   <th scope="col" className="px-4 py-3">Manage</th>
@@ -427,14 +428,16 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                       <p className="mt-1 text-xs text-muted-foreground">{item.periodName ?? "No academic period linked"}</p>
                     </td>
                     <td className="px-4 py-4 text-body">
-                      {item.credits} credits · {electiveSelectionLabel(item.minPick, item.maxPick)}
+                      {item.credits} credits · Pick: {electiveSelectionLabel(item.minPick, item.maxPick)}
                     </td>
+                    <td className="px-4 py-4 text-body" title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</td>
                     <td className="px-4 py-4 text-body">{item.activeOfferings}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
                     <td className="px-4 py-4">
                       <div className="flex flex-wrap items-start gap-2">
                         {electiveOptions && item.status === "ACTIVE" ? <>
-                          <CollegeSlotManager options={electiveOptions} row={item} />
+                          <Link href={"/college/electives/"+encodeURIComponent(item.id)} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Open</Link>
+                           <CollegeSlotManager options={electiveOptions} row={item} />
                           <CollegeElectiveOfferingManager slotId={item.id}/>
                           <Link href={"/college/electives/" + encodeURIComponent(item.id) + "/allocate"}
                             className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">

@@ -46,9 +46,7 @@ export function CollegeSlotManager({ options, row }: {
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!window.confirm(editing
-      ? "Confirm updating this elective slot? Existing learner selections may block changes to credits and choice limits."
-      : "Confirm creating this elective slot for the selected program and term?")) return;
+
     const common = {
       name, description: description.trim() || null,
       credits: Number(credits), minPick: Number(minPick),
@@ -92,6 +90,7 @@ export function CollegeSlotManager({ options, row }: {
       {row ? "Edit slot" : "New elective slot"}
     </button>
     {open ? <form onSubmit={submit} className="mt-3 grid max-w-3xl gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
+      {row?<p role="note" className="sm:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
       {!row ? <>
         <Field label="Program"><select required className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>

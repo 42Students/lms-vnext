@@ -36,6 +36,25 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## FAST v2 chat-3 continuation — 2026-10-17, post-lane merge
+
+- Synced `chatgpt/chat-3-b` to the new `origin/main` fast-forward before edits; prior lane commits were already merged. Source-only, individual `[chat-3]` gap-tagged commits pushed to branch. Never pushed to main.
+- **COL-courses-content-04:** a per-row Duplicate action on Courses prefills a new catalog course's department, name, description and collision-avoiding copy code. `Duplicating “X”` and `Cancel copy` provided. Creates via existing authorized API; offerings/deliveries/students intentionally are not duplicated.
+- **COL-verification-misc-03:** sequential review progress now accurately reports stops and outstanding requests without miscounting the current item. Remaining cross-page queue session behavior is not yet closed.
+- **COL-verification-misc-07:** bulk verified/sent-back receipts now show distinct wording, actual succeeded count and student notification copy. In-app browser acceptance not run.
+- **COL-people-10:** person audit timeline now includes both lower-/uppercase membership subject types and recorded actor names. Privacy-filtered full Profile modal now shows education, skills, certifications, experience, projects, awards and faculty publications without raw Aadhaar/PAN or document receipt IDs.
+- **COL-people-17:** legacy Contacts 10/20/50 page-size controls (retain bookmarked 25 compatibility), Faculty accounts, Student accounts and Teaching assignments direct links.
+- **COL-academic-setup-27:** batch create now preserves explicit academic year/start/end input with period-based fallback and guards date order, rather than overwriting entered values.
+- **COL-academic-setup-05:** Electives directory includes Open slot link, scoped Students count of confirmed ACTIVE group assignments, and Pick constraint wording; editing explains academic identity lock. Pending unrecorded `pick` intent is not counted.
+- **COL-academic-setup-16:** removed redundant native confirmations from styled batch/class/semester edit flows and elective create/edit. Destructive lifecycle confirms intentionally remain.
+- **COL-placements-06:** keyed application pipeline controller prevents stale selected learner IDs when search/filter/page changes.
+- BLOCKED `COL-placements-02`: resume preview and match-score explanation need authorized private file storage / reliable score source; existing detail drawer intentionally avoids fabricated evidence.
+- BLOCKED `COL-academic-setup-05`: pending learner elective selections are not registered as persisted student picks; only confirmed active group assignments can be counted.
+- BLOCKED `COL-people-02/07`: canonical login name/mobile/email require identity team flow; College Admin editable profile fields are available but canonical changes remain protected.
+- SKIP `COL-verification-misc-17`: OD-22 super-admin-only domains/branding security-sensitive permission decision remains restrictive.
+- SKIP `COL-people-18`: student contact unmasking remains privacy-policy dependent; masking is preserved.
+- WP-chat-3-02, -03 and -04 remain IN-PROGRESS; moved WP-chat-5-02/09/10 remain IN-PROGRESS; moved WP-chat-5-14/15 TODO. None were marked DONE merely on source commits. No tests/typecheck/lint/build/CI run under FAST v2.
+
 ## FAST v2 migration 0128/0129 implementation ledger — 2026-10-17
 
 - Merged origin/main at start (fast-forward because all earlier chat-3-b work had already landed), including registered migrations 0128/0129. Pushed **only** to `chatgpt/chat-3-b`, every source group committed with `[chat-3]` and IDs.

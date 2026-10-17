@@ -8,6 +8,7 @@ import { StudentClassMoveAction } from "@/components/college/student-class-move-
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
 import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
+import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
 import {CollegeStudentImportHistory} from "@/components/college/college-student-import-history";
 import { CollegeStudentLifecycleAction } from "@/components/college/college-student-lifecycle-action";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
@@ -365,6 +366,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
                 <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+                <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
                   departments={kind==="FACULTY"?result.departmentOptions:[]}/>
                 {kind==="FACULTY"?<CollegeFacultyLifecycleAction membershipId={item.membershipId}
@@ -412,6 +414,7 @@ export async function CollegeRoleDirectoryWorkspace({
                       </div> : null}
                     <div className="mt-2 flex flex-wrap items-center gap-2">
                       <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
+                <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                       <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
                         departments={kind==="FACULTY"?result.departmentOptions:[]}/>
                     </div>
