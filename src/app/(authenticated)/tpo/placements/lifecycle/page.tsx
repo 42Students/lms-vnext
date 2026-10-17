@@ -52,6 +52,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
    ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
+   display:data.display,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
