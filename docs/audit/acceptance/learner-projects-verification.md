@@ -37,7 +37,22 @@ Protocol: `docs/orchestrator/briefs/gap-closure-lane.md`. Source branch `chatgpt
 | LEARNER-projects-40 | DONE | src/components/projects/project-final-delivery-controls.tsx; tests/unit/learner-projects-gap-verification.test.ts — `it("LEARNER-projects-40 checks team confirmation and summary plus evidence")` |
 | LEARNER-projects-R03 | DONE | src/components/projects/project-final-delivery-controls.tsx; tests/unit/learner-projects-gap-verification.test.ts — `it("LEARNER-projects-R03 disabled submit explains readiness to assistive technology")` |
 
-## Still open on this page
+| LEARNER-projects-04 | DONE | src/app/(authenticated)/learn/projects/page.tsx; src/components/projects/project-participant-list-controls.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-04 supports legacy Active In progress Ready and Blocked status choices")` |
+| LEARNER-projects-06 | DONE | src/app/(authenticated)/learn/projects/error.tsx; src/app/(authenticated)/learn/projects/loading.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-06 shows legacy loading failure Retry and both empty messages")` |
+| LEARNER-projects-09 | DONE | src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-09 uses Projects shell heading with the specific project subtitle")` |
+| LEARNER-projects-14 | DONE | src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-14 displays task donut lane counts empty state and signoff note")` |
+| LEARNER-projects-15 | DONE | src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-15 shows ready waiting submitted and accepted final delivery states")` |
+| LEARNER-projects-20 | DONE | src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-20 includes Upcoming meetings and recent history and meeting history")` |
+| LEARNER-projects-21 | DONE | src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-21 shows project team role explanation and roster count")` |
+| LEARNER-projects-34 | DONE | src/components/projects/project-resource-open-link.tsx; src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-34 distinguishes no resource, malformed address and popup failures")` |
+| LEARNER-projects-35 | DONE | src/modules/projects/learner-project-activity-empty-model.ts; src/components/projects/learner-project-activity.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-35 uses exact empty activity text and friendly retry state")` |
+| LEARNER-projects-R04 | DONE | src/modules/projects/learner-sprint-progress-model.ts; src/components/projects/project-workspace.tsx; tests/unit/learner-projects-round2-gap-closure.test.ts — `it("LEARNER-projects-R04 calculates sprint overdue and per-sprint task completion safely")` |
+
+## Round two source-complete; awaiting orchestrator test execution
+
+The page's queued gaps now have written tests and source references. These are **not passing certifications**: orchestrator must run all tests, typecheck, lint and any acceptance checks. Runtime evidence may require revisions.
+
+## Previous open gap inventory (resolved in round two)
 
 These gaps are not claimed as closed. Some have partial source work or an authored test; they require complete legacy parity and runtime verification:
 
