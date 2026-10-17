@@ -70,7 +70,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
    </div>
   </div>
-  {!readOnly?<button type="button" disabled={busy||unassigned===0||!learners.length}
+  {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
      className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50"
      onClick={async()=>{
        if(!window.confirm("Auto-assign unassigned tasks to learners with the fewest open tasks?"))return;
