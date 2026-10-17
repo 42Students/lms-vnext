@@ -62,6 +62,7 @@ function previewData(rows:ImportRow[],roster:Roster[]){
  const matched:Array<{line:number;identity:string;applicationId:string;name:string;outcome:ImportRow["outcome"];status:string|null;rank:number|null;message:string|null}>=[];
  const unmatched:Array<{line:number;identity:string;reason:string;suggestions:ReturnType<typeof suggested>}>=[];
  for(const row of rows){
+  if(row.invalidRank){unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
   if(!row.outcome){unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
   const candidates=matchSource(row,roster);
   if(candidates.length!==1){
@@ -110,14 +111,23 @@ export async function stageTpoRoundImport(
  const used=new Set<string>(),entries:Array<{line:number;applicationId:string;outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT";rank:number|null;message:string|null}>=[];
  const rejected:Array<{applicationId:string;line:number;status:"skipped";reason:string}>=[];
  const skippedLines=new Set(input.skippedLines),override=new Map(input.overrides.map(v=>[v.line,v.applicationId]));
+ const knownLines=new Set(inputRows.map(row=>row.line));
+ if([...skippedLines,...override.keys()].some(line=>!knownLines.has(line)))
+  throw new Error("A skipped or matched row is not present in the uploaded file. Preview the file again.");
+ const explicitlySkippedApplications=new Set<string>();
  for(const row of inputRows){
-  if(skippedLines.has(row.line))continue;
+  if(skippedLines.has(row.line)){
+   const unique=matchSource(row,roster.roster);
+   if(unique.length===1)explicitlySkippedApplications.add(unique[0]!.applicationId);
+   continue;
+  }
   const exact=matchSource(row,roster.roster);
   const chosen=override.get(row.line);
   // Do not use the first ambiguous match: an import must never stage results
   // for a different learner merely because their roll/email was duplicated.
   const match=chosen??(exact.length===1?exact[0]!.applicationId:undefined);
-  const reason=!match?"Unmatched or ambiguous learner; review and choose Skip or a verified match":
+  const reason=row.invalidRank?"Invalid waitlist rank":
+   !match?"Unmatched or ambiguous learner; review and choose Skip or a verified match":
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
   if(reason){
@@ -134,7 +144,8 @@ export async function stageTpoRoundImport(
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   for(const candidate of roster.roster){
-   if(!used.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
+   if(!used.has(candidate.applicationId)&&
+     !explicitlySkippedApplications.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
     entries.push({line:0,applicationId:candidate.applicationId,outcome:"FAIL",rank:null,
      message:"No passing result was reported by the company."});
    }

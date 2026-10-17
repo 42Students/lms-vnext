@@ -1,0 +1,62 @@
+import "server-only";
+import {and,eq,or} from "drizzle-orm";
+import {z} from "zod";
+import {getDb} from "@/db/client";
+import {projectInstances,projectMeetings,projectReleases,projectSprints,projectTasks} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {requireProjectLifecycleMutationAccess} from "./access";
+import {ProjectsServiceError} from "./errors";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+const pathSchema=z.strictObject({projectId:z.string().uuid(),sprintId:z.string().uuid()});
+const bodySchema=z.strictObject({expectedUpdatedAt:z.iso.datetime({offset:true}),confirmUnlink:z.literal(true)});
+/** MEN-projects-meetings-35: unlink task plan only while still planned, preserving task identities. */
+export async function deleteMentorProjectSprint(context:RequestContext,rawPath:unknown,rawBody:unknown){
+ const path=pathSchema.parse(rawPath),input=bodySchema.parse(rawBody);
+ const scope=await requireProjectLifecycleMutationAccess(context,path.projectId);
+ return getDb().transaction(async tx=>{
+  const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
+   .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
+   .for("update").limit(1);
+  if(!project||!["PLANNED","ACTIVE"].includes(project.status))
+   throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  const [sprint]=await tx.select().from(projectSprints)
+    .where(and(eq(projectSprints.id,path.sprintId),eq(projectSprints.projectId,scope.project.id)))
+    .for("update").limit(1);
+  if(!sprint||sprint.status!=="PLANNED"||
+      sprint.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
+   throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
+    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,scope.project.id)))
+    .limit(1);
+  if(!release||release.status==="SHIPPED")throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  const [meeting]=await tx.select({id:projectMeetings.id}).from(projectMeetings)
+    .where(and(eq(projectMeetings.projectId,scope.project.id),eq(projectMeetings.linkedSprintId,sprint.id)))
+    .limit(1);
+  const [carryHistory]=await tx.select({id:projectTasks.id}).from(projectTasks)
+    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.carriedFromSprintId,sprint.id)))
+    .limit(1);
+  if(meeting||carryHistory)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  const moved=await tx.update(projectTasks).set({
+    sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:new Date(),updatedAt:new Date(),
+  }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
+    .returning({id:projectTasks.id});
+  // Moving task identities to the backlog preserves all task comments and submissions.
+  // FK carriedFromSprintId cannot reference a deleted row, so clear that reference
+  // for this explicit removal (the activity record preserves the origin).
+  if(moved.length)await tx.update(projectTasks).set({carriedFromSprintId:null})
+    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.carriedFromSprintId,sprint.id)));
+  const [removed]=await tx.delete(projectSprints).where(and(eq(projectSprints.id,sprint.id),
+    eq(projectSprints.projectId,scope.project.id))).returning({id:projectSprints.id});
+  if(!removed)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+  await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+    collegeId:scope.collegeId,organizationId:scope.organizationId,
+    subjectType:"project_sprint",subjectId:sprint.id,subjectLabel:sprint.title,
+    summary:"Planned sprint removed; tasks returned to product backlog",
+    metadata:{projectId:scope.project.id,sprintId:sprint.id,unlinkedTasks:moved.length,deleted:true},
+    groupKey:"project:"+scope.project.id,
+  });
+  return {deleted:true,unlinkedTasks:moved.length};
+ });
+}
