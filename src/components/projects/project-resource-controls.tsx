@@ -506,6 +506,7 @@ export function ProjectResourceActions({
             url={url}
             required={required}
             visibility={visibility}
+            metadata={metadata} onMetadata={setMetadata} sprints={sprints} tasks={tasks}
             onVisibility={setVisibility}
             onTitle={setTitle}
             onDescription={setDescription}
