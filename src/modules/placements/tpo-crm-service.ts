@@ -374,13 +374,17 @@ export async function logTpoLeadActivity(
     const nextStage=input.type==="CALL"&&input.outcome==="Not interested"?
       "NOT_NOW":lead.manualStage==="NEW"?"CONTACTED":lead.manualStage;
     if(nextStage!==lead.manualStage){
-      await tx.insert(activityEvents).values({
+      const [event]=await tx.insert(activityEvents).values({
         organizationId:college.organizationId,collegeId:input.collegeId,
         actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
         module:"PLACEMENTS",eventType:"RECRUITER_LEADS_STAGE_SET",
         subjectType:"placement_tpo_lead",subjectId:leadId,
         summary:"Recruiter stage changed after contact",
         metadata:{beforeStage:lead.manualStage,afterStage:nextStage,activityType:input.type},
+      }).returning({id:activityEvents.id});
+      if(event)await notifyActiveTposOfRecruiterEvent(tx,{
+       collegeId:college.id,eventId:event.id,leadId,
+       title:"Recruiter stage changed",body:"A recruiter outreach outcome updated the lead stage.",
       });
     }
     return activity;
