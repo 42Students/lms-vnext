@@ -50,3 +50,12 @@ New mutation tests check real typed request validation and current source contra
 | SA-tenants-modules-08 | DONE (source) | Organizations provides scoped search, counts, pagination and selected page size (10/25/50/100), plus clear and refresh. `tests/unit/superadmin-tenants-gap-closure.test.ts` and new round-13 test. |
 | SA-tenants-modules-13 | DONE (source) | Colleges provides scoped search across identity, code, city and organization, page size and refresh; no unscoped listing. Same ID-named tests. |
 | SA-tenants-modules-16 | DONE (source) | College edit saves addressLine, landmark, postalCode and country; intentionally does not reparent a live college or rewrite immutable tenant ID. New round-13 ID-named regression. |
+
+## Chat-3 round 13 — remaining tenant navigation and session control
+
+| ID | Status | Rationale / regression |
+| --- | --- | --- |
+| SA-tenants-modules-06 | DONE (source) | The scoped `/admin/tenants/setup` is one route with persisted `STRUCTURE`/`LAUNCH` URL steps, overview progress, adjacent structure forms, launch addresses/settings/checklist, and safe default to launch when college scoped. `tests/unit/chat3-tenant-public-verified-round13.test.ts` case SA-tenants-modules-06. |
+| SA-tenants-modules-17 | DONE (source) | College Admin/TPO creation, status, suspend/reactivate, scoped history, device list and session controls are reachable from a college-scoped Admins page. Active mentoring is intentionally guarded conservatively; permanent deletion is withheld to preserve history. Same ID-named test and persisted tenant-role permission guard. |
+| SA-tenants-modules-18 | DONE (source) | Scoped administrator active devices and audited Sign out everywhere POST; `tests/unit/superadmin-tenants-gap-closure.test.ts` and round13 source evidence. |
+| SA-tenants-modules-19 | NOT-A-GAP (safe functionality; visual tab deferred) | Scoped college detail links to `/activity?collegeId=` plus authorised activity CSV; route enforces tenant permission. Duplicate embedded audit grid would add maintenance/UX surface without added capability; visual navigation remains for playbook review, no page restyling now. Named round13 regression. |
