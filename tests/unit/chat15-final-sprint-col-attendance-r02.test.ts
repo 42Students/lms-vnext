@@ -49,6 +49,18 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
   expect(service).toContain("canNotifyVerifiedParent(contact)");
   expect(service).toContain("PARENT_SMS_SCHEMA_NOT_REGISTERED");
  });
+ it("COL-attendance-R02 retries only still-current, consented messages for the authorized college in bounded batches",()=>{
+  const service=source("src/modules/attendance/parent-sms-service.ts");
+  const route=source("src/app/api/attendance/admin/parent-contacts/retry/route.ts");
+  const editor=source("src/components/attendance/admin-attendance-parent-contact-editor.tsx");
+  expect(service).toContain('const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:currentAttendance===undefined');
+  expect(service).toContain('eq(attendanceParentSmsOutbox.collegeId,collegeId)');
+  expect(service).toContain('orderBy(asc(attendanceParentSmsOutbox.createdAt)).limit(25)');
+  expect(service).toContain("await requireAttendanceCollege(ctx,collegeId)");
+  expect(route).toContain("isSameOriginRequest(request)");
+  expect(editor).toContain("Retry queued guardian SMS (up to 25)");
+  expect(editor).toContain("Accepted is not proof of handset delivery.");
+ });
  it("COL-attendance-R02 exposes only College Admin same-origin verified-contact registration, never learner alternate phone",()=>{
   const api=source("src/app/api/attendance/admin/parent-contacts/route.ts");
   const ui=source("src/components/attendance/admin-attendance-parent-contact-editor.tsx");
