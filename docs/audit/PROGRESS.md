@@ -8,17 +8,17 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 
 | Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | CLOSED-SINCE | WRONG | Open work | Closed % |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 316 | 0 | 241 | 97 | 33 | 6 | 1 | 349 | 49.6% |
+| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 309 | 0 | 248 | 97 | 33 | 6 | 1 | 342 | 50.6% |
 | recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 36 | 2 | 51 | 20 | 5 | 2 | 0 | 43 | 62.9% |
 | learner | 6 | 3 | 231 | 208 | 23 | 5 | 57 | 109 | 60 | 93 | 0 | 99 | 21 | 16 | 1 | 1 | 109 | 52.6% |
 | faculty | 3 | 2 | 105 | 87 | 18 | 2 | 14 | 46 | 43 | 25 | 0 | 74 | 0 | 0 | 0 | 6 | 25 | 74.7% |
-| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 83 | 0 | 100 | 28 | 19 | 1 | 1 | 102 | 55.8% |
+| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 82 | 0 | 102 | 28 | 18 | 1 | 1 | 100 | 56.7% |
 | superadmin | 9 | 4 | 309 | 301 | 8 | 13 | 104 | 151 | 41 | 146 | 0 | 119 | 20 | 24 | 0 | 0 | 170 | 45.0% |
-| mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 47 | 0 | 35 | 5 | 1 | 0 | 0 | 48 | 45.5% |
+| mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 46 | 0 | 36 | 5 | 1 | 0 | 0 | 47 | 46.6% |
 | public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 33 | 0 | 24 | 4 | 7 | 0 | 0 | 40 | 41.2% |
-| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 779 | 2 | 743 | 195 | 105 | 10 | 9 | 886 | 51.7% |
+| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 770 | 2 | 753 | 195 | 104 | 10 | 9 | 876 | 52.2% |
 
-Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 7, S2 239, S3 443, S4 197.
+Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 7, S2 237, S3 436, S4 196.
 
 ## Closure status (git citations since 2026-10-15)
 
@@ -28,24 +28,24 @@ Open work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED
 
 | Account | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| tpo | 694 | 316 | 0 | 241 | 97 | 33 | 1 | 6 | 49.6% |
+| tpo | 694 | 309 | 0 | 248 | 97 | 33 | 1 | 6 | 50.6% |
 | recruiter | 116 | 36 | 2 | 51 | 20 | 5 | 0 | 2 | 62.9% |
 | learner | 231 | 93 | 0 | 99 | 21 | 16 | 1 | 1 | 52.6% |
 | faculty | 105 | 25 | 0 | 74 | 0 | 0 | 6 | 0 | 74.7% |
-| college | 232 | 83 | 0 | 100 | 28 | 19 | 1 | 1 | 55.8% |
+| college | 232 | 82 | 0 | 102 | 28 | 18 | 1 | 1 | 56.7% |
 | superadmin | 309 | 146 | 0 | 119 | 20 | 24 | 0 | 0 | 45.0% |
-| mentor | 88 | 47 | 0 | 35 | 5 | 1 | 0 | 0 | 45.5% |
+| mentor | 88 | 46 | 0 | 36 | 5 | 1 | 0 | 0 | 46.6% |
 | public | 68 | 33 | 0 | 24 | 4 | 7 | 0 | 0 | 41.2% |
-| **all** | 1843 | 779 | 2 | 743 | 195 | 105 | 9 | 10 | 51.7% |
+| **all** | 1843 | 770 | 2 | 753 | 195 | 104 | 9 | 10 | 52.2% |
 
 ### By severity
 
 | Severity | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
 | S1 | 113 | 7 | 0 | 29 | 76 | 0 | 0 | 1 | 93.8% |
-| S2 | 624 | 203 | 0 | 294 | 86 | 36 | 2 | 3 | 61.6% |
-| S3 | 807 | 398 | 2 | 330 | 31 | 43 | 0 | 3 | 45.1% |
-| S4 | 299 | 171 | 0 | 90 | 2 | 26 | 7 | 3 | 32.5% |
+| S2 | 624 | 202 | 0 | 296 | 86 | 35 | 2 | 3 | 61.9% |
+| S3 | 807 | 391 | 2 | 337 | 31 | 43 | 0 | 3 | 46.0% |
+| S4 | 299 | 170 | 0 | 91 | 2 | 26 | 7 | 3 | 32.9% |
 
 ### By lane
 
@@ -54,46 +54,46 @@ Lane = the lane branch for IN-BRANCH gaps, else the proposed lane.
 | Lane | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
 | chat-2 | 206 | 88 | 0 | 64 | 42 | 10 | 0 | 2 | 52.4% |
-| chat-5 | 312 | 164 | 0 | 98 | 33 | 15 | 1 | 1 | 42.4% |
-| chat-7 | 608 | 234 | 2 | 283 | 50 | 29 | 7 | 3 | 55.9% |
-| chat-9 | 717 | 293 | 0 | 298 | 70 | 51 | 1 | 4 | 52.0% |
+| chat-5 | 312 | 158 | 0 | 104 | 33 | 15 | 1 | 1 | 44.4% |
+| chat-7 | 608 | 233 | 2 | 284 | 50 | 29 | 7 | 3 | 56.1% |
+| chat-9 | 717 | 291 | 0 | 301 | 70 | 50 | 1 | 4 | 52.4% |
 
 ### Throughput per lane
 
-Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-17T03:07:45.939Z).
+Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-17T03:27:36.496Z).
 
 | Lane | Last 24 h | 2026-10-16 | 2026-10-17 | Total |
 |---|---|---|---|---|
 | chat-2 | 106 | 42 | 64 | 106 |
-| chat-5 | 131 | 44 | 87 | 131 |
-| chat-7 | 335 | 52 | 283 | 335 |
-| chat-9 | 368 | 63 | 305 | 368 |
-| **all** | 940 | 201 | 739 | 940 |
+| chat-5 | 137 | 44 | 93 | 137 |
+| chat-7 | 336 | 52 | 284 | 336 |
+| chat-9 | 371 | 63 | 308 | 371 |
+| **all** | 950 | 201 | 749 | 950 |
 
 ### 20 most recent fixes on main
 
 | ID | Severity | Status | Fixed by | Date |
 |---|---|---|---|---|
-| TPO-drives-18 | S3 | FIXED-ON-MAIN | d09b02f92 | 2026-10-17 08:35 |
-| TPO-drive-workspace-49 | S2 | FIXED-ON-MAIN | ddc524061 | 2026-10-17 08:35 |
-| TPO-drive-workspace-50 | S2 | FIXED-ON-MAIN | c3d70074d | 2026-10-17 08:34 |
-| TPO-drives-10 | S2 | FIXED-ON-MAIN | 7219ce57f | 2026-10-17 08:34 |
-| REC-home-drives-48 | S2 | FIXED-ON-MAIN | 91d25f353 | 2026-10-17 08:32 |
-| SA-academics-people-45 | S4 | FIXED-ON-MAIN | 1d5186148 | 2026-10-17 08:32 |
-| TPO-settings-audit-56 | S2 | FIXED-ON-MAIN | 0fbabe9f2 | 2026-10-17 08:32 |
-| MEN-projects-meetings-44 | S3 | FIXED-ON-MAIN | 8fbea2752 | 2026-10-17 08:31 |
-| SA-academics-people-42 | S4 | FIXED-ON-MAIN | 581a4dfa9 | 2026-10-17 08:31 |
-| TPO-settings-audit-20 | S2 | FIXED-ON-MAIN | e68774037 | 2026-10-17 08:31 |
-| SA-academics-people-40 | S4 | FIXED-ON-MAIN | 61632163f | 2026-10-17 08:31 |
-| TPO-drive-workspace-48 | S1 | FIXED-ON-MAIN | e8d399221 | 2026-10-17 08:31 |
-| SA-academics-people-23 | S3 | FIXED-ON-MAIN | e0b0e478a | 2026-10-17 08:31 |
-| TPO-settings-audit-92 | S2 | FIXED-ON-MAIN | 896b7dd0e | 2026-10-17 08:30 |
-| COL-courses-content-01 | S2 | FIXED-ON-MAIN | 6a3c23c2a | 2026-10-17 08:30 |
-| TPO-drive-workspace-40 | S1 | FIXED-ON-MAIN | 4612a1c9d | 2026-10-17 08:30 |
-| SA-placements-projects-19 | S2 | FIXED-ON-MAIN | 7b940d4f4 | 2026-10-17 08:30 |
-| TPO-recruiters-13 | S1 | VERIFIED | 7dbb067e8 | 2026-10-17 08:30 |
-| SA-academics-people-102 | S3 | FIXED-ON-MAIN | 1bd4a3870 | 2026-10-17 08:29 |
-| TPO-drive-workspace-29 | S2 | FIXED-ON-MAIN | cf5086fca | 2026-10-17 08:29 |
+| REC-home-drives-25 | S2 | FIXED-ON-MAIN | c0ad24b83 | 2026-10-17 08:54 |
+| REC-home-drives-01 | S2 | VERIFIED | ba6992ea2 | 2026-10-17 08:53 |
+| TPO-requests-verification-11 | S3 | FIXED-ON-MAIN | abb22baae | 2026-10-17 08:53 |
+| TPO-requests-verification-32 | S3 | FIXED-ON-MAIN | 68c4f4f26 | 2026-10-17 08:52 |
+| REC-home-drives-03 | S3 | FIXED-ON-MAIN | f9cb912fc | 2026-10-17 08:52 |
+| TPO-students-42 | S3 | FIXED-ON-MAIN | 6f55880c4 | 2026-10-17 08:51 |
+| REC-home-drives-06 | S3 | FIXED-ON-MAIN | d528739cc | 2026-10-17 08:51 |
+| REC-home-drives-49 | S2 | FIXED-ON-MAIN | b24e301e6 | 2026-10-17 08:50 |
+| TPO-requests-verification-30 | S3 | FIXED-ON-MAIN | 98aebbf26 | 2026-10-17 08:50 |
+| REC-home-drives-29 | S3 | FIXED-ON-MAIN | c18f04c97 | 2026-10-17 08:49 |
+| TPO-campaigns-public-07 | S2 | FIXED-ON-MAIN | f889803dd | 2026-10-17 08:49 |
+| TPO-calendar-reports-51 | S4 | FIXED-ON-MAIN | 7316b1378 | 2026-10-17 08:49 |
+| COL-courses-content-07 | S2 | FIXED-ON-MAIN | 5bca5001a | 2026-10-17 08:49 |
+| TPO-calendar-reports-50 | S4 | FIXED-ON-MAIN | 59d6812f4 | 2026-10-17 08:49 |
+| TPO-students-45 | S3 | FIXED-ON-MAIN | c56e87c6c | 2026-10-17 08:49 |
+| TPO-students-52 | S3 | FIXED-ON-MAIN | 737a1c92c | 2026-10-17 08:49 |
+| TPO-settings-audit-80 | S4 | FIXED-ON-MAIN | 2efac53c4 | 2026-10-17 08:48 |
+| TPO-students-R08 | S3 | FIXED-ON-MAIN | 2a689201a | 2026-10-17 08:48 |
+| SA-placements-projects-19 | S2 | FIXED-ON-MAIN | 518f790ad | 2026-10-17 08:48 |
+| LEARNER-projects-R02 | S2 | VERIFIED | 5d5a798d1 | 2026-10-17 08:47 |
 
 ### Citation parse problems
 
@@ -112,9 +112,9 @@ None.
 | tpo | home | yes | yes | 52 | 3 | 22 | 23 | 4 | 21 | 26.9% | YES |
 | tpo | inbox-team | yes | yes | 75 | 4 | 32 | 29 | 10 | 48 | 13.3% |  |
 | tpo | recruiters | yes | yes | 49 | 12 | 16 | 18 | 3 | 17 | 14.3% |  |
-| tpo | requests-verification | yes | yes | 41 | 6 | 15 | 17 | 3 | 20 | 19.5% | YES |
-| tpo | settings-audit | yes | yes | 63 | 2 | 33 | 24 | 4 | 23 | 14.3% |  |
-| tpo | students | yes | yes | 62 | 6 | 28 | 26 | 2 | 42 | 17.7% | YES |
+| tpo | requests-verification | yes | yes | 41 | 6 | 15 | 17 | 3 | 17 | 19.5% | YES |
+| tpo | settings-audit | yes | yes | 63 | 2 | 33 | 24 | 4 | 22 | 14.3% |  |
+| tpo | students | yes | yes | 62 | 6 | 28 | 26 | 2 | 39 | 17.7% | YES |
 | recruiter | calendar-messages-profile | yes | yes | 52 | 2 | 13 | 29 | 8 | 16 | 17.3% | YES |
 | recruiter | home-drives | yes | yes | 64 | 4 | 15 | 35 | 10 | 27 | 18.8% | YES |
 | learner | course-detail | yes | no | 20 | 0 | 7 | 8 | 5 | 14 |  |  |
@@ -129,7 +129,7 @@ None.
 | college | academic-setup | yes | no | 41 | 2 | 16 | 16 | 7 | 14 |  |  |
 | college | attendance | yes | no | 17 | 1 | 1 | 9 | 6 | 13 |  |  |
 | college | course-tabs | yes | no | 27 | 7 | 8 | 9 | 3 | 7 |  |  |
-| college | courses-content | yes | no | 17 | 0 | 7 | 7 | 3 | 8 |  |  |
+| college | courses-content | yes | no | 17 | 0 | 7 | 7 | 3 | 6 |  |  |
 | college | dashboard | yes | no | 17 | 0 | 11 | 4 | 2 | 5 |  |  |
 | college | people | yes | no | 27 | 0 | 12 | 11 | 4 | 8 |  |  |
 | college | placements | yes | no | 26 | 2 | 13 | 10 | 1 | 10 |  |  |
@@ -145,7 +145,7 @@ None.
 | superadmin | tenants-modules-3 | yes | no | 28 | 0 | 7 | 16 | 5 | 14 |  |  |
 | superadmin | tenants-modules | yes | yes | 27 | 0 | 10 | 13 | 4 | 12 | 8.5% |  |
 | mentor | projects-meetings-part2 | yes | no | 25 | 0 | 3 | 14 | 8 | 17 |  |  |
-| mentor | projects-meetings | yes | yes | 63 | 0 | 14 | 38 | 11 | 31 | n/a |  |
+| mentor | projects-meetings | yes | yes | 63 | 0 | 14 | 38 | 11 | 30 | n/a |  |
 | public | auth-public-1-login-session | yes | no | 39 | 0 | 10 | 18 | 11 | 28 |  |  |
 | public | auth-public-2-links-marketing | yes | no | 29 | 3 | 14 | 5 | 7 | 12 |  |  |
 
