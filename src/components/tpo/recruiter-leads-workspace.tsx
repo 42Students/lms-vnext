@@ -423,7 +423,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   async function createInviteLink(lead:Lead){
-    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||lead.manualStage==="NOT_NOW"||
+    if(invitingId||lead.recruiterUserId||lead.unsubscribedAt||
       !lead.emailNorm||!lead.companyRelationshipId)return;
     if(lead.inviteSentAt&&!window.confirm("Make a new link? The old link stops working."))return;
     setInvitingId(lead.id);setFreshInvite(null);setActionToast("");
@@ -957,7 +957,7 @@ export function RecruiterLeadsWorkspace({
                       <td style={{display:visibleColumns.includes("Actions")?undefined:"none"}} className="px-4 py-3">
                         {!lead.recruiterUserId?(
                           <button type="button" className={buttonStyle}
-                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)||lead.manualStage==="NOT_NOW"}
+                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
                             onClick={()=>void createInviteLink(lead)}>
                             {lead.inviteSentAt?"Resend invite":"Invite"}
                           </button>
@@ -1023,7 +1023,7 @@ export function RecruiterLeadsWorkspace({
                                href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
                            </div>
                          </details>
-                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
+                         {!lead.recruiterUserId&&!lead.unsubscribedAt?
                          <button type="button" className={buttonStyle+" mt-2"}
                           disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
                       </div>
