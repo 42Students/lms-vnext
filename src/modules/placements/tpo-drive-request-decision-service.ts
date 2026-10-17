@@ -79,8 +79,10 @@ export async function decideTpoRecruiterDriveRequest(
         ctcLpa:draft.ctcLpa||null,
         fixedCtcLpa:draft.fixedLpa||null,variableCtcLpa:draft.variableLpa||null,
         stipendPerMonthInr:draft.stipendMonthlyInr?Number(draft.stipendMonthlyInr):null,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr),
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr),
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr) ??
+          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
+          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
         createdByUserId:context.user.id,
         status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
         externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
