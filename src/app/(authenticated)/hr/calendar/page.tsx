@@ -315,7 +315,7 @@ export default async function HrCalendarPage({
       {noCollegeAccess ? (
         <section className="rounded-xl border border-border bg-surface p-6">
           <h2 className="text-lg font-semibold text-foreground">
-            No active college access
+            Open this on your college&apos;s placement address
           </h2>
           <p className="mt-2 text-sm text-body">
             Your recruiter account does not currently
