@@ -4,8 +4,22 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {tpoGeneralRequestReviewFacts} from "@/modules/placements/tpo-general-request-review-facts";
 type Request={id:string;kind:string;status:string;reason:string;payload:Record<string,unknown>;
  studentName:string|null;version:string;requestedAt:string;decisionNote:string|null};
+function TpoGeneralRequestFacts({kind,payload}:{kind:string;payload:Record<string,unknown>}){
+ const detail=tpoGeneralRequestReviewFacts(kind,payload);
+ return <div className="space-y-2">
+  {detail.facts.length?<dl className="grid gap-2 sm:grid-cols-2">{detail.facts.map(item=>
+   <div key={item.label} className="rounded border border-border p-2">
+    <dt className="text-xs text-muted-foreground">{item.label}</dt>
+    <dd className="break-words font-medium">{item.value}</dd>
+   </div>)}</dl>:null}
+  {detail.proofUrl?<a href={detail.proofUrl} target="_blank" rel="noopener noreferrer"
+   className="inline-flex min-h-10 items-center text-primary-text underline">Review submitted proof link</a>:
+   detail.requiresProof?<p role="alert" className="text-warning-text">No proof attached</p>:null}
+ </div>;
+}
 export function TpoGeneralRequestsPanel(){
  const [rows,setRows]=useState<Request[]>([]),[error,setError]=useState("");
  const [selection,setSelection]=useState<Request|null>(null),[action,setAction]=useState<"APPROVE"|"REJECT">("REJECT");
@@ -35,8 +49,6 @@ export function TpoGeneralRequestsPanel(){
  }
  const pendingRows=rows.filter(row=>row.status==="PENDING");
  const approveSupported=(kind:string)=>["OFF_CAMPUS_OFFER","REGISTRATION_CHANGE"].includes(kind);
- const proof=(row:Request)=>typeof row.payload.proofUrl==="string"&&row.payload.proofUrl.startsWith("https://")?
-  row.payload.proofUrl:null;
  return <section aria-label="Other student requests" className="space-y-3 rounded-xl border border-border p-4">
   <h2 className="font-semibold">Other student requests · {pendingRows.length} waiting</h2>
   <p className="text-sm">Off-campus offers, registration changes, attendance disputes, profile corrections, and requests after placement. Approval is enabled only where the database effect is fully supported; the others require a separate specialist workflow.</p>
@@ -48,7 +60,7 @@ export function TpoGeneralRequestsPanel(){
     <h3 className="font-semibold">{row.studentName??"Student"} · {row.kind.replaceAll("_"," ").toLowerCase()}</h3>
     <p className="break-words">{row.reason}</p>
     <p className="text-xs">{row.status.replaceAll("_"," ")}</p>
-    {proof(row)?<a href={proof(row)!} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Review submitted proof link</a>:null}
+    <TpoGeneralRequestFacts kind={row.kind} payload={row.payload}/>
     {row.decisionNote?<p>Decision: {row.decisionNote}</p>:null}
     {row.status==="PENDING"?<button type="button" disabled={pending} className="mt-2 min-h-10 rounded border border-border px-3 font-semibold text-primary-text"
       onClick={()=>{setSelection(row);setNote("");setAction("REJECT");}}>Review request</button>:null}
