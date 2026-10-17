@@ -58,8 +58,4 @@ The independent audit findings page displays the **persisted** `audit_finding_sy
 
 The source-level feature statuses for SA-placements-projects-101/103/104/106/107/109/112/113/114/116/117/118/119/121/122 have been reconciled in `docs/audit/gap-register.md`; source-complete is not a passing DB/browser/provider test.
 
-### Chat-6 follow-up: SA-placements-projects-115 report linkage
-
-| Gap ID | Status | Evidence and remaining acceptance |
-|---|---|---|
-| SA-placements-projects-115 | OPEN (source-authored create-and-link; runtime pending) | `KnownErrorsWorkspace` opens `/tracker?context=…&knownErrorId=…` with sanitized bounded text; `tracker/page.tsx` passes the UUID only to Super Admin; `TrackerReportForm` creates an issue via the origin-guarded tracker API, then PATCHes the Known Error via `LINK_ISSUE`. Failed linking retains the created issue ID and exposes `Retry linking Known Error` without creating another issue. `tests/unit/chat6-known-error-issue-link-115.test.ts` covers authorization, Zod validation and recoverable partial failure. Browser/PG transaction checks still pending; direct one-click submission is deliberately not performed without a reporter's description. |
+| SA-placements-projects-102 | DONE source | Mounted existing authenticated `TrackerQuickReportLauncher` from `src/components/shell/app-shell.tsx` without modifying the page design. Existing Alt+B/Escape modal captures page, browser and viewport at opening and uses `TrackerReportForm` with safe API plus retained unsaved draft; server enforces tracker create permissions. `tests/unit/chat9-final-SA-placements-projects-102.test.ts` — `SA-placements-projects-102 exposes the existing issue launcher in every authenticated shell without a new unguarded submit route`. Integration/browser testing remains pending orchestrator. |
