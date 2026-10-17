@@ -102,7 +102,7 @@ export async function ProjectAdminAtRiskPage({
           }))}/>
         <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
       </div>
-      <ProjectAdminFilters query={query} />
+      <ProjectAdminFilters query={query} includeRiskSort />
 
       {!result.items.length ? (
         <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
