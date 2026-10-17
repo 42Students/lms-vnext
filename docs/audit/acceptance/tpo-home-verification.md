@@ -39,3 +39,12 @@ Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4
 | TPO-home-19 | DONE | `src/components/tpo/tpo-home-return-refresh.tsx`, `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-19`. |
 | TPO-home-37 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-37`. |
 | TPO-home-R07 | PARTIAL | `src/app/(authenticated)/tpo/find/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-R07`. Student link now uses `q` and membership drawer, but roll-number searching and full command palette remain open. |
+
+### Round 4: module controls, live finder and unread refresh (tests NOT RUN)
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-home-26 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-26`: resolved module switch blocks Home reads and shows exact legacy module-off heading |
+| TPO-home-28 | DONE | `src/components/tpo/tpo-find-shortcut.tsx`, `src/app/api/tpo/find-suggestions/route.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-28`: Ctrl K palette, 200ms live search after two characters, bounded grouped results, in-session recents, keyboard navigation |
+| TPO-home-34 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-34`: unread badge refresh every 30s while visible and when returning to the tab; failures retain the previous count |
+| TPO-home-39 | DONE (test assertion reconciled) | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-39`: test expects the actual `changeOpen` state-aware callback, not a stale `setOpen` reference |
