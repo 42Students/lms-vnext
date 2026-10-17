@@ -57,6 +57,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
   if(new Date(dueAt).getTime()<=Date.now()){setMessage("Choose a future time to reschedule.");return;}
+  if(blocked.has(day)&&!window.confirm("This date is blocked in placement settings. Move the follow-up here anyway?"))return;
+  if(!blockedDatesAvailable&&!window.confirm("Blocked dates could not be checked. Move this follow-up anyway?"))return;
   if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;
   setSaving(true);setMessage("");
   try{
