@@ -27,6 +27,10 @@ type Lead = {
   unsubscribedAt:string|null;
   createdAt:string;
 };
+type CompanySummary = {
+ name:string;drivesRan:number;acceptedOfferDrives:number;
+ drives:Array<{id:string;jobTitle:string;applied:number;offers:number;status:string}>;
+};
 type Activity = {
   id: string;
   type: string;
