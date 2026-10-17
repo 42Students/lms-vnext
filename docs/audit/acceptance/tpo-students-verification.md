@@ -92,3 +92,11 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | TPO-students-44 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-44` contract; see earlier code evidence in this file. |
 | TPO-students-R02 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R02` contract; see earlier code evidence in this file. |
 | TPO-students-R08 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R08` contract; see earlier code evidence in this file. |
+
+## [chat-5] Additional queue ambiguity decisions after concurrent student bulk-add merge
+
+| Gap ID | Decision | Evidence |
+|---|---|---|
+| TPO-students-15 | DONE (additional delegated decision; runtime CI pending) | College-assisted applications must disclose Added by college provenance, notify learners, preserve a 48-hour opt-out, and never imply student consent from an administrator action. Confirmed in `src/modules/placements/bulk-drive-service.ts`, `src/modules/placements/application-service.ts` and `tests/unit/chat12-bulk-drive-side-effects-15.test.ts` with real source checks. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-15`. Tests authored, CI pending. |
+| TPO-students-49 | OPEN (additional delegated decision) | Allow a scoped College Admin with placements.manage on TPO Students and exports, never general Faculty or cross-college users; this requires the full roster, CSV and detail service permission path. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-49`. Tests authored, CI pending. |
+| TPO-students-50 | NOT-A-GAP (additional delegated decision) | For the operational Registered journey, a persisted application is evidence of participation when choice is missing; for **consent**, only an explicit placement registration choice counts. Never interpret the journey fallback as an opt-in permission. This matches `tpoStudentRegisteredForPlacements()` without weakening consent checks. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-50`. Tests authored, CI pending. |
