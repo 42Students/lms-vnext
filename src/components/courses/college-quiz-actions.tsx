@@ -11,9 +11,29 @@ function istInput(date:Date|null){
 }
 export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  const router=useRouter();
- const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
+ const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false),[loading,setLoading]=useState(false);
  const [title,setTitle]=useState(quiz.title),[due,setDue]=useState(istInput(quiz.dueAt));
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [description,setDescription]=useState(""),[maxAttempts,setMaxAttempts]=useState(1);
+ const [shuffleQuestions,setShuffleQuestions]=useState(false),[shuffleOptions,setShuffleOptions]=useState(false);
+ const [expectedUpdatedAt,setExpectedUpdatedAt]=useState("");
+ async function beginEdit(){
+  if(busy||loading)return;
+  if(editing){setEditing(false);return;}
+  setError("");setNotice("");setLoading(true);
+  try{
+   const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quiz.id),{cache:"no-store"});
+   const payload=await response.json().catch(()=>null);
+   if(!response.ok||payload?.quiz?.quiz?.id!==quiz.id)
+    throw Error(payload?.error??"Unable to load Quiz metadata.");
+   const current=payload.quiz.quiz;
+   setTitle(current.title);setDescription(current.description??"");
+   setDue(istInput(current.dueAt));setMaxAttempts(current.maxAttempts);
+   setShuffleQuestions(Boolean(current.shuffleQuestions));setShuffleOptions(Boolean(current.shuffleOptions));
+   setExpectedUpdatedAt(current.updatedAt);setEditing(true);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load Quiz metadata.");}
+  finally{setLoading(false);}
+ }
  async function act(action:"EDIT"|"ARCHIVE"){
   if(busy)return;
   let url="/api/courses/quizzes/"+encodeURIComponent(quiz.id);
