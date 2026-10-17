@@ -65,7 +65,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-81 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-82 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-83 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-85 | S2 | MISSING-ACTION | OPEN |
+| SA-academics-people-85 | S2 | MISSING-ACTION | DONE |
 | SA-academics-people-88 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
 | SA-academics-people-93 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-94 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -73,7 +73,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-96 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-100 | S3 | COPY | DONE |
 | SA-academics-people-102 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-academics-people-103 | S3 | COPY | OPEN |
+| SA-academics-people-103 | S3 | COPY | DONE |
 | SA-academics-people-104 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-academics-people-105 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-107 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |

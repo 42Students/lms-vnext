@@ -2,12 +2,14 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {moveRound} from "@/modules/placements/tpo-round-reorder-model";
+import {useUnsavedDriveGuard} from "./use-unsaved-drive-guard";
 
 type Round={id:string;name:string;sequence:number;status:string};
 export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
  allowed:boolean;reason:string|null;rounds:Round[];
 }}){
  const router=useRouter();
+ const {markDirty,clearDirty}=useUnsavedDriveGuard();
  const [ids,setIds]=useState(()=>readiness.rounds.map(round=>round.id));
  const [dragged,setDragged]=useState<string|null>(null);
  const [busy,setBusy]=useState(false);
@@ -29,7 +31,7 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
       "The order is locked now that results or students are in a round.":
       "The order could not be saved. Refresh and try again.");
    }
-   setSaved(true);router.refresh();
+   clearDirty();setSaved(true);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not reorder rounds.");}
   finally{setBusy(false);}
  }
@@ -43,23 +45,24 @@ export function TpoRoundReorder({jobId,readiness}:{jobId:string;readiness:{
    return <li key={id}
     className="flex flex-wrap items-center gap-2 rounded border border-border bg-surface-secondary p-3"
     onDragOver={event=>{if(readiness.allowed)event.preventDefault();}}
-    onDrop={event=>{event.preventDefault();if(!readiness.allowed||!dragged||busy)return;setIds(current=>moveRound(current,dragged,index));setDragged(null);setSaved(false);}}>
+    onDrop={event=>{event.preventDefault();if(!readiness.allowed||!dragged||busy)return;setIds(current=>moveRound(current,dragged,index));markDirty();setDragged(null);setSaved(false);}}>
     <span draggable={readiness.allowed&&!busy} onDragStart={()=>setDragged(id)} onDragEnd={()=>setDragged(null)}
      title="Drag to reorder" aria-label={"Drag "+round.name} className={readiness.allowed?"cursor-grab select-none font-semibold":"font-semibold"}>☰</span>
     <span className="flex-1 text-sm font-semibold text-foreground">{index+1}. {round.name}</span>
     <button type="button" aria-label={"Move "+round.name+" up"} disabled={!readiness.allowed||busy||index===0}
-     onClick={()=>{setIds(current=>moveRound(current,id,index-1));setSaved(false);}}
+     onClick={()=>{setIds(current=>moveRound(current,id,index-1));markDirty();setSaved(false);}}
      className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50">Move up</button>
     <button type="button" aria-label={"Move "+round.name+" down"} disabled={!readiness.allowed||busy||index===ids.length-1}
-     onClick={()=>{setIds(current=>moveRound(current,id,index+1));setSaved(false);}}
+     onClick={()=>{setIds(current=>moveRound(current,id,index+1));markDirty();setSaved(false);}}
      className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50">Move down</button>
    </li>;
   })}</ol>
+  {changed?<p role="status" className="mt-2 text-sm text-warning-text">Unsaved round order changes. Save or undo before leaving this page.</p>:null}
   <div className="mt-3 flex flex-wrap gap-2">
    <button type="button" disabled={!readiness.allowed||busy||!changed} onClick={()=>void save()}
     className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save round order"}</button>
-   <button type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));setError(null);}}
+   <button type="button" disabled={busy||!changed} onClick={()=>{setIds(readiness.rounds.map(round=>round.id));clearDirty();setError(null);}}
     className="min-h-10 rounded border border-border px-4 text-sm disabled:opacity-50">Undo</button>
   </div>
   {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
