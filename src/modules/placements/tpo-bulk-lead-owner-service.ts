@@ -122,9 +122,10 @@ export async function bulkAssignTpoLeadOwner(
       }).where(and(
         eq(placementTpoLeads.id, selected.id),
         eq(placementTpoLeads.collegeId, collegeId),
-      )).returning({ id: placementTpoLeads.id });
+      )).returning({ id: placementTpoLeads.id,updatedAt:placementTpoLeads.updatedAt });
       if (!updated) throw new Error("TPO_OWNER_UPDATE_CONFLICT");
-      changed.push({leadId:selected.id,beforeOwnerId:current.ownerMembershipId,afterOwnerId:target.id});
+      changed.push({leadId:selected.id,beforeOwnerId:current.ownerMembershipId,afterOwnerId:target.id,
+       afterUpdatedAt:updated.updatedAt.toISOString()});
       await tx.insert(placementTpoLeadActivities).values({
         leadId: current.id,
         collegeId,
