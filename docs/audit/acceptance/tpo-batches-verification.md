@@ -156,3 +156,10 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 | ID | Result | Evidence |
 |---|---|---|
 | TPO-batches-20 | BLOCKED (outbound only) | Real reminder service selects eligible unchosen recipients, writes IST-day deduped audited in-app notifications and guards origin. The reminder shortcut now links to the working batch reminder; `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-20 partial baseline — further implementation required` now verifies service/route/link contracts, in addition to `tests/unit/tpo-batches-20-chat5.test.ts`. Outbound SMS/email requires real provider credentials under OD-11/12. |
+
+## Chat-5 reported test repairs
+
+| ID | Result | Evidence |
+|---|---|---|
+| TPO-batches-40 | DONE (copy regression repair) | `src/components/tpo/tpo-batch-eligibility-import.tsx`: modal title `Import eligibility`, action `Confirm import`, and preserved draft/recovery. `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-40 uses the expected legacy import heading and confirm button`. |
+| TPO-batches-43 | DONE (test evidence corrected) | `src/components/tpo/tpo-batch-inline-decision.tsx` retains reviewed save, 3-character validation, six legacy reason chips and friendly errors. `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason` checks the six legacy strings, not invented alternatives; `tests/unit/tpo-batches-chat5-next-round.test.ts` verifies review gating and guarded save. |
