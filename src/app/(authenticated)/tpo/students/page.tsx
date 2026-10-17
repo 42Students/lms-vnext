@@ -75,7 +75,7 @@ function first(value: string | string[] | undefined) {
 function studentsHref(
   filters: {
     journeyState?: string;
-    legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;
+    legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
     gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
     branchId?: string;
     programId?:string;
@@ -103,6 +103,7 @@ function studentsHref(
     params.set("journeyState",filters.journeyState);
   }
   if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
+  if(filters.debarred!==undefined)params.set("debarred",filters.debarred?"YES":"NO");
   if(filters.gender)params.set("gender",filters.gender);
   if(filters.hasProfileLinks!==undefined)params.set("hasProfileLinks",filters.hasProfileLinks?"YES":"NO");
   for(const key of ["birthYear","minSkills","minProjects","minCertifications","minExperiences"] as const)
@@ -190,6 +191,7 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState:first(raw.journeyState)||undefined,
     legacyStage:first(raw.legacyStage)||undefined,
+    debarred:first(raw.debarred)||undefined,
     gender:first(raw.gender)||undefined,birthYear:first(raw.birthYear)||undefined,
     minSkills:first(raw.minSkills)||undefined,minProjects:first(raw.minProjects)||undefined,
     minCertifications:first(raw.minCertifications)||undefined,minExperiences:first(raw.minExperiences)||undefined,
@@ -306,6 +308,7 @@ export default async function TpoStudentsPage({
       afterCollege:query.afterCollege,
       profileStatus:query.profileStatus,
       legacyStage:query.legacyStage,
+      debarred:query.debarred,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
       minRoundReached:query.minRoundReached,
@@ -337,6 +340,7 @@ export default async function TpoStudentsPage({
     afterCollege:query.afterCollege,
     profileStatus:query.profileStatus,
     legacyStage:query.legacyStage,
+      debarred:query.debarred,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
     minRoundReached:query.minRoundReached,
@@ -409,6 +413,12 @@ export default async function TpoStudentsPage({
             <option value="">All stages</option>
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold">Debarred
+          <select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option><option value="YES">Debarred</option><option value="NO">Not debarred</option>
           </select>
         </label>
         <label className="text-sm font-semibold">Needs attention
@@ -595,6 +605,7 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
+      {!data.debarmentAvailable?<p role="status" className="text-sm text-warning-text">Timed debarment records are not available right now. Debarment filters and counts may be incomplete.</p>:null}
       {(data.uninvitedCount??0)>0?<section role="status" className="rounded-xl border border-border bg-surface p-4 text-sm">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="ml-2 font-semibold text-primary-text underline">Open Placement eligibility</Link>
@@ -623,6 +634,10 @@ export default async function TpoStudentsPage({
          </div>)}
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
+         {data.debarredCount!==null&&data.debarredCount>0?<Link
+          href={scopedHref({...currentFilters,debarred:true,page:1})}
+          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          Debarred · {data.debarredCount}</Link>:null}
          {tpoStudentJourneyGaps(summary).map(gap=><Link key={gap.state}
           href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
           className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">

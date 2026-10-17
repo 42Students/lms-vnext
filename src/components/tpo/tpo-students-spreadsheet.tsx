@@ -41,6 +41,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
  {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
+ {key:"debarred",label:"Debarred",read:row=>row.debarred===null?"Unavailable":row.debarred?"Debarred":"No"},
  {key:"furthest",label:"Furthest round",read:row=>row.maximumAppliedRoundSequence??"Not recorded"},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
