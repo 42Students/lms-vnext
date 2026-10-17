@@ -75,7 +75,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   <p className="text-sm text-body">Drag your own task into a lane, or use the move control for touch and keyboard.</p>
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="min-h-10 text-sm font-semibold text-primary-text underline"
-    onClick={()=>{const last=undo;setUndo(null);void move(last.taskId,last.status,last.blockerReason)}}>
+    onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </button>:null}
   <div className="overflow-x-auto pb-3">
