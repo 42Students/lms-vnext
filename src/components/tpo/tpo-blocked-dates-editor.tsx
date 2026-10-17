@@ -2,11 +2,12 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
+import {tpoIndiaCalendarDay} from "@/modules/placements/tpo-local-date-model";
 type BlockedDay={id:string;day:string;reason:string;updatedAt:string};
 export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
  const router=useRouter(),[startDay,setStartDay]=useState(""),[endDay,setEndDay]=useState(""),[reason,setReason]=useState("");
  const [showPast,setShowPast]=useState(false);
- const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+ const today=tpoIndiaCalendarDay(new Date());
  const rangeLength=startDay&&endDay?Math.round((Date.parse(endDay+"T00:00:00Z")-Date.parse(startDay+"T00:00:00Z"))/86400000)+1:0;
  const validRange=startDay>=today&&rangeLength>=1&&rangeLength<=90;
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -42,8 +43,9 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
    <label className="text-sm">Label (optional)
     <input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
      placeholder="Blocked" className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
+   {reason.trim().length>0&&reason.trim().length<3?<p role="alert" className="self-end text-xs text-error">Use at least 3 characters for a label, or leave it blank.</p>:null}
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50"
-    disabled={busy||!validRange}>Block dates</button>
+    disabled={busy||!validRange||(reason.trim().length>0&&reason.trim().length<3)}>Block dates</button>
   </form>
   <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
