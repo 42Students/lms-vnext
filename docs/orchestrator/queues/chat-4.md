@@ -68,3 +68,11 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - Blocked: `COL-course-tabs-16` delivery content order requires DB05 content-order runtime/registered schema. Section filtering already works; no false ordered-as-seen claim.
 - Blocked: `COL-course-tabs-17` OD-35 security owner decision; `FAC-courses-14`, `FAC-assessments-01`, `LEARNER-course-detail-03/07` private storage scanner/grants; `FAC-attendance-grades-01` parent SMS provider. Move on.
 - WP-01 through WP-07 remain IN-PROGRESS because nonblocked gaps remain beyond the implemented screen groups. No runtime checks, tests, typechecks, lint, builds or CI were performed by FAST v2 rule.
+
+## FAST v2 chat-4-b source delivery after migration 0129 (2026-10-17)
+
+- `COL-course-tabs-13` SOURCE IMPLEMENTED: 0129 registered the durable lesson visibility column; tenant-authorized optimistic single and bulk writes, activity audit, partial-failure report/Retry failed, College directory/offering controls, learner roadmap/lesson/content/assessment/progress/video/material access guards, and College lesson CSV visibility readback now committed on `chatgpt/chat-4-b`. Full browser/runtime parity remains UNVERIFIED under FAST v2.
+- `COL-course-tabs-08/09/10/11/12`: already implemented in previous source batches (class-first learner progress, export, eligible-submitted counts, direct lesson create); not falsely re-counted in this round.
+- WP-01 still IN-PROGRESS: remaining nonblocked deep parity for `COL-course-tabs-01/02/03/04/05/06`, and `SA-academics-people-58`; do not mark DONE. WP-02 to WP-07 retain their existing IN-PROGRESS statuses and unfinished gap lists.
+- Blocked, move on: `COL-course-tabs-16` (DB05 per-section ordering), `COL-course-tabs-17` (OD-35 secure preview decision), `FAC-courses-14`/`FAC-assessments-01`/`LEARNER-learning-misc-01`/`LEARNER-course-detail-03/07/10`/`SA-academics-people-59` (private storage/scanning), `FAC-attendance-grades-01` (parent SMS provider), `FAC-assessments-20`/`FAC-attendance-grades-21`/`FAC-courses-19/21` (owner decision).
+- No tests, lint, typecheck, builds or CI checks run per FAST v2. Source completion does not certify end-to-end acceptance.
