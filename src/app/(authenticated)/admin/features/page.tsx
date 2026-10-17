@@ -19,6 +19,7 @@ import {listSuperAdminFeatureControls} from "@/modules/module-access/admin-read-
 import {parseAdminFeaturePageParams} from "@/modules/module-access/admin-feature-query";
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import { placementFeatureEffects } from "@/modules/platform-settings/placement-feature-controls-model";
+import {adminControlScopeTag,adminControlFeatureCounts} from "@/modules/module-access/admin-control-overview-model";
 
 type SearchParams = Record<
   string,
@@ -96,6 +97,9 @@ export default async function SuperAdminFeaturesPage({
       parsed,
     );
 
+  const controlCounts=adminControlFeatureCounts(result.items);
+  const scopeLabel=adminControlScopeTag(context.adminScope);
+
   const firstItem =
     result.total === 0
       ? 0
@@ -116,6 +120,15 @@ export default async function SuperAdminFeaturesPage({
         description="Effective college-level access for the three optional modules configured in vNext: Projects, Placements and Electives. Values are resolved using the existing persisted-rule inheritance and source defaults."
       />
 
+      <section aria-label="Feature Controls overview" className="rounded-xl border border-border bg-surface p-4">
+        <p className="text-sm font-semibold">Module availability · {scopeLabel}</p>
+        <h2 className="mt-1 text-base font-semibold">Optional modules by college</h2>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+          <div><dt>Colleges in scope</dt><dd className="font-semibold">{result.total} matching current filters</dd></div>
+          <div><dt>Projects on</dt><dd className="font-semibold">{controlCounts.projectsOn} of {controlCounts.shown} on this page</dd></div>
+          <div><dt>Placements on</dt><dd className="font-semibold">{controlCounts.placementsOn} of {controlCounts.shown} on this page</dd></div>
+        </dl>
+      </section>
       <section className="rounded-xl border border-border bg-surface p-5">
         <form
           action="/admin/features"
