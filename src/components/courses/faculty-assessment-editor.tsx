@@ -88,14 +88,14 @@ export function FacultyAssessmentEditor({
     const number = Number(points);
     if (
       !Number.isInteger(number) ||
-      number < 1 ||
+      number < (assessment.kind === "ASSIGNMENT" ? 0 : 1) ||
       (assessment.kind === "ASSIGNMENT"
         ? number > 1000
         : number > 20)
     ) {
       setError(
         assessment.kind === "ASSIGNMENT"
-          ? "Enter a whole number from 1 to 1000"
+          ? "Enter a whole number from 0 to 1000"
           : "Maximum attempts must be between 1 and 20.",
       );
       return;
@@ -306,7 +306,7 @@ export function FacultyAssessmentEditor({
             <Input
               className="mt-1.5"
               type="number"
-              min={1}
+              min={assessment.kind === "ASSIGNMENT" ? 0 : 1}
               max={
                 assessment.kind ===
                 "ASSIGNMENT"

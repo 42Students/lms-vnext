@@ -50,7 +50,7 @@ export const createCourseAssignmentInputSchema =
     maxPoints: z
       .number()
       .int()
-      .min(1)
+      .min(0)
       .max(10000),
     sequence: z
       .number()
@@ -77,7 +77,7 @@ export const updateCourseAssignmentInputSchema =
       maxPoints: z
         .number()
         .int()
-        .min(1)
+        .min(0)
         .max(10000)
         .optional(),
       sequence: z
