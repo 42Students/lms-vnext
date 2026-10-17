@@ -220,17 +220,17 @@ export async function ProjectAdminSubmissionsPage({
                 projectId={submission.projectId} submissionId={submission.id}
                 status={submission.status} locked={!!submission.lockedAt}
                 projectStatus={submission.projectStatus} />
-              <Link
-                href={
-                  basePath +
-                  "/" +
-                  submission.projectId +
-                  "/delivery"
-                }
-                className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-              >
-                Open delivery review →
-              </Link>
+              <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold">
+                <Link href={basePath+"/"+submission.projectId+
+                  "/delivery?from=submissions&reason="+encodeURIComponent(
+                    submission.status==="SUBMITTED"?"pending-review":submission.status.toLowerCase())}
+                  className="text-primary-text underline">Open · Review submission</Link>
+                <Link href={basePath+"/reassign-mentor?fromMentorId="+
+                  encodeURIComponent(submission.mentorMembershipId??"UNASSIGNED")}
+                  className="text-primary-text underline">
+                  {submission.mentorMembershipId?"Reassign mentor":"Assign mentor"}
+                </Link>
+              </div>
             </article>
           ))}
         </div>
