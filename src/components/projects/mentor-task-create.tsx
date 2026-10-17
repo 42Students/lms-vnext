@@ -72,6 +72,16 @@ export function MentorTaskCreate({
         </Button>
       </>}>
       <div className="grid gap-4">
+        <label className="grid gap-1 text-sm font-semibold text-body">Sprint
+          <select value={selectedSprintId} disabled={busy} onChange={event=>{
+            setSelectedSprintId(event.target.value);setStatus("TODO");
+          }} className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Product backlog</option>
+            {choices.map(item=><option key={item.id} value={item.id}>
+              {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
+            </option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Task title
           <Input value={title} maxLength={200} required onChange={e=>setTitle(e.target.value)} />
         </label>
