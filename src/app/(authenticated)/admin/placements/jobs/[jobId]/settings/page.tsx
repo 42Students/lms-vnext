@@ -1,3 +1,4 @@
+import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementJob } from "@/modules/placements/job-service";
@@ -8,6 +9,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
  const job=await getPlacementJob(context,jobId);
  const base="/admin/placements/jobs/"+encodeURIComponent(jobId);
  return <div className="space-y-4">
+    <SuperAdminDriveTabs jobId={jobId} active="Settings"/>
   <PageHeader eyebrow="Super Admin · Drive workspace" title="Settings" description="Drive status, deadline and policy controls for the selected college."/>
   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">{job.title}</h2>
