@@ -14,6 +14,7 @@ export function RecruiterRosterDisplayControls({columns,onColumns,sort,onSort,as
     <option value="NEXT_FOLLOWUP">Next follow-up</option>
     <option value="ADDED">Added</option>
     <option value="NAME">Name</option>
+    <option value="DRIVES">Company drives</option>
    </select>
   </label>
   <label className="flex items-center gap-2 text-sm">
