@@ -4,7 +4,7 @@ import {activityEvents,colleges,collegeMemberships,membershipRoles,users,inAppNo
 import {tpoCampaignUnsubscribeEvent} from "./tpo-campaign-unsubscribe-notification-model";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoLeadActivities,placementTpoEmailCampaignRecipients} from "@/db/schema/tpo-crm";
-import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision} from "./tpo-campaign-recipient-token";
+import {verifyTpoCampaignRecipientToken,campaignUnsubscribeDecision,resolveTpoCampaignRecipientSecret} from "./tpo-campaign-recipient-token";
 
 export class CampaignUnsubscribeInvalid extends Error {
   constructor(){super("CAMPAIGN_UNSUBSCRIBE_INVALID");this.name="CampaignUnsubscribeInvalid";}
@@ -20,7 +20,7 @@ export async function unsubscribeTpoCampaignRecipient(
 ):Promise<{unsubscribed:true}>{
   const registered=await getDb().execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
   if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
-  const key=process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
+  const key=resolveTpoCampaignRecipientSecret(process.env);
   const claim=verifyTpoCampaignRecipientToken(token,key,Date.now());
   if(!claim)throw new CampaignUnsubscribeInvalid();
   const db=getDb();

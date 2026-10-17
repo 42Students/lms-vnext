@@ -386,3 +386,103 @@ export async function endCourseTeachingAssignment(
     return updated;
   });
 }
+
+
+/** SA-academics-people-101: change a teaching role in place. A single locked
+ * transaction preserves the assignment's identity and audit history; ending
+ * and recreating in two requests could leave a class without its teacher. */
+export async function changeCourseTeachingAssignmentRole(
+  context: RequestContext,
+  assignmentIdInput: string,
+  roleInput: unknown,
+) {
+  const assignmentId = courseTeachingAssignmentIdSchema.parse(assignmentIdInput);
+  const role = createCourseTeachingAssignmentInputSchema.shape.role.parse(roleInput);
+  const current = await loadCourseTeachingAssignmentScope(assignmentId);
+  requirePermission(context,"courses.manage",{
+    organizationId:current.organizationId,collegeId:current.collegeId,
+  });
+  try {
+    return await getDb().transaction(async tx=>{
+      const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id})
+        .from(courseSectionDeliveries)
+        .where(and(
+          eq(courseSectionDeliveries.id,current.deliveryId),
+          isNull(courseSectionDeliveries.endedAt),
+        )).for("update").limit(1);
+      if(!liveDelivery)throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
+      const [locked]=await tx.select({
+        id:courseTeachingAssignments.id,role:courseTeachingAssignments.role,
+        membershipId:courseTeachingAssignments.membershipId,
+      }).from(courseTeachingAssignments)
+        .where(and(
+          eq(courseTeachingAssignments.id,assignmentId),
+          eq(courseTeachingAssignments.deliveryId,current.deliveryId),
+          eq(courseTeachingAssignments.membershipId,current.membershipId),
+          isNull(courseTeachingAssignments.endedAt),
+        )).for("update").limit(1);
+      if(!locked)throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+      // Tenant ancestry is rechecked inside the same transaction after the
+      // initial authorization; a transferred delivery cannot be mutated.
+      const [scope]=await tx.select({
+        collegeId:departments.collegeId,organizationId:colleges.organizationId,
+      }).from(courseSectionDeliveries)
+        .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+        .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+        .innerJoin(departments,eq(departments.id,courses.departmentId))
+        .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+        .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+        .where(and(
+          eq(courseSectionDeliveries.id,current.deliveryId),
+          eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
+        )).for("share").limit(1);
+      if(!scope||scope.collegeId!==current.collegeId||
+         scope.organizationId!==current.organizationId)
+        throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+      const [member]=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status,
+        collegeId:collegeMemberships.collegeId})
+        .from(collegeMemberships).where(eq(collegeMemberships.id,locked.membershipId))
+        .for("share").limit(1);
+      if(!member||member.status!=="ACTIVE"||member.collegeId!==current.collegeId)
+        throw new CoursesServiceError("MEMBERSHIP_NOT_ACTIVE");
+      const [facultyRole]=await tx.select({id:membershipRoles.id})
+        .from(membershipRoles).where(and(
+          eq(membershipRoles.membershipId,locked.membershipId),
+          eq(membershipRoles.role,"FACULTY"),
+        )).for("share").limit(1);
+      if(!facultyRole)throw new CoursesServiceError("FACULTY_ROLE_REQUIRED");
+      if(locked.role===role)return locked;
+      const peers=await tx.select({membershipId:courseTeachingAssignments.membershipId,
+        role:courseTeachingAssignments.role})
+        .from(courseTeachingAssignments)
+        .where(and(
+          eq(courseTeachingAssignments.deliveryId,current.deliveryId),
+          isNull(courseTeachingAssignments.endedAt),
+        ));
+      const conflict=teachingAssignmentConflict({membershipId:locked.membershipId,role},
+        peers.filter(item=>item.membershipId!==locked.membershipId));
+      if(conflict)throw new CoursesServiceError(conflict);
+      const [updated]=await tx.update(courseTeachingAssignments)
+        .set({role,updatedAt:new Date()})
+        .where(and(
+          eq(courseTeachingAssignments.id,assignmentId),
+          eq(courseTeachingAssignments.deliveryId,current.deliveryId),
+          eq(courseTeachingAssignments.membershipId,current.membershipId),
+          isNull(courseTeachingAssignments.endedAt),
+        )).returning();
+      if(!updated)throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.COURSES_TEACHING_ASSIGNED,
+        collegeId:current.collegeId,organizationId:current.organizationId,
+        subjectType:"course_teaching_assignment",subjectId:assignmentId,
+        subjectLabel:updated.role,summary:"Faculty teaching role changed",
+        metadata:{before:{role:locked.role,membershipId:locked.membershipId},
+          after:{role:updated.role,membershipId:updated.membershipId}},
+      });
+      return updated;
+    });
+  } catch(error) {
+    if(error instanceof CoursesServiceError)throw error;
+    throw mapTeachingConstraint(error);
+  }
+}

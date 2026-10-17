@@ -2,6 +2,12 @@ import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {FacultyItemActions} from "@/components/courses/faculty-item-actions";
+import {AdminQuizResultsActions} from "@/components/courses/admin-learning-structure-actions";
+import {CollegeAssignmentActions} from "@/components/courses/college-assignment-actions";
+import {CollegeAssignmentReview} from "@/components/courses/college-assignment-review";
+import {CollegeQuizActions} from "@/components/courses/college-quiz-actions";
+import {CollegeQuizAttempts} from "@/components/courses/college-quiz-attempts";
 import { adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/admin-assessment-directory-model";
 import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
@@ -61,9 +67,33 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
         </dl>
-        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+        {assignment?<div className="mt-3 space-y-2">
+          <CollegeAssignmentActions assignment={{id:item.id,title:item.title,
+            points:item.points,dueAt:item.dueAt,status:item.status}}/>
+          <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
+            specificDeliveryId={item.deliveryId} maxPoints={item.points}
+            status={item.status} deliveries={data.reviewDeliveries} filesEnabled={false}/>
+        </div>:<div className="mt-3 space-y-2">
+          <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
+          <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
+            specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries}
+            status={item.status}/>
+        </div>}
+        <div className="mt-3 flex flex-wrap items-center gap-2">
+          <FacultyItemActions
+            transitionUrl={"/api/courses/"+(assignment?"assignments":"quizzes")+"/"+item.id+"/transition"}
+            actions={item.status==="DRAFT"?["PUBLISH","ARCHIVE"]:
+              item.status==="PUBLISHED"&&!assignment?["CLOSE","ARCHIVE"]:
+              item.status==="PUBLISHED"?["ARCHIVE"]:[]}/>
+          {!assignment&&["DRAFT","PUBLISHED","CLOSED","ARCHIVED"].includes(item.status)?
+            <AdminQuizResultsActions quizId={item.id}
+              status={item.status as "DRAFT"|"PUBLISHED"|"CLOSED"|"ARCHIVED"}
+              resultsPublished={Boolean(item.resultsPublished)}
+              deadlineReached={item.resultsReleaseReady}/>:null}
+        </div>
+        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
           className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
-          Open offering →
+          Open offering builder / submissions →
         </Link>
       </article>)}
     </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}

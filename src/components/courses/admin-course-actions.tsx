@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
+import {COLLEGE_COURSES_COPY} from "@/modules/courses/college-courses-copy";
 
 async function mutate(
   path: string,
@@ -62,14 +63,19 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,activeOfferingCount=0,
+  course,duplicateHref,activeOfferingCount=0,allowMetadata=false,
 }: {
   duplicateHref?:string;
   activeOfferingCount?:number;
+  allowMetadata?:boolean;
   course: {
     id: string;
     name: string;
     code: string;
+    shortTitle?:string|null;
+    officialCode?:string|null;
+    cardColor?:string|null;
+    takeaways?:string|null;
     description: string | null;
   };
 }) {
@@ -83,10 +89,16 @@ export function CourseActions({
     useState(course.code);
   const [description, setDescription] =
     useState(course.description ?? "");
+  const [shortTitle,setShortTitle]=useState(course.shortTitle??course.name.slice(0,120));
+  const [officialCode,setOfficialCode]=useState(course.officialCode??"");
+  const [cardColor,setCardColor]=useState(course.cardColor??"#1677FF");
+  const [takeaways,setTakeaways]=useState(course.takeaways??"");
   const { pending, run } =
     useCourseMutation();
   const dirty = name!==course.name || code!==course.code ||
-    description!==(course.description??"");
+    description!==(course.description??"")||(allowMetadata&&(
+      shortTitle!==(course.shortTitle??course.name.slice(0,120))||
+      officialCode!==(course.officialCode??"")||cardColor!==(course.cardColor??"#1677FF")||takeaways!==(course.takeaways??"")));
   function closeEdit(next:boolean) {
     if(!next && pending)return;
     if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
@@ -96,6 +108,10 @@ export function CourseActions({
   function openEdit() {
     setName(course.name);
     setCode(course.code);
+    setShortTitle(course.shortTitle??course.name.slice(0,120));
+    setOfficialCode(course.officialCode??"");
+    setCardColor(course.cardColor??"#1677FF");
+    setTakeaways(course.takeaways??"");
     setDescription(
       course.description ?? "",
     );
@@ -142,7 +158,7 @@ export function CourseActions({
               disabled={
                 pending ||
                 !name.trim() ||
-                !code.trim()
+                (allowMetadata?!shortTitle.trim():!code.trim())
               }
               onClick={() =>
                 run(
@@ -154,6 +170,8 @@ export function CourseActions({
                       {
                         name,
                         code,
+                        ...(allowMetadata?{shortTitle:shortTitle.trim(),
+                          officialCode:officialCode.trim()||null,cardColor,takeaways:takeaways.trim()||null}:{}),
                         description:
                           description.trim() ||
                           null,
@@ -174,7 +192,7 @@ export function CourseActions({
         <div className="grid gap-4">
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Name
+              {COLLEGE_COURSES_COPY.nameLabel}
             </span>
             <Input
               value={name}
@@ -184,7 +202,22 @@ export function CourseActions({
               maxLength={255}
             />
           </label>
-          <label>
+          {allowMetadata?<div className="grid gap-3">
+            <label className="grid gap-1 text-xs font-semibold text-body">Short display name
+              <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">Official course code (optional)
+              <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">Course takeaways (optional)
+              <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">Card colour
+              <Input value={cardColor} onChange={event=>setCardColor(event.target.value)}
+                maxLength={7} pattern="#[0-9A-Fa-f]{6}"/>
+            </label>
+          </div>:null}
+          {!allowMetadata?<label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Code
             </span>
@@ -195,7 +228,7 @@ export function CourseActions({
               }
               maxLength={64}
             />
-          </label>
+          </label>:null}
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Description

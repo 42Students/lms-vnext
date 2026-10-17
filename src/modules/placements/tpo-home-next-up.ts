@@ -12,7 +12,7 @@ const ACTION:Record<string,string>={
  SELECTIONS_TO_VERIFY:"Verify selections",REQUESTS:"Decide requests",
  RECRUITER_MESSAGES:"Reply",FOLLOW_UPS:"See follow-ups",
  NO_DEADLINE:"Set a deadline",CLOSING_SOON:"Remind students",
- TEAM_ASKS:"See what you were asked",
+ TEAM_ASKS:"See what you were asked",TEAM_MESSAGES:"Read team messages",
  SCREENING_PENDING:"Review applications",
  OFFERS_AWAITING_RESPONSE:"Check offers",
  JOINING_OUTCOME_PENDING:"Record joining",

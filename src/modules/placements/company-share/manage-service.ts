@@ -21,7 +21,7 @@ import {companyShareLinkPageSchema,COMPANY_SHARE_PAGE_SIZE,clampCompanyShareLink
 import { isShareableJob } from "./scope-model";
 import {
   companyShareExpiry, companyShareIssueSchema,
-  companyShareRevokeSchema, issueCompanyShareToken,
+  companyShareRevokeSchema, issueCompanyShareToken, issueCompanyShareAccessCode,
 } from "./token-model";
 
 export class CompanyShareError extends Error {
@@ -88,11 +88,17 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
         throw new CompanyShareError("NOT_SHAREABLE");
     }
     const {token,digest}=issueCompanyShareToken();
+    const challenge=issueCompanyShareAccessCode();
     const expiresAt=companyShareExpiry(new Date(),parsed.expiresInDays);
+    if(parsed.shortlistBy && Date.parse(parsed.shortlistBy)>expiresAt.getTime())
+      throw new CompanyShareError("NOT_SHAREABLE");
     const [row]=await tx.insert(shares).values({
       collegeId:college.id,jobId:job.id,
       createdByMembershipId:actorMembershipId,
       tokenHash:digest,expiresAt,
+      codeHash:challenge.hash,codeSalt:challenge.salt,
+      selectedColumns:parsed.selectedColumns,
+      shortlistBy:parsed.shortlistBy?new Date(parsed.shortlistBy):null,
     }).returning({id:shares.id});
     if(!row)throw new CompanyShareError("NOT_SHAREABLE");
     if(parsed.selectedApplicationIds?.length){
@@ -108,8 +114,9 @@ export async function issueTpoCompanyApplicantShare(context: RequestContext, raw
     await tx.insert(activityEvents).values({...event,metadata:{
       ...event.metadata,selectionMode:parsed.selectedApplicationIds?.length?"EXACT_SELECTION":"CURRENT_SHORTLIST",
       selectedCount:parsed.selectedApplicationIds?.length??null,
+      columns:parsed.selectedColumns,shortlistBy:parsed.shortlistBy,
     }});
-    return {shareId:row.id,token,expiresAt:expiresAt.toISOString(),
+    return {shareId:row.id,token,accessCode:challenge.code,expiresAt:expiresAt.toISOString(),
        selectedCount:parsed.selectedApplicationIds?.length??null};
   });
 }

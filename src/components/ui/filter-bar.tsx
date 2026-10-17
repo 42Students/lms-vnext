@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
+import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
 import { Button } from "@/components/ui/button";
 import { cx } from "@/lib/class-names";
 
@@ -20,6 +21,7 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]),select:n
 
 export function FilterBar({ title = "Filters", activeCount = 0, search, filters, children, action, className }: FilterBarProps) {
   const [open, setOpen] = useState(false);
+  const { availableHeight } = useOverlayWebview({ open, dismissible: true, onDismiss: () => setOpen(false) });
   const launcher = useRef<HTMLButtonElement>(null);
   const panel = useRef<HTMLDivElement>(null);
   const count = Number.isFinite(activeCount) ? Math.max(0, Math.trunc(activeCount)) : 0;
@@ -47,7 +49,8 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
       media.removeEventListener("change", resize);
       document.removeEventListener("keydown", keys);
       document.body.style.overflow = priorOverflow;
-      launcher.current?.focus();
+      if(media.matches) panel.current?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+      else launcher.current?.focus();
     };
   }, [open]);
 
@@ -62,10 +65,10 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
       className="fixed inset-0 z-30 bg-foreground/30 sm:hidden"/> : null}
-    <div id="lms-filter-panel" ref={panel} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
+    <div id="lms-filter-panel" ref={panel} style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties} role={open ? "dialog" : undefined} aria-modal={open ? true : undefined}
       aria-label={open ? title : undefined}
       className={cx("min-w-0 rounded-xl border border-border bg-surface p-4 sm:static sm:z-auto sm:block sm:max-h-none sm:w-full sm:rounded-xl sm:shadow-none",
-        open ? "fixed inset-0 z-40 block max-h-[100dvh] w-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
+        open ? "fixed inset-0 z-40 block max-h-[var(--lms-visual-height)] w-full overflow-y-auto overscroll-contain pb-[max(1rem,env(safe-area-inset-bottom))] pt-[max(1rem,env(safe-area-inset-top))] shadow-lg" : "hidden sm:block")}>
       <div className="mb-4 flex items-center justify-between gap-3 sm:hidden">
         <h2 className="text-lg font-semibold">{title}</h2>
         <Button variant="ghost" aria-label="Close filters" onClick={() => setOpen(false)}>×</Button>

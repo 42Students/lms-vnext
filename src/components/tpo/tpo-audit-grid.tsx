@@ -86,8 +86,10 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
      {showAbout?<td className="px-3 py-3"><span className="text-xs text-muted-foreground">{TPO_AUDIT_KIND_LABELS[row.kind]}</span><p>{row.title}</p></td>:null}
      {showDetail?<td className="px-3 py-3">{row.detail}</td>:null}
      <td className="px-3 py-3">{row.actorName}</td>
-     <td className="px-3 py-3">{row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
-      className="font-semibold text-primary-text">Open job →</Link>:"—"}</td>
+     <td className="px-3 py-3">{row.entityHref?
+      <Link href={row.entityHref} className="font-semibold text-primary-text">Open item →</Link>:
+      row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
+        className="font-semibold text-primary-text">Open job →</Link>:"—"}</td>
     </tr>)}</tbody>
    </table>
    {visible.length===0?<p role="status" className="p-4 text-sm">No matching audit records on this page.</p>:null}

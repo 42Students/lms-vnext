@@ -21,3 +21,9 @@ Protocol `docs/orchestrator/briefs/gap-closure-lane.md`; audit `docs/audit/pages
 | COL-courses-content-15 | DONE | Shared apiFetch maps HTML 502, non-JSON, network and timeout failures, with ref-locked action guard in course create/edit/display flows; test COL-courses-content-15 |
 
 Graceful operation: `GR-20` per-offering error retry, `GR-71` catalogue empty/filter guidance, `GR-90` role=alert, `GR-91` keyboard reachable Retry. Existing shared `src/lib/friendly-error.ts` and `api-fetch.ts` were not yet on main when work began; no raw code is rendered in the new boundaries. GR entries in `docs/audit/acceptance/graceful-chat-3-verification.md`.
+
+## Chat-3 round 14 — COL-courses-content-02 owner decision
+
+| ID | Disposition | Evidence |
+| --- | --- | --- |
+| COL-courses-content-02 | OPEN — UNCONFIRMED resolved | The richer Course display is a separately persisted, migration-gated object; `courseDisplayRuntimeEnabled()` correctly requires `DB05_COURSE_DISPLAY_READY=DB05_VERIFIED` and does not pretend the table exists. Do not enable or invent course images/card colours without verified storage and deployment readiness. Keep existing Course creation safe, and add missing short-title/code fields only with a real schema-backed write. `tests/unit/chat3-tpo-round14-decisions.test.ts`. |

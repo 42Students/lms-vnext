@@ -14,6 +14,7 @@ import type {
   getAdminCourseWorkspace,
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
+import {SuperAdminCourseBulkVisibility} from "./super-admin-course-bulk-visibility";
 import {
   CourseActions,
   DeliveryActions,
@@ -110,9 +111,11 @@ export function AdminCourseOverview({
           <p className="m-0 font-semibold text-foreground">
             {course.name}
           </p>
+          {courseBasePath.startsWith("/admin/")&&course.shortTitle?<p className="text-sm text-body">Short display name: {course.shortTitle}</p>:null}
           <p className="mt-1 text-xs font-semibold text-primary-text">
             {course.code}
           </p>
+          {courseBasePath.startsWith("/admin/")&&course.takeaways?<p className="mt-1 text-xs text-body">Takeaways: {course.takeaways}</p>:null}
           {course.description ? (
             <p className="mt-1 max-w-xl text-xs text-muted-foreground">
               {course.description}
@@ -163,12 +166,17 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (course) => (
         <CourseActions
+          allowMetadata={courseBasePath.startsWith("/admin/")}
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
           course={{
             id: course.id,
             name: course.name,
             code: course.code,
+            shortTitle:course.shortTitle,
+            officialCode:course.officialCode,
+            cardColor:course.cardColor,
+            takeaways:course.takeaways,
             description:
               course.description,
           }}
@@ -511,6 +519,8 @@ export function AdminCourseOverview({
         {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
+        {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
+          courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         <DataTable
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}

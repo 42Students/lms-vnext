@@ -1,6 +1,7 @@
 "use client";
 
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
+import {AdminAttendanceParentContactEditor} from "./admin-attendance-parent-contact-editor";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
@@ -318,6 +319,7 @@ export function AdminAttendanceWorkspace({
   return (
     <div className="space-y-5">
       {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
+      <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-surface p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
