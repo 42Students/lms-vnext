@@ -37,6 +37,9 @@ export function RecruiterBulkOwnerControls({
   const [results, setResults] = useState<Result[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
+  const [undoRunId,setUndoRunId]=useState("");
+  const [undoReview,setUndoReview]=useState(false);
+  const [undoBusy,setUndoBusy]=useState(false);
   const [reviewOpen,setReviewOpen]=useState(false);
   const [reviewSignature,setReviewSignature]=useState("");
 
@@ -116,6 +119,8 @@ export function RecruiterBulkOwnerControls({
       }
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
+      setUndoRunId(data.results.some(row=>row.status==="updated")?(data.runAuditId??""):"");
+      setUndoReview(false);
       setChosen([]);
       setReviewOpen(false);setReviewSignature("");
       onUpdated();
@@ -127,6 +132,27 @@ export function RecruiterBulkOwnerControls({
     } finally {
       setBusy(false);
     }
+  }
+
+  async function restore(){
+    if(!undoRunId||undoBusy)return;
+    if(!undoReview){setUndoReview(true);return;}
+    setUndoBusy(true);setError("");
+    try{
+     const response=await fetch("/api/placements/tpo/leads/bulk-undo",{
+      method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({confirmed:true,runAuditId:undoRunId}),
+     });
+     const data=await response.json() as {error?:string;restored?:number};
+     if(!response.ok)throw new Error(data.error==="STALE"?"A recruiter changed since the batch; nothing was undone.":
+      data.error==="EXPIRED"?"The five-minute undo window has ended.":
+      data.error==="ALREADY_RESTORED"?"This batch was already undone.":
+      "Undo unavailable. Refresh your recruiter leads before another change.");
+     setUndoRunId("");setUndoReview(false);setResults([]);
+     setCopyNotice(data.restored+" owner assignment(s) restored. Refreshing the roster.");
+     onUpdated();
+    }catch(cause){setError(cause instanceof Error?cause.message:"Could not undo this assignment batch.");}
+    finally{setUndoBusy(false);}
   }
 
   return (
@@ -221,6 +247,15 @@ export function RecruiterBulkOwnerControls({
         <section aria-live="polite">
           <h3 className="text-sm font-semibold text-foreground">Per-lead results</h3>
           {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
+          {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
+           <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>
+           {undoReview?<p role="status" className="mt-2">Restore the previous owner for every changed recruiter in this batch?</p>:null}
+           <div className="mt-2 flex gap-2">
+            <button type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
+             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo owner batch"}</button>
+            {undoReview?<button type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</button>:null}
+           </div>
+          </div>:null}
           <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
             unchanged: {results.filter(row=>row.status==="unchanged").length};
             ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
