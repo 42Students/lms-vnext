@@ -243,6 +243,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                       </tr>
                     </thead>
                     <tbody>
+                      {previewRows.length===0?<tr><td colSpan={4} className="px-3 py-5 text-center text-sm text-muted-foreground">
+                        No rows in this group.
+                      </td></tr>:null}
                       {previewRows.map(item => (
                         <tr key={item.row} className="border-t border-border">
                           <td className="px-3 py-2">{item.row}</td>
