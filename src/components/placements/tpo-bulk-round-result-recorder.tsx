@@ -35,6 +35,7 @@ export function TpoBulkRoundResultRecorder({
   const [outcome, setOutcome] = useState<"PASS" | "FAIL" | "HOLD" | "ABSENT">("PASS");
   const [message, setMessage] = useState("");
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
+  const [failUnselected,setFailUnselected]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
