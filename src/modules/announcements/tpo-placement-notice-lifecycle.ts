@@ -18,7 +18,7 @@ export const tpoNoticeLifecycleSchema=z.object({
  expectedVersion:z.number().int().nonnegative(),
 }).strict();
 
-/** Only original TPO author may delete or undo; version and state checked in the same CAS. */
+/** An authorized TPO colleague may delete, restore, or undo a same-college notice; version and state checked in the same CAS. */
 export async function mutateTpoNotice(context:RequestContext,raw:unknown){
  const input=tpoNoticeLifecycleSchema.parse(raw);
  const membership=context.membership;
@@ -40,7 +40,6 @@ export async function mutateTpoNotice(context:RequestContext,raw:unknown){
    eq(db10Announcements.receiverType,"COLLEGE"),
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,"TPO"),
-   eq(db10Announcements.senderUserId,context.user.id),
   )).for("update").limit(1);
   if(!current)throw new Error("ANNOUNCEMENT_NOT_FOUND");
   if(current.version!==input.expectedVersion)throw new Error("ANNOUNCEMENT_STALE");
