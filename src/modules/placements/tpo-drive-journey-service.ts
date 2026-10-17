@@ -16,7 +16,7 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [counts]=await db.select({
-  applied:sql<number>`count(*) filter(where ${placementApplications.status}='SUBMITTED')::int`,
+  applied:sql<number>`count(*)::int`,
   shortlisted:sql<number>`count(*) filter(where exists(
     select 1 from placement_application_screenings s where s.application_id=${placementApplications.id}
       and s.status='SHORTLISTED'))::int`,
