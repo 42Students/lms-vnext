@@ -12,6 +12,7 @@ import {hrResultsDueHref} from "@/modules/placements/hr-calendar-day-model";
 import {hrResultDeadlineUrgency,HR_DEADLINE_URGENCY_LABELS} from "@/modules/placements/hr-result-deadline-urgency-model";
 import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import {recruiterVisiblePortfolioCounts} from "@/modules/placements/recruiter-portfolio-counts-service";
 import { listRecruiterCalendarEvents } from "@/modules/placements/recruiter-calendar-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { listHrNotifications } from "@/modules/placements/hr-notifications-service";
@@ -85,6 +86,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const collegeJobs = jobs.filter(row => row.collegeId === selectedId && row.job.archivedAt === null);
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
+  const liveDriveCounts=await recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id));
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -203,6 +205,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
+          <span className="mt-2 block text-sm font-semibold text-foreground">
+            {liveDriveCounts[row.job.id]?.sharedApplicants??0} shared applicants
+          </span>
+          {(liveDriveCounts[row.job.id]?.sharedApplicants??0)===0?
+            <span className="mt-1 block text-xs text-muted-foreground">No shortlisted applicants have been shared yet.</span>:null}
           <span className="mt-2 block text-sm text-primary-text">Open hiring drive →</span>
         </Link>)}
       </div>:<p className="mt-3 text-sm text-muted-foreground">No live, non-archived drives for this employer and college.</p>}
