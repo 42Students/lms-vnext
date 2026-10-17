@@ -72,6 +72,8 @@ export const logTpoLeadActivitySchema = z.object({
   outcome: z.string().trim().max(30).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
 }).strict().superRefine((value,ctx)=>{
+  if(value.type==="CALL"&&!["Connected","No answer","Busy","Wrong number","Not interested"].includes(value.outcome??""))
+    ctx.addIssue({code:"custom",message:"Choose a call outcome.",path:["outcome"]});
   if(value.type==="NOTE"&&!value.note?.trim())
     ctx.addIssue({code:"custom",message:"Write a note before logging this interaction.",path:["note"]});
 });
