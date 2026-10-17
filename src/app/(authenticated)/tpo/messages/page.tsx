@@ -120,6 +120,19 @@ export default async function TpoMessagesPage({
   const sourceLabel = isRecruiterInbox
     ? "Recruiter conversations"
     : "Placement notifications";
+  // TPO-inbox-team-11: do not disguise notification deliveries as messages
+  // when the recruiter-thread tables are not available.
+  if(!isRecruiterInbox)return <div className="space-y-6">
+   <PageHeader eyebrow="TPO · Communication" title="Messages"
+    description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
+   <ErrorState title="Recruiter conversations are temporarily unavailable"
+    description="Your placement notifications remain available separately. No recruiter messages were loaded."
+    action={<Link href="/tpo/notifications"
+      className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+      Open notifications
+     </Link>}/>
+  </div>;
+
 
   const rangeStart =
     total === 0
