@@ -48,6 +48,12 @@ export default async function MentorDeliveryVersionPage({params}:{
           No written reviewer feedback is recorded for this version.
         </p>}
     </section>
+    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <h2 className="font-semibold">Learner notes</h2>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
+        {v.notes||"No learner notes were attached to this version."}
+      </p>
+    </section>
     <p className="text-xs text-muted-foreground">
       This view is scoped to an active Mentor assignment and displays only the
       selected registered review decision and text. Learner contact, private
