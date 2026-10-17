@@ -32,6 +32,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
       <AdminCourseOverview
         workspace={workspace}
         catalogueQuery={catalogueQuery}
+        catalogueData={catalogue}
         duplicateCourseId={duplicateCourseId}
         offeringBasePath="/college/courses/offerings"
         allowOfferingLifecycle
