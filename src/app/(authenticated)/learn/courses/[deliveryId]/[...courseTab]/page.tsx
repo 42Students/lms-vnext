@@ -2,7 +2,7 @@ import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-m
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCourseAttendance } from "@/components/courses/learner-course-attendance";
 import { LearnerCourseDiscussion } from "@/components/courses/learner-course-discussion";
@@ -39,7 +39,16 @@ export default async function LearnerCourseTabPage({
   const query = await searchParams;
   const activeTab = learnerCourseTabPath(courseTab, learnerCourseTabs.map((tab) => tab.path));
   if (activeTab === null) {
-    notFound();
+    // Legacy deep links with an unknown course tab resolve to Overview.
+    // Keep query context, but never interpolate it into a path segment.
+    const safeQuery=new URLSearchParams();
+    for(const [key,value] of Object.entries(query).slice(0,20)){
+      if(key.length>100)continue;
+      const one=Array.isArray(value)?value[0]:value;
+      if(typeof one==="string"&&one.length<=500)safeQuery.set(key,one);
+    }
+    const suffix=safeQuery.toString();
+    redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
   }
 
   const context = await getCurrentRequestContext();
