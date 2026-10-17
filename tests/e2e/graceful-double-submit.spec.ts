@@ -45,13 +45,16 @@ for (const flow of flows) {
         await page.getByRole("button", { name: flow.button, exact: true }).click();
         await expect.poll(() => fault.requests().some((request) => request.includes(flow.endpoint.replace("**", "")))).toBe(true);
         expect(fault.hits()).toBe(1);
-        const submit = page.getByRole("button", { name: flow.button, exact: true });
-        // While the server is slow, second user actions must not create a
-        // second mutation. Press Enter as an impatient user would.
-        await expect(submit).toBeDisabled();
+        // React swaps the button's accessible label to its busy copy. Never
+        // continue searching by the original label during the pending state.
+        const busy = page.getByRole("button", { name: /^(Saving|Creating|Sending code)…$/ });
+        await expect(busy.first()).toBeDisabled();
+        // A second Enter on the still-focused form field must not duplicate
+        // a mutation while the first request is outstanding.
         await field.press("Enter");
         expect(fault.hits()).toBe(1);
-        await expect(submit).toBeEnabled({ timeout: 15_000 });
+        await expect(page.getByRole("button", { name: flow.button, exact: true }))
+          .toBeEnabled({ timeout: 15_000 });
         await expect(field).toHaveValue(flow.value);
         expect(fault.hits(), "GR-30 action sent twice while first request was pending").toBe(1);
         await expectNoRawErrors(page);

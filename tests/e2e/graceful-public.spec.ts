@@ -45,7 +45,7 @@ test.describe("GR-80 public sign-in failure matrix", () => {
         );
         try {
           await page.getByRole("button", { name: "Continue" }).click();
-          await expect.poll(failure.hits).toBeGreaterThan(0);
+          await expect.poll(() => failure.requests().includes("POST /api/auth/login/start")).toBe(true);
           await expectFriendlyFailure(page, kind);
           await expect(contact).toHaveValue("9876543210");
           await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
