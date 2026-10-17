@@ -130,7 +130,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-70 | S4 | STATE | NOT-A-GAP |
 | SA-academics-people-71 | S4 | COPY | DONE |
 | SA-academics-people-75 | S4 | RESPONSIVE | UNCONFIRMED |
-| SA-academics-people-76 | S4 | A11Y | UNCONFIRMED |
+| SA-academics-people-76 | S4 | A11Y | NOT-A-GAP$3
 
 ## college/placements (26: FIXED-ON-MAIN 16, UNCONFIRMED 3, OPEN 7)
 
@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-118 | S4 | PERMISSION | NOT-A-GAP |
-| SA-placements-projects-123 | S4 | COPY | UNCONFIRMED |
+| SA-placements-projects-123 | S4 | COPY | DONE$3
 
 ## learner/profile-misc (19: OPEN 6, FIXED-ON-MAIN 13)
 
@@ -308,3 +308,5 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - LEARNER-profile-misc-08: OD-38 retains safety-enhancing academic/verification separation and the privacy-aware career checklist. Named test `chat6-learner-safe-profile-enhancements.test.ts`; acceptance updated, not run.
 
 - FAC-assessments-R06: report page now shows legacy Back, Submitted, Average score, Questions, Due date; named contract `tests/unit/chat6-faculty-quiz-report-header-r06.test.ts` and acceptance added (tests not run).
+
+- SA-academics-people-76: intentionally accessible keyboard move controls per OD-38; existing named unit test and Courses/Content acceptance. SA-placements-projects-123: confirmed existing named tracker-title test and acceptance. Tests not run.
