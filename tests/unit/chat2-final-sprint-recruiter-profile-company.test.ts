@@ -104,4 +104,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-33 |");
  });
 
+ it("REC-calendar-messages-profile-34 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("attributedDriveCounts[member.userId]??0");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Colleagues from your company who work with this college.");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("hrTeamRosterMessage(result.team");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-34 |");
+ });
+
 });
