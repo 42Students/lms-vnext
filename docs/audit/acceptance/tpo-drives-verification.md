@@ -33,3 +33,6 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-04 | DONE | `src/modules/placements/tpo-drive-lifecycle-list-service.ts`: default Requests when pending reviews else Live, explicit All preserved; persistent college-scoped counts. `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`: clickable count badges and active view. Named test `TPO-drives-04 review-first default and persistent badge counts` in `tests/unit/tpo-drives-chat-3-round4.test.ts` (written, not run). |
 
 | TPO-drives-45 | OPEN | `tpo-drive-deadline-ist.ts` parses valid IST wall time and rejects impossible days before the first creation write; Create form uses the converted ISO and explains IST. 11:59 PM prefill still outstanding. `tests/unit/tpo-drives-chat-3-round4.test.ts`, two TPO-drives-45 tests (not run). |
+
+| TPO-drives-37 | OPEN | Legacy retired backlog/gap-year filters are now absent from Create and its submitted policy. Other policy APIs can still set them; `tests/unit/tpo-drives-chat-3-round4.test.ts` test TPO-drives-37. |
+| TPO-drives-49 | OPEN | Non-editable edit page points operators to Clone a past drive; complete frozen detail/hydration behavior remains; test TPO-drives-49. |

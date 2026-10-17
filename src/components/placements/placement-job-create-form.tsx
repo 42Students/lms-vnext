@@ -361,22 +361,6 @@ export function PlacementJobCreateForm({
               data.get("minCgpa") ?? "",
             ),
           ),
-          maxActiveBacklogs:
-            nullableInteger(
-              String(
-                data.get(
-                  "maxActiveBacklogs",
-                ) ?? "",
-              ),
-            ),
-          maxPastBacklogs:
-            nullableInteger(
-              String(
-                data.get(
-                  "maxPastBacklogs",
-                ) ?? "",
-              ),
-            ),
           minTenthPercentage:
             nullableDecimal(
               String(
@@ -409,11 +393,6 @@ export function PlacementJobCreateForm({
                 ) ?? "",
               ),
             ),
-          maxGapYears: nullableInteger(
-            String(
-              data.get("maxGapYears") ?? "",
-            ),
-          ),
           allowedPassingYears:
             splitList(
               String(
@@ -946,21 +925,9 @@ export function PlacementJobCreateForm({
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             ["minCgpa", "Minimum CGPA", "0.01"],
-            [
-              "maxActiveBacklogs",
-              "Max active backlogs",
-              "1",
-            ],
-            [
-              "maxPastBacklogs",
-              "Max past backlogs",
-              "1",
-            ],
-            [
-              "maxGapYears",
-              "Max gap years",
-              "1",
-            ],
+            
+            
+            
             [
               "minTenthPercentage",
               "Minimum 10th %",
