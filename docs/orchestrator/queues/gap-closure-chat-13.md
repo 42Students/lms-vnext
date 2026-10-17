@@ -97,7 +97,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-41 | S3 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-46 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-academics-people-R03 | S3 | STATE | DONE |
-| SA-academics-people-R04 | S3 | SIDE-EFFECT | UNCONFIRMED |
+| SA-academics-people-R04 | S3 | SIDE-EFFECT | DONE |
 | SA-academics-people-10 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-34 | S4 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-35 | S4 | PERFORMANCE | FIXED-ON-MAIN |
@@ -115,7 +115,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-placements-projects-21: scoped offer-letter link attachment, history and internal notes exist; resume preview, editing older notes and score-backed re-screen remain unverified, so do not mark complete.
 - SA-placements-projects-37: existing-mobile recruiter reuse now works for a matching company, but the full gap remains OPEN: free-text company creation and optional multiple colleges are not yet supported.
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
-- SA-academics-people-R04: queue gives SIDE-EFFECT but no ID-level legacy evidence in page audit; do not claim DONE without a persisted mutation contract.
+- SA-academics-people-R04: nine period/cohort/section mutations now write audit events in their transactions; people repository and attendance-policy already audit; integration verification pending orchestrator.
 - SA-placements-projects-35: recruiter Suspend now preserves grants, blocks profile access and revokes signed-in sessions; unit test written, runtime sign-in denial to be verified by orchestrator.
 - SA-placements-projects-05: four legacy attention flags and attach-link evidence are implemented on this branch; orchestrator must register the proposed offer-letter migration before runtime verification.
 
