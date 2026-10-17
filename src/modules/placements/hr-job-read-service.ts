@@ -3,7 +3,7 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
@@ -36,9 +36,11 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const stageCondition=filters.stage === "ALL"
     ? where
     : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
+  const selectionOnly=["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState);
   const offerCondition=filters.offerState === "ALL"
     ? where
-    : and(where,eq(placementOffers.status,filters.offerState));
+    : selectionOnly?and(where,sql`false`):
+      and(where,eq(placementOffers.status,filters.offerState));
   const [counts,applications, offerCounts,offers] = await Promise.all([
     db.select({
       total: sql<number>`count(*)::integer`,
@@ -107,6 +109,44 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .orderBy(desc(placementOffers.issuedAt), desc(placementOffers.id))
       .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE),
   ]);
+  // REC-home-drives-52: formal selection ledger is not an issued offer.
+  // Share the same shortlisted/active-college boundary as the offer reader,
+  // and never treat a CANCELLED selection as a revoked issued offer.
+  const selectionStatus=filters.offerState==="SELECTED"?"SELECTED":
+   filters.offerState==="PENDING_VERIFICATION"?"VERIFIED":
+   filters.offerState==="REVOKED"?"CANCELLED":null;
+  const readSelections=filters.offerState==="ALL"||selectionStatus!==null;
+  const selectionWhere=and(where,
+   eq(placementDriveSelections.jobId,workspace.job.id),
+   selectionStatus?eq(placementDriveSelections.status,selectionStatus):
+    inArray(placementDriveSelections.status,["SELECTED","VERIFIED","CANCELLED"]));
+  const selectionJoin=()=>db.select({
+   id:placementDriveSelections.id,
+   applicationId:placementDriveSelections.applicationId,
+   name:users.displayName,
+   role:placementDriveSelections.roleTitle,
+   status:placementDriveSelections.status,
+   annualCtcInr:placementDriveSelections.annualCtcInr,
+   recordedAt:placementDriveSelections.recordedAt,
+  }).from(placementDriveSelections)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+   .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId));
+  const [selectionCountRows,selectionRows]=readSelections
+   ?await Promise.all([
+    db.select({total:sql<number>`count(*)::integer`}).from(placementDriveSelections)
+     .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+     .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
+     .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+     .innerJoin(users,eq(users.id,collegeMemberships.userId))
+     .where(selectionWhere),
+    selectionJoin().where(selectionWhere).orderBy(desc(placementDriveSelections.recordedAt),
+     desc(placementDriveSelections.id)).limit(HR_OFFER_PAGE_SIZE)
+     .offset((filters.offerState==="ALL"?0:filters.offerPage-1)*HR_OFFER_PAGE_SIZE),
+   ]):[[],[]];
+  const selectionTotal=Number(selectionCountRows[0]?.total??0);
+  const selectionPage=hrOfferPageBounds(filters.offerState==="ALL"?1:filters.offerPage,selectionTotal);
   const totals = counts[0];
   const applicantCounts = {
     all: Number(totals?.total ?? 0),
@@ -154,7 +194,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
     : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
   return {
-    workspace, filters,
+    workspace, filters, selectionRows, selectionPage, selectionTotal,
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
     applicantsTruncated: false,
