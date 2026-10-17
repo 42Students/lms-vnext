@@ -8,6 +8,7 @@ import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
+import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
@@ -37,6 +38,7 @@ type SearchParams = {
   journeyState?: string | string[];
   branchId?: string | string[];
   programId?: string | string[];
+  afterCollege?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -62,6 +64,7 @@ function studentsHref(
     journeyState?: string;
     branchId?: string;
     programId?:string;
+    afterCollege?:string;
     batchId?: string;
     search?: string;
     page?: number;
@@ -80,6 +83,7 @@ function studentsHref(
     params.set("branchId", filters.branchId);
   }
   if(filters.programId)params.set("programId",filters.programId);
+  if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
   if (filters.search) {
@@ -144,6 +148,7 @@ export default async function TpoStudentsPage({
     journeyState: first(raw.journeyState) || undefined,
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
+    afterCollege:first(raw.afterCollege)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -222,12 +227,13 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
       programId:query.programId,
+      afterCollege:query.afterCollege,
       search: query.search,
     },
     true,
@@ -238,6 +244,7 @@ export default async function TpoStudentsPage({
     journeyState: query.journeyState,
     branchId: query.branchId,
     programId:query.programId,
+    afterCollege:query.afterCollege,
     batchId: query.batchId,
     search: query.search,
     pageSize: query.pageSize,
