@@ -61,6 +61,8 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
   const values:string[]=[];
   for(const c of rowMatch[2]!.matchAll(/<c\b([^>]*)>([\s\S]*?)<\/c>/g)){
    const attr=c[1]??"",body=c[2]??"";
+   if(/<f(?:\s|>|\/)/i.test(body))
+    throw Error("Formula cells are not accepted for company results. Paste values first.");
    const ref=/\br="([^"]+)"/.exec(attr)?.[1]??"";
    const position=cellIndex(ref);
    if(position<0||position>39)continue;
