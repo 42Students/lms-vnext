@@ -88,6 +88,9 @@ describe("TPO drive workspace S2 verification round 2",()=>{
   expect(tpoApplicantExportSearchPattern("a_b%")).toBe("%a\\_b\\%%");
   expect(tpoApplicantPipelineParams.safeParse({jobId,search:"student"}).success).toBe(true);
   expect(tpoApplicantPipelineParams.safeParse({jobId,search:"a".repeat(101)}).success).toBe(false);
+  const reader=source("src/modules/placements/tpo-applicant-pipeline-service.ts");
+  for(const field of ["learnerProfiles.rollNumber","users.email","users.phoneE164","cohorts.name","departments.name"])
+   expect(reader).toContain(field);
  });
  it("TPO-drive-workspace-R03 rejects duplicated learners and identical waitlist ranks",()=>{
   const a={expectedCurrentResultId:null,result:{applicationId,outcome:"HOLD",
@@ -110,6 +113,11 @@ describe("TPO drive workspace S2 verification round 2",()=>{
   for(const label of ["Registered & eligible","Applied","Shortlisted","Interviewed","Offered","Placed"])
    expect(code).toContain(label);
   expect(code).toContain("eq(placementApplications.jobId,jobId)");
+  expect(code).toContain("count(*) filter");
+  const workspace=source("src/components/placements/placement-drive-workspace.tsx");
+  expect(workspace).toContain('aria-label="Drive applicant journey"');
+  expect(workspace).toContain("journey.stages.map");
+  expect(workspace).toContain("journey.excluded");
  });
  it("TPO-drive-workspace-45 displays staged and applied result counts with a safe venue fallback",()=>{
   const r=projectTpoRoundFacts({id:jobId,name:"Interview",sequence:1,status:"SCHEDULED",
