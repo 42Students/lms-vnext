@@ -34,6 +34,15 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
       startedByMembershipId: placementTpoInternalThreads.startedByMembershipId,
       invitedMembershipId: placementTpoInternalThreads.invitedMembershipId,
       createdAt: placementTpoInternalThreads.createdAt,
+      counterpartName: sql<string>`coalesce((
+        select nullif(btrim(u.display_name),'')
+        from college_memberships cm join users u on u.id=cm.user_id
+        where cm.college_id=${college.id}::uuid
+          and cm.id=(case when ${placementTpoInternalThreads.startedByMembershipId}=${membership.id}::uuid
+            then ${placementTpoInternalThreads.invitedMembershipId}
+            else ${placementTpoInternalThreads.startedByMembershipId} end)
+        limit 1
+      ),'Team member')`,
     }).from(placementTpoInternalThreads).where(and(
       eq(placementTpoInternalThreads.id, id),
       eq(placementTpoInternalThreads.collegeId, college.id),

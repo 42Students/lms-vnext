@@ -8,13 +8,13 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-inbox-team-15 | S1 | MISSING-ACTION | OPEN |
+| TPO-inbox-team-15 | S1 | MISSING-ACTION | IN-BRANCH |
 | TPO-inbox-team-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-inbox-team-05 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-inbox-team-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-inbox-team-07 | S2 | MISSING-TAB | OPEN |
 | TPO-inbox-team-08 | S2 | SIDE-EFFECT | UNCONFIRMED |
-| TPO-inbox-team-10 | S2 | COPY | OPEN |
+| TPO-inbox-team-10 | S2 | COPY | IN-BRANCH |
 | TPO-inbox-team-16 | S2 | MISSING-TAB | OPEN |
 | TPO-inbox-team-17 | S2 | MISSING-FIELD | OPEN |
 | TPO-inbox-team-18 | S2 | MISSING-COLUMN | OPEN |
@@ -28,7 +28,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-33 | S2 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-35 | S2 | MISSING-ACTION | UNCONFIRMED |
 | TPO-inbox-team-36 | S2 | MISSING-ACTION | OPEN |
-| TPO-inbox-team-39 | S2 | STATE | OPEN |
+| TPO-inbox-team-39 | S2 | STATE | IN-BRANCH |
 | TPO-inbox-team-44 | S2 | MISSING-FIELD | OPEN |
 | TPO-inbox-team-45 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-46 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
@@ -38,42 +38,42 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-55 | S2 | VALIDATION | FIXED-ON-MAIN |
 | TPO-inbox-team-60 | S2 | SIDE-EFFECT | OPEN |
 | TPO-inbox-team-63 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-inbox-team-09 | S3 | STATE | OPEN |
+| TPO-inbox-team-09 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-11 | S3 | STATE | UNCONFIRMED |
-| TPO-inbox-team-13 | S3 | RESPONSIVE | OPEN |
-| TPO-inbox-team-14 | S3 | STATE | OPEN |
+| TPO-inbox-team-13 | S3 | RESPONSIVE | IN-BRANCH |
+| TPO-inbox-team-14 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-23 | S3 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-25 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-26 | S3 | MISSING-FIELD | OPEN |
-| TPO-inbox-team-27 | S3 | STATE | OPEN |
+| TPO-inbox-team-27 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-29 | S3 | SIDE-EFFECT | OPEN |
 | TPO-inbox-team-30 | S3 | STATE | OPEN |
 | TPO-inbox-team-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-inbox-team-34 | S3 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-37 | S3 | COPY | OPEN |
 | TPO-inbox-team-38 | S3 | PERMISSION | OPEN |
-| TPO-inbox-team-40 | S3 | COPY | OPEN |
+| TPO-inbox-team-40 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-49 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-50 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
 | TPO-inbox-team-51 | S3 | MISSING-FIELD | OPEN |
 | TPO-inbox-team-52 | S3 | STATE | OPEN |
 | TPO-inbox-team-53 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-inbox-team-56 | S3 | COPY | OPEN |
-| TPO-inbox-team-57 | S3 | PERMISSION | OPEN |
+| TPO-inbox-team-56 | S3 | COPY | IN-BRANCH |
+| TPO-inbox-team-57 | S3 | PERMISSION | IN-BRANCH |
 | TPO-inbox-team-59 | S3 | MISSING-FIELD | OPEN |
-| TPO-inbox-team-64 | S3 | COPY | OPEN |
-| TPO-inbox-team-65 | S3 | COPY | OPEN |
+| TPO-inbox-team-64 | S3 | COPY | IN-BRANCH |
+| TPO-inbox-team-65 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-R01 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-inbox-team-R02 | S3 | PERMISSION | OPEN |
-| TPO-inbox-team-R03 | S3 | STATE | OPEN |
-| TPO-inbox-team-R05 | S3 | STATE | OPEN |
+| TPO-inbox-team-R03 | S3 | STATE | IN-BRANCH |
+| TPO-inbox-team-R05 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-12 | S4 | PERFORMANCE | FIXED-ON-MAIN |
-| TPO-inbox-team-41 | S4 | STATE | OPEN |
+| TPO-inbox-team-41 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-42 | S4 | RESPONSIVE | OPEN |
-| TPO-inbox-team-58 | S4 | VALIDATION | OPEN |
+| TPO-inbox-team-58 | S4 | VALIDATION | IN-BRANCH |
 | TPO-inbox-team-66 | S4 | A11Y | FIXED-ON-MAIN |
-| TPO-inbox-team-67 | S4 | STATE | OPEN |
-| TPO-inbox-team-68 | S4 | STATE | OPEN |
+| TPO-inbox-team-67 | S4 | STATE | IN-BRANCH |
+| TPO-inbox-team-68 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-R04 | S4 | STATE | OPEN |
 | TPO-inbox-team-R06 | S4 | STATE | OPEN |
 | TPO-inbox-team-R07 | S4 | A11Y | FIXED-ON-MAIN |
@@ -243,3 +243,8 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - TPO-inbox-team-28 / TPO-inbox-team-63: chat-9 owns `src/components/shell`; add scoped Team, Messages and Announcements unread counters to TPO navigation (chat-2 cannot edit shell).
 
 
+
+## Chat-2 current-round status (2026-10-17)
+- This round verified and pushed source-backed fixes to `chatgpt/chat-2-b`; IN-BRANCH means named tests are written but not executed, and unregistered proposed migrations still require orchestrator registration.
+- First 25 initially OPEN entries under tpo/inbox-team: 7 have source-level DONE evidence, 8 have partial progress, 10 remain open with substantial missing workflows. See `docs/audit/acceptance/tpo-inbox-team-verification.md` for evidence; do not treat partial or unrun PostgreSQL cases as runtime certified.
+- Other OPEN items with source-level closure on branch are marked IN-BRANCH above. No source-only claim is upgraded to production verified.

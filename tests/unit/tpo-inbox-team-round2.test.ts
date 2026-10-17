@@ -126,7 +126,9 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   const schema=src("src/db/schema/tpo-internal.ts");
   expect(read).toContain('placementTableExists("placement_tpo_internal_reads")');
   expect(read).toContain("m.created_at>coalesce");
-  expect(read).toContain("unreadCount:Number(row.unreadMessages)");
+  expect(read).toContain("unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0");
+  expect(read).toContain("m.author_membership_id<>");
+  expect(read).toContain("and r.membership_id=");
   expect(ack).toContain("tx.insert(placementTpoInternalReads)");
   expect(ack).toContain("onConflictDoUpdate");
   expect(schema).toContain("placementTpoInternalReads=pgTable");
