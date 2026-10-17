@@ -1,0 +1,27 @@
+"use client";
+import {useState} from "react";
+type Item={id:string;title:string;status:string;mentorName:string|null;memberCount:number;progressPercent:number;updatedAt:Date};
+function quote(value:unknown){
+ const text=String(value??"");
+ return '"'+text.replaceAll('"','""')+'"';
+}
+export function ProjectWorkspacePageExport({items}:{items:Item[]}){
+ const [notice,setNotice]=useState("");
+ function exportCsv(){
+  const columns=["Workspace ID","Workspace","Mentor","Status","Progress %","Members","Updated at"];
+  const body=items.map(r=>[r.id,r.title,r.mentorName,r.status,r.progressPercent,r.memberCount,
+    new Date(r.updatedAt).toISOString()]);
+  const text=[columns,...body].map(row=>row.map(quote).join(",")).join("\r\n");
+  const file=new Blob(["\ufeff"+text],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(file);const link=document.createElement("a");
+  link.href=url;link.download="project-workspaces-page.csv";link.click();URL.revokeObjectURL(url);
+  setNotice("Exported "+items.length+" workspaces from this page.");
+ }
+ return <div className="flex items-center gap-3">
+  <button type="button" disabled={!items.length} onClick={exportCsv}
+   className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
+   Export this page · CSV
+  </button>
+  {notice?<span role="status" className="text-xs text-body">{notice}</span>:null}
+ </div>;
+}
