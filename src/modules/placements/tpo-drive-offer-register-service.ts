@@ -20,7 +20,7 @@ export async function getTpoDriveOfferRegister(context:RequestContext,raw:unknow
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  await requirePlacementManageScope(context,collegeId);
  const facts=await listPlacementJobOffers(context,job.id);
- return {job,status:input.status,...projectOfferRegister(facts,input.status,input.page,input.q,input.joining)};
+ return {job,status:input.status,...projectOfferRegister(facts,input.status,input.page,input.q,input.joining,new Date(),input.kind)};
 }
 
 /** Read-only, scoped export. Does not mark a letter delivered or contact a learner. */
