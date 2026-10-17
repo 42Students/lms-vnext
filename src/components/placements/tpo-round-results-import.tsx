@@ -74,6 +74,14 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      </div>
     </div>)}
    </div>:null}
+   <details className="rounded border border-border bg-surface p-3 text-sm">
+    <summary className="cursor-pointer font-semibold">Not in file ({preview.notInFile.length})</summary>
+    {preview.notInFile.length?<ul className="mt-2 max-h-48 space-y-1 overflow-auto">
+     {preview.notInFile.map(row=><li key={row.applicationId} className="border-b border-border py-1">
+      {row.name} · <span className="font-mono text-xs">{row.applicationId}</span>
+     </li>)}
+    </ul>:<p className="mt-2">Every candidate in this round is represented in the file.</p>}
+   </details>
    <fieldset className="space-y-2 rounded border border-border bg-surface p-3 text-sm">
     <legend className="font-semibold">Students not in the file</legend>
     <label className="flex gap-2"><input type="radio" checked={missingPolicy==="LEAVE_PENDING"}
