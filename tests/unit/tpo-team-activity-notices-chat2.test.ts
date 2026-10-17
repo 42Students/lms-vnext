@@ -18,7 +18,7 @@ describe("Team inbox activity and participant notices",()=>{
   expect(reply).toContain("input.body.slice(0,120)");
   expect(reply).toContain('+"?m="+message.id');
   expect(create).toContain('" added you to a conversation"');
-  expect(create).toContain("input.topic.slice(0,120)");
+  expect(create).toContain("(input.firstMessage??input.topic).slice(0,120)");
  });
  it("TPO-inbox-team-R05 acknowledges both the old thread link and a deep-linked Team message",()=>{
   const ack=src("src/modules/placements/tpo-team-internal-ack-service.ts");

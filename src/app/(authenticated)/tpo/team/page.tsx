@@ -3,6 +3,7 @@ import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-ser
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
+import {TpoTeamHandover} from "@/components/tpo/tpo-team-handover";
 import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
 import {readTpoTeamOwnershipWorkload} from "@/modules/placements/tpo-team-ownership-workload-service";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
@@ -113,12 +114,27 @@ export default async function TpoTeamPage({searchParams}:{
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
        </p>:null}
        {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-3">
-        {([["Live drives",member.liveDrives],["Draft drives",member.draftDrives],
-          ["Companies",member.companies],["Overdue follow-ups",member.overdueFollowups],
-          ["Waiting on teammates",member.waitingOnOthers]] as const).map(([label,count])=><div key={label}>
-         <dt className="text-muted-foreground">{label}</dt><dd className="font-semibold">{label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":count}</dd>
+        {([["Live drives",member.liveDrives,"/tpo/placements"],
+          ["Draft drives",member.draftDrives,"/tpo/placements"],
+          ["Companies",member.companies,"/tpo/recruiters?view=companies"],
+          ["Overdue follow-ups",member.overdueFollowups,"/tpo/recruiters?due=1"],
+          ["Waiting on teammates",member.waitingOnOthers,"/tpo/team?tab=conversations&filter=ASKS"]] as const)
+         .map(([label,count,href])=><div key={label}>
+         <dt className="text-muted-foreground">{label}</dt>
+         <dd className="font-semibold">
+          {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
+           <Link href={href} title={"Open "+label.toLowerCase()+" records"}
+            className="text-primary-text underline underline-offset-2">{count}</Link>}
+         </dd>
         </div>)}
        </dl>:null}
+       {ownerWorkload?.drivesReady&&member.membershipId!==context.membership?.id&&
+        (member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))?
+        <TpoTeamHandover sourceMembershipId={member.membershipId}
+         sourceName={member.displayName}
+         members={activeTeam.filter(candidate=>(candidate.roles.includes("TPO")||candidate.roles.includes("COLLEGE_ADMIN"))&&
+          candidate.membershipId!==member.membershipId)
+          .map(candidate=>({membershipId:candidate.membershipId,displayName:candidate.displayName}))}/>:null}
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
        </p>:null}
