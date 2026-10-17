@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Pagination, paginationWindow } from "@/components/ui/pagination";
-import { tabNextEnabled } from "@/components/ui/tabs";
+import { Tabs, tabNextEnabled } from "@/components/ui/tabs";
 import { avatarInitials } from "@/components/ui/avatar";
 import { fileSizeIsValid } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
@@ -42,6 +42,14 @@ describe("UX playbook shared behaviour", () => {
     const markup = renderToStaticMarkup(<Skeleton variant="card" count={2} label="Loading courses" />);
     expect(markup).toContain('role="status"');
     expect(markup).toContain("Loading courses");
+  });
+  it("UX-PLAYBOOK-08 preserves link navigation for route tabs", () => {
+    const markup = renderToStaticMarkup(<Tabs renderPanel={false} ariaLabel="Project sections" value="team"
+      items={[{ value: "overview", label: "Overview", href: "/project?tab=overview" },
+        { value: "team", label: "People & Meetings", href: "/project?tab=team" }]} />);
+    expect(markup).toContain('aria-current="page"');
+    expect(markup).toContain("/project?tab=team");
+    expect(markup).toContain('aria-label="Project sections"');
   });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
     const markup = renderToStaticMarkup(<Pagination page={2} pageCount={3} hrefForPage={page => "/directory?page=" + page}/>);
