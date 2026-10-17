@@ -8,6 +8,7 @@ import {
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
+import {ProjectWorkspacePageExport} from "@/components/projects/project-workspace-page-export";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
@@ -116,6 +117,10 @@ export default async function SuperAdminProjectsPage({
           (query.status?"&status="+query.status:"")} aria-current={view==="cards"?"page":undefined}
           className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Cards</Link>
       </nav>
+      <ProjectWorkspacePageExport items={result.items.map(item=>({
+        id:item.id,title:item.title,mentorName:item.mentorName,status:item.status,
+        memberCount:item.memberCount,progressPercent:item.progressPercent,updatedAt:item.updatedAt,
+      }))}/>
       <ProjectAdminWorkspaceList
         view={view}
         items={result.items.map((project) => ({
