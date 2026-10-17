@@ -44,7 +44,10 @@ export function TpoApplicationsSpreadsheet({rows,jobId,jobStatus}:{rows:readonly
  return <div className="space-y-3"><TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.id}
    rowActions={row=><div className="space-y-1">
-    <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}/>
+    <TpoApplicantReviewDrawer jobId={jobId} jobStatus={jobStatus} app={row}
+      previousId={rows.findIndex(candidate=>candidate.id===row.id)>0?
+        rows[rows.findIndex(candidate=>candidate.id===row.id)-1]?.id:undefined}
+      nextId={rows[rows.findIndex(candidate=>candidate.id===row.id)+1]?.id}/>
     <Link href={"/tpo/placements/jobs/"+jobId+"/applicants/"+row.id} className="inline-flex min-h-10 items-center text-primary-text underline">Open applicant</Link>
    </div>}/>
  </div>;
