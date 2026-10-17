@@ -6,6 +6,5 @@ export function learnerWithdrawalMode(input:{
  screeningStatus:string;
 }):"UNAVAILABLE"|"SELF"|"REQUEST"{
  if(input.applicationStatus!=="SUBMITTED")return "UNAVAILABLE";
- return input.screeningStatus==="SHORTLISTED"&&input.scheduledRoundCount>0
-  ?"REQUEST":"SELF";
+ return input.scheduledRoundCount>0 ? "REQUEST" : "SELF";
 }

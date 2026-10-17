@@ -15,6 +15,8 @@ export type TpoDriveNextStepInput = {
   closeAllowed: boolean;
   shortlistCount: number | null;
   pendingRequests: number;
+  nonApplicantCount?: number;
+  canRemindNonApplicants?: boolean;
   deadlineMissing?: boolean;
   stagedRounds: Array<{ id: string; name: string; pendingCount: number }>;
 };
@@ -61,6 +63,11 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       label: "Share with company",
       description: input.shortlistCount + " shortlisted application(s) are available for review.",
       href: root + "/share-preview",
+    });
+    if (input.canRemindNonApplicants && (input.nonApplicantCount ?? 0) > 0) actions.push({
+      label: "Remind all",
+      description: input.nonApplicantCount + " eligible registered students have not applied. Remind once today before the deadline.",
+      href: "#drive-registered-not-applied",
     });
     actions.push({
       label: "Applicants",

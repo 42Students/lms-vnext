@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { tpoDriveTabs } from "@/modules/placements/tpo-drive-tab-model";
+import { tpoDriveTabs,tpoDriveMoreTabs } from "@/modules/placements/tpo-drive-tab-model";
 
 /** Keep the same drive navigation and active state on every nested workflow. */
 export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
@@ -28,6 +28,20 @@ export function TpoDriveWorkspaceNav({ jobId }: { jobId: string }) {
           </Link>
         );
       })}
+      <details className="relative min-w-fit">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+          More sections ▾
+        </summary>
+        <div className="absolute right-0 z-30 mt-1 grid min-w-52 gap-1 rounded-lg border border-border bg-surface p-2 shadow-lg">
+          {tpoDriveMoreTabs(jobId).map(tab=>(
+            <Link key={tab.href} href={tab.href}
+              aria-current={pathname===tab.href.split("#")[0]?"page":undefined}
+              className="min-h-10 rounded-md px-3 py-2 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+              {tab.label}
+            </Link>
+          ))}
+        </div>
+      </details>
     </nav>
   );
 }
