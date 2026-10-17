@@ -9,7 +9,7 @@ type Detail={
  placementParticipation:{
   status:"ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
   level:"MEMBERSHIP"|"SECTION"|"COHORT"|null;reason:string|null;
-  actorName:string|null;decidedAt:string|null;
+  actorName:string|null;decidedAtDisplay:string|null;
  };
  modules:readonly {module:string;label:string;enabled:boolean;winnerLevel:string;winnerLocked:boolean;explanation:string}[];
  rules:readonly Rule[];
@@ -86,8 +86,8 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
       detail.placementParticipation.status==="ELIGIBLE"?"Eligible":
       "Ineligible"+(detail.placementParticipation.reason?": "+detail.placementParticipation.reason:"")}</p>
      {detail.placementParticipation.level?<p className="mt-1">Scope: {detail.placementParticipation.level}</p>:null}
-     {detail.placementParticipation.decidedAt?<p className="mt-1">Decided by {detail.placementParticipation.actorName||"Unknown actor"} on {
-      new Date(detail.placementParticipation.decidedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</p>:null}
+     {detail.placementParticipation.decidedAtDisplay?<p className="mt-1">Decided by {detail.placementParticipation.actorName||"Unknown actor"} on {
+      detail.placementParticipation.decidedAtDisplay}</p>:null}
      <p className="mt-2 text-xs text-body">Placements requires both an enabled module and an eligible placement decision.</p>
     </section>
     <div className="space-y-4">{detail.modules.map(module=><article key={module.module}
