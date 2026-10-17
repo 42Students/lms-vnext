@@ -548,6 +548,9 @@ export function FinalReviewControl({
           {staleReview ? <div role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
             <p className="font-semibold">This submission may have changed since you opened this review</p>
             <p>Refresh the page to load the latest version before accepting, requesting changes, or locking.</p>
+            <Button size="sm" variant="secondary" onClick={() => {setOpen(false);router.refresh();}}>
+              Refresh latest submission
+            </Button>
           </div> : null}
           {mode!=="MENTOR" ? <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">

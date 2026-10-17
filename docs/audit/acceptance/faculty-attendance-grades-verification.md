@@ -34,3 +34,5 @@ FAC-attendance-grades-01/03/04/20 remain to be reconciled; no tests executed by 
 
 | FAC-attendance-grades-04 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/chat11-faculty-attendance-confirm-round3.test.ts — `it("FAC-attendance-grades-04 uses styled Submit Attendance confirmation and exact count message")` |
 | FAC-attendance-grades-20 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/chat11-faculty-attendance-confirm-round3.test.ts — `it("FAC-attendance-grades-20 keeps a narrow-screen sticky submission bar and responsive roster")`. Mobile browser acceptance at 375px remains for orchestrator. |
+
+| FAC-attendance-grades-03 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("FAC-attendance-grades-03 has an atomic-failure explanation and deliberate persisted-roster re-read")` |

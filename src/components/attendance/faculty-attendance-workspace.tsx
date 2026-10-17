@@ -171,6 +171,7 @@ export function FacultyAttendanceWorkspace({
   const [submitting, setSubmitting] =
     useState(false);
   const [confirmingAttendance, setConfirmingAttendance] = useState(false);
+  const [confirmingRosterReload, setConfirmingRosterReload] = useState(false);
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
@@ -1061,6 +1062,13 @@ export function FacultyAttendanceWorkspace({
                   className="mt-3 text-sm font-semibold text-error"
                 >
                   {error}
+                  <span className="mt-2 block text-sm font-normal text-body">
+                    Attendance saves are atomic: no partial roster will be committed on a rejected request.
+                    Reload the saved roster before retrying if the connection was interrupted.
+                  </span>
+                  <Button size="sm" variant="secondary" onClick={() => setConfirmingRosterReload(true)}>
+                    Reload saved roster
+                  </Button>
                 </p>
               ) : null}
             </section>
@@ -1079,6 +1087,15 @@ export function FacultyAttendanceWorkspace({
         pending={submitting}
         confirmDisabled={!selectedSession || markingWindow !== "OPEN" || !attendanceConfirmation}
         onConfirm={() => void submitAttendance()}
+      />
+      <ConfirmDialog
+        open={confirmingRosterReload}
+        onOpenChange={setConfirmingRosterReload}
+        title="Reload saved attendance?"
+        description="This reloads marks recorded on the server and discards any unsaved selections in this page."
+        confirmLabel="Reload roster"
+        confirmVariant="primary"
+        onConfirm={() => window.location.reload()}
       />
       {selectedLearner ? (
       <Drawer
