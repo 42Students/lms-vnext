@@ -1,8 +1,8 @@
 import "server-only";
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, users } from "@/db/schema";
+import { collegeMemberships, membershipRoles, users, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
 import { profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -11,6 +11,9 @@ import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import {effectiveTpoVerifierSetting,tpoVerifierGrantAllowed} from "@/modules/verification/switch-state";
 import { placementTableExists } from "./staged-tables";
 import type { VerificationQueueCard } from "@/components/verification/VerificationWorkspace";
+import {submittedMarksheets} from "@/modules/verification/queue-mark-sheets";
+import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
+import {verificationAttentionFlags} from "@/modules/verification/attention-flags";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
 export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
@@ -37,6 +40,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
   id:profileVerifications.learnerMembershipId,status:profileVerifications.status,
   section:profileVerifications.section,submittedAt:profileVerifications.submittedAt,
   version:profileVerifications.rowVersion,name:users.displayName,
+  submittedSnapshot:profileVerifications.submittedSnapshot,
  }).from(profileVerifications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -45,12 +49,33 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
   .where(and(eq(collegeMemberships.collegeId,collegeId),
    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
   .orderBy(desc(profileVerifications.submittedAt)).limit(100);
+ const memberIds=[...new Set(records.map(row=>row.id))];
+ const enrollments=memberIds.length?await getDb().select({
+  membershipId:learnerProgramEnrollments.membershipId,
+  batchName:cohorts.name,branchName:departments.name,
+ }).from(learnerProgramEnrollments)
+  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),eq(programs.id,cohorts.programId)))
+  .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
+  .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
+   eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
+ const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
+ const evaluatedAt=new Date();
  const rows:VerificationQueueCard[]=records.flatMap(row=>{
   const status=statusSchema.safeParse(row.status),section=sectionSchema.safeParse(row.section);
   if(!status.success||!section.success)return [];
-  return [{learnerMembershipId:row.id,learnerName:row.name??"Unnamed learner",
-   batchName:null,branchName:null,status:status.data,section:section.data,
-   submittedAt:row.submittedAt,version:row.version,missingMarksheet:false,attention:[]}];
+  const marks=submittedMarksheets(row.submittedSnapshot);
+  const missingMarksheet=section.data==="EDUCATION"&&marks.missing>0;
+  const missingIdentityProof=section.data==="IDENTITY"&&
+    !verificationDocumentManifest(row.submittedSnapshot).some(ref=>ref.purpose==="AADHAAR"||ref.purpose==="PAN");
+  const attention=verificationAttentionFlags({status:status.data,section:section.data,
+    submittedAt:row.submittedAt,missingMarksheet},evaluatedAt)
+    .map(flag=>flag.replaceAll("_"," ").toLowerCase());
+  return [{learnerMembershipId:row.id,learnerName:row.name?.trim()||"Unnamed learner",
+   batchName:byMember.get(row.id)?.batchName??null,branchName:byMember.get(row.id)?.branchName??null,
+   status:status.data,section:section.data,
+   submittedAt:row.submittedAt,version:row.version,missingMarksheet,missingIdentityProof,
+   marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},attention}];
  });
  return {available:true,enabled:true,permitted:true,rows};
 }
