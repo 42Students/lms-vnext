@@ -16,7 +16,7 @@ export function learnerWaitingOnYou(input:{
  if(input.registration?.stage==="OPEN" && input.registration.choice!=="PLACEMENTS")items.push({
   key:"register",label:input.registration.choice===null?"Register for placements":"Review your placement registration",
   detail:"Registration is open for your batch. Choose Placements to take part in campus drives.",
-  href:"/learn/my-placements#placement-registration",priority:"URGENT",
+  href:"/learn/my-placements#registration",priority:"URGENT",
  });
  if((input.eligibleToApply??0)>0 && input.registration?.choice==="PLACEMENTS")items.push({
   key:"apply",label:"Apply to "+input.eligibleToApply+" eligible drive"+(input.eligibleToApply===1?"":"s"),
