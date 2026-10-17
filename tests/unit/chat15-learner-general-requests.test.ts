@@ -42,4 +42,14 @@ describe("chat-15 learner general placement requests",()=>{
   expect(tpoGeneralRequestDecisionSchema.safeParse({confirmed:true,version:uuid,action:"REJECT",note:"Policy requires more proof"}).success).toBe(true);
   expect(tpoGeneralRequestDecisionSchema.safeParse({confirmed:false,version:uuid,action:"APPROVE",note:""}).success).toBe(false);
  });
+ it("LEARNER-placements-52 offers a prefilled dispute for a persisted ABSENT round",()=>{
+  const journey=source("src/components/placements/learner-placement-journey.tsx");
+  expect(journey).toContain('result.outcome==="ABSENT"&&result.appliedAt&&result.roundId');
+  expect(journey).toContain("Wrong? Tell the placement cell");
+  expect(journey).toContain('request:"absence-dispute"');
+  expect(journey).toContain("roundId:result.roundId");
+  const page=source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
+  expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
+  expect(page).toContain('initialKind={prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
+ });
 });
