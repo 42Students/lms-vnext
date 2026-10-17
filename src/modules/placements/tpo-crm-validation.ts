@@ -71,7 +71,10 @@ export const logTpoLeadActivitySchema = z.object({
   type: z.enum(["CALL", "EMAIL", "MEETING", "NOTE"]),
   outcome: z.string().trim().max(30).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
-}).strict();
+}).strict().superRefine((value,ctx)=>{
+  if(value.type==="NOTE"&&!value.note?.trim())
+    ctx.addIssue({code:"custom",message:"Write a note before logging this interaction.",path:["note"]});
+});
 
 export const createTpoFollowupSchema = z.object({
   collegeId: id,
