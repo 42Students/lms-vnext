@@ -8,7 +8,7 @@ export function TpoTeamMessageScroll({highlightId}:{highlightId?:string}){
    :document.querySelector('[aria-label="Private team messages"] li:last-child');
   if(!target)return;
   const frame=window.requestAnimationFrame(()=>target.scrollIntoView({
-   block:"nearest",behavior:"instant",
+   block:"nearest",behavior:"auto",
   }));
   return ()=>window.cancelAnimationFrame(frame);
  },[highlightId]);
