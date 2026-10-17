@@ -74,3 +74,5 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-31 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-31` |
 | TPO-students-43 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-43` |
 | TPO-students-52 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-52` |
+
+| TPO-students-45 | OPEN (round-stage and company CTC detail pending) | All-season application history now links each drive and shows persisted Add-by-College provenance, without inferring from actor identity; `tests/unit/chat12-student-history-links-round5.test.ts` named `TPO-students-45` |
