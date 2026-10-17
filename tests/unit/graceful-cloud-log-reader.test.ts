@@ -38,6 +38,14 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     });
     expect(e?.message).toBe("connection refused");
   });
+  it("GR-118 never accepts an arbitrary project, injected filter or untrusted credential", async () => {
+    await expect(readCloudLogErrorPage({
+      project: "untrusted/project", namespace: "lms-dev-2026",
+      start: new Date("2099-04-01T00:00:00Z"), end: new Date("2099-04-01T00:02:00Z"),
+      token: "synthetic",
+      transport: (async () => { throw new Error("transport should not be called"); }) as typeof fetch,
+    })).rejects.toThrow("INVALID_LOG_CONFIGURATION");
+  });
   it("GR-125 uses metadata ADC without leaking the access token on failures", async () => {
     const access = await cloudLoggingAccessToken(vi.fn(async () =>
       new Response(JSON.stringify({ access_token: "synthetic-access-value" }), { status: 200 })) as typeof fetch);
