@@ -20,6 +20,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
  const named=text?await findTpoPeopleAndCompanies(ctx,ctx.membership!.collegeId,text):
   {students:[],recruiters:[],companies:[]};
  const jobs=operations?operations.jobs.filter(r=>[r.job.title,r.job.company.name].some(v=>v.toLocaleLowerCase().includes(text))).slice(0,5):[];
+ const hasMatches=foundBatches.length+named.students.length+named.recruiters.length+named.companies.length+jobs.length>0;
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO" title="Find a student, recruiter or company" description="Search your college records. Search does not execute actions or navigate to arbitrary pages."/>
   <form action="/tpo/find" method="get" className="flex min-w-0 flex-wrap gap-2">
@@ -29,6 +30,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
    </label><button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Find</button>
   </form>
   {invalid?<p role="alert">Search must contain 1–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
+   {!hasMatches?<p role="status">No student, recruiter, company or drive matches &quot;{rawText}&quot;</p>:null}
    <section className="space-y-2"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
     {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="space-y-2">{foundBatches.map(b=><li key={b.id} className="rounded border border-border p-3 text-sm">
       <Link href={"/tpo/batches/"+b.id} className="text-primary-text underline">{b.name} · {b.program}</Link></li>)}</ul>}

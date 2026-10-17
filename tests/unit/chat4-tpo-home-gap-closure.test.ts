@@ -127,6 +127,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const s=source("src/app/(authenticated)/tpo/find/page.tsx");
   expect(s).toContain("Find a student, recruiter, company or drive");
   expect(s).toContain("Type a name or a roll number, for example 21CS001");
+  expect(s).toContain("No student, recruiter, company or drive matches");
 
  });
  it("TPO-home-30 verified legacy and graceful behavior",()=>{
@@ -157,6 +158,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  it("TPO-home-38 verified legacy and graceful behavior",()=>{
   const s=source("src/components/tpo/tpo-bell-panel.tsx");
   expect(s).toContain("/api/tpo/notifications/read-all");
+  expect(s).toContain("unread>0?<button");
   expect(s).toContain("Mark all read");
   expect(s).not.toContain("window.confirm");
  });
