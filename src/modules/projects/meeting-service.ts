@@ -4,6 +4,8 @@ import {
   eq,
   inArray,
   ne,
+  not,
+  isNull,
   or,
   sql,
   gt,
@@ -159,7 +161,14 @@ export async function listProjectMeetings(
     .from(projectMeetings)
     .where(
       and(eq(projectMeetings.projectId,scope.project.id),
-        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")] : [])),
+        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [
+          ne(projectMeetings.status,"DRAFT"),
+          // MEN-projects-meetings-27: cancelled private drafts were never announced.
+          // A cancelled learner request still has a requester and remains visible.
+          not(and(eq(projectMeetings.status,"CANCELLED"),
+            isNull(projectMeetings.requestedByMembershipId),
+            isNull(projectMeetings.scheduledByUserId))),
+        ] : [])),
     )
     .orderBy(
       asc(projectMeetings.startsAt),
