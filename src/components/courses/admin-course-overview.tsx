@@ -115,6 +115,7 @@ export function AdminCourseOverview({
           <p className="mt-1 text-xs font-semibold text-primary-text">
             {course.code}
           </p>
+          {courseBasePath.startsWith("/admin/")&&course.takeaways?<p className="mt-1 text-xs text-body">Takeaways: {course.takeaways}</p>:null}
           {course.description ? (
             <p className="mt-1 max-w-xl text-xs text-muted-foreground">
               {course.description}
@@ -175,6 +176,7 @@ export function AdminCourseOverview({
             shortTitle:course.shortTitle,
             officialCode:course.officialCode,
             cardColor:course.cardColor,
+            takeaways:course.takeaways,
             description:
               course.description,
           }}
