@@ -68,7 +68,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   <label className="grid gap-2 text-sm text-body">Message
    <textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
-    required maxLength={4000} rows={4} disabled={sending}
+    maxLength={4000} rows={4} disabled={sending}
     className="rounded-md border border-border bg-surface p-3"
     placeholder="Write a message to the placement cell"/>
   </label>
