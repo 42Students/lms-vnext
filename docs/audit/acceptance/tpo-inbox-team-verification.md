@@ -370,3 +370,11 @@ The following entries supersede earlier PARTIAL/OPEN rows for these IDs. **Sourc
 | TPO-inbox-team-51 | PARTIAL — OPEN | Version-locked edits now render the optional **Tell them it changed** checkbox in `src/app/(authenticated)/tpo/announcements/page.tsx` (bound to `notifyChanged` in its POST route and persisted recipient-safe notices in `tpo-placement-edit-service.ts`). Named test `tests/unit/chat2-notices-retraction-update.test.ts` **TPO-inbox-team-51 supports versioned edits and optional scoped re-notification**. Legacy unsent audience changes still need a fully scoped edit path, so this ID is not fully closed. |
 
 **Execution:** No tests, lint or typecheck were run by this lane; orchestrator should run them and the disposable PostgreSQL acceptance suite before marking deployment verified.
+
+
+## Chat-2 UNCONFIRMED decisions — 2026-10-17 (owner delegated safer behavior)
+| ID | Decision | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-08 | BLOCKED — legacy e-mail relay cannot be promised without real provider credentials, inbound reply routing and scoped send history. Keep recruiter conversations in-app, never show an email delivery success that has not happened. | `src/modules/placements/tpo-messages-service.ts`; `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts` test **TPO-inbox-team-08 does not claim provider email delivery without an active relay**. |
+| TPO-inbox-team-11 | DONE — safer than legacy's notification-as-message fallback: if conversation storage is unavailable, show a clear error and a separate Notifications link, not a fabricated conversation. | `src/app/(authenticated)/tpo/messages/page.tsx`; test **TPO-inbox-team-11 fails visibly when recruiter conversations are missing instead of presenting notifications as conversations** in `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts`. |
+| TPO-inbox-team-35 | NOT-A-GAP (intentional safer design) — adding a person to Team must not itself elevate their placement privileges; only an audited College Admin role-management path may grant authority, not any active TPO participant. | `src/modules/placements/placement-team-access-model.ts`; named **TPO-inbox-team-35 reserves role grants for audited college administration** in `tests/unit/chat2-unconfirmed-inbox-decisions.test.ts`. Faculty search as a read-only picker may be added without changing this decision. |
