@@ -14,6 +14,7 @@ export function facultyContentPatch(input: {
   const title = input.title.trim();
   const notes = input.notes.trim();
   const url = input.url.trim();
+  if(input.points!==undefined&&!input.points.trim())throw new Error("Points are required.");
   const points = input.points===undefined ? undefined : Number(input.points);
   if (points !== undefined && (!Number.isInteger(points) || points < 0 || points > 1000))
     throw new Error("Points must be a whole number between 0 and 1000.");

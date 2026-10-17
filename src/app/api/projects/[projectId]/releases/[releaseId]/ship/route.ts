@@ -29,10 +29,12 @@ export async function POST(
   try {
     const context = await getCurrentRequestContext();
     const { projectId, releaseId } = await params;
+    const payload:unknown=await request.json().catch(()=>({}));
     const release = await shipProjectRelease(
       context,
       projectId,
       releaseId,
+      payload,
     );
 
     return NextResponse.json({ release });

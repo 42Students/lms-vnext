@@ -10,10 +10,11 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
 
 export function MentorTaskCreate({
-  projectId,sprintId,updatedAt,sprints=[],learners=[],
-}:{projectId:string;sprintId:string;updatedAt:string;
+  projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],
+}:{projectId:string;sprintId:string;updatedAt:string;estimationUnit?:string|null;
   sprints?:readonly {id:string;title:string;status:string;updatedAt:string}[];
   learners?:readonly {membershipId:string;displayName:string|null}[];
 }){
@@ -123,9 +124,13 @@ export function MentorTaskCreate({
             </>:null}
           </select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Estimate
-          <Input inputMode="numeric" type="number" min={0} max={1000} value={estimate}
-            onChange={e=>setEstimate(e.target.value)}/>
+        <label className="grid gap-1 text-sm font-semibold text-body">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
+          <select value={estimate} onChange={e=>setEstimate(e.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Not estimated</option>
+            {mentorEstimateOptions(estimationUnit).map(value=>
+              <option key={value} value={String(value)}>{mentorEstimateLabel(value,estimationUnit)}</option>)}
+          </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Type
           <select value={taskType} onChange={e=>setTaskType(e.target.value)}
