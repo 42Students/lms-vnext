@@ -6,6 +6,7 @@ import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
+import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import {tpoStudentNeedsAttention,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -51,6 +52,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
  const [noteSelection,setNoteSelection]=useState<string[]>([]);
+ const [downloadError,setDownloadError]=useState("");
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
@@ -59,6 +61,24 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
  });
  const active=sortedRows.find(row=>row.membershipId===selected)??null;
+ function downloadSelection(){
+  const permitted=new Set(rows.map(row=>row.membershipId));
+  const chosen=sortedRows.filter(row=>noteSelection.includes(row.membershipId)&&permitted.has(row.membershipId));
+  if(!chosen.length){setDownloadError("Select at least one student on this visible page.");return;}
+  setDownloadError("");
+  try{
+   const csv=exportTpoStudentsCsv(chosen,Object.fromEntries(chosen.map(row=>[
+     row.membershipId,afterCollegeDisplay(afterCollege[row.membershipId]?.outcome),
+   ])));
+   const url=URL.createObjectURL(new Blob(["\uFEFF",csv],{type:"text/csv;charset=utf-8"}));
+   try{
+    const anchor=document.createElement("a");
+    anchor.href=url;anchor.download="selected-tpo-students.csv";document.body.appendChild(anchor);
+    anchor.click();anchor.remove();
+   }finally{URL.revokeObjectURL(url);}
+  }catch{setDownloadError("Could not prepare the selected CSV. Please try again.");}
+ }
+
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
@@ -101,6 +121,11 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected of {rows.length} on this visible page.</p>
+  <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
+    onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    Export selected CSV
+  </button>
+  {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
