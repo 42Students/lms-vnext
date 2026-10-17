@@ -13,6 +13,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
@@ -1156,6 +1157,10 @@ export function ProjectWorkspace({
                         locked={Boolean(submission.lockedAt)}
                         projectStatus={workspace.project.status}/>
                     ) : null}
+                    {mode==="MENTOR"&&!readOnly?<MentorDeliveryLockControl
+                      projectId={workspace.project.id} submissionId={submission.id}
+                      status={submission.status} lockedAt={submission.lockedAt}
+                      updatedAt={submission.updatedAt}/>:null}
                     {mode === "MENTOR" && !readOnly &&
                       submission.status === "SUBMITTED" ? (
                       <div className="mt-3">
