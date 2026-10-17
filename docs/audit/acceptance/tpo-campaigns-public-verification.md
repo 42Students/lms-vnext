@@ -16,3 +16,6 @@
 
 | TPO-campaigns-public-35 | DONE (source, unrun) | Unknown host / explicitly unpublished college page returns real Next 404, with legacy unavailable text in `src/app/placements/not-found.tsx`; transient read outage remains separate. Named `tests/unit/chat2-public-placements-page.test.ts`. |
 | TPO-campaigns-public-36 | PARTIAL — OPEN | Replaced platform eyebrow, college heading and footer with legacy public placements framing; exact Recruit from us body still subject to legacy verification, named test. |
+
+| TPO-campaigns-public-16 | DONE (source, tests not run) | Unsubscribe confirmation now guarded client POST with inline retry instead of raw JSON navigation; unknown used tokens get non-enumerating success response. Named `tests/unit/chat2-unsubscribe-graceful.test.ts`. |
+| TPO-campaigns-public-R09 | DONE (source, tests not run) | Missing storage and network failures preserve confirmation page and show retry rather than raw JSON; same named test. |
