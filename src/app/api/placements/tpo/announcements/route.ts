@@ -16,6 +16,7 @@ export async function POST(request:Request){
   sendAt:z.string().optional(),showUntil:z.string().optional(),
   audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
   targetId:z.string().uuid().optional(),
+  targetIds:z.array(z.string().uuid()).max(50).optional(),
  }).strict().safeParse({
   title:form.get("title"),message:form.get("message"),pinned:form.get("pinned")==="on",
   buttonLabel:String(form.get("buttonLabel")??"").trim()||undefined,
@@ -24,6 +25,7 @@ export async function POST(request:Request){
   showUntil:String(form.get("showUntil")??"")||undefined,
   audience:String(form.get("audience")??"COLLEGE"),
   targetId:String(form.get("targetId")??"")||undefined,
+  targetIds:form.getAll("targetIds").length?form.getAll("targetIds").map(String):undefined,
  });
  if(!parsed.success)return noticePostError(request,"INVALID_BODY",400);
  try{
