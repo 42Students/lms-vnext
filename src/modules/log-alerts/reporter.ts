@@ -176,8 +176,9 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
         if (await sendTelegramAlert("vNext alert burst: 1 more new or recurring error; see the Logs page. Environment: " + environment)) {
           await tx.update(states).set({
             burstMinuteAt: minute, burstCount: spent + 1,
-            overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
           }).where(eq(states.stateKey, key));
+          // The fifth post already summarized the overflow. Do not enqueue it
+          // again for a duplicate next-tick summary.
           // New signatures must remain retryable even after the summary is sent.
           if (current) await rememberEvent();
         } else {
