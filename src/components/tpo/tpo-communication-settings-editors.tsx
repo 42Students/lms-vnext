@@ -6,7 +6,7 @@ type ResponseBody={error?:string;version?:string};
 function saveError(body:ResponseBody){
  return body.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
   body.error==="TPO_SETTINGS_PENDING"?"Communication settings are not yet available.":
-  body.error??"Settings were not saved.";
+  "Settings were not saved. Refresh and try again.";
 }
 export function TpoSmsCapEditor({initial,version}: {initial:number;version:string|null}){
  const router=useRouter();
