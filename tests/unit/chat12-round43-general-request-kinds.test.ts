@@ -23,5 +23,7 @@ describe("Five distinct learner requests",()=>{
   expect(sql).toContain("foreign key(membership_id,college_id)");
   expect(sql).toContain("placement_learner_general_request_events");
   expect(sql).toContain("placement_general_request_events_parent_idx");
+  expect(src("src/db/schema/index.ts")).toContain('export * from "./placement-general-requests"');
+  expect(src("src/modules/placements/tpo-general-request-service.ts")).toContain("await requireRegisteredKind(tx,input.kind)");
  });
 });

@@ -60,3 +60,16 @@ Source-verified against the audited legacy behavior on the branch. Tests named b
 | REC-calendar-messages-profile-48 | DONE | `src/app/(authenticated)/hr/calendar/page.tsx` no-college guidance; `tests/unit/recruiter-chat14-round3.test.ts` — `REC-calendar-messages-profile-48 keeps the original no-college recruiter address guidance`. |
 | REC-calendar-messages-profile-R01 | OPEN | Unread placement-cell message email digests and inbound Reply-To conversation routing are not yet implemented; provider credentials and allowlist-only delivery must be respected. |
 | REC-calendar-messages-profile-R03 | DONE | `src/app/(authenticated)/hr/notifications/page.tsx` no longer wrongly says conversations unavailable; `tests/unit/recruiter-chat14-round1.test.ts` — `REC-calendar-messages-profile-R03 links the notification footer to working recruiter conversations`. |
+
+
+### Chat-14 UNCONFIRMED owner decision — 2026-10-18
+
+| Gap ID | Decision | Evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-46 | NOT-A-GAP for automatic pending-grant acceptance: existing recruiters use the expiring college/company join link and verified mailbox code, after which the existing active account is reused or the join returns ALREADY_JOINED. No silent grant at login, no acceptance of a revoked grant, and no unverified pending invitation in the recruiter Home. This is more secure and deterministic for multi-college grants than legacy implicit acceptance. | `src/modules/placements/public-join/join-service.ts`; `tests/unit/recruiter-chat14-unconfirmed-decisions.test.ts` test `REC-calendar-messages-profile-46 reuses verified existing-account join and never silently auto-accepts`. |
+
+### REC-calendar-messages-profile-R01 bridge delivery (2026-10-18)
+
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-R01 | BLOCKED — real provider credentials and database deployment | `src/modules/placements/recruiter-message-email-model.ts` and `tests/unit/recruiter-chat14-message-email-policy.test.ts`: 15-min initial wait, 2-min quiet, 45-min maximum wait, 6-hour cooldown, latest 3 excerpts, HMAC. `src/modules/placements/recruiter-message-email-dispatch-service.ts`: active same-company grant, verified DRIVES capability, unread TPO messages, persisted row lock and digest cooldown. `src/modules/placements/recruiter-message-email-inbound-service.ts`: signed-gateway payload, exact sender, unexpired opaque reply alias, idempotency, attribution EMAIL and TPO bell. `src/app/api/internal/placements/recruiter-message-reminders/route.ts` and `recruiter-message-inbound/route.ts` accept only origin-checked POST. `tests/unit/recruiter-chat14-message-email-bridge-contract.test.ts`. New schema is `src/db/schema/recruiter-message-email.ts`, SQL in `docs/proposed-migrations/recruiter-message-email-bridge.sql`. Delivery remains disabled until the orchestrator registers SQL, configures a dedicated ZeptoMail (not OTP) template, provider-verified inbound mail gateway, reply domain and HMAC/worker secrets. No proof of provider end-to-end acceptance is claimed. |

@@ -7,7 +7,7 @@ describe("mentor meeting organiser collision protection", () => {
     expect(source).toContain("pg_advisory_xact_lock");
     expect(source).toContain("eq(projectMeetings.scheduledByUserId,context.user.id)");
     expect(source).toContain("eq(projectMeetings.projectId,scope.project.id)");
-    expect(source).toContain('eq(projectMeetings.status,"SCHEDULED")');
+    expect(source).toContain('inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"])');
     expect(source).toContain("lt(projectMeetings.startsAt,endsAt)");
     expect(source).toContain("gt(projectMeetings.endsAt,startsAt)");
     expect(source).toContain("ne(projectMeetings.id,existing.id)");

@@ -8,7 +8,7 @@ import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-cou
 import { ErrorState } from "@/components/ui/error-state";
 import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
 
-export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[]}>}) {
+export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[];pageSize?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   const collegeId =
@@ -38,7 +38,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   }
 
   const query=await searchParams;
-  const catalogueQuery=collegeCourseCatalogueQuerySchema.safeParse({q:query.q,sort:query.sort,page:query.page});
+  const catalogueQuery=collegeCourseCatalogueQuerySchema.safeParse({q:query.q,sort:query.sort,page:query.page,pageSize:query.pageSize});
   if(!catalogueQuery.success)return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin" title="Courses"/>
     <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."

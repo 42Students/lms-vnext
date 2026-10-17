@@ -8,6 +8,7 @@ import {
   inArray,
   isNull,
   lt,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -157,6 +158,7 @@ export async function getAdminAttendanceOptions(
           courseName: courses.name,
           courseCode: courses.code,
           offeringType:courseOfferings.type,
+          isPast:sql<boolean>`${courseSectionDeliveries.endedAt} is not null`,
           academicPeriodId:
             academicPeriods.id,
           academicPeriodName:
@@ -206,9 +208,6 @@ export async function getAdminAttendanceOptions(
         )
         .where(
           and(
-            isNull(
-              courseSectionDeliveries.endedAt,
-            ),
             eq(courseOfferings.status, "ACTIVE"),
             eq(courses.status, "ACTIVE"),
             eq(sections.status, "ACTIVE"),
@@ -219,6 +218,7 @@ export async function getAdminAttendanceOptions(
         .orderBy(
           asc(sections.name),
           asc(courses.name),
+          sql`case when ${courseSectionDeliveries.endedAt} is null then 0 else 1 end`,
           asc(courseSectionDeliveries.id),
         ),
       getDb()

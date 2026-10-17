@@ -1230,6 +1230,8 @@ export const placementJobRounds = pgTable(
     platform: text("platform"),
     testUrl: text("test_url"),
     durationMinutes: integer("duration_minutes"),
+    /** Learner assessment submission cutoff; distinct from result publication deadline. */
+    assessmentDueAt: timestamp("assessment_due_at", {withTimezone:true}),
     resultsDueAt: timestamp("results_due_at", {
       withTimezone: true,
     }),

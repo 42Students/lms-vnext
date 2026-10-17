@@ -23,6 +23,18 @@ const sqlUuid=z.string().uuid();
 async function requireRegistered(){
  if(!(await placementTableExists(UUID)))throw new TpoGeneralRequestError("UNAVAILABLE");
 }
+/** 0134 first IF NOT EXISTS definition has a five-kind CHECK. The sixth kind
+ * cannot be written until its additive migration has actually been registered. */
+async function requireRegisteredKind(tx:Tx,kind:string){
+ if(kind!=="OFFER_ACCEPTANCE_DISPUTE")return;
+ const result=await tx.execute(sql`select exists(
+  select 1 from pg_constraint where conrelid=to_regclass('public.placement_learner_general_requests')
+   and conname='placement_general_request_kind_ck' and contype='c'
+   and pg_get_constraintdef(oid) like '%OFFER_ACCEPTANCE_DISPUTE%'
+ ) as enabled`);
+ if(result.rows[0]?.enabled!==true)throw new TpoGeneralRequestError("UNAVAILABLE");
+}
+
 async function requireLearner(ctx:RequestContext){
  const member=ctx.membership;
  if(!member||!hasMembershipRole(ctx,"LEARNER")||member.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE")
@@ -77,6 +89,7 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
  return getDb().transaction(async tx=>{
   const college=await lockCollege(tx,member.collegeId);
   await verifyLearnerTx(tx,member.collegeId,member.id);
+   await requireRegisteredKind(tx,input.kind);
   if(input.kind==="OFFER_ACCEPTANCE_DISPUTE"){
    const [offer]=await tx.select({
     id:placementOffers.id,

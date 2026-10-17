@@ -43,3 +43,10 @@ Remaining: course field/policy parity, lesson-level operations, class-by-course 
 | SA-academics-people-66 | DONE (source authored; PostgreSQL/browser pending) | `src/modules/courses/admin-assessment-directory-model.ts`, `src/components/courses/admin-assessment-read-directory.tsx`, admin assessment routes; `tests/unit/chat6-superadmin-scoped-directory-filters.test.ts` → `SA-academics-people-66 filters selected college assessments by course, section scope and result publication`. |
 
 | SA-academics-people-75 | DONE (responsive source authored; 375px browser acceptance pending) | `src/components/courses/admin-course-overview.tsx`, shared overflow-scroll `DataTable`; `tests/unit/chat6-people-phone-session-and-mobile-round6.test.ts` → `SA-academics-people-75 keeps create controls and scrolling course tables within mobile width`. |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-academics-people-49 | NOT-A-GAP (editable video policy) | OD-34 keeps watched threshold platform-wide and hidden; progress rule still requires service verification; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-49` |
+| SA-academics-people-75 | DONE (source) | Responsive course workspace uses DataTable; mobile browser signoff pending; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-75` |
+
+| SA-academics-people-54 | OPEN (page-size and Refresh now authored; image and short title pending -50) | `src/modules/courses/college-course-catalogue-model.ts`, `src/app/(authenticated)/admin/courses/page.tsx`, `src/components/courses/admin-course-overview.tsx`; `tests/unit/chat6-superadmin-course-pagination-54.test.ts` → `SA-academics-people-54 supports stable search sort and 25/50/100-page URL persistence`, `SA-academics-people-54 wires bounded UI page size and Refresh into the Super Admin page`. No claim of full parity before the course short title / image fields. |

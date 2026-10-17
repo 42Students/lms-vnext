@@ -45,6 +45,7 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
   try{
    await runGuarded(async()=>{
     const results:Outcome[]=[];
+    const runId=window.crypto.randomUUID();
     for(const row of chosen){
      try{
       await apiFetch("/api/placements/tpo/requests/"+encodeURIComponent(row.id)+"/decision",{
@@ -61,6 +62,17 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
      }
     }
     setOutcomes(results);
+    // Decisions were persisted separately. Audit the batch from authoritative
+    // database statuses, never a client-supplied success count; failure to
+    // record summary does not pretend those decisions were rolled back.
+    try{
+     await apiFetch("/api/placements/tpo/requests/bulk-audit",{
+      method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+      body:JSON.stringify({runId,action,requestIds:chosen.map(row=>row.id)}),
+     });
+    }catch{
+     setError("Decisions were processed, but the batch audit could not be confirmed. Check the request history.");
+    }
     setSelected(ids=>ids.filter(id=>!results.some(result=>result.id===id&&result.status==="updated")));
     setAcknowledged(false);setConfirmOpen(false);
     router.refresh();

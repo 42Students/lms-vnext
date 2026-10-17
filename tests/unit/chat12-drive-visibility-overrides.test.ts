@@ -20,6 +20,7 @@ describe("TPO drive visibility overrides",()=>{
   const ui=src("src/components/tpo/tpo-students-drive-visibility.tsx");
   const route=src("src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts");
   expect(page).toContain("<TpoStudentsDriveVisibility");
+  expect(page).toContain("roster.total<=5000?data.exportRows??roster.items:roster.items");
   expect(ui).toContain("run(async()=>");
   expect(ui).toContain('method:"PUT"');
   expect(ui).toContain('method:"DELETE"');

@@ -22,6 +22,9 @@ export type SharedApplicant = {
   screening: string; submittedAt: Date; email: string | null;
   rollNumber?: string | null;
   branch?: string | null; phone?: string | null;
+  githubUrl?:string|null;portfolioUrl?:string|null;
+  resumeShared?:boolean;
+  sharedSkills?:string[];sharedProjects?:Array<{name:string;url:string}>;
   ugPercentage?: string | null; tenthPercentage?: string | null;
   twelfthOrDiplomaPercentage?: string | null;
 };

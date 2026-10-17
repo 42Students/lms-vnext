@@ -27,3 +27,19 @@ Graceful operation: section 3 guard and plain conflict copy, GR-71 loading/empty
 | ID | Status | Evidence |
 | --- | --- | --- |
 | COL-attendance-10 | OPEN | Course and academic-period selectors now derive the "(elective)" label from the stored `courseOfferings.type` joined in `admin-service.ts`; regular courses are never guessed as electives. Slot names are not modeled, so full legacy Course + Slot wording stays OPEN. `tests/unit/college-attendance-gap-closure.test.ts`, named COL-attendance-10 test. |
+
+## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+
+These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
+
+| Gap | Queue disposition maintained | New named source regression |
+| --- | --- | --- |
+| COL-attendance-03 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-03` |
+| COL-attendance-05 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-05` |
+| COL-attendance-12 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-12` |
+
+## Chat-3 round 12 — COL-attendance-09 functional data fix
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| COL-attendance-09 | PARTIAL (data fix committed; runtime unverified) | `src/modules/attendance/admin-service.ts` now includes ended course deliveries and projects `isPast` from actual endedAt, ordered current first; `src/components/attendance/admin-attendance-workspace.tsx` appends `· past` only for ended deliveries and continues to pass the exact deliveryId. `tests/unit/college-attendance-gap-closure.test.ts` named `COL-attendance-09 past-term options use persisted ended-at facts, active first and delivery-specific selection`. Archived courses/sections still excluded by existing ACTIVE predicates; full historic roster parity is not claimed. |

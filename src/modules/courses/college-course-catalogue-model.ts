@@ -4,6 +4,7 @@ export const collegeCourseCatalogueQuerySchema=z.object({
  q:z.string().trim().max(100).default(""),
  sort:z.enum(["NAME_ASC","NAME_DESC","CODE_ASC","CODE_DESC"]).default("NAME_ASC"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
+ pageSize:z.enum(["25","50","100"]).optional(),
 }).strict();
 export type CollegeCourseCatalogueQuery=z.infer<typeof collegeCourseCatalogueQuerySchema>;
 export const COLLEGE_COURSE_CATALOGUE_PAGE_SIZE=25;
@@ -13,6 +14,7 @@ export function collegeCourseCatalogueHref(query:CollegeCourseCatalogueQuery){
  if(query.q)params.set("q",query.q);
  if(query.sort!=="NAME_ASC")params.set("sort",query.sort);
  if(query.page>1)params.set("page",String(query.page));
+ if(query.pageSize&&query.pageSize!=="25")params.set("pageSize",query.pageSize);
  return "/college/courses"+(params.size?"?"+params.toString():"");
 }
 
@@ -27,8 +29,9 @@ export function paginateCollegeCourses<T extends {id:string;name:string;code:str
   const sign=query.sort.endsWith("DESC")?-1:1;
   return sign*a[field].localeCompare(b[field])||a.id.localeCompare(b.id);
  });
- const pages=Math.max(1,Math.ceil(sorted.length/COLLEGE_COURSE_CATALOGUE_PAGE_SIZE));
+ const pageSize=Number(query.pageSize??COLLEGE_COURSE_CATALOGUE_PAGE_SIZE);
+ const pages=Math.max(1,Math.ceil(sorted.length/pageSize));
  const page=Math.min(query.page,pages);
- return {items:sorted.slice((page-1)*COLLEGE_COURSE_CATALOGUE_PAGE_SIZE,
-  page*COLLEGE_COURSE_CATALOGUE_PAGE_SIZE),total:sorted.length,pages,page};
+ return {items:sorted.slice((page-1)*pageSize,
+  page*pageSize),total:sorted.length,pages,page,pageSize};
 }

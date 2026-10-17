@@ -20,6 +20,7 @@ import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer
 import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/placements/recruiter-drive-progress-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
+import {RecruiterResumeDownload} from "@/components/placements/recruiter-resume-download";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
@@ -562,6 +563,16 @@ export default async function HrPlacementJobPage({
                 {selectedApplicant.rollNumber?<div><dt className="text-muted-foreground">Roll no.</dt><dd className="text-foreground">{selectedApplicant.rollNumber}</dd></div>:null}
                 {selectedApplicant.branch?<div><dt className="text-muted-foreground">Branch</dt><dd className="text-foreground">{selectedApplicant.branch}</dd></div>:null}
                 {selectedApplicant.phone?<div><dt className="text-muted-foreground">Shared phone</dt><dd className="text-foreground">{selectedApplicant.phone}</dd></div>:null}
+                {selectedApplicant.resumeShared?<RecruiterResumeDownload jobId={workspace.job.id} applicationId={selectedApplicant.id}/>:null}
+                {selectedApplicant.sharedSkills.length?<div><dt className="text-muted-foreground">Skills provided by applicant</dt>
+                 <dd className="break-words text-foreground">{selectedApplicant.sharedSkills.join(", ")}</dd></div>:null}
+                {selectedApplicant.githubUrl?<div><dt className="text-muted-foreground">GitHub</dt>
+                 <dd><a href={selectedApplicant.githubUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">View GitHub</a></dd></div>:null}
+                {selectedApplicant.portfolioUrl?<div><dt className="text-muted-foreground">Portfolio</dt>
+                 <dd><a href={selectedApplicant.portfolioUrl} target="_blank" rel="noopener noreferrer" className="text-primary-text underline">View portfolio</a></dd></div>:null}
+                {selectedApplicant.sharedProjects.length?<div><dt className="text-muted-foreground">Shared projects</dt>
+                 <dd className="space-y-1">{selectedApplicant.sharedProjects.map(project=>
+                  <a key={project.url} href={project.url} target="_blank" rel="noopener noreferrer" className="block text-primary-text underline">{project.name}</a>)}</dd></div>:null}
                 {selectedApplicant.ugPercentage?<div><dt className="text-muted-foreground">UG %</dt><dd className="text-foreground">{selectedApplicant.ugPercentage}</dd></div>:null}
                 {selectedApplicant.tenthPercentage?<div><dt className="text-muted-foreground">10th %</dt><dd className="text-foreground">{selectedApplicant.tenthPercentage}</dd></div>:null}
                 {selectedApplicant.twelfthOrDiplomaPercentage?<div><dt className="text-muted-foreground">12th / diploma %</dt><dd className="text-foreground">{selectedApplicant.twelfthOrDiplomaPercentage}</dd></div>:null}
