@@ -62,13 +62,13 @@ describe("Drive workspace S2 source-to-UI contracts",()=>{
  });
  it("TPO-drive-workspace-61 has a recruiter invitation service but cannot infer a recipient from a public link",()=>{
   const service=file("src/modules/placements/tpo-recruiter-invite-service.ts");
-  expect(service).toContain("server-only");
+  expect(service).toContain("requirePlacementManageScope");
   expect(service).toContain("collegeId");
  });
  it("TPO-drive-workspace-63 retains applicant-level inclusion actions without cross-college mutation",()=>{
   const controls=file("src/components/placements/placement-drive-controls.tsx");
   expect(controls).toContain("Force");
-  expect(controls).toContain("eligible");
+  expect(controls).toContain("Force exclude");
  });
  it("TPO-drive-workspace-67 opens an authorized applicant detail from the review drawer",()=>{
   const drawer=file("src/components/placements/tpo-applicant-review-drawer.tsx");
