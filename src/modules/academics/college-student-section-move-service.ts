@@ -9,7 +9,8 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   requiresStudentSectionMove,
@@ -26,7 +27,8 @@ export class CollegeStudentSectionMoveError extends Error {
   }
 }
 
-function ownAdmin(context: RequestContext) {
+async function ownAdmin(context: RequestContext) {
+  if(isSuperAdmin(context))return resolveActingCollege(context,"academics.manage");
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
     !can(context, "academics.manage", {
@@ -91,7 +93,7 @@ async function loadCurrent(tx: Parameters<Parameters<ReturnType<typeof getDb>["t
 
 export async function collegeStudentSectionOptions(context: RequestContext, rawMembershipId: unknown) {
   const membershipId = studentSectionMemberIdSchema.parse(rawMembershipId);
-  const own = ownAdmin(context);
+  const own = await ownAdmin(context);
   return getDb().transaction(async tx => {
     const { enrollment, placement } = await loadCurrent(tx, membershipId, own.collegeId);
     const options = await tx.select({
@@ -165,7 +167,7 @@ export async function moveCollegeStudentSection(
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_LEARNER_ENROLLED,
       organizationId: own.organizationId, collegeId: own.collegeId,
       subjectType: "learner_program_enrollment", subjectId: enrollment.id,
-      summary: "College Admin moved learner between classes",
+      summary: isSuperAdmin(context)?"Super Admin moved learner between classes":"College Admin moved learner between classes",
       metadata: { membershipId, fromSectionId: placement.sectionId,
         toSectionId: target.id, oldPlacementId: moved.id,
         newPlacementId: created.id, action: "SECTION_MOVE" },

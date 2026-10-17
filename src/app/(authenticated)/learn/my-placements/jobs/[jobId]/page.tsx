@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
+import {LearnerOwnDriveJourney} from "@/components/placements/learner-own-drive-journey";
+import {getOwnLearnerDriveJourney} from "@/modules/placements/learner-historical-drive-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {learnerJobReturnToDrivesHref} from "@/modules/placements/learner-drives-return-model";
@@ -65,13 +67,14 @@ export default async function LearnerPlacementJobDetailPage({
     listLearnerPlacementJobs(context),listOwnPlacementSavedJobs(context),
   ]);
   const rows=feed.filter(row=>row.job.id===jobId);
-
-  if (rows.length === 0) {
-    notFound();
-  }
+  const journey=await getOwnLearnerDriveJourney(context,jobId);
+  if(rows.length===0&&!journey)notFound();
 
   const query=await searchParams;
   const back=learnerJobReturnToDrivesHref(query.back);
-  return <LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back}
-    initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>;
+  return <div className="space-y-5">
+   {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
+    returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>:null}
+   {journey?<LearnerOwnDriveJourney journey={journey}/>:null}
+  </div>;
 }
