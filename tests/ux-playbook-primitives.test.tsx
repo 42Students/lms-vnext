@@ -6,6 +6,7 @@ import { avatarInitials } from "@/components/ui/avatar";
 import { fileSizeIsValid } from "@/components/ui/file-upload";
 import { DataTable } from "@/components/ui/data-table";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatTile } from "@/components/ui/stat-tile";
 
 describe("UX playbook shared behaviour", () => {
   it("UX-PLAYBOOK-01 keeps pagination inside bounds on phones", () => {
@@ -50,6 +51,10 @@ describe("UX playbook shared behaviour", () => {
     expect(markup).toContain('aria-current="page"');
     expect(markup).toContain("/project?tab=team");
     expect(markup).toContain('aria-label="Project sections"');
+  });
+  it("UX-PLAYBOOK-09 formats KPI counts using en-IN grouping", () => {
+    const markup = renderToStaticMarkup(<StatTile label="Students" value={123456}/>);
+    expect(markup).toContain("1,23,456");
   });
   it("UX-PLAYBOOK-07 pagination announces current page", () => {
     const markup = renderToStaticMarkup(<Pagination page={2} pageCount={3} hrefForPage={page => "/directory?page=" + page}/>);
