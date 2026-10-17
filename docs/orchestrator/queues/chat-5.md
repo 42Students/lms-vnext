@@ -40,8 +40,8 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 ## Current integration notes (2026-10-17)
 
 - TPO-drive-workspace-40/42/44/47/48/53/60: registered migration integration is committed; don't restore staged migration existence checks or duplicate SQL proposals.
-- COL-placements-01: 0112 stage/history registered; **REINSTATE screening correction** still needs its separate SQL constraint disposition; leave pending, move on.
-- COL-placements-04: **candidate-specific interview appointments** require the proposed `placement_college_interviews` table, which is not part of 0108-0121; leave pending, move on.
+- COL-placements-01: 0112 stage/history and 0125 screening reinstatement constraints are registered; correction path is active in source, runtime acceptance pending.
+- COL-placements-04: 0124 registered `placement_college_interviews`; scheduling/outcomes are active in source, runtime acceptance pending.
 - TPO-requests-verification-05: escalation endpoint exists; **deployment scheduler invocation** remains outside this lane and WP-chat-5-02 is reassigned to chat-3; leave pending, move on.
 - TPO-drive-workspace-65: owner-sensitive company disclosure remains SKIP (OD-09); no widening permissions.
 - Reassignments.md is authoritative: chat-5 retains WPs 01,03,06,07,08,12,13 only. Old moved WP rows remain historical, not chat-5 work.
@@ -60,8 +60,8 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - TPO-drive-workspace-R03/41: bulk staged HOLD/ABSENT support, ordered waitlist ranks, duplicate/rank-taken checks; unmarked-to-fail policy remains available in round import, not yet in this bulk picker.
 - TPO-drive-workspace-29: pending withdrawal, no-show, placed-elsewhere and eligibility flags added to applicant sheet.
 - TPO-drive-workspace-68: activity deep link into About tab's existing persisted event feed.
-- Blocked COL-placements-04: candidate appointment migration not registered in 0108–0121; leave gated and move on.
-- Blocked COL-placements-01: screening reinstatement history constraint not registered in 0108–0121; leave gated and move on.
+- Unblocked COL-placements-04: registered 0124 now active; remaining acceptance/parity to review.
+- Unblocked COL-placements-01: registered 0125 corrected screening history; remaining acceptance/parity to review.
 - Blocked TPO-requests-verification-05: production scheduler configuration; delegated per reassignments (chat-3 owns WP-02).
 - Blocked TPO-drive-workspace-65: owner security decision OD-09; SKIP.
 
@@ -108,3 +108,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - Blocked TPO-drive-workspace-65: OD-09 recruiter document/consent disclosure remains security-sensitive SKIP. Move on.
 - Reassignments remain authoritative; WP-chat-5-02 is chat-3 and batches are chat-6. No cross-lane shell edits.
 - FAST v2 source-only status: no test/build/typecheck/lint/CI executed, so WPs are IN-PROGRESS until their remaining nonblocked behavior is delivered and accepted.
+
+- TPO-drive-workspace-40: contradictory application ID/email/roll source identities and unresolved skipped rows cannot cause automatic mass FAIL results.
+- TPO-drive-workspace-R03/41: selected results can be searched, pasted by exact application ID, staged in batches of 25, and exported as a formula-neutralized CSV.
+- TPO-drives-13/17: selected row helpers added; bulk reminders retain the 10-drive cap, while selected CSV export is capped at one 25-drive page.
