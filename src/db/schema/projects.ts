@@ -343,6 +343,11 @@ export const projectSprints = pgTable(
     }).notNull(),
     title: text("title").notNull(),
     description: text("description"),
+    goal: text("goal"),
+    definitionOfDone: text("definition_of_done"),
+    startDate: date("start_date"),
+    endDate: date("end_date"),
+    dueDate: date("due_date"),
     sequence: integer("sequence").notNull(),
     status: varchar("status", { length: 32 })
       .notNull()
@@ -372,6 +377,10 @@ export const projectSprints = pgTable(
     index("project_sprints_project_status_idx").on(
       table.projectId,
       table.status,
+    ),
+    check(
+      "project_sprints_dates_ck",
+      sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`,
     ),
     check(
       "project_sprints_sequence_ck",
