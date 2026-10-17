@@ -31,3 +31,5 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-23 | DONE | `src/components/public/browser-support-notice.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-23 |
 | GR-18 | DONE | `src/lib/db-outage.ts` and `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-18 (central API fallback) |
 | GR-54 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-54 (central error handler only) |
+| GR-19 | DONE | `src/components/ui/graceful-page-loading.tsx`, ${missingLoading.length} new loading boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-19 |
+| GR-20 | DONE | ${missingError.length} new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
