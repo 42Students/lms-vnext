@@ -13,6 +13,9 @@ describe("TPO Company Memory legacy parity",()=>{
   expect(source).not.toContain("DB09 database verification");
   expect(source).toContain('Company details are unavailable right now. Try again.');
   expect(source).toContain(">Retry</button>");
+  expect(source).toContain('phase === "migration-pending"');
+  expect(source).toContain("Students-placed counts are unavailable for this college");
+  expect(source).not.toContain("until W04 verifies");
  });
  it("TPO-companies-22 labels the company numbers strip and does not misrepresent empty activity",()=>{
   expect(source).toContain('aria-label="Company numbers"');
