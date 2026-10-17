@@ -256,6 +256,11 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       if(reviewPublish){
+        // TPO-drives-42: verify company selection before any employer or job is written.
+        if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))
+          throw new Error("Pick the company from the list before publishing.");
+        if(companyMode==="NEW"&&String(data.get("companyName")??"").trim().length<2)
+          throw new Error("Enter the company name before publishing.");
         const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
@@ -1151,7 +1156,7 @@ export function PlacementJobCreateForm({
       <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Interview rounds are configured in the saved drive workspace; recruiter lead invitations are managed separately under Engage.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
