@@ -1,0 +1,101 @@
+import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+import {superAdminCollegeBroadcastSchema} from "@/modules/announcements/super-admin-college-broadcast-model";
+const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
+
+describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>{
+ it("SA-tenants-modules-41 preserves the audited admin workflow",()=>{
+  const s=source("src/app/(authenticated)/activity/page.tsx");
+  expect(s).toContain("name:\"Important\"");
+  expect(s).toContain("name:\"Academic setup\"");
+  expect(s).toContain("name:\"People & access\"");
+  expect(s).toContain("name:\"Teaching\"");
+  expect(s).toContain("name:\"Projects\"");
+  expect(s).toContain("name:\"Everything\"");
+ });
+ it("SA-tenants-modules-42 preserves the audited admin workflow",()=>{
+  const s=source("src/app/(authenticated)/activity/page.tsx");
+  expect(s).toContain("label:\"Today\"");
+  expect(s).toContain("label:\"7 days\"");
+  expect(s).toContain("label:\"30 days\"");
+  expect(s).toContain("label:\"All time\"");
+  expect(s).toContain("defaultFrom");
+ });
+ it("SA-tenants-modules-51 preserves the audited admin workflow",()=>{
+  const s=source("src/components/admin/inbound-mail-list.tsx");
+  expect(s).toContain("Mark done");
+  expect(s).toContain("Move back to To read");
+  expect(s).toContain("/api/admin/inbound-mail/status");
+ });
+ it("SA-tenants-modules-52 preserves the audited admin workflow",()=>{
+  const s=source("src/app/(authenticated)/admin/inbound-mail/page.tsx");
+  expect(s).toContain("label:\"To read\"");
+  expect(s).toContain("label:\"Done\"");
+  expect(s).toContain("label:\"All\"");
+  expect(s).toContain("toReadCount");
+ });
+ it("SA-tenants-modules-55 preserves the audited admin workflow",()=>{
+  const s=source("src/modules/inbound-mail/admin-service.ts");
+  expect(s).toContain("isSuperAdmin(context)");
+  expect(s).toContain("admin-scope.select");
+  expect(s).not.toContain("context.adminScope?.collegeId");
+ });
+ it("SA-tenants-modules-56 preserves the audited admin workflow",()=>{
+  const s=source("src/modules/inbound-mail/admin-service.ts");
+  expect(s).toContain("ilike(t.bodyPlain,pattern)");
+  expect(s).toContain(".limit(51)");
+  expect(s).toContain(".offset((input.page-1)*50)");
+ });
+ it("SA-tenants-modules-58 preserves the audited admin workflow",()=>{
+  const s=source("src/components/announcements/super-admin-college-broadcast-form.tsx");
+  expect(s).toContain("Button (optional)");
+  expect(s).toContain("buttonLabel");
+  expect(s).toContain("buttonUrl");
+  expect(s).toContain("maxLength={60}");
+  expect(s).toContain("maxLength={500}");
+ });
+ it("SA-tenants-modules-59 preserves the audited admin workflow",()=>{
+  const s=source("src/app/(authenticated)/admin/announcements/page.tsx");
+  expect(s).toContain("getSuperAdminBroadcastReceiptCounts");
+  expect(s).toContain("Placement-cell read receipts");
+  expect(s).toContain("<progress");
+  expect(s).toContain("receipt.cellRead");
+ });
+ it("SA-tenants-modules-61 preserves the audited admin workflow",()=>{
+  const s=source("src/modules/announcements/super-admin-college-broadcast-model.ts");
+  expect(s).toContain(".max(200)");
+  expect(s).toContain(".max(8000)");
+  expect(s).toContain(".max(60)");
+  expect(s).toContain(".max(500)");
+  const values={audienceMode:"ALL_COLLEGES",collegeIds:[],title:"T",message:"M",
+   scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true};
+  expect(superAdminCollegeBroadcastSchema.safeParse(values).success).toBe(true);
+  expect(superAdminCollegeBroadcastSchema.safeParse({...values,title:"T".repeat(201)}).success).toBe(false);
+  expect(superAdminCollegeBroadcastSchema.safeParse({...values,message:"M".repeat(8001)}).success).toBe(false);
+ });
+ it("SA-tenants-modules-62 preserves the audited admin workflow",()=>{
+  const s=source("src/modules/announcements/super-admin-college-broadcast-service.ts");
+  expect(s).toContain("deliverInAppNotificationInTransaction");
+  expect(s).toContain("From 42: ");
+ });
+ it("SA-tenants-modules-63 preserves the audited admin workflow",()=>{
+  const s=source("src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx");
+  expect(s).toContain("TpoVerificationSwitch");
+  expect(s).toContain("tpoCanVerifyProfiles");
+ });
+ it("SA-tenants-modules-65 preserves the audited admin workflow",()=>{
+  const s=source("src/components/verification/SuperAdminVerificationPanel.tsx");
+  expect(s).toContain("Verify without opening");
+  expect(s).toContain("Send back");
+  expect(s).toContain("/api/admin/verification/bulk-review");
+  expect(s).toContain("acknowledged");
+ });
+ it("SA-tenants-modules-66 preserves the audited admin workflow",()=>{
+  const s=source("src/components/verification/SuperAdminVerificationPanel.tsx");
+  expect(s).toContain("Review one by one");
+  expect(s).toContain("setSequence");
+  expect(s).toContain("setSequenceIndex");
+  expect(s).toContain("nextInSequence");
+ });
+});
