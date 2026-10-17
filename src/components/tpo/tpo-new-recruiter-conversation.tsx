@@ -1,71 +1,145 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
+
 type Recruiter={userId:string;displayName:string|null;companyName:string};
-export function TpoNewRecruiterConversation({recruiters}:{recruiters:Recruiter[]}){
+export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
+ recruiters:Recruiter[];actorUserId:string;
+}){
  const router=useRouter();
- const [open,setOpen]=useState(false),[id,setId]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [open,setOpen]=useState(false),[id,setId]=useState("");
+ const [busy,setBusy]=useState(false),[error,setError]=useState("");
  const [message,setMessage]=useState("");
  const [createdThreadId,setCreatedThreadId]=useState<string|null>(null);
+ const dialogRef=useRef<HTMLDivElement>(null),selectRef=useRef<HTMLSelectElement>(null);
+ const launchRef=useRef<HTMLButtonElement>(null);
+ const draftKey="tpo-new-recruiter-message:"+actorUserId;
+
+ function editMessage(value:string){
+  setMessage(value);
+  try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}
+  catch{/* Private browsing may disable storage. */}
+ }
+ function close(){
+  if(busy)return;
+  setOpen(false);setError("");
+  launchRef.current?.focus();
+ }
+ function openDialog(){
+  setOpen(true);setError("");
+  try{const draft=sessionStorage.getItem(draftKey);if(draft&&draft.length<=4000)setMessage(draft);}
+  catch{/* Session storage is optional. */}
+ }
+ useEffect(()=>{
+  if(!open)return;
+  selectRef.current?.focus();
+  const handleKey=(event:KeyboardEvent)=>{
+   if(event.key==="Escape"){event.preventDefault();close();return;}
+   if(event.key!=="Tab"||!dialogRef.current)return;
+   const focusable=Array.from(dialogRef.current.querySelectorAll<HTMLElement>(
+    'button:not([disabled]),select:not([disabled]),textarea:not([disabled]),a[href]'));
+   const first=focusable[0],last=focusable[focusable.length-1];
+   if(!first||!last)return;
+   if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  };
+  window.addEventListener("keydown",handleKey);
+  return ()=>window.removeEventListener("keydown",handleKey);
+ },[open,busy]);
+ useEffect(()=>{
+  if(!open||!message.trim())return;
+  const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",warn);
+  return ()=>window.removeEventListener("beforeunload",warn);
+ },[open,message]);
+
  async function create(){
-  if(!id||!message.trim()||message.trim().length>4000)return;
+  if(!id||!message.trim()||message.trim().length>4000||busy)return;
   setBusy(true);setError("");
   try{
-   const res=await fetch("/api/placements/tpo/messages/threads",{
-    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({recruiterUserId:id}),
-   });
-   if(!res.ok)throw new Error(res.status===403?"You do not have permission to start this conversation.":
-     "This recruiter no longer has active placement access. Please refresh.");
-   const result=await res.json() as {threadId:string};
-   setCreatedThreadId(result.threadId);
-   const sent=await fetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(result.threadId)+"/messages",{
+   let threadId=createdThreadId;
+   if(!threadId){
+    const res=await fetch("/api/placements/tpo/messages/threads",{
      method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({body:message.trim()}),
-   });
-   if(!sent.ok){
-     setError("Conversation opened, but the message was not sent. Open the conversation to retry.");
-     return;
+     body:JSON.stringify({recruiterUserId:id}),
+    });
+    if(!res.ok)throw new Error(res.status===403?"You do not have permission to start this conversation.":
+      "This recruiter no longer has active placement access. Please refresh.");
+    const result=await res.json() as {threadId:string};
+    threadId=result.threadId;
+    setCreatedThreadId(threadId);
    }
-   setMessage("");
-   router.push("/tpo/messages/"+encodeURIComponent(result.threadId));
+   const sent=await fetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(threadId)+"/messages",{
+    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({body:message.trim()}),
+   });
+   if(!sent.ok)throw new Error("Conversation opened, but the message was not sent. Retry or open the conversation.");
+   editMessage("");
+   router.push("/tpo/messages/"+encodeURIComponent(threadId));
+   router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Couldn't start conversation.");}
   finally{setBusy(false);}
  }
  return <div>
-  <button type="button" className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold"
-    onClick={()=>{
-      if(open&&message.trim()&&!window.confirm("Discard draft?"))return;
-      if(open)setMessage("");
-      setOpen(value=>!value);
-    }}>New message</button>
-  {open?<div role="group" aria-label="New message to a recruiter" className="mt-2 space-y-2 rounded-md border border-border bg-surface p-3">
-   <label className="block text-sm font-semibold text-body">Recruiter
-    <select aria-label="Recruiter" required value={id} onChange={e=>setId(e.target.value)}
-      className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-2">
-     <option value="">Choose a recruiter</option>
-     {recruiters.map(r=><option key={r.userId} value={r.userId}>
-       {(r.displayName?.trim()||"Unnamed recruiter")+" · "+r.companyName}
-      </option>)}
-    </select>
-   </label>
-   <label className="block text-sm font-semibold text-body">Message
+  <button ref={launchRef} type="button" className="min-h-10 rounded-md border border-border bg-surface px-4 text-sm font-semibold"
+   onClick={()=>open?close():openDialog()}>New message</button>
+  {open?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3"
+    onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
+   <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="new-recruiter-message-title"
+    className="w-full max-w-lg space-y-3 rounded-xl border border-border bg-surface p-5 shadow-lg">
+    <div className="flex items-start justify-between gap-4">
+     <h2 id="new-recruiter-message-title" className="text-lg font-semibold text-foreground">New message to a recruiter</h2>
+     <button type="button" onClick={close} disabled={busy} className="min-h-10 rounded border border-border px-3">Close</button>
+    </div>
+    <form onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
+     <label className="block text-sm font-semibold text-body">Recruiter
+      <select ref={selectRef} aria-label="Recruiter" required value={id}
+       onChange={e=>{setId(e.target.value);setCreatedThreadId(null);}}
+       className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-2">
+       <option value="">Choose a recruiter</option>
+       {recruiters.map(r=><option key={r.userId} value={r.userId}>
+        {(r.displayName?.trim()||"Unnamed recruiter")+" · "+r.companyName}
+       </option>)}
+      </select>
+     </label>
+     <div role="group" aria-label="Quick replies" className="flex flex-wrap gap-2">
+      {TPO_QUICK_REPLIES.map(reply=><button key={reply} type="button" disabled={busy}
+       onClick={()=>editMessage(message?message+" "+reply:reply)}
+       className="min-h-10 rounded border border-border px-3 text-xs">{reply}</button>)}
+     </div>
+     <label className="block text-sm font-semibold text-body">Message
       <textarea aria-label="New message" placeholder="Write a message" required maxLength={4000}
-        className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3"
-        value={message} onChange={event=>setMessage(event.target.value)}/>
-   </label>
-   <p className="text-xs text-muted-foreground">
-     This starts their General thread. Messages about a drive are best sent from that drive.
-   </p>
-   {recruiters.length===0?<p role="status" className="text-sm text-body">
-     No recruiters have verified, active placement access.</p>:null}
-   {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
-   {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
-    className="text-sm font-semibold text-primary-text underline">Open conversation</a>:null}
-   <button type="button" disabled={!id||!message.trim()||busy||Boolean(createdThreadId)} onClick={()=>void create()}
-     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-    {busy?"Sending…":"Send"}
-   </button>
+       className="mt-1 min-h-28 w-full rounded-md border border-border bg-surface p-3"
+       value={message} onChange={event=>editMessage(event.target.value)}
+       onKeyDown={event=>{
+        if(event.key==="Enter"&&(event.ctrlKey||event.metaKey||!event.shiftKey)&&
+          !event.nativeEvent.isComposing){
+         event.preventDefault();if(id&&message.trim())void create();
+        }
+       }}/>
+     </label>
+     <p className="text-xs text-muted-foreground" aria-live="polite">
+      Enter or Ctrl/Cmd+Enter to send · Shift+Enter for a new line · {message.length}/4000
+     </p>
+     <p className="text-xs text-muted-foreground">
+      This starts their General thread. Messages about a drive are best sent from that drive.
+     </p>
+     {recruiters.length===0?<p role="status" className="text-sm text-body">
+      No recruiters have verified, active placement access.</p>:null}
+     {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
+     {createdThreadId?<a href={"/tpo/messages/"+encodeURIComponent(createdThreadId)}
+      className="text-sm font-semibold text-primary-text underline">Open conversation</a>:null}
+     <div className="flex justify-end gap-2">
+      <button type="button" onClick={()=>editMessage("")} disabled={!message||busy}
+       className="min-h-11 rounded-md border border-border px-4 text-sm">Discard draft</button>
+      <button type="submit" disabled={!id||!message.trim()||busy}
+       className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
+       {busy?"Sending…":"Send"}
+      </button>
+     </div>
+    </form>
+   </div>
   </div>:null}
  </div>;
 }

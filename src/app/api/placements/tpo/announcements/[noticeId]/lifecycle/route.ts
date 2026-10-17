@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import {noticePostError} from "../../form-error-response";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
@@ -15,22 +16,22 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
  }).strict().safeParse({
   noticeId,action:form?.get("action"),expectedVersion:form?.get("expectedVersion"),
  });
- if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
+ if(!parsed.success)return noticePostError(request,"INVALID_BODY",400);
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),parsed.data);
   const tab=parsed.data.action==="RESTORE"?"deleted":"yours";
   return NextResponse.redirect(new URL("/tpo/announcements?tab="+tab,request.url),303);
  }catch(error){
-  if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
+  if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
+  if(error instanceof z.ZodError)return noticePostError(request,"INVALID_BODY",400);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")
-   return NextResponse.json({error:"NOT_FOUND"},{status:404});
+   return noticePostError(request,"NOT_FOUND",404);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED")
-   return NextResponse.json({error:"UNDO_WINDOW_EXPIRED"},{status:409});
+   return noticePostError(request,"UNDO_WINDOW_EXPIRED",409);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
-   return NextResponse.json({error:"STALE_VERSION"},{status:409});
+   return noticePostError(request,"STALE_VERSION",409);
   if(error instanceof Error&&error.message==="ANNOUNCEMENTS_NOT_REGISTERED")
-   return NextResponse.json({error:"ANNOUNCEMENTS_NOT_REGISTERED"},{status:503});
+   return noticePostError(request,"ANNOUNCEMENTS_NOT_REGISTERED",503);
   throw error;
  }
 }
