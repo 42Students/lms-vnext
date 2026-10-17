@@ -24,7 +24,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   throw new Error("Only completed or cancelled drives can be run again.");
  const draft=await createPlacementJob(context,{
   collegeId,companyRelationshipId:source.companyRelationshipId,
-  title:source.title.slice(0,100),description:source.description,
+  title:source.title.slice(0,100),description:("Copied from "+source.title+" (historical drive "+source.id+"). Review every field before publishing.\n\n"+source.description).slice(0,15000),
   employmentType:source.employmentType as "FULL_TIME"|"INTERNSHIP"|"CONTRACT",
   workMode:source.workMode as "ONSITE"|"REMOTE"|"HYBRID",
   locations:source.locations,openings:source.openings,

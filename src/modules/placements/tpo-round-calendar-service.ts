@@ -25,7 +25,7 @@ async function requireTpo(context: RequestContext) {
 /** Pages may schedule a registered pending round or update/cancel a scheduled one. */
 export async function listTpoCalendarRoundChoices(context: RequestContext,raw:unknown={}) {
   const input=z.strictObject({page:z.coerce.number().int().min(1).max(10000).default(1),
-   q:z.string().trim().max(100).default("")}).parse(raw);
+   q:z.string().trim().max(100).default(""),kind:z.enum(["ALL","INTERVIEW"]).default("ALL")}).parse(raw);
   const pattern="%"+input.q.replace(/[\\%_]/g, value=>"\\"+value)+"%";
   const college = await requireTpo(context);
   const rows = await getDb().select({
@@ -54,11 +54,12 @@ export async function listTpoCalendarRoundChoices(context: RequestContext,raw:un
       eq(placementJobs.status, "PUBLISHED"),
       isNull(placementJobs.archivedAt),
       inArray(placementJobRounds.status, ["PENDING", "SCHEDULED"]),
+      input.kind==="INTERVIEW"?eq(placementJobRounds.kind,"INTERVIEW"):undefined,
       input.q?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern),ilike(placementJobRounds.name,pattern)):undefined,
     ))
     .orderBy(asc(placementJobRounds.updatedAt), asc(placementJobRounds.id))
     .limit(201).offset((input.page-1)*200);
-  return { rows: rows.slice(0, 200), limited: rows.length > 200, page:input.page, q:input.q };
+  return { rows: rows.slice(0, 200), limited: rows.length > 200, page:input.page, q:input.q,kind:input.kind };
 }
 
 /**

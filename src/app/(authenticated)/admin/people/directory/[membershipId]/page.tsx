@@ -30,6 +30,10 @@ export default async function MembershipDetail({params}:{params:Promise<{members
     <dd className="mt-1 break-words text-sm text-body">{field.value}</dd>
    </div>)}
   </dl>
+  <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"}
+    className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+    View audit trail →
+   </Link>
   <p className="text-xs text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text">← Users &amp; Roles directory</Link>
  </div>;

@@ -66,8 +66,7 @@ export default async function LearnerAttendanceCalendarPage({
   }).toString();
 
   return <div className="space-y-6">
-    <PageHeader eyebrow="Learner · Attendance" title="Attendance calendar"
-      description="Registered class dates and actual attendance markings in your currently accessible Courses."
+    <PageHeader title="Attendance calendar"
       actions={<Link href={sourceLink} className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
         Attendance detail
       </Link>} />

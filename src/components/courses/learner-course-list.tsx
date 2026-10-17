@@ -39,6 +39,7 @@ export type LearnerCourseListRow = {
     credits: number | null;
     sectionName: string;
     sectionCode: string;
+    cohortName: string;
     academicPeriodId: string;
     academicPeriodName: string;
     programName: string;
@@ -308,7 +309,7 @@ export function LearnerCourseList({
           <button type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</button>
         </p>
       ) : null}
-      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length)}</p>
+      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -389,6 +390,9 @@ export function LearnerCourseList({
                         <span className="rounded-full bg-muted px-2.5 py-1">
                           {row.course.sectionName}
                         </span>
+                        {row.course.cohortName ? <span className="rounded-full bg-muted px-2.5 py-1">
+                          Batch: {row.course.cohortName}
+                        </span> : null}
                         {row.course.credits ? (
                           <span className="rounded-full bg-muted px-2.5 py-1">
                             {row.course.credits} Credits
@@ -420,7 +424,7 @@ export function LearnerCourseList({
                         </div> : <p className="text-xs text-muted-foreground">No published learning items to measure.</p>}
                         {!row.readOnly && row.overdueAssignments ? (
                           <p className="mt-3 text-xs font-semibold text-warning" role="note">
-                            {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · late submission available
+                            {row.overdueAssignments} overdue {row.overdueAssignments === 1 ? "assignment" : "assignments"} · submission deadline passed
                           </p>
                         ) : null}
                         <div className="mt-3 grid gap-1 text-xs text-muted-foreground">

@@ -20,6 +20,7 @@ function isInRange(value:string|null|undefined,kind:string,now:number):boolean{
  const start=new Date(now);start.setHours(0,0,0,0);
  const midnight=start.getTime();
  switch(kind){
+  case "DUE":return time<=now;
   case "OVERDUE":return time<midnight;
   case "TODAY":return time>=midnight&&time<midnight+DAY;
   case "NEXT_7":return time>=midnight+DAY&&time<midnight+8*DAY;

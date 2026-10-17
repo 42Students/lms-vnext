@@ -4,6 +4,8 @@ export const TPO_RECRUITER_ACCESS_FILTERS = [
   "ALL",
   "ACTIVE",
   "REVOKED",
+  "ENDING_SOON",
+  "ENDED_OR_REMOVED",
 ] as const;
 
 export type TpoRecruiterGrantStatus =
@@ -35,6 +37,9 @@ export type TpoRecruiterGrantSourceRow = {
   status: string;
   grantedAt: Date;
   revokedAt: Date | null;
+  validUntil?: Date | null;
+  capabilities?: string[];
+  verificationStatus?: string;
 };
 
 export type TpoRecruiterGrantView = {
@@ -45,6 +50,10 @@ export type TpoRecruiterGrantView = {
   status: TpoRecruiterGrantStatus;
   grantedDate: string;
   revokedDate: string | null;
+  validUntilDate: string | null;
+  ended: boolean;
+  capabilities: string[];
+  verificationStatus: string;
 };
 
 const istDateFormatter = new Intl.DateTimeFormat(
@@ -95,9 +104,11 @@ export function toTpoRecruiterGrantView(
         row.grantedAt,
       ) ?? "Not recorded",
     revokedDate:
-      formatTpoRecruiterGrantDate(
-        row.revokedAt,
-      ),
+      formatTpoRecruiterGrantDate(row.revokedAt),
+    validUntilDate:formatTpoRecruiterGrantDate(row.validUntil??null),
+    ended:status==="REVOKED"||!row.validUntil||row.validUntil.getTime()<=Date.now(),
+    capabilities:row.capabilities??[],
+    verificationStatus:row.verificationStatus??"UNKNOWN",
   };
 }
 

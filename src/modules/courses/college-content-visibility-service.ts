@@ -4,7 +4,8 @@ import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import { academicPeriods, cohorts, courseLearningPaths, courseLessons, courseOfferings,
   courses, departments, lessonContents, programs } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole,isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -16,10 +17,9 @@ const programDepartment=alias(departments,"visibility_program_department");
 
 export async function updateCollegeContentStudentVisibility(context:RequestContext,raw:unknown){
   const input=lessonVisibilityCommandSchema.parse(raw);
-  const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN"))
-    throw new AuthorizationError("courses.manage");
-  const scope={collegeId:member.collegeId,organizationId:member.organizationId};
+  const acting=await resolveActingCollege(context,"courses.manage");
+  if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))throw new AuthorizationError("courses.manage");
+  const scope={collegeId:acting.collegeId,organizationId:acting.organizationId};
   requirePermission(context,"courses.manage",scope);
   return getDb().transaction(async tx=>{
     const [content]=await tx.select({
@@ -40,7 +40,7 @@ export async function updateCollegeContentStudentVisibility(context:RequestConte
       .for("update",{of:lessonContents}).limit(1);
     if(!content||content.status==="ARCHIVED")throw new CoursesServiceError("LESSON_CONTENT_NOT_FOUND");
     const persisted=await assertPersistedPlatformPermission(tx,context,"courses.manage",scope);
-    if(!hasMembershipRole(persisted,"COLLEGE_ADMIN"))
+    if(!isSuperAdmin(persisted)&&!hasMembershipRole(persisted,"COLLEGE_ADMIN"))
       throw new AuthorizationError("courses.manage");
     const [updated]=await tx.update(lessonContents).set({
       visibleToStudents:input.visibleToStudents,

@@ -782,6 +782,10 @@ export async function listProjectAdminSubmissionQueue(
           projectId: projectSubmissions.projectId,
           projectTitle: projectInstances.title,
           projectStatus: projectInstances.status,
+          mentorMembershipId:sql<string|null>`(select pm.membership_id from project_members pm
+            where pm.project_id=${projectInstances.id} and pm.role='MENTOR'
+              and pm.is_primary=true and pm.ended_at is null
+            order by pm.created_at limit 1)`,
           version: projectSubmissions.version,
           status: projectSubmissions.status,
           summary: projectSubmissions.summary,

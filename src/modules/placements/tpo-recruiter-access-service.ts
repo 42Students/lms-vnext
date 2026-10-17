@@ -8,6 +8,9 @@ import {
   eq,
   ilike,
   or,
+  gt,
+  lte,
+  isNull,
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
@@ -79,6 +82,7 @@ export async function listTpoRecruiterAccess(
     );
 
   const db = getDb();
+  const now=new Date(),ending=new Date(now.getTime()+30*86400000);
 
   const scopedGrants = db
     .select({
@@ -95,6 +99,9 @@ export async function listTpoRecruiterAccess(
         placementRecruiterCollegeGrants.createdAt,
       revokedAt:
         placementRecruiterCollegeGrants.revokedAt,
+      validUntil:placementRecruiterCollegeGrants.validUntil,
+      capabilities:placementRecruiterCollegeGrants.capabilities,
+      verificationStatus:placementRecruiterCollegeGrants.verificationStatus,
     })
     .from(
       placementRecruiterCollegeGrants,
@@ -143,12 +150,15 @@ export async function listTpoRecruiterAccess(
           ilike(users.displayName,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
           ilike(placementCompanies.name,"%"+escapeLiteralApplicantSearch(query.q)+"%"),
         ) : undefined,
-        query.status === "ALL"
-          ? undefined
-          : eq(
-              placementRecruiterCollegeGrants.status,
-              query.status,
-            ),
+        query.status==="ENDING_SOON"?and(
+          eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+          gt(placementRecruiterCollegeGrants.validUntil,now),
+          lte(placementRecruiterCollegeGrants.validUntil,ending),
+        ):query.status==="ENDED_OR_REMOVED"?or(
+          eq(placementRecruiterCollegeGrants.status,"REVOKED"),
+          and(eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+           or(isNull(placementRecruiterCollegeGrants.validUntil),lte(placementRecruiterCollegeGrants.validUntil,now))),
+        ):query.status==="ALL"?undefined:eq(placementRecruiterCollegeGrants.status,query.status),
       ),
     )
     .as("tpo_scoped_recruiter_grants");
@@ -175,6 +185,9 @@ export async function listTpoRecruiterAccess(
             scopedGrants.grantedAt,
           revokedAt:
             scopedGrants.revokedAt,
+          validUntil:scopedGrants.validUntil,
+          capabilities:scopedGrants.capabilities,
+          verificationStatus:scopedGrants.verificationStatus,
         })
         .from(scopedGrants)
         .orderBy(

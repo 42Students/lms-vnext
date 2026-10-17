@@ -9,7 +9,7 @@ import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-del
 import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people/learner-profile-refresh-model";
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
-import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
+import {learnerProfileCareerCoverage,learnerCareerCompletionMessage} from "@/modules/people/learner-profile-career-coverage-model";
 import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry,isLearnerShowcaseKey,type LearnerShowcaseKind,type LearnerShowcaseDetails} from "@/modules/people/learner-profile-publications-awards-model";
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
@@ -596,6 +596,7 @@ export function LearnerProfileWorkspace(props: {
             </div>
           </div>
         </div>
+        <p className="mt-2 text-sm font-semibold text-foreground">{learnerCareerCompletionMessage(percent)}</p>
         <p className="mt-2 text-sm text-body">
           This reflects fields saved in your profile, not verification or placement eligibility.
           Sensitive identity information is optional and excluded from this career-profile score. Select a section to review or edit it.

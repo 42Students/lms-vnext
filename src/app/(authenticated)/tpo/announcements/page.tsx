@@ -2,6 +2,8 @@ import Link from "next/link";
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
+import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
+import {TpoNoticeScheduleControls} from "@/components/tpo/tpo-notice-schedule-controls";
 import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,7 +14,7 @@ import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placeme
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -25,6 +27,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
   await placementTableExists("placement_tpo_notice_recipients");
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
  const noticeError=tpoNoticeFormErrorMessage(first(raw.noticeError));
+ const sentId=first(raw.sentNotice);
+ const sent=result.status==="READY"&&tab.data==="yours"&&sentId?
+  result.items.find(row=>row.id===sentId&&row.senderUserId===context.user.id&&
+    canUndoTpoAnnouncementSend(row.createdAt,new Date())):null;
  const query=tpoAudiencePreviewQuery.safeParse({
   audience:first(raw.audience)??"COLLEGE",
   targetId:first(raw.targetId)||undefined,
@@ -39,6 +45,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
   {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
+  {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
@@ -82,18 +89,13 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-1 text-sm font-semibold">Message
      <textarea name="message" required maxLength={10000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
-    <label className="grid gap-1 text-sm">Send at (IST, optional)
-      <input type="datetime-local" name="sendAt" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
-    </label>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
-    <button type="submit" disabled={!query.success||!audience||audience.potentiallyVisibleMemberships===0||!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)}
-      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-      {audience?"Send to "+audience.potentiallyVisibleMemberships+" members":
-       query.success&&query.data.audience!=="COLLEGE"?"Publish to selected audience":"Publish college notice"}
-    </button>
+    <TpoNoticeScheduleControls count={audience?.potentiallyVisibleMemberships??null}
+      enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
+       canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
    </form>
   </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
@@ -108,6 +110,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
+    <p className="mt-1 text-xs text-muted-foreground">
+      By {row.senderName?.trim()||"Placement team"} ·
+      {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
+      {row.updatedAt.getTime()>row.createdAt.getTime()+1000?" · Updated":""}
+      {row.expiresAt?" · Shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
+    </p>
     {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-amber-700">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?

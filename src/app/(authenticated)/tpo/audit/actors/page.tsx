@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
 import { tpoActorAuditQuerySchema } from "@/modules/placements/tpo-actor-audit-model";
+import {tpoAuditEntityHref} from "@/modules/placements/tpo-audit-entity-link-model";
 
 type SearchParams = {
   actorId?: string | string[];
@@ -12,6 +13,7 @@ type SearchParams = {
   entityId?: string | string[];
   from?: string | string[];
   to?: string | string[];
+  sort?:string|string[];
   page?: string | string[];
   pageSize?: string | string[];
 };
@@ -30,6 +32,7 @@ export default async function TpoActorAuditPage({
     ...(first(raw.entityId) ? { entityId: first(raw.entityId) } : {}),
     ...(first(raw.from) ? { from: first(raw.from) } : {}),
     ...(first(raw.to) ? { to: first(raw.to) } : {}),
+    ...(first(raw.sort) ? { sort: first(raw.sort) } : {}),
     ...(first(raw.page) ? { page: first(raw.page) } : {}),
     ...(first(raw.pageSize) ? { pageSize: first(raw.pageSize) } : {}),
   };
@@ -90,6 +93,13 @@ export default async function TpoActorAuditPage({
           className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
       <label className="grid gap-1 text-sm font-semibold text-foreground">
+       Sort date
+       <select name="sort" defaultValue={parsed.data.sort}
+        className="min-h-10 rounded-md border border-border bg-surface px-3">
+        <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
+       </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
         <select name="pageSize" defaultValue={String(parsed.data.pageSize)}
           className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground">
@@ -130,7 +140,9 @@ export default async function TpoActorAuditPage({
               <td className="p-3 text-sm">{row.actorName?.trim()||"System / unknown"}</td>
               <td className="p-3">{row.eventType}</td>
               <td className="p-3">{row.entityType}</td>
-              <td className="p-3 font-mono text-xs">{row.entityId}</td>
+              <td className="p-3 font-mono text-xs">{tpoAuditEntityHref(row.entityType,row.entityId)?
+                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-primary-text underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
+                <span title="No safe direct page is registered for this entity type">{row.entityId}</span>}</td>
             </tr>)}</tbody>
           </table>
         </div>

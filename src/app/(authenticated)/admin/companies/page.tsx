@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
+import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -51,6 +52,10 @@ export default async function SuperAdminCompaniesPage({
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
       <Link href="/admin/companies" className="font-semibold text-primary-text underline">Show all employers</Link>
     </section> : null}
+    <div className="flex flex-wrap gap-3 text-sm">
+      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Show deleted (archived) companies →</Link>
+      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Active companies →</Link>
+    </div>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
         <input name="q" defaultValue={data.query.q} placeholder="Search companies"
@@ -113,8 +118,9 @@ export default async function SuperAdminCompaniesPage({
     </Link>
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
-      {([["Companies in this page", data.distinctCompanies], ["Relationships", data.relationships],
-        ["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
+      {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
+        ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
+        ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
         <div key={label} className="rounded-xl border border-border bg-surface p-4">
           <p className="m-0 text-xs text-muted-foreground">{label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
@@ -149,6 +155,8 @@ export default async function SuperAdminCompaniesPage({
     {data.rows.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
         <h2 className="m-0 break-words text-base font-semibold text-foreground">{row.name}</h2>
+        {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
+         <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
         <p className="mt-1 text-sm text-body">{row.collegeName}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           <StatusBadge>{row.companyStatus}</StatusBadge>

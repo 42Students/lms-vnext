@@ -7,6 +7,7 @@ import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
+import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
@@ -129,6 +130,12 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <button type="button" onClick={()=>setSelected(task.id)}
         className="min-h-10 text-left font-semibold text-primary-text underline">{task.title}</button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
+      <p className="text-xs text-body">Assignee: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"} ·
+        {" "}Estimate: {task.estimatePoints??"Unsized"} · {task.taskType??"Task"}</p>
+      <p className="text-xs text-body">Due: {task.dueDate??"No due date"} ·
+        {" "}{projectTaskDueState(task.dueDate,task.status,new Date())}</p>
+      {taskSubmissions.some(s=>s.taskId===task.id&&/^https?:\/\//.test(s.submissionUrl))?
+        <p className="text-xs font-semibold text-primary-text">Submission link attached</p>:null}
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}

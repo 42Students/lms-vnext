@@ -57,7 +57,6 @@ export function CollegeClassCreate({ cohorts, periods }: {
       setNotice(result.error.issues[0]?.message ?? "Enter valid class details.");
       return;
     }
-    if (!window.confirm("Create this class in the selected batch and academic period?")) return;
     startTransition(async () => {
       try {
         await requestWrite("POST", "/api/college/classes", result.data);

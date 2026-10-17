@@ -44,11 +44,13 @@ export function ProjectAdminWorkspaceList({
   basePath,
   emptyTitle,
   emptyDescription,
+  view="cards",
 }: {
   items: readonly ProjectAdminWorkspaceListItem[];
   basePath: string;
   emptyTitle: string;
   emptyDescription: string;
+  view?:"cards"|"table";
 }) {
   if (!items.length) {
     return (
@@ -59,6 +61,33 @@ export function ProjectAdminWorkspaceList({
     );
   }
 
+  if(view==="table")return <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+    <table className="min-w-full text-left text-sm">
+      <thead className="bg-muted"><tr>
+        <th scope="col" className="p-3">Workspace</th><th scope="col" className="p-3">Mentor</th>
+        <th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Progress</th>
+        <th scope="col" className="p-3">Members</th><th scope="col" className="p-3">Action</th>
+      </tr></thead>
+      <tbody>{items.map(item=><tr key={item.id} className="border-t border-border">
+        <td className="p-3 font-semibold">{item.title}</td>
+        <td className="p-3">{item.mentorName??"Unassigned"}</td>
+        <td className="p-3"><StatusBadge tone={tone(item.status)}>{label(item.status)}</StatusBadge></td>
+        <td className="min-w-32 p-3"><div className="flex items-center gap-2">
+          <div role="progressbar" aria-label={item.title+" progress"} aria-valuemin={0}
+            aria-valuemax={100} aria-valuenow={item.progressPercent}
+            className="h-2 w-24 overflow-hidden rounded bg-muted">
+            <div className="h-full bg-primary" style={{width:item.progressPercent+"%"}}/></div>
+          <span className="tabular-nums">{item.progressPercent}%</span>
+        </div></td>
+        <td className="p-3">{item.memberCount}</td>
+        <td className="p-3"><div className="flex flex-wrap items-center gap-2">
+          <Link href={basePath+"/"+item.id} className="font-semibold text-primary-text underline">Open</Link>
+          <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
+            status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
+        </div></td>
+      </tr>)}</tbody>
+    </table>
+  </div>;
   return (
     <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       {items.map((item) => (

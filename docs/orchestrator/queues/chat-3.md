@@ -23,7 +23,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 1. WP-chat-3-01-academic-setup-dashboard-s1 | DONE (FAST source scope; blocked exceptions documented below) | 23 gaps: S1 4, S2 19
 2. WP-chat-3-02-people-placements-s2 | IN-PROGRESS | 20 gaps: S2 20
 3. WP-chat-3-03-people-academic-setup-s2 | IN-PROGRESS | 19 gaps: S2 3, S3 16
-4. WP-chat-3-04-verification-misc-people-s3 | TODO | 16 gaps: S3 7, S4 9
+4. WP-chat-3-04-verification-misc-people-s3 | IN-PROGRESS (COL-verification-misc-12/13 implemented) | 16 gaps: S3 7, S4 9
 
 
 ## Moved in (2026-10-17 reassignments)
@@ -35,6 +35,28 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 3. WP-chat-5-10-students-placements-s2 | IN-PROGRESS | 23 gaps (S2 12, S3 11)
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
+
+## FAST v2 2026-10-17 continuation — post-orchestrator lane merge
+
+- Branch `chatgpt/chat-3-b` was fast-forwarded to the latest merged `main` before work. Each file group was then committed to the lane branch with `[chat-3]` and gap IDs; no direct writes to main.
+- **COL-placements-21:** per-drive pipeline stage cards for Applied, Shortlisted, Assessment, Interview, Waitlisted, Offered, Hired, Rejected and Withdrawn, plus Applications/Schedule/Edit shortcuts and drive-local attention links.
+- **COL-dashboard-09:** next-seven-days published Quizzes card, scoped to college course hierarchy, with authoritative due dates and Quizzes link.
+- **COL-placements-09:** College Admin Duplicate as new drive creates new DRAFT through canonical job service; old applications, offers, audiences, rounds, deadlines and external links are explicitly not carried. Same-origin API and confirmed action.
+- **COL-verification-misc-12:** Activity Log Today, Last 7/30 days, All time, Refresh, and View project activity.
+- **COL-verification-misc-13:** Activity Log actor/entity/action display uses recorded names/labels when present, readable fallback otherwise; detailed audit IDs remain in event details.
+- **COL-people-10:** College-scoped, bounded per-member activity timeline, protected API and Faculty/Student row modal.
+- **COL-placements-11:** College Admin 180-day rejected/withdrawn retention review (read-only, capped 200) and college-scoped student placement lookup with offers and joining records; Analytics links to both.
+- **COL-placements-18:** College Admin Analytics offers its own report navigation rather than inaccessible /tpo/reports/* links.
+- **COL-people-11:** future faculty schedules bulk reassignment with active scoped faculty list, per-slot conflict skip, audit, and `Reassigned N of M upcoming session(s)` receipt.
+- **COL-academic-setup-16:** removed unnecessary native create confirms for batches and classes. Styled edit/archive confirmations remain open under this gap.
+- **Blocked COL-placements-02:** private resume preview and score explanation need approved document and scoring integration.
+- **Blocked COL-placements-03/10:** offer-letter attachments and accurate missing-letter attention require registered protected offer-evidence storage; do not guess missing letters.
+- **Blocked COL-academic-setup-27:** proposed academic year and independent dates not yet registered as DB columns; retain existing cohort period model.
+- **Blocked COL-people-02/07:** canonical login phone/name/email edits need identity-layer ownership and a vetted identity update flow; profile fields already editable.
+- **Skipped COL-people-18:** reveal of student contacts is a privacy-sensitive policy decision, so masking remains.
+- **Skipped COL-verification-misc-17 and COL-verification-misc-16/18:** owner/security-sensitive OD-22 role/permission decisions remain untouched.
+- WP-chat-3-02/03/04 and moved WP-chat-5-02/09/10 remain IN-PROGRESS because implementable gaps still remain. Moved WP-chat-5-14/15 remain TODO; do not claim closure without each listed gap.
+- No tests, typecheck, lint, build or CI were run, per FAST v2.
 
 ## FAST v2 next implementation ledger — 2026-10-17
 

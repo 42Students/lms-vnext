@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,ne} from "drizzle-orm";
+import {and,asc,eq,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -9,7 +9,6 @@ import {PlacementsServiceError} from "./errors";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
-import {placementTableExists} from "./staged-tables";
 
 async function jobScope(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
@@ -22,7 +21,7 @@ async function jobScope(context:RequestContext,rawJobId:unknown){
 }
 export async function getCollegeInterviewAppointments(context:RequestContext,rawJobId:unknown){
  const {collegeId,job}=await jobScope(context,rawJobId);
- const storageReady=await placementTableExists("placement_college_interviews");
+ const storageReady=true; // Registered in drizzle/0124_college_interviews.sql
  const [rounds,candidates,interviews]=await Promise.all([
   getDb().select({id:placementJobRounds.id,name:placementJobRounds.name,
    status:placementJobRounds.status,kind:placementJobRounds.kind})
@@ -54,8 +53,6 @@ export async function getCollegeInterviewAppointments(context:RequestContext,raw
 
 export async function mutateCollegeInterview(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {collegeId,job}=await jobScope(context,rawJobId);
- if(!await placementTableExists("placement_college_interviews"))
-  throw Error("Candidate interview storage has not been registered.");
  const input=collegeInterviewActionSchema.parse(raw);
  if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
  return getDb().transaction(async tx=>{
@@ -81,6 +78,32 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,proposed.applicationId),
+     eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+     eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+   if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
+   const start=new Date(proposed.scheduledAt);
+   const end=new Date(start.getTime()+proposed.durationMinutes*60000);
+   const sharedResource=or(
+     proposed.mode==="ON_CAMPUS"&&proposed.venue?
+      sql`lower(${placementCollegeInterviews.venue})=lower(${proposed.venue})`:undefined,
+     proposed.interviewer?
+      sql`lower(${placementCollegeInterviews.interviewer})=lower(${proposed.interviewer})`:undefined,
+   );
+   if(sharedResource){
+    const collision=await tx.select({id:placementCollegeInterviews.id})
+     .from(placementCollegeInterviews).where(and(
+      eq(placementCollegeInterviews.jobId,job.id),
+      eq(placementCollegeInterviews.status,"SCHEDULED"),
+      input.action==="EDIT"?ne(placementCollegeInterviews.id,input.interviewId):undefined,
+      sql`${placementCollegeInterviews.scheduledAt} < ${end}`,
+      sql`${placementCollegeInterviews.scheduledAt} + ${placementCollegeInterviews.durationMinutes} * interval '1 minute' > ${start}`,
+      sharedResource,
+     )).limit(1);
+    if(collision.length)throw Error("An interview already occupies this interviewer or venue at the chosen time.");
+   }
    const values={
     roundId:proposed.roundId,applicationId:proposed.applicationId,
     scheduledAt:new Date(proposed.scheduledAt),durationMinutes:proposed.durationMinutes,

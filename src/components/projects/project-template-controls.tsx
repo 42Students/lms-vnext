@@ -105,6 +105,7 @@ export function CreateProjectTemplateControl() {
       });
       setOpen(false);
       reset();
+      setDuplicateOpen(false);
       router.push(
         "/admin/projects/templates/" +
           result.template.id,
@@ -305,6 +306,9 @@ export function ProjectTemplateActions({
     useState(false);
 
   const [confirmRevoke, setConfirmRevoke] = useState(false);
+  const [duplicateOpen,setDuplicateOpen]=useState(false);
+  const [copyTitle,setCopyTitle]=useState(title+" Copy");
+  const [copySlug,setCopySlug]=useState(""),[copySummary,setCopySummary]=useState("");
 
   async function mutate(
     label: string,
@@ -350,7 +354,8 @@ export function ProjectTemplateActions({
           templateId +
           "/duplicate",
         "POST",
-        {},
+        {title:copyTitle.trim()||undefined,slug:copySlug.trim()||undefined,
+         summary:copySummary.trim()||undefined},
       )) as {
         template: { id: string; title: string };
       };
@@ -449,7 +454,7 @@ export function ProjectTemplateActions({
           size="sm"
           variant="secondary"
           disabled={pending !== null}
-          onClick={() => void duplicate()}
+          onClick={() => setDuplicateOpen(true)}
         >
           {pending === "Duplicate template"
             ? "Duplicating…"
@@ -488,6 +493,27 @@ export function ProjectTemplateActions({
         ) : null}
       </div>
 
+      <Dialog open={duplicateOpen} onOpenChange={setDuplicateOpen}
+        title="Duplicate project template"
+        description="Create a new draft copy. The source template and its assigned workspaces remain unchanged."
+        footer={<>
+          <Button variant="secondary" disabled={pending!==null} onClick={()=>setDuplicateOpen(false)}>Cancel</Button>
+          <Button disabled={pending!==null||!copyTitle.trim()||!copySlug.trim()}
+            onClick={()=>void duplicate()}>{pending==="Duplicate template"?"Duplicating…":"Duplicate template"}</Button>
+        </>}>
+        <div className="grid gap-3">
+          <label className="text-sm font-semibold">New title
+            <Input required maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
+          </label>
+          <label className="text-sm font-semibold">New slug
+            <Input required maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+              value={copySlug} onChange={e=>setCopySlug(e.target.value.toLowerCase())}/>
+          </label>
+          <label className="text-sm font-semibold">New summary
+            <Textarea maxLength={2000} value={copySummary} onChange={e=>setCopySummary(e.target.value)}/>
+          </label>
+        </div>
+      </Dialog>
       <Dialog open={confirmRevoke} onOpenChange={setConfirmRevoke}
         title="Revoke college assignment?" description={templateAssignmentRevocationNotice()}
         footer={<>

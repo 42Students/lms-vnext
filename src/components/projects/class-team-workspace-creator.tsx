@@ -21,12 +21,14 @@ type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
 type Roster = {classId:string;className:string;revision:string;members:Learner[]};
 
-export function ClassTeamWorkspaceCreator({collegeId,basePath,templates}:{collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[]}) {
+export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialTemplateId}:{
+ collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];initialTemplateId?:string|null;
+}) {
   const router=useRouter();
   const [classes,setClasses]=useState<ClassChoice[]>([]);
   const [classId,setClassId]=useState("");
   const [roster,setRoster]=useState<Roster|null>(null);
-  const [templateId,setTemplateId]=useState(templates[0]?.templateId??"");
+  const [templateId,setTemplateId]=useState(templates.some(t=>t.templateId===initialTemplateId)?initialTemplateId!:templates[0]?.templateId??"");
   const [mode,setMode]=useState<"TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL">("TEAMS");
   const [order,setOrder]=useState<"ROLL"|"SHUFFLE">("ROLL");
   const [size,setSize]=useState(5);
