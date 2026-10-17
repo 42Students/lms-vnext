@@ -174,6 +174,7 @@ export function LearnerAssessmentOverview({
 
   const countsByCourse=useMemo(()=>learnerAssessmentCourseCounts(items),[items]);
   const scopedAttentionItems=learnerAssessmentScopedItems(items,activeCourseId);
+  const submittedQuizzes=scopedAttentionItems.filter(item=>item.kind==="QUIZ"&&item.attemptsUsed>0);
   const actionCounts=learnerAssessmentActionCounts(scopedAttentionItems,currentNowMs);
   const quickCounts=learnerAssessmentQuickCounts(scopedAttentionItems,currentNowMs);
 
@@ -213,7 +214,19 @@ export function LearnerAssessmentOverview({
 
   return (
     <div className="space-y-5">
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      {kind==="QUIZ" ? (
+        <section aria-label="Quiz summary" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3 text-sm font-semibold text-body">
+          <span className="rounded-full border border-border px-3 py-1">{scopedAttentionItems.length} {scopedAttentionItems.length===1?"Quiz":"Quizzes"}</span>
+          <details className="min-w-0 rounded-lg border border-border px-3 py-1">
+            <summary className="cursor-pointer text-primary-text">{submittedQuizzes.length} Submitted</summary>
+            {submittedQuizzes.length>0 ? (
+              <ul className="mt-2 max-h-48 space-y-1 overflow-y-auto text-xs font-normal">
+                {submittedQuizzes.map(item=><li key={item.deliveryId+":"+item.id}>{item.title}</li>)}
+              </ul>
+            ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
+          </details>
+        </section>
+      ) : (<div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <Metric
           label={
             kind === "ASSIGNMENT"
@@ -237,6 +250,7 @@ export function LearnerAssessmentOverview({
           value={completed}
         />
       </div>
+      )}
 
       <nav aria-label={kind === "ASSIGNMENT" ? "Assignment quick views" : "Quiz quick views"}
         className="flex flex-wrap gap-2">
@@ -377,12 +391,11 @@ export function LearnerAssessmentOverview({
                       {item.lessonName}
                     </p>
                     <p className="mt-2 text-xs text-muted-foreground">
-                      {item.kind === "ASSIGNMENT"
-                        ? `Created ${formatDate(item.createdAt)} · `
-                        : ""}
-                      {item.dueAt
-                        ? `Due ${formatDate(item.dueAt)}`
-                        : "No deadline"}
+                      {item.kind==="ASSIGNMENT"&&!item.dueAt
+                        ? `Created: ${formatDate(item.createdAt)}`
+                        : item.dueAt
+                          ? `Due ${formatDate(item.dueAt)}`
+                          : "No deadline"}
                     </p>
                     {item.kind === "ASSIGNMENT" ? (
                       <p className="mt-2 rounded-md bg-surface-subtle px-3 py-2 text-xs font-semibold text-body sm:hidden"
