@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -160,13 +161,14 @@ export default async function TpoReportsPage({
     },
   ];
 
-  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(groups,parsedSearch.data,parsedGroup.data));
+  const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
+  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data));
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Insights"
         title="Reports"
-        description="Explore read-only placement performance inside your college."
+        description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION}
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
