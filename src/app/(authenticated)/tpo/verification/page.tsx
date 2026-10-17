@@ -11,7 +11,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const params=await searchParams;
  const first=(key:string)=>Array.isArray(params[key])?params[key][0]:params[key];
  const parsed=tpoVerificationQuerySchema.safeParse({
-  tab:first("tab"),kind:first("kind"),waitingState:first("waitingState"),
+  tab:first("tab"),kind:first("kind"),waitingState:first("waitingState"),waitingSince:first("waitingSince"),
   page:first("page"),pageSize:first("pageSize"),search:first("search"),
   batchId:first("batchId")||undefined,branchId:first("branchId")||undefined,
  });
