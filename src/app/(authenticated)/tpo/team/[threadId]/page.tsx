@@ -1,6 +1,8 @@
 import Link from "next/link";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {TpoTeamReplyComposer} from "@/components/tpo/tpo-team-forms";
+import {TpoTeamFollowControls} from "@/components/tpo/tpo-team-follow-controls";
+import {getTpoTeamThreadPreferences} from "@/modules/placements/tpo-team-preferences-service";
 import {TpoTeamMessageScroll} from "@/components/tpo/tpo-team-message-scroll";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,11 +28,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <p role="status">Private messaging tables are not registered.</p>
    <Link href="/tpo/team" className="text-primary-text">Back to team</Link>
  </main>;
+ const preferences=await getTpoTeamThreadPreferences(context,parsed.data);
  return <main className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
    description="Private conversation between the named college team participants."/>
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">Back to team conversations</Link>
+  <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
+   muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
    <button type="submit"
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
