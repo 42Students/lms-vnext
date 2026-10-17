@@ -51,3 +51,14 @@ Record for each role and injection kind whether the target request was intercept
 | GR-83 | BLOCKED | No newly claimed helper unit or disposable PostgreSQL integration certification; orchestrator must execute existing named suites and close the GR-51 fake-provider outbox witness. |
 
 **No Playwright, unit, integration, lint, typecheck or production checks were run by chat-15.** Counts here represent authored assertions, not verified passes. GR-80 through GR-83 stay BLOCKED pending runtime evidence and identified fixtures.
+
+## Round-5 browser journey expansion (authored, not executed)
+
+| GR ID | Status | Authored evidence |
+| --- | --- | --- |
+| GR-80 | BLOCKED | `tests/e2e/graceful-recovery-cycle.spec.ts`: 18 `GR-80 ... sign-in retries after ...` email/phone requests across nine network/HTTP faults, each proving **two intercepted OTP-start POSTs only**, persisted contact, recovered control, nonblank friendly screen, and no unhandled browser error. The same file adds 16 `GR-80 GR-16 ... offline notice clears after reconnect` desktop/mobile public and seven-role shell journeys. Fixtures and orchestrator execution still required. |
+| GR-81 | BLOCKED | The new 34 browser journeys invoke `expectNoRawErrors`; the helper's own negative controls remain separately unexecuted. |
+| GR-82 | BLOCKED | Production-build and signed-in state checks remain unexecuted; not inferred from development role journeys. |
+| GR-83 | BLOCKED | Helper units/integration must run independently, including a fake-provider GR-51 outbox UI witness. |
+
+These are **34 additional authored cases** against real pages, not 34 distinct GR identifiers or passing executions. The new sign-in retry suite cannot send actual email or SMS because both attempts are always routed to controlled failures. No tests, lint, typecheck, or CI checks were run by this builder.
