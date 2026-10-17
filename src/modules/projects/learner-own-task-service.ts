@@ -114,7 +114,8 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED,collegeId:scope.collegeId,
     organizationId:scope.organizationId,subjectType:"project_task",subjectId:task.id,
     subjectLabel:task.title,summary:"Learner deleted own project task",
-    metadata:{projectId,taskId:task.id,deleted:true,createdByMembershipId:membership.id},
+    metadata:{projectId,taskId:task.id,deleted:true,sprintId:task.sprintId,
+      createdByMembershipId:membership.id},
     groupKey:"project:"+projectId,
   });
   await tx.delete(projectTasks).where(and(eq(projectTasks.projectId,projectId),
