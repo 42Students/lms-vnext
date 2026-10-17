@@ -13,7 +13,7 @@ import {notifyActiveProjectMembers} from "./project-notification-service";
 
 const params=z.strictObject({projectId:z.string().uuid()});
 const create=z.strictObject({
- sprintId:z.string().uuid(),title:z.string().trim().min(1).max(200),
+ sprintId:z.string().uuid().nullable(),title:z.string().trim().min(1).max(200),
  description:z.string().trim().max(4000).nullable().default(null),
  acceptanceCriteria:z.string().trim().max(4000).nullable().default(null),
  priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
