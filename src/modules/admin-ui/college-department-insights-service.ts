@@ -16,7 +16,8 @@ import {
   sectionScheduleEvents,
   sections,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import {requireAttendanceCollege} from "@/modules/attendance/admin-service";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   COLLEGE_DEPARTMENT_INSIGHTS_PAGE_SIZE,
@@ -25,10 +26,18 @@ import {
   type DepartmentInsightsKind,
 } from "./college-department-insights-model";
 
-function requireCollegeDepartmentInsightAccess(
+async function requireCollegeDepartmentInsightAccess(
   context: RequestContext,
   kind: DepartmentInsightsKind,
 ) {
+  // Super Admin attendance routes share the same explicit acting-college
+  // authorization as the main Attendance page. Placement readiness stays
+  // restricted to a real College Admin membership.
+  if (kind === "ATTENDANCE" && isSuperAdmin(context)) {
+    if (!context.adminScope?.collegeId) throw new AuthorizationError("academics.read");
+    const college = await requireAttendanceCollege(context, context.adminScope.collegeId);
+    return college.id;
+  }
   const membership = context.membership;
   const permission = kind === "ATTENDANCE" ? "academics.read" : "placements.read";
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -64,7 +73,7 @@ export async function listCollegeDepartmentInsights(
   raw: unknown,
 ) {
   const query = collegeDepartmentInsightsQuerySchema.parse(raw);
-  const collegeId = requireCollegeDepartmentInsightAccess(context, kind);
+  const collegeId = await requireCollegeDepartmentInsightAccess(context, kind);
   const db = getDb();
   const condition = and(
     eq(departments.collegeId, collegeId),

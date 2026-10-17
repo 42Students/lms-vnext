@@ -5,7 +5,7 @@ import { getDb } from "@/db/client";
 import {
   academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
   departments, learnerProgramEnrollments, membershipRoles, programs,
-  programTerms, sectionEnrollments, sections, users,
+  programTermCourses, programTerms, sectionEnrollments, sections, users,
 } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -139,6 +139,15 @@ export async function previewCollegeBatchPromotionInTransaction(
       .orderBy(asc(users.displayName), asc(learnerProgramEnrollments.id))
       .limit(2001),
   ]);
+  // COL-academic-setup-R04: an active next semester without any mapped
+  // course cannot receive a batch. The execute path shares this preview
+  // inside its progression transaction, and this FOR SHARE guards against
+  // concurrent removal of the last mapping until that transaction commits.
+  const mappedTargetCourses = availableTerm[0] && nextTerm !== null
+    ? await db.select({id:programTermCourses.id}).from(programTermCourses)
+      .where(eq(programTermCourses.programTermId,availableTerm[0].id))
+      .for("share",{of:programTermCourses}).limit(1)
+    : [];
   const tooMany = students.length > 2000;
   const visible = students.slice(0, 2000);
   const ids = visible.map(student => student.enrollmentId);
@@ -163,6 +172,7 @@ export async function previewCollegeBatchPromotionInTransaction(
     currentTermNumber: batch.currentTermNumber,
     durationTerms: batch.durationTerms,
     nextTermConfigured: availableTerm.length > 0,
+    nextTermHasCourses: mappedTargetCourses.length > 0,
     currentYearStart: batch.currentAcademicYearStart,
     overrideYearStart: query.yearStart,
     currentPeriodConfigured: batch.currentPeriodId !== null,
