@@ -461,7 +461,7 @@ export async function PlacementDriveWorkspace({
                       </dd>
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
-                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply</dd></div>
+                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
                       {rescheduleRequests>0?<Link href="#drive-request-actions"
                         className="ml-2 font-semibold text-primary-text underline">Review pending →</Link>:null}
