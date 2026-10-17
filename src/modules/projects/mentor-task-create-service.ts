@@ -60,7 +60,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
           sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
         .orderBy(desc(projectTasks.sequence)).limit(1);
       const [created]=await tx.insert(projectTasks).values({
-        projectId:scope.project.id,sprintId:sprint.id,
+        projectId:scope.project.id,sprintId:sprint?.id??null,
         templateKey:"mentor-"+randomUUID().replaceAll("-",""),
         sequence:(last?.sequence??-1)+1,
         title:input.title,description:input.description,
