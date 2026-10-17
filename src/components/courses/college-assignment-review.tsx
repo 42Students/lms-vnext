@@ -83,5 +83,10 @@ export function CollegeAssignmentReview({
   </div>
   {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
+  {retryAllowed&&status==="PUBLISHED"?<button type="button" disabled={bulkBusy}
+   onClick={()=>void publishAllGrades(selected.deliveryId)}
+   className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+   Retry failed
+  </button>:null}
  </div>;
 }
