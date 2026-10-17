@@ -62,7 +62,10 @@ function previewData(rows:ImportRow[],roster:Roster[]){
  const matched:Array<{line:number;identity:string;applicationId:string;name:string;outcome:ImportRow["outcome"];status:string|null;rank:number|null;message:string|null}>=[];
  const unmatched:Array<{line:number;identity:string;reason:string;suggestions:ReturnType<typeof suggested>}>=[];
  for(const row of rows){
-  if(row.invalidRank){unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
+  if(row.invalidRank){
+   const exact=matchSource(row,roster);
+   if(exact.length===1)used.add(exact[0]!.applicationId);
+   unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
   if(!row.outcome){unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
   const candidates=matchSource(row,roster);
   if(candidates.length!==1){
