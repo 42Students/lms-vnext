@@ -472,6 +472,9 @@ export function AdminCourseOverview({
          </a>
          <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
         </form>:null}
+        {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
+         Export CSV includes up to the first 1,000 matching courses. Narrow filters to export a smaller set.
+        </p>:null}
         {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
