@@ -17,6 +17,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_threads"))
   return {status:"NOT_REGISTERED" as const,items:[]};
+ const readsReady=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
