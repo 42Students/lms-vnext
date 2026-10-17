@@ -8,13 +8,17 @@ Further live provider/permission/integration acceptance is owned by the orchestr
 | TPO-home-01 | DONE | `src/modules/placements/tpo-home-greeting-model.ts`, `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-01` |
 | TPO-home-05 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-05` |
 | TPO-home-06 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-06` |
-| TPO-home-07 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-07` |
 | TPO-home-08 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-08` |
-| TPO-home-09 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-09` |
 | TPO-home-13 | DONE | `src/modules/placements/tpo-home-next-up.ts`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-13` |
 | TPO-home-42 | DONE | `src/components/shell/sidebar-nav.tsx` (verification only; owned by chat-9); `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-42` |
 | TPO-home-43 | DONE | `src/components/tpo/tpo-mobile-footer.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-43` |
+| TPO-home-17 | DONE | `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-17` |
+| TPO-home-36 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-36` |
+| TPO-home-39 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-39` |
+| TPO-home-41 | DONE | `src/components/tpo/tpo-keyboard-shortcuts.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts`, `TPO-home-41` |
 
 Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4.md`.
 Live numbers in legacy row fields remain conditional on available persisted data;
 tests prove presentation policy rather than claiming unavailable provider data exists.
+
+TPO-home-07 and TPO-home-09 remain OPEN: their display models exist, but the live recruiter-access and team-ask/overdue inputs are not wired; presentation-only tests are not accepted as full closure.
