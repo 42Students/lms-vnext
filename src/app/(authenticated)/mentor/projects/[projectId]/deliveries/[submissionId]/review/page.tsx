@@ -93,7 +93,8 @@ export default async function MentorDeliveryVersionPage({params}:{
       <ol className="mt-3 space-y-2 text-sm">
         {v.createdAt?<li>Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
         {v.submittedAt?<li>Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
-        {v.reviewedAt?<li>Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}</li>:null}
+        {v.reviewedAt?<li>Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}
+          {" · "+(data.reviewedByName??"Reviewer")}</li>:null}
         {data.events.map(event=><li key={event.id}>
           {event.eventType.replaceAll("_"," ").toLowerCase()} · {format(event.occurredAt)}
           {" · "+event.actorName}
