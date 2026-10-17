@@ -14,7 +14,9 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   idempotencyKey:form?.get("idempotencyKey")||undefined});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
-  await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
+  const result=await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json(result);
   return NextResponse.redirect(new URL("/tpo/team/"+threadId,request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
