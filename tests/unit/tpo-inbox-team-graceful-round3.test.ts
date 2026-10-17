@@ -147,4 +147,36 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(internalMessageSchema.safeParse({threadId,body:"Hello",collegeId:threadId}).success).toBe(false);
  });
 
+ it("TPO-inbox-team-17 GR-34 prevents duplicate private conversation creation on retry",()=>{
+  const svc=source("src/modules/placements/tpo-team-internal-create-service.ts");
+  const client=source("src/components/tpo/tpo-team-forms.tsx");
+  expect(svc).toContain('createHash("sha256").update(input.topic)');
+  expect(svc).toContain("eq(activityEvents.dedupeKey,key)");
+  expect(svc).toContain("dedupeKey:key");
+  expect(svc).toContain('.for("update")');
+  expect(client).toContain('draftKey+":createKey"');
+ });
+ it("TPO-inbox-team-19 GR-71/72/73/76 preserves Team search and shows Retry instead of false empty",()=>{
+  const p=source("src/app/(authenticated)/tpo/team/page.tsx");
+  expect(p).toContain('status:"FAILED" as const');
+  expect(p).toContain("Could not load conversations right now.");
+  expect(p).toContain("Retry conversations");
+  expect(p).toContain('conversations?.status==="FAILED"?null:');
+ });
+ it("TPO-inbox-team-45 GR-71/72/73 preserves audience preview filters when one section fails",()=>{
+  const p=source("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(p).toContain("const previewRequest=");
+  expect(p).toContain("preview.failed");
+  expect(p).toContain("Retry audience preview");
+  expect(p).toContain("targetId:query.data.targetId");
+ });
+ it("TPO-inbox-team-54 GR-90 marks From 42 announcements New only with verified college-scoped reads",()=>{
+  const service=source("src/modules/announcements/tpo-placement-read-service.ts");
+  const page=source("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(service).toContain("placementCellAnnouncementReads");
+  expect(service).toContain("eq(placementCellAnnouncementReads.collegeId,college.id)");
+  expect(service).toContain("readStateReady:cellReadsReady");
+  expect(page).toContain('tab.data==="from-42"&&result.readStateReady&&!row.readAt');
+ });
+
 });
