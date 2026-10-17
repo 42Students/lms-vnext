@@ -168,7 +168,7 @@ export function FacultyAssessmentOverview({
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
-              className="rounded-xl border border-border bg-surface p-5"
+              className="min-w-0 rounded-xl border border-border bg-surface p-3 sm:p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
@@ -198,7 +198,7 @@ export function FacultyAssessmentOverview({
                     <p className="mt-2 line-clamp-2 text-sm text-body">{item.description}</p>
                   ) : null}
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap">
                   {item.facultyOwned ? (
                     <>
                       <FacultyAssessmentEditor

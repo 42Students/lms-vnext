@@ -9,6 +9,7 @@ export const collegeLearningQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
+  pageSize:z.coerce.number().int().refine(value=>[10,25,50,100].includes(value)).default(25),
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
 export const collegeLessonQuerySchema = collegeLearningQuerySchema.extend({
@@ -138,6 +139,7 @@ export function collegeLearningHref(kind: CollegeLearningKind, query: CollegeLea
   if ("courseStatus" in query && query.courseStatus !== "ALL") params.set("courseStatus",query.courseStatus);
   if ("departmentCode" in query && query.departmentCode) params.set("departmentCode",query.departmentCode);
   if (query.page !== 1) params.set("page", String(query.page));
+  if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
   return params.size ? base + "?" + params.toString() : base;
 }
 
@@ -153,8 +155,8 @@ export function collegeOfferingLessonsHref(offeringId:string) {
     offeringId:z.string().uuid().parse(offeringId), status:"ALL",
   }));
 }
-export function collegeLearningPageCount(total: number) {
-  return Math.max(1, Math.ceil(total / COLLEGE_LEARNING_PAGE_SIZE));
+export function collegeLearningPageCount(total: number,pageSize=COLLEGE_LEARNING_PAGE_SIZE) {
+  return Math.max(1, Math.ceil(total / pageSize));
 }
 
 export type CollegeLessonRecord = {

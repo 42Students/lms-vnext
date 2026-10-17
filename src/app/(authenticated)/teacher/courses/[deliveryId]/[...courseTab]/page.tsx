@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import { redirect,notFound } from "next/navigation";
+import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-workspace";
 import { getFacultyCourseWorkspace } from "@/modules/courses/faculty-course-service";
@@ -10,10 +11,11 @@ export default async function FacultyCourseTabPage({
   params,searchParams,
 }: {
   params: Promise<{ deliveryId: string; courseTab: string[] }>;
-  searchParams:Promise<{filter?:string}>;
+  searchParams:Promise<{filter?:string;lesson?:string}>;
 }) {
   const { deliveryId, courseTab } = await params;
-  const requestedFilter=(await searchParams).filter?.toUpperCase();
+  const query=await searchParams;
+  const requestedFilter=query.filter?.toUpperCase();
   const filter=(["ALL","LECTURES","RESOURCES","ASSESSMENTS","LIVE"].includes(requestedFilter??"")?
     requestedFilter:"ALL") as "ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   if (courseTab.length !== 1 || (courseTab[0] !== "home" && courseTab[0] !== "blueprint")) {
@@ -21,6 +23,9 @@ export default async function FacultyCourseTabPage({
   }
   const context = await getCurrentRequestContext();
   const workspace = await getFacultyCourseWorkspace(context, deliveryId);
+  const lessonId=courseTab[0]==="blueprint"&&query.lesson?query.lesson:null;
+  if(lessonId&&(!z.string().uuid().safeParse(lessonId).success||
+    !workspace.lessons.some(lesson=>lesson.id===lessonId)))notFound();
   const [homeSignals, display] = await Promise.all([
     getFacultyCourseHomeSignals(context, workspace),
     loadCourseDisplayContentIfReady(workspace.course.courseId),
@@ -32,6 +37,7 @@ export default async function FacultyCourseTabPage({
       display={display}
       view={courseTab[0] === "home" ? "OVERVIEW" : "BLUEPRINT"}
       contentFilter={filter}
+      selectedLessonId={lessonId}
     />
   );
 }

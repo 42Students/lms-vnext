@@ -11,7 +11,7 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeLessons>>
   | Awaited<ReturnType<typeof listCollegeCourseProgress>>;
 
-export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
+export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: DirectoryData;courseChoices?:readonly {code:string;name:string}[] }) {
   const lessons = data.kind === "LESSONS";
   const title = lessons ? COLLEGE_COURSE_TAB_COPY.lessonsTitle : COLLEGE_COURSE_TAB_COPY.progressTitle;
   const href = lessons ? "/college/lessons" : "/college/course-progress";
@@ -30,6 +30,13 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
       />
       <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
+          {lessons?<label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
+            Rows per page
+            <select name="pageSize" defaultValue={data.query.pageSize}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+            </select>
+          </label>:null}
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Course or {lessons ? "lesson" : "cohort"}
             <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -165,10 +172,16 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
-            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course code (exact)
-              <input name="courseCode" type="search" maxLength={64}
-                defaultValue={data.query.courseCode??""}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+            <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">Course
+              <select name="courseCode" defaultValue={data.query.courseCode??""}
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+                <option value="">All courses</option>
+                {courseChoices.map(option=><option key={option.code} value={option.code}>
+                  {option.name} ({option.code})
+                </option>)}
+                {data.query.courseCode&&!courseChoices.some(option=>option.code===data.query.courseCode)?
+                  <option value={data.query.courseCode}>{data.query.courseCode} (not in current authoring list)</option>:null}
+              </select>
             </label>
           ) : null}
           {data.kind === "LESSONS" ? (
@@ -584,7 +597,7 @@ export function CollegeLearningDirectory({ data }: { data: DirectoryData }) {
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+        <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <div className="flex gap-2">
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}

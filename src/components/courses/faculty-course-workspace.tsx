@@ -368,6 +368,7 @@ export function FacultyCourseWorkspace({
   display,
   view = "ALL",
   contentFilter="ALL",
+  selectedLessonId=null,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
@@ -376,6 +377,7 @@ export function FacultyCourseWorkspace({
   display: CourseDisplayContentView | null;
   view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
   contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
+  selectedLessonId?:string|null;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -411,7 +413,7 @@ export function FacultyCourseWorkspace({
 
       <section aria-label="In this Course" className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface px-4 py-3">
         <span className="rounded-full bg-muted px-3 py-1 text-sm font-semibold text-body">
-          {course.credits} Credits
+          {course.credits===null?"Credits not configured":course.credits+" Credits"}
         </span>
         <span className="text-sm text-body">
           Instructor: You · {course.teachingRole.replaceAll("_"," ").toLowerCase()}
@@ -533,6 +535,22 @@ export function FacultyCourseWorkspace({
               {label}
             </Link>)}
           </nav>
+          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3">
+            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
+              Back to Blueprint
+            </Link>
+            {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
+              <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
+                {index>0?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1].id)}>
+                  Previous lesson
+                </Link>:null}
+                <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
+                {index+1<workspace.lessons.length?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1].id)}>
+                  Next lesson
+                </Link>:null}
+              </div>
+            ):null)}
+          </nav>:null}
           {workspace.lessons.length === 0 ? (
             <EmptyState
               title="No lessons yet"
@@ -540,8 +558,9 @@ export function FacultyCourseWorkspace({
             />
           ) : (
             <div className="space-y-5">
-              {workspace.lessons.map(
-                (lesson, lessonIndex) => {
+              {workspace.lessons.filter(lesson=>!selectedLessonId||lesson.id===selectedLessonId).map(
+                (lesson) => {
+                  const lessonIndex=workspace.lessons.findIndex(row=>row.id===lesson.id);
                   const visibleContents=lesson.contents.filter(item=>
                     contentFilter==="ALL"||
                     contentFilter==="LECTURES"&&["VIDEO","YOUTUBE"].includes(item.contentType)||
@@ -569,10 +588,12 @@ export function FacultyCourseWorkspace({
                   return (
                     <details
                       key={lesson.id}
-                      open={lessonIndex===0?true:undefined}
+                      open={selectedLessonId?true:lessonIndex===0?true:undefined}
                       className="group rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                     >
-                      <summary className="mb-4 flex cursor-pointer list-none flex-wrap items-start justify-between gap-3 focus-visible:outline-2 focus-visible:outline-primary">
+                      <summary aria-label={"Lesson "+(lessonIndex+1)+": "+lesson.name+
+                        ", "+itemCount+" items. Expand or collapse lesson"}
+                        className="mb-4 flex min-h-11 cursor-pointer list-none flex-wrap items-start justify-between gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-primary">
                         <div>
                           <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
                             Lesson{" "}
@@ -594,6 +615,20 @@ export function FacultyCourseWorkspace({
                         </span>
                       </summary>
 
+                      {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
+                        className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        View lesson details →
+                      </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.contents.length} content
+                        </span>
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.assignments.length} assignments
+                        </span>
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.quizzes.length} quizzes
+                        </span>
+                      </div>}
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
@@ -628,7 +663,7 @@ export function FacultyCourseWorkspace({
 
                       {itemCount === 0 ? (
                         <div className="mt-3 rounded-lg border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
-                          {contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
+                          {selectedLessonId&&contentFilter==="ALL"?"No lesson content yet":contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (
                         <div className="mt-3 space-y-3">

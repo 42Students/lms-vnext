@@ -191,6 +191,13 @@ export function FacultyCourseHomeSignals({
         <p className="mt-1 text-sm text-muted-foreground">
           Current learner averages across graded assignments.
         </p>
+        {signals.performance.studentAverages.length<3?
+          <p className="mt-2 text-xs text-muted-foreground">
+            Grade a few submissions to see more useful performance insights.
+          </p>:<p className="mt-2 text-xs text-muted-foreground">
+            {signals.performance.studentAverages.length} students have a graded average.
+            Select a score range below to review the corresponding students.
+          </p>}
         <div className="mt-4 space-y-3">
           {signals.performance.distribution.map((bucket) => {
             const total = Math.max(
