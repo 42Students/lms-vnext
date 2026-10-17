@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
 import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
+import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -1579,6 +1580,24 @@ export function ProjectWorkspace({
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
+                    {mode==="MENTOR"?(()=>{
+                      const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
+                      const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
+                        detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
+                      return hasDetail?<details className="mt-2 rounded-md border border-border p-3 text-sm">
+                        <summary className="cursor-pointer font-semibold text-foreground">Meeting notes and follow-up</summary>
+                        {([
+                          ["Notes",detail.notes],["Action items",detail.actionItems],
+                          ["What went well?",detail.wentWell],["What could improve?",detail.improve],
+                          ["What to try next?",detail.nextTime],["Follow-up notes",detail.followUpNotes],
+                        ] as const).filter(([,value])=>Boolean(value)).map(([label,value])=>
+                          <p key={label} className="mt-2 whitespace-pre-wrap break-words">
+                            <strong>{label}: </strong>{value}</p>)}
+                        {detail.followUpAt?<p className="mt-2">
+                          Follow-up: {formatDateTime(new Date(detail.followUpAt))}
+                          {" · "}{label(detail.followUpStatus)}</p>:null}
+                      </details>:null;
+                    })():null}
                     {mode==="MENTOR"? (
                       <Link
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
