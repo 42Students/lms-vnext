@@ -6,7 +6,7 @@ export function AdminReadinessWorkspacePicker({items,selected,action}:{
 }){
  const [search,setSearch]=useState("");
  const [choice,setChoice]=useState(selected??"");
- const [page,setPage]=useState(1),pageSize=20;
+ const [page,setPage]=useState(1),pageSize=25;
  const matching=useMemo(()=>items.filter(item=>
   (item.title+" "+item.id).toLocaleLowerCase().includes(search.toLocaleLowerCase())),[items,search]);
  const count=Math.max(1,Math.ceil(matching.length/pageSize)),current=Math.min(page,count);
