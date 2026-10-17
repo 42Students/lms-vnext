@@ -111,6 +111,8 @@ export function SuperAdminContentActions({item}:{item:Content}){
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
   </div>
   {editing?<fieldset disabled={busy} className="grid gap-2 rounded border border-border p-3">
+   <p className="text-xs text-muted-foreground">Edit saved metadata or replace a link.
+    Private files and existing published URLs are not exposed in this form.</p>
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>
