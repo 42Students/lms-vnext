@@ -14,7 +14,7 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 
 ## Notes (blockers, one line each)
 
-- GR-80: Chat-14 GR-02 helpers and per-area graceful screens exist on chatgpt/chat-14-b but have not merged into main or been adopted by every page; browser acceptance remains unverified.
+- GR-80: GR-02 shared helpers and graceful screens are now merged into main, but many page-specific clients have not adopted them; strict browser acceptance remains unverified.
 - GR-80 Mentor: A deterministic unread notification must be seeded; the current read-all mutation cannot claim coverage when the button is disabled.
 - GR-80 Recruiter: Additional test tenant must have active, verified, nonexpired employer college grant with required capability before messaging/profile suites can certify.
 - GR-80: Real stale-chunk recovery for authenticated roles needs a production-capable test session, not development-only E2E cookie bypass; public production smoke is authored.
