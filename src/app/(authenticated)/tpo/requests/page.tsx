@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
+import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
 import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
@@ -62,7 +63,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
         </select>
       </label>
-      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
+      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
@@ -72,12 +73,20 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
       <span className="rounded border border-border px-3 py-2">Urgent · {attention.urgent}</span>
-      <span className="rounded border border-border px-3 py-2">Waiting more than 2 days · {attention.waitingOverTwoDays}</span>
+      <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
+       aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
+       className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
       <span className="rounded border border-border px-3 py-2">May need proof review · {attention.proofUnconfirmed}</span>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
-    <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
+    {data.query.status==="PENDING"?<TpoSequentialRequestReview
+      requests={data.requests.filter(row=>row.status==="PENDING").map(row=>({
+        id:row.id,studentName:row.studentName,requestType:row.requestType,
+        reason:row.reason,jobTitle:row.jobTitle,companyName:row.companyName,
+        expectedUpdatedAt:row.updatedAt.toISOString(),
+      }))}/>:null}
+    <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export filtered requests CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
       {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
@@ -91,6 +100,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <div className="min-w-0">
             <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Student number: {request.rollNumber??"Not recorded"} · Branch: {request.branchName??"Not assigned"}</p>
             {request.nextRoundAt?<p className="mt-1 text-sm text-body">{tpoNextRoundCue(request,asOf)}</p>:null}
             {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
@@ -109,7 +119,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       {data.page>1?<Link href={href({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Previous</Link>:null}
       {data.page<data.totalPages?<Link href={href({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Next</Link>:null}
     </nav>
-    <p className="text-xs text-muted-foreground">CSV exports only the current authorized page (maximum 100), omits private request reasons and decision notes, and neutralizes spreadsheet formulas.</p>
+    <p className="text-xs text-muted-foreground">CSV exports matching authorized requests across pages (up to 5,000), includes their recorded reasons and decisions, and neutralizes spreadsheet formulas. If the export is truncated, narrow the filters.</p>
     <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
   </main>;
 }
