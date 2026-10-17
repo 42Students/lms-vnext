@@ -29,10 +29,11 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
   expect(recruiterMobileNumberValid("+919876543210")).toBe(true);
   expect(recruiterMobileNumberValid("12345")).toBe(false);
   const service=read("src/modules/placements/recruiter-profile-details-service.ts");
-  expect(service).toContain('phoneE164=normalizeRecruiterMobile');
+  expect(service).toContain("placementRecruiterPublicContacts.phoneDigits");
+  expect(service).not.toContain("users.phoneE164");
   expect(service).toContain('eq(users.id,context.user.id)');
   expect(service).not.toContain("users.email,");
-  expect(component).toContain("Only for the placement cell to call you. You never sign in with it.");
+  expect(profile).toContain("Only for the placement cell to call you. You never sign in with it.");
  });
  it("REC-calendar-messages-profile-27 saves name designation and mobile atomically and warns before leaving dirty form",()=>{
   const service=read("src/modules/placements/recruiter-profile-details-service.ts");
@@ -44,14 +45,14 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
   expect(component).toContain("Profile saved");
   expect(component).toContain("Could not save your profile. Your changes are still here; try again.");
   expect(component).toContain("Discard your unsaved profile changes?");
-  expect(component).toContain("disabled={!dirty||pending}");
+  expect(component).toContain("disabled={busy||!dirty}");
  });
  it("REC-calendar-messages-profile-28 preserves recruiter profile card titles and legacy help",()=>{
   for(const sentence of ["Your details","College access","Account",
     "These details identify you to the placement cell.","Manage your recruiter details."]){
    expect(profile).toContain(sentence);
   }
-  expect(component).toContain("Work email");
+  expect(profile).toContain("Work email");
   expect(component).toContain("Mobile");
   expect(component).toContain("Designation");
  });
