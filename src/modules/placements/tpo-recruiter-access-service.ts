@@ -91,6 +91,7 @@ export async function listTpoRecruiterAccess(
       updatedAt: placementRecruiterCollegeGrants.updatedAt,
       displayName:
         users.displayName,
+      designation:placementRecruiterProfiles.title,
       companyName:
         placementCompanies.name,
       status:
@@ -177,6 +178,7 @@ export async function listTpoRecruiterAccess(
           updatedAt: scopedGrants.updatedAt,
           displayName:
             scopedGrants.displayName,
+          designation:scopedGrants.designation,
           companyName:
             scopedGrants.companyName,
           status:
