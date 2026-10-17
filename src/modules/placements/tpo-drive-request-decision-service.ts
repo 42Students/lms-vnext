@@ -64,6 +64,7 @@ export async function decideTpoRecruiterDriveRequest(
       if(draft.workMode==="NO_PREFERENCE")
         throw new TpoDriveRequestDecisionError("WORK_MODE_REVIEW_REQUIRED");
       const workMode=draft.workMode;
+      const legacyAnnualCtc=draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null;
       // REC-home-drives-26: off-campus applications must not be silently
       // converted into an internal LMS apply flow on TPO approval.
       if(draft.driveMode==="OFF_CAMPUS"&&!draft.externalApplicationUrl)
@@ -79,10 +80,9 @@ export async function decideTpoRecruiterDriveRequest(
         ctcLpa:draft.ctcLpa||null,
         fixedCtcLpa:draft.fixedLpa||null,variableCtcLpa:draft.variableLpa||null,
         stipendPerMonthInr:draft.stipendMonthlyInr?Number(draft.stipendMonthlyInr):null,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr) ??
-          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
         maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
-          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
         createdByUserId:context.user.id,
         status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
         externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
@@ -93,10 +93,9 @@ export async function decideTpoRecruiterDriveRequest(
         jobId:job.id,title:draft.title,
         employmentType:draft.employmentType,workMode,
         locations:[draft.location],isPrimary:true,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr) ??
-          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
         maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
-          (draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null),
+          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
         fixedLpa:draft.fixedLpa|| (draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null),
         variableLpa:draft.variableLpa|| (draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null),
         bondMonths:inr(draft.bondMonths),
