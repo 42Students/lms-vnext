@@ -43,6 +43,7 @@ export type PlacementCompanyChoice = {
   name: string;
   primaryDomain: string | null;
   otherNames?: readonly string[];
+  domains?: readonly string[];
   isTrusted: boolean;
 };
 
@@ -117,7 +118,8 @@ export function PlacementJobCreateForm({
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>Boolean(newEmployerName.trim()) && (company.name.toLowerCase()===newEmployerName.trim().toLowerCase() || company.otherNames?.some(alias=>alias.toLowerCase()===newEmployerName.trim().toLowerCase())) ||
-    Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
+    Boolean(newEmployerDomain.trim())&&(company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,"")
+      ||company.domains?.some(domain=>domain.toLowerCase()===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""))));
   const {pending,run}=useGuardedAction({timeoutMs:45000});
   const [
     selectedProgramIds,

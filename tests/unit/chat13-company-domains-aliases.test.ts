@@ -26,6 +26,10 @@ describe("Global company domain and other-name curation",()=>{
  it("SA-placements-projects-28 includes aliases in TPO employer suggestion matching",()=>{
   const ui=read("src/components/placements/placement-job-create-form.tsx");
   expect(ui).toContain("company.otherNames?.some");
+  expect(ui).toContain("company.domains?.some");
+  const workspace=read("src/components/placements/placement-job-create-workspace.tsx");
+  expect(workspace).toContain("otherNames:company.otherNames");
+  expect(workspace).toContain("domains:company.domains");
   expect(read("src/modules/placements/company-service.ts")).toContain("otherNames:");
  });
 });
