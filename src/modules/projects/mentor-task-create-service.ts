@@ -99,6 +99,14 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         groupKey:"project:"+scope.project.id,
         dedupeKey:"project-task:"+created.id+":created",
       });
+      if(created.assigneeMembershipId){
+        await notifyProjectMemberships(tx,event.id,{
+          projectId:scope.project.id,collegeId:scope.collegeId,
+          membershipIds:[created.assigneeMembershipId],
+          title:"New task assigned",body:"You have been assigned "+created.title+".",
+          actionHref:"/learn/projects/"+scope.project.id+"?tab=board",
+        });
+      }
       return created;
     });
   }catch(error){
