@@ -65,7 +65,7 @@ export async function listOfferingSectionPreview(
    assignments:assignments.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
     scope:item.deliveryId?"SECTION":"SHARED",
-    studentVisible:lesson.visibleToStudents&&lesson.status==="ACTIVE"&&item.status==="PUBLISHED",
+    studentVisible:learningPathPublished&&lesson.visibleToStudents&&lesson.status==="ACTIVE"&&item.status==="PUBLISHED",
    })),
    quizzes:quizzes.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
