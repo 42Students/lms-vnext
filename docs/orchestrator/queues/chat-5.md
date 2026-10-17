@@ -219,3 +219,19 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - SKIP TPO-drive-workspace-65: OD-09 recruiter disclosure owner decision still pending.
 - MOVED WPs 02/09/10/14/15 to chat-3 and 04/05/11/16 to chat-6; no reassigned edits.
 - Owned WPs 01,03,06,07,08,12,13 remain IN-PROGRESS (no acceptance evidence); no tests, lint, typecheck, build or CI run.
+
+## FAST v2 chat-5-b 30-commit S1/S2 source batch — 2026-10-17
+
+- Start: fast-forwarded chatgpt/chat-5-b to newly merged main `9c4cdf54` (existing lane head already merged); all writes remain branch-only.
+- WP-01/S1 TPO-drive-workspace-14: TPO publish readiness now requires a recorded stipend/CTC from an active role or job, a non-expired set deadline, and employer link for hybrid/external modes; direct publish path also checks pay and future deadline. Unset and elapsed deadlines have distinct blockers.
+- WP-01/S1 TPO-drive-workspace-33: applicant export now joins college-owned academic evidence by membership without multiplying rows. Filtered CSV contains CGPA, active/past backlogs, 10th/12th scores and evidence provenance with correct 26-column truncation; preview shows academic facts.
+- WP-03/S2 LEARNER-placements-04: home Waiting on you now includes actionable registration and eligible published drive prompts from own persisted registration and authorized browse records; registration jump uses the real section ID.
+- WP-03/S2 LEARNER-placements-R02: added read-only own-offer acceptance impact GET and confirmation dialog showing Withdrawn, Other offers declined, You stay in; fetching, failure and stale-response states block acceptance until impact review. This is advisory; final write rechecks under locks. R03 rules-aware cascade remains open.
+- WP-08/S2 TPO-drives-32/33: new draft and audited draft editor accept fixed/variable LPA, monthly stipend and Dream drive classification; Zod validation, numeric DB conversion and audit included. These values display on About and drive header. Super-dream category/college-defined thresholds and broad job-type parity remain open.
+- WP-06/S2 TPO-drive-workspace-03/62: persisted Dream category, stipend and pay breakdown surfaced in workspace header/About.
+- BLOCKED TPO-drive-workspace-28: apply-on-behalf 48-hour opt-out requires durable learner consent and opt-out policy; reminders available, application-by-proxy remains unimplemented.
+- BLOCKED TPO-drive-workspace-40: company portal identifier mapping to college applications is not registered; explicit internal id/email/roll match only.
+- BLOCKED LEARNER-placements-20 and TPO-drive-workspace-54: authenticated private resume/letter storage and consent-retention contract unavailable; no fake uploads.
+- SKIP TPO-drive-workspace-65: owner-sensitive OD-09 recruiter disclosure and private attachments decision remains pending.
+- MOVED WP-02/09/10/14/15 to chat-3 and WP-04/05/11/16 to chat-6; nothing reassigned was edited.
+- No tests, typecheck, lint, build or CI checks run. Owned WPs 01/03/06/07/08/12/13 are still IN-PROGRESS; source commits are not runtime acceptance.

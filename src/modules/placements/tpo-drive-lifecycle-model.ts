@@ -16,6 +16,9 @@ export type TpoDriveReadinessFacts = {
   evaluativeRoundCount: number;
   policyPersisted: boolean;
   deadlineValid: boolean;
+  deadlinePresent: boolean;
+  payPresent: boolean;
+  externalUrlPresent: boolean;
   appliedResultCount: number;
   acceptedOfferCount: number;
 };
@@ -35,6 +38,9 @@ export function evaluateTpoDriveLifecycle(
     if (facts.roleCount < 1) blockers.push("NO_ACTIVE_ROLE");
     if (facts.evaluativeRoundCount < 1) blockers.push("NO_EVALUATIVE_ROUND");
     if (!facts.policyPersisted) blockers.push("ELIGIBILITY_POLICY_NOT_PERSISTED");
+    if (!facts.deadlinePresent) blockers.push("APPLICATION_DEADLINE_MISSING");
+    if (!facts.payPresent) blockers.push("PACKAGE_MISSING");
+    if (!facts.externalUrlPresent) blockers.push("EXTERNAL_APPLICATION_LINK_MISSING");
     if (!facts.deadlineValid) blockers.push("APPLICATION_DEADLINE_PASSED");
   }
   if (action === "REOPEN") {
@@ -53,6 +59,9 @@ export function tpoDriveReadinessMessage(code: string): string {
     NO_ACTIVE_ROLE: "Add an active role before publishing.",
     NO_EVALUATIVE_ROUND: "Add at least one interview or test round.",
     ELIGIBILITY_POLICY_NOT_PERSISTED: "Save the eligibility rules before publishing.",
+    APPLICATION_DEADLINE_MISSING: "Set an application deadline before publishing.",
+    PACKAGE_MISSING: "Record the role package or stipend before publishing.",
+    EXTERNAL_APPLICATION_LINK_MISSING: "Provide the employer application link before publishing an external drive.",
     APPLICATION_DEADLINE_PASSED: "Set an application deadline in the future.",
     APPLIED_RESULTS_EXIST: "This drive already has applied round results and cannot be reopened.",
     ACCEPTED_OFFERS_EXIST: "Accepted offers prevent reopening this drive.",

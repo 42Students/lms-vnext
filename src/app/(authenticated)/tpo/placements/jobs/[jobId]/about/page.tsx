@@ -78,6 +78,9 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
      ["Openings",data.job.openings??"Not recorded"],["Application deadline",when(data.job.applicationDeadline)],
      ["Minimum CTC",format(data.job.minimumAnnualCtcInr)],["Maximum CTC",format(data.job.maximumAnnualCtcInr)],
      ["Dream drive",data.job.isDream?"Yes":"No"],
+     ["Fixed CTC (LPA)",data.job.fixedCtcLpa??"Not recorded"],
+     ["Variable CTC (LPA)",data.job.variableCtcLpa??"Not recorded"],
+     ["Stipend per month",data.job.stipendPerMonthInr!==null?"₹"+data.job.stipendPerMonthInr.toLocaleString("en-IN"):"Not recorded"],
     ].map(([label,value])=><div key={String(label)}><dt className="text-body">{label}</dt><dd className="font-semibold">{value}</dd></div>)}
    </dl>
    <p className="mt-4 whitespace-pre-wrap text-sm text-body">{data.job.description}</p>
