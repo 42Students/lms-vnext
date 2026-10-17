@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
 
 export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:{
  membershipId:string;status:string;hasMentorRole:boolean;
@@ -17,14 +18,10 @@ export function CollegeAdminLifecycleAction({membershipId,status,hasMentorRole}:
    "Reactivate this administrator's college access?"))return;
   setBusy(true);setError("");
   try{
-   const response=await fetch("/api/people/"+encodeURIComponent(membershipId)+"/lifecycle",{
+   await apiFetch("/api/people/"+encodeURIComponent(membershipId)+"/lifecycle",{
     method:"PATCH",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify(action==="SUSPEND"?{action,reason:reason.trim()}:{action}),
    });
-   if(!response.ok){
-    const result=await response.json().catch(()=>({error:"Unable to change access"})) as {error?:string};
-    throw Error(result.error??"Unable to change access");
-   }
    setReason("");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to change access");}
   finally{setBusy(false);}
