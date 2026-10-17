@@ -28,7 +28,8 @@ export type StudentCsvRow = z.infer<typeof csvRowSchema>;
 export type StudentCsvResult = { row: number; status: "VALID" | "INVALID" | "IMPORTED" | "FAILED" | "PARTIAL"; detail: string; membershipId?: string; enrollmentId?: string };
 export const STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","programId","cohortId"] as const;
 export const MAX_STUDENT_CSV_ROWS = 500;
-export const LEGACY_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Mobile Number","Email","Roll Number"] as const;
+export const LEGACY_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Roll Number","Mobile Number","Email"] as const;
+const PRIOR_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Mobile Number","Email","Roll Number"] as const;
 export const PICKER_STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","rollNumber"] as const;
 
 /** Strict CSV tokenizer: quoted commas, escaped double quotes and CRLF only. */
@@ -72,12 +73,13 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   catch { return { entries: [], structuralErrors: ["INVALID_CSV_FORMAT"] }; }
   const header = rows[0]?.map(value => value.trim()) ?? [];
   const legacy = header.join(",") === LEGACY_STUDENT_CSV_COLUMNS.join(",");
+  const prior = header.join(",") === PRIOR_STUDENT_CSV_COLUMNS.join(",");
   const picker = header.join(",") === PICKER_STUDENT_CSV_COLUMNS.join(",");
   const canonical = header.join(",") === STUDENT_CSV_COLUMNS.join(",");
-  if (!legacy && !picker && !canonical) {
+  if (!legacy && !prior && !picker && !canonical) {
     return { entries: [], structuralErrors: ["INVALID_CSV_HEADER"] };
   }
-  if ((legacy || picker) && (!defaults.programId || !defaults.cohortId)) {
+  if ((legacy || prior || picker) && (!defaults.programId || !defaults.cohortId)) {
     return { entries: [], structuralErrors: ["CHOOSE_PROGRAM_AND_BATCH"] };
   }
   if (rows.length - 1 > MAX_STUDENT_CSV_ROWS) {
@@ -89,11 +91,11 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
     const row = index + 2;
     if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
     const record = canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
-      (key, i) => [key, cells[i]?.trim() ?? ""])), sectionId: defaults.sectionId } : legacy ? {
+      (key, i) => [key, cells[i]?.trim() ?? ""])), sectionId: defaults.sectionId } : (legacy || prior) ? {
         displayName: [cells[0],cells[1]].map(v=>v?.trim()).filter(Boolean).join(" "),
-        phoneE164: (cells[2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),
-        email: cells[3]?.trim() ?? "",
-        rollNumber: cells[4]?.trim() ?? "",
+        phoneE164: (cells[legacy ? 3 : 2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),
+        email: cells[legacy ? 4 : 3]?.trim() ?? "",
+        rollNumber: cells[legacy ? 2 : 4]?.trim() ?? "",
         programId: defaults.programId, cohortId: defaults.cohortId,
         sectionId: defaults.sectionId,
       } : {
