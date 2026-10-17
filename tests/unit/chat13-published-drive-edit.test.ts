@@ -24,6 +24,12 @@ describe("Super Admin published drive editing",()=>{
   expect(service).toContain("date_trunc('milliseconds'");
   expect(service).toContain("recordActivityEventInTransaction(tx,context");
  });
+ it("SA-placements-projects-13 preserves persisted assessment chronology during published edits",()=>{
+  const service=read("src/modules/placements/super-admin-published-drive-edit-service.ts");
+  expect(service).toContain("job.legacyPostingDetails?.assessmentDeadline");
+  expect(service).toContain("isLegacyAssessmentDeadlineAfterApplication");
+  expect(service).toContain("Assessment deadline must be after application deadline.");
+ });
  it("SA-placements-projects-13 uses guarded form and IST-aware deadline",()=>{
   const component=read("src/components/placements/super-admin-published-drive-edit.tsx");
   expect(component).toContain("useGuardedAction");
