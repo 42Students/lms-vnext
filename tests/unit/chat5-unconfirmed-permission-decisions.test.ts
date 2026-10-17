@@ -7,7 +7,7 @@ const college="11111111-1111-4111-8111-111111111111";
 const principal=(roles:("TPO"|"COLLEGE_ADMIN"|"FACULTY")[]):RequestContext=>({
  user:{id:"22222222-2222-4222-8222-222222222222",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:"33333333-3333-4333-8333-333333333333",userId:"22222222-2222-4222-8222-222222222222",collegeId:college,organizationId:"44444444-4444-4444-8444-444444444444",status:"ACTIVE",roles},
-}) as RequestContext;
+}) as unknown as RequestContext;
 
 describe("Chat5 delegated central-scope placement decisions",()=>{
  it("TPO-batches-64 grants active college administrators within college scope, not faculty or foreign colleges",()=>{
