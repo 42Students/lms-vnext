@@ -166,7 +166,7 @@ export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
   if (env.LOG_ALERT_CLOUD_POLL_ENABLED !== "true") return null;
   const project = env.GOOGLE_CLOUD_PROJECT;
   const namespace = env.LOG_ALERT_K8S_NAMESPACE ??
-    (env.APP_ENV === "production" ? "" : "lms-dev-2026");
+    (!env.APP_ENV || env.APP_ENV === "development" ? "lms-dev-2026" : "");
   if (!isCloudLogProject(project) || !isCloudLogNamespace(namespace)) return null;
   return { project, namespace };
 }

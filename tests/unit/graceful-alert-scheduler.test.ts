@@ -40,6 +40,7 @@ describe("scheduled Telegram alerts", () => {
   it("GR-118 requires explicit Cloud Logging enablement and namespace in production", () => {
     expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234" } as unknown as NodeJS.ProcessEnv)).toBeNull();
     expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234", LOG_ALERT_CLOUD_POLL_ENABLED: "true" } as unknown as NodeJS.ProcessEnv)).toBeNull();
+    expect(cloudPollSettings({ APP_ENV: "uat", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234", LOG_ALERT_CLOUD_POLL_ENABLED: "true" } as unknown as NodeJS.ProcessEnv)).toBeNull();
     expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234", LOG_ALERT_CLOUD_POLL_ENABLED: "true", LOG_ALERT_K8S_NAMESPACE: "lms-production" } as unknown as NodeJS.ProcessEnv))
       .toEqual({ project: "lms-vnext-1234", namespace: "lms-production" });
   });
