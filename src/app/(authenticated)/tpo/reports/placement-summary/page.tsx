@@ -173,6 +173,15 @@ export default async function TpoPlacementSummaryPage({
             </label>
             <button type="submit" className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Apply</button>
           </form>
+          {!validFilters?<p role="alert" className="rounded-md border border-border p-3 text-sm text-warning-text">
+           One or more selected drive dimensions are invalid for this college. Clear the filters.
+          </p>:null}
+          <p role="status" className="text-xs text-muted-foreground">
+           Showing {shownDrives.length} of {byDrive.length} drive rows. This filters the drive table only.
+           Summary figures, charts, company table and standard report CSV keep the selected season/drive scope.
+           CTC recorded means a declared annual package; stipend recorded means a declared stipend without CTC.
+           Missing pay figures are not assumed to mean an unpaid role.
+          </p>
           <ReportTable
             title="Drive performance"
             headings={[
@@ -187,7 +196,7 @@ export default async function TpoPlacementSummaryPage({
               "Accepted offers",
               "Placed learners",
             ]}
-            rows={byDrive.map((row) => [
+            rows={shownDrives.map((row) => [
               row.title,
               row.companyName,
               row.employmentType,
