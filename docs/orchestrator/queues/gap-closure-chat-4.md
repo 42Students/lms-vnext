@@ -77,12 +77,12 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-21 | S3 | COPY | DONE |
 | TPO-home-23 | S3 | COPY | DONE |
 | TPO-home-25 | S3 | PERMISSION | UNCONFIRMED |
-| TPO-home-29 | S3 | COPY | OPEN |
-| TPO-home-30 | S3 | COPY | OPEN |
+| TPO-home-29 | S3 | COPY | DONE |
+| TPO-home-30 | S3 | COPY | DONE |
 | TPO-home-32 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-home-34 | S3 | STATE | OPEN |
+| TPO-home-34 | S3 | STATE | DONE |
 | TPO-home-36 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-37 | S3 | STATE | OPEN |
+| TPO-home-37 | S3 | STATE | DONE |
 | TPO-home-39 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-home-40 | S3 | COPY | OPEN |
 | TPO-home-41 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -92,8 +92,8 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | TPO-home-22 | S4 | STATE | OPEN |
-| TPO-home-24 | S4 | COPY | OPEN |
-| TPO-home-38 | S4 | COPY | OPEN |
+| TPO-home-24 | S4 | COPY | DONE |
+| TPO-home-38 | S4 | COPY | DONE |
 | TPO-home-44 | S4 | RESPONSIVE | OPEN |
 
 ## superadmin/tenants-modules-3 (28: OPEN 11, FIXED-ON-MAIN 14, UNCONFIRMED 3)
@@ -112,13 +112,13 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-41 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-42 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-43 | S3 | COPY | OPEN |
-| SA-tenants-modules-44 | S3 | STATE | OPEN |
+| SA-tenants-modules-44 | S3 | STATE | DONE |
 | SA-tenants-modules-48 | S3 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-52 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-tenants-modules-55 | S3 | PERMISSION | FIXED-ON-MAIN |
-| SA-tenants-modules-58 | S3 | MISSING-FIELD | OPEN |
-| SA-tenants-modules-59 | S3 | MISSING-COLUMN | OPEN |
+| SA-tenants-modules-58 | S3 | MISSING-FIELD | DONE |
+| SA-tenants-modules-59 | S3 | MISSING-COLUMN | DONE |
 | SA-tenants-modules-60 | S3 | STATE | UNCONFIRMED |
 | SA-tenants-modules-62 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | SA-tenants-modules-64 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -129,7 +129,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-50 | S4 | MISSING-FILTER | OPEN |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-61 | S4 | VALIDATION | OPEN |
+| SA-tenants-modules-61 | S4 | VALIDATION | DONE |
 
 ## learner/home-courses (27: FIXED-ON-MAIN 14, UNCONFIRMED 2, OPEN 11)
 
