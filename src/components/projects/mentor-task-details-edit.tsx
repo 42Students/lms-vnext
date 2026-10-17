@@ -52,7 +52,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(!title.trim()||title.trim().length>200||
-      description.trim().length>4000||criteria.trim().length>4000||!changed) {
+      description.trim().length>4000||approach.trim().length>4000||criteria.trim().length>4000||!changed) {
       setError("Change a task field within its allowed length.");
       return;
     }
