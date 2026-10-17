@@ -12,10 +12,12 @@ const rows=[
 ];
 describe("TPO conversations filters",()=>{
  it("TPO-inbox-team-18 counts and filters available thread types without guessing unsupported object threads",()=>{
-  expect(tpoTeamConversationCounts(rows)).toEqual({ALL:4,FOLLOWING:3,UNREAD:1,TOPICS:1,DECISIONS:1});
+  expect(tpoTeamConversationCounts(rows)).toEqual({ALL:4,FOLLOWING:3,UNREAD:1,TOPICS:1,DECISIONS:1,ASKS:1,AT_ME:1});
   expect(filterTpoTeamConversations(rows,"TOPICS").map(row=>row.id)).toEqual(["four"]);
   expect(filterTpoTeamConversations(rows,"ALL").length).toBe(4);
   expect(filterTpoTeamConversations(rows,"DECISIONS").map(row=>row.id)).toEqual(["four"]);
+  expect(filterTpoTeamConversations(rows,"ASKS").map(row=>row.id)).toEqual(["four"]);
+  expect(filterTpoTeamConversations(rows,"AT_ME").map(row=>row.id)).toEqual(["four"]);
   expect(tpoTeamConversationFilterSchema.safeParse("UNSAFE").success).toBe(false);
  });
  it("TPO-inbox-team-23 filters only conversations with recorded, unrevoked decisions",()=>{
@@ -23,8 +25,15 @@ describe("TPO conversations filters",()=>{
   const page=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/team/page.tsx"),"utf8");
   expect(reader).toContain("hasDecisions:sql<boolean>");
   expect(reader).toContain("later.event_type in");
-  expect(page).toContain('(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS"] as const)');
+  expect(page).toContain('conversations.asksReady?["ASKS","AT_ME"] as const');
   expect(page).toContain('"Decisions"');
+ });
+ it("TPO-inbox-team-22 uses only scoped OPEN asks for the Asks and @ Me chips",()=>{
+  const reader=readFileSync(join(process.cwd(),"src/modules/placements/tpo-team-internal-read-service.ts"),"utf8");
+  expect(reader).toContain('placementTableExists("placement_tpo_team_asks")');
+  expect(reader).toContain("a.status='OPEN'");
+  expect(reader).toContain("a.college_id=");
+  expect(reader).toContain("asksForMe:");
  });
  it("TPO-inbox-team-20 only counts followed, unmuted member-thread unread as actionable",()=>{
   expect(filterTpoTeamConversations(rows,"UNREAD").map(row=>row.id)).toEqual(["one"]);

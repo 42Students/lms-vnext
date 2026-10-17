@@ -302,3 +302,8 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 ### TPO-inbox-team-22 / 29 disposable PostgreSQL acceptance
 
 `tests/integration/tpo-team-asks-chat2.test.ts` adds actual PostgreSQL tests named **TPO-inbox-team-22** and **TPO-inbox-team-29**, exercising duplicate-request idempotency, assignee-only completion, stale-transition rejection and recipient-specific in-app events, with dependency-ordered cleanup. It requires the orchestrator to register the proposed asks table before executing the DB10 isolated target. **Not run by builder.**
+
+## Round 6 — persisted ask filtering
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Team inbox has persisted Asks and **@ Me** (assigned asks only, not mentions) chips, visible only when ask storage is registered; `tests/unit/tpo-team-filter-round4.test.ts` names **TPO-inbox-team-22**. |
+| TPO-inbox-team-22 | PARTIAL — OPEN | Asks and ask-only @ Me counts are explicitly scoped to member/thread/college, no fabricated references. Home Needs-you integration still open. |
