@@ -30,6 +30,8 @@ export const ACTIVITY_EVENT_TYPES = {
   PLATFORM_ORGANIZATION_CREATED:"platform.organization.created",
   PLATFORM_ORGANIZATION_RENAMED:"platform.organization.renamed",
   PLATFORM_ORGANIZATION_ARCHIVED:"platform.organization.archived",
+  PLATFORM_ORGANIZATION_RESTORED:"platform.organization.restored",
+  PLATFORM_COLLEGE_RESTORED:"platform.college.restored",
   PLATFORM_COLLEGE_BRANDING_UPDATED:"platform.college.branding_updated",
   PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED:"platform.announcement.college_published",
   PLATFORM_COLLEGE_MODULE_RULE_CHANGED:"platform.module_access.college_rule_changed",

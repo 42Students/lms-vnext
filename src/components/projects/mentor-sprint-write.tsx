@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 
 export function MentorSprintCreate({
   projectId, releaseId,releases=[],
@@ -16,6 +17,7 @@ export function MentorSprintCreate({
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -23,8 +25,34 @@ export function MentorSprintCreate({
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
   const [chosenReleaseId,setChosenReleaseId]=useState(releaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==releaseId);
+  function discardDraft(){
+    setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
+    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
+  }
+  const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
     (!dueDate||!startDate||dueDate>=startDate);
+  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||
+    chosenReleaseId!==releaseId);
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function resetForm(){
+    setTitle("");setDescription("");setGoal("");setDone("");
+    setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
+  }
+  function requestClose(){
+    if(busy)return;
+    if(dirty)setConfirmDiscard(true);
+    else setOpen(false);
+  }
 
   async function create() {
     if(!title.trim() || title.trim().length>200 || description.length>4000||
@@ -38,12 +66,11 @@ export function MentorSprintCreate({
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
       showToast({tone:"success",title:"Sprint created"});
-      setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
-      setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
+      setOpen(false);resetForm();
       router.refresh();
-    } catch(error) {
+    } catch {
       showToast({tone:"error",title:"Could not create sprint",
-        description:error instanceof Error?error.message:"Please try again."});
+        description:"Please check the sprint details and try again."});
     } finally {setBusy(false);}
   }
 
@@ -51,10 +78,10 @@ export function MentorSprintCreate({
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>
       Add sprint
     </Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Create sprint"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
       description="Create a planned sprint with goal, dates and definition of done in this release."
       footer={<>
-        <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button disabled={busy||!title.trim()||title.trim().length>200||
           description.length>4000||!datesValid||!chosenReleaseId||
           chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
@@ -97,6 +124,11 @@ export function MentorSprintCreate({
         </p>:null}
       </div>
     </Dialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard sprint changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy}
+      onConfirm={guard.confirmDiscard}/>
   </>;
 }
 
@@ -126,9 +158,9 @@ export function MentorSprintTransition({
         "/mentor-transition","POST",{action,expectedUpdatedAt:updatedAt});
       showToast({tone:"success",title:action==="COMPLETE"?"Sprint completed. Anything not done went back to the backlog.":action==="START"?"Sprint started.":"Sprint reopened."});
       router.refresh();
-    } catch(error) {
+    } catch {
       showToast({tone:"error",title:"Sprint status was not changed",
-        description:error instanceof Error?error.message:"Reload to retry."});
+        description:"Reload the sprint to review its latest status, then try again."});
     } finally {setBusy(false);}
   }
   return <>

@@ -4,16 +4,17 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 export function TpoTeamAwayForm({until}:{until:string|null}){
  const pending=useRef(false),router=useRouter();
- const [date,setDate]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [date,setDate]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  async function submit(next:string|null){
   if(pending.current)return;
-  pending.current=true;setBusy(true);setError("");
+  pending.current=true;setBusy(true);setError("");setNotice("");
   try{
    await apiFetch("/api/placements/tpo/team/away",{
     method:"POST",credentials:"same-origin",timeoutMs:12000,
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify({until:next,expectedUntil:until}),
    });
+   setNotice(next?"Away until saved":"Back now");
    router.refresh();
   }catch(reason){setError(reason instanceof Error?reason.message:"Could not save away status. Try again.");}
   finally{pending.current=false;setBusy(false);}
@@ -28,6 +29,7 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
     className="min-h-11 rounded border border-border bg-surface px-3" />
   </label>
   {error?<p role="alert" className="text-xs text-danger">{error}</p>:null}
+  {notice?<p role="status" className="text-xs text-body">{notice}</p>:null}
   <div className="flex flex-wrap gap-2">
    <button type="submit" disabled={busy||!date} className="min-h-11 rounded border border-border px-3 text-xs font-semibold">{busy?"Saving…":"Set away"}</button>
    {until?<button type="button" disabled={busy} className="min-h-11 rounded border border-border px-3 text-xs font-semibold"

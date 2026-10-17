@@ -20,3 +20,10 @@ Audit `docs/audit/pages/college/attendance.md`; protocol `docs/orchestrator/brie
 | COL-attendance-17 | DONE | Screen-reader caption, column/button semantics and disabled-future explanation with keyboard focus; test COL-attendance-17 |
 
 Graceful operation: section 3 guard and plain conflict copy, GR-71 loading/empty/failed distinction, GR-90 role=alert correction failures, GR-91 keyboard Retry; recorded in `docs/audit/acceptance/graceful-chat-3-verification.md`. Main's shared friendly-error and guarded-action helpers were not yet merged at round start, so no unapproved replacement was added.
+
+
+## Round 6 — Elective evidence (not yet full slot parity)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| COL-attendance-10 | OPEN | Course and academic-period selectors now derive the "(elective)" label from the stored `courseOfferings.type` joined in `admin-service.ts`; regular courses are never guessed as electives. Slot names are not modeled, so full legacy Course + Slot wording stays OPEN. `tests/unit/college-attendance-gap-closure.test.ts`, named COL-attendance-10 test. |

@@ -17,7 +17,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  const [form,setForm]=useState(saved),[versions,setVersions]=useState({userUpdatedAt,profileUpdatedAt});
  const [busy,setBusy]=useState(false),busyRef=useRef(false);
  const [feedback,setFeedback]=useState("");
- const [pendingLeave,setPendingLeave]=useState<string|null>(null);
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const dirty=Object.keys(saved).some(key=>{
   const field=key as keyof typeof saved;
   return saved[field]!==form[field];
@@ -25,26 +25,22 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  useEffect(()=>{
   if(!dirty)return;
   const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();e.returnValue="";};
-  window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
- },[dirty]);
- useEffect(()=>{
-  if(!dirty||busy)return;
   const intercept=(event:MouseEvent)=>{
-   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
-   if(!(anchor instanceof HTMLAnchorElement)||anchor.target||anchor.hasAttribute("download"))return;
-   const destination=new URL(anchor.href,window.location.href);
-   if(destination.origin!==window.location.origin)return;
-   if(destination.pathname===window.location.pathname&&destination.search===window.location.search&&destination.hash)return;
+   if(!(anchor instanceof HTMLAnchorElement))return;
+   if(event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+   const url=new URL(anchor.href,window.location.href);
+   if(url.origin!==window.location.origin||url.pathname===window.location.pathname)return;
    event.preventDefault();event.stopPropagation();
-   setPendingLeave(destination.pathname+destination.search+destination.hash);
+   setLeaveHref(url.pathname+url.search+url.hash);
   };
+  window.addEventListener("beforeunload",warn);
   document.addEventListener("click",intercept,true);
-  return ()=>document.removeEventListener("click",intercept,true);
- },[dirty,busy]);
+  return ()=>{window.removeEventListener("beforeunload",warn);
+   document.removeEventListener("click",intercept,true);};
+ },[dirty]);
  function update(key:keyof typeof form,value:string){setForm(s=>({...s,[key]:value}));setFeedback("");}
  async function save(e:FormEvent<HTMLFormElement>){
   e.preventDefault();
@@ -91,11 +87,11 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    className="min-h-11 rounded bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
    {busy?"Saving…":"Save changes"}</button>
   {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className="text-sm">{feedback}</p>:null}
-  <ConfirmActionDialog open={pendingLeave!==null}
-   title="Discard your unsaved profile changes?"
-   consequence="Your unsaved changes will be lost."
-   confirmLabel="Discard"
-   onCancel={()=>setPendingLeave(null)}
-   onConfirm={()=>{const href=pendingLeave;setPendingLeave(null);if(href)router.push(href);}}/>
+  <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
+   consequence="Your changes have not been saved." confirmLabel="Discard"
+   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
+    const href=leaveHref;setLeaveHref(null);setSaved(form);
+    if(href)router.push(href);
+   }}/>
  </form>;
 }

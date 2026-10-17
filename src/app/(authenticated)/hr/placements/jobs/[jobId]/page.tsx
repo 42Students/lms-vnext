@@ -21,6 +21,9 @@ import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/pl
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
+import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
+import {getOwnRecruiterCandidateRating} from "@/modules/placements/recruiter-private-rating-service";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
@@ -144,6 +147,11 @@ export default async function HrPlacementJobPage({
       if (!(error instanceof PlacementsServiceError && error.code === "PLACEMENT_APPLICATION_NOT_FOUND")) throw error;
     }
   }
+  const privateRatingReady=selectedApplicant?.status==="SUBMITTED"
+    ? await placementTableExists("placement_recruiter_private_reviews") : false;
+  const privateRating=selectedApplicant?.status==="SUBMITTED"&&privateRatingReady
+    ? await getOwnRecruiterCandidateRating(context,workspace.job.id,selectedApplicant.id)
+    : null;
   const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
     (filters.roundId ? null : workspace.rounds[0] ?? null);
   if (filters.roundId && !selectedRound) notFound();
@@ -570,6 +578,14 @@ export default async function HrPlacementJobPage({
                   />
                 </div>
               ) : null}
+              {selectedApplicant.status==="SUBMITTED"&&!privateRatingReady?
+                <p role="status" className="mt-5 rounded-lg border border-warning p-3 text-sm text-body">
+                  Your private rating is temporarily unavailable until the database setup is complete.
+                  Existing shared applicant information is still visible.
+                </p>:null}
+              {privateRating?<RecruiterPrivateRatingEditor
+                jobId={workspace.job.id} applicationId={selectedApplicant.id}
+                initial={privateRating}/>:null}
               {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
                 <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
                 <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
@@ -750,6 +766,7 @@ export default async function HrPlacementJobPage({
                {round.participants.filter(person=>person.result?.status==="STAGED").length} waiting for the cell ·
                {" "}{round.participants.filter(person=>person.result?.status==="APPLIED").length} applied
               </p>
+
               {!driveOverview.readOnly && round.createdByUserId===context.user.id ?
                 <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
                  className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Change or remove</Link>:null}

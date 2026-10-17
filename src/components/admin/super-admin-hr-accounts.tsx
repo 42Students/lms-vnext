@@ -602,7 +602,7 @@ export function SuperAdminHrAccounts({
         <StatusBadge
           tone={hrStatusTone(account.status)}
         >
-          {account.status==="ARCHIVED"?"Suspended":account.status}
+          {account.status==="ARCHIVED"?"Suspended":account.status==="ACTIVE"?"Active":"Disabled"}
         </StatusBadge>
       ),
     },
@@ -788,7 +788,7 @@ export function SuperAdminHrAccounts({
                         <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
                         <p className="mt-1 break-all text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
                       </div>
-                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status==="ARCHIVED"?"Suspended":account.status}</StatusBadge>
+                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status==="ARCHIVED"?"Suspended":account.status==="ACTIVE"?"Active":"Disabled"}</StatusBadge>
                     </div>
                     <dl className="mt-3 grid min-w-0 gap-2 text-sm">
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>

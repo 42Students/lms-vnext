@@ -75,6 +75,7 @@ export * from "./storage-files";
 export * from "./placement-drive-requests";
 export * from "./tpo-campaign-drafts";
 export * from "./placement-recruiter-public-contacts";
+export * from "./placement-recruiter-candidate-ratings";
 export * from "./placement-tpo-application-stages";
 export * from "./placement-tpo-recruiter-saved-views";
 export * from "./assignment-submission-links";

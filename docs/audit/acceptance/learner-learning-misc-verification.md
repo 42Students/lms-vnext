@@ -46,3 +46,12 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-19 | DONE (source authored, test unexecuted) | `tests/unit/chat15-class-scope-quiz-empty.test.ts` + authoritative section membership test in learner-assessment-service, legacy no-class/failed-class states with retry. |
 
 | LEARNER-learning-misc-34 | PARTIAL | `tests/unit/chat15-calendar-window-bounds.test.ts` and SQL overlap bounded class schedule; attendance range work outstanding. |
+
+## Chat-15 additional bounded attendance retrieval
+
+| ID | Status | Evidence |
+|---|---|---|
+| LEARNER-learning-misc-34 | DONE (calendar queries; runtime unverified) | `src/modules/academics/learner-schedule-service.ts` and `src/modules/attendance/learner-service.ts` use selected IST date windows rather than a full-history read on the calendar surfaces. `tests/unit/chat15-calendar-window-bounds.test.ts` cases `LEARNER-learning-misc-34 bounds academic schedule` and `LEARNER-learning-misc-34 bounds attendance reads`. The general attendance summary intentionally retains all enrolled deliveries and history; do not claim a bounded `/learn/attendance` summary. |
+| LEARNER-learning-misc-01 | BLOCKED | Actual private object-storage bucket/malware-scanner integration is required for secure upload end-to-end. No fabricated upload success. |
+
+| LEARNER-learning-misc-04 | DONE (source, not executed) | `src/modules/courses/assignment-submission-file-service.ts` accepts at least one validated written, HTTPS link or ready file part, checks method permissions and writes parts atomically. `src/modules/courses/assignment-method-policy.ts` no longer requires a fake file for legal mixed text/link entries. `src/components/courses/assignment-file-submission-control.tsx` exposes final confirmation even without uploaded files and passes mixed parts to one authorized POST. `tests/unit/chat15-multipart-no-file.test.ts` has two `LEARNER-learning-misc-04` cases. Requires registered 0111 migration, typecheck, Vitest and disposable database acceptance. |

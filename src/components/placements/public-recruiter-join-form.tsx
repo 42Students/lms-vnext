@@ -133,6 +133,7 @@ export function PublicRecruiterJoinForm({
             <p className="mt-3 text-sm text-body">
               Join with your company email. You can then request placement drives and review the students who apply.
             </p>
+            {sentTo?<h2 className="mt-5 text-lg font-semibold text-foreground">One more step</h2>:null}
             <form className="mt-5 space-y-4" onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>

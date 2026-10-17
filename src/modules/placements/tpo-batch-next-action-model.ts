@@ -18,8 +18,8 @@ export function tpoBatchNextActionLink(row:{
   if (!ready) return "";
   if (row.finishedAt) return "/history";
   if (counts && counts.undecided > 0) return "/students?decision=NOT_DECIDED";
-  if (!row.invitedAt) return "/invitation-prep";
-  if(journey&&counts&&journey.registered<counts.eligible)return "/reminder-prep";
+  if (!row.invitedAt) return "#batch-invite";
+  if(journey&&counts&&journey.registered<counts.eligible)return "/registrations?choice=UNRECORDED";
   if(journey&&journey.verified<journey.registered)return "/students?profileVerified=false";
   return "/registrations?choice=UNRECORDED";
 }

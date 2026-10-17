@@ -311,7 +311,7 @@ export async function updatePlacementJob(
   const legacyAssessmentDeadline=input.legacyPostingDetails?.assessmentDeadline;
   if(legacyAssessmentDeadline){
     const applicationDeadline=input.applicationDeadline??current.applicationDeadline;
-    if(!applicationDeadline||Date.parse(legacyAssessmentDeadline)<=applicationDeadline.getTime())
+    if(!applicationDeadline||Date.parse(legacyAssessmentDeadline)<applicationDeadline.getTime())
       throw new PlacementsServiceError("PLACEMENT_JOB_INVALID_DEADLINE");
   }
   const db = getDb();

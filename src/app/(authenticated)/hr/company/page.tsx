@@ -32,7 +32,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const query = await searchParams;
   const collegeQuery = z.string().uuid().optional().safeParse(one(query.collegeId));
-  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow="Employer Recruiter" title="Company & Team" />
+  if (!collegeQuery.success) return <div className="space-y-5"><PageHeader eyebrow="Recruiter" title="Company & Team" />
     <ErrorState title="Invalid college selection" description="Choose a college from your authorized access list."
       action={<Link href="/hr/company" className="text-primary-text underline">Choose college</Link>} /></div>;
   const requestedCollegeId = collegeQuery.data ?? null;
@@ -102,7 +102,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
         <PageHeader
           eyebrow="Employer Recruiter"
           title="Company & Team"
-          description={result.grant.collegeName + " · " + result.company.name}
+          description={"Your work with " + result.grant.collegeName}
         />
         <Link
           href="/hr/profile"

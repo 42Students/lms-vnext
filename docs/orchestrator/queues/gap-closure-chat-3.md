@@ -36,7 +36,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-04 | S3 | STATE | DONE |
 | TPO-drives-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-drives-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-drives-11 | S3 | MISSING-FILTER | DONE |
 | TPO-drives-12 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-16 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-18 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -47,7 +47,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-29 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-30 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-35 | S3 | MISSING-FIELD | OPEN |
-| TPO-drives-37 | S3 | VALIDATION | OPEN |
+| TPO-drives-37 | S3 | VALIDATION | DONE |
 | TPO-drives-38 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-39 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-41 | S3 | STATE | OPEN |
@@ -120,24 +120,24 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-08 | S2 | MISSING-ACTION | DONE |
 | COL-people-17 | S2 | MISSING-TAB | DONE |
 | COL-people-20 | S2 | PERMISSION | DONE |
-| COL-people-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-people-22 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-people-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| COL-people-21 | S2 | MISSING-FIELD | DONE |
+| COL-people-22 | S2 | MISSING-FILTER | DONE |
+| COL-people-23 | S2 | SIDE-EFFECT | DONE |
 | COL-people-06 | S3 | MISSING-ACTION | DONE |
 | COL-people-10 | S3 | MISSING-ACTION | DONE |
 | COL-people-11 | S3 | MISSING-ACTION | DONE |
 | COL-people-13 | S3 | COPY | OPEN |
 | COL-people-14 | S3 | MISSING-FIELD | DONE |
-| COL-people-15 | S3 | COPY | OPEN |
+| COL-people-15 | S3 | COPY | DONE |
 | COL-people-16 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| COL-people-18 | S3 | PERMISSION | FIXED-ON-MAIN |
+| COL-people-18 | S3 | PERMISSION | NOT-A-GAP |
 | COL-people-19 | S3 | COPY | DONE |
 | COL-people-24 | S3 | COPY | DONE |
 | COL-people-25 | S3 | VALIDATION | FIXED-ON-MAIN |
 | COL-people-09 | S4 | MISSING-ACTION | NOT-A-GAP |
-| COL-people-12 | S4 | MISSING-ACTION | UNCONFIRMED |
+| COL-people-12 | S4 | MISSING-ACTION | NOT-A-GAP |
 | COL-people-26 | S4 | A11Y | FIXED-ON-MAIN |
-| COL-people-27 | S4 | RESPONSIVE | UNCONFIRMED |
+| COL-people-27 | S4 | RESPONSIVE | DONE |
 
 ## public/auth-public-2-links-marketing (25: FIXED-ON-MAIN 13, OPEN 10, UNCONFIRMED 2)
 
@@ -160,7 +160,7 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | PUB-auth-public-68 | S2 | MISSING-PAGE | DONE |
 | PUB-auth-public-48 | S3 | COPY | DONE |
 | PUB-auth-public-49 | S3 | SIDE-EFFECT | UNCONFIRMED |
-| PUB-auth-public-54 | S3 | MISSING-EXPORT | OPEN |
+| PUB-auth-public-54 | S3 | MISSING-EXPORT | DONE |
 | PUB-auth-public-57 | S3 | MISSING-FIELD | OPEN |
 | PUB-auth-public-60 | S3 | SIDE-EFFECT | UNCONFIRMED |
 | PUB-auth-public-58 | S4 | MISSING-FIELD | DONE |
@@ -182,22 +182,22 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 | SA-tenants-modules-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-21 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-03 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-04 | S3 | COPY | OPEN |
+| SA-tenants-modules-04 | S3 | COPY | DONE |
 | SA-tenants-modules-06 | S3 | MISSING-TAB | OPEN |
-| SA-tenants-modules-07 | S3 | COPY | OPEN |
+| SA-tenants-modules-07 | S3 | COPY | NOT-A-GAP |
 | SA-tenants-modules-08 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-11 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-13 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-14 | S3 | COPY | OPEN |
+| SA-tenants-modules-14 | S3 | COPY | NOT-A-GAP |
 | SA-tenants-modules-16 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-tenants-modules-17 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-tenants-modules-19 | S3 | MISSING-TAB | OPEN |
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
-| SA-tenants-modules-R02 | S3 | MISSING-ACTION | OPEN |
+| SA-tenants-modules-R02 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-05 | S4 | A11Y | FIXED-ON-MAIN |
 | SA-tenants-modules-09 | S4 | STATE | DONE |
 | SA-tenants-modules-R01 | S4 | MISSING-FIELD | OPEN |
-| SA-tenants-modules-R03 | S4 | PERMISSION | OPEN |
+| SA-tenants-modules-R03 | S4 | PERMISSION | NOT-A-GAP |
 
 ## college/courses-content (14: FIXED-ON-MAIN 8, UNCONFIRMED 2, OPEN 4)
 
@@ -307,3 +307,23 @@ Updated queue statuses above are authoritative for this round. The previous "Rou
 - **Runtime disclaimer**: no new test suite, integration suite, lint, typecheck, build, or database tests have been executed by chat-3. Source-DONE means authored, reviewed and test-covered in existing work, **not** independently runtime-accepted. All other OPEN rows remain OPEN; no status was inferred from a passing build or from absence of a failure.
 
 Evidence (already under `docs/audit/acceptance/`): `tpo-drives-verification.md`, `learner-learning-misc-verification.md`, `college-people-verification.md`, `superadmin-tenants-modules-verification.md`, `public-auth-public-2-links-marketing-verification.md`, `college-courses-content-verification.md`, `college-attendance-verification.md`, `learner-profile-learning-verification.md`.
+
+## Round 7 — current source-level dispositions, October 17
+
+Prior batches and fixed-on-main reconciliation are historical. This batch resolves: `TPO-drives-37`=DONE, `COL-people-12`=NOT-A-GAP, `COL-people-15`=DONE, `COL-people-27`=DONE, `SA-tenants-modules-04`=DONE, `SA-tenants-modules-07`=NOT-A-GAP, `SA-tenants-modules-14`=NOT-A-GAP, `SA-tenants-modules-R03`=NOT-A-GAP, `PUB-auth-public-54`=DONE. Named tests in `tests/unit/superadmin-tenants-gap-closure.test.ts`, `tests/unit/college-people-gap-closure.test.ts`, `tests/unit/tpo-drives-chat-3-round4.test.ts`, and `tests/unit/public-auth-links-gap-closure.test.ts`. Exact evidence lives in each page's acceptance document.
+
+Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pending rounds now persist through a server readback-safe preset workflow); `TPO-drives-42/-43` server publication/idempotency; `COL-attendance-10` elective slot labels; `COL-people-13` private metric/contact columns; `SA-tenants-modules-06/-19` complete embedded tab/detail parity; `PUB-auth-public-47` review-drive invite title. Nothing here claims an unexecuted runtime test passed.
+
+**Failing-unit report reconciliation**: the listed chat-3 source assertions `COL-courses-content-17`, `TPO-drives-39`, `TPO-drives-51`, `TPO-drives-42` now have corresponding source on this branch, including the real round workflow and exact preflight copy. Unit tests were authored/updated, **not run**; the orchestrator must refresh the failure report after running Vitest. No edits to other lane files or shared shell.
+
+## Round 8 — verified mentor workspaces, tests unexecuted
+
+`COL-people-21`, `COL-people-22`, and `COL-people-23` source-closed based on the real persisted workload query, cross-page mentor filter/selection, and tenant-scoped reassignment transaction which clears former-mentor task ownership and writes notifications for both mentors and learners. Added 3 gap-ID tests in `tests/unit/college-people-gap-closure.test.ts` and corresponding evidence in `docs/audit/acceptance/college-people-verification.md`. Tests/PG not executed; integration acceptance remains with orchestrator.
+
+## Round 9 — additional verified dispositions
+
+`TPO-drives-11` is source-DONE: the lifecycle dashboard now supplies all five persisted, tenant-scoped Needs doing categories with actual SQL counts and clickable filtered links; ID-named `tests/unit/tpo-drives-gap-closure.test.ts` upgraded and acceptance documented. `COL-people-18` is a deliberate privacy NOT-A-GAP: generic Contacts masks learner email and phone, with a separate need-to-know workflow required. `tests/unit/college-people-gap-closure.test.ts` checks this policy. **Tests have not been run in this lane.**
+
+## Round 10 — recovery of archived tenants
+
+`SA-tenants-modules-R02` source-DONE. Both archived organizations and archived colleges can be restored by Super Admin in an authorized scope through same-origin POST endpoints, guarded accessible confirmation, archived-state optimistic SQL and audit events. Parent organization must be ACTIVE before restoring college; organization name cannot conflict with another active one. Organization list and College detail expose recovery. `tests/unit/superadmin-tenants-gap-closure.test.ts` has named R02 test; PostgreSQL/runtime and browser testing remain **unexecuted**. Do not treat this as automatic restoration of child membership, DNS, credential, or runtime readiness.

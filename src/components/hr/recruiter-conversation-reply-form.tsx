@@ -11,7 +11,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
- const [pendingLeave,setPendingLeave]=useState<string|null>(null);
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
@@ -19,26 +19,20 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
     event.returnValue="";
   };
   window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
- },[body,sending]);
-
- useEffect(()=>{
-  if(!body.trim()||sending)return;
   const intercept=(event:MouseEvent)=>{
-   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
-   if(!(anchor instanceof HTMLAnchorElement)||anchor.target||anchor.hasAttribute("download"))return;
-   const destination=new URL(anchor.href,window.location.href);
-   if(destination.origin!==window.location.origin)return;
-   if(destination.pathname===window.location.pathname&&destination.search===window.location.search&&destination.hash)return;
+   if(!(anchor instanceof HTMLAnchorElement))return;
+   const url=new URL(anchor.href,window.location.href);
+   if(url.origin!==window.location.origin || url.pathname===window.location.pathname)return;
    event.preventDefault();event.stopPropagation();
-   setPendingLeave(destination.pathname+destination.search+destination.hash);
+   setLeaveHref(url.pathname+url.search+url.hash);
   };
   document.addEventListener("click",intercept,true);
-  return ()=>document.removeEventListener("click",intercept,true);
+  return ()=>{window.removeEventListener("beforeunload",warn);document.removeEventListener("click",intercept,true);};
  },[body,sending]);
+
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(sending)return;
@@ -103,17 +97,12 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
    {sending?"Sending…":"Send reply"}
   </button>
-  <button type="button" className="min-h-11 rounded border border-border px-4 text-sm"
-   disabled={sending} onClick={()=>{
-    if(!body.trim()){router.push("/hr/messages");return;}
-    setPendingLeave("/hr/messages");
-   }}>Close</button>
+  <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
+   consequence="Your draft reply will be lost." confirmLabel="Discard"
+   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
+    const destination=leaveHref;setLeaveHref(null);setBody("");
+    if(destination)router.push(destination);
+   }}/>
   </div>
-  <ConfirmActionDialog open={pendingLeave!==null}
-   title="Discard this unsent message?"
-   consequence="Your draft reply will be lost."
-   confirmLabel="Discard"
-   onCancel={()=>setPendingLeave(null)}
-   onConfirm={()=>{const href=pendingLeave;setPendingLeave(null);setBody("");if(href)router.push(href);}}/>
  </form>;
 }

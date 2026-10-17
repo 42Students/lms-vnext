@@ -269,6 +269,7 @@ const lessonContentBaseSchema = z.object({
       .nullable()
       .optional(),
   title: courseNameSchema,
+  points: z.number().int().min(0).max(1000).default(1),
   sequence: z
     .number()
     .int()
@@ -379,6 +380,7 @@ export const updateLessonContentInputSchema =
   z
     .object({
       title: courseNameSchema.optional(),
+      points: z.number().int().min(0).max(1000).optional(),
       notes: learningTextSchema
         .nullable()
         .optional(),

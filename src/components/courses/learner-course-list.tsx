@@ -10,6 +10,7 @@ import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-dat
 import { Fragment, useMemo, useState } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {learnerCourseSetupCopy,type LearnerCourseSetupStatus} from "@/modules/courses/learner-course-setup-copy";
 import { learnerCourseResultSummary } from "@/modules/courses/learner-course-result-summary-model";
 import { learnerCourseHasActiveFilters } from "@/modules/courses/learner-course-active-filters-model";
 import { learnerCourseFilteredEmptyTitle } from "@/modules/courses/learner-course-filtered-empty-model";
@@ -73,9 +74,10 @@ export type LearnerCourseListRow = {
 
 
 export function LearnerCourseList({
-  rows,
+  rows,setupStatus=null,
 }: {
   rows: readonly LearnerCourseListRow[];
+  setupStatus?:LearnerCourseSetupStatus|null;
 }) {
   const periods = useMemo(() => {
     const map = new Map<string, {
@@ -141,7 +143,7 @@ export function LearnerCourseList({
     return (
       <EmptyState
         title="No courses found"
-        description="Courses will appear here when your class, batch and semester have active course assignments."
+        description={setupStatus?learnerCourseSetupCopy[setupStatus]:"Courses will appear here when your class, batch and semester have active course assignments."}
       />
     );
   }

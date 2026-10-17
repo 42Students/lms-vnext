@@ -66,10 +66,20 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(page()).toContain('name="companyId"');
   expect(page()).toContain('name="cohortId"');
  });
- it("TPO-drives-11 Needs doing links show real count categories",()=>{
-  expect(page()).toContain('aria-label="Needs doing"');
-  expect(page()).toContain("data.attentionCounts.noApplicants");
-  expect(page()).toContain("data.attentionCounts.overdue");
+ it("TPO-drives-11 five real Needs doing categories link to filtered drives and review requests",()=>{
+  const pageSource=page();
+  const list=source("src/modules/placements/tpo-drive-lifecycle-list-service.ts");
+  expect(pageSource).toContain('aria-label="Needs doing"');
+  for(const label of ["Waiting for your review","Nobody has applied","Live with no deadline",
+    "Close in the next 7 days","Deadline passed, still open"])
+    expect(pageSource).toContain(label);
+  for(const key of ["data.attentionCounts.noApplicants","data.attentionCounts.noDeadline",
+    "data.attentionCounts.dueSoon","data.attentionCounts.overdue"])
+    expect(pageSource).toContain(key);
+  expect(list).toContain('noApplicants:sql<number>');
+  expect(list).toContain('noDeadline:sql<number>');
+  expect(list).toContain('dueSoon:sql<number>');
+  expect(list).toContain('overdue:sql<number>');
  });
  it("TPO-drives-12 row More menu links to applicants, rounds and offers",()=>{
   expect(page()).toContain("More ···");

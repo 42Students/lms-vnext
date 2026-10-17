@@ -41,6 +41,8 @@ export type LearnerPlacementOfferItem = {
   joiningDate: string | null;
   expiresAt: string | null;
   issuedAt: string;
+  acceptanceChannel?: string | null;
+  acceptedDisputableUntil?: string | null;
   joining: {
     status:
       | "PENDING"
@@ -362,6 +364,24 @@ export function LearnerPlacementOffers({
               </p>
             </div>
 
+            {item.status==="ACCEPTED" && item.acceptanceChannel==="EXTERNAL_IMPORT" ? (
+              <aside role="status" className="mt-4 rounded-lg border border-warning bg-surface-subtle p-4 text-sm text-body">
+                <p>The company told us you accepted this offer. If that is wrong, tell the placement cell
+                  {item.acceptedDisputableUntil ? " before "+(formatWhen(item.acceptedDisputableUntil)??"the recorded deadline")+" IST." : "."}
+                </p>
+                {item.acceptedDisputableUntil &&
+                  Number.isFinite(Date.parse(item.acceptedDisputableUntil)) &&
+                  Number.isFinite(Date.parse(snapshotNowIso)) &&
+                  Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso) ? (
+                    <Link className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline"
+                      href={"/learn/my-placements/placement?"+new URLSearchParams({
+                        request:"acceptance-dispute",offerId:item.offerId,
+                      }).toString()+"#requests"}>
+                      Tell the placement cell
+                    </Link>
+                  ) : <p className="mt-2">The recorded dispute window has ended. Contact your placement team for help.</p>}
+              </aside>
+            ) : null}
             {pendingExtensions.has(item.offerId) ? (
               <p role="status" className="mt-4 text-sm font-semibold text-body">
                 Offer deadline extension requested. Your placement team has not approved it yet.
