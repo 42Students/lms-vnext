@@ -5,6 +5,8 @@ import { CoursesServiceError } from "@/modules/courses/errors";
 import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
+import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 import { getAdminCourseDisplayContent } from "@/modules/courses/course-display-service";
 import {
