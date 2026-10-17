@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import type { CollegeOwnProfileInput } from "@/modules/people/college-admin-profile-edit-service";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
 function Field({ label, value, onChange, type = "text", hint }: {
@@ -34,18 +36,18 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     })); setSaved(false);
   }
   async function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault(); setSaving(true); setError(""); setSaved(false);
+    event.preventDefault();
+    if(saving)return;
+    setSaving(true); setError(""); setSaved(false);
     try {
-      const response = await fetch("/api/college/profile", {
+      const result = await apiFetch<{profile:CollegeOwnProfileInput}>("/api/college/profile", {
         method: "PATCH", headers: { "content-type": "application/json" },
         body: JSON.stringify(profile),
       });
-      const result = await response.json().catch(() => null);
-      if (!response.ok) throw Error(result?.error ?? "Failed to save profile.");
-      setProfile(result.profile as CollegeOwnProfileInput); setSaved(true);
+      setProfile(result.profile); setSaved(true);
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Failed to save profile.");
+      setError(cause instanceof Error ? cause.message : friendlyApiError({}));
     } finally { setSaving(false); }
   }
   return <form onSubmit={event => void submit(event)} className="space-y-5">
