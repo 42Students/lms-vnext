@@ -108,7 +108,7 @@ export function SuperAdminHrDetailDrawer({
           {account ? (
             <Button
               variant="secondary"
-              disabled={pending}
+              disabled={pending||!account.accountManageable}
               onClick={() => onEdit(account)}
             >
               Edit account
@@ -368,10 +368,11 @@ export function SuperAdminHrDetailDrawer({
               sessions used for other memberships and
               does not delete the recruiter account.
             </p>
+            {!account.accountManageable?<p role="status" className="mt-2 text-sm text-warning">Account-wide actions are unavailable: this recruiter has active access grants beyond your selected college or organization.</p>:null}
             <Button
               className="mt-4"
               variant="danger"
-              disabled={pending}
+              disabled={pending||!account.accountManageable}
               onClick={() =>
                 onTerminateRequest(account)
               }
