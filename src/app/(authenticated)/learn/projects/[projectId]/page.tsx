@@ -122,6 +122,14 @@ export default async function LearnerProjectPage({
       {activeSection === "tasks" && workspace.project.status==="ACTIVE" ? (
         <LearnerAddOwnTask projectId={projectId} sprints={workspace.sprints}/>
       ) : null}
+      {activeSection === "tasks" ? <section className="flex flex-wrap items-center gap-3">
+        {workspace.readiness.finalSubmission.canSubmitDraft?
+          <Link href={"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+            className="inline-flex min-h-11 items-center rounded-lg border border-primary px-4 text-sm font-semibold text-primary-text">
+            Submit final work
+          </Link>:
+          <p className="text-xs text-body">Submission available after completion.</p>}
+      </section>:null}
       {activeSection === "tasks" ? (
         <LearnerBoardInteractive projectId={projectId} initialTasks={boardTasks}
           filters={boardFilters} sprints={workspace.sprints}
