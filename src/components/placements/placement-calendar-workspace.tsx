@@ -28,6 +28,7 @@ import {
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
 import {toTpoBlockedCalendarEvents} from "@/modules/placements/tpo-blocked-calendar-model";
+import {summarizeTpoCalendarNeeds} from "@/modules/placements/tpo-calendar-needs-model";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
@@ -487,15 +488,8 @@ export async function PlacementCalendarWorkspace({
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
   const visibleEvents=state.kind==="BLOCKED"?blockedEvents:[...events,...blockedEvents];
   const needsEvents=needsWindow?.events??[];
-  const overdue=needsEvents.filter(item=>item.kind==="FOLLOW_UP"&&item.status==="OPEN"&&item.startsAt<now);
   const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
-  const blockedRounds=needsEvents.filter(item=>item.kind==="ROUND"&&blockedSet.has(placementCalendarDayKey(item.startsAt)));
-  const byBusyDay=new Map<string,number>();
-  for(const item of needsEvents){
-    const day=placementCalendarDayKey(item.startsAt);
-    byBusyDay.set(day,(byBusyDay.get(day)??0)+1);
-  }
-  const busyDays=[...byBusyDay].filter(([,count])=>count>=3);
+  const {overdue,blockedRounds,busyDays}=summarizeTpoCalendarNeeds(needsEvents,blockedSet,now);
   const groups =
     groupPlacementCalendarEvents(visibleEvents);
 
