@@ -5,6 +5,16 @@ import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterRe
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 never truncates half of a markup entity",()=>{
+  expect(safeRecruiterEmailMergeText("Test <tag>",6)).toBe("Test ");
+  expect(safeRecruiterEmailMergeText("Test & Me",7)).toBe("Test ");
+ });
+ it("REC-calendar-messages-profile-R01 bounds expanded escaped text and weird limits",()=>{
+  expect(safeRecruiterEmailMergeText("<".repeat(3000),120).length).toBeLessThanOrEqual(120);
+  expect(safeRecruiterEmailMergeText("ABC",-5)).toBe("");
+  expect(safeRecruiterEmailMergeText("ABC",Number.NaN)).toBe("ABC");
+ });
+
  it("REC-calendar-messages-profile-R01 authorizes exact dedicated Reply-To domain",()=>{
   const addr="r-"+("a".repeat(32))+"@reply.example.com";
   expect(isRecruiterReplyAddress(addr,"reply.example.com")).toBe(true);
