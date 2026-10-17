@@ -1,16 +1,21 @@
-# Graceful-operation E2E verification — chat-15
+# Graceful E2E acceptance — chat-15, round 2
 
-Status column is an **authoring/ownership queue** and not executed acceptance. The orchestrator must independently run this suite at a pinned merged commit, report passing/failing/skipped cases and record source SHA before declaring any release gate closed. All items below are **not yet certified**; the browser tests were authored but not run by chat-15.
+**NOT EXECUTED by this builder (explicit owner instruction).** This file records authored test evidence, not an acceptance result. The orchestrator must merge chat-14 and chat-15, run tests against a pinned SHA, and fill in execution fields before declaring DONE for the product. `BLOCKED` below means browser certification is pending, not that the test source is missing.
 
-| ID | Status | Evidence: file + test |
+| ID | Status | Authored evidence (path; test names carry ID) |
 | --- | --- | --- |
-| GR-80 | BLOCKED | Authored: `tests/e2e/graceful-public.spec.ts` (`GR-80 public sign-in ...`), `graceful-role-saves.spec.ts` (`GR-80 <role> ... protects unsaved input`, `unknown record link`), `graceful-faculty.spec.ts` (`GR-80 Faculty assignment authoring ...`), `graceful-tpo.spec.ts` (`GR-80 TPO ... recoverable failure`), `graceful-mentor.spec.ts` (`GR-80 Mentor ...`), `graceful-recruiter.spec.ts` (`GR-80 Recruiter ...`), `graceful-learner.spec.ts` (`GR-80 Learner profile ...`), `graceful-college.spec.ts` (`GR-80 College Admin ...`), `graceful-superadmin.spec.ts` (`GR-80 Super Admin college creation ...`). Blocked pending shared helper adoption, verified role fixtures and executed acceptance. |
-| GR-81 | DONE | Authored: `tests/e2e/support/no-raw-error.ts` + `tests/e2e/graceful-helper.spec.ts`, tests `GR-81 rejects a raw error code ...`, `GR-81 rejects stack frames ...`, `GR-81 accepts actionable ...`. Not run; DONE = source authored only. |
-| GR-82 | BLOCKED | Authored: `tests/e2e/graceful-production.spec.ts`, tests `GR-82 sign-in is branded...`, `GR-82 production does not serve JavaScript source maps`, `GR-82 production JSON 500 shows a reference id`, `GR-82 stale chunk recovers...`. Requires orchestrator-hosted real production build and executed smoke. |
-| GR-83 | BLOCKED | `tests/e2e/README-graceful.md` describes cross-lane helper/unit/integration requirements. Helper test source is assigned to chat-14 and must be executed/certified by orchestrator; chat-15 cannot claim it. |
+| GR-80 | BLOCKED | `tests/e2e/graceful-public.spec.ts` — `GR-80 public sign-in ...` and phone sign-in; `graceful-role-saves.spec.ts` — Learner preferences, College department, Super Admin organization saves and each role's `GR-80 ... unknown record link`; `graceful-learner.spec.ts` — Learner profile save/offline/reload; `graceful-faculty.spec.ts` — Faculty assignment and membership switch; `graceful-mentor.spec.ts` — notifications, calendar recovery/offline; `graceful-tpo.spec.ts` — recruiter roster and companies; `graceful-recruiter.spec.ts` — conversation reply/offline; `graceful-recruiter-profile.spec.ts` — designation/name; `graceful-college-onboard.spec.ts` — person onboarding/offline; `graceful-college.spec.ts` — contacts recovery; `graceful-superadmin.spec.ts` — college create/offline; `graceful-double-submit.spec.ts` — pending guard/duplicate prevention; `graceful-production.spec.ts` — stale chunks. Pending helper adoption, role fixtures and execution. |
+| GR-81 | DONE | Source authored: `tests/e2e/support/no-raw-error.ts` (`expectNoRawErrors`, `failApi`, `requests`, exact `GR02_TEXT`); `tests/e2e/graceful-helper.spec.ts` (`GR-81 rejects ...`, `GR-81 accepts actionable ...`). **Not executed**, so no verified pass. |
+| GR-82 | BLOCKED | `tests/e2e/graceful-production.spec.ts` (`GR-82 sign-in is branded`, `GR-82 unknown public URL`, `GR-82 production does not serve JavaScript source maps`, `GR-82 HTML 502`, `GR-82 production JSON 500`, `GR-80 GR-82 stale chunk recovers`); `tests/e2e/playwright.graceful-production.config.ts` disables dev webserver. Needs production-build run. |
+| GR-83 | BLOCKED | `tests/e2e/README-graceful.md` cross-references chat-14's eight `tests/unit/graceful-*.test.ts` files and `tests/integration/db10-outbound-queue.test.ts`. Chat-14/orchestrator owns exhaustive unit + PostgreSQL integration execution; authored sources on separate branch are **not** merged/verified here. |
 
-## Browser evidence
+## Execution evidence — orchestrator only
 
-- Source branch: `chatgpt/chat-15-b`.
-- Test execution: **NOT RUN by this lane** (per owner instruction).
-- Browser verdict: **UNVERIFIED** until orchestrator runs the suite after required parallel branches merge.
+- Tested commit SHA: **NOT RUN**
+- Browser environment/database: **NOT RUN**
+- Production build URL and build SHA: **NOT RUN**
+- Unit/integration source and database SHA: **NOT RUN**
+- Passed / failed / skipped counts: **NOT RUN**
+- Traces, defects, remediation: **NOT RUN**
+
+The GR-02 exact strings derive from `chatgpt/chat-14-b:src/lib/friendly-error.ts`. Areas that still display older domain-only messages may fail the strict GR-80 expectations; this is a product adoption task, not a pass or a justification to relax the test.
