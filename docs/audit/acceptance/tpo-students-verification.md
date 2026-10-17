@@ -83,3 +83,5 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-24 | OPEN (column-header filters, live counts pending) | Removable active-filter chips and Clear all, URL-preserving; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-24` |
 | TPO-students-51 | OPEN (desktop-only tools remain) | Mobile bottom-sheet filter control with accessible disclosure, desktop grid retained; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-51` |
 | TPO-students-48 | OPEN (cross-page selection remaining) | Live announced filter count and selected visible-page count retained; `tests/unit/chat12-filter-chips-mobile-round5.test.ts` named `TPO-students-48` |
+
+| TPO-students-28 | OPEN (20-drive tooltip remains) | Authorized company for deepest applied round is shown only when no placed or offer outcome supersedes it; `tests/unit/chat12-company-depth-round5.test.ts` named `TPO-students-28` |

@@ -502,6 +502,7 @@ export async function getTpoStudentsIntelligence(
             status: placementApplications.status,
             screeningStatus:
               placementApplicationScreenings.status,
+            companyName:placementCompanies.name,
           })
           .from(placementApplications)
           .innerJoin(
@@ -511,6 +512,11 @@ export async function getTpoStudentsIntelligence(
               placementApplications.jobId,
             ),
           )
+          .innerJoin(placementCompanyRelationships,and(
+            eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+            eq(placementCompanyRelationships.collegeId,college.id),
+          ))
+          .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
           .leftJoin(
             placementApplicationScreenings,
             eq(
@@ -732,6 +738,7 @@ export async function getTpoStudentsIntelligence(
         status: application.status,
         screeningStatus:
           application.screeningStatus,
+        companyName:application.companyName,
       },
     );
   }

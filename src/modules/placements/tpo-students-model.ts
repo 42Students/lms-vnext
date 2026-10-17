@@ -20,6 +20,7 @@ export type TpoStudentApplicationSignal = {
   id: string;
   status: string;
   screeningStatus: string | null;
+  companyName?:string|null;
 };
 
 export type TpoStudentOfferSignal = {
@@ -109,6 +110,8 @@ export type TpoStudentRow = {
   placed: boolean;
   journeyState: TpoStudentJourneyState;
   bestSoFar: string;
+  bestCompany?:string|null;
+  interviewedCompanies?:readonly string[];
   maximumAppliedRoundSequence: number | null;
   ambiguousSection: boolean;
 };
@@ -335,6 +338,12 @@ export function deriveTpoStudent(
     placed,
     journeyState,
     bestSoFar,
+    bestCompany:latestDepth&&!placed&&offerCount===0
+      ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
+    interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{
+      const name=source.applications.find(application=>application.id===result.applicationId)?.companyName;
+      return name?[name]:[];
+    }))],
     maximumAppliedRoundSequence,
     ambiguousSection: source.ambiguousSection,
   };
