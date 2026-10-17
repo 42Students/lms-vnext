@@ -35,6 +35,12 @@ export async function DELETE(request: Request) {
   }
 
   const response = NextResponse.json({ ok: true });
+  // PUB-auth-public-38: clear per-person drafts, cached reminders and quiz state
+  // across all tabs on this shared device, not merely session cookies.
+  // Deliberately exclude the `cookies` Clear-Site-Data directive: explicitly
+  // expired first-party auth cookies below are the only intended cookie edits.
+  response.headers.set("Clear-Site-Data", '"storage"');
+  response.headers.set("Cache-Control", "no-store");
   const secure = process.env.NODE_ENV === "production";
 
   for (const name of [
