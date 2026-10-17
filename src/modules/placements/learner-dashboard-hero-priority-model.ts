@@ -19,7 +19,7 @@ export function learnerPlacementHeroPriority(input:{
   detail:"Your saved choice is higher studies. Ask the placement cell if you need to change it.",
   href:"/learn/my-placements/placement",when:null,
  };
- if(input.registration?.stage==="OPEN"&&input.registration.choice==="NOT_PARTICIPATING")return {
+ if(input.registration?.stage==="OPEN"&&input.registration.choice==="NOT_INTERESTED")return {
   label:"You are not taking part in placements",title:"Your registration choice",
   detail:"Your saved choice is not to participate. Contact the placement cell if you need to change it.",
   href:"/learn/my-placements/placement",when:null,
