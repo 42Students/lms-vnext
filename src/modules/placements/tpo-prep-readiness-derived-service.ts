@@ -1,0 +1,95 @@
+import "server-only";
+import {and,eq,inArray,isNotNull} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {
+ courses,departments,courseOfferings,courseLearningPaths,courseLessons,
+ lessonContents,learnerContentProgress,
+} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
+import {getTpoPrepReadiness} from "./tpo-configuration-read-service";
+import {getTpoCommunicationSettings} from "./tpo-communication-settings-service";
+import {tpoPrepConfigSchema} from "./tpo-configuration-model";
+import {
+ deriveTpoPrepCourseOutcome,type TpoPrepCourseOutcome,type TpoPrepCourseEvidence,
+} from "./tpo-prep-readiness-derivation";
+
+type Learner={membershipId:string;cohortId:string};
+export async function readTpoLearnerPrepOutcomes(
+ context:RequestContext,collegeId:string,learners:readonly Learner[],
+):Promise<{available:boolean;outcomes:ReadonlyMap<string,TpoPrepCourseOutcome>}>{
+ const outcomes=new Map<string,TpoPrepCourseOutcome>();
+ if(!learners.length)return {available:true,outcomes};
+ // Both settings reads revalidate persisted TPO scope. Unavailable storage or
+ // malformed saved policy never turns missing data into an "unprepared" judgment.
+ const [stored,communication]=await Promise.all([
+  getTpoPrepReadiness(context),getTpoCommunicationSettings(context),
+ ]);
+ const config=tpoPrepConfigSchema.safeParse(stored.config);
+ if(!stored.ready||!communication.ready||!config.success)return {available:false,outcomes};
+ const ids=config.data.courseIds;
+ if(!ids.length){
+  for(const row of learners)outcomes.set(row.membershipId,"UNCONFIGURED");
+  return {available:true,outcomes};
+ }
+ const cohorts=[...new Set(learners.map(row=>row.cohortId))];
+ if(cohorts.length>2500)return {available:false,outcomes};
+ const db=getDb();
+ const contents=await db.select({
+  courseId:courseOfferings.courseId,
+  cohortId:courseOfferings.cohortId,
+  contentId:lessonContents.id,
+ }).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(and(
+   eq(departments.collegeId,collegeId),
+   eq(courses.status,"ACTIVE"),
+   eq(courseOfferings.status,"ACTIVE"),
+   eq(courseLearningPaths.status,"PUBLISHED"),
+   eq(courseLessons.status,"ACTIVE"),
+   eq(courseLessons.visibleToStudents,true),
+   eq(lessonContents.status,"PUBLISHED"),
+   eq(lessonContents.visibleToStudents,true),
+   inArray(courseOfferings.courseId,ids),
+   inArray(courseOfferings.cohortId,cohorts),
+  )).limit(5001);
+ if(contents.length>5000)return {available:false,outcomes};
+ const contentIds=[...new Set(contents.map(row=>row.contentId))];
+ const complete=new Set<string>();
+ if(contentIds.length){
+  // Bounded database requests avoid a giant membership x content query.
+  for(let offset=0;offset<learners.length;offset+=250){
+   const memberIds=[...new Set(learners.slice(offset,offset+250).map(row=>row.membershipId))];
+   const rows=await db.select({membershipId:learnerContentProgress.membershipId,
+     contentId:learnerContentProgress.lessonContentId})
+    .from(learnerContentProgress)
+    .where(and(inArray(learnerContentProgress.membershipId,memberIds),
+     inArray(learnerContentProgress.lessonContentId,contentIds),
+     isNotNull(learnerContentProgress.completedAt)));
+   for(const row of rows)complete.add(row.membershipId+":"+row.contentId);
+  }
+ }
+ const byCohort=new Map<string,Map<string,Set<string>>>();
+ for(const row of contents){
+  const coursesForCohort=byCohort.get(row.cohortId)??new Map<string,Set<string>>();
+  const contentsForCourse=coursesForCohort.get(row.courseId)??new Set<string>();
+  contentsForCourse.add(row.contentId);
+  coursesForCohort.set(row.courseId,contentsForCourse);
+  byCohort.set(row.cohortId,coursesForCohort);
+ }
+ for(const row of learners){
+  const evidence:TpoPrepCourseEvidence[]=ids.map(courseId=>{
+   const content=byCohort.get(row.cohortId)?.get(courseId);
+   return {courseId,totalContent:content?.size??0,
+    completedContent:content?[...content].filter(id=>complete.has(row.membershipId+":"+id)).length:0};
+  });
+  outcomes.set(row.membershipId,deriveTpoPrepCourseOutcome({
+   courseIds:ids,minimumCompleted:config.data.minimumCompleted,
+   progressThresholdPct:communication.prepThresholdPct,
+  },evidence));
+ }
+ return {available:true,outcomes};
+}
