@@ -17,7 +17,7 @@ export const superAdminReadQuerySchema = z.strictObject({
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
 export type SuperAdminReadRow = {
  id:string; title:string; subtitle:string; details:readonly string[];
- status:string; href?:string;
+ status:string; href?:string;secondaryHref?:string;secondaryLabel?:string;
 };
 export type SuperAdminReadResult = {
  query:SuperAdminReadQuery; total:number; totalPages:number; items:SuperAdminReadRow[];
