@@ -19,12 +19,13 @@ export function CollegeAssignmentReview({
  const [deliveryId,setDeliveryId]=useState(options[0]?.deliveryId??"");
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkStatus,setBulkStatus]=useState("");
+ const [retryAllowed,setRetryAllowed]=useState(false);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string){
   if(bulkBusy||!window.confirm(
     "Publish grades for every graded submission in this Section? Learners will be notified."
   ))return;
-  setBulkBusy(true);setBulkStatus("");
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);
   let published=0,failed=0;
   try{
    const base="/api/courses/college/assignments/"+encodeURIComponent(selectedDeliveryId)+
@@ -46,10 +47,12 @@ export function CollegeAssignmentReview({
      else failed++;
     }
    }
+   setRetryAllowed(failed>0);
    setBulkStatus(published+" grade(s) published"+
     (failed?"; "+failed+" failed. Review and retry the remaining grades.":"."));
    router.refresh();
   }catch(cause){
+   setRetryAllowed(true);
    setBulkStatus((cause instanceof Error?cause.message:"Unable to publish all grades.")+
     (published?" "+published+" grade(s) were published; retry after refreshing.":""));
   }finally{setBulkBusy(false);}
