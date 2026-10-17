@@ -267,7 +267,7 @@ const requestedWindow = {
   agenda: "Clarify the acceptance criteria",
   startsAt: "2099-10-10T10:00:00+05:30",
   endsAt: "2099-10-10T10:30:00+05:30",
-  timeZone: "Asia/Kolkata",
+  timeZone: "Asia/Kolkata" as const,
 };
 
 beforeEach(cleanup);
@@ -433,7 +433,7 @@ describe("Projects P7B meetings", () => {
           "2099-10-11T11:00:00+05:30",
         endsAt:
           "2099-10-11T11:45:00+05:30",
-        timeZone: "Asia/Kolkata",
+        timeZone: "Asia/Kolkata" as const,
         meetingType: "PLANNING",
         meetingUrl:
           "https://meet.example.com/planning",
@@ -462,7 +462,7 @@ describe("Projects P7B meetings", () => {
             "2099-10-12T11:00:00+05:30",
           endsAt:
             "2099-10-12T11:30:00+05:30",
-          timeZone: "Asia/Kolkata",
+          timeZone: "Asia/Kolkata" as const,
           meetingUrl:
             "https://meet.example.com/bad",
           linkedTaskId:
@@ -520,7 +520,7 @@ describe("Projects P7B meetings", () => {
     expect(rows).toEqual(expect.arrayContaining([
       expect.objectContaining({
         id:pending.id,projectId:project.id,projectTitle:project.title,
-        status:"REQUESTED",timeZone:"Asia/Kolkata",
+        status:"REQUESTED",timeZone:"Asia/Kolkata" as const,
       }),
     ]));
     expect(rows.find(x=>x.id===pending.id)?.endsAt).toContain("T");
