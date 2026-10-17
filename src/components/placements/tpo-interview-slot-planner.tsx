@@ -59,7 +59,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
       gapMinutes:gap,slotsPerRoom:count,rooms:rooms.split(",").map(v=>v.trim()).filter(Boolean),
     })} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
      Generate day</button>
-    <button type="button" disabled={busy||!free.length} onClick={()=>void action({action:"CLEAR_AVAILABLE"})}
+    <button type="button" disabled={busy||!free.length} onClick={()=>{if(window.confirm("Remove "+free.length+" unbooked interview slots? Existing bookings stay unchanged."))void action({action:"CLEAR_AVAILABLE"});}}
      className="min-h-11 rounded border border-border px-4 text-sm font-semibold disabled:opacity-50">
      Clear {free.length} unbooked slot(s)</button>
    </div>
@@ -75,13 +75,14 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
     <label className="grid gap-1 text-sm">New room<input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
      className="min-h-11 rounded border border-border bg-surface px-3"/></label>
    </div>
+   {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<p role="alert" className="mt-2 text-sm text-error">The ending roll must be after the starting roll.</p>:null}
    {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
-   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom} onClick={()=>void action({
+   <button type="button" disabled={busy||!fromRoll||!toRoll||!bulkRoom||fromRoll.localeCompare(toRoll,"en",{numeric:true})>0} onClick={()=>{if(window.confirm("Change rooms for booked learners in roll range "+fromRoll+" to "+toRoll+"? Collision checks will skip blocked moves."))void action({
     action:"ASSIGN_ROOMS_BY_ROLL",fromRoll,toRoll,room:bulkRoom,
-   })} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   });}} className="mt-3 min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
     Previewed · Assign room
    </button>
   </div>

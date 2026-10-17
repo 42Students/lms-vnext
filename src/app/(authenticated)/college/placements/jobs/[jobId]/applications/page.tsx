@@ -105,7 +105,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       </div>
       {!data.items.length?<p className="text-sm text-body">No applications match these filters.</p>:null}
      </section>:
-     <CollegeApplicationPipelineControls jobId={jobId} rows={data.items} total={data.total} query={query}/>}
+     <CollegeApplicationPipelineControls key={jobId+":"+JSON.stringify(query)} jobId={jobId} rows={data.items} total={data.total} query={query}/>}
     <nav aria-label="Application pagination" className="flex justify-between gap-3 text-sm">
       <span>Page {query.page} of {data.totalPages}</span><div className="flex gap-3">
         {query.page>1?<Link href={driveApplicationsHref(jobId,{...query,page:query.page-1})}>Previous</Link>:null}

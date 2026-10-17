@@ -7,13 +7,11 @@ import {placementTpoBlockedDates} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
+import {tpoIndiaCalendarDay} from "./tpo-local-date-model";
 const inputSchema=z.object({
  day:z.iso.date().optional(),startDay:z.iso.date().optional(),endDay:z.iso.date().optional(),
  reason:z.string().trim().min(3).max(500).optional(),
 }).strict();
-function todayInIndia(){
- return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
-}
 function rangeDays(start:string,end:string):string[]{
  const first=Date.parse(start+"T00:00:00Z"),last=Date.parse(end+"T00:00:00Z");
  const count=Math.round((last-first)/86400000)+1;
@@ -28,7 +26,7 @@ export async function createBlockedDate(ctx:RequestContext,raw:unknown){
  const start=input.startDay??input.day,end=input.endDay??input.day;
  if(!start||!end||(input.day&&input.startDay))throw new BlockedDateError("DATE_RANGE_INVALID");
  const days=rangeDays(start,end);
- if(start<todayInIndia())throw new BlockedDateError("DATE_IN_PAST");
+ if(start<tpoIndiaCalendarDay(new Date()))throw new BlockedDateError("DATE_IN_PAST");
  const reason=input.reason??"Blocked";
  if(!await placementTableExists("placement_tpo_blocked_dates"))throw new BlockedDateError("DATE_PENDING");
  return getDb().transaction(async tx=>{

@@ -16,14 +16,14 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
   .from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [counts]=await db.select({
-  applied:sql<number>`count(*) filter(where ${placementApplications.status}='SUBMITTED')::int`,
+  applied:sql<number>`count(*)::int`,
   shortlisted:sql<number>`count(*) filter(where exists(
     select 1 from placement_application_screenings s where s.application_id=${placementApplications.id}
       and s.status='SHORTLISTED'))::int`,
   interviewed:sql<number>`count(*) filter(where exists(
     select 1 from placement_round_results r join placement_job_rounds p on p.id=r.round_id
     where r.application_id=${placementApplications.id} and p.job_id=${jobId}
-      and p.kind='INTERVIEW' and r.status='APPLIED'))::int`,
+      and p.kind='INTERVIEW' and r.status='APPLIED' and r.outcome<>'ABSENT'))::int`,
   offered:sql<number>`count(*) filter(where exists(
     select 1 from placement_offers o where o.application_id=${placementApplications.id}
     and o.status in ('ISSUED','ACCEPTED')))::int`,
@@ -42,5 +42,5 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
   {name:"Placed",count:counts?.placed??0,href:"/tpo/placements/jobs/"+jobId+"/joining"},
  ];
  return {stages,excluded:reach.excluded,considered:reach.candidateCount,
-  definition:"Registered & eligible means the current opted-in, eligible notification audience; later stages count distinct persisted applications."};
+  definition:"Registered & eligible means the current opted-in, eligible notification audience; Applied counts learners who applied even if they later withdrew. Subsequent stages count distinct persisted applications."};
 }

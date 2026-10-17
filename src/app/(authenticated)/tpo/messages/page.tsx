@@ -2,10 +2,12 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { formatTpoInboxTime } from "@/modules/placements/tpo-inbox-date-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoNewRecruiterConversation } from "@/components/tpo/tpo-new-recruiter-conversation";
+import {TpoInboxSearch} from "@/components/tpo/tpo-inbox-search";
 import { listTpoMessageRecruiters } from "@/modules/placements/tpo-recruiter-message-recipients-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -36,14 +38,6 @@ function first(
     : value;
 }
 
-function dateTime(value: Date) {
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium",
-    timeStyle: "short",
-    timeZone: "Asia/Kolkata",
-  }).format(value);
-}
-
 function labelStatus(status: string) {
   if (status === "EMPTY") return "No messages";
 
@@ -65,6 +59,7 @@ export default async function TpoMessagesPage({
     redirect("/dashboard");
   }
 
+  const now = new Date();
   const raw = await searchParams;
 
   const parsed = tpoMessagesQuerySchema.safeParse({
@@ -257,6 +252,21 @@ export default async function TpoMessagesPage({
         ))}
       </section>
 
+      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex flex-wrap gap-2">
+        {([
+          ["ALL","All",summary.total],
+          ["REPLY","Reply",summary.reply],
+          ["UNREAD","Unread",summary.unread],
+        ] as const).map(([status,label,count])=><Link
+          key={status}
+          href={tpoMessagesHref({...commonFilters,status,page:1})}
+          aria-current={query.status===status?"page":undefined}
+          className={"inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold "+
+            (query.status===status?"border-primary bg-primary-subtle text-primary-text":
+              "border-border bg-surface text-foreground")}>
+            {label} ({count})
+          </Link>)}
+      </nav> : null}
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-base font-semibold text-foreground">
           Communication filters
@@ -313,18 +323,11 @@ export default async function TpoMessagesPage({
 
           <label className="grid gap-1 text-sm font-semibold text-body">
             Search
-            <input
-              type="search"
-              name="q"
-              maxLength={120}
-              defaultValue={query.q}
-              placeholder={
-                isRecruiterInbox
-                  ? "Recruiter, subject or message"
-                  : "TPO name or event type"
-              }
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
-            />
+            {isRecruiterInbox?<TpoInboxSearch
+              value={query.q} placeholder="Recruiter, subject or message"/>:
+              <input type="search" name="q" maxLength={120} defaultValue={query.q}
+                placeholder="TPO name or event type"
+                className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"/>}
           </label>
 
           <label className="grid gap-1 text-sm font-semibold text-body">
@@ -423,13 +426,15 @@ export default async function TpoMessagesPage({
                   >
                     <td className="px-4 py-4 font-semibold text-foreground">
                       {item.participantName}
+                      {item.companyName ? <p className="mt-1 text-xs font-normal text-muted-foreground">{item.companyName}</p> : null}
                        {item.waitingForYou?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Waiting for you</span>:null}
+                       {item.accessEnded?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Access ended</span>:null}
                     </td>
 
                     <td className="px-4 py-4 text-body">
                       {isRecruiterInbox ? <Link className="font-semibold text-primary-text hover:underline"
                         href={"/tpo/messages/" + encodeURIComponent(item.id)}>{item.subject} →</Link> : item.subject}
-                       {item.lastPreview?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{item.lastPreview}</p>:null}
+                       {(query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview)?<p className="mt-1 max-w-sm truncate text-xs text-muted-foreground">{query.q.trim()?item.searchSnippet??item.lastPreview:item.lastPreview}</p>:null}
                     </td>
 
                     <td className="px-4 py-4">
@@ -462,7 +467,7 @@ export default async function TpoMessagesPage({
 
                     <td className="px-4 py-4 text-body">
                       <time dateTime={item.occurredAt.toISOString()}>
-                        {dateTime(item.occurredAt)} IST
+                        {formatTpoInboxTime(item.occurredAt, now)}
                       </time>
                     </td>
 

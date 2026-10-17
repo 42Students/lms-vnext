@@ -1,6 +1,6 @@
 "use client";
 import {useState} from "react";
-type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null};
+type Event={id:string;summary:string;kind:string;at:string;importance:string;authorId:string|null;authorName:string|null};
 export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:string;name:string;kind:"FACULTY"|"LEARNER"}){
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [events,setEvents]=useState<Event[]>([]),[error,setError]=useState(""),[truncated,setTruncated]=useState(false);
@@ -32,7 +32,7 @@ export function CollegePersonAuditModal({membershipId,name,kind}:{membershipId:s
     <ol className="max-h-96 space-y-3 overflow-auto">
      {events.map(event=><li key={event.id} className="rounded border border-border p-3 text-sm">
       <strong>{event.summary}</strong>
-      <p className="mt-1 text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{date.format(new Date(event.at))} IST · {event.importance} · By {event.authorName??"System/unknown staff"}</p>
       <p className="mt-1 break-all text-xs text-muted-foreground">{event.kind}</p>
      </li>)}
     </ol>

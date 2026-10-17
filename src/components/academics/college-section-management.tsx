@@ -162,9 +162,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
       setNotice(parsed.error.issues[0]?.message ?? "Invalid class changes.");
       return;
     }
-    if (!window.confirm(
-      "Save class changes? Renaming a class with learners, faculty, schedules or deliveries is blocked. Capacity cannot be below active enrollment.",
-    )) return;
+
     startTransition(async () => {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);

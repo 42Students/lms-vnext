@@ -22,8 +22,8 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-11-01-projects-people-s1 | DONE (non-blocked) | 17 gaps: S1 6, S2 11; COL-projects-03 authored workspace brief now enabled on registered 0122; status excludes runtime/test certification.
 2. WP-chat-11-02-projects-meetings-projects-s2 | IN-PROGRESS | 22 S2 gaps. LEARNER-projects-38 last-editor attribution and MEN-projects-meetings-41 card facts enhanced; other unblocked task/review/meeting gaps remain. MEN-projects-meetings-31 external calendar sync BLOCKED pending provider config.
-3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. SA-placements-projects-88 rollback source added; workspace/table/export and template improvements implemented across neighboring WPs. Remaining creation, tracker and historical audit gaps still open; reporter auth, storage and external logs marked SKIP by owner/config.
-4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 source advanced, partial parity remains)
+3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. SA-placements-projects-88 rollback source added; workspace/table/export and template improvements implemented across neighboring WPs. This round added SA-placements-projects-60 blocker accuracy, SA-placements-projects-61 Watch/Risk severity and SQL sorting, SA-placements-projects-63 scoped CSV and title/ID search. Remaining creation, tracker and historical audit gaps still open; reporter auth, storage and external logs marked SKIP by owner/config.
+4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 advanced; LEARNER-projects-37 existing-draft autosave added; remaining parity open)
 5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/33/40/51/52 source advanced; other mentor S3 gaps still open)
 6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 S3 gaps. SA-placements-projects-53/54/71/74/75/76/80 row export/facts/filtering advanced; broader audit, resources and permissions parity remains.
 7. WP-chat-11-07-tracker-projects-s3 | TODO | 16 gaps: S3 9, S4 7
@@ -173,3 +173,19 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - BLOCKED `MEN-projects-meetings-31` external calendar sync: no configured calendar provider credentials; existing in-app notices remain.
 - `MEN-projects-meetings-42/43` comment types and type filter remain OPEN until comment-kind storage design and migration are implemented; no synthetic type labels were shown.
 - `WP-chat-11-02` remains IN-PROGRESS: unresolved comment-kind parity and other unverified project notifications; do not certify all 22 gap IDs from this source-only round. No tests/typecheck/lint/build/CI waiting were performed under FAST v2.
+
+## [chat-11] FAST v2 resumed — 2026-10-17 (branch-only)
+
+- Initial sync: origin/main `e324194c5805e124cbbfcc3b650569e03ea713c9` was ahead of `chatgpt/chat-11-b` by 185 and included all prior lane work; safely fast-forwarded lane branch before editing. No direct main pushes and no PR.
+- `MEN-projects-meetings-42/43`: proposed `docs/proposed-migrations/chat-11-men-projects-meetings-43-comment-kinds.sql` with NOTE / PROGRESS_UPDATE / FLAG_FOR_MENTOR and staged exact legacy labels. Comment type/filter runtime is **not enabled** until the orchestrator registers the proposal.
+- `SA-placements-projects-60`: removed obsolete blocker persistence warning; current registered project/task blocker signals remain authoritative.
+- `SA-placements-projects-61`: Watch/Risk severity, reason count, inactivity age, severity / workspace / inactive SQL sorting before pagination, persistent sort selection.
+- `SA-placements-projects-63`: workspace title/slug/UUID search in scoped at-risk query; visible-page CSV export with formula-neutralized fields, correct page-only disclosure and college/date filename.
+- `LEARNER-projects-37`: debounced existing-draft PATCH autosave using the current draft payload; visible legacy Saved/Unsaved/Saving/Failure strings, no repeated failing retries and manual-save recovery. New first drafts still require an explicit Save draft to establish the ID; no fictitious autosave claim.
+- BLOCKED `MEN-projects-meetings-31`: external calendar sync needs provider configuration.
+- BLOCKED `MEN-projects-meetings-43`: comment-kind live UI requires proposed comment_kind migration to be registered.
+- BLOCKED `SA-placements-projects-101`: public reporter model requires OD-27 security owner decision.
+- BLOCKED `SA-placements-projects-103`: screenshots require private storage/consent configuration.
+- BLOCKED `SA-placements-projects-113`: live Cloud Logging needs GCP IAM and production configuration.
+- BLOCKED `SA-placements-projects-120`: findings importer requires GitHub credentials.
+- WP-02, WP-03, WP-04 remain **IN-PROGRESS**; other previously recorded statuses unchanged. Runtime acceptance not certified; no tests, typecheck, lint, build or CI waits under FAST v2.

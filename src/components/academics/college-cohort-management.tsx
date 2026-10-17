@@ -224,7 +224,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       setNotice(parsed.error.issues[0]?.message ?? "Invalid batch changes.");
       return;
     }
-    if (!window.confirm("Save batch changes? Academic identity and existing enrollment links are preserved.")) return;
+
     startTransition(async () => {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);

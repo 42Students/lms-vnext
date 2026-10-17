@@ -633,6 +633,8 @@ export function LearnerProfileWorkspace(props: {
                   {item.completed ? "✓" : "○"}
                 </span>
                 <span className="min-w-0 break-words">{item.label}</span>
+                {(["personal-details","contacts","education","skills"].includes(item.section))?
+                  <span className="ml-auto shrink-0 rounded-full border border-border px-2 py-0.5 text-[10px] font-semibold text-muted-foreground">Required</span>:null}
                 <span className="sr-only">{item.completed ? "Completed" : "Not filled"}</span>
               </Link>
             </li>
@@ -1010,6 +1012,8 @@ export function LearnerProfileWorkspace(props: {
                   return <label key={field.key} className="text-xs font-semibold text-body">
                     {field.label}
                     <Input type="text" className="mt-1" maxLength={field.maxLength}
+                      inputMode={field.key==="passingYear"?"numeric":undefined}
+                      placeholder={field.key==="passingYear"?"YYYY":undefined}
                       value={value}
                       onChange={event=>setItemDraft(current=>({
                         ...current,examDetails:{
