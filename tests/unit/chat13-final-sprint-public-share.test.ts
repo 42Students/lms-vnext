@@ -29,6 +29,10 @@ describe("chat-13 final sprint public company share",()=>{
   expect(service).toContain("3600000");
   expect(service).toContain('eventKind:"LOCKED"');
   expect(service).toContain('title:"SHARE_LOCKED"');
+  const audit=read("src/modules/placements/company-share/audit-history-model.ts");
+  const filter=read("src/modules/placements/company-share/audit-kind-model.ts");
+  expect(audit).toContain("Locked after wrong codes");
+  expect(filter).toContain('"LOCKED"');
   expect(service).not.toContain('metadata:{code:');
   const page=read("src/app/company-share/[token]/page.tsx");
   expect(page).toContain("That code did not work, or this share is no longer available.");
