@@ -6,7 +6,8 @@ it("TPO-students-R03 makes table and mobile row checkboxes use the same selectio
  const students=src("src/components/tpo/tpo-students-spreadsheet.tsx");
  expect(students).toContain('selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}}');
  expect(grid).toContain('aria-label="Select all filtered students"');
- expect(grid).toContain("changeRowSelection(rowKey(row),event.target.checked)");
+ expect(grid).toContain("changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent");
+ expect(grid).toContain("event.nativeEvent.shiftKey");
  expect(grid).toContain("selection.selected.includes(rowKey(row))");
  expect(src("src/components/tpo/tpo-bulk-action-panel.tsx")).toContain("useTpoStudentsSelection()");
  expect(src("src/components/tpo/tpo-students-bulk-add.tsx")).toContain("useTpoStudentsSelection()");

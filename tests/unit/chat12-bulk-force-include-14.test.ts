@@ -17,7 +17,8 @@ describe("TPO forced student drive inclusion",()=>{
   expect(service).toContain("throw new UnsafeForceInclude()");
   expect(service).toContain("evaluatePlacementEligibility(context,job.id,membershipId,tx)");
   expect(service).toContain('eventType:"STUDENTS_ADDED_TO_DRIVE_OVERRIDE"');
-  expect(service).toContain("addedByCollege: Boolean(includeIneligibleReason)");
+  expect(service).toContain("forcedInclude=true");
+  expect(service).toContain("addedByCollege: forcedInclude");
   expect(service).toContain("You were added to a placement drive");
  });
  it("TPO-students-14 exposes a reasoned Add-to-Drive option but keeps the existing confirmation and per-row outcomes",()=>{
