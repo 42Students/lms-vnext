@@ -72,6 +72,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        const data=await response.json().catch(()=>null);
        if(!response.ok||data?.assignment?.id!==assignment.id)throw Error(
         data?.error??"Could not load assignment settings.");
+       setTitle(data.assignment.title);setPoints(String(data.assignment.maxPoints));
+       setDueAt(istInput(data.assignment.dueAt));
        setDescription(data.assignment.description??"");
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
