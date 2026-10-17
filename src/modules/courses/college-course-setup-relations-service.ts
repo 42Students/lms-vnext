@@ -119,7 +119,8 @@ export async function listCollegeCourseSetupRelations(
   eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
   eq(collegeMemberships.collegeId,college.id)))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
- .where(isNull(courseTeachingAssignments.endedAt))
+ .where(and(isNull(courseTeachingAssignments.endedAt),
+  ne(cohorts.status,"ARCHIVED"),eq(sections.status,"ACTIVE")))
  .orderBy(asc(courseTeachingAssignments.role),asc(users.displayName),asc(courseTeachingAssignments.id));
 
  return {offerings,deliveries,teachingAssignments};
