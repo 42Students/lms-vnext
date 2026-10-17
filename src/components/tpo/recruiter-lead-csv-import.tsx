@@ -28,7 +28,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [preview, setPreview] = useState<Preview | null>(null);
   const [csv, setCsv] = useState("");
   const [fileName, setFileName] = useState("");
+  const [rowGroup,setRowGroup]=useState<"ALL"|"NEW"|"EXISTING"|"INVALID"|"SKIPPED">("ALL");
   const [error, setError] = useState("");
+  const [copyNotice,setCopyNotice]=useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ImportResponse | null>(null);
   const [skipRows,setSkipRows]=useState<number[]>([]);
@@ -59,13 +61,14 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   async function chooseFile(file: File | undefined) {
     const sequence=++previewSeq.current;
     setExisting([]);
+    setRowGroup("ALL");
     setPreviewStatus("idle");
     setResult(null);
     setSkipRows([]);
     setPreview(null);
     setReviewReady(false);
     setCsv("");
-    setError("");
+    setError("");setCopyNotice("");
     setFileName(file?.name ?? "");
     if (!file) return;
     if(!/\.(?:csv|xlsx)$/i.test(file.name)){
@@ -78,6 +81,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     }
     try {
       const content = /\.xlsx$/i.test(file.name)?await recruiterXlsxToCsv(file):await file.text();
+      if(content.length>TPO_LEAD_CSV_MAX_CHARACTERS)
+        throw new Error("CSV_SIZE_LIMIT_EXCEEDED");
       const parsed = previewTpoLeadCsv(content);
       if(sequence!==previewSeq.current)return;
       setPreview(parsed);
@@ -153,6 +158,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
 
   const existingNumbers=new Set(existing.map(item=>item.row));
   const newRows=preview?.rows.filter(item=>item.lead&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)).length??0;
+  const previewRows=preview?.rows.filter(item=>{
+    if(rowGroup==="ALL")return true;
+    if(rowGroup==="INVALID")return !item.lead;
+    if(rowGroup==="EXISTING")return existingNumbers.has(item.row);
+    if(rowGroup==="SKIPPED")return Boolean(item.lead)&&skipRows.includes(item.row);
+    return Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row);
+  })??[];
   return (
     <>
       <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
@@ -164,12 +176,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             role="dialog"
             aria-modal="true"
             aria-label="Import recruiter leads"
+            aria-describedby="recruiter-import-help"
             className="max-h-[90vh] w-full max-w-3xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold text-foreground">Import recruiter leads</h2>
-                <p className="mt-2 text-sm text-body">
+                <p id="recruiter-import-help" className="mt-2 text-sm text-body">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
@@ -205,18 +218,39 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
                 <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                    onClick={()=>{setReviewReady(false);
+                      setSkipRows(preview.rows.filter(row=>row.lead&&!existingNumbers.has(row.row)).map(row=>row.row));}}>
+                    Skip all new rows
+                  </button>
+                  <button type="button" className={buttonClass} disabled={busy||Boolean(result)}
+                    onClick={()=>{setReviewReady(false);setSkipRows([]);}}>
+                    Include all new rows
+                  </button>
+                </div>
+                <nav aria-label="Import preview groups" className="flex flex-wrap gap-2">
+                  {([["ALL","All"],["NEW","New"],["EXISTING","Already recruiters"],
+                    ["INVALID","To fix"],["SKIPPED","Skipped"]] as const).map(([value,label])=>
+                    <button key={value} type="button" aria-pressed={rowGroup===value}
+                      className={rowGroup===value?primaryClass:buttonClass}
+                      onClick={()=>setRowGroup(value)}>{label}</button>)}
+                </nav>
                 <div className="max-h-56 overflow-auto rounded-lg border border-border">
                   <table className="w-full text-left text-sm">
                     <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
                       <tr>
-                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">File row</th>
                         <th scope="col" className="px-3 py-2">Name</th>
                         <th scope="col" className="px-3 py-2">Validation</th>
                         <th scope="col" className="px-3 py-2">Include</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {preview.rows.map(item => (
+                      {previewRows.length===0?<tr><td colSpan={4} className="px-3 py-5 text-center text-sm text-muted-foreground">
+                        No rows in this group.
+                      </td></tr>:null}
+                      {previewRows.map(item => (
                         <tr key={item.row} className="border-t border-border">
                           <td className="px-3 py-2">{item.row}</td>
                           <td className="px-3 py-2">{item.name || "Unnamed"}</td>
@@ -246,6 +280,22 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             ) : null}
             {result ? (
               <div className="space-y-3" aria-live="polite">
+                <button type="button" className={buttonClass} onClick={()=>{
+                  const header="Row,Status,Reason";
+                  const cell=(value:string)=>'"'+(/^[\t\r\n]*[=+@-]/.test(value)?"'"+value:value).replaceAll('"','""')+'"';
+                  const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
+                  const blob=new Blob(["\uFEFF"+[header,...lines].join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});
+                  const url=URL.createObjectURL(blob);const link=document.createElement("a");
+                  link.href=url;link.download="recruiter-import-results.csv";
+                  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+                }}>Download row results CSV</button>
+                <button type="button" className={buttonClass} onClick={()=>void navigator.clipboard.writeText(
+                  result.results.filter(item=>item.status!=="created").map(item=>
+                    "Row "+item.row+": "+item.status+(item.reason?" — "+item.reason:"")).join("\n")
+                ).then(()=>setCopyNotice("Non-created rows copied."),()=>setCopyNotice("Could not copy these results."))}>
+                  Copy rows not imported
+                </button>
+                {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
                 <h3 className="font-semibold text-foreground">Import results</h3>
                 <p className="text-sm text-body">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
@@ -255,7 +305,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   <table className="w-full text-left text-sm">
                     <thead className="bg-surface-secondary">
                       <tr>
-                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">File row</th>
                         <th scope="col" className="px-3 py-2">Status</th>
                         <th scope="col" className="px-3 py-2">Details</th>
                       </tr>

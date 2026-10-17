@@ -709,6 +709,8 @@ export function RecruiterLeadsWorkspace({
                   <option value="ALL">Any contact method</option>
                   <option value="EMAIL">Has an email</option>
                   <option value="PHONE">Has a phone</option>
+                   <option value="BOTH">Has both</option>
+                   <option value="EITHER">Email or phone</option>
                   <option value="NEITHER">Neither</option>
                 </select>
               </label>
@@ -768,19 +770,19 @@ export function RecruiterLeadsWorkspace({
           {view !== "companies" ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
-                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
-                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</button>
-                <button type="button" className={buttonStyle} onClick={()=>void copyRows()}>Copy rows</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>void copyRows()}>Copy rows</button>
                 {selectedIds.length>0?<button type="button" className={buttonStyle}
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
               <RecruiterSavedViewControls columns={visibleColumns}/>
-              {selectedIds.length?<button type="button" className={buttonStyle}
+              {visible.some(row=>selectedIds.includes(row.id))?<button type="button" className={buttonStyle}
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).slice(0,100).map(row=>row.id).join(",")))}>
                 Send an email to selected ({Math.min(visible.filter(row=>selectedIds.includes(row.id)).length,100)})
               </button>:null}

@@ -9,9 +9,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [results,setResults]=useState<Entry[]>([]);
  const [notice,setNotice]=useState("");
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
- async function createLinks(target:readonly TpoBulkInviteCandidate[]){
+ async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
-  setBusy(true);setResults([]);setNotice("");
+  setBusy(true);if(!retryOnly)setResults([]);setNotice("");
   const outcome:Entry[]=[];
   for(const lead of target){
    try{
@@ -28,7 +28,10 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    }catch(e){outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
     url:null,reason:e instanceof Error?e.message:"Could not create link",emailed:false});}
   }
-  setResults(outcome);setBusy(false);onUpdated();
+  setResults(previous=>retryOnly?[
+    ...previous.filter(item=>!target.some(lead=>lead.id===item.id)),
+    ...outcome,
+  ]:outcome);setBusy(false);onUpdated();
  }
  async function copy(value:string){
   try{await navigator.clipboard.writeText(value);setNotice("Copied. Invitation tokens are shown only in this session.");}
@@ -45,7 +48,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    <p className="text-sm text-body">Review recipients before issuing new invites. Email sending requires the approved delivery configuration and is restricted to allowlisted addresses outside production.</p>
    <p className="text-xs text-muted-foreground">
     The configured email provider does not currently confirm delivery of recruiter invitations.
-    Create one-time links only, then share them directly. This will not send any email.
+    Create one-time links only, then share them directly. This will not send any email. Retrying failed rows leaves previously created links unchanged.
    </p>
    <p className="text-sm">{eligible.length} eligible · {rows.length-eligible.length} left out</p>
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
@@ -64,7 +67,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
       onClick={()=>void copy(linkLines)}>Copy invite links</button></>:null}
     {failed.length?<><ul>{failed.map(item=><li key={item.id} className="text-sm">{item.name}: {item.reason}</li>)}</ul>
      <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
-      onClick={()=>void createLinks(rows.filter(row=>failed.some(item=>item.id===row.id)))}>Retry failed</button></>:null}
+      onClick={()=>void createLinks(rows.filter(row=>failed.some(item=>item.id===row.id)),true)}>Retry failed</button></>:null}
     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
       onClick={()=>{setResults([]);setOpen(false);}}>Close results</button>
    </div>:null}
