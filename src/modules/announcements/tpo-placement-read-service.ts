@@ -25,6 +25,7 @@ export async function listTpoPlacementAnnouncements(
   });
   const rows=await tx.select({
    id:db10Announcements.id,title:db10Announcements.title,
+   buttonLabel:db10Announcements.buttonLabel,buttonUrl:db10Announcements.buttonUrl,
    message:db10Announcements.message,isPinned:db10Announcements.isPinned,
    version:db10Announcements.version,deletedAt:db10Announcements.deletedAt,
    senderUserId:db10Announcements.senderUserId,
