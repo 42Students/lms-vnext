@@ -26,6 +26,7 @@ import {
 } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
+import {mentorMeetingFacilitationSchema} from "./mentor-meeting-facilitation-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -246,7 +247,7 @@ export async function scheduleProjectMeeting(
   }
   const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
-    const [project] = await tx.select({status:projectInstances.status})
+    const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
       .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
       .for("update").limit(1);
     if (!project) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
@@ -255,6 +256,18 @@ export async function scheduleProjectMeeting(
       .where(and(eq(projectMeetings.id,projectMeetingIdSchema.parse(meetingIdInput)),
         eq(projectMeetings.projectId,scope.project.id))).for("update").limit(1) : [null];
     if (meetingIdInput && !existing) throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
+    // MEN-projects-meetings-R07: reject obsolete mentor submissions before
+    // making any meeting or activity changes inside the locked transaction.
+    if (scope.access==="MENTOR" && (
+      (existing && !input.expectedUpdatedAt) ||
+      (!existing && !input.expectedProjectUpdatedAt)
+    )) throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+    if (existing && input.expectedUpdatedAt &&
+      existing.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+      throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+    if (!existing && input.expectedProjectUpdatedAt &&
+      project.updatedAt.getTime()!==new Date(input.expectedProjectUpdatedAt).getTime())
+      throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
     if (existing && !["REQUESTED","SCHEDULED"].includes(existing.status)) {
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     }
@@ -281,13 +294,17 @@ export async function scheduleProjectMeeting(
       scheduledByUserId: context.user.id,
       scheduledByMembershipId: context.membership?.id ?? null,
       linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
-      outcome: null, cancellationNote: null, updatedAt: new Date(),
+      outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
+      facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
+      cancellationNote: null, updatedAt: new Date(),
     };
     if (!existing) {
       const [created] = await tx.insert(projectMeetings).values({
         projectId:scope.project.id,...values,createdByUserId:context.user.id,
       }).returning();
       if(!created)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+      await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
+        .where(eq(projectInstances.id,scope.project.id));
       const event=await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
@@ -316,6 +333,8 @@ export async function scheduleProjectMeeting(
         inArray(projectMeetings.status,["REQUESTED","SCHEDULED"])))
       .returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
+      .where(eq(projectInstances.id,scope.project.id));
     const event=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,

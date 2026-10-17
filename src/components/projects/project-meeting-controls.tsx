@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 import { mentorMeetingCeremonyLabel, mentorMeetingScheduleError } from "@/modules/projects/mentor-meeting-form-model";
+import {emptyMentorMeetingFacilitation,mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 
 type Meeting = {
   id: string;
@@ -23,6 +24,8 @@ type Meeting = {
   endsAt: Date;
   timeZone: string;
   meetingUrl: string | null;
+  outcome:string|null;
+  facilitation:unknown;
   requestedByMembershipId: string | null;
   updatedAt: Date;
   linkedSprintId: string | null;
@@ -249,6 +252,38 @@ export function RequestProjectMeetingControl({
             onEndsAt={setEndsAt}
             onTimeZone={setTimeZone}
           />
+          <fieldset className="grid gap-3 rounded-lg border border-border p-3">
+            <legend className="px-1 text-sm font-semibold">Meeting notes and follow-up</legend>
+            {([
+              ["notes","Notes"],["actionItems","Action items"],
+              ["wentWell","What went well?"],["improve","What could improve?"],
+              ["nextTime","What to try next?"],["followUpNotes","Follow-up notes"],
+            ] as const).map(([field,label])=>
+              <label key={field} className="grid gap-1 text-xs font-semibold text-body">
+                {label}
+                <Textarea value={facilitation[field]} maxLength={4000}
+                  onChange={event=>setFacilitation(prev=>({...prev,[field]:event.target.value}))}/>
+              </label>)}
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Outcome
+              <Textarea value={outcome} maxLength={4000} onChange={event=>setOutcome(event.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Follow-up at (IST)
+              <Input type="datetime-local" value={followUpAt}
+                onChange={event=>setFollowUpAt(event.target.value)}/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">
+              Follow-up status
+              <Select value={facilitation.followUpStatus}
+                onChange={event=>setFacilitation(prev=>({...prev,
+                  followUpStatus:event.target.value as "NOT_PLANNED"|"OPEN"|"DONE"}))}>
+                <option value="NOT_PLANNED">Not planned</option>
+                <option value="OPEN">Open</option>
+                <option value="DONE">Done</option>
+              </Select>
+            </label>
+          </fieldset>
           {error ? (
             <p
               role="alert"
@@ -292,11 +327,13 @@ export function RequestProjectMeetingControl({
 
 export function ScheduleProjectMeetingControl({
   projectId,
+  projectUpdatedAt,
   meeting,
   sprints,
   tasks,
 }: {
   projectId: string;
+  projectUpdatedAt: Date | string;
   meeting?: Meeting | null;
   sprints: readonly LinkChoice[];
   tasks: readonly (LinkChoice & {
@@ -328,6 +365,12 @@ export function ScheduleProjectMeetingControl({
   const [meetingUrl, setMeetingUrl] =
     useState(meeting?.meetingUrl ?? "");
   const [scheduleMinStart, setScheduleMinStart] = useState("");
+  const [facilitation,setFacilitation]=useState(()=>
+    mentorMeetingFacilitationSchema.parse(meeting?.facilitation??emptyMentorMeetingFacilitation));
+  const [outcome,setOutcome]=useState(meeting?.outcome??"");
+  const [followUpAt,setFollowUpAt]=useState(()=>
+    facilitation.followUpAt?toLocalInput(new Date(facilitation.followUpAt)):"");
+
   const [meetingType, setMeetingType] =
     useState(meeting?.meetingType ?? "GENERAL");
   const [linkedSprintId, setLinkedSprintId] =
@@ -387,6 +430,11 @@ export function ScheduleProjectMeetingControl({
     setMeetingType(
       meeting?.meetingType ?? "GENERAL",
     );
+    const stored=mentorMeetingFacilitationSchema.parse(meeting?.facilitation??{});
+    setFacilitation(stored);
+    setOutcome(meeting?.outcome??"");
+    setFollowUpAt(stored.followUpAt?toLocalInput(new Date(stored.followUpAt)):"");
+
     setLinkedSprintId(
       meeting?.linkedSprintId ?? "",
     );
@@ -444,7 +492,14 @@ export function ScheduleProjectMeetingControl({
           endsAt: toIso(endsAt),
           timeZone,
           meetingUrl: meetingUrl.trim(),
+          expectedProjectUpdatedAt: new Date(projectUpdatedAt).toISOString(),
+          ...(meeting?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString()}:{}),
           meetingType,
+          outcome:outcome.trim()||null,
+          facilitation:{
+            ...facilitation,
+            followUpAt:followUpAt?toIso(followUpAt):null,
+          },
           linkedSprintId:
             linkedSprintId || undefined,
           linkedTaskId:

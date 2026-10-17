@@ -8,10 +8,11 @@ import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
 /** Active persisted project memberships only, scoped by the same authenticated Mentor roster. */
-export async function getMentorProjectTeamSizes(context:RequestContext){
+export async function getMentorProjectTeamSizes(context:RequestContext,
+ verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][]){
  if(!hasMembershipRole(context,"MENTOR")||context.user.platformStatus!=="ACTIVE")
    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
- const ids=(await listMyProjectInstances(context))
+ const ids=(verifiedRows??await listMyProjectInstances(context))
    .filter(row=>row.memberRole==="MENTOR").map(row=>row.project.id);
  const sizes=new Map<string,number>();
  if(!ids.length)return sizes;

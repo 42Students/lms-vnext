@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
+import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
+import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -857,9 +859,9 @@ export function ProjectWorkspace({
                   {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
                     {(sprintsByRelease.get(release.id)??[]).filter(s=>s.status==="COMPLETED").length}
                     {" "}of {(sprintsByRelease.get(release.id)??[]).length} sprints complete ·
-                    {" "}{workspace.tasks.filter(t=>t.sprintId!==null&&
+                    {" "}{mentorEstimateLabel(workspace.tasks.filter(t=>t.sprintId!==null&&
                       (sprintsByRelease.get(release.id)??[]).some(s=>s.id===t.sprintId))
-                      .reduce((sum,t)=>sum+(t.estimatePoints??0),0)} points ·
+                      .reduce((sum,t)=>sum+(t.estimatePoints??0),0),workspace.project.estimationUnit)} ·
                     {" "}{(sprintsByRelease.get(release.id)??[]).every(s=>s.status==="COMPLETED")?
                       "Ready to ship":"Work remaining"}
                   </p>:null}
@@ -888,6 +890,7 @@ export function ProjectWorkspace({
                       projectId={workspace.project.id}
                       releaseId={release.id}
                       status={release.status}
+                      expectedUpdatedAt={release.updatedAt.toISOString()}
                     />
                   ) : null}
                 </div>
@@ -947,6 +950,7 @@ export function ProjectWorkspace({
                                 title={sprint.title}
                                 description={sprint.description}
                                 updatedAt={sprint.updatedAt.toISOString()}
+                              estimationUnit={workspace.project.estimationUnit}
                                 goal={sprint.goal}
                                 definitionOfDone={sprint.definitionOfDone}
                                 startDate={sprint.startDate}
@@ -1083,7 +1087,7 @@ export function ProjectWorkspace({
                               {mode==="MENTOR"?<div>
                                 <dt className="font-semibold">Sprint</dt><dd>{sprint.title}</dd>
                               </div>:null}
-                              <div><dt className="font-semibold">Estimate</dt><dd>{taskFacts.estimate}</dd></div>
+                              <div><dt className="font-semibold">Estimate</dt><dd>{mentorEstimateLabel(task.estimatePoints,workspace.project.estimationUnit)}</dd></div>
                               <div><dt className="font-semibold">Task type</dt><dd>{taskFacts.taskType}</dd></div>
                               {taskFacts.blockerReason ? <div className="sm:col-span-2">
                                 <dt className="font-semibold">Blocker note</dt>
@@ -1476,6 +1480,7 @@ export function ProjectWorkspace({
             ) : !readOnly ? (
               <ScheduleProjectMeetingControl
                 projectId={workspace.project.id}
+                projectUpdatedAt={workspace.project.updatedAt}
                 sprints={workspace.sprints.map(
                   (sprint) => ({
                     id: sprint.id,
@@ -1575,6 +1580,24 @@ export function ProjectWorkspace({
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
+                    {mode==="MENTOR"?(()=>{
+                      const detail=mentorMeetingFacilitationSchema.parse(meeting.facilitation??{});
+                      const hasDetail=Boolean(detail.notes||detail.actionItems||detail.wentWell||
+                        detail.improve||detail.nextTime||detail.followUpAt||detail.followUpNotes);
+                      return hasDetail?<details className="mt-2 rounded-md border border-border p-3 text-sm">
+                        <summary className="cursor-pointer font-semibold text-foreground">Meeting notes and follow-up</summary>
+                        {([
+                          ["Notes",detail.notes],["Action items",detail.actionItems],
+                          ["What went well?",detail.wentWell],["What could improve?",detail.improve],
+                          ["What to try next?",detail.nextTime],["Follow-up notes",detail.followUpNotes],
+                        ] as const).filter(([,value])=>Boolean(value)).map(([label,value])=>
+                          <p key={label} className="mt-2 whitespace-pre-wrap break-words">
+                            <strong>{label}: </strong>{value}</p>)}
+                        {detail.followUpAt?<p className="mt-2">
+                          Follow-up: {formatDateTime(new Date(detail.followUpAt))}
+                          {" · "}{label(detail.followUpStatus)}</p>:null}
+                      </details>:null;
+                    })():null}
                     {mode==="MENTOR"? (
                       <Link
                         href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
@@ -1600,6 +1623,7 @@ export function ProjectWorkspace({
                       <div className="mt-3">
                         <ScheduleProjectMeetingControl
                           projectId={workspace.project.id}
+                          projectUpdatedAt={workspace.project.updatedAt}
                           meeting={meeting}
                           sprints={workspace.sprints.map(
                             (sprint) => ({
