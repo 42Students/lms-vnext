@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
 | COL-course-tabs-25 | S4 | PERMISSION | UNCONFIRMED |
-| COL-course-tabs-27 | S4 | RESPONSIVE | OPEN |
+| COL-course-tabs-27 | S4 | RESPONSIVE | DONE |
 
 ## college/verification-misc (20: FIXED-ON-MAIN 12, OPEN 8)
 

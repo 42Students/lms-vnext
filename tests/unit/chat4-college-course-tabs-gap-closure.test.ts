@@ -97,7 +97,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
- it("COL-course-tabs-27 shows both lesson and progress mobile cards without invalid ternary JSX",()=>{
+ it("COL-course-tabs-27 shows Lessons, Progress, Assignments and Quizzes as mobile cards",()=>{
   const directory=source("src/components/courses/college-learning-directory.tsx");
   expect(directory).toContain('aria-label={title+" mobile records"}');
   expect(directory).toContain('className="space-y-3 p-3 md:hidden"');
@@ -107,6 +107,13 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   expect(directory).toContain("collegeLessonVisibilityLabel(item)");
   expect(directory).toContain("collegeProgressDescription(item)");
   expect(directory).toContain('className="hidden overflow-x-auto md:block"');
+  const assessment=source("src/components/courses/college-assessment-aggregate.tsx");
+  expect(assessment).toContain('className="divide-y divide-border sm:hidden"');
+  expect(assessment).toContain('className="hidden overflow-x-auto sm:block"');
+  expect(assessment).toContain("data.items.map(item=><article");
+  expect(assessment).toContain("<CollegeAssignmentActions assignment={item}/>");
+  expect(assessment).toContain("<CollegeQuizAttempts quizId={item.id}");
+
  });
  it("COL-course-tabs-22 keeps all College Course pages usable when no college is assigned",()=>{
   const files=["src/app/(authenticated)/college/assignments/page.tsx","src/app/(authenticated)/college/course-progress/page.tsx","src/app/(authenticated)/college/courses/page.tsx","src/app/(authenticated)/college/lessons/page.tsx","src/app/(authenticated)/college/live-classes/page.tsx","src/app/(authenticated)/college/quizzes/page.tsx","src/app/(authenticated)/college/resources/page.tsx","src/app/(authenticated)/college/videos/page.tsx"];
