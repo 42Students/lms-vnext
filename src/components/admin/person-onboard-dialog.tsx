@@ -84,7 +84,11 @@ export function PersonOnboardDialog({
           title: "Onboarding failed",
           description:
             payload?.error === "IDENTITY_COLLISION"
-              ? "Phone/email identity data conflicts with an existing canonical user."
+              ? "Mobile number already exists. Check the linked account before creating a duplicate."
+              : payload?.error === "EMAIL_ALREADY_EXISTS"
+              ? "Email already exists. Please use a different email address."
+              : payload?.error === "PHONE_ALREADY_EXISTS"
+              ? "Mobile number already exists. Please use a different mobile number."
               : "The person could not be onboarded. Check the fields and try again.",
         });
         return;
