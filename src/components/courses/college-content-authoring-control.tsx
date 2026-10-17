@@ -24,6 +24,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
+ const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
  const [removeLink,setRemoveLink]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
@@ -83,6 +84,22 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    if(!editing)setNextOverride(old=>({...old,[lessonId]:(nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0)+1}));
    setMessage(editing?"Content updated.":"Content created.");setOpen(false);router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save content");}
+  finally{setBusy(false);}
+ }
+ async function saveOrder(item:Existing){
+  if(busy)return;
+  const entered=Number(orderDraft[item.id]??item.sequence+1);
+  if(!Number.isInteger(entered)||entered<1||entered>10001){setError("Enter a valid Order.");return;}
+  setBusy(true);setError("");setMessage("");
+  try{
+   const response=await fetch("/api/courses/lesson-contents/"+encodeURIComponent(item.id),{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({sequence:entered-1}),
+   });
+   if(!response.ok){const result=await response.json().catch(()=>null);
+    throw Error(result?.error??"Unable to save Order.");}
+   setMessage("Order saved.");router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to save Order.");}
   finally{setBusy(false);}
  }
  async function transition(item:Existing,action:"PUBLISH"|"ARCHIVE"){
@@ -162,6 +179,12 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
+     <label className="flex items-center gap-1 text-xs">Order
+      <input type="number" min={1} max={10001} value={orderDraft[item.id]??String(item.sequence+1)}
+       onChange={e=>setOrderDraft(old=>({...old,[item.id]:e.target.value}))}
+       className="w-16 rounded border border-border bg-background p-1"/>
+     </label>
+     <button type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</button>
      <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
      {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
