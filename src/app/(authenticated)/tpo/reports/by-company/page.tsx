@@ -75,7 +75,7 @@ export default async function TpoByCompanyReportPage({
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} path="/tpo/reports/by-company" />
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <ReportMetrics metrics={workspace.report.metrics} />
       <form action="/tpo/reports/by-company" method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
