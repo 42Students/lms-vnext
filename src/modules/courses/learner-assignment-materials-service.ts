@@ -2,6 +2,8 @@ import "server-only";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {courseAssignmentMaterials,courseAssignments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
@@ -64,6 +66,12 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
    if(!found)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
    await tx.delete(courseAssignmentMaterials).where(and(
     eq(courseAssignmentMaterials.id,found.id),eq(courseAssignmentMaterials.assignmentId,assignmentId)));
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED,collegeId:assignment.collegeId,
+    subjectType:"course_assignment",subjectId:assignment.id,
+    summary:"Faculty removed assignment resource link",
+    metadata:{assignmentId,materialId:found.id,action:"REMOVE_LINK",deliveryId},
+   });
    return {id:found.id,removed:true};
   }
   if(rows.length>=20)throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
@@ -77,6 +85,12 @@ export async function commandFacultyAssignmentMaterialLink(context:RequestContex
    sequence,createdByUserId:context.user.id,
   }).returning({id:courseAssignmentMaterials.id});
   if(!created)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED,collegeId:assignment.collegeId,
+   subjectType:"course_assignment",subjectId:assignment.id,
+   summary:"Faculty added assignment resource link",
+   metadata:{assignmentId,materialId:created.id,action:"ADD_LINK",deliveryId},
+  });
   return {id:created.id,removed:false};
  });
 }
