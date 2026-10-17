@@ -37,6 +37,7 @@ import {
   placementJobRoleOptions,
   placementJobRounds,
   placementRoundCandidateSlots,
+  placementApplicationRoundExceptions,
   programs,
   sectionEnrollments,
   sections,
@@ -1180,10 +1181,22 @@ export async function withdrawPlacementApplication(
           eq(placementRoundCandidateSlots.applicationId,applicationId),
           eq(placementRoundCandidateSlots.status,"BOOKED"),
         )).limit(1);
+      // An approved learner-specific schedule exception is also a real
+      // commitment, even if the slot planner did not issue a BOOKED row.
+      const scheduleExceptions=await tx.select({id:placementApplicationRoundExceptions.id})
+        .from(placementApplicationRoundExceptions)
+        .innerJoin(placementJobRounds,eq(
+          placementJobRounds.id,placementApplicationRoundExceptions.roundId,
+        ))
+        .where(and(
+          eq(placementApplicationRoundExceptions.applicationId,applicationId),
+          eq(placementJobRounds.jobId,row.job.id),
+          eq(placementJobRounds.status,"SCHEDULED"),
+        )).limit(1);
       if(learnerWithdrawalMode({
         applicationStatus:row.application.status,
         screeningStatus:liveScreening?.status??"UNDER_REVIEW",
-        scheduledRoundCount:scheduled.length,
+        scheduledRoundCount:scheduled.length+scheduleExceptions.length,
       })==="REQUEST")
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
 
