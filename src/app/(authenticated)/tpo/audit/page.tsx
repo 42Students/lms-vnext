@@ -371,7 +371,8 @@ export default async function TpoAuditPage({
             }
           />
         ) : (
-          <TpoAuditGrid rows={items}/>        )}
+          <TpoAuditGrid rows={items}/>
+        )}
 
         <nav
           aria-label="Audit pagination"
