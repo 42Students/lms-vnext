@@ -3,7 +3,7 @@ import {readFileSync} from "node:fs";
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 describe("Final sprint recruiter IST date decision",()=>{
  it("REC-home-drives-R07 IST presentation deliberately overrides viewer-local legacy dates",()=>{
-  const instant=new Date("2099-01-01T12:00:00Z");
+  const instant=new Date("2099-01-01T09:00:00Z");
   expect(recruiterTodayGreeting(instant,"Asha","Acme",0).title).toBe("Good afternoon, Asha");
   const paths=[
    "src/app/(authenticated)/hr/home/page.tsx",
