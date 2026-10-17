@@ -49,4 +49,28 @@ describe("chat-3 Drives round 4",()=>{
   expect(driveEligibilityPresetValue("OPEN","minCgpa")).toBe("");
   expect(source("src/components/placements/placement-job-create-form.tsx")).toContain('key={eligibilityPreset+":"+name}');
  });
+ it("TPO-drives-R02 publish path opens workspace review instead of silently publishing",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain('?publish=1#drive-lifecycle-publish');
+  expect(body).not.toContain('"/api/placements/jobs/"+jobId+"/status"');
+ });
+ it("TPO-drives-R03 preflight shows nonblocking rounds and eligibility warnings",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("No interview rounds added yet");
+  expect(body).toContain("No eligibility rules set - every registered student will see this drive");
+  expect(body).toContain("selectedProgramIds.length===0");
+  expect(body).toContain("These are warnings, not publication blockers.");
+ });
+ it("TPO-drives-R05 numeric validation has correct client upper bounds",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("max={1000}");
+  expect(body).toContain("Minimum CGPA");
+  expect(body).toContain("Percentage throughout");
+ });
+ it("TPO-drives-44 broken internal create responses do not expose implementation details",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).not.toContain("Created job id was not returned");
+  expect(body).not.toContain("Company relationship was not returned");
+  expect(body).toContain("Check your drafts before trying again.");
+ });
 });

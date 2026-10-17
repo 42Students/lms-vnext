@@ -113,6 +113,7 @@ export function PlacementJobCreateForm({
   );
   const [companySearch,setCompanySearch]=useState("");
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
+  const [hasEnteredEligibilityRule,setHasEnteredEligibilityRule]=useState(false);
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
@@ -259,7 +260,7 @@ export function PlacementJobCreateForm({
             | undefined;
         if (!relationship?.id) {
           throw new Error(
-            "Company relationship was not returned",
+            "We could not finish setting up the employer. Please check your companies before trying again.",
           );
         }
         relationshipId = relationship.id;
@@ -347,7 +348,7 @@ export function PlacementJobCreateForm({
           : null;
       if (!jobId) {
         throw new Error(
-          "Created job id was not returned",
+          "The drive may have been saved but could not be opened. Check your drafts before trying again.",
         );
       }
 
@@ -441,7 +442,16 @@ export function PlacementJobCreateForm({
   return (
     <form
       onSubmit={submit}
-      onChange={markDirty}
+      onChange={event=>{
+        markDirty();
+        const fields=new FormData(event.currentTarget);
+        setHasEnteredEligibilityRule([
+          "minCgpa","minTenthPercentage","minTwelfthPercentage","minDiplomaPercentage",
+          "minUndergraduatePercentage","minPctThroughout","passingYears"
+        ].some(name=>String(fields.get(name)??"").trim().length>0)
+          ||fields.get("requireVerifiedEvidence")==="on"
+          ||fields.get("missingEvidencePolicy")==="REQUIRE_COMPLETE");
+      }}
       className="space-y-6"
     >
       <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
@@ -455,6 +465,12 @@ export function PlacementJobCreateForm({
           ))}
         </ol>
         <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
+        <div aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
+          <p role="status">No interview rounds added yet</p>
+          {!hasEnteredEligibilityRule&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
+            <p role="status">No eligibility rules set - every registered student will see this drive</p>:null}
+          <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
+        </div>
       </nav>
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
@@ -744,6 +760,7 @@ export function PlacementJobCreateForm({
               name="minimumLpa"
               type="number"
               min={0}
+              max={1000}
               step="0.1"
             />
           </label>
@@ -756,6 +773,7 @@ export function PlacementJobCreateForm({
               name="maximumLpa"
               type="number"
               min={0}
+              max={1000}
               step="0.1"
             />
           </label>
