@@ -72,6 +72,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     <h1 className="mt-2 text-xl font-semibold">Task Allocation</h1>
     <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
     <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
+    {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text">
+      {previousAssignees.length} former assignee(s) have tasks that need review.
+    </p>:null}
    </div>
   </div>
   {!readOnly?<button type="button" disabled={busy||projectUnassigned===0||!learners.length}
