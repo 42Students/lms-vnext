@@ -10,6 +10,7 @@ import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
 import {z} from "zod";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
+import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
 export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=z.string().uuid().parse(rawJobId),input=hrRoundFormSchema.parse(raw);
@@ -62,11 +63,9 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     roundId:created.id,eventType:"CREATED",actorUserId:context.user.id,
     metadata:{source:"RECRUITER",kind:input.kind,name:input.name},
    });
-   await tx.insert(activityEvents).values({
-    organizationId:job.organizationId,
-    collegeId:job.collegeId,actorUserId:context.user.id,module:"PLACEMENTS",
-    eventType:"placements.hr_round.created",subjectType:"placement_round",subjectId:created.id,
-    summary:"Recruiter added hiring round",metadata:{jobId:job.id},
+   await notifyTpoOfRecruiterAction(tx,context,{
+    collegeId:job.collegeId,jobId:job.id,roundId:created.id,
+    subjectId:created.id,action:"ROUND_CREATED",
    });
    return {id:created.id,action:"CREATED" as const};
   }
