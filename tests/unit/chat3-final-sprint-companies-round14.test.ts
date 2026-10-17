@@ -108,4 +108,28 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(service).not.toContain('companyRelationshipId:placementTpoInternalThreads.companyRelationshipId');
   // This remains OPEN until a new verified object-scoped company thread exists.
  });
+ it("TPO-companies-R02 failed join link creation explains missing domain and permits Retry",()=>{
+  const card=source("src/components/tpo/tpo-public-join-link-card.tsx");
+  expect(card).toContain("Add the company's email domain first, so only its people can join.");
+  expect(card).toContain("router.refresh()");
+  expect(card).toContain("companyName??status.domain");
+  expect(card).toContain("Retry");
+ });
+ it("TPO-companies-28 canonical hiring cards never display candidate names in company summary",()=>{
+  const page=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
+  const history=page.slice(page.indexOf('<section className="rounded-xl border border-border bg-surface">',page.indexOf("Company hiring cards")-1500));
+  expect(page).not.toContain("offer.candidateName");
+  expect(page).not.toContain("offer.learnerName");
+  expect(history).toContain("Joining");
+  expect(page).toContain("Confirmed joined learners");
+ });
+ it("TPO-companies-13 company identity prefill is consumed by authorized create workspace",()=>{
+  const detail=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
+  const create=source("src/app/(authenticated)/tpo/placements/new/page.tsx");
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(detail).toContain('/tpo/placements/new?company=');
+  expect(create).toContain('initialCompanyName');
+  expect(form).toContain('initialCompanyName');
+  expect(form).toContain('companyRelationshipId');
+ });
 });
