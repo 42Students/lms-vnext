@@ -299,7 +299,7 @@ export default async function TpoCompanyDetailPage({
                           : "neutral"
                       }
                     >
-                      {contact.stage.replaceAll("_", " ")}
+                      {({NOT_NOW:"Not now",DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",JOINED:"Joined",INVITED:"Invited",CONTACTED:"Contacted",NEW:"New"} as Record<string,string>)[contact.stage]??"Recorded"}
                     </StatusBadge>
                   </div>
                 </li>
