@@ -195,3 +195,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 49: TPO-requests-verification-01 OPEN (partial): effective 0134 target-key varchar(150) bounds enforced at both learner entry and Zod boundary, while sixth OFFER_ACCEPTANCE_DISPUTE remains unsupported by the active first CHECK; additive correction proposed, not registered.
 
 - Round 50: TPO-students-15 DONE (source-authored, runtime pending): transactional learner notices, existing 48-hour staff-add opt-out and a new batch-level summary audit/bell to the scoped TPO team. No summary emitted for zero new applications; tests unrun.
+
+- Round 51: TPO-students-14 OPEN pending runtime acceptance: 200 cross-page selected authorized learners, server already-applied count before confirm and drive search are implemented; no mutation on preview. Named tests authored, unrun.
