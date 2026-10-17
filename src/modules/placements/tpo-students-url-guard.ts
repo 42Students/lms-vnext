@@ -2,7 +2,7 @@ import {TPO_STUDENT_VISIBLE_KEYS,validTpoColumnPreference} from "./tpo-grid-mode
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
-  const supported = new Set(["journeyState","branchId","programId","batchId","search","page","pageSize","columns","student"]);
+  const supported = new Set(["journeyState","branchId","programId","afterCollege","batchId","search","page","pageSize","columns","student"]);
   if(Object.keys(raw).some(key=>!supported.has(key))) return "Unsupported Students filter. No student data was loaded.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))
     return "The selected student is invalid. No student data was loaded.";
@@ -26,6 +26,10 @@ export function tpoStudentFilterMessage(raw:Record<string,string|string[]|undefi
   return "Page size must be a positive whole number. No student data was loaded.";
  if(typeof raw.search==="string"&&raw.search.length>150)
   return "Student search is too long. No student data was loaded.";
+ if(typeof raw.afterCollege==="string"&&
+  !["PLACED_ON_CAMPUS","PLACED_OFF_CAMPUS","HIGHER_STUDIES","ENTREPRENEURSHIP",
+    "COMPETITIVE_EXAMS","NOT_INTERESTED","LOOKING_FOR_JOB","DEBARRED","NOT_DECIDED"].includes(raw.afterCollege))
+  return "The selected after-college outcome is invalid. No student data was loaded.";
  if(typeof raw.programId==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.programId))
   return "The selected academic program is invalid. No student data was loaded.";
  if(typeof raw.batchId==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.batchId))
