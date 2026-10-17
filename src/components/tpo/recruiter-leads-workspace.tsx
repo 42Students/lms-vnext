@@ -770,13 +770,13 @@ export function RecruiterLeadsWorkspace({
           {view !== "companies" ? (
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
-                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
-                <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</button>
-                <button type="button" className={buttonStyle} onClick={()=>void copyRows()}>Copy rows</button>
+                <button type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>void copyRows()}>Copy rows</button>
                 {selectedIds.length>0?<button type="button" className={buttonStyle}
                   onClick={()=>setSelectedIds([])}>Clear selection</button>:null}
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
