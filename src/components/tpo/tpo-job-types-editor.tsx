@@ -1,5 +1,6 @@
 "use client";
 import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
+import {TpoCustomJobTypePlaced} from "./tpo-custom-job-type-placed";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoJobTypes,tpoJobTypesEmptyMessage,type TpoJobTypeStatusFilter} from "@/modules/placements/tpo-job-type-filter-model";
@@ -68,6 +69,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
    <ul className="space-y-2">{visible.map(item=><li key={item.id} className="flex min-w-0 flex-wrap items-center justify-between gap-3 rounded border border-border p-3">
     <div className="min-w-0 space-y-2"><span className="block break-words text-sm"><strong>{item.label}</strong> · {item.active?"Active":"Inactive"}</span>
      <TpoCustomJobTypeRename id={item.id} label={item.label} version={item.updatedAt}/>
+     <TpoCustomJobTypePlaced id={item.id} label={item.label} version={item.updatedAt} value={item.countsAsPlaced}/>
     </div>
     <button type="button" disabled={busy||(item.active&&activeCount<=1)} title={item.active&&activeCount<=1?"Keep at least one job type visible.":undefined} onClick={()=>void send("/api/placements/tpo/settings/job-types/"+item.id,"PATCH",{
       active:!item.active,expectedVersion:item.updatedAt,
