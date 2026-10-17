@@ -122,20 +122,10 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | --- | --- | --- |
 | TPO-drives-25 | DONE (source-level; tests not run) | `placement-job-create-workspace.tsx` aggregates **all** non-archived college-scoped prior drive titles/status/IDs for the selected employer, independently of three recent-role highlights; `placement-job-create-form.tsx` warns of an existing drive with its status and a direct drive link; ID-named `tests/unit/tpo-drives-chat-3-round4.test.ts` test `TPO-drives-25 Company Memory uses scoped historical drive facts`. |
 
-## Round 11 — API error translation (not yet full legacy parity)
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
 
-| ID | Status | Evidence |
-| --- | --- | --- |
-| TPO-drives-44 | OPEN (improved) | `src/modules/placements/tpo-drive-form-error-copy.ts` now maps common company, season, draft/edit, deadline, compensation, role, round and eligibility server codes to actionable sentences. `tests/unit/tpo-drives-44-error-copy.test.ts` names TPO-drives-44 in both cases and checks unmapped codes do not appear. Exact messaging for every legacy backend error remains to be verified; tests are written, not executed. |
-
-## Round 11 — automatic IST application deadline default
-
-| ID | Status | Evidence |
-| --- | --- | --- |
-| TPO-drives-45 | DONE (source-level; test not run) | `tpo-drive-deadline-ist.ts` validates full IST wall-clock date and time, rejects impossible days, and converts to UTC without browser timezone assumptions. `placement-job-create-form.tsx` automatically sets a first selected valid date to `23:59` IST, respects an existing restored value and later user changes, retains manual end-of-day action and checks future publication deadline. Named `TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts` plus existing tests in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Browser validation still unexecuted. |
-
-## Round 11 — confirmed partial draft recovery
-
-| ID | Status | Evidence |
-| --- | --- | --- |
-| TPO-drives-43 | OPEN (improved) | `placement-job-create-form.tsx` preserves a scoped browser backup of a server-confirmed job ID, employer relationship ID and exact form fingerprint. On reload it restores the partial job; repeated submissions resume eligibility/round writes instead of creating a duplicate draft, and modified form fields are refused until the existing drive is opened. Named test `TPO-drives-43 confirmed partial draft survives reload without duplicate POST` in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Still OPEN until create requests are idempotent if the first server POST commits but its response is lost; browser/test acceptance not run. |
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-drives-28 | OPEN | Decision: Retain canonical FULL_TIME/INTERNSHIP/CONTRACT contract status, but link college-defined job-type labels and counts-as-placed policy separately; never infer placement from a free-text label. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-28` (source/policy regression; executable CI pending). |
+| TPO-drives-34 | NOT-A-GAP | Decision: Explicit, college-scoped cohort IDs are safer than unqualified batch names for eligibility targeting; maintain cohort selectors and effective eligibility checks, excluding finished/inactive scopes. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drives-34` (source/policy regression; executable CI pending). |
+| TPO-drives-51 | OPEN | Decision: Enable College Admin entry into scoped drive lifecycle using placements.manage and persisted actor checks, including TPO drive list and job overview; remaining TPO-specific subpages must be checked before full parity. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-drives-51` (source/policy regression; executable CI pending). |
