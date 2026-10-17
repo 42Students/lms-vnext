@@ -54,23 +54,26 @@ function trustedAccountHash(input: ReportableError): string | null {
     .update((input.collegeId ?? "platform") + ":" + input.userId).digest("hex");
 }
 
-async function emergencySend(hash: string, message: string): Promise<void> {
+async function emergencySend(hash: string, message: string): Promise<boolean> {
   const minute = Math.floor(Date.now() / 60_000);
   if (minute !== fallbackMinute) {
     fallbackMinute = minute;
     fallbackSent = 0;
   }
-  if (fallbackSeen.has(hash) || fallbackSent >= 4) return;
+  if (fallbackSeen.has(hash)) return true;
+  if (fallbackSent >= 4) return false;
   if (await sendTelegramAlert(message + "\nAlert persistence pending DB10 migration")) {
     fallbackSeen.add(hash);
     fallbackSent += 1;
     if (fallbackSeen.size > 500) fallbackSeen.clear();
+    return true;
   }
+  return false;
 }
 
 /** Global state row holds an exclusive lock across delivery, preventing duplicate sends. */
-export async function reportErrorForAlert(input: ReportableError): Promise<void> {
-  if (!telegramAlertsConfigured()) return;
+export async function reportErrorForAlert(input: ReportableError): Promise<boolean> {
+  if (!telegramAlertsConfigured()) return false;
   const now = new Date();
   const environment = alertEnvironment();
   const dayKey = new Date(now.getTime() + 330 * 60_000).toISOString().slice(0, 10);
@@ -84,10 +87,10 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
   });
 
   if (!logAlertsRuntimeEnabled()) {
-    await emergencySend(hash, summary);
-    return;
+    return emergencySend(hash, summary);
   }
   let providerAccepted = false;
+  let outcome = true;
   try {
     await getDb().transaction(async (tx) => {
       const key = "TELEGRAM_BURST_" + environment;
@@ -155,7 +158,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
         count: current ? Number(current.occurrenceCount) + 1 : 1,
         affectedAccounts: radius?.total ?? 0,
       }), { acknowledgeSignatureId: id });
-      if (!delivered) return;
+      if (!delivered) { outcome = false; return; }
       providerAccepted = true;
       if (!current) {
         await tx.insert(signatures).values({
@@ -181,8 +184,11 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
         burstMinuteAt: minute, burstCount: spent + 1,
       }).where(eq(states.stateKey, key));
     });
+    return outcome;
   } catch {
-    // If Telegram accepted but DB commit failed, never send an immediate duplicate.
-    if (!providerAccepted) await emergencySend(hash, summary);
+    // Never throw into the originating request. Do not retry an accepted
+    // message immediately if the DB commit failed: it could double notify.
+    if (!providerAccepted) return emergencySend(hash, summary);
+    return false;
   }
 }
