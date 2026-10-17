@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {placementRecruiterMessageMailState,placementTpoMessages} from "@/db/schema";
 import {isRecruiterUnreadReminderDue,makeRecruiterReplyAddress,recruiterReplyTokenForThread} from "./recruiter-message-email-model";
 import {sendRecruiterMessageDigest} from "./recruiter-message-email-provider";
+import {readZeptoMailConfig} from "@/modules/notifications/zeptomail-email";
 
 type Candidate={
  thread_id:string;recruiter_user_id:string;recipient_email:string;
@@ -23,7 +24,13 @@ export async function dispatchRecruiterUnreadMessageDigests(
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")return {examined:0,sent:0,enabled:false};
  const replyDomain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").trim().toLowerCase();
  const replySecret=env.RECRUITER_MESSAGE_REPLY_TOKEN_SECRET??"";
- if(Buffer.byteLength(replySecret,"utf8")<32)return {examined:0,sent:0,enabled:false};
+ const inboundSecret=env.RECRUITER_MESSAGE_INBOUND_HMAC_SECRET??"";
+ const templateKey=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
+ const mailConfig=readZeptoMailConfig(env);
+ if(Buffer.byteLength(replySecret,"utf8")<32||
+    Buffer.byteLength(inboundSecret,"utf8")<32||
+    !templateKey||templateKey===mailConfig.otpTemplateKey||!mailConfig.token)
+  return {examined:0,sent:0,enabled:false};
  if(!makeRecruiterReplyAddress("a".repeat(32),replyDomain))
   return {examined:0,sent:0,enabled:false};
  const db=getDb();
