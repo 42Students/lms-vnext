@@ -272,3 +272,23 @@ FAST v2: no tests, lint, typecheck, build, CI wait, live email sending or live d
 - `TPO-inbox-team-R02` / `TPO-companies-R03`: OD-07 placement-team role expansion requires permission owner decision.
 
 No tests, typecheck, lint, build, CI waits or live delivery operations; source behavior remains runtime-unverified.
+
+## FAST v2 chat-2 continuation after merged main / migration 0132 — 2026-10-17
+
+- Fast-forwarded `chatgpt/chat-2-b` onto integrated `main` including migration 0132 before all new work; subsequent `[chat-2]` gap-tagged commits pushed exclusively to this branch.
+- **WP-01 `TPO-recruiters-18`:** saved views now include Needs doing / Needs attention in persisted query, use inline delete review/cancel instead of destructive one-click, clear stale selection on delete, show quick-access pinned views and pin counts, surface 100-view/5-pin limits and block empty rename.
+- **WP-01 `TPO-recruiters-13`:** bulk invite one-time links now require explicit two-step recipient review before issuance; preview counts previously issued links, confirmation invalidates on selected ID change, and warns older links will stop working. Retries remain link-only (no provider-backed emails).
+- **WP-02 `TPO-campaigns-public-07`:** selected recruiter campaign drafts fail closed for malformed, repeated, empty, or over-100 selection parameters. Explicitly selected recipients cannot accidentally fall back to all eligible; submit fixes selected segment to ALL_ELIGIBLE, prevents extra segment filtering, hides misleading generic audience preview, and labels the exact selection as an unsent draft. API validates nonempty distinct explicit selected IDs. Authoritative storage side still scopes and enforces eligibility.
+- **WP-01..WP-08 remain IN-PROGRESS**; no live/provider or regression acceptance claimed for this source-only round.
+
+### Blocked / skipped dependency lines
+- `PUB-auth-public-50/52/53/54/55`: OD-09 OTP share, sensitive disclosure columns and resume ZIP require security-owner consent/storage policy.
+- `TPO-campaigns-public-01/02/05`: provider dispatch, suppression receipts and worker rollout require verified sender credentials/templates.
+- `TPO-recruiters-13/14/17`: full email sending, audited durable undo/replay and delayed reminder delivery require provider/worker registration.
+- `TPO-settings-audit-52`: lifetime recruiter grants require explicit owner policy change.
+- `TPO-companies-05` / `TPO-inbox-team-23/26/34`: Team object threads, asks, decisions and away data require shared persistence/ownership.
+- `REC-calendar-messages-profile-R01`: inbound email reply relay requires verified webhook routing and consent.
+- `TPO-companies-06`: counts-as-placed policy still unapproved, do not guess from offers.
+- `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 broader placement-staff permissions require policy owner approval.
+
+No tests, typecheck, lint, build, CI waits, live email sends or deployment operations under FAST v2. New code is not runtime-verified.
