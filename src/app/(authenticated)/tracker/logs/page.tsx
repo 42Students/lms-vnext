@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { KnownErrorsWorkspace } from "@/components/tracker/known-errors-workspace";
 import { TrackerLiveLogsExplorer } from "@/components/tracker/tracker-live-logs-explorer";
+import { TrackerTelegramManualPanel } from "@/components/tracker/tracker-telegram-manual-panel";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -36,7 +37,8 @@ export default async function TrackerLogsPage({
         description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
       />
       <TrackerAdminNav />
-      <TrackerLiveLogsExplorer initialQuery={liveQuery}/>
+      {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
+        <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
       {!cloudLogPollConfigured() ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.
@@ -113,6 +115,9 @@ export default async function TrackerLogsPage({
           </Link>
         ))}
       </nav>
+      <TrackerTelegramManualPanel items={items} configured={telegramAlertsConfigured()}
+        deploy={/^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT??"")
+          ?process.env.DEPLOY_COMMIT??null:null} />
       <KnownErrorsWorkspace items={items} lastViewedAt={state.adminLastViewedAt} />
       {items.length === 40 ? (
         <p className="text-xs text-muted-foreground">
