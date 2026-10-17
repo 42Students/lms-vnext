@@ -19,6 +19,7 @@ export async function GET(request: Request) {
       context,
       url.searchParams.get("quizId") ?? "",
       url.searchParams.get("deliveryId") ?? "",
+      page,
     );
 
     return NextResponse.json({ attempts });
