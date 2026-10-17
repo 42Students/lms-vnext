@@ -130,8 +130,8 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
           {item.note&&<p className="whitespace-pre-wrap break-words">{item.note}</p>}
         </li>)}
       </ol>
-      {detail.review.history?.length===100&&<p className="text-xs text-muted-foreground">
-        Showing the latest 100 history events.
+      {detail.review.history?.length===50&&<p className="text-xs text-muted-foreground">
+        Showing the latest 50 history events.
       </p>}
     </section>
     {row.section==="IDENTITY"?<p className="text-sm text-muted-foreground">Numbers show only the last four digits; compare them with the document.</p>:null}
