@@ -468,7 +468,7 @@ export function ScheduleProjectMeetingControl({
       showToast({
         tone: "success",
         title: meeting
-          ? "Meeting scheduled"
+          ? "Meeting updated."
           : meetingStatus==="DRAFT"?"Meeting draft saved.":"Meeting added.",
       });
       router.refresh();
@@ -645,7 +645,8 @@ export function ScheduleProjectMeetingControl({
               ["notes","Notes"],["actionItems","Action items"],
               ["wentWell","What went well?"],["improve","What didn't go well?"],
               ["nextTime","Actions for next sprint"],["followUpNotes","Follow-up notes"],
-            ] as const).map(([field,label])=>
+            ] as const).filter(([field])=>meetingType==="RETRO" ||
+              !["wentWell","improve","nextTime"].includes(field)).map(([field,label])=>
               <label key={field} className="grid gap-1 text-xs font-semibold text-body">
                 {label}
                 <Textarea value={facilitation[field]} maxLength={4000}
