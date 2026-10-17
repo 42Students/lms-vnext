@@ -9,7 +9,7 @@ import {placementTableExists} from "./staged-tables";
 import {AFTER_COLLEGE_LABELS,afterCollegeManualSchema} from "./tpo-after-college-model";
 
 const entrySchema=z.object({
- id:z.string().uuid().nullable(),
+ id:z.string().uuid().nullable().optional(),
  label:z.string().trim().min(2).max(60),
  outcome:afterCollegeManualSchema,
 }).strict();
@@ -31,7 +31,7 @@ export class TpoOutcomeLabelError extends Error{
 }
 function decodeLabels(raw:unknown):TpoOutcomeLabel[]{
  const parsed=z.array(entrySchema).safeParse(raw);
- return parsed.success?parsed.data:[];
+ return parsed.success?parsed.data.map(row=>({...row,id:row.id??null})):[];
 }
 export async function readTpoOutcomeLabels(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
