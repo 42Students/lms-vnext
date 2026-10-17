@@ -5,6 +5,8 @@ export function redactAlertText(value: unknown): string {
     .split(/\r?\n/)[0]
     .replace(/(?:postgres(?:ql)?|mysql|redis|mongodb(?:\+srv)?):\/\/[^\s"'<>]+/gi, "[connection redacted]")
     .replace(/(?:https?:\/\/)?api\.telegram\.org\/bot[^\s/"']+/gi, "[telegram endpoint]")
+    .replace(/https?:\/\/[^\s"'<>]+/gi, "[url redacted]")
+    .replace(/\b[A-Za-z0-9_-]{28,}\b/g, "[opaque value]")
     .replace(/\b(?:Bearer|Basic)\s+[A-Za-z0-9._~+/-]+=*/gi, "[authorization redacted]")
     .replace(/\b(?:TELEGRAM_ALERT_BOT_TOKEN|api[_-]?key|access[_-]?token|refresh[_-]?token|password|secret|cookie|authorization)\b\s*[:=]\s*["']?[^"',;\s}]+/gi, "[credential redacted]")
     .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[email redacted]")

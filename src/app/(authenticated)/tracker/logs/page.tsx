@@ -33,6 +33,11 @@ export default async function TrackerLogsPage({
         description="Durable error signatures, recurrence and triage. Live Cloud Logging search and alerts are separate integrations, not implied by this view."
       />
       <TrackerAdminNav />
+      {!telegramAlertsConfigured() ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Telegram alerts are not configured
+        </p>
+      ) : null}
     </>
   );
 
@@ -82,11 +87,6 @@ export default async function TrackerLogsPage({
   return (
     <div className="space-y-6">
       {header}
-      {!telegramAlertsConfigured() ? (
-        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
-          Telegram alerts are not configured
-        </p>
-      ) : null}
       <nav aria-label="Log environment" className="flex flex-wrap gap-2">
         {(["PRODUCTION", "UAT", "DEVELOPMENT"] as const).map((value) => (
           <Link
