@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import {readRecruiterPrivateReview,writeRecruiterPrivateReview,
  RecruiterPrivateReviewConflict} from "@/modules/placements/recruiter-private-rating-service";
 export const runtime="nodejs";
@@ -10,6 +11,8 @@ type Params={params:Promise<{jobId:string;applicationId:string}>};
 export async function GET(_request:Request,{params}:Params){
  try{
   const {jobId,applicationId}=await params;
+  if(!await placementTableExists("placement_recruiter_private_reviews"))
+   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers});
   const body=await readRecruiterPrivateReview(await getCurrentRequestContext(),jobId,applicationId);
   return NextResponse.json(body,{headers});
  }catch(error){return apiErrorResponse(error);}
@@ -19,6 +22,8 @@ export async function PATCH(request:Request,{params}:Params){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers});
  try{
   const {jobId,applicationId}=await params;
+  if(!await placementTableExists("placement_recruiter_private_reviews"))
+   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503,headers});
   const body=await writeRecruiterPrivateReview(await getCurrentRequestContext(),
    jobId,applicationId,await request.json());
   return NextResponse.json(body,{headers});
