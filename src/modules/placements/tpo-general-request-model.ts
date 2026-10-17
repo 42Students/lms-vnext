@@ -4,7 +4,7 @@ const https=z.url().refine(value=>{try{const url=new URL(value);return url.proto
 const shared={reason};
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.strictObject({...shared,kind:z.literal("OFF_CAMPUS_OFFER"),companyName:z.string().trim().min(2).max(200),
-  ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,6})(?:\\.[0-9]{1,2})?$/),
+  ctcLpa:z.string().regex(/^(?:0|[1-9][0-9]{0,6})(?:\.[0-9]{1,2})?$/),
   proofUrl:https}),
  z.strictObject({...shared,kind:z.literal("REGISTRATION_CHANGE"),
   cohortId:uuid,choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),
