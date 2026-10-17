@@ -393,7 +393,7 @@ export async function getTpoMessagesInbox(
     : "PLACEMENT_NOTIFICATIONS" as const;
 
   const records = recruiterConversationsAvailable
-    ? await loadRecruiterThreads(collegeId, query.q.trim())
+    ? await loadRecruiterThreads(collegeId, query.q.trim().length >= 2 ? query.q.trim() : "")
     : await loadTpoPlacementNotifications(collegeId);
 
   const from = query.from
