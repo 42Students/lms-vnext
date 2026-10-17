@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const recruiterDriveListQuerySchema = z.object({
-  view: z.enum(["ALL", "LIVE", "CLOSED", "WAITING"]).default("ALL"),
+  view: z.preprocess(value=>typeof value==="string"?value.toUpperCase():value,z.enum(["ALL","LIVE","CLOSED","WAITING"]).default("ALL")),
   collegeId: z.string().uuid().optional(),
   q: z.string().trim().max(100).default(""),
   employment: z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
