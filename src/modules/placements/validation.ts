@@ -296,6 +296,11 @@ const placementJobFieldsSchema = z
     openings: z.number().int().positive().max(100_000).nullable().optional(),
     minimumAnnualCtcInr: z.number().int().min(0).max(100_000_000).nullable().optional(),
     maximumAnnualCtcInr: z.number().int().min(0).max(100_000_000).nullable().optional(),
+    /** Persisted dream classification and pay detail on the drive itself. */
+    isDream: z.boolean().optional().default(false),
+    fixedCtcLpa: z.number().min(0).max(1000).nullable().optional(),
+    variableCtcLpa: z.number().min(0).max(1000).nullable().optional(),
+    stipendPerMonthInr: z.number().int().min(0).max(10_000_000).nullable().optional(),
     applicationMode: z.enum(placementJobApplicationModes).optional().default("INTERNAL"),
     externalApplicationUrl: optionalHttpUrlSchema,
     applicationDeadline: z.coerce.date().nullable().optional(),
@@ -304,6 +309,11 @@ const placementJobFieldsSchema = z
 
 export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
+    if(value.fixedCtcLpa!=null&&value.variableCtcLpa!=null&&
+      value.maximumAnnualCtcInr!=null&&(value.fixedCtcLpa+value.variableCtcLpa)*100000>value.maximumAnnualCtcInr){
+      ctx.addIssue({code:"custom",path:["variableCtcLpa"],
+        message:"Fixed and variable pay cannot exceed the recorded maximum annual CTC"});
+    }
     if (
       value.minimumAnnualCtcInr != null &&
       value.maximumAnnualCtcInr != null &&

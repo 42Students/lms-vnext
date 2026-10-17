@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,desc,eq,exists,gte,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
- placementJobRoleOptions,placementJobs,users,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
+ placementJobRoleOptions,placementJobs,users,placementCandidateAcademicEvidence,learnerProgramEnrollments,cohorts,programs,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
@@ -39,6 +39,12 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   eligibilityStatus:placementApplications.eligibilityStatus,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
   rollNumber:learnerProfiles.rollNumber,email:users.email,phone:users.phoneE164,
+  cgpaHundredths:placementCandidateAcademicEvidence.cgpaHundredths,
+  activeBacklogs:placementCandidateAcademicEvidence.activeBacklogs,
+  pastBacklogs:placementCandidateAcademicEvidence.pastBacklogs,
+  tenthPctBasisPoints:placementCandidateAcademicEvidence.tenthPctBasisPoints,
+  twelfthPctBasisPoints:placementCandidateAcademicEvidence.twelfthPctBasisPoints,
+  evidenceSource:placementCandidateAcademicEvidence.source,
   // TPO-drive-workspace-33: project the active college-owned academic roster,
   // without multiplying applications for learners with historical enrollments.
   batchName:sql<string|null>`(select c.name from learner_program_enrollments lpe
@@ -73,6 +79,8 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
    eq(collegeMemberships.collegeId,collegeId)))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+  .leftJoin(placementCandidateAcademicEvidence,
+   eq(placementCandidateAcademicEvidence.membershipId,collegeMemberships.id))
   .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
    eq(placementJobRoleOptions.jobId,job.id)))
   .leftJoin(placementApplicationScreenings,

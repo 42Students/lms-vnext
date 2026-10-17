@@ -998,6 +998,56 @@ export async function actOnPlacementOffer(
   });
 }
 
+/**
+ * LEARNER-placements-R02: advisory, learner-owned impact read.
+ * Matches the currently registered ACCEPT cascade (pending offers declined,
+ * other submitted applications withdrawn). The POST rechecks under locks.
+ */
+export async function previewOwnOfferAcceptanceImpact(
+ context:RequestContext,rawOfferId:unknown,
+){
+ const offerId=placementOfferIdSchema.parse(rawOfferId);
+ const membership=await requireLearnerPlacementAccess(context);
+ const current=await loadOfferContext(offerId);
+ requireLearnerOfferOwner(context,current.application.membershipId);
+ if(current.job.collegeId!==membership.collegeId ||
+    !can(context,"placements.read",{collegeId:membership.collegeId,
+      organizationId:membership.organizationId}))
+   throw new AuthorizationError("placements.read");
+ const [otherOffers,applications]=await Promise.all([
+  getDb().select({
+   id:placementOffers.id,status:placementOffers.status,
+   title:placementJobs.title,
+  }).from(placementOffers)
+   .innerJoin(placementApplications,
+    eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .where(and(eq(placementApplications.membershipId,membership.id),
+    eq(placementJobs.collegeId,membership.collegeId),
+    ne(placementOffers.id,offerId),
+    inArray(placementOffers.status,["ISSUED","ACCEPTED"]))),
+  getDb().select({
+   id:placementApplications.id,title:placementJobs.title,
+   status:placementApplications.status,
+  }).from(placementApplications)
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .where(and(eq(placementApplications.membershipId,membership.id),
+    eq(placementJobs.collegeId,membership.collegeId))),
+ ]);
+ const withdrawn=applications.filter(row=>row.id!==current.application.id&&
+  row.status==="SUBMITTED");
+ const stayed=applications.filter(row=>row.id===current.application.id||
+  row.status!=="SUBMITTED");
+ return {
+  offerId,offerStatus:current.offer.status,expiresAt:current.offer.expiresAt?.toISOString()??null,
+  blockedByAnotherAcceptedOffer:otherOffers.some(row=>row.status==="ACCEPTED"),
+  withdrawn:withdrawn.map(row=>({id:row.id,title:row.title})),
+  declined:otherOffers.filter(row=>row.status==="ISSUED").map(row=>({id:row.id,title:row.title})),
+  stayed:stayed.map(row=>({id:row.id,title:row.title})),
+  previewOnly:true,
+ };
+}
+
 export async function recordPlacementJoiningOutcome(
   context: RequestContext,
   offerIdInput: string,
