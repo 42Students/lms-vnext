@@ -195,7 +195,7 @@ export function RecruiterResultControls({
     }
 
     const score = draft.scorePercent.trim();
-    if (score && (!Number.isFinite(Number(score)) || Number(score) < 0 || Number(score) > 100)) {
+    if (score && (!Number.isInteger(Number(score)) || Number(score) < 0 || Number(score) > 100)) {
       showToast({
         tone: "error",
         title: "Invalid score",
@@ -304,7 +304,7 @@ export function RecruiterResultControls({
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       const raw=draft.scorePercent.trim();
-      if(raw && (!Number.isFinite(Number(raw))||Number(raw)<0||Number(raw)>100)){
+      if(raw && (!Number.isInteger(Number(raw))||Number(raw)<0||Number(raw)>100)){
         showToast({tone:"error",title:"Invalid score",description:"Every selected score must be between 0 and 100."});
         return;
       }
@@ -601,6 +601,7 @@ export function RecruiterResultControls({
                                   type="number"
                                   min="0"
                                   max="100"
+                                  step="1"
                                   value={
                                     draft.scorePercent
                                   }
