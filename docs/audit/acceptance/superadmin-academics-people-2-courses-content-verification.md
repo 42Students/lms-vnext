@@ -87,3 +87,9 @@ The Super Admin Assignments and Quizzes pages now render the existing full Colle
 ### SA-academics-people-56 full active offering picker
 
 `src/modules/courses/super-admin-learning-path-picker.ts` reads selected-college active learning paths, including those with **zero lessons**, with an acting-college permission gate. The Super Admin Lessons page passes these choices into `SuperAdminLessonCreate`, supporting first-lesson creation directly from the Lessons directory. The existing edit/archive/keyboard reorder and offering drag/reorder remain available. This closes the prior missing zero-lesson path caveat in the create flow; high-volume picker uses a documented 1,000-path bound. Gap-named unit case: `SA-academics-people-56 can edit archive reorder and open offering creation from the lesson directory` in `tests/unit/chat7-final-sprint-superadmin-courses-content.test.ts`. Tests authored, not executed.
+
+### chat-9 reassessment — SA-academics-people-60
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-60 | BLOCKED | Private object storage and an SSRF-resistant server-side media ingestion/scanner pathway are not provisioned. Do not fetch arbitrary external video URLs server-side or present a link as a completed binary import. Existing signed-grant upload path and safe YouTube/link authoring remain intact; `tests/unit/chat9-final-named-gap-verification.test.ts` → `SA-academics-people-60 BLOCKED: refuses fake remote video ingestion before private scanner exists`. |
