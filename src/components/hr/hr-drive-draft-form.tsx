@@ -223,6 +223,15 @@ export function HrDriveDraftForm({
               <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
             </select>
           </label>
+          {draft.driveMode==="OFF_CAMPUS"?<label className="grid gap-1 text-sm text-body sm:col-span-2">
+            Application website (HTTPS)
+            <input className={inputClass} type="url" inputMode="url" maxLength={2000}
+              placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
+              onChange={event=>setDraft(current=>({...current,externalApplicationUrl:event.target.value}))}/>
+            <span className="text-xs text-muted-foreground">
+              The placement cell reviews the application website before publishing.
+            </span>
+          </label>:null}
           <label className="grid gap-1 text-sm text-body">
             Work mode
             <select className={inputClass} value={draft.workMode}
