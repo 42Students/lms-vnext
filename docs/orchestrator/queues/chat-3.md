@@ -36,6 +36,11 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## FAST v2 continuation — College Admin Settings
+
+- **COL-placements-13:** College Admin Settings now renders the existing tenant-scoped draft/job eligibility editor and keeps read-only behavior for published drives. Archive impact preview uses in-page two-stage confirmation instead of blocking native browser confirm; all placement evidence stays archived. **PARTIAL:** editing already published drive fields remains backend-restricted, and legacy full JobForm fields are not all persisted in the current job model.
+- WP-chat-3-02 remains IN-PROGRESS; identity-email changes (COL-people-02/07), private resume/score sources (COL-placements-02), offer evidence (COL-placements-03/10), browser verification (COL-verification-misc-07), and published drive field parity (COL-placements-13) require separate authorized integrations; proceed to next implementable WP under FAST v2.
+
 ## FAST v2 chat-3 round — 0130 merged main (2026-10-17)
 
 - Fast-forwarded `chatgpt/chat-3-b` onto `origin/main` (main had merged all earlier chat-3 changes and migration 0130); no direct-main pushes, PRs, tests, typecheck, lint, build or CI waits.
