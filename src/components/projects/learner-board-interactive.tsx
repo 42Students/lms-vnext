@@ -13,7 +13,7 @@ type EditableStatus=typeof statuses[number];
 
 export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,membershipId,readOnly=false}:{
  projectId:string;initialTasks:Task[];filters:LearnerTaskBoardUrlFilters;
- sprints:Sprint[];membershipId:string|null;
+ sprints:Sprint[];membershipId:string|null;readOnly?:boolean;
 }){
  const router=useRouter();
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState("");
