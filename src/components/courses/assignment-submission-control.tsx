@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
+import {Dialog} from "@/components/ui/dialog";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
@@ -53,6 +54,7 @@ export function AssignmentSubmissionControl({
   const [success, setSuccess] =
     useState(false);
   const flight = useRef(createSubmissionFlightGuard());
+  const [discardHref,setDiscardHref]=useState<string|null>(null);
   const methodsKey=(methodsEnabled?"1|":"0|")+assignmentId+"|"+deliveryId;
   const [prevMethodsKey,setPrevMethodsKey]=useState(methodsKey);
   if(prevMethodsKey!==methodsKey){
@@ -90,6 +92,23 @@ export function AssignmentSubmissionControl({
     };
     window.addEventListener("beforeunload",guard);
     return ()=>window.removeEventListener("beforeunload",guard);
+  },[unsent,submitting]);
+
+  useEffect(()=>{
+    if(!unsent&&!submitting)return;
+    const onLink=(event:MouseEvent)=>{
+      if(event.defaultPrevented)return;
+      const node=event.target;
+      const link=node instanceof Element?node.closest("a[href]"):null;
+      if(!link)return;
+      const target=new URL((link as HTMLAnchorElement).href,window.location.href);
+      if(target.origin!==window.location.origin)return;
+      event.preventDefault();
+      if(submitting){setError("Wait for the upload to finish before closing this submission.");return;}
+      setDiscardHref(target.pathname+target.search+target.hash);
+    };
+    document.addEventListener("click",onLink,true);
+    return ()=>document.removeEventListener("click",onLink,true);
   },[unsent,submitting]);
 
   async function submit(
@@ -311,6 +330,19 @@ export function AssignmentSubmissionControl({
           </span>
         </div> : null}
       </fieldset>
+      <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
+        title="Discard this submission?" description="Your unsent answer will be lost."
+        footer={<>
+          <Button type="button" variant="secondary" onClick={()=>setDiscardHref(null)}>Keep editing</Button>
+          <Button type="button" onClick={()=>{
+            if(submitting)return;
+            const href=discardHref;
+            setDiscardHref(null);setTextContent("");setSubmissionUrl("");
+            if(href)router.push(href);
+          }}>Discard</Button>
+        </>}>
+        <p className="text-sm text-body">You have unsent work. Keep editing to preserve your answer.</p>
+      </Dialog>
     </form>
   );
 }
