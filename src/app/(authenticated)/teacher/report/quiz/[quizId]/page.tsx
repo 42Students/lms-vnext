@@ -43,32 +43,32 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="space-y-6">
-      <Link href="/teacher/allQuizzes" className="text-sm font-semibold text-primary-text">
+      <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         ← My Quizzes
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
         <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Individual attempts &amp; question accuracy →
         </Link>
       </div>
       <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="min-h-10 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
+          className="min-h-11 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
           Export attempted only
         </Link>
         <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
           deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="min-h-10 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
+          className="min-h-11 rounded-md border border-border px-3 py-2 font-semibold text-primary-text">
           Export not attempted only
         </Link>
       </nav>
       <div className="flex flex-wrap items-center gap-3">
         <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
           "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
           Download question accuracy CSV
         </Link>
         <p className="text-xs text-muted-foreground">Question export includes aggregate accuracy only, capped at 500 questions.</p>
@@ -147,7 +147,7 @@ export default async function FacultyQuizReportPage({
             const width = Math.round((bucket.count / total) * 100);
             return (
               <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
-                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+                <summary className="grid min-h-11 cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
                 <span className="text-body">{bucket.label}</span>
                 <span className="h-2 overflow-hidden rounded-full bg-muted">
                   <span

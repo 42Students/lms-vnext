@@ -64,27 +64,27 @@ export default async function CollegeOverviewPage() {
   const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}
         description={`${college.name} · ${formatCollegeHeaderDate(new Date())}`}
         actions={
           <>
             <Link href="/college/contacts"
-              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Contacts
             </Link>
             <Link href="/college/announcements"
-              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Announcements
             </Link>
             <Link href="/college/verification"
-              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle">
               Verification
             </Link>
             <Link
               href="/college/branding"
-              className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
             >
               Branding
             </Link>
@@ -159,7 +159,7 @@ export default async function CollegeOverviewPage() {
             </p>
           </div>
           <Link href="/college/attendance"
-            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+            className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
             Open attendance
           </Link>
         </div>
@@ -196,7 +196,7 @@ export default async function CollegeOverviewPage() {
           ? <p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>
           : <div className="max-h-72 overflow-auto">
             <table className="w-full text-left text-sm">
-              <thead><tr className="border-b border-border">
+              <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
                 <th scope="col" className="py-2">Student</th>
                 <th scope="col" className="py-2">Attendance</th>
                 <th scope="col" className="py-2">Sessions attended</th>

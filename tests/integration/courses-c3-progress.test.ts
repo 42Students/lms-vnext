@@ -350,6 +350,7 @@ async function createStructure() {
       {
         lessonId: lesson.id,
         contentType: "RESOURCE",
+        points: 1,
         title: "C3 Array Notes",
         notes: "Read the shared notes",
         sequence: 0,
@@ -361,6 +362,7 @@ async function createStructure() {
       lessonId: lesson.id,
       deliveryId: deliveryA.id,
       contentType: "VIDEO",
+      points: 1,
       title: "C3 Arrays Walkthrough",
       storageKey:
         "courses/c3/arrays-walkthrough.mp4",
@@ -375,6 +377,7 @@ async function createStructure() {
         lessonId: lesson.id,
         deliveryId: deliveryB.id,
         contentType: "RESOURCE",
+        points: 1,
         title: "C3 Section B Notes",
         notes: "Section B only",
         sequence: 2,
@@ -645,6 +648,7 @@ describe("courses C3 learner progress against PostgreSQL", () => {
           lessonId: structure.lesson.id,
           deliveryId: structure.deliveryA.id,
           contentType: "LIVE_CLASS",
+          points: 1,
           title: "C3 Future Live Class",
           externalUrl:
             "https://meet.example.com/c3-future",

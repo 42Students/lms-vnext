@@ -7,7 +7,7 @@ import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-car
 import {TpoCompanyTrustSwitch} from "@/components/placements/tpo-company-trust-switch";
 import {getTpoCompanyLifecycle} from "@/modules/placements/tpo-company-lifecycle-service";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
 import { tpoCompanyDetailQuerySchema } from "@/modules/placements/tpo-companies-view-service";
 import { getTpoCompanyDetailReadOnly } from "@/modules/placements/tpo-company-detail-read-service";
 import { getTpoPublicJoinLinkStatus } from "@/modules/placements/tpo-public-join-link-service";
@@ -41,7 +41,7 @@ export default async function TpoCompanyDetailPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !can(context,"placements.manage",{collegeId:context.membership.collegeId})
   ) {
     redirect("/dashboard");
   }

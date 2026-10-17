@@ -22,9 +22,12 @@ describe("learner/projects round-two gap verification",()=>{
   expect(source("src/modules/projects/learner-project-list-empty-model.ts")).toContain("No projects assigned yet.");
   expect(source("src/modules/projects/learner-project-list-empty-model.ts")).toContain("No projects match these filters.");
  });
- it("LEARNER-projects-09 uses Projects shell heading with the specific project subtitle",()=>{
-  const s=workspace();expect(s).toContain('mode==="LEARNER"?"Projects":workspace.project.title');
-  expect(s).toContain('mode==="LEARNER"?workspace.project.title');
+ it("LEARNER-projects-09 retains Projects as the list heading and the real workspace title",()=>{
+  const listPage=source("src/app/(authenticated)/learn/projects/page.tsx");
+  expect(listPage).toContain('<PageHeader title="Projects" description="Choose a project to open its workspace." />');
+  const s=workspace();
+  expect(s).toContain('title={workspace.project.title}');
+  expect(s).toContain('workspace.project.summary ?? undefined');
  });
  it("LEARNER-projects-14 displays task donut lane counts empty state and signoff note",()=>{
   const s=workspace();expect(s).toContain('aria-label="Task completion donut"');

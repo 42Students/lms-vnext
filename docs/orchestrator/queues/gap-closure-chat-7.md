@@ -273,3 +273,9 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 ## Chat-7 final mentor status note
 - MEN-projects-meetings-27: structured meeting notes, action items, retrospective, outcome, follow-up/status saved with an unnumbered migration proposal. Legacy Draft and Rescheduled meeting lifecycle statuses remain OPEN: chat-16 owns mentor/calendar and moved meeting pages; do not add incompatible state transitions without updating that lane's consumers. Need orchestrator to register the meeting facilitation proposal before deploying.
 - MEN-projects-meetings-10: DB paging is active for ordinary search/status/assignment with recent/title order; advanced attention/task-work and computed progress sorts remain full-scope rollups. Unit tests authored, not run.
+
+## Chat-7 round 2 (35 gap-ID source verifications)
+- The `docs/orchestrator/queues/unconfirmed-decisions.md` owner list has no chat-7 section. Legacy queue UNCONFIRMED items LEARNER-placements-08/-16/-25/-39/-45/-49 are reassigned to chat-15; REC-home-drives-09/-19/-44/R02 to chat-14. Do not issue competing decisions or edit their acceptance files.
+- Verified 30 FIXED-ON-MAIN mentor gap IDs in six five-gap batches, plus 5 faculty gaps, with one named assertion test per ID and acceptance evidence. Tests authored, not run; this is source verification, not end-to-end runtime certification.
+- Typecheck report (2026-10-17 23:15) is stale for chat-7: mentor facilitation fields are in the schedule form, sprint estimationUnit is accepted, and all six createLessonContent calls in courses-c2-learning.test.ts include points. A fresh CI typecheck remains required.
+- MEN-projects-meetings-27 remains OPEN: project_meetings facilitation/status SQL is proposed under docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql and is not registered in 0133/0134; test, journal replay and lifecycle acceptance must precede closure.

@@ -69,7 +69,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       {programs.length === 0 ? (
         <p className="mt-2 text-sm text-muted-foreground">Create a program before adding semesters.</p>
       ) : (
-        <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.programLabel}
             <select required value={programId} onChange={e => setProgramId(e.target.value)}
