@@ -284,3 +284,13 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - BLOCKED TPO-drive-workspace-54 and TPO-drive-workspace-65: offer letters/resume ZIP upload needs private object storage and malware scanner; share one-time email code needs provider credentials.
 - GR helper integration pending: `src/lib/friendly-error.ts`, `src/lib/api-fetch.ts`, and guarded-action hook not on origin/main at adoption check; no fake helper imports added. Import UI uses local safe fallback messages.
 - Tests and builds written but NOT executed by chat-5; orchestrator handles full CI, database integration and runtime certification.
+
+## Chat-5 round 4 (2026-10-17) — branch-only follow-up
+
+- Drive Workspace: `TPO-drive-workspace-59` recruiter Discussion screen and tab built, internal team thread still OPEN; `TPO-drive-workspace-64` closed-drive recruiter follow-up DONE; `TPO-drive-workspace-70` cancellations and lifecycle actions use reviewed checkboxes/ref guards (other destructive offer actions remain OPEN). Named tests: `tests/unit/tpo-drive-discussion-chat5.test.ts`, `tpo-drive-graceful-chat5-round4.test.ts`.
+- Batches: `TPO-batches-07` older batch working set DONE; `03` effective placement states DONE; `04` eligible open KPI DONE; `09` priority ordering DONE; `15` no migration jargon DONE; `28` independently fallible secondary counts DONE. Named tests are recorded in the page verification file.
+- TPO-batches-26 OPEN: never-invited finish modeled and audited, UI guarded, but `docs/proposed-migrations/tpo-batches-finish-without-invite.sql` requires orchestrator migration registration and PostgreSQL replay before acceptance.
+- TPO-batches-39/40 OPEN: importer now uses `apiFetch`, retains editable CSV on failure, and requires visible review without `window.confirm`; remaining modal and wording parity still open.
+- GR-04/30/31/32/35/38/71/72/90/91: targeted adoption recorded in `docs/audit/acceptance/graceful-chat-5-verification.md`; global app-wide compliance is not claimed.
+- BLOCKED TPO-drive-workspace-54 / -65: private bucket, malware scanner and provider credentials are needed for uploads/emailed share code; do not fabricate delivery.
+- All tests were authored but not run by chat-5. Do not treat these entries as CI certification; orchestrator owns builds, DB migration acceptance and Playwright.

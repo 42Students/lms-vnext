@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const tpoBatchSortSchema = z.enum(["NAME_ASC", "NAME_DESC", "DEADLINE_ASC", "DEADLINE_DESC"]).default("NAME_ASC");
+export const tpoBatchSortSchema = z.enum(["WORKING_SET", "NAME_ASC", "NAME_DESC", "DEADLINE_ASC", "DEADLINE_DESC"]).default("WORKING_SET");
 
 export function sortTpoBatchNames<T extends { id: string; name: string; deadline?: Date | null }>(
   batches: readonly T[],
