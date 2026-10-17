@@ -17,19 +17,20 @@ describe("Trust-policy recruiter REQUEST autoapproval",()=>{
  });
  it("TPO-requests-verification-37 saves the real draft in the same transaction as the request, not a decorative status",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
-  expect(code).toContain("createDraftFromRecruiterRequest(tx,");
-  expect(code).toContain('status:approvedJobId?"DRAFT":"REQUEST"');
-  expect(code).toContain('verificationPending:scope.grant.verificationStatus!=="VERIFIED"');
+  expect(code).toContain("createRecruiterApprovedDraftJob(tx,created,context.user.id)");
+  expect(code).toContain('status:"REQUEST",draft:input.draft');
+  expect(code).toContain('status:"DRAFT",approvedJobId');
+  expect(code).toContain('grantVerified:scope.grant.verificationStatus==="VERIFIED"');
   expect(code).toContain("recruiterDriveNeedsApproval");
   expect(code).toContain("placementTpoTrustedDomains");
   expect(code).toContain("pg_advisory_xact_lock");
  });
  it("TPO-requests-verification-38 emits distinct new-request and autoapproved TPO signals and recruiter confirmation",()=>{
   const code=src("src/modules/placements/recruiter-drive-request-service.ts");
-  expect(code).toContain('eventType:action==="AUTO_APPROVED"?"REQUEST_AUTO_APPROVED"');
+  expect(code).toContain('eventType:action==="AUTO_APPROVED"?"placements.recruiter.drive.auto_approved"');
   expect(code).toContain('approvedJobId?"AUTO_APPROVED":"NEW"');
-  expect(code).toContain("A verified recruiter request was auto-approved to a draft");
-  expect(code).toContain("Drive request approved as a draft");
+  expect(code).toContain("A verified recruiter request met this college");
+  expect(code).toContain("Your request is approved as a draft.");
   expect(code).toContain("onConflictDoNothing()");
  });
 });

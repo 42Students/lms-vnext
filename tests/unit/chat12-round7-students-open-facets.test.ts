@@ -58,7 +58,8 @@ describe("chat-12 reopened Students URL facets and UI contracts",()=>{
   expect(page()).toContain('aria-live="polite"');
  });
  it("TPO-students-51 collapses mobile row actions without hiding filters",()=>{
-  expect(grid()).toContain("mobileActionsCollapsible storageKey=");
+  expect(grid()).toContain("mobileActionsCollapsible mobilePrimaryKeys=");
+  expect(grid()).toContain('storageKey="tpo-students-columns-v1"');
   expect(src("src/components/tpo/tpo-spreadsheet-grid.tsx")).toContain("<summary");
  });
  it("TPO-students-53 distinguishes issued offers from accepted offers and pending answers",()=>{
