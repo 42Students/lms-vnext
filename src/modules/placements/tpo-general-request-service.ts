@@ -1,6 +1,7 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
-import {and,desc,eq,inArray,sql} from "drizzle-orm";
+import {and,desc,eq,sql} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
@@ -18,6 +19,7 @@ export class TpoGeneralRequestError extends Error{
  }
 }
 const UUID="placement_learner_general_requests";
+const sqlUuid=z.string().uuid();
 async function requireRegistered(){
  if(!(await placementTableExists(UUID)))throw new TpoGeneralRequestError("UNAVAILABLE");
 }
@@ -239,4 +241,3 @@ export async function decideTpoGeneralRequest(ctx:RequestContext,rawId:unknown,r
   return {id:row.id,status:nextStatus,effect};
  });
 }
-const sqlUuid=sql``; // placeholder
