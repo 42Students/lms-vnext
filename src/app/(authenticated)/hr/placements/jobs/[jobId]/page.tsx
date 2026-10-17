@@ -689,13 +689,12 @@ export default async function HrPlacementJobPage({
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
-              {filters.offerState!=="ALL"?<nav aria-label="Selection history pages" className="flex gap-3 text-sm">
+              <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
                {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
                 className="text-primary-text underline">Previous selections</Link>:null}
                {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
                 className="text-primary-text underline">Next selections</Link>:null}
-              </nav>:selectionTotal>selectionRows.length?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState=SELECTED"+returnQuery}
-               className="text-primary-text underline text-sm">Review recorded selections</Link>:null}
+              </nav>
             </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full min-w-[56rem] text-left text-sm">
