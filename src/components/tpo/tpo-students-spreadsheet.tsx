@@ -105,6 +105,8 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
   </label>
   <TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+   openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
+     ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
