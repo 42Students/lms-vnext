@@ -131,3 +131,13 @@ Fast-forwarded to latest `main` before edits. Wrote but did **not run** tests. P
 | TPO-drive-workspace-74 | NOT-A-GAP | Legacy recruiter key bug is not inherited by college-scoped vNext projection. `tests/unit/tpo-drive-workspace-chat5-round6.test.ts` — `TPO-drive-workspace-74 partial or implemented scope is recorded without inferring unsupported parity`. |
 
 Source areas: `src/modules/placements/tpo-delete-draft-{model,service}.ts`, `src/app/api/placements/tpo/jobs/[jobId]/delete-draft/route.ts`, `src/components/placements/tpo-delete-draft-action.tsx`, `src/modules/placements/tpo-applicant-pipeline-{model,service}.ts`, `src/components/tpo/tpo-applications-spreadsheet.tsx`, `src/modules/placements/tpo-drive-applications-export-service.ts`, `src/modules/placements/tpo-drive-offer-register-model.ts`, and related role pages. No numbered migration touched.
+
+## Chat-5 follow-up evidence — isolated database contract
+
+| Gap | Status | Evidence |
+|---|---|---|
+| TPO-drive-workspace-06 | DONE (pending orchestrator execution) | `src/modules/placements/tpo-delete-draft-service.ts`, `src/app/api/placements/tpo/jobs/[jobId]/delete-draft/route.ts`; `tests/integration/tpo-delete-draft-chat5.test.ts` — `TPO-drive-workspace-06 archives only empty unpublished drafts after scoped version and audit checks`. Empty, correct-version unpublished drafts archive with an activity event; archived history stays in the database. |
+| TPO-drive-workspace-R06 | OPEN | Same integration file — `TPO-drive-workspace-R06 refuses an abandoned draft that already has an applicant`. This proves safe archive as a fallback but does not implement distinct draft cancellation. |
+| TPO-drive-workspace-09 | OPEN (copy partial) | `src/components/placements/placement-drive-workspace.tsx`, `src/components/placements/tpo-delete-draft-action.tsx`; `tests/unit/tpo-drive-workspace-chat5-round6.test.ts` — `TPO-drive-workspace-09 partial or implemented scope is recorded without inferring unsupported parity`. Exact legacy Delete draft, Applicants, Close drive and company/job heading restored; remaining workspace headings not all checked. |
+
+This test file uses `DB09_ISOLATED_TEST_DATABASE` and `TEST_DATABASE_URL` and follows the existing disposable-database guard. The test was not executed by chat-5.
