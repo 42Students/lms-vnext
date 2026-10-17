@@ -69,7 +69,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
      <SuperAdminContentActions item={item}/>:
      <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
-    {item.offeringStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+    {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?<Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
      className="inline-flex min-h-10 items-center font-semibold text-primary-text">Edit, publish or archive →</Link>:null}
    </article>)}
   </div>:<EmptyState title="No content records" description="No matching authored content exists in this college or filter."/>}
