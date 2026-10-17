@@ -75,7 +75,11 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
    .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
    .orderBy(asc(users.displayName)).limit(100),
  ]);
- return {status:"READY" as const,companyName:company.name,messages:latest.slice(0,100).reverse(),
+ const formatter=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+  dateStyle:"medium",timeStyle:"short"});
+ return {status:"READY" as const,companyName:company.name,messages:latest.slice(0,100).reverse()
+   .map(row=>({...row,createdLabel:formatter.format(row.createdAt)+" IST",
+    dueLabel:row.askDueAt?formatter.format(row.askDueAt)+" IST":null})),
   members:team,following:followers.length>0,truncated:latest.length>100};
 }
 export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown,raw:unknown){
