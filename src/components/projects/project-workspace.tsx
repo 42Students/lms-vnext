@@ -1409,7 +1409,10 @@ export function ProjectWorkspace({
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
             return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
               <h3 className="text-sm font-semibold">Next meeting</h3>
-              {upcoming[0]?<p className="mt-1 text-sm">{upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}</p>:
+              {upcoming[0]?<p className="mt-1 text-sm">
+                {upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}
+                {upcoming[0].meetingType?" · "+label(upcoming[0].meetingType):""}
+              </p>:
                 <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
               {upcoming.length>1?<details className="mt-2 text-sm">
                 <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
