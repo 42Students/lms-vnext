@@ -444,7 +444,7 @@ export type UpdateCourseLessonInput =
     typeof updateCourseLessonInputSchema
   >;
 export type CreateLessonContentInput =
-  z.infer<
+  z.input<
     typeof createLessonContentInputSchema
   >;
 export type UpdateLessonContentInput =
