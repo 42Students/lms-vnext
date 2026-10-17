@@ -25,6 +25,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [note,setNote]=useState("");
  const [pastedRolls,setPastedRolls]=useState("");
  const [rollFeedback,setRollFeedback]=useState("");
+ const [copyFeedback,setCopyFeedback]=useState("");
  const [preview,setPreview]=useState<PreviewResponse|null>(null);
  const [plan,setPlan]=useState<PreviewPlan|null>(null);
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
@@ -194,11 +195,20 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
      Clear selection
    </button>
+   {target==="STUDENTS"?<button type="button" disabled={busy||safeSelected.length===0}
+    onClick={async()=>{
+      try{
+       await navigator.clipboard.writeText(safeSelected.map(id=>labelsById.get(id)??id).join("\\n"));
+       setCopyFeedback(safeSelected.length+" selected student rows copied.");
+      }catch{setCopyFeedback("Could not copy selected student rows. Check browser clipboard permission.");}
+    }}
+    className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">Copy selected rows</button>:null}
    {preview&&!busy?<button type="button" onClick={invalidate}
      className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
      Cancel preview
    </button>:null}
   </div>
+  {copyFeedback?<p role="status" className="text-xs text-muted-foreground">{copyFeedback}</p>:null}
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="text-sm font-semibold text-body">Action
     <select value={action} disabled={busy}
