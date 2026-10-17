@@ -36,8 +36,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
- const listSections=deliveries.filter(row=>!listLessonId||
-  lessons.find(lesson=>lesson.id===listLessonId)?.offeringId===row.offeringId);
+ const listOfferingId=lessons.find(lesson=>lesson.id===listLessonId)?.offeringId??
+   existing.find(item=>item.lessonId===listLessonId)?.offeringId;
+ const listSections=deliveries.filter(row=>!listLessonId||listOfferingId===row.offeringId);
  const matching=existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
   (!listSectionId||item.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId));
