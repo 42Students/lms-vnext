@@ -254,6 +254,8 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 
 ## Notes (blockers, one line each)
 
+- PUB-auth-public-55: All-resume ZIP download remains blocked by production private document receipt/bucket and scanner readiness; do not fabricate PDFs or public signed links.
+
 - LEARNER-learning-misc-01: Assignment file-upload acceptance needs real private bucket and scanner readiness; do not fake signed receipts.
 - TPO-drives-27: JD file upload needs real private bucket and scanner readiness; no public storage URLs.
 - COL-people-02/07: Canonical login identity edits stay restricted pending the approved identity verification workflow.
@@ -263,7 +265,8 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 - tpo/drives: 6 DONE + 1 NOT-A-GAP with gap-ID-named tests in `tests/unit/tpo-drives-gap-closure.test.ts` and page record in `docs/audit/acceptance/tpo-drives-verification.md`; the other gaps remain open/partial.
 - learner/learning-misc: 11 DONE with gap-ID-named tests in `tests/unit/learner-learning-misc-gap-closure.test.ts` and page record in `docs/audit/acceptance/learner-learning-misc-verification.md`.
 - college/people: 9 DONE with unit and disposable-PostgreSQL integration gap tests in `tests/unit/college-people-gap-closure.test.ts`, `tests/integration/college-people-gap-closure.test.ts`, and page record `docs/audit/acceptance/college-people-verification.md`.
-- Current round: 26 DONE and 1 NOT-A-GAP dispositions, subject to orchestrator acceptance; do not inflate closure from partially implemented gap-ID source checks.
+- Current round: 37 DONE and 1 NOT-A-GAP source-level dispositions through public page, subject to orchestrator acceptance; unexecuted tests are not proof of integration.
+- public/auth-public-2-links-marketing: 11 DONE in `docs/audit/acceptance/public-auth-public-2-links-marketing-verification.md`, 18 ID-named tests in `tests/unit/public-auth-links-gap-closure.test.ts`; remaining open gaps have explicit reasons.
 
 ## Needs shell (chat-9 only)
 
