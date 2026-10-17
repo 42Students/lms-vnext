@@ -36,6 +36,7 @@ import {
   type PlacementReportQuery,
 } from "./report-service";
 import { listTpoLeads } from "./tpo-crm-service";
+import {summarizeFailedRoundShares} from "./tpo-failure-round-share-model";
 import {buildTpoCompanyEngagement} from "./tpo-company-engagement-model";
 import { summarizeTpoLeadHealth } from "./tpo-lead-health-model";
 
@@ -276,6 +277,20 @@ export async function getPlacementFailureReasonsReport(
       ),
   ]);
 
+  const appliedRoundRows=await db.select({
+    id:placementRoundResults.id,roundId:placementJobRounds.id,
+    roundName:placementJobRounds.name,jobId:placementApplications.jobId,
+    outcome:placementRoundResults.outcome,
+  }).from(placementRoundResults)
+   .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
+   .innerJoin(placementApplications,and(
+    eq(placementApplications.id,placementRoundResults.applicationId),
+    eq(placementApplications.jobId,placementJobRounds.jobId)))
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .where(and(scopedJob,eq(placementRoundResults.status,"APPLIED")));
+  const byRound=summarizeFailedRoundShares(appliedRoundRows);
+
   const facts: PlacementFailureFact[] = [];
 
   function append(
@@ -340,6 +355,7 @@ export async function getPlacementFailureReasonsReport(
   return {
     ...workspace,
     failures: summarizePlacementFailureReasons(facts),
+    roundFailureShares:byRound,
     failureScopeNote:
       "This report counts persisted adverse events or current decisions, " +
       "not unique learners. Screening rejection uses the current screening " +
