@@ -17,12 +17,13 @@ export function TpoRosterVerificationBulk({rows}:{rows:readonly VerificationQueu
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<BulkReviewOutcome[]>([]);
+ const [receiptRows,setReceiptRows]=useState<VerificationQueueCard[]>([]);
  const waiting=rows.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const checked=waiting.filter(row=>selected.includes(verificationSelectionKey(row)));
  const eligible=action==="VERIFY"?checked.filter(row=>!row.missingMarksheet&&!row.missingIdentityProof):checked;
  const skipped=checked.filter(row=>!eligible.includes(row));
- const described=describeBulkReviewOutcomeRows(outcomes,checked);
- function invalidate(){setPreview(false);setAck(false);setError("");setOutcomes([]);}
+ const described=describeBulkReviewOutcomeRows(outcomes,receiptRows);
+ function invalidate(){setPreview(false);setAck(false);setError("");setOutcomes([]);setReceiptRows([]);}
  function toggle(id:string){
   setSelected(old=>old.includes(id)?old.filter(item=>item!==id):old.length<20?[...old,id]:old);
   invalidate();
@@ -42,6 +43,7 @@ export function TpoRosterVerificationBulk({rows}:{rows:readonly VerificationQueu
     error?:string;outcomes?:BulkReviewOutcome[];summary?:{attempted:number;succeeded:number;failed:number}
    }|null;
    if(!response.ok||!Array.isArray(result?.outcomes))throw Error(result?.error??"Bulk decision could not be saved");
+   setReceiptRows(eligible);
    setOutcomes(result.outcomes);
    setPreview(false);setAck(false);
    setSelected([]);
