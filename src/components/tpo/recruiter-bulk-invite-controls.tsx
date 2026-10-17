@@ -70,6 +70,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    <button type="button" disabled={busy||eligible.length===0||eligible.length>100}
     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
     onClick={()=>void createLinks(eligible)}>{busy?"Working…":reviewSnapshot===eligibleSnapshot?"Confirm "+eligible.length+" new invite links":"Review "+eligible.length+" invite links"}</button>
+   {eligible.length===0&&rows.length>0?<p role="status" className="text-sm">No selected recruiters can receive an invite link. The reasons are shown above.</p>:null}
    {eligible.length>100?<p role="alert" className="text-sm">Select at most 100 eligible recruiters.</p>:null}
    {results.length>0?<div aria-live="polite" className="space-y-2">
     <p className="text-sm">{results.filter(item=>item.url).length} links · No invitation emails sent · {failed.length} failed</p>
