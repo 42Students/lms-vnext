@@ -57,6 +57,11 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     </div>)}
    </div>
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
+   <button type="button" onClick={()=>downloadRoundCsv(
+    roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
+    className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+    Export consequence preview (CSV)
+   </button>
    {!preview.ready?<p role="alert" className="text-sm text-error">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
     <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
