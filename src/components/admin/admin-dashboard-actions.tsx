@@ -48,7 +48,7 @@ export function CollegeAdminQuickActions() {
   return (
     <section aria-label="Quick Actions" className="space-y-3">
       <h2 className="m-0 text-lg font-semibold text-foreground">Quick Actions</h2>
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {COLLEGE_ADMIN_QUICK_ACTIONS.map((item) => (
           <ActionLink key={item.key} label={item.label} href={item.href} />
         ))}
