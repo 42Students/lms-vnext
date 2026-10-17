@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, lt, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
 import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
@@ -97,6 +97,58 @@ async function flushOverflow(now: Date): Promise<boolean> {
   });
 }
 
+/** Replays a post-fix regression that was counted but could not be delivered. */
+export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
+  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
+    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  let delivered = 0;
+  await withScheduledLease("telegram-regression-sweep", now, async () => {
+    const threshold = new Date(now.getTime() - 86_400_000);
+    const candidates = await getDb().select({ id: signatures.id })
+      .from(signatures)
+      .where(and(
+        eq(signatures.environment, environment),
+        eq(signatures.fixStatus, "FIXED"),
+        isNull(signatures.regressedAt),
+        lt(signatures.fixedAt, threshold),
+        sql`${signatures.lastSeenAt} >= ${signatures.fixedAt} + interval '24 hours'`,
+      )).orderBy(desc(signatures.lastSeenAt)).limit(5);
+    for (const candidate of candidates) {
+      await getDb().transaction(async (tx) => {
+        const key = "TELEGRAM_BURST_" + environment;
+        await tx.insert(states).values({ stateKey: key }).onConflictDoNothing();
+        const [state] = await tx.select().from(states)
+          .where(eq(states.stateKey, key)).for("update").limit(1);
+        const [current] = await tx.select().from(signatures)
+          .where(eq(signatures.id, candidate.id)).for("update").limit(1);
+        if (!state || !current || current.fixStatus !== "FIXED" || !current.fixedAt ||
+            current.regressedAt || current.lastSeenAt.getTime() <
+              current.fixedAt.getTime() + 86_400_000) return;
+        const minute = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
+        const spent = state.burstMinuteAt?.getTime() === minute.getTime()
+          ? state.burstCount : 0;
+        if (spent >= 5) return; // Leave pending for the next in-cluster tick.
+        const ok = await sendTelegramAlert(
+          "vNext regression detected after fix. Environment: " + environment +
+          "\\nSignature: " + current.signatureHash.slice(0, 12) +
+          "\\nCount: " + current.occurrenceCount.toString() +
+          "\\nSee the Logs page.",
+          { acknowledgeSignatureId: current.id },
+        );
+        if (!ok) return; // Delivery-gated transition, retry next tick.
+        await tx.update(signatures)
+          .set({ fixStatus: "OPEN", regressedAt: now })
+          .where(eq(signatures.id, current.id));
+        await tx.update(states).set({
+          burstMinuteAt: minute, burstCount: spent + 1,
+        }).where(eq(states.stateKey, key));
+        delivered++;
+      });
+    }
+  });
+  return delivered;
+}
+
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
@@ -104,6 +156,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
   // Burst overflow is not lost even if no subsequent error arrives to trigger a send.
   // The locked state row preserves the five-per-minute ceiling across web replicas.
   await flushOverflow(now);
+  await sweepUndeliveredRegressions(now);
   let digest = false;
   const acquired = await withScheduledLease("telegram-digest", now, async () => {
     if (hour < 9) return;
