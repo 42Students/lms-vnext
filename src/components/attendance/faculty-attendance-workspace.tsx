@@ -1017,7 +1017,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg bg-surface-subtle p-3">
+              <div className="sticky bottom-0 z-20 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-3 shadow-sm sm:static sm:border-0 sm:bg-surface-subtle sm:shadow-none">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
