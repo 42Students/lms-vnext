@@ -25,7 +25,6 @@ export function TpoGridFilterPanel({fields,mobileSheet=false}:{fields:readonly T
     aria-label={"Remove "+chip.label}>{chip.label} ×</button>)}
   </div>
   <h2 className="font-semibold">Filters</h2>
-  <h2 className="font-semibold">Filters</h2>
   <p role="status" className="text-xs text-muted-foreground">{activeCount} active {activeCount===1?"filter":"filters"}</p>
   {fields.map(field=><label key={field.key} className="block text-sm">{field.label}
    <select className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2" value={resolvedTpoGridFilterValue(query.get(field.urlKey??"filter."+field.key),field)} onChange={event=>update(field,event.target.value)}>
