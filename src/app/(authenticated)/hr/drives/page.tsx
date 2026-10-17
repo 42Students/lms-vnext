@@ -6,12 +6,11 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
-import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
+import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
+import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import { recruiterVisiblePortfolioCounts } from "@/modules/placements/recruiter-portfolio-counts-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
-import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
@@ -52,13 +51,17 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
-  const jobs = (await listOwnRecruiterPlacementJobs(context,selectedCollege)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
-  const totals = {...summarizeRecruiterDrives(jobs),
-    all:summarizeRecruiterDrives(jobs).all+requests.length,
+  // eslint-disable-next-line react-hooks/purity -- the request clock drives IST deadline filters.
+  const now = new Date();
+  const pageResult=await searchOwnRecruiterDrives(context,selectedCollege,{
+    ...query.data,collegeId:selectedCollege,
+  },now);
+  const totals = {...pageResult.totals,
+    all:pageResult.totals.all+requests.length,
     waiting:requests.filter(req=>["REQUEST","SENT_BACK","DRAFT"].includes(req.status)).length,
-    closed:summarizeRecruiterDrives(jobs).closed+
+    closed:pageResult.totals.closed+
       requests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
   };
   const viewOptions = [
@@ -67,11 +70,15 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {view: "WAITING", label: "Sent for review", count: totals.waiting},
     {view: "CLOSED", label: "Completed and cancelled", count: totals.closed},
   ] as const;
-  // eslint-disable-next-line react-hooks/purity -- recruiter deadline urgency needs request-time current instant.
-  const now = new Date();
-  const filtered = filterRecruiterDrives(jobs, {...query.data, collegeId: selectedCollege},now);
-  const attention=hrDriveAttention(jobs,selectedCollege,now);
-  const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
+  const deadlineBase={...query.data,collegeId:selectedCollege,view:"LIVE" as const,
+    q:"",employment:"ALL" as const,mode:"ALL" as const,page:1,sort:"DEADLINE" as const};
+  const [soon,past]=await Promise.all([
+    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5,previewOnly:true}),
+    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"PAST"},now,{
+      pageSize:5,descendingDeadline:true,previewOnly:true,
+    }),
+  ]);
+  const attention={soon:soon.rows,past:past.rows};
   const visibleCounts=await recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id));
   return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
@@ -201,12 +208,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
-        "Showing "+(Math.min(pageResult.total,(query.data.page-1)*pageResult.pageSize+1))+"–"+
-        Math.min(pageResult.total,query.data.page*pageResult.pageSize)+" of "+pageResult.total}</p>
+        "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
+        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p>
       <div className="flex gap-2">
-        {query.data.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page-1})}
+        {pageResult.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page-1})}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
-        {query.data.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page+1})}
+        {pageResult.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page+1})}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
