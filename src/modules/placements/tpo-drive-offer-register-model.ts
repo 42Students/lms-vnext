@@ -15,7 +15,7 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
  return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
   (kind==="ALL"||f.offer.kind===kind)&&
   (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
-  [f.candidate.displayName,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
+  [f.candidate.displayName,f.candidate.email,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
@@ -51,13 +51,14 @@ export function tpoDriveOfferRegisterCsv(
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
   f.offer.kind,f.offer.annualCtcInr,f.candidate.email??null,
+  f.candidate.rollNumber??null,f.candidate.batch??null,f.candidate.branch??null,
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
  ]);
- rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","",""]);
+ rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","","","","",""]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
  if(truncated)rows.push(["TRUNCATED",
-  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null]);
- return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Email","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)"],rows),
+  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null,null,null,null]);
+ return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Email","Roll number","Batch","Branch","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)"],rows),
   totalMatching:matches.length,truncated};
 }

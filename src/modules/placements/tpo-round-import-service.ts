@@ -69,7 +69,7 @@ function previewData(rows:ImportRow[],roster:Roster[]){
   if(row.invalidRank){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
-   unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
+   unmatched.push({line:row.line,identity:row.identity,reason:"Rank must be 1–100000 and is only allowed for Waitlisted results",suggestions:[]});continue;}
   if(!row.outcome){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
@@ -140,7 +140,7 @@ export async function stageTpoRoundImport(
   // Do not use the first ambiguous match: an import must never stage results
   // for a different learner merely because their roll/email was duplicated.
   const match=chosen??(exact.length===1?exact[0]!.applicationId:undefined);
-  const reason=row.invalidRank?"Invalid waitlist rank":
+  const reason=row.invalidRank?"Rank must be 1–100000 and is only allowed for Waitlisted results":
    !match?"Unmatched or ambiguous learner; review and choose Skip or a verified match":
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
@@ -160,6 +160,9 @@ export async function stageTpoRoundImport(
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
+  if(inputRows.some(row=>row.invalidRank&&!skippedLines.has(row.line)))
+   throw Error("Correct or skip invalid waitlist ranks before failing absent results.");
+  if(!inputRows.length)throw Error("An empty result file cannot mark the entire round not cleared.");
   if(rejected.length||unresolvedSkippedRows)throw Error("Resolve ambiguous source identities before automatically marking missing learners not cleared. Skipping an unmatched row cannot identify which learner to protect.");
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&

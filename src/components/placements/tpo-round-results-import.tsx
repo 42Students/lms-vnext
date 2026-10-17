@@ -39,7 +39,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-lg font-semibold text-foreground">Import company round results</h2>
   <p className="text-sm text-body">Upload a CSV or Excel (.xlsx) result list. All supplied Application ID, email and roll identifiers must agree.
-   Company portal IDs with no matching application are left unmatched. Nothing is applied to the round until the separate Apply results step.</p>
+   Company portal IDs with no matching application are left unmatched. Contradictory IDs, email and roll must be reviewed; a manual match is audited. Nothing is applied to the round until the separate Apply results step.</p>
   <a href={url} download className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Download CSV template</a>
   <label className="block text-sm font-semibold text-body">Company results file
    <input type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
