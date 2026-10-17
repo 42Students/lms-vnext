@@ -314,7 +314,7 @@ export function PlacementEmployerRelationships({
                 </div>
 
                 <div className="flex flex-wrap items-start gap-2 xl:justify-end">
-                  {item.companyStatus!=="ACTIVE" ? (
+                  {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
                     <span role="status" className="text-sm text-muted-foreground">
                       This company is archived on the platform and cannot be restored here.
                     </span>
