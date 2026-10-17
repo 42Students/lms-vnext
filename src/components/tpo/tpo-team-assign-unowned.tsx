@@ -2,6 +2,7 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 
 type Member={membershipId:string;displayName:string};
 export function TpoTeamAssignUnowned({drives,companies,members}:{
@@ -9,6 +10,7 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
 }){
  const router=useRouter(),pending=useRef(false);
  const [assignee,setAssignee]=useState("");
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  async function assign(){
   if(pending.current||!assignee)return;
@@ -40,11 +42,17 @@ export function TpoTeamAssignUnowned({drives,companies,members}:{
      {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
     </select>
    </label>
-   <button type="button" disabled={busy||!assignee} onClick={()=>void assign()}
+   <button type="button" disabled={busy||!assignee} onClick={()=>setConfirmOpen(true)}
     className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
     {busy?"Assigning…":"Assign work"}
    </button>
   </div>
+  <ConfirmActionDialog open={confirmOpen&&!busy}
+   title="Assign unowned placement work?"
+   consequence={"Assign "+drives+" unowned drive(s) and "+companies+" company relationship(s) to "+(members.find(member=>member.membershipId===assignee)?.displayName??"the selected teammate")+"? Work that already has an owner will not move."}
+   confirmLabel="Assign work"
+   onCancel={()=>setConfirmOpen(false)}
+   onConfirm={()=>{setConfirmOpen(false);void assign();}}/>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;
