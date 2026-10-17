@@ -27,7 +27,7 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
     onChange={e=>setPercent(Number(e.target.value))}
     className="mt-1 block min-h-11 w-28 rounded border border-border bg-surface px-3"/>
   </label>
-  <p className="text-xs text-muted-foreground">This configures the legacy percentage threshold. The student readiness calculation still requires the learner course-progress producer.</p>
+  <p className="text-xs text-muted-foreground">This threshold is applied to learner course-progress records when the selected preparation courses have published content. Unavailable records are not treated as a failed learner.</p>
   <button type="button" disabled={busy||percent===initial||percent<0||percent>100}
    onClick={()=>void save()} className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save changes</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}

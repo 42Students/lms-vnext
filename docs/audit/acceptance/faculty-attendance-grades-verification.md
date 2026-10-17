@@ -37,3 +37,14 @@ FAC-attendance-grades-01/03/04/20 remain to be reconciled; no tests executed by 
 
 | FAC-attendance-grades-03 | DONE | src/components/attendance/faculty-attendance-workspace.tsx; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("FAC-attendance-grades-03 has an atomic-failure explanation and deliberate persisted-roster re-read")` |
 | FAC-attendance-grades-01 | PARTIAL — SMS provider registration outstanding | src/modules/attendance/faculty-service.ts; src/modules/attendance/faculty-correction-audit-model.ts; tests/unit/chat11-attendance-learner-notifications-round8.test.ts — `it("FAC-attendance-grades-01 only notifies learners whose absent/present state changed")`. In-app notices persisted in the same transaction as attendance. Parent absence/correction SMS remains OPEN pending registered DLT attendance templates and opted-in parent recipients. |
+
+
+## Final sprint — chat-12 verification
+
+| ID | Disposition | Test and acceptance evidence |
+|---|---|---|
+| FAC-attendance-grades-18 | NOT-A-GAP (intentional safe capacity 1000 instead of legacy 500) | `src/modules/attendance/faculty-service.ts`: 1000 maximum per list, unique and disjoint learner lists, scoped scheduled-roster verification. `tests/unit/chat12-final-faculty-attendance.test.ts`: `FAC-attendance-grades-18 keeps bounded present and absent lists with duplicate checks`, `FAC-attendance-grades-18 checks roster membership within the scheduled class`. |
+| FAC-attendance-grades-19 | DONE | Persisted college attendance threshold is read from `attendancePolicies.eligibilityThresholdPercent`; no "legacy risk rules" user-visible explanation in `src/components/courses/faculty-course-home-signals.tsx`. `tests/unit/chat12-final-faculty-attendance.test.ts`: `FAC-attendance-grades-19 honors persisted college policy rather than hardcoded UI risk rules`. |
+| FAC-attendance-grades-22 | DONE (intentionally new pages) | Legitimate gradebook, reports and session coverage are new features without legacy equivalents. Their headers state their purposes and do not claim legacy wording. `tests/unit/chat12-final-faculty-attendance.test.ts`: `FAC-attendance-grades-22 uses purposeful native reports and gradebook labels, without invented legacy eyebrow`. |
+
+Tests authored, not run in this environment; orchestrator must execute TypeScript, Vitest, and the database/browser acceptance.

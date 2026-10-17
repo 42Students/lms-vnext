@@ -47,20 +47,26 @@ export default async function TpoHome(){
  const weekEnd=new Date(calendarNow.getTime()+7*86400000);
  // Independent reads run concurrently; Home no longer serially awaits the full
  // operations graph before requests, unread messages or the week calendar.
- const [batches,operations,pendingRequestCount,studentStats,unreadMessages,
+ const [batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,
   crmReady,collegeRules,placementTeam,teamThreads,weekEvents,profileRows]=await Promise.all([
-   listTpoBatches(ctx),getPlacementTpoOperations(ctx,collegeId),
-   getPendingTpoRequestsCount(ctx).catch(()=>null),
-   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}).catch(()=>null),
-   countTpoUnreadRecruiterMessages(ctx).catch(()=>null),tpoCrmTablesReady().catch(()=>false),
-   getCollegePlacementRules(ctx,collegeId).catch(()=>null),
-   getTpoPlacementTeam(ctx,collegeId).catch(()=>null),
-   listMyTpoInternalThreads(ctx).catch(()=>null),
+   listTpoBatches(ctx).catch(()=>null),getPlacementTpoOperations(ctx,collegeId).catch(()=>null),
+   getPendingTpoRequestsCount(ctx),
+   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}),
+   countTpoUnreadRecruiterMessages(ctx),tpoCrmTablesReady(),
+   getCollegePlacementRules(ctx,collegeId),
+   getTpoPlacementTeam(ctx,collegeId),
+   listMyTpoInternalThreads(ctx),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
     to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
    getDb().select({displayName:users.displayName}).from(users)
     .where(eq(users.id,ctx.user.id)).limit(1).catch(()=>[]),
  ]);
+ // TPO-home-R08: a single heavyweight analytics or batch rejection cannot
+ // replace every lightweight, independently loaded Home signal with error.tsx.
+ const batches=batchResult??{ready:false,batches:[]};
+ const operations=operationsResult??{
+  summary:{publishedJobs:0,jobsNeedingAttention:0},workQueue:[],jobs:[],
+ };
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
  const optionalDataUnavailable=[pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads].some(value=>value===null);
@@ -166,7 +172,7 @@ export default async function TpoHome(){
  <PageHeader eyebrow="TPO" title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
  <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-  <StatTile label={rows[1]?.title ?? "Drives"} value={operations.summary.publishedJobs}
+  <StatTile label={rows[1]?.title ?? "Drives"} value={operationsResult?operations.summary.publishedJobs:"—"}
     detail={rows[1]?.status} href={rows[1]?.href}/>
   <StatTile label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
     detail={rows[2]?.status} href={rows[2]?.href}/>

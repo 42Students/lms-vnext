@@ -1,3 +1,4 @@
+import {publicNetworkNotice} from "@/modules/auth/public-network-notice-model";
 /**
  * Guarded JSON fetch for client components. Usage:
  *   const data = await apiFetch<MyPayload>("/api/example", { method: "POST", body: ... });
@@ -86,6 +87,12 @@ export async function apiFetch<T = unknown>(
     }
     return payload as T;
   } catch (reason) {
+    const status=reason instanceof FriendlyFetchError?reason.status:didTimeout?504:0;
+    if(typeof window!=="undefined"){
+      const path=typeof input==="string"?input:input instanceof URL?input.pathname:input instanceof Request?input.url:"";
+      const notice=publicNetworkNotice({status,isSessionChange:/\/api\/auth\/session(?:\?|$)/.test(path)});
+      if(notice)window.dispatchEvent(new CustomEvent("lms:network-notice",{detail:notice}));
+    }
     if (reason instanceof FriendlyFetchError) throw reason;
     if (didTimeout) {
       throw new FriendlyFetchError(friendlyApiError({ status: 504 }), 504);

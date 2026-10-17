@@ -15,7 +15,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
-import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
+import {listLearnerCourseClassAnnouncements} from "@/modules/courses/learner-course-announcements-service";
 import {readLearnerPlaybackSettings,LEARNER_PLAYBACK_DEFAULTS} from "@/modules/courses/learner-playback-settings";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import {
@@ -81,28 +81,19 @@ export default async function LearnerCourseTabPage({
   let content: ReactNode;
 
   if (activeTab === "home") {
-    const [discussion, display] =
+    const [announcements, display] =
       await Promise.all([
-        listCourseDiscussionMessages(
-          context,
-          deliveryId,
-        ),
-        loadCourseDisplayContentIfReady(
-          workspace.course.id,
-        ),
+        listLearnerCourseClassAnnouncements(context,courseMeta.sectionId),
+        loadCourseDisplayContentIfReady(workspace.course.id),
       ]);
-    const courseUpdates = discussion.messages
-      .filter((message) => message.senderRole !== "LEARNER")
-      .sort((left, right) => {
-        if (left.pinned !== right.pinned) {
-          return left.pinned ? -1 : 1;
-        }
-        return right.createdAt.getTime() - left.createdAt.getTime();
-      })
-      .map((message) => ({
-        ...message,
-        senderName: message.senderName?.trim() || "Instructor",
-      }));
+    const courseUpdates = announcements.map(announcement=>({
+      id:announcement.id,
+      title:announcement.title,
+      senderName:announcement.senderName?.trim()||"College staff",
+      messageText:announcement.messageText,
+      pinned:false,
+      createdAt:announcement.createdAt,
+    }));
 
     content = (
       <LearnerCourseOverview

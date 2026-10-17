@@ -4,7 +4,7 @@ import {
   type LearnerCourseListRow,
 } from "@/components/courses/learner-course-list";
 import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
-import {getLearnerCourseSetupStatus} from "@/modules/courses/learner-course-setup-service";
+import {getLearnerCourseSetupStatus,listLearnerProgramSemesters} from "@/modules/courses/learner-course-setup-service";
 import { learnerCourseInstructorLabels } from "@/modules/courses/learner-course-instructor-labels-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { loadAuthorizedCourseDisplayContentsIfReady } from "@/modules/courses/course-display-service";
@@ -118,13 +118,16 @@ export default async function LearnerCoursesPage() {
     }, 4,
   );
 
-  const setupStatus=rows.length===0?await getLearnerCourseSetupStatus(context):null;
+  const [setupStatus,programSemesters]=await Promise.all([
+    rows.length===0?getLearnerCourseSetupStatus(context):Promise.resolve(null),
+    listLearnerProgramSemesters(context),
+  ]);
   return (
     <div className="space-y-6">
       <PageHeader
         title="Courses"
       />
-      <LearnerCourseList rows={rows} setupStatus={setupStatus} />
+      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters} />
     </div>
   );
 }

@@ -65,3 +65,5 @@ Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integ
 
 
 - COL-academic-setup-29/33: `src/components/academics/college-cohort-management.tsx` now uses the guarded `apiFetch` for archive (including expectedUpdatedAt) and graduation, instead of parsing and rethrowing untrusted backend error codes. `tests/unit/chat11-academic-register-regressions-round11.test.ts` has named lifecycle regression cases; tests have not been run.
+
+| COL-academic-setup-21 (chat-14 final sprint) | WRONG | The original assertion is contradicted by persisted department name sorting, result counter, department search and a remembered program rows-per-page setting. `src/components/admin/department-directory.tsx`, `admin-program-directory.tsx`; `tests/unit/chat14-final-col-academic-setup-21.test.ts`. |

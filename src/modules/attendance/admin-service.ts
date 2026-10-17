@@ -42,6 +42,7 @@ import {
   listActiveDeliveryLearners,
 } from "@/modules/courses/delivery-roster";
 import { indiaAttendanceMonthWindow } from "./month-window";
+import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 
 
 const uuid = z.string().uuid();
@@ -158,7 +159,7 @@ export async function getAdminAttendanceOptions(
           courseName: courses.name,
           courseCode: courses.code,
           offeringType:courseOfferings.type,
-          isPast:sql<boolean>`(${courseSectionDeliveries.endedAt} is not null or ${academicPeriods.endDate} < (now() at time zone 'Asia/Kolkata')::date)`,
+          isPast:sql<boolean>`${courseSectionDeliveries.endedAt} is not null`,
           academicPeriodId:
             academicPeriods.id,
           academicPeriodName:
@@ -218,7 +219,7 @@ export async function getAdminAttendanceOptions(
         .orderBy(
           asc(sections.name),
           asc(courses.name),
-          sql`case when ${courseSectionDeliveries.endedAt} is null and ${academicPeriods.endDate} >= (now() at time zone 'Asia/Kolkata')::date then 0 else 1 end`,
+          sql`case when ${courseSectionDeliveries.endedAt} is null then 0 else 1 end`,
           asc(courseSectionDeliveries.id),
         ),
       getDb()
@@ -460,7 +461,7 @@ export async function correctAdminAttendance(
     );
   }
 
-  return getDb().transaction(
+  const receipt=await getDb().transaction(
     async (tx) => {
       const [event] = await tx
         .select({
@@ -531,7 +532,7 @@ export async function correctAdminAttendance(
       const priorStatus=priorRecord?.status??"PRESENT";
       // A repeated correction is a no-op and must not create a false event.
       if(priorStatus===input.status){
-        return {scheduleEventId,membershipId:input.membershipId,status:input.status,correctedAt:now};
+        return {scheduleEventId,membershipId:input.membershipId,status:input.status,correctedAt:now,smsOutboxId:null};
       }
 
       // Preserve Faculty/Learner semantics: PRESENT is an absent
@@ -609,7 +610,7 @@ export async function correctAdminAttendance(
 
       // COL-attendance-02: persist audit in the same transaction. It also
       // records corrections to PRESENT, which delete the absence exception row.
-      await tx.insert(activityEvents).values({
+      const [audit]=await tx.insert(activityEvents).values({
         organizationId:college.organizationId,
         collegeId:college.id,
         actorUserId:context.user.id,
@@ -627,13 +628,26 @@ export async function correctAdminAttendance(
           from:priorStatus,to:input.status,
         },
         occurredAt:now,
-      });
+      }).returning({id:activityEvents.id});
+      const smsKind=input.status==="ABSENT"?"ABSENT" as const:
+       input.status==="PRESENT"&&priorStatus==="ABSENT"?"CORRECTED" as const:null;
+      const smsOutboxId=smsKind&&audit?await enqueueAttendanceParentSms(tx,{
+       eventId:audit.id,collegeId:college.id,membershipId:input.membershipId,
+       scheduleEventId,kind:smsKind,courseName:delivery.courseName,
+       startsAt:event.startsAt,endsAt:event.endsAt,
+      }):null;
       return {
         scheduleEventId,
         membershipId: input.membershipId,
         status: input.status,
         correctedAt: now,
+        smsOutboxId,
       };
     },
   );
+  // Provider I/O is never part of the attendance mutation transaction.
+  // Rejections or absent DLT credentials cannot roll back the correction.
+  const {smsOutboxId,...publicReceipt}=receipt;
+  if(smsOutboxId)await dispatchQueuedAttendanceParentSms(smsOutboxId).catch(()=>undefined);
+  return publicReceipt;
 }
