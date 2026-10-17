@@ -51,3 +51,9 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/82: `graceful-production-saves.spec.ts` tests 36 signed-in staging save failures (4 roles × 9 faults). All mutations fail under interception; no real writes occur. Production config includes the spec.
 - GR-80/81/82: Missing externally authenticated staging role states cause explicit skips, not passes; `expectNoRawErrors` and uncaught-browser-error assertions remain mandatory.
 - GR-83: No fake-provider outbox completion asserted; orchestrator still needs independent helper and database test execution.
+
+### Round-7 code-step injection handoff
+
+- GR-80/81: `tests/e2e/graceful-otp-flows.spec.ts` adds **40 uniquely named browser scenarios**: 20 single-factor verification failures (Email/Phone × 10 kinds), 10 administrator two-factor verification failures (both codes retained), and 10 SMS-to-email fallback failures (OTP attempt retained).
+- GR-80: Every first-step success is intercepted and returns a synthetic UUID-shaped login attempt. Every verify/fallback request is intercepted, so no SMS/email provider call or real sign-in occurs; assertions require a real target POST, readable alert, preserved form and no raw DOM/console error.
+- GR-82/83: Production-build certification, role fixture readiness and fake-provider GR-51 outbox witness are orchestrator-owned, NOT RUN by chat-15.
