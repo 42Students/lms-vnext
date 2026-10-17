@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getTpoCompaniesView,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
+import {exportTpoCompanyDirectory,tpoCompaniesQuerySchema} from "@/modules/placements/tpo-companies-view-service";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -23,15 +23,13 @@ export async function GET(request:Request) {
    sort:url.searchParams.get("sort")||undefined,page:1,pageSize:100,
   });
   if(!parsed.success)return NextResponse.json({error:"INVALID_FILTERS"},{status:422});
-  const first=await getTpoCompaniesView(context,parsed.data);
-  // Explicit ceiling, never silently truncate a directory export.
-  if(first.page.total>2000)return NextResponse.json({
-   error:"EXPORT_TOO_LARGE",message:"Narrow the search to 2,000 companies or fewer.",
-  },{status:413});
-  const rows=[...first.page.items];
-  for(let page=2;page<=first.page.totalPages;page++){
-   const next=await getTpoCompaniesView(context,{...parsed.data,page});
-   rows.push(...next.page.items);
+  let rows;
+  try{rows=await exportTpoCompanyDirectory(context,parsed.data);}
+  catch(error){
+    if(error instanceof Error&&error.message==="COMPANY_EXPORT_TOO_LARGE")
+      return NextResponse.json({error:"EXPORT_TOO_LARGE",
+        message:"Narrow the search to 2,000 companies or fewer."},{status:413});
+    throw error;
   }
   const header=["Company","Website","Contacts","Drives","Offers","Accepted offers","Confirmed joins","Relationship"];
   const records=rows.map(row=>[
