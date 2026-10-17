@@ -17,8 +17,8 @@ export function learnerProjectDeliveryReviewNotice(projectId:string,decision:str
  const approved=decision==="APPROVED";
  return {
   title:approved?"Delivery accepted":"Changes requested",
-  body:approved?"The mentor approved your team's final project submission.":
-   "The mentor has requested changes to your team's final submission.",
+  body:approved?"Your team's final delivery was accepted. Open it to view the review.":
+   "Changes were requested on your team's final delivery. Open it to read the feedback.",
   actionHref:"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery",
  };
 }
