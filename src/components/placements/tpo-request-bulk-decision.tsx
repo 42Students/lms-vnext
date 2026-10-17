@@ -5,6 +5,7 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
+import {tpoRequestFailedRowsTsv} from "@/modules/placements/tpo-request-failed-rows-model";
 
 type Row={id:string;studentName:string;requestType:string;expectedUpdatedAt:string};
 type Outcome={id:string;name:string;status:"updated"|"failed";message:string};
@@ -21,6 +22,13 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
  const [acknowledged,setAcknowledged]=useState(false);
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<Outcome[]>([]);
+ async function copyFailed(){
+  const text=tpoRequestFailedRowsTsv(outcomes);
+  if(!text)return;
+  try{
+   await navigator.clipboard.writeText(text);
+  }catch{setError("Could not copy failed requests. Check browser clipboard permissions.");}
+ }
  const chosen=rows.filter(row=>selected.includes(row.id));
  const chosenKind=chosen[0]?.requestType??null;
  const valid=chosen.length>0&&chosen.length<=MAX_BULK_REQUESTS&&
@@ -113,7 +121,10 @@ export function TpoRequestBulkDecision({rows}:{rows:readonly Row[]}){
    <ul className="space-y-1">{outcomes.map(row=><li key={row.id} className="rounded border border-border p-2">
     <strong>{row.name}</strong>: {row.message}
    </li>)}</ul>
-   {outcomes.some(row=>row.status==="failed")?<p role="alert">Some requests were not decided. Recheck them before retrying.</p>:null}
+   {outcomes.some(row=>row.status==="failed")?<div className="space-y-2">
+    <p role="alert">Some requests were not decided. Recheck them before retrying.</p>
+    <button type="button" onClick={()=>void copyFailed()} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Copy failed</button>
+   </div>:null}
   </div>:null}
   {error?<p role="alert" className="text-error">{error}</p>:null}
  </section>;
