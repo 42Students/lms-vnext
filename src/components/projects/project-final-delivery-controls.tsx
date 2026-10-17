@@ -107,7 +107,14 @@ export function LearnerFinalDeliveryControl({
     setDemoUrl(draft?.demoUrl ?? "");
     setNotes(draft?.notes ?? "");
     setAttachments(safeDraftAttachments(draft?.attachments));
-    setLinkName("");setLinkUrl("");
+    setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
+    lastSavedSnapshot.current=JSON.stringify({
+      summary:(draft?.summary??"").trim(),
+      sourceUrl:draft?.sourceUrl?.trim()||undefined,
+      demoUrl:draft?.demoUrl?.trim()||undefined,
+      notes:draft?.notes?.trim()||undefined,
+      attachments:safeDraftAttachments(draft?.attachments),
+    });
   }
 
   async function save(
