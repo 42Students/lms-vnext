@@ -121,6 +121,16 @@ export function MentorTaskCreate({
             <option value="SPIKE">Spike</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Assignee
+          <select value={assigneeMembershipId} disabled={busy}
+            onChange={event=>setAssigneeMembershipId(event.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Unassigned</option>
+            {learners.map(member=><option key={member.membershipId} value={member.membershipId}>
+              {member.displayName??"Learner"}
+            </option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Due date
           <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/>
         </label>
