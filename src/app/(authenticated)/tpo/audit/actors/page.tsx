@@ -13,6 +13,7 @@ type SearchParams = {
   entityId?: string | string[];
   from?: string | string[];
   to?: string | string[];
+  sort?:string|string[];
   page?: string | string[];
   pageSize?: string | string[];
 };
@@ -31,6 +32,7 @@ export default async function TpoActorAuditPage({
     ...(first(raw.entityId) ? { entityId: first(raw.entityId) } : {}),
     ...(first(raw.from) ? { from: first(raw.from) } : {}),
     ...(first(raw.to) ? { to: first(raw.to) } : {}),
+    ...(first(raw.sort) ? { sort: first(raw.sort) } : {}),
     ...(first(raw.page) ? { page: first(raw.page) } : {}),
     ...(first(raw.pageSize) ? { pageSize: first(raw.pageSize) } : {}),
   };
@@ -90,6 +92,13 @@ export default async function TpoActorAuditPage({
         <input type="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal text-foreground"/>
       </label>)}
+      <label className="grid gap-1 text-sm font-semibold text-foreground">
+       Sort date
+       <select name="sort" defaultValue={parsed.data.sort}
+        className="min-h-10 rounded-md border border-border bg-surface px-3">
+        <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
+       </select>
+      </label>
       <label className="grid gap-1 text-sm font-semibold text-foreground">
         Page size
         <select name="pageSize" defaultValue={String(parsed.data.pageSize)}
