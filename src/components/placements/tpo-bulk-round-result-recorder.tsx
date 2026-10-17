@@ -59,7 +59,11 @@ export function TpoBulkRoundResultRecorder({
     if (busy || selected.length === 0 || selected.length > 25 ||
       (outcome !== "PASS" && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
-      setError("Select learners and provide a learner-facing message for Not Selected.");
+      setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
+        ? "Choose a valid first waitlist rank. Ranks must be 1–100000."
+        : selected.length===0?"Select at least one learner."
+        : selected.length>25?"Select at most 25 learners."
+        : "Enter a learner-facing message before staging this outcome.");
       return;
     }
     const entries = selected.flatMap((id,index) => {
