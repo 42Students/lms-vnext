@@ -7,6 +7,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
 import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
+import {CollegeStudentImportHistory} from "@/components/college/college-student-import-history";
 import { CollegeStudentLifecycleAction } from "@/components/college/college-student-lifecycle-action";
 import { PersonOnboardDialog } from "@/components/admin/person-onboard-dialog";
 import {
@@ -96,6 +97,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 Register students
               </Link>
             ) : null}
+            {kind==="LEARNER"?<CollegeStudentImportHistory/>:null}
             {kind === "LEARNER" ? (
               <Link href="/college/students/import"
                 className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
