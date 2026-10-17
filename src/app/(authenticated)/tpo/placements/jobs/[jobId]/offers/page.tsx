@@ -60,7 +60,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="UNKNOWN">No expiry recorded</option>
     </select>
    </label>
-   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, roll, batch, branch or role
+   <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
