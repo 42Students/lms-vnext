@@ -9,11 +9,16 @@ export type StatTileProps = {
   className?: string;
 };
 
+const numberFormat = new Intl.NumberFormat("en-IN");
+
 export function StatTile({ label, value, detail, href, className }: StatTileProps) {
+  const displayValue = typeof value === "number"
+    ? Number.isFinite(value) ? numberFormat.format(value) : "—"
+    : value;
   const content = (
     <>
       <p className="m-0 text-sm font-medium leading-6 text-body">{label}</p>
-      <p className="mt-2 break-words text-2xl font-semibold leading-8 tabular-nums text-foreground lg:text-3xl lg:leading-9">{value}</p>
+      <p className="mt-2 break-words text-2xl font-semibold leading-8 tabular-nums text-foreground lg:text-3xl lg:leading-9">{displayValue}</p>
       {detail ? <p className="mt-2 text-sm leading-6 text-body">{detail}</p> : null}
     </>
   );
