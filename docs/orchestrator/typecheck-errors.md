@@ -1,51 +1,24 @@
-# Typecheck errors on main (cloud CI, 2026-10-17 23:15)
+# Typecheck errors on main (cloud CI, 2026-10-18 01:15)
 
-Main fails `tsc --noEmit` with the errors below. Most come from merge conflicts that dropped parts of a lane's commit (missing schema exports, missing state variables, missing props). The author lane must restore what is missing, keeping everything else on main as is. Do not delete features to silence an error. Typecheck is the gate for deploy, so fix these before new gaps.
-
-Likely owners:
-- src/db/schema/* missing exports (placementLearnerGeneralRequests, placementLearnerGeneralRequestEvents, placementTpoPrepAssignments, foreignKey import): chat-12 and chat-15 (their SQL is already registered in migration 0134; the Drizzle table definitions in src/db/schema/placements.ts or tpo files are missing or half-merged)
-- recruiter-private-rating-service.ts: chat-14
-- project-meeting-controls.tsx, project-workspace.tsx: chat-7 and chat-16
-- tests/integration/courses-c2-learning.test.ts: chat-7 (lesson content now requires points)
-- everything else: the lane that last touched the file (git log -1 on the path)
+Main fails `tsc --noEmit` with ONLY the errors below (everything else is green; lint passes). Each owner lane fixes its own FIRST, restoring what merge conflicts dropped, without deleting features. Owners:
+- src/components/ui/tabs.tsx: chat-17
+- recruiter-drive-request-service.ts (autoReason, approvedJobId missing declarations): chat-14
+- college-company-directory-service.ts and tests/integration/chat11-college-company-restore.test.ts (DirectoryQuery.status, ActiveMembership.showDeleted): chat-11
+- college/placements/interviews/export route type: chat-4 or chat-11 (whoever last touched the file)
 
 Errors:
 
-- ﻿src/components/projects/project-meeting-controls.tsx(264,34): error TS2304: Cannot find name 'facilitation'.
-- src/components/projects/project-meeting-controls.tsx(265,36): error TS2304: Cannot find name 'setFacilitation'.
-- src/components/projects/project-meeting-controls.tsx(265,52): error TS7006: Parameter 'prev' implicitly has an 'any' type.
-- src/components/projects/project-meeting-controls.tsx(269,32): error TS2304: Cannot find name 'outcome'.
-- src/components/projects/project-meeting-controls.tsx(269,75): error TS2304: Cannot find name 'setOutcome'.
-- src/components/projects/project-meeting-controls.tsx(273,51): error TS2304: Cannot find name 'followUpAt'.
-- src/components/projects/project-meeting-controls.tsx(274,34): error TS2304: Cannot find name 'setFollowUpAt'.
-- src/components/projects/project-meeting-controls.tsx(278,30): error TS2304: Cannot find name 'facilitation'.
-- src/components/projects/project-meeting-controls.tsx(279,34): error TS2304: Cannot find name 'setFacilitation'.
-- src/components/projects/project-meeting-controls.tsx(279,50): error TS7006: Parameter 'prev' implicitly has an 'any' type.
-- src/components/projects/project-workspace.tsx(953,31): error TS2322: Type '{ projectId: string; sprintId: string; title: string; description: string | null; updatedAt: string; estimationUnit: string | null; goal: string | null; definitionOfDone: string | null; startDate: string | null; endDate: string | null; dueDate: 
-- src/db/schema/placements.ts(557,5): error TS2304: Cannot find name 'foreignKey'.
-- src/modules/placements/recruiter-private-rating-service.ts(26,45): error TS2339: Property 'companyRelationshipId' does not exist on type '{ id: string; title: string; description: string; status: string; employmentType: string; workMode: string; locations: string[]; openings: number | null; minimumAnnualCtcInr: number 
-- src/modules/placements/recruiter-private-rating-service.ts(28,48): error TS2339: Property 'companyRelationshipId' does not exist on type '{ id: string; title: string; description: string; status: string; employmentType: string; workMode: string; locations: string[]; openings: number | null; minimumAnnualCtcInr: number 
-- src/modules/placements/recruiter-private-rating-service.ts(69,73): error TS2339: Property 'companyRelationshipId' does not exist on type '{ id: string; title: string; description: string; status: string; employmentType: string; workMode: string; locations: string[]; openings: number | null; minimumAnnualCtcInr: number 
-- src/modules/placements/tpo-general-request-service.ts(8,2): error TS2724: '"@/db/schema"' has no exported member named 'placementLearnerGeneralRequestEvents'. Did you mean 'placementLearnerRequests'?
-- src/modules/placements/tpo-general-request-service.ts(8,39): error TS2724: '"@/db/schema"' has no exported member named 'placementLearnerGeneralRequests'. Did you mean 'placementLearnerRequests'?
-- src/modules/placements/tpo-prep-assignment-service.ts(6,63): error TS2724: '"@/db/schema"' has no exported member named 'placementTpoPrepAssignments'. Did you mean 'placementTpoPrepReadiness'?
-- tests/integration/courses-c2-learning.test.ts(391,9): error TS2345: Argument of type '{ lessonId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentType: "RESOURCE"; deli
-- tests/integration/courses-c2-learning.test.ts(403,9): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "YOUTUBE"; title: string; externalUrl: string; durationSeconds: number; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: numbe
-- tests/integration/courses-c2-learning.test.ts(417,36): error TS2345: Argument of type '{ lessonId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentType: "RESOURCE"; del
-- tests/integration/courses-c2-learning.test.ts(450,9): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentTy
-- tests/integration/courses-c2-learning.test.ts(633,41): error TS2345: Argument of type '{ lessonId: string; contentType: "YOUTUBE"; title: string; externalUrl: string; durationSeconds: number; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number
-- tests/integration/courses-c2-learning.test.ts(708,41): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentT
-- tests/integration/courses-c3-progress.test.ts(350,7): error TS2345: Argument of type '{ lessonId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentType: "RESOURCE"; deli
-- tests/integration/courses-c3-progress.test.ts(360,5): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "VIDEO"; title: string; storageKey: string; durationSeconds: number; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; 
-- tests/integration/courses-c3-progress.test.ts(374,7): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentTy
-- tests/integration/courses-c3-progress.test.ts(644,9): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "LIVE_CLASS"; title: string; externalUrl: string; startsAt: string; endsAt: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; p
-- tests/integration/courses-c4c-assessment-progress.test.ts(402,5): error TS2345: Argument of type '{ lessonId: string; contentType: "RESOURCE"; title: string; notes: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentType: "RES
-- tests/integration/courses-ui2a-faculty.test.ts(446,5): error TS2345: Argument of type '{ lessonId: string; contentType: "RESOURCE"; title: string; externalUrl: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; contentType: "RESOURCE
-- tests/integration/courses-ui2a-faculty.test.ts(457,5): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; contentType: "RESOURCE"; title: string; externalUrl: string; sequence: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: number; co
-- tests/integration/faculty-section-authoring.test.ts(119,48): error TS2345: Argument of type '{ lessonId: string; deliveryId: string; title: string; contentType: "LIVE_CLASS"; sequence: number; externalUrl: string; startsAt: string; endsAt: string; }' is not assignable to parameter of type '{ lessonId: string; title: st
-- tests/integration/sa-courses-content-authoring.test.ts(31,54): error TS2345: Argument of type '{ lessonId: `${string}-${string}-${string}-${string}-${string}`; contentType: "YOUTUBE"; title: string; sequence: number; externalUrl: string; durationSeconds: number; }' is not assignable to parameter of type '{ lessonId: st
-- tests/integration/sa-courses-content-authoring.test.ts(35,55): error TS2345: Argument of type '{ lessonId: `${string}-${string}-${string}-${string}-${string}`; contentType: "RESOURCE"; title: string; sequence: number; notes: string; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: n
-- tests/integration/sa-courses-content-authoring.test.ts(38,51): error TS2345: Argument of type '{ lessonId: `${string}-${string}-${string}-${string}-${string}`; contentType: "LIVE_CLASS"; title: string; sequence: number; externalUrl: string; startsAt: string; endsAt: string; }' is not assignable to parameter of type '{ 
-- tests/integration/sa-courses-content-authoring.test.ts(76,52): error TS2345: Argument of type '{ lessonId: `${string}-${string}-${string}-${string}-${string}`; contentType: "RESOURCE"; title: string; sequence: number; notes: string; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: n
-- tests/integration/sa-courses-content-authoring.test.ts(80,48): error TS2345: Argument of type '{ lessonId: `${string}-${string}-${string}-${string}-${string}`; contentType: "RESOURCE"; title: string; sequence: number; notes: string; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: n
-- tests/integration/storage-files-courses-db.test.ts(690,61): error TS2345: Argument of type '{ lessonId: string; contentType: "VIDEO"; title: string; sequence: number; storageKey: string; durationSeconds: number; }' is not assignable to parameter of type '{ lessonId: string; title: string; points: number; sequence: numb
+- ﻿src/app/api/college/placements/interviews/export/route.ts(14,43): error TS2345: Argument of type '{ conflict: boolean; id: string; jobId: string; roundId: string; applicationId: string | null; studentId: string; student: string | null; company: string; companyId: string; department: string | null; .
+- src/components/ui/tabs.tsx(54,28): error TS2722: Cannot invoke an object which is possibly 'undefined'.
+- src/modules/placements/college-company-directory-service.ts(23,51): error TS2339: Property 'status' does not exist on type 'DirectoryQuery'.
+- src/modules/placements/college-company-directory-service.ts(24,11): error TS2339: Property 'status' does not exist on type 'DirectoryQuery'.
+- src/modules/placements/recruiter-drive-request-service.ts(69,61): error TS2304: Cannot find name 'autoReason'.
+- src/modules/placements/recruiter-drive-request-service.ts(69,92): error TS2304: Cannot find name 'approvedJobId'.
+- src/modules/placements/recruiter-drive-request-service.ts(140,47): error TS2448: Block-scoped variable 'approvedJobId' used before its declaration.
+- src/modules/placements/recruiter-drive-request-service.ts(140,47): error TS2454: Variable 'approvedJobId' is used before being assigned.
+- src/modules/placements/recruiter-drive-request-service.ts(141,4): error TS2448: Block-scoped variable 'approvedJobId' used before its declaration.
+- src/modules/placements/recruiter-drive-request-service.ts(141,4): error TS2454: Variable 'approvedJobId' is used before being assigned.
+- src/modules/placements/recruiter-drive-request-service.ts(141,31): error TS2304: Cannot find name 'autoReason'.
+- tests/integration/chat11-college-company-restore.test.ts(22,40): error TS2353: Object literal may only specify known properties, and 'showDeleted' does not exist in type 'ActiveMembership'.
+- tests/integration/chat11-college-company-restore.test.ts(60,79): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'DirectoryQuery'.
+- tests/integration/chat11-college-company-restore.test.ts(62,87): error TS2353: Object literal may only specify known properties, and 'status' does not exist in type 'DirectoryQuery'.
