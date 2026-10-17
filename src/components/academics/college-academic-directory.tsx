@@ -276,7 +276,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
                     </td>
                     <td className="px-4 py-4 text-body">{item.programName} ({item.programCode})</td>
                     <td className="px-4 py-4 text-body">
-                      {item.totalCredits === null ? "Not configured" : item.totalCredits}
+                      {item.mappedCredits ?? 0}
                     </td>
                     <td className="px-4 py-4 text-body">{item.mappedCourses}</td>
                     <td className="px-4 py-4 text-body">{item.isActive ? "Active" : "Inactive"}</td>
