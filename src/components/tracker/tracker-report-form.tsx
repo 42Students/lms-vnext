@@ -13,7 +13,7 @@ import { trackerReportSchema } from "@/modules/bug-tracker/report-input-model";
 const field = "mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground";
 const label = "block text-sm font-semibold text-body";
 
-export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={}) {
+export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{contextPrefill?:string;canSearchSimilar?:boolean}={}) {
   const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
   const {draft,setDraft,restored,dirty,clearDraft}=useFormDraft("tracker-issue-report",initial);
   const {page,screen}=draft;
@@ -67,6 +67,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
   }
 
   async function checkSimilar(){
+    if(!canSearchSimilar)return;
     if(similarLoading || similarQuery.trim().length<3)return;
     setSimilarLoading(true);setSimilarError("");setSimilarResults([]);setSimilarSearched(false);
     try{
@@ -92,7 +93,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
       <h2 className="text-xl font-semibold">{created}</h2>
       <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
       <div className="flex flex-wrap gap-3">
-        <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href={"/tracker/issues/" + encodeURIComponent(created)}>View issue</Link>
+        <Link className="rounded-md border border-border px-4 py-2 text-sm font-semibold" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <button className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground"
           onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
           type="button">Report another</button>
@@ -181,6 +182,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
           Optional — use this for a screen recording, Drive file, or other useful http/https link.
         </span>
       </label>
+      {canSearchSimilar ? <>
       <section aria-label="Similar issues" className="rounded-lg border border-border p-4">
         <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
@@ -206,6 +208,7 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
       </section>
+      </> : null}
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
