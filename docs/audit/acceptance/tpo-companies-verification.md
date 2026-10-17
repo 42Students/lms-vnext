@@ -49,3 +49,9 @@ Builder did not run tests, lint, typecheck, or PostgreSQL integration.
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-companies-21 | DONE (source, tests unrun) | Company Memory uses exact **Company not found**, a retained Retry control, a separate warning for unavailable placed counts, and a friendly schema-not-ready message for both old `DB09_MIGRATIONS_PENDING` and new `DATABASE_NOT_READY` API errors. `src/components/tpo/tpo-company-memory-workspace.tsx`; named gap test in `tests/unit/chat2-company-memory-gap-parity.test.ts` and `tests/unit/chat2-company-friendly-retry-21.test.ts`. |
+
+
+## Chat-2 canonical company navigation decision
+| ID | Decision | Evidence |
+| --- | --- | --- |
+| TPO-companies-20 | NOT-A-GAP (intentional complementary identity views) | Default Companies landing redirects to the legacy Engage Companies tab; explicit `name` maintains grouped Company Memory, and `directory=1` with advanced filters preserves relationship-ID directory deep links. Removing either would break valid bookmarks or conflate similarly named company relationships across college-scoped identities. `src/app/(authenticated)/tpo/companies/page.tsx`; `tests/unit/chat2-campaign-open-increments.test.ts` **TPO-companies-20 routes the default list…**. Counts remain based on real offers per college, not cross-tenant merging. |
