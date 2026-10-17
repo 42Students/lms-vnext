@@ -20,6 +20,9 @@ export async function sendRecruiterMessageDigest(
  if(!canContactRecipientAtRuntime("EMAIL",digest.recipient,env))return false;
  const config=readZeptoMailConfig(env);
  const key=(env.RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY??"").trim();
+ let endpoint:URL;
+ try{endpoint=new URL(config.apiUrl);}catch{return false;}
+ if(endpoint.protocol!=="https:"||endpoint.username||endpoint.password)return false;
  if(!config.token||!key||key===config.otpTemplateKey ||
     !isRecruiterReplyAddress(digest.replyTo,env.RECRUITER_MESSAGE_REPLY_DOMAIN??"")||
     digest.messages.length===0)return false;
