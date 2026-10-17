@@ -13,6 +13,9 @@ describe("TPO batch finished access and honest state",()=>{
   expect(learnerWrite).toContain("if (batchLifecycle?.finishedAt) throw new TpoParticipationConflictError()");
   expect(groupWrite).toContain('throw new PlacementBatchError("DB08_BATCH_FINISHED")');
   expect(cohortWrite).toContain('if(lifecycle?.finishedAt)');
+  const rules=source("src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx");
+  expect(rules).toContain("ready&&!lifecycle?.finishedAt?<TpoBatchDecisionControl");
+  expect(rules).toContain("This batch is finished. Eligibility decisions are read-only.");
  });
  it("TPO-batches-15 never renders internal lifecycle migration jargon",()=>{
   for(const path of ["src/app/(authenticated)/tpo/batches/page.tsx",
