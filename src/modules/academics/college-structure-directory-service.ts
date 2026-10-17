@@ -266,6 +266,7 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
     .innerJoin(collegeMemberships,and(
       eq(collegeMemberships.id,lmsGroupMembers.membershipId),
       eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
     ))
     .where(and(inArray(electiveOfferings.slotId,ids),
       eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt)))
