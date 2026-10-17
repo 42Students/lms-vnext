@@ -18,7 +18,7 @@ export function MentorSprintDetailsEdit({
   projectId:string;sprintId:string;title:string;
   description:string|null;updatedAt:string;
   goal:string|null;definitionOfDone:string|null;startDate:string|null;endDate:string|null;
-  dueDate:string|null;status:string;estimationUnit:string|null;
+  dueDate:string|null;status:string;estimationUnit?:string|null;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -95,6 +95,7 @@ export function MentorSprintDetailsEdit({
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
+        {estimationUnit?<p className="m-0 text-xs text-muted-foreground">Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}</p>:null}
         <label className="grid gap-1 text-xs font-semibold text-body">Sprint goal
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
         <label className="grid gap-1 text-xs font-semibold text-body">What does done look like?

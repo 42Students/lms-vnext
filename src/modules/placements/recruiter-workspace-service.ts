@@ -329,6 +329,7 @@ export async function getRecruiterPlacementWorkspace(
   return {
     job: {
       id: scope.job.id,
+      companyRelationshipId: scope.relationshipId,
       title: scope.job.title,
       description:
         scope.job.description,
