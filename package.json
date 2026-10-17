@@ -47,7 +47,8 @@
     "ux:audit:unit": "vitest run tests/ux-playbook-primitives.test.tsx tests/ux-color-contrast.test.ts tests/ux-playbook-compatibility.test.tsx",
     "ux:audit:source": "node --test tests/ux-audit1-source.test.mjs",
     "ux:capture": "node scripts/ux-capture-references.mjs",
-    "ux:audit:verify": "npm run typecheck && npm run lint && npm run ux:audit:source && npm run ux:audit:unit"
+    "ux:audit:verify": "npm run typecheck && npm run lint && npm run ux:audit:source && npm run ux:audit:unit",
+    "ux:callsites": "node scripts/ux-callsite-audit.mjs"
   },
   "dependencies": {
     "drizzle-orm": "0.45.3",
