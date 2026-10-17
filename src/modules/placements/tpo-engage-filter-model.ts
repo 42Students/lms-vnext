@@ -10,7 +10,7 @@ export type EngageRosterRow={
  ownerName:string|null;inviteStatus:string;source:string|null;
  recruiterUserId:string|null;unsubscribedAt:string|null;
  designation?:string|null;nextFollowupAt?:string|null;lastActivityAt?:string|null;
- createdAt?:string;
+ createdAt?:string;drivesRan?:number|null;
 };
 const DAY=86_400_000;
 function isInRange(value:string|null|undefined,kind:string,now:number):boolean{
