@@ -62,3 +62,6 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-21 | OPEN (PG / entrance exam pending) | Stored percentage/year/gap/verified filters; `tests/unit/chat12-academic-evidence-round5.test.ts` test `TPO-students-21` |
 | TPO-students-29 | OPEN (profile data incomplete) | Persisted 10th/12th/diploma/UG percentages and verification projection; `tests/unit/chat12-academic-evidence-round5.test.ts` test `TPO-students-29` |
 | TPO-students-22 | OPEN (profile filters missing) | Missing marks stay null; `tests/unit/chat12-academic-evidence-round5.test.ts` test `TPO-students-22` |
+
+| TPO-students-24 | OPEN (drawer/chips parity) | Typed academic filters now selectable and URL persisted; `tests/unit/chat12-academic-filter-ui-round5.test.ts` named `TPO-students-24` |
+| TPO-students-26 | OPEN (demographic/profile columns pending) | Academic percentage, verified, year and gap columns use persisted values; `tests/unit/chat12-academic-filter-ui-round5.test.ts` named `TPO-students-26` |
