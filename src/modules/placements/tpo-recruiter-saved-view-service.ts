@@ -6,15 +6,19 @@ import {hasMembershipRole,type RequestContext} from "@/modules/identity/context"
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
-import {ENGAGE_COLUMNS} from "./tpo-recruiter-table-view-model";
+import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS} from "./tpo-recruiter-table-view-model";
 
+const SAVED_FILTER_KEYS=["q","stage","owner","status","invite","source","company","reach",
+ "designation","nextFollowup","lastActivity","added","need","attention"] as const;
 const viewBody=z.strictObject({
  action:z.enum(["CREATE","UPDATE","DELETE","PIN"]),
  id:z.string().uuid().optional(),
  name:z.string().trim().min(1).max(100).optional(),
  note:z.string().trim().max(500).nullable().optional(),
- query:z.record(z.string().max(64),z.string().max(250)).optional(),
- columns:z.array(z.enum(ENGAGE_COLUMNS)).max(ENGAGE_COLUMNS.length).optional(),
+ query:z.record(z.enum(SAVED_FILTER_KEYS),z.string().max(250)).optional(),
+ columns:z.array(z.enum(ENGAGE_COLUMNS)).max(ENGAGE_COLUMNS.length)
+  .refine(columns=>columns.includes("Contact")&&new Set(columns).size===columns.length,
+   "Contact must stay visible and columns must be unique").optional(),
  pinned:z.boolean().optional(),
 });
 export class TpoSavedViewError extends Error{
@@ -37,7 +41,13 @@ export async function listTpoRecruiterSavedViews(context:RequestContext){
  }>(sql`SELECT id,name,note,query_json,columns_json,pinned,updated_at
  FROM placement_tpo_recruiter_saved_views WHERE college_id=${college.id}::uuid
  AND owner_user_id=${context.user.id}::uuid ORDER BY pinned DESC,updated_at DESC LIMIT 100`);
- return {ready:true as const,views:result.rows};
+ return {ready:true as const,views:result.rows.map(row=>({
+  ...row,
+  query_json:Object.fromEntries(Object.entries(row.query_json??{}).filter(
+   ([key,value])=>SAVED_FILTER_KEYS.some(allowed=>allowed===key)&&typeof value==="string")),
+  columns_json:Array.isArray(row.columns_json)&&row.columns_json.includes("Contact")?
+   ENGAGE_COLUMNS.filter(column=>row.columns_json.includes(column)):[...ENGAGE_DEFAULT_COLUMNS],
+ }))};
 }
 export async function changeTpoRecruiterSavedView(context:RequestContext,raw:unknown){
  const input=viewBody.parse(raw),college=await scope(context),db=getDb();
@@ -58,7 +68,7 @@ export async function changeTpoRecruiterSavedView(context:RequestContext,raw:unk
   }
   if(input.action==="CREATE"&&!input.name)throw new TpoSavedViewError("BAD_ACTION");
   if(input.action!=="CREATE"&&!input.id)throw new TpoSavedViewError("BAD_ACTION");
-  const pinned=input.action==="PIN"?input.pinned??false:input.pinned??false;
+  const pinned=input.pinned??false;
   if(pinned){
    const existing=await tx.execute<{count:number}>(sql`SELECT count(*)::integer as count
     FROM placement_tpo_recruiter_saved_views WHERE ${owner} AND pinned=true

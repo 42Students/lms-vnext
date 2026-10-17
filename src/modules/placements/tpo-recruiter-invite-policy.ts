@@ -60,7 +60,8 @@ export function canIssueRecruiterInvite(
 ): boolean {
   return Boolean(
     !lead.recruiterUserId &&
-    !lead.unsubscribedAt,
+    !lead.unsubscribedAt &&
+    lead.manualStage !== "NOT_NOW",
   );
 }
 

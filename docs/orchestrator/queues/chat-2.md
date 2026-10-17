@@ -292,3 +292,23 @@ No tests, typecheck, lint, build, CI waits or live delivery operations; source b
 - `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 broader placement-staff permissions require policy owner approval.
 
 No tests, typecheck, lint, build, CI waits, live email sends or deployment operations under FAST v2. New code is not runtime-verified.
+
+## FAST v2 continuation after next integrated main — chat-2
+
+- Fast-forwarded chatgpt/chat-2-b to the latest integrated origin/main before edits (branch was fully merged). Pushed only [chat-2] gap-tagged commits on chatgpt/chat-2-b.
+- **WP-01 TPO-recruiters-13/14:** Link retry now filters currently ineligible failures, shows the retryable count, and review fingerprints bind identity, work-email, manual stage and invite history; no provider-backed sending. Bulk stage updates bind the review to lead IDs, expected manual stages, reason and date. Bulk owner reassignment binds the review to selected IDs and expected current owner membership. Mutated selections require another explicit review. Not-now invitations are denied by the shared server-side issuance policy, not just UI, with roster/detail controls aligned.
+- **WP-01 TPO-recruiters-18/20:** Saved-view server validates an allowlist of Engage filter query keys, unique columns and required Contact column, and sanitizes persisted legacy JSON before serving it. Invalid saved columns use the non-PII default column set rather than showing optional contact columns.
+- **WP-02 TPO-campaigns-public-07:** Engage no longer slices selection to 100 silently; selection counts display the real total and the campaign navigation is disabled above 100 with a user-visible explanation. Provider send remains disabled; drafts and exact recipient selection still need runtime acceptance.
+- WP-01..WP-08 remain IN-PROGRESS; the improvements are not equivalent to full WP acceptance.
+
+### Blocked items — skip and move on
+- `PUB-auth-public-50/52/53/54/55`: OD-09 sensitive share disclosure, OTP/ZIP and storage consent need security owner authorization/keys.
+- `TPO-campaigns-public-01/02/05`: verified campaign provider/templates, dispatch and durable receipts workers not available.
+- `TPO-recruiters-13/14/17`: real email bulk sending, audited undo/replay and reminder scheduler need provider registration and worker.
+- `TPO-settings-audit-52`: unlimited recruiter grants require security policy approval.
+- `REC-calendar-messages-profile-R01`: inbound reply relay requires registered email webhook and routing.
+- `TPO-companies-05` / `TPO-inbox-team-23/26/34`: Team object conversation/ask/away persistence needs coordinated schema.
+- `TPO-companies-06`: placed outcome requires approved college counts-as-placed policy.
+- `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 role expansion awaits permission-owner decision.
+
+FAST v2: No tests, lint, typecheck, build, CI waiting, deployment or live email sending. All source-level work is runtime-unverified.

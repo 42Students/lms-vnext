@@ -38,6 +38,7 @@ export function RecruiterBulkOwnerControls({
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
   const [reviewOpen,setReviewOpen]=useState(false);
+  const [reviewSignature,setReviewSignature]=useState("");
 
   const assignable = rows;
   const retryable=results.filter(item=>item.status==="ineligible"&&assignable.some(row=>row.id===item.leadId));
@@ -47,6 +48,7 @@ export function RecruiterBulkOwnerControls({
       id: lead.id,
       expectedOwnerMembershipId: lead.ownerMembershipId,
     }));
+  const currentSignature=[ownerId,...selections.map(row=>row.id+":"+(row.expectedOwnerMembershipId??"UNASSIGNED")).sort()].join("|");
   const canSubmit = !busy && ownersState === "ready" &&
     Boolean(ownerId) && selections.length > 0 && selections.length <= 100;
 
@@ -91,7 +93,7 @@ export function RecruiterBulkOwnerControls({
       setError("The selected owner is no longer in the list; reload staff.");
       return;
     }
-    if(!reviewOpen){setReviewOpen(true);return;}
+    if(!reviewOpen||reviewSignature!==currentSignature){setReviewSignature(currentSignature);setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
@@ -115,7 +117,7 @@ export function RecruiterBulkOwnerControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosen([]);
-      setReviewOpen(false);
+      setReviewOpen(false);setReviewSignature("");
       onUpdated();
     } catch {
       setError(
@@ -196,7 +198,7 @@ export function RecruiterBulkOwnerControls({
               ))}
             </div>
           )}
-          {reviewOpen?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
             <button type="button" className="ml-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit</button>
@@ -209,7 +211,7 @@ export function RecruiterBulkOwnerControls({
               disabled={!canSubmit}
               className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50"
             >
-              {busy ? "Assigning…" : reviewOpen ? "Confirm assignment" : "Review and confirm assignment"}
+              {busy ? "Assigning…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm assignment" : "Review and confirm assignment"}
             </button>
           </div>
         </>
