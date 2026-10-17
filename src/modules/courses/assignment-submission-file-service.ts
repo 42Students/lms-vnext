@@ -59,7 +59,7 @@ export type SubmissionFileUploadInput = z.infer<typeof submissionFileUploadInput
 export const submitSubmissionFilesInputSchema = z
   .object({
     deliveryId: courseSectionDeliveryIdSchema,
-    fileIds: z.array(idSchema).min(1).max(MAX_ASSIGNMENT_FILES_PER_SUBMISSION),
+    fileIds: z.array(idSchema).max(MAX_ASSIGNMENT_FILES_PER_SUBMISSION),
     textContent:z.string().trim().max(50000).nullable().optional(),
     links:z.array(z.object({
       kind:z.enum(["REPOSITORY_LINK","EXTERNAL_LINK"]),
@@ -71,6 +71,9 @@ export const submitSubmissionFilesInputSchema = z
     }).strict()).max(20).optional().default([]),
   })
   .strict()
+  .refine(value=>value.fileIds.length>0 || Boolean(value.textContent?.trim()) || value.links.length>0,{
+    message:"Include at least one written, link or file part.",
+  })
   .refine((value) => new Set(value.fileIds).size === value.fileIds.length, {
     message: "fileIds must be distinct",
   }).refine(value=>new Set(value.links.map(link=>link.url.toLowerCase())).size===value.links.length,{
