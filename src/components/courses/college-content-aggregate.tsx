@@ -3,6 +3,8 @@ import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
+import {CollegeContentCsvExport} from "./college-content-csv-export";
+import {CollegeContentPreview} from "./college-content-preview";
 import {
   collegeContentDuration,
   collegeContentHref,
@@ -156,6 +158,11 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </Link>
         </form>
       </section>
+      <CollegeContentCsvExport filename={(videos?"videos":"resources")+"-page-"+data.query.page+".csv"}
+       rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
+        lesson:item.lessonName,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
+        visible:item.visibleToStudents?"Visible":"Hidden",
+        details:videos?collegeContentDuration(item.durationSeconds):"Materials: "+(item.materialsCount??"Unavailable")}))}/>
       {!videos?<p className="text-xs text-muted-foreground">
         Materials counts cover registered additional materials only; a legacy Resource HTTPS link is stored separately.
         {data.materialCountsReady?"":" Counts require the verified DB05 Resource Materials runtime."}
@@ -180,6 +187,10 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     <span className="text-xs font-semibold text-body">{item.status}</span>
                   </div>
                   <h2 className="break-words text-base font-semibold text-foreground">{item.title}</h2>
+                  <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+                   type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
+                   visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
+                    "Materials: "+(item.materialsCount??"Unavailable")}}/>
                   <Link href={"/college/courses/offerings/" + encodeURIComponent(item.offeringId)}
                     className="block break-words font-semibold text-primary-text hover:underline">
                     {item.courseName} ({item.courseCode})
@@ -214,6 +225,10 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 <tr key={item.id} className="border-t border-border align-top">
                   <td className="px-4 py-4">
                     <p className="font-semibold text-foreground">{item.title}</p>
+                     <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+                      type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
+                      visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
+                       "Materials: "+(item.materialsCount??"Unavailable")}}/>
                     <p className="mt-1 text-xs text-muted-foreground">
                       {item.contentType}{videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
                     </p>
