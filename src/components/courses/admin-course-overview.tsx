@@ -14,6 +14,7 @@ import type {
   getAdminCourseWorkspace,
 } from "@/modules/courses/admin-course-workspace";
 import { AdminCourseCreatePanel } from "./admin-course-create-panel";
+import {SuperAdminCourseBulkVisibility} from "./super-admin-course-bulk-visibility";
 import {
   CourseActions,
   DeliveryActions,
@@ -511,6 +512,8 @@ export function AdminCourseOverview({
         {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
          No courses match these filters. Clear filters to see the whole catalogue.
         </p>:null}
+        {courseBasePath.startsWith("/admin/") ? <SuperAdminCourseBulkVisibility
+          courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         <DataTable
           columns={courseColumns}
           rows={catalogue?catalogue.items:workspace.courses}
