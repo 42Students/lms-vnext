@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -73,6 +75,7 @@ export default async function TpoFailureReasonsPage({
         }
       />
 
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/failure-reasons" collegeId={context.membership.collegeId}/></Suspense>
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
