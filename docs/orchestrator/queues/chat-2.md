@@ -195,3 +195,4 @@ No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct
 - Blocked `TPO-inbox-team-R01` remainder: email-inbound title variant requires verified inbound email pipeline; Messages topbar badge belongs to chat-9 shared shell, do not edit here.
 - WP-04 and WP-08 remain IN-PROGRESS because their other S2/S3 gaps (Team object conversations, announcements, staff workload) are not closed; do not mark them DONE.
 - No tests, typecheck, lint, build or CI waits under FAST v2. All new commits exclusively on `chatgpt/chat-2-b`.
+- `TPO-inbox-team-12` partial performance mitigation: omit correlated body-search SQL entirely when query has fewer than two characters. Full SQL-backed thread pagination is still open.
