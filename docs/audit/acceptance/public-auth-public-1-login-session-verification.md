@@ -22,7 +22,10 @@ DONE below means implemented plus a named acceptance test written, **not that th
 | PUB-auth-public-34 | DONE | src/components/auth/login-form.tsx; tests/unit/public-auth-login-gap-verification.test.ts — `it("PUB-auth-public-34 method tabs announce selection and allow keyboard arrows")` |
 | PUB-auth-public-37 | DONE | src/app/auth/handoff/page.tsx; tests/unit/public-auth-login-gap-verification.test.ts — `it("PUB-auth-public-37 safely retires legacy handoff tokens by redirecting to fresh login")` |
 
+| PUB-auth-public-08 | DONE | src/components/auth/membership-chooser.tsx; tests/unit/public-auth-chooser-graceful-gap.test.ts — `it("PUB-auth-public-08 restores last used active college as radio default")` |
+| PUB-auth-public-09 | DONE | src/components/auth/membership-chooser.tsx; tests/unit/public-auth-chooser-graceful-gap.test.ts — `it("PUB-auth-public-09 shows suspended memberships but never allows selection")` |
+
 ## Outstanding gaps (not claimed closed)
-`PUB-auth-public-08/09/10/14/15/18/20/21/22/23/24/26/27/28/29/30/31/32/35/36/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
+`PUB-auth-public-10/14/15/18/20/21/22/23/24/26/27/28/29/30/31/32/35/36/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.

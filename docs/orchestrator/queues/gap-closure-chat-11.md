@@ -249,7 +249,15 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - Remaining learner/projects gaps needing additional implementation/legacy verification: `LEARNER-projects-04/06/09/14/15/20/21/34/35/R04`. These are **OPEN**, not blocked or marked NOT-A-GAP; their partial witnesses do not count as closure.
 - `docs/audit/acceptance/learner-projects-verification.md` records implementation paths and exact named tests for the 29 queued source-complete items; orchestrator validates them before closing the official tracker.
 
+## Round-two checkpoint — 2026-10-17 (chat-11)
+
+- Merged main `3b213085` as two-parent commit `068c778e` (non-overlapping source changes), branch-only. Reread revised graceful/friendly protocol and checklist; shared helpers were not on main at the start of the round.
+- Learner/projects: closed source plus named tests for `LEARNER-projects-04/06/09/14/15/20/21/34/35/R04` (10 IDs). Implemented status options, legacy error and page copy, progress donut, delivery-readiness summary, meeting/team headings, safe resource opening with fallback and stats, activity state, overdue sprint rollup. `tests/unit/learner-projects-round2-gap-closure.test.ts` and learner page verification updated atomically; orchestrator runs tests.
+- Public/auth login: documented and covered `PUB-auth-public-01/02/03/04/05/06/07/08/09/11/12/13/16/17/19/25/33/34/37` (19 IDs). Updated login copy/failures, default/allowed methods, legal links, branding/title, unknown host, expired notice, recruiter deep-link, last-used chooser, suspended accounts, keyboard/focus. `tests/unit/public-auth-login-gap-verification.test.ts` and `tests/unit/public-auth-chooser-graceful-gap.test.ts`; public verification created/updated.
+- Total for this reply: 29 gap IDs with source evidence and tests authored (not run). Public remaining: `PUB-auth-public-10/14/15/18/20/21/22/23/24/26/27/28/29/30/31/32/35/36/38/39`. Remaining chat-11 pages: college academic setup; mentor projects meetings part2; faculty attendance grades; learner course detail; superadmin tenants modules 2. Tests, build, typecheck, lint delegated to orchestrator. No migration proposals.
+
 ## Notes (blockers, one line each)
 
 ## Needs shell (chat-9 only)
+- PUB-auth-public-20/21/22/24/29/31: chat-9 owns shell membership switching, cross-tab signout, forbidden notices and global connectivity banners; chat-11 cannot modify src/components/shell.
 
