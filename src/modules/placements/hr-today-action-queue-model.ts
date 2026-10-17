@@ -29,7 +29,7 @@ export function buildRecruiterActionQueue(input:{
  const deadlines = input.now ? live
   .filter(row=>row.job.applicationDeadline instanceof Date &&
     Number.isFinite(row.job.applicationDeadline.getTime()))
-  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-86400000)
+  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-7*86400000)
   .sort((a,b)=>a.job.applicationDeadline!.getTime()-b.job.applicationDeadline!.getTime())
   .slice(0,3)
   .map(row=>({
