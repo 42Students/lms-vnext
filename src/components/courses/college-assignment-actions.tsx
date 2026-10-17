@@ -2,11 +2,16 @@
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
+import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string};
 
 export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const router=useRouter();
  const [editing,setEditing]=useState(false);
+ const [methods,setMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
+ const [methodsLoaded,setMethodsLoaded]=useState(false);
+ const [description,setDescription]=useState("");
  const [title,setTitle]=useState(assignment.title);
  const [points,setPoints]=useState(String(assignment.points));
  const [dueAt,setDueAt]=useState(assignment.dueAt?new Intl.DateTimeFormat("sv-SE",{
@@ -29,7 +34,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    const due=dueAt?new Date(dueAt+":00+05:30"):null;
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
    path=path;method="PATCH";
-   body={title:title.trim(),maxPoints,dueAt:due?.toISOString()??null};
+   if(!methodsLoaded){setError("Load the saved submission methods before editing.");return;}
+   body={title:title.trim(),description:description.trim()||null,maxPoints,dueAt:due?.toISOString()??null,allowedMethods:methods};
   }else{
    const question=action==="ARCHIVE"?
     "Delete this assignment? Existing submissions must be preserved and will block deletion.":
@@ -52,7 +58,19 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   <div className="flex flex-wrap gap-2">
    {assignment.status!=="ARCHIVED"?<button type="button" disabled={busy}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
-    onClick={()=>setEditing(v=>!v)}>Edit</button>:null}
+    onClick={()=>void (async()=>{
+      if(editing){setEditing(false);return;}
+      setError("");setMethodsLoaded(false);
+      try{
+       const response=await fetch("/api/courses/assignments/"+encodeURIComponent(assignment.id),{cache:"no-store"});
+       const data=await response.json().catch(()=>null);
+       if(!response.ok||data?.assignment?.id!==assignment.id)throw Error(
+        data?.error??"Could not load assignment settings.");
+       setDescription(data.assignment.description??"");
+       setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));
+       setMethodsLoaded(true);setEditing(true);
+      }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
+    })()}>Edit</button>:null}
    {assignment.status==="DRAFT"?<button type="button" disabled={busy}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
     onClick={()=>void command("PUBLISH")}>Publish</button>:null}
@@ -70,6 +88,10 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
     <input type="datetime-local" disabled={busy} value={dueAt} onChange={e=>setDueAt(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
+   <label className="grid gap-1 text-xs font-semibold">Instructions
+    <textarea value={description} disabled={busy} maxLength={10000} rows={3}
+     onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
+   <FacultyAssignmentMethodPicker methods={methods} onChange={setMethods} disabled={busy}/>
    <button disabled={busy} className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary"
     type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</button>
   </div>:null}
