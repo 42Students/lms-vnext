@@ -7,7 +7,7 @@ export default function HrJobError({reset}:{
  return <section role="alert" className="rounded-xl border border-border bg-surface px-6 py-10 text-center">
   <h1 className="text-lg font-semibold text-foreground">Drive details could not load</h1>
   <p className="mx-auto mt-2 max-w-xl text-sm text-body">
-   There was a problem loading this recruiter-visible drive. No applicant or offer details are
+   Some drive information may be stale or unavailable. We couldn&apos;t verify this drive right now. No applicant or offer details are
    shown until the employer and college access check succeeds.
   </p>
   <div className="mt-5 flex flex-wrap justify-center gap-3">
