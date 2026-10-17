@@ -6,6 +6,7 @@ import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {TpoNoticeUndoToast} from "@/components/tpo/tpo-notice-undo-toast";
+import {TpoNoticeDraftGuard} from "@/components/tpo/tpo-notice-draft-guard";
 import {TpoNoticeScheduleControls} from "@/components/tpo/tpo-notice-schedule-controls";
 import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
 import {redirect} from "next/navigation";
@@ -89,7 +90,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
       Targeted announcement publishing is not ready. This audience preview cannot be published
       until fixed recipient storage is registered. Choose COLLEGE only to publish to the whole college.
     </p>:null}
-   <form action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
+   <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
+   <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 space-y-3">
     <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
     {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     <label className="grid gap-1 text-sm font-semibold">Title
