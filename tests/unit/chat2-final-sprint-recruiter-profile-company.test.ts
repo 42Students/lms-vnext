@@ -76,4 +76,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-26 |");
  });
 
+ it("REC-calendar-messages-profile-29 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/profile/page.tsx")).toContain("grant.accessUntilIso");
+  expect(src("src/app/(authenticated)/hr/profile/page.tsx")).toContain("Access has no end date");
+  expect(src("src/modules/placements/recruiter-self-grants-service.ts")).toContain("validUntil: placementRecruiterCollegeGrants.validUntil");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-29 |");
+ });
+
 });
