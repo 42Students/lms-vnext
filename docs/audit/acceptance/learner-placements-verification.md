@@ -149,3 +149,12 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 | LEARNER-placements-28 | PARTIAL | Same test: privacy notice, full company-preview projection not implemented. |
 
 | LEARNER-placements-01 | DONE (source authored; not run) | `tests/unit/chat15-personal-placement-alert-read.test.ts`; recipient-scoped POST, mark read before navigation, friendly retry. |
+
+## Chat-15 requests and absence-dispute round
+
+| ID | Status | Evidence |
+|---|---|---|
+| LEARNER-placements-51 | DONE (source), registration pending | `src/components/placements/learner-general-requests.tsx` is now reachable from `src/app/(authenticated)/learn/my-placements/placement/page.tsx` and uses `/api/placements/requests/general`; discriminated schema in `src/modules/placements/tpo-general-request-model.ts` validates five request categories and safe proof URLs. `tests/unit/chat15-learner-general-requests.test.ts` case `LEARNER-placements-51 validates registration changes`. Migration proposal `docs/proposed-migrations/learner-general-placement-requests.sql` needs orchestrator numbering/DB registration; a private offer-letter upload remains dependent on storage/scanner. |
+| LEARNER-placements-52 | DONE (source), registration pending | `src/components/placements/learner-placement-journey.tsx` offers `Wrong? Tell the placement cell` on recorded ABSENT outcomes and deep-links with the application/round into an `ABSENCE_DISPUTE` form. `src/modules/placements/tpo-general-request-service.ts` persists the request in a tenant-scoped transaction without silently reversing attendance. `tests/unit/chat15-learner-general-requests.test.ts` case `LEARNER-placements-52 records a recipient-owned absence dispute`. Requires registered migration to activate writes. |
+| LEARNER-placements-33 | NOT-A-GAP | OD-38 approves supplementary vNext application count tiles; `tests/unit/learner-placements-chat7-queue-review.test.ts` case `LEARNER-placements-33`. |
+| LEARNER-placements-R08 | NOT-A-GAP | Strict cohort/section-based drive non-disclosure by owner decision OD-38; `tests/unit/learner-placements-chat7-notice-actions.test.ts` case `LEARNER-placements-R08`. |
