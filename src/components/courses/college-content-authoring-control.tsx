@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
@@ -16,8 +17,9 @@ function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){if(!/^\d{4}-\d{2}-
  if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
  return date.toISOString();
 }
-export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false}:{
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,materialsEnabled=false}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
+ materialsEnabled?:boolean;
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
@@ -29,6 +31,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [listLessonId,setListLessonId]=useState("");
  const [listSectionId,setListSectionId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
+ const [openMaterialsId,setOpenMaterialsId]=useState<string|null>(null);
  const [deliveryId,setDeliveryId]=useState("");
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
@@ -233,12 +236,18 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        className="w-16 rounded border border-border bg-background p-1"/>
      </label>
      <button type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</button>
+     {kind==="RESOURCE"&&materialsEnabled?<button type="button" className="underline"
+      aria-expanded={openMaterialsId===item.id} disabled={busy}
+      onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</button>:null}
      <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
      {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
      <button type="button" className="underline text-error" disabled={busy}
        onClick={()=>void transition(item,"ARCHIVE")}>Delete</button>
     </div>
+    {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId===item.id?
+      <LessonResourceMaterialsControl key={item.id} contentId={item.id}
+       deliveryId={item.deliveryId} editable/>:null}
    </li>)}</ul>
   </div>}
   {error&&<p role="alert" className="text-sm text-error">{error}</p>}
