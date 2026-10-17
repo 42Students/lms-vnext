@@ -16,10 +16,14 @@ export function isRecruiterUnreadReminderDue(value:RecruiterReminderWindow){
  return now-first>=RECRUITER_MAIL_FIRST_UNREAD_MS &&
   (now-last>=RECRUITER_MAIL_QUIET_MS||now-first>=RECRUITER_MAIL_MAX_WAIT_MS);
 }
+/** Never pass uncontrolled HTML/control characters into ZeptoMail template variables. */
+export function safeRecruiterEmailMergeText(value:string,limit=4000){
+ return value.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,limit)
+   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+   .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
- return messages.slice(-3).map(row=>row.body.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,4000)
-  .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
-  .replace(/"/g,"&quot;").replace(/'/g,"&#39;"));
+ return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
 }
 /** Stable, opaque per-thread address: older unread digest emails remain replyable.
  * The secret lives only in worker config; we persist only the derived token hash.
