@@ -9,6 +9,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  const router=useRouter();const [mode,setMode]=useState<"RECORD"|"VERIFY_AND_RELEASE"|null>(null);
  const [chosen,setChosen]=useState<string[]>([]);const [role,setRole]=useState("");
  const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);
+ const [search,setSearch]=useState("");
  const [error,setError]=useState("");const [report,setReport]=useState<Result[]>([]);
  const existing=new Set(selections.map(s=>s.applicationId));
  const recordable=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&!existing.has(c.applicationId));
