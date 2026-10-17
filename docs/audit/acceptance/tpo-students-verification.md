@@ -71,3 +71,24 @@ All tests are authored but not executed by chat-12. The orchestrator must run te
 
 
 | TPO-students-R03 | DONE (code authored; acceptance pending) | Confirmed two separate selection models; shared grid-to-Act selection remains OPEN; `tests/unit/chat12-round9-students-resilience.test.ts` named `TPO-students-R03` (authored, not run) ; Round-12–17: Current-page selection now shared across grid, bulk action and drive add; selection from table header and cross-page remain; `tests/unit/chat12-round14-unified-selection.test.ts` test `TPO-students-R03` (authored, not run) ; Round-18 table and mobile row/header checkboxes share one provider with notes, bulk actions and Add to Drive; `tests/unit/chat12-round18-grid-checkboxes.test.ts` named `TPO-students-R03` (authored, not run) |
+## [chat-5] Reverified FIXED-ON-MAIN source contracts
+
+The following DONE statuses are limited to the named source/model behavior. Their existing integration contracts must still pass orchestrator CI; no database test was run in this builder.
+
+| ID | Status | Named regression evidence |
+|---|---|---|
+| TPO-students-08 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-08` contract; see earlier code evidence in this file. |
+| TPO-students-09 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-09` contract; see earlier code evidence in this file. |
+| TPO-students-11 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-11` contract; see earlier code evidence in this file. |
+| TPO-students-18 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-18` contract; see earlier code evidence in this file. |
+| TPO-students-27 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-27` contract; see earlier code evidence in this file. |
+| TPO-students-30 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-students-30` contract; see earlier code evidence in this file. |
+| TPO-students-35 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-35` contract; see earlier code evidence in this file. |
+| TPO-students-37 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-37` contract; see earlier code evidence in this file. |
+| TPO-students-38 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-38` contract; see earlier code evidence in this file. |
+| TPO-students-40 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-40` contract; see earlier code evidence in this file. |
+| TPO-students-41 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-41` contract; see earlier code evidence in this file. |
+| TPO-students-42 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-42` contract; see earlier code evidence in this file. |
+| TPO-students-44 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-44` contract; see earlier code evidence in this file. |
+| TPO-students-R02 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R02` contract; see earlier code evidence in this file. |
+| TPO-students-R08 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R08` contract; see earlier code evidence in this file. |
