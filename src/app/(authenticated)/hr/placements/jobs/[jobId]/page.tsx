@@ -11,7 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
-import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
+import { HR_OFFER_STATES,HR_RECRUITER_STAGES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
 import { recruiterVisibleDriveFunnel } from "@/modules/placements/recruiter-drive-funnel-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
@@ -103,7 +103,7 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal, roundSlotCounts } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal, roundSlotCounts, stageCounts } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
@@ -506,15 +506,15 @@ export default async function HrPlacementJobPage({
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
-            {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
-              ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
+            {HR_RECRUITER_STAGES.map(({value:stage,label}) => (
               <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
                 aria-current={filters.stage === stage ? "page" : undefined}
                 className={`inline-flex min-h-10 items-center rounded-md border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
-                {label} ({count})
+                {label} ({stageCounts[stage]})
               </Link>
             ))}
           </nav>
+          <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
           {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
             {applicants.rows.map(applicant => (
               <article key={applicant.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
@@ -597,8 +597,7 @@ export default async function HrPlacementJobPage({
             <span className="text-xs text-muted-foreground">
               {applicantsPage.first === 0 ? "No rows on this page" :
                 "Showing " + applicantsPage.first + "–" + applicantsPage.last}
-              {" of " + (filters.stage === "SHORTLISTED" ? applicants.counts.shortlisted :
-                filters.stage === "WITHDRAWN" ? applicants.counts.withdrawn : applicants.counts.all)}
+              {" of " + stageCounts[filters.stage]}
             </span>
             <div className="flex gap-2">
               {filters.page > 1 ? (
