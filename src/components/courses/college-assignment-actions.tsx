@@ -74,6 +74,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
         data?.error??"Could not load assignment settings.");
        setTitle(data.assignment.title);setPoints(String(data.assignment.maxPoints));
        setDueAt(istInput(data.assignment.dueAt));
+       setExpectedUpdatedAt(data.assignment.updatedAt);
        setDescription(data.assignment.description??"");
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
