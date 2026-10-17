@@ -17,6 +17,7 @@ import { listPlacementScreeningQueue } from "@/modules/placements/screening-serv
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
 import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-schedule-warnings-model";
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
+import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selection-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
@@ -231,6 +232,8 @@ export async function PlacementDriveWorkspace({
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+  const pendingSelections=isTpo&&job.status==="PUBLISHED"
+    ? await countUnreleasedTpoSelections(context,jobId) : 0;
   const reminderPreview=isTpo&&job.status==="PUBLISHED"
     ? await getTpoNonApplicantReminderPreview(context,jobId).catch(()=>null)
     : null;
@@ -242,6 +245,7 @@ export async function PlacementDriveWorkspace({
         publishAllowed: lifecycleReadiness.publish.allowed,
         closeAllowed: lifecycleReadiness.close.allowed,
         shortlistCount: shortlist?.total ?? null,
+        pendingSelections,
         pendingRequests: placementRequests.filter(row => row.request.status === "PENDING").length,
         nonApplicantCount: reminderPreview?.count ?? 0,
         canRemindNonApplicants: Boolean(reminderPreview?.allowed && !reminderPreview.alreadySent),
@@ -457,7 +461,7 @@ export async function PlacementDriveWorkspace({
                       </dd>
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
-                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply</dd></div>
+                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests}
                       {rescheduleRequests>0?<Link href="#drive-request-actions"
                         className="ml-2 font-semibold text-primary-text underline">Review pending →</Link>:null}
@@ -468,6 +472,10 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
                   </dl>
                   {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
+                  {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<a href={round.testUrl}
+                    target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
+                    Open test instructions →
+                  </a>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}

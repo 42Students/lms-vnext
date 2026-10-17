@@ -144,6 +144,11 @@ export function PlacementJobCreateForm({
   ] = useState(
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
+  const [companySearch,setCompanySearch]=useState("");
+  const [newEmployerName,setNewEmployerName]=useState("");
+  const [newEmployerDomain,setNewEmployerDomain]=useState("");
+  const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
+    Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
   const [pending, setPending] =
     useState(false);
   const [
@@ -225,6 +230,11 @@ export function PlacementJobCreateForm({
         companyRelationshipId;
 
       if (companyMode === "NEW") {
+        const newName=String(data.get("companyName")??"").trim().toLowerCase();
+        const newDomain=String(data.get("companyDomain")??"").trim().toLowerCase().replace(/^www\./,"");
+        const existing=companies.find(company=>company.name.trim().toLowerCase()===newName||
+          Boolean(newDomain)&&company.primaryDomain?.trim().toLowerCase().replace(/^www\./,"")===newDomain);
+        if(existing)throw Error("This employer may already be in your companies as "+existing.name+". Choose Existing employer to avoid a duplicate.");
         const companyResult =
           await requestJson(
             "/api/placements/companies",
@@ -464,6 +474,18 @@ export function PlacementJobCreateForm({
       onSubmit={submit}
       className="space-y-6"
     >
+      <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Setup review</h2>
+        <ol className="mt-3 grid gap-3 sm:grid-cols-4">
+          {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
+            <li key={label} className="rounded-lg border border-border p-3 text-sm">
+              <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
+              <span className="mt-1 block font-semibold text-foreground">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
+      </nav>
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="m-0 text-base font-semibold text-foreground">
@@ -540,7 +562,15 @@ export function PlacementJobCreateForm({
           ) : null}
 
           {companyMode === "EXISTING" ? (
-            <label>
+            <div className="space-y-3">
+              <label className="block text-xs font-semibold text-body">
+                Find employer by name or website domain
+                <input type="search" value={companySearch} maxLength={100}
+                  onChange={event=>setCompanySearch(event.target.value)}
+                  placeholder="Search your companies"
+                  className={inputClass+" mt-2"}/>
+              </label>
+              <label>
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Employer
               </span>
@@ -556,7 +586,9 @@ export function PlacementJobCreateForm({
                   )
                 }
               >
-                {companies.map((company) => (
+                {companies.filter(company=>company.relationshipId===companyRelationshipId||
+                  (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))
+                  .map((company) => (
                   <option
                     key={
                       company.relationshipId
@@ -573,6 +605,10 @@ export function PlacementJobCreateForm({
                 ))}
               </select>
             </label>
+            {companySearch.trim()&&!companies.some(company=>
+              (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
+              <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
+            </div>
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
               <label>
@@ -582,6 +618,8 @@ export function PlacementJobCreateForm({
                 <input
                   className={inputClass}
                   name="companyName"
+                  value={newEmployerName}
+                  onChange={event=>setNewEmployerName(event.target.value)}
                   required
                   maxLength={200}
                 />
@@ -593,6 +631,8 @@ export function PlacementJobCreateForm({
                 <input
                   className={inputClass}
                   name="companyDomain"
+                  value={newEmployerDomain}
+                  onChange={event=>setNewEmployerDomain(event.target.value)}
                   placeholder="example.com"
                 />
               </label>
@@ -607,6 +647,14 @@ export function PlacementJobCreateForm({
                   placeholder="https://example.com"
                 />
               </label>
+              {matchingEmployer?<div role="status" className="rounded border border-border bg-surface-subtle p-3 text-sm">
+                <p className="font-semibold">This may already be {matchingEmployer.name}</p>
+                <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
+                <button type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
+                  className="mt-2 min-h-10 rounded-md border border-primary px-3 font-semibold text-primary-text">
+                  Use {matchingEmployer.name}
+                </button>
+              </div>:null}
               <label className="flex items-center gap-2 self-end pb-2 text-sm text-body">
                 <input
                   name="companyTrusted"

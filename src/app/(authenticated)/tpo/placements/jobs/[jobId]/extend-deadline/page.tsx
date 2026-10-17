@@ -18,8 +18,8 @@ export default async function TpoExtendDeadlinePage({params}:{params:Promise<{jo
  return <div className="space-y-5">
   <Link href={"/tpo/placements/jobs/"+job.id} className="text-sm font-semibold text-primary-text hover:underline">← Drive workspace</Link>
   <PageHeader eyebrow="TPO · Drive deadline" title={job.title}
-   description="Extend a published application deadline with a validated IST date and immutable audit."/>
+   description={job.applicationDeadline?"Extend a published application deadline with a validated IST date and immutable audit.":"Set the first application deadline on this published drive, with a validated IST date and immutable audit."}/>
   {job.extendable?<TpoDriveDeadlineForm job={job}/>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-   Only published active-season drives with an existing application deadline can be extended.</p>}
+   Only published active-season drives can set or extend their application deadline.</p>}
  </div>;
 }

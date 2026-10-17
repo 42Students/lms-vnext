@@ -14,6 +14,7 @@ export type TpoDriveNextStepInput = {
   publishAllowed: boolean;
   closeAllowed: boolean;
   shortlistCount: number | null;
+  pendingSelections?: number;
   pendingRequests: number;
   nonApplicantCount?: number;
   canRemindNonApplicants?: boolean;
@@ -58,6 +59,11 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       label: "Review " + input.pendingRequests + " request(s)",
       description: "Students are waiting for a decision from the placement cell.",
       href: "#drive-request-actions",
+    });
+    if ((input.pendingSelections ?? 0) > 0) actions.push({
+      label: "Verify and release " + input.pendingSelections + " selection(s)",
+      description: "Recorded employer selections still need verification before official offers are issued.",
+      href: root + "/selections",
     });
     if (input.shortlistCount !== null && input.shortlistCount > 0) actions.push({
       label: "Share with company",

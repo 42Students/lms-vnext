@@ -205,6 +205,10 @@ export async function stageTpoRoundImport(
    inArray(placementRoundResults.status,["STAGED","APPLIED"])));
  const importing=new Set(entries.map(e=>e.applicationId));
  const occupied=new Set(existingRanks.filter(r=>r.rank!==null&&!importing.has(r.applicationId)).map(r=>r.rank!));
+ // Reserve every explicit imported waitlist rank before assigning implicit
+ // ranks, regardless of source-row order. Otherwise an earlier blank rank
+ // can steal a later explicit rank and silently skip that candidate.
+ const explicitReserved=new Set(entries.filter(e=>e.outcome==="HOLD"&&e.rank!==null).map(e=>e.rank!));
  let nextWaitlistRank=1;
  for(const entry of entries){
   let addedRank:number|null=null;
@@ -214,7 +218,7 @@ export async function stageTpoRoundImport(
    if(entry.outcome==="HOLD"){
     if(entry.rank!==null)waitlistRank=entry.rank;
     else{
-     while(occupied.has(nextWaitlistRank))nextWaitlistRank++;
+     while(occupied.has(nextWaitlistRank)||explicitReserved.has(nextWaitlistRank))nextWaitlistRank++;
      waitlistRank=nextWaitlistRank++;
     }
     if(occupied.has(waitlistRank)){
