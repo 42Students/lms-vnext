@@ -14,7 +14,8 @@ describe("TPO campaign delivery receipts and audit",()=>{
   expect(service).toContain("tx.insert(messagingDeliveryReceipts).values(receipts)");
   expect(service).toContain("finalizedAt:new Date()");
   expect(service).toContain('status:"SENDING"');
-  expect(service).toContain('status:"QUEUED"');
+  expect(service).toContain('"QUEUED"');
+  expect(service).toContain(".set({status:preliminary})");
   expect(schema).toContain("messaging_delivery_receipts");
   expect(service).not.toContain("recipient:row.email,recipientKey:");
  });
