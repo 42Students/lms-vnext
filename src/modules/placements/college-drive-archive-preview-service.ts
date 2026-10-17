@@ -1,5 +1,6 @@
 import "server-only";
 import {and,count,eq} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobs,placementOffers,placementJobRounds} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -33,7 +34,7 @@ export async function previewCollegeDriveArchive(ctx:RequestContext,rawId:unknow
  };
 }
 export async function archiveCollegeDrive(ctx:RequestContext,rawId:unknown,raw:unknown){
- const input=(await import("zod")).z.strictObject({confirmed:(await import("zod")).z.literal(true)}).parse(raw);
+ z.strictObject({confirmed:z.literal(true)}).parse(raw);
  const preview=await previewCollegeDriveArchive(ctx,rawId);
  if(!preview.canArchive)throw Error("Close the drive before archiving it.");
  return archivePlacementJob(ctx,preview.job.id);
