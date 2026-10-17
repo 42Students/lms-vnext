@@ -69,6 +69,8 @@ Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4
 
 ### Chat-4 follow-up acceptance, 2026-10-18
 
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
 | TPO-home-09 | PARTIAL (functional fix) | src/app/(authenticated)/tpo/home/page.tsx derives asksForMe from persisted scoped team threads only when reads are complete; unread messages are separate, mentions stay unknown. TPO-home-next-up.ts now distinguishes TEAM_ASKS from TEAM_MESSAGES and links assigned work to /tpo/team?filter=me. tests/unit/chat4-tpo-home-team-asks-09.test.ts tests TPO-home-09. Complete mentions and cross-page aggregation still need acceptance. |
 | TPO-home-R04 | PARTIAL (functional fix) | Assigned asks priority 1 while generic unread messages priority 4; preserves urgent requests and deadline rules rather than elevating all chat messages. tests/unit/chat4-tpo-next-up-priority-r04.test.ts tests TPO-home-R04. Complete historical urgency/tie ordering still open. |
 | TPO-home-R07 | PARTIAL (functional fix) | src/modules/placements/tpo-find-people-service.ts searches scoped learner name or roll, returns department; /tpo/find and /api/tpo/find-suggestions use the roll and learner membership ID, restrict to 2+ characters and 5 results per group. tests/unit/chat4-tpo-finder-roll-lookup-r07.test.ts tests TPO-home-R07. Full legacy recently-opened history and every status hint still need acceptance. |
