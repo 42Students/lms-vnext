@@ -22,7 +22,10 @@ export async function readHrRecruiterBell(ctx:RequestContext){
 export async function markHrRecruiterBellRead(ctx:RequestContext){
  if(!hasActiveRecruiter(ctx)||!ctx.recruiter)
   throw new AuthorizationError("placements.recruiter.read");
- const visible=(await listOwnRecruiterPlacementJobs(ctx)).filter(x=>x.companyId===ctx.recruiter!.companyId);
+ const feed=await listHrNotifications(ctx,{});
+ if(feed.status!=="READY")return {marked:0};
+ const visible=(await listOwnRecruiterPlacementJobs(ctx,feed.collegeId))
+  .filter(x=>x.companyId===ctx.recruiter!.companyId && x.collegeId===feed.collegeId);
  const ids=[...new Set(visible.map(x=>x.job.id))];
  const colleges=[...new Set(visible.map(x=>x.collegeId))];
  if(!ids.length||!colleges.length)return {marked:0};

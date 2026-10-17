@@ -90,7 +90,8 @@ export function adminAttendanceCellState(
   }
   // A session marked by faculty defaults every learner to PRESENT.
   // Only non-present learner exceptions have attendance_records rows.
-  if (session.attendanceStatus !== "MARKED") {
+  const facultyMarked = session.attendanceStatus === "MARKED";
+  if (!facultyMarked && !record) {
     return { code: "—", label: "Not marked", counted: false, present: false };
   }
   const status = record?.status ?? "PRESENT";
@@ -105,8 +106,8 @@ export function adminAttendanceCellState(
   return {
     code: state?.[0] ?? "?",
     label: state?.[1] ?? status,
-    counted: true,
-    present: status === "PRESENT",
+    counted: facultyMarked,
+    present: facultyMarked && status === "PRESENT",
   };
 }
 

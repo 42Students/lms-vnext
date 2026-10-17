@@ -278,6 +278,8 @@ export async function getRecruiterPlacementWorkspace(
       kind: round.kind,
       name: round.name,
       status: round.status,
+      createdByUserId: round.createdByUserId,
+      updatedAt: round.updatedAt,
       scheduledAt: round.scheduledAt,
       timezone: round.timezone,
       mode: round.mode,

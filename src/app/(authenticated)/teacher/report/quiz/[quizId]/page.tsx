@@ -44,7 +44,7 @@ export default async function FacultyQuizReportPage({
   return (
     <div className="space-y-6">
       <Link href="/teacher/allQuizzes" className="text-sm font-semibold text-primary-text">
-        ← My Quizzes
+        Back
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">
@@ -110,7 +110,7 @@ export default async function FacultyQuizReportPage({
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
-          ["Total attempts", metrics.totalAttempts],
+          ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-xl border border-border bg-surface p-4">
             <p className="text-xs font-semibold uppercase text-muted-foreground">{label}</p>

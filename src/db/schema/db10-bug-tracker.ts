@@ -54,6 +54,7 @@ export const db10BugReports = pgTable("bug_reports", {
   publicId: varchar("public_id", { length: 24 }).notNull(),
   reporterAccessId: uuid("reporter_access_id").notNull()
     .references(() => db10BugTrackerAccess.id, { onDelete: "restrict" }),
+  reporterUserId: uuid("reporter_user_id").references(() => users.id,{onDelete:"restrict"}),
   collegeId: uuid("college_id").references(() => colleges.id, { onDelete: "restrict" }),
   reporterName: varchar("reporter_name", { length: 120 }).notNull(),
   accountRole: varchar("account_role", { length: 32 }).notNull(),
@@ -89,6 +90,7 @@ export const db10BugReports = pgTable("bug_reports", {
   uniqueIndex("db10_bug_reports_public_id_uq").on(sql.raw('lower("public_id")')),
   index("db10_bug_reports_status_time_idx").on(t.status, t.createdAt),
   index("db10_bug_reports_reporter_time_idx").on(t.reporterAccessId, t.createdAt),
+  index("db10_bug_reports_reporter_user_idx").on(t.reporterUserId, t.createdAt),
   index("db10_bug_reports_college_time_idx").on(t.collegeId, t.createdAt),
   index("db10_bug_reports_environment_time_idx").on(t.environment, t.createdAt),
   check("db10_bug_reports_status_ck",
