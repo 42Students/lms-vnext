@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -20,7 +21,7 @@ describe.skipIf(!enabled)("HR company report export PostgreSQL",()=>{
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Rep Other "+n,primaryDomain:"repother-"+n+".example"});
   const make=async(relationshipId:string)=>{
    const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:relationshipId,
-    title:"Report job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    title:"Report job "+randomUUID(),description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
    await publishPlacementJob(tpo,job.id);return job;
   };
   const own=await make(a.relationship.id),other=await make(b.relationship.id);

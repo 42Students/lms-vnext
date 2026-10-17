@@ -41,7 +41,7 @@ describe("own persisted assessment notification context",()=>{
   const item=notifications.find(row=>row.notification.id===notificationId);
   expect(item).toBeDefined();
   const action=learnerNotificationAssessmentAction(item?.notification.actionHref);
-  expect(action?.label).toBe("View assessment details");
+  expect(action?.label).toBe("Take Assessment");
   const rounds=(await getOwnLearnerAssessmentBrowse(ctx)).rounds;
   expect(resolveOwnAssessmentDeepLink(rounds,{
     applicationId:f.applicationId,roundId:f.roundId,

@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -21,7 +22,7 @@ describe.skipIf(!enabled)("HR today results due PostgreSQL",()=>{
   const a=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Today Due Own "+nonce,primaryDomain:"todayown-"+nonce+".example"});
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Today Due Foreign "+nonce,primaryDomain:"todayother-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,title:"Today "+nonce,
-    description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Technical"});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-18T08:00:00Z"),
     timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet",resultsDueAt:new Date("2026-10-19T08:00:00Z")});

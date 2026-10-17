@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -19,7 +20,7 @@ describe.skipIf(!enabled)("HR drive structured filter PG",()=>{
   const a=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Filter A "+nonce,primaryDomain:"hrfa-"+nonce+".example"});
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Filter B "+nonce,primaryDomain:"hrfb-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
-   title:"Remote Engineer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL"});
+   title:"Remote Engineer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({

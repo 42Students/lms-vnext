@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -20,7 +21,7 @@ describe.skipIf(!enabled)("HR round schedule scoped PG",()=>{
   const a=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Sched Own "+n,primaryDomain:"schedown-"+n+".example"});
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"Sched Other "+n,primaryDomain:"schedother-"+n+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
-   title:"Schedule "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+   title:"Schedule "+n,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel",durationMinutes:60});
   await actOnPlacementRound(tpo,round.id,{action:"SCHEDULE",scheduledAt:new Date("2026-10-20T10:00:00Z"),
    timezone:"Asia/Kolkata",mode:"VIRTUAL",meetingUrl:"https://example.test/meet"});

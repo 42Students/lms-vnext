@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {randomUUID} from "node:crypto";
 import {afterAll,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
@@ -19,7 +20,7 @@ describe.skipIf(!enabled)("HR round contact disclosure isolation (isolated PG)",
   const company=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Private Own "+nonce,primaryDomain:"privown-"+nonce+".example"});
   const foreign=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Private Other "+nonce,primaryDomain:"privforeign-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:company.relationship.id,
-    title:"HR Contact "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL"});
+    title:"HR Contact "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"REMOTE",applicationMode:"INTERNAL",...publishableJobTerms});
   const round=await createPlacementRound(tpo,job.id,{kind:"INTERVIEW",name:"Panel"});
   await publishPlacementJob(tpo,job.id);
   const userId=randomUUID();
