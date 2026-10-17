@@ -1,5 +1,5 @@
 "use client";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 
 import {useState} from "react";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -52,7 +52,9 @@ export function TpoAfterCollegeEditor({
         setConfirmation(null);
         router.refresh();
       }catch(cause){
-        setError(cause instanceof Error?cause.message:"Could not save outcome. Please try again.");
+        setError(cause instanceof FriendlyFetchError && cause.status===409
+          ?"This changed while you were working. Your outcome selection is kept below. Refresh before retrying."
+          :cause instanceof Error?cause.message:"Could not save outcome. Please try again.");
       }
     });
   }

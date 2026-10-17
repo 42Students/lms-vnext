@@ -39,6 +39,7 @@ describe("chat-12 TPO export failure protection",()=>{
   const v=read("src/components/tpo/tpo-student-saved-views.tsx");
   expect(i).toContain('Array.isArray(result.preview?.rows)');
   expect(i).toContain("Could not process the academic details.");
-  expect(v).toContain("res.json().catch(()=>null)");
+  expect(v).toContain("apiFetch<View[]>(api");
+  expect(v).toContain("Array.isArray(body)");
  });
 });
