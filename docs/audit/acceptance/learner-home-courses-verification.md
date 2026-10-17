@@ -60,3 +60,10 @@ orchestrator test execution before full acceptance.
 | LEARNER-course-detail-R03 | DONE (FIXED-ON-MAIN independently covered) | Future live sessions keep their authorized HTTPS meeting link available for Join and Copy, while scheduled non-live content still withholds its storage key. `learner-course-service.ts`, `learner-live-class-link.tsx`; `tests/unit/chat12-final-learner-courses.test.ts`: `LEARNER-course-detail-R03 exposes authorized future LIVE_CLASS external links but no private content storage`. |
 
 Tests have been authored, not run. Browser, database, TypeScript and CI acceptance remain required.
+
+
+### LEARNER-course-detail-R03 — last-gap reimplementation on chat-2 (2026-10-18)
+
+| Gap ID | Verdict | Evidence |
+| --- | --- | --- |
+| LEARNER-course-detail-R03 | IN-BRANCH — source implemented, runtime verification pending | The previously partial scheduled-live exception is now an explicit type-aware release policy: `src/modules/courses/learner-live-link-availability-model.ts` returns the authorized published meeting URL for SCHEDULED and AVAILABLE LIVE_CLASS only; ENDED returns null, and non-live SCHEDULED URLs/storage remain withheld. `src/modules/courses/learner-course-service.ts` applies it under the existing learner/delivery authorization and makes session end inclusive (<= now), including inconsistent authored times. `src/components/courses/learner-course-workspace.tsx` explains that pre-start Join/Copy works when the meeting link is published; `learner-live-class-link.tsx` disables Join/Copy after the end time, including on an open page, without changing layout. Test `tests/unit/chat2-LEARNER-course-detail-R03-live-session-policy.test.ts` contains gap-named policy, time, endpoint wiring and UI cases; updated old `chat12-final-learner-courses.test.ts` source assertion. No public link is invented; unsafe external URLs continue through `learnerSafeExternalContentHref`. Tests authored, not executed in the GitHub connector. |

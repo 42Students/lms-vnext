@@ -267,10 +267,14 @@ function ContentCard({
 
       {scheduled ? (
         <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
-          {start
-            ? `Available ${start}`
-            : "This item is scheduled and is not available yet."}
-        {content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?<LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!}/>:null}
+          {content.type==="LIVE_CLASS"
+            ? start
+              ? "Live session starts "+start+". Join and Copy are available now when the meeting link is published."
+              : "Live session scheduled. Join and Copy are available once the meeting link is published."
+            : start
+              ? `Available ${start}`
+              : "This item is scheduled and is not available yet."}
+        {content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?<LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!} endsAt={content.endsAt?new Date(content.endsAt).toISOString():null}/>:null}
          </div>
       ) : content.type === "LIVE_CLASS" && ended ? (
         <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
@@ -318,7 +322,7 @@ function ContentCard({
           saveIntervalMs={saveIntervalMs}
         />
       ) : content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?(
-         <LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!}/>
+         <LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!} endsAt={content.endsAt?new Date(content.endsAt).toISOString():null}/>
        ) : learnerSafeExternalContentHref(content.externalUrl) ? (
         <a
           href={learnerSafeExternalContentHref(content.externalUrl)!}
