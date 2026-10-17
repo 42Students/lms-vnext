@@ -24,7 +24,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
 }){
  const router=useRouter(),params=useSearchParams();
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
- [sprint,setSprint]=useState(params.get("sprint")??""),[priority,setPriority]=useState(params.get("priority")??""),
+ [sprint,setSprint]=useState(params.get("sprint")??""),[scope,setScope]=useState(params.get("scope")==="all"?"all":"current"),
+ [priority,setPriority]=useState(params.get("priority")??""),
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
