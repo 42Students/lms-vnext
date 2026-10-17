@@ -39,7 +39,7 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
   {data.truncated?<p role="status" className="text-xs text-muted-foreground">Only the first 200 active Sections are listed. Use the Section management page for the full directory.</p>:null}
   {data.selected?<div className="space-y-3">
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
-   <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links, and does not simulate an individual learner&apos;s completion or visibility.</p>
+   <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links. Visibility indicators reflect publication and lesson flags, not an individual learner&apos;s enrolment or progress.</p>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-lg border border-border p-3">
     <h3 className="font-semibold">{lesson.name}
      <span className="ml-2 text-xs font-normal text-muted-foreground">
