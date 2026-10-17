@@ -174,19 +174,19 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | FAC-attendance-grades-01 | S2 | SIDE-EFFECT | OPEN |
-| FAC-attendance-grades-02 | S2 | STATE | FIXED-ON-MAIN |
+| FAC-attendance-grades-02 | S2 | STATE | DONE |
 | FAC-attendance-grades-04 | S3 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-05 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| FAC-attendance-grades-06 | S3 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-07 | S3 | VALIDATION | FIXED-ON-MAIN |
-| FAC-attendance-grades-14 | S3 | COPY | OPEN |
+| FAC-attendance-grades-05 | S3 | MISSING-FILTER | DONE |
+| FAC-attendance-grades-06 | S3 | COPY | DONE |
+| FAC-attendance-grades-07 | S3 | VALIDATION | DONE |
+| FAC-attendance-grades-14 | S3 | COPY | DONE |
 | FAC-attendance-grades-20 | S3 | RESPONSIVE | FIXED-ON-MAIN |
-| FAC-attendance-grades-22 | S3 | COPY | OPEN |
+| FAC-attendance-grades-22 | S3 | COPY | DONE |
 | FAC-attendance-grades-03 | S4 | STATE | FIXED-ON-MAIN |
-| FAC-attendance-grades-08 | S4 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-09 | S4 | COPY | FIXED-ON-MAIN |
-| FAC-attendance-grades-10 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| FAC-attendance-grades-11 | S4 | COPY | FIXED-ON-MAIN |
+| FAC-attendance-grades-08 | S4 | COPY | DONE |
+| FAC-attendance-grades-09 | S4 | COPY | DONE |
+| FAC-attendance-grades-10 | S4 | MISSING-ACTION | DONE |
+| FAC-attendance-grades-11 | S4 | COPY | DONE |
 | FAC-attendance-grades-12 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-attendance-grades-13 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-attendance-grades-15 | S4 | VALIDATION | OPEN |
