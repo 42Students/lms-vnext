@@ -14,9 +14,9 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 
 ## Notes (blockers, one line each)
 
-- GR-80: Shared friendly screens/API adoption are being built in parallel; hostile-response assertions are authored but require merged implementation and executed browser evidence.
-- GR-80 Mentor: Existing seed does not guarantee unread notifications, so read-all fault tests skip without a fixture rather than passing vacuously.
-- GR-80 Recruiter: Test recruiter grants must be current, verified, capability-enabled and seeded before messaging fault tests can run.
-- GR-82: Default Playwright server is development; orchestrator must separately serve a production build and supply GRACEFUL_PRODUCTION_BASE_URL.
-- GR-83: Shared helper unit/integration tests are assigned to chat-14 and cannot be certified by chat-15 without execution.
-
+- GR-80: Chat-14 GR-02 helpers and per-area graceful screens exist on chatgpt/chat-14-b but have not merged into main or been adopted by every page; browser acceptance remains unverified.
+- GR-80 Mentor: A deterministic unread notification must be seeded; the current read-all mutation cannot claim coverage when the button is disabled.
+- GR-80 Recruiter: Additional test tenant must have active, verified, nonexpired employer college grant with required capability before messaging/profile suites can certify.
+- GR-80: Real stale-chunk recovery for authenticated roles needs a production-capable test session, not development-only E2E cookie bypass; public production smoke is authored.
+- GR-82: Orchestrator must supply a separately built production origin and run tests/e2e/playwright.graceful-production.config.ts; local dev is not evidence.
+- GR-83: Chat-14 helper unit suites and isolated PostgreSQL integration still require merge and execution; chat-15 only records their contract and dependencies.
