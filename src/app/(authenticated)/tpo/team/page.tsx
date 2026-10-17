@@ -3,6 +3,7 @@ import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-ser
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
 import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
+import {TpoTeamHandover} from "@/components/tpo/tpo-team-handover";
 import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
 import {readTpoTeamOwnershipWorkload} from "@/modules/placements/tpo-team-ownership-workload-service";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
@@ -127,6 +128,13 @@ export default async function TpoTeamPage({searchParams}:{
          </dd>
         </div>)}
        </dl>:null}
+       {ownerWorkload?.drivesReady&&member.membershipId!==context.membership?.id&&
+        (member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))?
+        <TpoTeamHandover sourceMembershipId={member.membershipId}
+         sourceName={member.displayName}
+         members={activeTeam.filter(candidate=>(candidate.roles.includes("TPO")||candidate.roles.includes("COLLEGE_ADMIN"))&&
+          candidate.membershipId!==member.membershipId)
+          .map(candidate=>({membershipId:candidate.membershipId,displayName:candidate.displayName}))}/>:null}
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
        </p>:null}
