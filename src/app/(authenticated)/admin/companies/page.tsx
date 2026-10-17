@@ -58,12 +58,12 @@ export default async function SuperAdminCompaniesPage({
     </div>
     <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Company
-        <input name="q" defaultValue={data.query.q} placeholder="Search companies"
+        <input name="q" defaultValue={data.query.q} placeholder="Search company name or domain"
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Search in
         <select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="NAME">Company name</option><option value="DOMAIN">Primary domain</option>
+          <option value="ALL">Name or domain</option><option value="NAME">Company name</option><option value="DOMAIN">Primary domain</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship
