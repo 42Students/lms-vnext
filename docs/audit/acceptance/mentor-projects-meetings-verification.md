@@ -148,3 +148,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | Gap ID | Status | Evidence and remaining gate |
 |---|---|---|
 | MEN-projects-meetings-27 | OPEN — implementation extended, database gate pending | `src/modules/projects/mentor-meeting-decision-model.ts`, `mentor-meeting-decision-service.ts`, `meeting-service.ts`, `src/components/projects/project-meeting-controls.tsx`; `tests/unit/chat7-mentor-meeting-draft-lifecycle.test.ts` — `MEN-projects-meetings-27 lets a mentor discard only mutable draft, requested or scheduled meetings`, `MEN-projects-meetings-27 requires a confirmed versioned mentor draft cancellation`, `MEN-projects-meetings-27 makes draft private and never notifies learners when cancelled`. Decision: mentors/admins may cancel their unsent meeting drafts and retain an internal cancelled record; no learner notifications or activity event for a previously private draft. Complete/cancel remain explicit actions; REQUESTED remains learner-originated. Register and replay `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql` (not in numbered migration journal), then execute DB lifecycle integration tests. Unit tests authored but not run. |
+
+## Chat-7 round 3 — five mentor access and loading contracts
+
+| Gap ID | Review | Gap-named evidence |
+|---|---|---|
+| MEN-projects-meetings-01 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-projects-unavailable.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-01 module lookup failure does not assert disabled state`. |
+| MEN-projects-meetings-02 | SOURCE VERIFIED; CI pending | `src/app/(authenticated)/mentor/loading.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-02 mentor workspace advertises pending loading`. |
+| MEN-projects-meetings-08 | SOURCE VERIFIED; CI pending | `src/app/(authenticated)/mentor/projects/error.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-08 error boundary offers retry without false feature-disable copy`. |
+| MEN-projects-meetings-11 | SOURCE VERIFIED; CI pending | `src/modules/projects/access.ts`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-11 review-only memberships are not granted write access`. |
+| MEN-projects-meetings-16 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-16 mentor readiness and final-delivery states derive from workspace facts`. |
