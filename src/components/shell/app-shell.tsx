@@ -16,6 +16,7 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
+import { RouteAnnouncer } from "./route-announcer";
 import {ShellWidgetBoundary} from "./shell-widget-boundary";
 import {ShellConnectivityNotice} from "./shell-connectivity-notice";
 import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
@@ -162,6 +163,7 @@ export async function AppShell({
           </div>
         </header>
 
+        <RouteAnnouncer />
         <ShellConnectivityNotice />
         <main id="lms-main-content" tabIndex={-1} className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
