@@ -90,8 +90,8 @@ export default async function LearnerPlacementRulesPage({
         </h2>
         <p className="mt-2 text-sm leading-6 text-body">{ruleApplicability.message}</p>
         <p className="mt-2 text-xs text-muted-foreground">
-          We do not have a versioned College placement-policy record here.
-          No change-effective date or retroactive eligibility decision is inferred.
+          {policyView?"College placement rules are saved; the exact effective date of a change is not inferred.":"A college placement policy is not configured for your membership."}
+          No retroactive eligibility decision is inferred.
         </p>
         <Link href="/learn/my-placements/applications"
           className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
