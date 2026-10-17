@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {activityEvents,attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireAttendanceCollege} from "./admin-service";
 import {attendanceParentContactInputSchema,attendanceParentSmsBody,canNotifyVerifiedParent,type AttendanceParentSmsKind} from "./parent-sms-model";
@@ -41,7 +41,44 @@ export async function recordVerifiedAttendanceParentContact(ctx:RequestContext,r
    consentEvidenceReference:input.consentEvidenceReference,
    consentAt:now,verifiedAt:now,verifiedByUserId:ctx.user.id,updatedAt:now,
   }});
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership.id:null,
+   module:"COURSES",eventType:"ATTENDANCE_PARENT_SMS_CONSENT_UPDATED",
+   subjectType:"learner_membership",subjectId:input.membershipId,
+   summary:"College Admin recorded verified guardian attendance messaging consent",
+   metadata:{smsOptIn:true},occurredAt:now,
+  });
   return {recorded:true};
+ });
+}
+/** Revocation requires no parent phone disclosure and cancels unsent
+ * notices transactionally. Already attempted provider requests cannot be undone. */
+export async function revokeAttendanceParentContact(ctx:RequestContext,raw:unknown){
+ const input=z.object({collegeId:z.string().uuid(),membershipId:z.string().uuid()}).strict().parse(raw);
+ const college=await requireAttendanceCollege(ctx,input.collegeId);
+ return getDb().transaction(async tx=>{
+  if(!(await parentTablesReady(tx)))return {revoked:false,ready:false};
+  const [saved]=await tx.update(attendanceParentContacts)
+   .set({smsOptIn:false,updatedAt:new Date()})
+   .where(and(eq(attendanceParentContacts.collegeId,college.id),
+    eq(attendanceParentContacts.membershipId,input.membershipId),
+    eq(attendanceParentContacts.smsOptIn,true)))
+   .returning({membershipId:attendanceParentContacts.membershipId});
+  if(!saved)return {revoked:false,ready:true};
+  await tx.update(attendanceParentSmsOutbox).set({status:"SKIPPED"}).where(and(
+   eq(attendanceParentSmsOutbox.collegeId,college.id),
+   eq(attendanceParentSmsOutbox.membershipId,input.membershipId),
+   eq(attendanceParentSmsOutbox.status,"QUEUED")));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:college.id,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.collegeId===college.id?ctx.membership.id:null,
+   module:"COURSES",eventType:"ATTENDANCE_PARENT_SMS_CONSENT_REVOKED",
+   subjectType:"learner_membership",subjectId:input.membershipId,
+   summary:"College Admin disabled guardian attendance SMS",
+   metadata:{smsOptIn:false},
+  });
+  return {revoked:true,ready:true};
  });
 }
 /** Only a changed attendance record can enqueue a parent notice. Call from the
