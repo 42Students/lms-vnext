@@ -2,18 +2,24 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { buildFacultyReportPdf, type FacultyReportPdfInput } from "@/modules/courses/faculty-report-pdf";
 
-type Props = Omit<FacultyReportPdfInput, "generatedAt">;
+type Props = Omit<FacultyReportPdfInput, "generatedAt"> & { incomplete?: boolean };
 
 export function FacultyReportDownload(props: Props) {
   const [error, setError] = useState<string | null>(null);
+  const [confirmationOpen,setConfirmationOpen]=useState(false);
 
-  function download() {
+  function downloadPdf() {
     setError(null);
     try {
       // All private report data was resolved via server-side Faculty authorization.
-      const pdf = buildFacultyReportPdf(props);
+      const {incomplete,...reportData}=props;
+      const pdf = buildFacultyReportPdf({
+        ...reportData,
+        summary:incomplete?["This report is incomplete",...reportData.summary]:reportData.summary,
+      });
       const url = URL.createObjectURL(new Blob([pdf], { type: "application/pdf" }));
       const title = props.title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 70) || props.kind;
       const link = document.createElement("a");
@@ -30,7 +36,14 @@ export function FacultyReportDownload(props: Props) {
 
   return (
     <div className="flex flex-wrap items-center gap-3 print:hidden">
-      <Button variant="secondary" onClick={download}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
+      <Button variant="secondary" onClick={()=>{
+        if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
+      }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
+      <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}
+        title="This report is incomplete"
+        description="Some learners have not submitted or some submitted assignments have not been graded. The PDF will be marked incomplete."
+        confirmLabel="Download marked incomplete" confirmVariant="primary"
+        onConfirm={()=>{setConfirmationOpen(false);downloadPdf();}}/>
       {error ? <p role="alert" className="text-sm font-semibold text-error">{error}</p> : null}
     </div>
   );

@@ -6,6 +6,7 @@ import { FacultyReportStudentTable } from "@/components/courses/faculty-report-s
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
 import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
+import {facultyReportIsIncomplete} from "@/modules/courses/faculty-report-completeness";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
@@ -62,6 +63,8 @@ export default async function FacultyAssignmentReportPage({
       </div>
       <FacultyReportDownload
         kind="assignment"
+        incomplete={facultyReportIsIncomplete({kind:"assignment",eligibleLearners:metrics.eligibleLearners,
+          submitted:metrics.submitted,graded:metrics.graded})}
         title={assignment.title}
         subtitle={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
         summary={[
@@ -204,7 +207,7 @@ export default async function FacultyAssignmentReportPage({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section id="submissions" className="scroll-mt-16 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">View submissions</h2>
         <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview

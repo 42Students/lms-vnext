@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {readLearnerPlaybackSettings} from "./learner-playback-settings";
+import {learnerVisibleContentExternalUrl} from "./learner-live-link-availability-model";
 import {
   academicPeriods,
   cohorts,
@@ -742,14 +743,16 @@ export async function getLearnerCourseWorkspace(
       continue;
     }
 
+    // End-of-session takes priority if authored start/end times conflict.
+    // At the exact end boundary learners must no longer join or copy.
     const contentAvailability =
-      row.contentStartsAt &&
-      row.contentStartsAt.getTime() > now
-        ? "SCHEDULED"
-        : row.contentType === "LIVE_CLASS" &&
-            row.contentEndsAt &&
-            row.contentEndsAt.getTime() < now
-          ? "ENDED"
+      row.contentType === "LIVE_CLASS" &&
+      row.contentEndsAt &&
+      row.contentEndsAt.getTime() <= now
+        ? "ENDED"
+        : row.contentStartsAt &&
+            row.contentStartsAt.getTime() > now
+          ? "SCHEDULED"
           : "AVAILABLE";
 
     lesson.contents.push({
@@ -757,10 +760,13 @@ export async function getLearnerCourseWorkspace(
       type: row.contentType!,
       title: row.contentTitle!,
       notes: row.contentNotes,
-      externalUrl:
-        (contentAvailability === "AVAILABLE" || row.contentType === "LIVE_CLASS")
-          ? row.contentExternalUrl
-          : null,
+      // A published live meeting link is usable before the scheduled start.
+      // Do not release scheduled files/videos or an ended meeting link.
+      externalUrl: learnerVisibleContentExternalUrl({
+        contentType: row.contentType!,
+        availability: contentAvailability,
+        externalUrl: row.contentExternalUrl,
+      }),
       storageKey:
         contentAvailability === "AVAILABLE"
           ? row.contentStorageKey

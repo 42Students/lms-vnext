@@ -120,7 +120,7 @@ export async function moveCollegeStudentSection(
 ) {
   const membershipId = studentSectionMemberIdSchema.parse(rawMembershipId);
   const input = studentSectionMoveSchema.parse(raw);
-  const own = ownAdmin(context);
+  const own = await ownAdmin(context);
   return getDb().transaction(async tx => {
     const { enrollment, placement } = await loadCurrent(tx, membershipId, own.collegeId);
     if (placement.id !== input.expectedSectionEnrollmentId ||

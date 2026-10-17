@@ -7,6 +7,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { facultyRosterCsv, facultyRosterFileName } from "@/modules/courses/faculty-roster-export";
+import {Dialog} from "@/components/ui/dialog";
+import {sortFacultyRosterByRollThenName,facultyRosterPhotoPreview,facultyRosterMetrics} from "@/modules/courses/faculty-roster-display-model";
 
 export type FacultyCourseRosterLearner = {
   membershipId: string;
@@ -14,6 +16,8 @@ export type FacultyCourseRosterLearner = {
   email: string | null;
   phoneE164: string | null;
   rollNumber: string | null;
+  /** Explicitly permitted same-origin avatar download; absent until profile photos are provisioned. */
+  photoDownloadUrl?: string | null;
 };
 
 const PAGE_SIZE = 25;
@@ -49,20 +53,10 @@ export function FacultyCourseRoster({
 }) {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [preview, setPreview] = useState<FacultyCourseRosterLearner|null>(null);
 
-  const sorted = useMemo(
-    () =>
-      [...learners].sort(
-        (a, b) =>
-          String(a.rollNumber ?? "").localeCompare(
-            String(b.rollNumber ?? ""),
-            undefined,
-            { numeric: true },
-          ) ||
-          nameOf(a).localeCompare(nameOf(b)),
-      ),
-    [learners],
-  );
+  // Missing roll numbers always follow assigned rolls; ties sort by name.
+  const sorted=useMemo(()=>sortFacultyRosterByRollThenName(learners),[learners]);
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -91,9 +85,7 @@ export function FacultyCourseRoster({
     currentPage * PAGE_SIZE,
   );
 
-  const missingRoll = learners.filter(
-    (learner) => !learner.rollNumber,
-  ).length;
+  const {missingRoll,contactLabel,rollLabel}=facultyRosterMetrics(learners);
   const contacts = learners.filter(
     (learner) =>
       Boolean(learner.email || learner.phoneE164),
@@ -130,8 +122,8 @@ export function FacultyCourseRoster({
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ["Students", learners.length],
-          ["Roll missing", missingRoll],
-          ["Contact available", contacts],
+          [rollLabel, missingRoll],
+          [contactLabel, contacts],
         ].map(([label, value]) => (
           <section
             key={label}
@@ -182,14 +174,10 @@ export function FacultyCourseRoster({
           </label>
           </div>
         </div>
-        {search.trim() ? (
-          <p
-            className="mt-3 text-xs text-muted-foreground"
-            aria-live="polite"
-          >
-            Showing {filtered.length} of {learners.length}
-          </p>
-        ) : null}
+        <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
+          Showing {rows.length} of {filtered.length} students
+          {filtered.length!==learners.length?" · "+learners.length+" in class":""}
+        </p>
       </section>
 
       {filtered.length === 0 ? (
@@ -221,12 +209,11 @@ export function FacultyCourseRoster({
                     <tr key={learner.membershipId}>
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-3">
-                          <span
-                            aria-hidden="true"
-                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text"
-                          >
+                          <button type="button" onClick={()=>setPreview(learner)}
+                            aria-label={"Preview avatar for "+name}
+                            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
                             {initials(name)}
-                          </span>
+                          </button>
                           <div>
                             <p className="m-0 font-semibold text-foreground">
                               {name}
@@ -294,12 +281,11 @@ export function FacultyCourseRoster({
                   className="rounded-xl border border-border bg-surface p-4"
                 >
                   <div className="flex items-start gap-3">
-                    <span
-                      aria-hidden="true"
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text"
-                    >
+                    <button type="button" onClick={()=>setPreview(learner)}
+                      aria-label={"Preview avatar for "+name}
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text focus-visible:outline-2 focus-visible:outline-primary">
                       {initials(name)}
-                    </span>
+                    </button>
                     <div className="min-w-0">
                       <p className="m-0 font-semibold text-foreground">
                         {name}
@@ -397,6 +383,20 @@ export function FacultyCourseRoster({
           ) : null}
         </>
       )}
+      <Dialog open={preview!==null} onOpenChange={open=>{if(!open)setPreview(null);}}
+        title={preview?"Photo preview · "+nameOf(preview):"Photo preview"}
+        description="Only photos provided through an authorized course roster can be displayed.">
+        {preview&&facultyRosterPhotoPreview(preview.photoDownloadUrl)?
+          <img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
+            alt={"Profile photograph of "+nameOf(preview)}
+            className="mx-auto max-h-[60vh] max-w-full rounded-lg object-contain"/>:
+          <div className="space-y-3 text-center">
+            <div aria-hidden="true" className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">
+              {preview?initials(nameOf(preview)):""}
+            </div>
+            <p className="text-sm text-body">No photo is available for this student.</p>
+          </div>}
+      </Dialog>
     </div>
   );
 }

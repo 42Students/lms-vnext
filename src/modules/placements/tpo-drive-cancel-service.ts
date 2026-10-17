@@ -184,9 +184,9 @@ export async function cancelTpoDriveWithPreview(
       });
     if (!saved) throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
     const now = new Date();
-    // P-S2-12: stop live ISSUED offers in the same transaction as closure.
-    // The registered offer schema permits WITHDRAWN; CANCELLED job status
-    // requires a separate orchestrator-owned migration.
+    // TPO-drives-03: persist a distinct CANCELLED job status, not CLOSED.
+    // The Closed lifecycle tab includes both statuses while preserving their labels.
+    // Stop live ISSUED offers within this same cancellation transaction.
     const issued = await tx.select({
       id: placementOffers.id, status: placementOffers.status,
     }).from(placementOffers)
