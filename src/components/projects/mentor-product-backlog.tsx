@@ -145,8 +145,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   {!readOnly&&returnable.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
-     {tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status))
-       .map(task=><button key={task.id} type="button" disabled={busy}
+     {returnable.map(task=><button key={task.id} type="button" disabled={busy}
         onClick={()=>void move(task,null)}
         className="block min-h-10 w-full rounded-md border border-border p-2 text-left text-sm">
         {task.title} · Return to backlog
