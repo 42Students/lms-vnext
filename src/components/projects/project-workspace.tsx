@@ -1336,7 +1336,7 @@ export function ProjectWorkspace({
                       <a
                         href={href}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
                       >
                         Open resource ↗
