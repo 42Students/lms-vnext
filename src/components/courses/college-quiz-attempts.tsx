@@ -44,7 +44,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   </button>
   {opened?<div className="max-h-80 overflow-auto rounded border border-border bg-surface p-2">
    {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
-    <button type="button" className="underline" disabled={loading} onClick={()=>void open()}>Retry</button>
+    <button type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     No quiz submissions yet for this Section.</p>:null}
