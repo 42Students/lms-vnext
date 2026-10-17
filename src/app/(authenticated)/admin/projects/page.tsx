@@ -49,8 +49,8 @@ export default async function SuperAdminProjectsPage({
           description="Live projects, each run by a mentor with a team of students."
         />
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before opening Project workspaces."
+          title="No college selected"
+          description="Pick a college in the header to manage its project workspaces."
         />
       </div>
     );
