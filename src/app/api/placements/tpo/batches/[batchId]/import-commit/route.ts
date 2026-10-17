@@ -40,6 +40,7 @@ export async function POST(request:Request,{params}:{params:Promise<{batchId:str
    const version=body.expectedVersions[candidate.membershipId];
    if(!version||version!==candidate.expectedVersion)
     return NextResponse.json({error:"IMPORT_PREVIEW_STALE"},{status:409});
+   if(row.decision==="INVALID")return NextResponse.json({error:"IMPORT_HAS_UNUSABLE_ROWS"},{status:422});
    changes.push({scopeType:"MEMBERSHIP",scopeId:candidate.membershipId,status:row.decision,
      reason:row.decision==="INELIGIBLE"?row.reason:null,expectedVersion:version});
   }

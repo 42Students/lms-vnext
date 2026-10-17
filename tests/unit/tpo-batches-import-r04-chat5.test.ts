@@ -17,6 +17,8 @@ describe("TPO-batches-R04 eligibility import safety",()=>{
   const roster=[{studentCode:"student-1",membershipId:"student-1",expectedVersion:"none",rollNumber:"R1"}];
   const preview=previewTpoEligibilitySheet(rows,roster);
   expect(preview.map(row=>row.reason)).toEqual(["Roll number is missing","Ineligible needs a reason","Roll number appears twice"]);
-  expect(()=>parseTpoEligibilitySheetCsv("Roll no,Decision\nR1,Maybe")).toThrow("Decision must be Eligible, Ineligible or Not decided");
+  const bad=parseTpoEligibilitySheetCsv("Roll no,Decision\nR1,Maybe");
+  expect(bad[0]?.decision).toBe("INVALID");
+  expect(previewTpoEligibilitySheet(bad,roster)[0]?.reason).toBe("Decision must be Eligible, Ineligible or Not decided");
  });
 });

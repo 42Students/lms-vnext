@@ -3,7 +3,7 @@ import { parseTpoImportCsvRecords } from "./tpo-import-csv-parser";
 
 export const tpoSheetRowSchema=z.object({
   studentCode:z.string().trim().max(128),
-  decision:z.enum(["ELIGIBLE","INELIGIBLE","NOT_DECIDED"]),
+  decision:z.enum(["ELIGIBLE","INELIGIBLE","NOT_DECIDED","INVALID"]),
   reason:z.string().trim().max(200).default(""),
 }).strict();
 export const tpoSheetInputSchema=z.object({rows:z.array(tpoSheetRowSchema).min(1).max(5000)}).strict();
@@ -26,7 +26,7 @@ export function parseTpoEligibilitySheetCsv(source:string):TpoSheetRow[] {
     if(["Y","YES","TRUE","ELIGIBLE"].includes(name))return "ELIGIBLE";
     if(["N","NO","FALSE","INELIGIBLE"].includes(name))return "INELIGIBLE";
     if(["","NOT_DECIDED","UNDECIDED","CLEAR","INHERIT","RESET"].includes(name))return "NOT_DECIDED";
-    throw new Error("Decision must be Eligible, Ineligible or Not decided");
+    return "INVALID";
   };
   return body.map((cells,index)=>{
     const studentCode=cells[withHeader?codeColumn:0]?.trim()??"";
@@ -58,6 +58,8 @@ export function previewTpoEligibilitySheet(rows:readonly TpoSheetRow[],
     const match=found[0];
     if(seenMembers.has(match.membershipId))return {index,status:"unusable" as const,reason:"Roll number appears twice",membershipId:null,expectedVersion:null};
     seenMembers.add(match.membershipId);
+    if(row.decision==="INVALID")
+      return {index,status:"unusable" as const,reason:"Decision must be Eligible, Ineligible or Not decided",membershipId:null,expectedVersion:null};
     if(row.decision==="INELIGIBLE" && row.reason.length<3)
       return {index,status:"unusable" as const,reason:"Ineligible needs a reason",membershipId:null,expectedVersion:null};
     return {index,status:"matched" as const,reason:null,membershipId:match.membershipId,expectedVersion:match.expectedVersion};

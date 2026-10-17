@@ -116,3 +116,5 @@ Tests are written but not run. This section supersedes older partial statuses on
 The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests and later DONE evidence in this file. They are now marked DONE in the queue; tests are authored but remain unexecuted by this lane:
 
 `TPO-batches-19`, `TPO-batches-02`, `TPO-batches-04`, `TPO-batches-05`, `TPO-batches-08`, `TPO-batches-22`, `TPO-batches-38`, `TPO-batches-41`, `TPO-batches-42`, `TPO-batches-58`, `TPO-batches-59`, `TPO-batches-06`, `TPO-batches-10`, `TPO-batches-23`, `TPO-batches-47`, `TPO-batches-30`, `TPO-batches-62`.
+
+| TPO-batches-R04 | OPEN (improved invalid-value preview) | `src/modules/placements/tpo-eligibility-sheet-model.ts` preserves unrecognized CSV decisions as noncommittable `INVALID` preview rows, with a precise, per-row reason instead of discarding the whole file. `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` independently refuses invalid rows; `tests/unit/tpo-batches-import-r04-chat5.test.ts` — `TPO-batches-R04 preserves missing-roll and ambiguous-roll review reasons`. Legacy suggestion/replacement editor is still outstanding. |
