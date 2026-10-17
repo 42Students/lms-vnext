@@ -32,3 +32,5 @@ Round 4: College workspace list now offers formula-safe visible-page CSV, table/
 | COL-projects-08 | OPEN | Added template labels to cards/table from college-assigned template identity, `tests/unit/chat9-college-projects-template-catalogue.test.ts` — `COL-projects-08 renders template tags in both list and cards without introducing a new status`; legacy READY/BLOCKED status mapping still unresolved. |
 
 | COL-projects-15 | OPEN | Workspace Team now links to preselected, UUID-validated tenant-scoped reassignment; `tests/unit/chat9-college-project-team-entry.test.ts` — `COL-projects-15 links workspace Team to an authorized preselected reassignment without inferring a different tenant`. Roster/change-role modal parity remains. |
+
+| COL-projects-18 | OPEN | Added resource action and search filters using persisted resource event types; `tests/unit/chat9-college-project-resource-audit.test.ts` — `COL-projects-18 recognizes resource added edited saved removed without treating task events as resource edits`. Source has no separate Saved event; exact action provenance remains to verify. |
