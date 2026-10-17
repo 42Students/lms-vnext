@@ -32,6 +32,7 @@ export function TpoBatchInvitationControl(props: Props) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [remindReview,setRemindReview]=useState(false);
   const ready = props.eligible > 0 &&
     !props.invitedAt && !props.finishedAt;
   async function invite() {
@@ -82,6 +83,26 @@ export function TpoBatchInvitationControl(props: Props) {
       setError(cause instanceof Error ? cause.message : "Could not save the deadline.");
     } finally { setBusy(false); }
   }
+  async function remind(){
+    if(busy||!remindReview||!props.deadline)return;
+    setBusy(true);setError("");setMessage("");
+    try{
+      const response=await fetch("/api/placements/tpo/batches/"+encodeURIComponent(props.batchId)+"/remind",{
+        method:"POST",credentials:"same-origin",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({confirmed:true,expectedVersion:props.expectedVersion}),
+      });
+      const data=await response.json() as {reminded?:number;alreadySent?:boolean};
+      if(!response.ok)throw new Error(response.status===409?
+        "Registration changed or today’s reminder was already sent. Refresh to review the latest state.":
+        "Could not send the reminder. Please try again.");
+      setMessage(data.alreadySent?"Already reminded today":
+        (data.reminded??0)>0?"Reminded "+data.reminded+" student"+(data.reminded===1?"":"s")+" in the app":
+        "Everyone has chosen already");
+      setRemindReview(false);router.refresh();
+    }catch(cause){setError(cause instanceof Error?cause.message:"Could not send the reminder.")}
+    finally{setBusy(false);}
+  }
   if (props.invitedAt) {
     const deadlinePassed = props.deadlinePassed;
     const sameDeadline = date === (props.deadline?.slice(0,10) ?? "");
@@ -103,6 +124,20 @@ export function TpoBatchInvitationControl(props: Props) {
           {TPO_INVITATION_COPY.clear}
         </button>
       </div>
+      {!deadlinePassed&&props.invitable>0?<fieldset className="space-y-2 border-t border-border pt-3">
+        <legend className="text-sm font-semibold">Remind eligible students</legend>
+        <p className="text-sm">Eligible students of this batch who have not chosen Placements, Higher studies or Not interested get a reminder with the deadline.</p>
+        <label className="flex items-start gap-2 text-sm text-body">
+          <input type="checkbox" checked={remindReview} disabled={busy}
+            onChange={event=>setRemindReview(event.target.checked)}/>
+          I reviewed the recipients. Send a reminder in the app; no SMS or email is claimed.
+        </label>
+        <button type="button" disabled={busy||!remindReview}
+          onClick={()=>void remind()}
+          className="min-h-11 rounded border border-border px-4 text-sm disabled:opacity-50">
+          {busy?"Sending…":"Send reminder"}
+        </button>
+      </fieldset>:null}
       {deadlinePassed ? <p className="text-sm text-muted-foreground">
         Move the deadline to reopen registration and tell eligible students in the app.
       </p> : null}
