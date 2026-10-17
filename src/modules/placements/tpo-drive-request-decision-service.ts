@@ -1,15 +1,12 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, inAppNotifications, placementCompanies,
-  placementCompanyRelationships, placementJobEligibilityPolicies,
-  placementJobRoleOptions, placementJobRounds, placementJobs,
-  placementRecruiterDriveRequests, placementSeasons,
+  activityEvents, inAppNotifications, placementRecruiterDriveRequests,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoJobActor, requireTpoJobCollege } from "./tpo-job-write-base";
-import { hrDriveDraftSchema } from "./hr-drive-draft-model";
+import { createRecruiterApprovedDraftJob,RecruiterDraftApprovalError } from "./recruiter-approved-draft-job-service";
 import { tpoDriveRequestDecisionSchema }
   from "./tpo-drive-request-decision-model";
 
@@ -21,7 +18,6 @@ export class TpoDriveRequestDecisionError extends Error {
     super(code);this.name="TpoDriveRequestDecisionError";
   }
 }
-const inr = (value:string) => value ? Number(value) : null;
 /** Approving creates a real DRAFT, never publishes implicitly. All writes are atomic. */
 export async function decideTpoRecruiterDriveRequest(
   context:RequestContext, rawRequestId:unknown, raw:unknown,
@@ -43,73 +39,14 @@ export async function decideTpoRecruiterDriveRequest(
     const now=new Date();
     let approvedJobId:string|null=null;
     if(input.action==="APPROVE_LATER"){
-      const draft=hrDriveDraftSchema.parse(request.draft);
-      const [relation]=await tx.select({id:placementCompanyRelationships.id})
-        .from(placementCompanyRelationships)
-        .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
-        .where(and(eq(placementCompanyRelationships.id,request.companyRelationshipId),
-          eq(placementCompanyRelationships.collegeId,collegeId),
-          eq(placementCompanyRelationships.status,"ACTIVE"),
-          eq(placementCompanies.status,"ACTIVE")))
-        .limit(1);
-      if(!relation)throw new TpoDriveRequestDecisionError("COMPANY_INACTIVE");
-      const seasons=await tx.select({id:placementSeasons.id})
-        .from(placementSeasons).where(and(eq(placementSeasons.collegeId,collegeId),
-          eq(placementSeasons.status,"ACTIVE")))
-        .orderBy(asc(placementSeasons.id)).for("update").limit(2);
-      if(seasons.length===0)throw new TpoDriveRequestDecisionError("NO_ACTIVE_SEASON");
-      if(seasons.length!==1)throw new TpoDriveRequestDecisionError("AMBIGUOUS_ACTIVE_SEASONS");
-      // Do not silently turn a recruiter's "No preference" into on-site.
-      // Request clarification; publication changes where students must attend.
-      if(draft.workMode==="NO_PREFERENCE")
-        throw new TpoDriveRequestDecisionError("WORK_MODE_REVIEW_REQUIRED");
-      const workMode=draft.workMode;
-      const legacyAnnualCtc=draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null;
-      // REC-home-drives-26: off-campus applications must not be silently
-      // converted into an internal LMS apply flow on TPO approval.
-      if(draft.driveMode==="OFF_CAMPUS"&&!draft.externalApplicationUrl)
-        throw new TpoDriveRequestDecisionError("EXTERNAL_APPLICATION_URL_REQUIRED");
-      const [job]=await tx.insert(placementJobs).values({
-        collegeId,seasonId:seasons[0].id,
-        companyRelationshipId:request.companyRelationshipId,
-        title:draft.title,description:draft.description,
-        employmentType:draft.employmentType,workMode,
-        locations:[draft.location],
-        recruiterDriveMode:draft.driveMode,eligibleBranches:draft.branches,
-        eligiblePassingYear:draft.passingYear?Number(draft.passingYear):null,
-        ctcLpa:draft.ctcLpa||null,
-        fixedCtcLpa:draft.fixedLpa||null,variableCtcLpa:draft.variableLpa||null,
-        stipendPerMonthInr:draft.stipendMonthlyInr?Number(draft.stipendMonthlyInr):null,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
-          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
-        createdByUserId:context.user.id,
-        status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
-        externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
-      }).returning({id:placementJobs.id});
-      if(!job)throw new TpoDriveRequestDecisionError("REQUEST_STALE");
-      approvedJobId=job.id;
-      await tx.insert(placementJobRoleOptions).values({
-        jobId:job.id,title:draft.title,
-        employmentType:draft.employmentType,workMode,
-        locations:[draft.location],isPrimary:true,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
-          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
-        fixedLpa:draft.fixedLpa|| (draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null),
-        variableLpa:draft.variableLpa|| (draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null),
-        bondMonths:inr(draft.bondMonths),
-        bondAmount:draft.bondAmountInr||null,
-      });
-      await tx.insert(placementJobRounds).values(draft.rounds.map((round,index)=>({
-        jobId:job.id,sequence:index+1,
-        kind:round.kind,name:round.name,createdByUserId:context.user.id,
-      })));
-      await tx.insert(placementJobEligibilityPolicies).values({
-        jobId:job.id,updatedByUserId:context.user.id,
-        minCgpaHundredths:draft.minimumCgpa?Math.round(Number(draft.minimumCgpa)*100):null,
-        maxActiveBacklogs:inr(draft.maximumActiveBacklogs),
-      });
+      try{
+        approvedJobId=await createRecruiterApprovedDraftJob(tx,request,context.user.id);
+      }catch(error){
+        if(error instanceof RecruiterDraftApprovalError){
+          throw new TpoDriveRequestDecisionError(error.code==="REQUEST_STALE"?"REQUEST_STALE":error.code);
+        }
+        throw error;
+      }
     }
     const status=input.action==="APPROVE_LATER"?"DRAFT":
       input.action==="DECLINE"?"REJECTED":"SENT_BACK";
