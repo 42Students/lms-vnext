@@ -3,6 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementReportWorkspace} from "@/modules/placements/report-service";
 import {getPlacementLeadsReport} from "@/modules/placements/report-extra-service";
+import {getTpoRecordedRanDrives} from "@/modules/placements/tpo-engagement-ran-drives-service";
 import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {companyEngagementCsv,companyEngagementCsvQuerySchema} from "@/modules/placements/tpo-company-engagement-csv-model";
 import {NextResponse} from "next/server";
@@ -19,10 +20,12 @@ export async function GET(request:Request){
    getPlacementReportWorkspace(context,{collegeId,...input}),
    getPlacementLeadsReport(context,collegeId),
   ]);
-  const all=joinTpoCompanyEngagementWithPlacement(leads.companyEngagement,report.report.byCompany);
+  const ranDrives=await getTpoRecordedRanDrives(context,{collegeId,
+   seasonId:report.selectedSeasonId,jobId:report.selectedJobId});
+  const all=joinTpoCompanyEngagementWithPlacement(leads.companyEngagement,report.report.byCompany,ranDrives);
   const rows=all.slice(0,5000).map(row=>{
    return {companyName:row.companyName,contacts:row.contacts,invited:row.invited,joined:row.joined,
-    drives:row.drives,placed:row.placed};
+    drives:row.ranDrives,placed:row.placed};
   });
   return new Response("\uFEFF"+companyEngagementCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
