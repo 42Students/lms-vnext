@@ -6,10 +6,10 @@ export function tpoStudentClipboardCell(value:unknown):string{
  return /^[\s]*[=+@-]/.test(raw)?"'"+raw:raw;
 }
 export function tpoStudentClipboardTsv(rows:readonly TpoStudentRow[]):string{
- const headers=["Student","Student number","Program","Batch","Branch","Stage","Applications","Offers","Best so far"];
+ const headers=["Student","Student number","Program","Batch","Branch","Stage","Applications","Offers","Offers awaiting answer","Best so far"];
  const data=rows.map(row=>[row.displayName,row.rollNumber??row.registrationNumber??"",
   row.programName,row.cohortName,row.branchName,row.journeyState.replaceAll("_"," "),
-  row.applicationCount,row.offerCount,row.bestSoFar]);
+  row.applicationCount,row.offerCount,row.offersAwaitingAnswer,row.bestSoFar]);
  return [headers,...data].map(line=>line.map(tpoStudentClipboardCell).join("\t")).join("\r\n");
 }
 export function matchTpoStudentRolls(rows:readonly TpoStudentRow[],raw:string){
