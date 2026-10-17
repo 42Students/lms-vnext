@@ -28,6 +28,8 @@ export async function GET(request:Request){
   ]);
   const activity=await getTpoUnplacedLastApplications(context,{collegeId,
    seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
+  if(input.branchId&&!students.branches.some(branch=>branch.branchId===input.branchId))
+   return NextResponse.json({error:"INVALID_BRANCH"},{status:400});
   const roster=new Map((students.exportRows??[]).map(row=>[row.membershipId,row]));
   const matching=workspace.details.unplaced.filter(row=>roster.has(row.membershipId));
   const rows=matching.slice(0,5000).map(student=>{
