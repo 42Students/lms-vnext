@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,departments,membershipRoles,programs,cohorts,sections,
   sectionScheduleEvents,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -87,7 +88,7 @@ export async function reassignSuperAdminFacultySchedules(context:RequestContext,
       if(changed.length!==1)throw new SuperAdminFacultyScheduleReassignError("SCHEDULE_CHANGED");
     }
     await recordActivityEventInTransaction(tx,context,{
-      eventType:"ACADEMICS_FACULTY_SCHEDULE_REASSIGNED",
+      eventType:ACTIVITY_EVENT_TYPES.COURSES_CLASS_SCHEDULED,
       collegeId:selected.collegeId,organizationId:selected.organizationId,
       subjectType:"faculty_schedule_reassignment",
       subjectId:input.sourceMembershipId,
