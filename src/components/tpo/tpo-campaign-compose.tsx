@@ -22,6 +22,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [error,setError]=useState(""),[done,setDone]=useState("");
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
  const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">("idle");
+ const [audienceRetry,setAudienceRetry]=useState(0);
  const selectionKey=selectedLeadIds.join(",");
  useEffect(()=>{
   if(!selectionKey){setAudience(null);setAudienceStatus("idle");return;}
