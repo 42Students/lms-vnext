@@ -143,6 +143,12 @@ export async function readIndependentFindingSyncState(context:RequestContext){
  }).from(db10AuditFindingSyncs)
   .where(eq(db10AuditFindingSyncs.source,"42Students/lms-findings")).limit(1);
  if(!row)return null;
+ // The importer's refusal details are already persisted. Expose a bounded
+ // diagnostic view to the authorized Super Admin, never a fabricated sync.
+ const refusedFiles=row.refusedFiles.slice(0,50).map(file=>({
+  path:String(file.path??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,240),
+  reason:String(file.reason??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,400),
+ }));
  return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,
-  importedCount:row.importedCount,refusedCount:row.refusedFiles.length};
+  importedCount:row.importedCount,refusedCount:row.refusedFiles.length,refusedFiles};
 }

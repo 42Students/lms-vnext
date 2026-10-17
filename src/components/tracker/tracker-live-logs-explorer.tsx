@@ -24,6 +24,19 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
       "Details: "+row.message,
     ].join("\n"))].join("\n\n");
 }
+/** CSV data is redacted by the server, but spreadsheet programs can still
+ * execute formulas in quoted CSV cells. Neutralise formula prefixes and bound
+ * embedded newlines without changing the immutable source records. */
+export function trackerLogCsv(rows:readonly Entry[]):string{
+ const cell=(value:string)=>{
+ const clean=value.replace(/[\r\n]+/g," ");
+ const inert=/^\s*[=+\-@]/.test(clean)?"'"+clean:clean;
+  return '"'+inert.replaceAll('"','""')+'"';
+ };
+ return ["Time,Event,Route,Component,Reference,Message",
+  ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
+   .map(cell).join(","))].join("\n");
+}
 export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
   const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("ERROR");
@@ -78,10 +91,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     catch{setNotice("Copy is unavailable. Select the text manually.");}
   }
   function download(rows:Entry[],format:"csv"|"markdown"){
-    const contents=format==="markdown"?trackerLogMarkdown(rows):
-      ["Time,Event,Route,Component,Reference,Message",
-       ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
-         .map(value=>'"'+value.replaceAll('"','""')+'"').join(","))].join("\n");
+    const contents=format==="markdown"?trackerLogMarkdown(rows):trackerLogCsv(rows);
     const blob=new Blob([contents],{type:format==="csv"?"text/csv;charset=utf-8":"text/markdown;charset=utf-8"});
     const href=URL.createObjectURL(blob);
     const anchor=document.createElement("a");anchor.href=href;
