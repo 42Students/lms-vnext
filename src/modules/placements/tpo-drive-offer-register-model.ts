@@ -58,7 +58,7 @@ export function tpoDriveOfferRegisterCsv(
  rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","","","","",""]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
  if(truncated)rows.push(["TRUNCATED",
-  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null]);
+  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null,null,null,null]);
  return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Email","Roll number","Batch","Branch","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)"],rows),
   totalMatching:matches.length,truncated};
 }
