@@ -37,8 +37,8 @@ export function MentorTaskStatusTransition(props:{
       setConfirm(false);
       showToast({tone:"success",title:"Task status recorded"});
       router.refresh();
-    }catch(caught){
-      const message=caught instanceof Error?caught.message:"Status change failed";
+    }catch{
+      const message="The task state could not be changed. Reload the latest status and retry.";
       setError(message);
       showToast({tone:"error",title:"Task transition rejected",description:message});
     }finally{setPending(false);}

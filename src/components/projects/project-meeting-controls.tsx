@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -343,7 +343,6 @@ export function ScheduleProjectMeetingControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [title, setTitle] = useState(
     meeting?.title ?? "",
   );
@@ -381,25 +380,6 @@ export function ScheduleProjectMeetingControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
-  const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
-    startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
-    endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
-    meetingUrl!==(meeting?.meetingUrl??"")||meetingType!==(meeting?.meetingType??"GENERAL")||
-    linkedSprintId!==(meeting?.linkedSprintId??"")||linkedTaskId!==(meeting?.linkedTaskId??"");
-  useEffect(()=>{
-    if(!open||!dirty)return;
-    const warn=(event:BeforeUnloadEvent)=>{
-      event.preventDefault();
-      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
-    };
-    window.addEventListener("beforeunload",warn);
-    return ()=>window.removeEventListener("beforeunload",warn);
-  },[open,dirty]);
-  function requestClose(){
-    if(pending)return;
-    if(dirty)setConfirmDiscard(true);else setOpen(false);
-  }
-
   const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
     startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
     endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
@@ -720,22 +700,6 @@ export function ProjectMeetingTransitionActions({
   const [note, setNote] = useState("");
   const [pending, setPending] =
     useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
-  const dirty=Boolean(note.trim());
-  useEffect(()=>{
-    if(!open||!dirty)return;
-    const warn=(event:BeforeUnloadEvent)=>{
-      event.preventDefault();
-      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
-    };
-    window.addEventListener("beforeunload",warn);
-    return ()=>window.removeEventListener("beforeunload",warn);
-  },[open,dirty]);
-  function requestClose(){
-    if(pending)return;
-    if(dirty)setConfirmDiscard(true);else setOpen(null);
-  }
-
   function discardNote(){setOpen(null);setNote("");}
   const guard=useProjectEditorDiscardGuard(open!==null,Boolean(note.trim()),pending,discardNote);
   const manager =
