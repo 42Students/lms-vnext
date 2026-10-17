@@ -34,7 +34,7 @@ const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
 
 function parsePageSize(value: string | undefined) {
   const parsed = z.coerce.number().int().safeParse(value);
-  return parsed.success && (parsed.data === 50 || parsed.data === 100)
+  return parsed.success && (parsed.data === 10 || parsed.data === 50)
     ? parsed.data : 25;
 }
 
