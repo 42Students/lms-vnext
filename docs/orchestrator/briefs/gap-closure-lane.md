@@ -1,3 +1,6 @@
+# TOP PRIORITY (2026-10-18): FINAL SPRINT
+Before anything else each round, open docs/orchestrator/queues/final-sprint.md, find the section for your lane (chat-N) and close every item in it (OPEN: implement; FIXED-ON-MAIN: add the missing test plus acceptance citation; WRONG and UNCONFIRMED: decide the better behaviour and record). Cite the gap ID in commits, tests and docs/audit/acceptance/<account>-<page>-verification.md. Push to your branch every ~5 items. When your list is finished, say so explicitly.
+
 # Gap closure for ChatGPT lanes (verified-closure protocol, 2026-10-17)
 
 You are a builder lane (chat-N). Your queue is `docs/orchestrator/queues/gap-closure-chat-N.md` (pages with gap IDs). Goal: every gap on your pages is built AND covered by a test, with the code on your branch. The orchestrator merges your branch, runs the whole test suite, typecheck and lint, and sends back anything that fails. Work fast, but write code that compiles and tests that will pass.
