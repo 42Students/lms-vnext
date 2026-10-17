@@ -111,7 +111,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-requests-verification-01: registered migration 0134 has duplicate IF NOT EXISTS definitions for the general request tables; the first effective CHECK omits OFFER_ACCEPTANCE_DISPUTE, and target_key is varchar(150); a separately registered follow-up migration is required to align the sixth learner request kind, do not edit 0134.
 
 - TPO-students-06/07 OPEN: timed/date/N-drive debarment is wired, but bulk, student dispute/notification and true drive counting transitions are not closed; database acceptance not run.
-- TPO-students-14/15 OPEN: dialog and transactional learner notification are wired; inclusion override and 48-hour opt-out, summary bell and whole-view selections still remain.
+- TPO-students-14 OPEN for browser/database acceptance of reasoned INCLUDE, cross-page 200-row selection and preflight; TPO-students-15 DONE source-authored with existing 48-hour opt-out, transactional learner notice and scoped TPO summary bell.
 - TPO-requests-verification-01/37/38 OPEN: missing learner request kinds and recruiter REQUEST transitions require staged schema/service changes, not an external blocker.
 
 - TPO-requests-verification-01 OPEN: expand Drizzle schema and stage proposed SQL under docs/proposed-migrations for the five missing learner kinds, then add transactional effects and tests; see docs/orchestrator/proposals/chat-12-requests-schema.md. Not a valid external-dependency BLOCKED.
@@ -123,8 +123,8 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 
 - TPO-students-10 remains OPEN (partial): real 0134 course Assign prep picker, due date, duplicate skip and learner notice now exist, but the legacy optional due-date behavior is not supported by the NOT NULL schema. The due date entered as IST is now converted without browser timezone drift.
-- TPO-students-12 OPEN: scoped drive INCLUDE/EXCLUDE visibility overrides, reason and undo are still missing.
-- TPO-students-34 OPEN: academic import updates need application re-evaluation, learner notice and placement-team bell.
+- TPO-students-12 OPEN for live verification of implemented scoped INCLUDE/EXCLUDE/CLEAR, reason, audit and CAS undo; never clear a different staff member's later override.
+- TPO-students-34 OPEN for PostgreSQL verification of implemented import-time application rechecks, review flags and scoped student/TPO notifications.
 - TPO-students-49 OPEN: do not widen roster/export authorization without proving College Admin, SA and placement-team faculty role parity.
 
 ## Needs shell (chat-9 only)
@@ -190,7 +190,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 - Round 47: TPO-students-12 now has expected override CAS undo of last successful bulk action and audit on SET/CLEAR in the shared service; remain OPEN pending live DB concurrency proof and true legacy visibility semantics.
 
-- Round 48: TPO-students-14 OPEN (partial): explicit ineligible Add to Drive with audited reason and scoped transactional eligibility override; hard guards cannot be bypassed, application conflict rolls back override; 48-hour opt-out and user-visible release still need verified work.
+- Round 48: TPO-students-14 OPEN (partial): explicit ineligible Add to Drive with audited reason and scoped transactional eligibility override; hard guards cannot be bypassed, application conflict rolls back override. Existing staff-origin 48-hour learner opt-out path is reused; live verification remains.
 
 - Round 49: TPO-requests-verification-01 OPEN (partial): effective 0134 target-key varchar(150) bounds enforced at both learner entry and Zod boundary, while sixth OFFER_ACCEPTANCE_DISPUTE remains unsupported by the active first CHECK; additive correction proposed, not registered.
 
