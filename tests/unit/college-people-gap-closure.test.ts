@@ -37,9 +37,9 @@ describe("College People legacy audited page contracts",()=>{
   expect(src("src/modules/people/college-student-registration-service.ts")).toContain("placeImportedLearnerInSection");
  });
  it("COL-people-05 student CSV accepts legacy five-column template and bounded 500-row import",()=>{
-  expect(LEGACY_STUDENT_CSV_COLUMNS).toEqual(["First Name","Last Name","Mobile Number","Email","Roll Number"]);
+  expect(LEGACY_STUDENT_CSV_COLUMNS).toEqual(["First Name","Last Name","Roll Number","Mobile Number","Email"]);
   expect(MAX_STUDENT_CSV_ROWS).toBe(500);
-  const sample=LEGACY_STUDENT_CSV_COLUMNS.join(",")+"\nAkhila,Example,9876543210,a@example.test,R001";
+  const sample=LEGACY_STUDENT_CSV_COLUMNS.join(",")+"\nAkhila,Example,R001,9876543210,a@example.test";
   const programId="11111111-1111-4111-8111-111111111111";
   const cohortId="22222222-2222-4222-8222-222222222222";
   const result=parseStudentCsv(sample,{programId,cohortId});

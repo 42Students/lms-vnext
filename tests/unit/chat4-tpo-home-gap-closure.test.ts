@@ -121,9 +121,10 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(src).toContain('<Drawer open={open} onOpenChange={changeOpen} title="Notifications"');
   expect(src).toContain("aria-expanded={open}");
   const drawer=source("src/components/ui/drawer.tsx");
-  expect(drawer).toContain("panel.showModal()");
+  expect(drawer).toContain("modal.showModal()");
+  expect(drawer).toContain("modal.close()");
   expect(drawer).toContain('aria-labelledby={titleId}');
-  expect(drawer).toContain('onCancel={(event) => {');
+  expect(drawer).toContain("onCancel={event => {");
   expect(drawer).toContain("onOpenChange(false)");
 
  });
@@ -149,7 +150,8 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  it("TPO-home-20 verified legacy and graceful behavior",()=>{
   const s=source("src/app/(authenticated)/tpo/home/loading.tsx");
   expect(s).toContain("Loading placement home");
-  expect(s).toContain("animate-pulse");
+  expect(s).toContain('<PageLoading label="Loading placement home…" variant="kpi" count={4} />');
+  expect(source("src/components/ui/skeleton.tsx")).toContain("animate-pulse");
 
  });
  it("TPO-home-21 verified legacy and graceful behavior",()=>{
@@ -225,7 +227,8 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  });
  it("TPO-home-R07 opens a student record using the scoped finder query and membership identifier",()=>{
   const s=source("src/app/(authenticated)/tpo/find/page.tsx");
-  expect(s).toContain('"/tpo/students?q="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)');
+  expect(s).toContain('"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)');
+  expect(s).toContain('s.branch');
   expect(s).toContain("named.students.slice(0,5)");
  });
 

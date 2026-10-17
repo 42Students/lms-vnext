@@ -58,7 +58,10 @@ describe("Chat-5 FIXED-ON-MAIN evidence revalidation",()=>{
  it("TPO-requests-verification-04 persists student-facing notice in the decision service",()=>{
   const c=source("src/modules/placements/request-service.ts");
   expect(c).toContain("inAppNotifications");
-  expect(c).toContain("Your request was answered");
+  expect(c).toContain("deliverRecordedLearnerPlacementEvent(tx,{");
+  expect(c).toContain('kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED"');
+  expect(source("src/modules/placements/learner-placement-event-copy.ts")).toContain('REQUEST_DECIDED:"Placement request reviewed"');
+  expect(source("src/modules/placements/learner-placement-event-delivery.ts")).toContain("deliverInAppNotificationInTransaction(tx,input.eventId");
   expect(c).toContain("decisionEvent.id");
  });
 });

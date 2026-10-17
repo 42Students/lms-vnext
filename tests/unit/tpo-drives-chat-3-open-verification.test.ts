@@ -60,9 +60,10 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(create()).toContain("Add a valid HTTPS employer application link before publishing.");
   expect(source("src/modules/placements/tpo-drive-lifecycle-model.ts")).toContain("APPLICATION_DEADLINE_MISSING");
  });
- it("TPO-drives-48 edit remains draft-only until the live notify contract exists",()=>{
+ it("TPO-drives-48 published edits require the live applicant notification contract",()=>{
   const service=source("src/modules/placements/tpo-drive-edit-service.ts");
-  expect(service).toContain('editable:job.status==="DRAFT"&&season?.status==="ACTIVE"');
+  expect(service).toContain('editable:["DRAFT","PUBLISHED"].includes(job.status)&&season?.status==="ACTIVE"');
+  expect(service).toContain('job.status==="PUBLISHED"&&input.notifyApplicants');
  });
  it("TPO-drives-52 quick and full create paths are explicitly separate",()=>{
   const page=source("src/app/(authenticated)/tpo/placements/new/page.tsx");
