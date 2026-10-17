@@ -227,11 +227,11 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-dashboard-03 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-04 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| COL-dashboard-03 | S2 | MISSING-FIELD | DONE |
+| COL-dashboard-04 | S2 | MISSING-FIELD | DONE |
+| COL-dashboard-05 | S2 | MISSING-FIELD | DONE |
+| COL-dashboard-06 | S2 | MISSING-FIELD | DONE |
+| COL-dashboard-07 | S2 | MISSING-FIELD | DONE |
 | COL-dashboard-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-dashboard-10 | S2 | STATE | DONE |
 | COL-dashboard-09 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
