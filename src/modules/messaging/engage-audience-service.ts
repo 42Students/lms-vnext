@@ -10,6 +10,10 @@ import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {engageAudienceQuerySchema,summarizeEngageAudience} from "./engage-audience-model";
 import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 
+const selectedCampaignPreviewSchema=z.strictObject({
+ selectedLeadIds:z.array(z.string().uuid()).min(1).max(100)
+  .refine(ids=>new Set(ids).size===ids.length,"Select different recruiter leads"),
+});
 /** Count-only preview; no emails leave this service. A send requires separate revalidation. */
 export async function previewEngageCampaignAudience(context:RequestContext,raw:unknown={}){
  const collegeId=context.membership?.collegeId;
