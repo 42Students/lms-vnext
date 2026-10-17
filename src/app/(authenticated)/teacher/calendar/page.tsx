@@ -53,11 +53,11 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className="flex flex-wrap gap-3 text-sm font-semibold">
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className="text-primary-text hover:underline">Previous month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Previous month</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className="text-primary-text hover:underline">Current month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Current month</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className="text-primary-text hover:underline">Next month</Link>
+            className="inline-flex min-h-11 items-center rounded-md px-2 text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Next month</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="mt-4 flex flex-wrap items-end gap-3">
@@ -84,7 +84,7 @@ export default async function FacultyCalendarPage({
       </p>:grid.days.every(day=>day.events.length===0)?<p className="mt-5 text-sm text-body">
         No persisted scheduled sessions in this IST month for the selected teaching Sections.
       </p>:null}
-      <div className="mt-4 overflow-x-auto" role="region" aria-label="IST month schedule grid">
+      <div className="mt-4 overflow-x-auto rounded-lg focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" role="region" aria-label="IST month schedule grid; scroll horizontally for all weekdays" tabIndex={0}>
         <div className="grid min-w-[44rem] grid-cols-7 gap-px rounded-lg border border-border bg-border">
           {names.map(name=><div key={name} className="bg-surface-subtle p-2 text-center text-xs font-semibold">{name}</div>)}
           {grid.days.map(day=><section key={day.key}
