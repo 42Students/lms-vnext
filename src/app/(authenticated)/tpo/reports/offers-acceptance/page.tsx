@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -50,7 +51,7 @@ export default async function TpoOffersAcceptanceReportPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Offers and acceptance"
@@ -61,6 +62,7 @@ export default async function TpoOffersAcceptanceReportPage({
       />
 
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/offers-acceptance" collegeId={context.membership.collegeId}/></Suspense>
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
