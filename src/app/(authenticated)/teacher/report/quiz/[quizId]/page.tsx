@@ -134,6 +134,9 @@ export default async function FacultyQuizReportPage({
         <h2 className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
+        {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
+          No quiz attempts yet. Scores will appear after students submit.
+        </p>:null}
         <div
           className="mt-4 space-y-3"
           role="group"
