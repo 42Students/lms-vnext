@@ -14,8 +14,8 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const tpoNoticeCreateSchema=z.object({
- title:z.string().trim().min(1).max(255),
- message:z.string().trim().min(1).max(10000),
+ title:z.string().trim().min(1).max(200),
+ message:z.string().trim().min(1).max(8000),
  pinned:z.boolean().default(false),
  audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
  targetId:z.string().uuid().optional(),
