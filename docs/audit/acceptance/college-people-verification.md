@@ -14,7 +14,7 @@ Tests authored, **not executed**, for every source-checked gap below: `tests/uni
 | COL-people-06 | DONE | Recorded bulk student import history with When/Students/Imported/Partial/Failed, server pagination; unit test COL-people-06 |
 | COL-people-07 | OPEN | Student editable profile exists; canonical login identity and program/class edit parity remain incomplete |
 | COL-people-08 | DONE | Faculty Suspend/Reactivate and Student Suspend/Reactivate on own roster surfaces; guarded APIs; unit and PG tests COL-people-08 |
-| COL-people-09 | OPEN | Permanent deletion guards and attendance consequences are not implemented |
+| COL-people-09 | NOT-A-GAP (approved redesign) | Owner decision OD-23 explicitly replaces permanent deletion with suspend/end membership and session-safe lifecycle. Faculty and learner lifecycle actions only offer Suspend/Reactivate; `tests/unit/college-people-gap-closure.test.ts` — `COL-people-09 is an approved non-destructive membership lifecycle instead of permanent delete`. Avoid destructive deletion of attendance and historical records. |
 | COL-people-10 | DONE | College-scoped person audit and rich profile modal covering education/skills/publications/identity summaries; unit and PG tests COL-people-10 |
 | COL-people-11 | DONE | Upcoming faculty schedule reassignment transaction, overlapping-session skip, result breakdown and activity audit; unit test COL-people-11; DB writer acceptance not run |
 | COL-people-12 | OPEN | OTP per-user lockout may not exist; confirm before adding unsafe bypass |
@@ -29,7 +29,7 @@ Tests authored, **not executed**, for every source-checked gap below: `tests/uni
 | COL-people-21 | OPEN | Mentor workload and risk band UI not yet demonstrated on this page |
 | COL-people-22 | OPEN | Reassign mentor filter / already-this-mentor count and preview need inspection |
 | COL-people-23 | OPEN | Outgoing mentor task assignments/notification side effects need DB evidence |
-| COL-people-24 | OPEN | Mentor reassignment confirmation and result wording incomplete |
+| COL-people-24 | DONE (source verified; tests not run) | `project-mentor-reassignment.tsx` uses accessible ConfirmDialog with selected/count/mentor wording; action lock, no raw errors, exact reassignment/no-change feedback, and failed-only selection retained for retry. `project-admin-reassign-mentor-page.tsx` restores subtitle/Back to workspaces. `tests/unit/college-people-gap-closure.test.ts` — `COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy`. |
 | COL-people-25 | OPEN | Mobile validation and CSV duplicate detection exist; full identity duplicate messages and field-level parity remain |
 | COL-people-26 | OPEN | Inline faculty lifecycle confirmation exists, but full Popconfirm wording/state parity remains |
 | COL-people-27 | OPEN | Mobile cards exist; 375px behavior and 12-filter layout remain unverified |
