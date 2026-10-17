@@ -164,8 +164,8 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     db.select({ total: count() }).from(scoped),
     db.select().from(scoped)
       .orderBy(asc(scoped.courseName), asc(scoped.cohortName), asc(scoped.sequence), asc(scoped.id))
-      .limit(COLLEGE_LEARNING_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_LEARNING_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
   ]);
   const ids = baseRows.map(r => r.id);
   const counts = ids.length === 0 ? [] : await db.select({
@@ -184,7 +184,7 @@ export async function listCollegeLessons(context: RequestContext, raw: unknown) 
     publishedAndVisibleFlagCount: byLesson.get(row.id)?.publishedVisible ?? 0,
   }));
   const total = countRows[0]?.total ?? 0;
-  return { kind: "LESSONS" as const, query, items, total, totalPages: collegeLearningPageCount(total) };
+  return { kind: "LESSONS" as const, query, items, total, totalPages: collegeLearningPageCount(total,query.pageSize) };
 }
 
 /** Recorded *content events* per offering, never attendance/quiz completion,
@@ -414,8 +414,8 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     db.select({ total: count() }).from(scoped),
     db.select().from(scoped)
       .orderBy(asc(scoped.courseName), asc(scoped.cohortName), asc(scoped.offeringId))
-      .limit(COLLEGE_LEARNING_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_LEARNING_PAGE_SIZE),
+      .limit(query.pageSize)
+      .offset((query.page - 1) * query.pageSize),
   ]);
   const ids = baseRows.map(r => r.offeringId);
   const progress = ids.length === 0 ? [] : await db.select({
@@ -445,5 +445,5 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
     learnersWithRecords: byOffering.get(row.offeringId)?.learnerCount ?? 0,
   }));
   const total = countRows[0]?.total ?? 0;
-  return { kind: "PROGRESS" as const, query, items, total, totalPages: collegeLearningPageCount(total) };
+  return { kind: "PROGRESS" as const, query, items, total, totalPages: collegeLearningPageCount(total,query.pageSize) };
 }
