@@ -157,6 +157,7 @@ export async function getAdminCourseWorkspace(
     cohorts: academics.cohorts,
     sections: academics.sections,
     faculty,
+    facultyTruncated:facultyChoices.truncated,
     courses,
     offerings,
     deliveries,
