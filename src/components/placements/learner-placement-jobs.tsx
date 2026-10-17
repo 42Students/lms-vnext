@@ -35,6 +35,7 @@ export type LearnerPlacementJobItem = {
     externalApplicationUrl: string | null;
     applicationDeadline: string | null;
     publishedAt?: string | null;
+    stipendPerMonthInr?:number|null;
   };
   roleOption: {
     id: string;
@@ -46,6 +47,9 @@ export type LearnerPlacementJobItem = {
     minimumAnnualCtcInr: number | null;
     maximumAnnualCtcInr: number | null;
     isPrimary: boolean;
+    fixedLpa?:string|null;
+    variableLpa?:string|null;
+    joiningBonusLpa?:string|null;
   };
   company: {
     id: string;
