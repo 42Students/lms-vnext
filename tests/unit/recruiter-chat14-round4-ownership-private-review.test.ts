@@ -3,6 +3,37 @@ import {describe,expect,it} from "vitest";
 const source=(path:string)=>readFileSync(path,"utf8");
 
 describe("chat-14 recruiter ownership and private review gap closure",()=>{
+ it("REC-home-drives-38 shares enrolled branch/phone only when college columns allow each",()=>{
+   const service=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   expect(service).toContain('share?.columns?.includes("branch")');
+   expect(service).toContain('share?.columns?.includes("phone")');
+   expect(service).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
+   expect(service).toContain("eq(departments.collegeId,workspace.college.id)");
+   expect(service).toContain("branchSet.get(membershipId)?.size===1");
+   expect(service).toContain("phone:sharePhone?row.phone:null");
+   expect(page).toContain("selectedApplicant.branch");
+   expect(page).toContain("selectedApplicant.phone");
+ });
+ it("REC-home-drives-45 filters historical milestones only within TPO-shared applicants",()=>{
+   const model=source("src/modules/placements/hr-job-applicants-model.ts");
+   const service=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   for(const label of ["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
+      "OFFERED","HIRED","REJECTED","WITHDRAWN"]){
+     expect(model).toContain('value:"'+label+'"');
+   }
+   expect(service).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
+   expect(service).toContain('eq(placementRoundResults.status,"APPLIED")');
+   expect(service).toContain('eq(placementRoundResults.applicationId,placementApplications.id)');
+   expect(service).toContain('eq(placementJoiningOutcomes.status,"JOINED")');
+   expect(service).toContain('const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage])');
+   expect(service).toContain('const selectedTotal = stageCounts[filters.stage]');
+   expect(page).toContain("HR_RECRUITER_STAGES.map");
+   expect(page).toContain("stageCounts[stage]");
+   expect(page).toContain("unshared or privately rejected applicants remain hidden");
+ });
+
  it("REC-home-drives-41 typecheck restores authorized companyRelationshipId for private rating reads and writes",()=>{
    const workspace=source("src/modules/placements/recruiter-workspace-service.ts");
    const service=source("src/modules/placements/recruiter-private-rating-service.ts");
