@@ -13,7 +13,7 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
   expect(workspace).toContain("content.storageKey");
   expect(workspace).toContain("learnerSafeExternalContentHref(content.externalUrl)");
   const storage=source("src/modules/courses/learner-storage-ui-model.ts");
-  expect(storage).toContain("video-asset/");
+  expect(storage).toContain(String.raw`video-asset\/`);
   expect(storage).toContain("A secure signed URL is required");
  });
  it("LEARNER-course-detail-18 refuses mismatched or stale lesson-content deep links",()=>{
@@ -47,7 +47,8 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
  });
  it("LEARNER-learning-misc-41 keeps authorized delivery IDs as canonical learner course links",()=>{
   const schedule=source("src/components/academics/learner-class-schedule.tsx");
-  expect(schedule).toContain("/learn/courses/");
+  expect(schedule).toContain('courseBasePath = "/learn/courses"');
+  expect(schedule).toContain('href={\`${courseBasePath}/${event.deliveryId}');
   const route=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
   expect(route).toContain("getLearnerCourseWorkspace(context, deliveryId)");
   expect(route).toContain("if (!courseMeta)");
