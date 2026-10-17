@@ -3,6 +3,7 @@ import Link from "next/link";
 export type ProjectAdminCollectionQuery = {
   fromMentorId?: string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
+  riskSort?: "INACTIVE" | "WORKSPACE" | "SEVERITY";
   q?: string;
   status?:
     | "PLANNED"
@@ -53,9 +54,11 @@ function label(value: string) {
 export function ProjectAdminFilters({
   query,
   includeSubmissionStatus = false,
+  includeRiskSort = false,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
+  includeRiskSort?: boolean;
 }) {
   return (
     <form
@@ -89,6 +92,17 @@ export function ProjectAdminFilters({
       </label>
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
+      {includeRiskSort ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Sort by
+          <select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
+            className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="INACTIVE">Inactive</option>
+            <option value="SEVERITY">Severity</option>
+            <option value="WORKSPACE">Workspace</option>
+          </select>
+        </label>
+      ) : null}
       {includeSubmissionStatus ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Submission status
@@ -158,6 +172,7 @@ export function ProjectAdminPagination({
     if (query.q) params.set("q", query.q);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
     if (query.riskBucket) params.set("riskBucket", query.riskBucket);
+    if (query.riskSort) params.set("riskSort", query.riskSort);
     if (query.status) {
       params.set("status", query.status);
     }

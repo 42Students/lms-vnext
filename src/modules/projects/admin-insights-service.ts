@@ -40,6 +40,7 @@ import { loadProjectCollegeScope } from "./scope";
 
 const projectAdminQuerySchema = z.object({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
+  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z
     .enum([
@@ -97,6 +98,7 @@ export async function listProjectAdminSnapshots(
           projectInstances.slug,
           `%${query.q}%`,
         ),
+        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
       )
     : undefined;
   const where = and(
@@ -469,6 +471,7 @@ export async function listProjectAdminRiskQueue(
           projectInstances.slug,
           `%${query.q}%`,
         ),
+        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
       )
     : undefined;
   const lastActivityAt = sql<Date>`greatest(
@@ -569,8 +572,12 @@ export async function listProjectAdminRiskQueue(
         .from(projectInstances)
         .where(where)
         .orderBy(
-          asc(lastActivityAt),
+          query.riskSort==="WORKSPACE"?asc(projectInstances.title):
+            query.riskSort==="SEVERITY"
+              ? asc(sql`case when ${blockedTask} or (${lastActivityAt} <= ${staleCutoff} and ${pendingReview}) then 0 else 1 end`)
+              : asc(lastActivityAt),
           asc(projectInstances.title),
+          asc(projectInstances.id),
         )
         .limit(query.pageSize)
         .offset(
