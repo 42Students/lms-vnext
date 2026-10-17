@@ -23,7 +23,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  const lanes=groupLearnerBoardLanes(tasks,sprints);
  async function move(taskId:string,next:EditableStatus,restoreNote?:string|null,isUndo=false){
   const task=tasks.find(row=>row.id===taskId);
-  if(!task||busy||!membershipId||task.assigneeMembershipId!==membershipId||
+  if(!task||busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||
     !task.sprintId||sprintState.get(task.sprintId)!=="ACTIVE"||
     !statuses.includes(task.status as EditableStatus)||task.status===next)return;
   let note=restoreNote??null;
