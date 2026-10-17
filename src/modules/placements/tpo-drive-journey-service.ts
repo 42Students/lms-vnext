@@ -23,7 +23,7 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
   interviewed:sql<number>`count(*) filter(where exists(
     select 1 from placement_round_results r join placement_job_rounds p on p.id=r.round_id
     where r.application_id=${placementApplications.id} and p.job_id=${jobId}
-      and p.kind='INTERVIEW' and r.status='APPLIED'))::int`,
+      and p.kind='INTERVIEW' and r.status='APPLIED' and r.outcome<>'ABSENT'))::int`,
   offered:sql<number>`count(*) filter(where exists(
     select 1 from placement_offers o where o.application_id=${placementApplications.id}
     and o.status in ('ISSUED','ACCEPTED')))::int`,
