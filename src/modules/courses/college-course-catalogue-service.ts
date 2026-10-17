@@ -11,7 +11,7 @@ import {collegeCourseCatalogueExportQuerySchema,COLLEGE_COURSE_EXPORT_CAP} from 
 
 async function authorizedCollege(context:RequestContext){
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))
+ if(!membership||membership.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.read");
  const college=await loadAcademicCollegeScope(membership.collegeId);
  requirePermission(context,"courses.read",{
