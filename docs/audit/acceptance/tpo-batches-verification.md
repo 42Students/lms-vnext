@@ -97,3 +97,12 @@ Tests are written but not run. This section supersedes older partial statuses on
 | TPO-batches-37 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-37 partial baseline — further implementation required`. |
 | TPO-batches-45 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-45 partial baseline — further implementation required`. |
 | TPO-batches-53 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-53 partial baseline — further implementation required`. |
+
+## Chat-5 filter/navigation and mismatched-preview verification (2026-10-17)
+
+| ID | Status | Evidence (file + named test) |
+|---|---|---|
+| TPO-batches-12 | DONE | `src/components/tpo/tpo-batch-instant-search.tsx` debounces URL updates and clears the search without losing other filters; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-12 debounces URL-synced search and clears its query`. |
+| TPO-batches-16 | DONE | `src/modules/placements/tpo-batch-return-model.ts` and list/detail pages preserve an allowlisted return URL; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-16 preserves filters on back without an unsafe redirect`. |
+| TPO-batches-51 | DONE | Removed the academic CSV preview from the eligibility student page; eligibility sheet import and CSV exports remain; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-51 removes misplaced academic import without hiding eligibility import`. |
+| TPO-batches-57 | DONE | Existing `src/modules/placements/tpo-batch-decision-model.ts` enforces 3–200 characters on ineligibility reasons and strict payloads; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-57 enforces the same strict reason limits in UI and schema`. |
