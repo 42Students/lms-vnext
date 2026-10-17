@@ -16,7 +16,6 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 
@@ -446,7 +445,6 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
-  const [staleReview, setStaleReview] = useState(false);
   function discardDraft(){
     setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }
