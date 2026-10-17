@@ -54,6 +54,18 @@ export default async function MentorDeliveryVersionPage({params}:{
         {v.notes||"No learner notes were attached to this version."}
       </p>
     </section>
+    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <h2 className="font-semibold">Submitted source and demo links</h2>
+      <div className="mt-3 flex flex-wrap gap-3">
+        {([{label:"Source",href:safeProjectExternalHref(v.sourceUrl)},
+          {label:"Demo",href:safeProjectExternalHref(v.demoUrl)}]).map(item=>
+            item.href?<a key={item.label} href={item.href} target="_blank"
+              rel="noopener noreferrer" className="text-sm font-semibold text-primary-text underline">
+              Open {item.label.toLowerCase()} link ↗</a>:null)}
+        {!safeProjectExternalHref(v.sourceUrl)&&!safeProjectExternalHref(v.demoUrl)?
+          <p className="text-sm text-muted-foreground">No valid source or demo URL.</p>:null}
+      </div>
+    </section>
     <p className="text-xs text-muted-foreground">
       This view is scoped to an active Mentor assignment and displays only the
       selected registered review decision and text. Learner contact, private
