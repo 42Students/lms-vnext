@@ -18,6 +18,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { loadProjectCollegeScope } from "./scope";
 import {
@@ -282,7 +284,8 @@ export async function createProjectTemplate(
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_CREATED,
         subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
-        summary:"Super Admin created project template",metadata:{version:1},
+        summary:"Project template created",metadata:{version:1,source:"manual"},
+        groupKey:"template:"+template.id,
       });
       return { template, version };
     });
@@ -354,8 +357,9 @@ export async function reviseProjectTemplate(
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_REVISED,
         subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
-        summary:"Super Admin revised project template",
-        metadata:{version:template.currentVersion},
+        summary:"Project template revised",
+        metadata:{previousVersion:input.expectedVersion,newVersion:template.currentVersion,
+         changeNote:input.changeNote??null},groupKey:"template:"+template.id,
       });
       return { template, version };
     });
@@ -469,9 +473,8 @@ export async function publishProjectTemplate(
 
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_PUBLISHED,
-      subjectType:"project_template",subjectId:published.id,subjectLabel:published.title,
-      summary:"Super Admin published project template",
-      metadata:{version:published.publishedVersion},
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template published",metadata:{previousStatus:template.status,publishedVersion:published.publishedVersion,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
     });
     return published;
   });
@@ -517,9 +520,8 @@ export async function unpublishProjectTemplate(
 
     await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNPUBLISHED,
-      subjectType:"project_template",subjectId:draft!.id,subjectLabel:draft!.title,
-      summary:"Super Admin unpublished project template",
-      metadata:{previousPublishedVersion:template.publishedVersion},
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template unpublished",metadata:{previousStatus:template.status,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
     });
     return draft!;
   });
@@ -609,8 +611,9 @@ export async function duplicateProjectTemplate(
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_DUPLICATED,
         subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
-        summary:"Super Admin duplicated project template",
-        metadata:{sourceTemplateId:source.id},
+        summary:"Project template duplicated",
+        metadata:{sourceTemplateId:templateId,sourceVersion:source.currentVersion,
+          createdVersion:template.currentVersion},groupKey:"template:"+template.id,
       });
       return { template, version };
     });
