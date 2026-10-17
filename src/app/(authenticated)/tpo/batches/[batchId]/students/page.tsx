@@ -43,7 +43,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <h2 className="font-semibold">Placement journey</h2>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
    {([["Students",journey.total],["Eligible",journey.eligible],
-      ["Invited",batchScope.lifecycle?.invitedAt?journey.eligible:null],
+      ["Invitation sent",batchScope.lifecycle?.invitedAt?"Yes":"Not yet"],
       ["Registered",journey.registered]] as const).map(([label,value])=>
       <div key={label} className="rounded-md border border-border p-3">
        <dt className="text-xs text-muted-foreground">{label}</dt>
@@ -52,11 +52,11 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   </dl>
   <div className="flex flex-wrap gap-2 text-xs">
    {journey.undecided!==null?<span className="rounded-md bg-muted px-2 py-1">Not decided: {journey.undecided}</span>:null}
-   {journey.registrationGap!==null?<span className="rounded-md bg-muted px-2 py-1">Not registered: {journey.registrationGap}</span>:null}
+   {journey.registrationGap!==null?<span className="rounded-md bg-muted px-2 py-1">No choice recorded: {journey.registrationGap}</span>:null}
   </div>
   {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
   {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
-  <p className="text-xs text-muted-foreground">Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
+  <p className="text-xs text-muted-foreground">Invited is a lifecycle event, not a trustworthy per-student delivery count. Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
  </section>
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
