@@ -82,6 +82,21 @@ export default async function MentorDeliveryVersionPage({params}:{
         </li>;
       })}</ul>
     </section>
+    <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
+      <h2 className="font-semibold">Recorded submission history</h2>
+      <ol className="mt-3 space-y-2 text-sm">
+        {v.createdAt?<li>Draft created · {format(v.createdAt)} · {data.createdByName??"Project learner"}</li>:null}
+        {v.submittedAt?<li>Submitted · {format(v.submittedAt)} · {data.submittedByName??"Project learner"}</li>:null}
+        {v.reviewedAt?<li>Reviewed ({v.decisionLabel}) · {format(v.reviewedAt)}</li>:null}
+        {data.events.map(event=><li key={event.id}>
+          {event.eventType.replaceAll("_"," ").toLowerCase()} · {format(event.occurredAt)}
+          {" · "+event.actorName}
+          {event.reason?<p className="whitespace-pre-wrap break-words text-xs text-body">{event.reason}</p>:null}
+        </li>)}
+      </ol>
+      {!v.createdAt&&!v.submittedAt&&!v.reviewedAt&&!data.events.length?
+        <p className="mt-2 text-sm text-muted-foreground">No submission history recorded.</p>:null}
+    </section>
     <p className="text-xs text-muted-foreground">
       This view is scoped to an active Mentor assignment and displays only the
       selected registered review decision and text. Learner contact, private
