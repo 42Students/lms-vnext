@@ -35,11 +35,11 @@ export async function getTpoRecruiterThreadSqlPage(collegeId:string,query:TpoMes
    (select lead.company_name from placement_tpo_leads lead where lead.college_id=t.college_id
       and lead.recruiter_user_id=t.recruiter_user_id
       order by lead.updated_at desc,lead.id desc limit 1) as company_name,
-   (select left(z.body,160) from placement_tpo_messages z where z.thread_id=t.id
+   (case when ${q} <> '' then (select left(z.body,160) from placement_tpo_messages z where z.thread_id=t.id
       and position(lower(${q}) in lower(z.body))>0
-      order by z.created_at desc,z.id desc limit 1) as search_snippet,
-   exists(select 1 from placement_tpo_messages z where z.thread_id=t.id
-      and position(lower(${q}) in lower(z.body))>0) as body_match,
+      order by z.created_at desc,z.id desc limit 1) else null end) as search_snippet,
+   (${q} <> '' and exists(select 1 from placement_tpo_messages z where z.thread_id=t.id
+      and position(lower(${q}) in lower(z.body))>0)) as body_match,
    not exists(select 1 from placement_recruiter_college_grants grant_row
       inner join placement_company_relationships rel on rel.id=grant_row.company_relationship_id
       inner join placement_recruiter_profiles pr on pr.user_id=grant_row.recruiter_user_id
