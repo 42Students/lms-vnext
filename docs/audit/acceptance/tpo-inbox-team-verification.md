@@ -215,3 +215,8 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 ## Chat-2 round 5 — pinned decisions
 
 | TPO-inbox-team-23 | PARTIAL — OPEN | Same-college participants can optimistically mark/unmark a persisted Team message as decision with audited state changes; the thread displays decision tags and a last-five “Decided:” strip, and guards retry with friendly errors. `tests/unit/tpo-team-decision-chat2.test.ts` names `TPO-inbox-team-23`. Conversation-level Decisions filter and cross-message context panel still pending. |
+
+## Chat-2 round 5 — Conversation details
+
+| TPO-inbox-team-26 | PARTIAL — OPEN | `TpoTeamThreadDetails` provides optional context with authorized counterpart/topic/date and real last-page decision count; no unsupported company or drive claims. Named `TPO-inbox-team-26` in `tests/unit/tpo-team-details-chat2.test.ts`. Object facts, people workload and open asks pending. |
+| TPO-inbox-team-42 | PARTIAL — OPEN | Detail disclosure persists per-thread browser preference and folds on phones using responsive width; named `TPO-inbox-team-42` same test. Full desktop list/detail split remains open. |
