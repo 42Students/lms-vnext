@@ -66,7 +66,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
 
   if (filters.view === "REQUESTS") {
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
-    const common = {seasons,season,companies,owners,ownerUserId:filters.ownerUserId,
+    const common = {seasons,season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
       companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
@@ -231,7 +231,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
-    ...projection, seasons, season,companies,owners,ownerUserId:filters.ownerUserId,
+    ...projection, seasons, season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
     companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,asOf: now.toISOString(),
