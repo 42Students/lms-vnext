@@ -360,3 +360,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Round 6 evidence: R02 DONE-BRANCH, R03/81 NOT-A-GAP, COL-projects-09/17 FIXED-ON-MAIN verified. Test file chat9-round6-reviewed-not-a-gaps.test.ts, not run.
 
 - Round 6: TPO-settings-audit-94/-96 and COL-projects-21 improved but OPEN. TPO-settings-audit-07 sticky left desktop layout refined. Source tests unrun.
+
+- Unit CI `api-origin-guard` resolved source-level: Telegram provider webhook uses mandatory x-telegram-bot-api-secret-token and is a documented ALLOWED exception (not a cookie endpoint). `tests/unit/api-origin-guard.test.ts` — `api-origin-guard telegram webhook accepts only the provider secret without a browser session`. Tests authored, NOT run.
