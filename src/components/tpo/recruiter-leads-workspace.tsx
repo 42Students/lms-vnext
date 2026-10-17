@@ -769,8 +769,8 @@ export function RecruiterLeadsWorkspace({
             <div className="space-y-3">
               <div className="flex flex-wrap gap-2">
                 <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","csv")}>Export CSV</button>
-                <button type="button" className={buttonStyle} disabled={selectedIds.length===0}
-                  onClick={()=>exportRows("selected","csv")}>Export selected ({selectedIds.length})</button>
+                <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
+                  onClick={()=>exportRows("selected","csv")}>Export selected ({visible.filter(row=>selectedIds.includes(row.id)).length})</button>
                 <button type="button" className={buttonStyle} onClick={()=>exportRows("shown","xlsx")}>Export Excel</button>
                 <button type="button" className={buttonStyle} disabled={!visible.some(row=>selectedIds.includes(row.id))}
                   onClick={()=>exportRows("selected","xlsx")}>Export selected Excel</button>
