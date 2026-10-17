@@ -4,6 +4,23 @@ import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message
 
 const source=(p:string)=>readFileSync(p,"utf8");
 describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()=>{
+ it("REC-calendar-messages-profile-R01 does not dispatch without an inbound reply gateway secret",()=>{
+  const code=source("src/modules/placements/recruiter-message-email-dispatch-service.ts");
+  expect(code).toContain("RECRUITER_MESSAGE_INBOUND_HMAC_SECRET");
+  expect(code).toContain('Buffer.byteLength(inboundSecret,"utf8")<32');
+ });
+ it("REC-calendar-messages-profile-R01 refuses to send using the OTP template",()=>{
+  const code=source("src/modules/placements/recruiter-message-email-dispatch-service.ts");
+  expect(code).toContain("templateKey===mailConfig.otpTemplateKey");
+  expect(code).toContain("!mailConfig.token");
+ });
+ it("REC-calendar-messages-profile-R01 does not send before reply aliases are configured",()=>{
+  const code=source("src/modules/placements/recruiter-message-email-dispatch-service.ts");
+  expect(code).toContain("RECRUITER_MESSAGE_REPLY_TOKEN_SECRET");
+  expect(code).toContain("makeRecruiterReplyAddress");
+  expect(code).toContain("if(!ready?.ok)");
+ });
+
  it("REC-calendar-messages-profile-R01 does not email messages for a foreign-company job thread",()=>{
   const worker=source("src/modules/placements/recruiter-message-email-dispatch-service.ts");
   expect(worker).toContain("t.job_id is null or exists(select 1 from placement_jobs j");
