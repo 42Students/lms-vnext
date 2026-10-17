@@ -20,7 +20,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  async function beginEdit(){
   if(busy||loading)return;
   if(editing){setEditing(false);return;}
-  setError("");setNotice("");setLoading(true);
+  setError("");setNotice("");setExpectedUpdatedAt("");setLoading(true);
   try{
    const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quiz.id),{cache:"no-store"});
    const payload=await response.json().catch(()=>null);
