@@ -42,6 +42,8 @@ Photo upload for -01/-02 requires private object storage; the HTTPS link route w
 
 ### Chat-4 follow-up acceptance, 2026-10-18
 
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
 | COL-verification-misc-13 | PARTIAL (source reverified) | activity-center.tsx resolves actor displayName/System and stores readable summary/subjectLabel. tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests COL-verification-misc-13. Every source event producer still needs human-readable summary verification. |
 
 Source inspections and regression tests authored, **not executed**. No UX page restyling is part of these records.
