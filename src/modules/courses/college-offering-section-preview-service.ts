@@ -41,7 +41,24 @@ export async function listOfferingSectionPreview(
 
  const options=rows.slice(0,MAX_SECTION_OPTIONS);
  const truncated=rows.length>MAX_SECTION_OPTIONS;
- const selected=options.find(row=>row.deliveryId===requestedDeliveryId)??null;
+ let selected=options.find(row=>row.deliveryId===requestedDeliveryId)??null;
+ if(requestedDeliveryId&&!selected){
+  // A selected Section beyond the 200-option display cap is still addressable;
+  // re-authorize the exact delivery instead of treating a valid UUID as foreign.
+  const [matched]=await db.select({
+   deliveryId:courseSectionDeliveries.id,
+   sectionName:sections.name,sectionCode:sections.code,
+  }).from(courseSectionDeliveries)
+   .innerJoin(sections,and(
+    eq(sections.id,courseSectionDeliveries.sectionId),
+    eq(sections.cohortId,offering.cohortId),
+    eq(sections.academicPeriodId,offering.academicPeriodId),
+    eq(sections.status,"ACTIVE")))
+   .where(and(eq(courseSectionDeliveries.id,requestedDeliveryId),
+    eq(courseSectionDeliveries.offeringId,offering.id),
+    isNull(courseSectionDeliveries.endedAt))).limit(1);
+  if(matched){selected=matched;options.push(matched);}
+ }
  const invalid=Boolean(requestedDeliveryId&&!selected);
  if(!selected)return {options,truncated,selected:null,invalid,lessons:[]};
 
