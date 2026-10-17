@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -57,6 +58,7 @@ export default async function TpoLeadsReportPage({
   ]);
 
   const { leads, health } = result;
+  const companyEngagement=joinTpoCompanyEngagementWithPlacement(result.companyEngagement,workspace.report.byCompany);
 
   const metrics = [
     ["Recruiter leads", leads.totals.leads],
@@ -118,9 +120,8 @@ export default async function TpoLeadsReportPage({
        }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
-        rows={result.companyEngagement.map(row=>{
-         const placement=row.companyId?workspace.report.byCompany.find(company=>company.companyId===row.companyId):null;
-         return [row.companyName,row.contacts,row.invited,row.joined,placement?.drives??0,placement?.placed??0];
+        rows={companyEngagement.map(row=>{
+         return [row.companyName,row.contacts,row.invited,row.joined,row.drives,row.placed];
         })}
         emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
       </section>
