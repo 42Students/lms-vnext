@@ -4,6 +4,7 @@ import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-lea
 import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
 import {LessonActions} from "@/components/courses/admin-learning-structure-actions";
 import {CollegeLessonReorderActions} from "@/components/courses/college-lesson-reorder-actions";
+import {SuperAdminLessonCreate} from "@/components/courses/super-admin-lesson-create";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -49,6 +50,10 @@ export default async function SuperAdminLessonsPage({
     </form>
     <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
+    <SuperAdminLessonCreate paths={data.items.filter((lesson,index,rows)=>
+       rows.findIndex(row=>row.learningPathId===lesson.learningPathId)===index)
+       .map(lesson=>({id:lesson.learningPathId,courseName:lesson.courseName,
+        cohortName:lesson.cohortName,periodName:lesson.periodName}))}/>
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
