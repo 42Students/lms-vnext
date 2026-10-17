@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 test.describe("GR-80 Faculty authoring gracefully survives failed saves", () => {
   test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
@@ -33,7 +33,7 @@ test.describe("GR-80 Faculty authoring gracefully survives failed saves", () => 
       try {
         await page.getByRole("button", { name: "Create draft" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);
-        await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 15_000 });
+        await expectFriendlyFailure(page, kind);
         await expect(title).toHaveValue("Graceful assignment unsaved draft");
         await expect(page.getByRole("textbox", { name: "Text instructions" }))
           .toHaveValue("Text that must remain after the failure");
