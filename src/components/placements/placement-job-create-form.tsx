@@ -193,7 +193,7 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset}));
+        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset,partialDraft:createdJobRef.current}));
     }catch{/* Storage may be unavailable in private mode; form still works. */}
   },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
   useEffect(()=>{
@@ -205,8 +205,17 @@ export function PlacementJobCreateForm({
         const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
-          departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset};
+          departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
+          partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
+        // TPO-drives-43: recover a saved partial draft before allowing another POST.
+        const resume=saved.partialDraft;
+        if(resume&&/^[0-9a-f-]{36}$/i.test(resume.jobId)&&
+          typeof resume.fingerprint==="string"&&resume.fingerprint.length<100_000&&
+          companies.some(company=>company.relationshipId===resume.relationshipId)){
+          createdJobRef.current=resume;
+          setPartialJobId(resume.jobId);
+        }
         if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
         if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
           setCompanyRelationshipId(saved.companyRelationshipId);
@@ -502,6 +511,7 @@ export function PlacementJobCreateForm({
       if(!createdJobRef.current){
         createdJobRef.current={jobId,relationshipId,fingerprint};
         setPartialJobId(jobId);
+        if(formRef.current)saveBrowserDraft(formRef.current);
       }
 
       await requestJson(
