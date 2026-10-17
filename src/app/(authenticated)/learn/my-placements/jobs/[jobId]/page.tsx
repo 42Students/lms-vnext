@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
+import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
 import {learnerJobReturnToDrivesHref} from "@/modules/placements/learner-drives-return-model";
 
 function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number]): LearnerPlacementJobItem {
@@ -54,7 +55,10 @@ export default async function LearnerPlacementJobDetailPage({
 }) {
   const { jobId } = await params;
   const context = await getCurrentRequestContext();
-  const rows = (await listLearnerPlacementJobs(context)).filter((row) => row.job.id === jobId);
+  const [feed,savedJobs]=await Promise.all([
+    listLearnerPlacementJobs(context),listOwnPlacementSavedJobs(context),
+  ]);
+  const rows=feed.filter(row=>row.job.id===jobId);
 
   if (rows.length === 0) {
     notFound();
@@ -62,5 +66,6 @@ export default async function LearnerPlacementJobDetailPage({
 
   const query=await searchParams;
   const back=learnerJobReturnToDrivesHref(query.back);
-  return <LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back} />;
+  return <LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back}
+    initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>;
 }
