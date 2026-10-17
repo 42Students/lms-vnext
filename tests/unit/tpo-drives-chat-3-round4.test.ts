@@ -86,4 +86,12 @@ describe("chat-3 Drives round 4",()=>{
   const form=source("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain('!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"');
  });
+ it("TPO-drives-43 retry reuses a partial draft and refuses changed form payload",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("createdJobRef.current?{id:createdJobRef.current.jobId}");
+  expect(body).toContain("createdJobRef.current.fingerprint!==fingerprint");
+  expect(body).toContain("createdJobRef.current={jobId,relationshipId,fingerprint}");
+  expect(body).toContain("open the existing draft");
+  expect(body).toContain("if (companyMode === \"NEW\" && !createdJobRef.current)");
+ });
 });

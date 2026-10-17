@@ -2,6 +2,7 @@
 
 import {
   useState,
+  useRef,
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -122,6 +123,9 @@ export function PlacementJobCreateForm({
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
     Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
   const {pending,run}=useGuardedAction({timeoutMs:45000});
+  // TPO-drives-43: never POST a second draft on retry after a partial create.
+  const createdJobRef=useRef<{jobId:string;relationshipId:string;fingerprint:string}|null>(null);
+  const [partialJobId,setPartialJobId]=useState<string|null>(null);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -222,10 +226,18 @@ export function PlacementJobCreateForm({
           throw new Error(label + " must be between 0 and " + max + ".");
         }
       }
+      const fingerprint=JSON.stringify({
+        fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
+        selectedProgramIds:[...selectedProgramIds].sort(),
+        selectedCohortIds:[...selectedCohortIds].sort(),
+        companyMode,companyRelationshipId,
+      });
+      if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
+        throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
       let relationshipId =
-        companyRelationshipId;
+        createdJobRef.current?.relationshipId??companyRelationshipId;
 
-      if (companyMode === "NEW") {
+      if (companyMode === "NEW" && !createdJobRef.current) {
         const newName=String(data.get("companyName")??"").trim().toLowerCase();
         const newDomain=String(data.get("companyDomain")??"").trim().toLowerCase().replace(/^www\./,"");
         const existing=companies.find(company=>company.name.trim().toLowerCase()===newName||
@@ -280,7 +292,8 @@ export function PlacementJobCreateForm({
           "INTERNAL",
       );
       
-      const jobResult = await requestJson(
+      const jobResult = createdJobRef.current?{id:createdJobRef.current.jobId}:
+       await requestJson(
         "/api/placements/jobs",
         "POST",
         {
@@ -353,6 +366,10 @@ export function PlacementJobCreateForm({
         throw new Error(
           "The drive may have been saved but could not be opened. Check your drafts before trying again.",
         );
+      }
+      if(!createdJobRef.current){
+        createdJobRef.current={jobId,relationshipId,fingerprint};
+        setPartialJobId(jobId);
       }
 
       await requestJson(
@@ -428,6 +445,8 @@ export function PlacementJobCreateForm({
         `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
       );
       clearDirty();
+      createdJobRef.current=null;
+      setPartialJobId(null);
       router.refresh();
     } catch (error) {
       showToast({
@@ -1068,6 +1087,10 @@ export function PlacementJobCreateForm({
           </button>
         </div>
       </section>
+      {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
+        <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
+        Do not submit a second drive.
+      </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
     </form>
   );
