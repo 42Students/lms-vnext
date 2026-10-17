@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
+import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
@@ -59,7 +60,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
- const [noteSelection,setNoteSelection]=useState<string[]>([]);
+ const [localSelection,setLocalSelection]=useState<string[]>([]);
+ const shared=useTpoStudentsSelection();
+ const noteSelection=shared?.selected??localSelection;
+ const setNoteSelection=shared?.setSelected??setLocalSelection;
  const [downloadError,setDownloadError]=useState("");
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
