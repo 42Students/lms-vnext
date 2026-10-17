@@ -65,6 +65,12 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    body:updated.title+" has been updated.",
    actionHref:"/learn/projects/"+updated.id,
   });
+  await notifyActiveProjectMembers(tx,updatedEvent.id,{
+   projectId:updated.id,collegeId:scope.collegeId,roles:["MENTOR"],
+   exceptUserId:context.user.id,title:"Project updated",
+   body:updated.title+" has been updated.",
+   actionHref:"/mentor/projects/"+updated.id,
+  });
   return updated;
  });
 }
