@@ -245,7 +245,9 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
+      minApplications:filters.minApplications??query.minApplications,maxApplications:filters.maxApplications??query.maxApplications,
+      minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
@@ -253,6 +255,8 @@ export default async function TpoStudentsPage({
       programId:query.programId,
       afterCollege:query.afterCollege,
       profileStatus:query.profileStatus,
+      minApplications:query.minApplications,maxApplications:query.maxApplications,
+      minOffers:query.minOffers,maxOffers:query.maxOffers,
       classId:query.classId,
       search: query.search,
     },
@@ -266,6 +270,8 @@ export default async function TpoStudentsPage({
     programId:query.programId,
     afterCollege:query.afterCollege,
     profileStatus:query.profileStatus,
+    minApplications:query.minApplications,maxApplications:query.maxApplications,
+    minOffers:query.minOffers,maxOffers:query.maxOffers,
     classId:query.classId,
     batchId: query.batchId,
     search: query.search,
