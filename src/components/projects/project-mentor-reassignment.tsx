@@ -160,7 +160,7 @@ export function ProjectMentorReassignment({
       // Preserve failed workspace selection so the operator can retry without reselecting.
       setSelected([...new Set(response.failures.map(row=>row.projectId))]);
       router.refresh();
-    } catch (error) {
+    } catch {
       showToast({
         tone: "error",
         title: "Mentor reassignment failed",
