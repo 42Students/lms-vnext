@@ -11,7 +11,7 @@ type Release={id:string;title:string};
 export function MentorTaskAllocation({projectId,initialTasks,members,sprints,releases,readOnly=false}:{
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
- const router=useRouter();
+ const router=useRouter(),searchParams=useSearchParams();
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),[sprint,setSprint]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
