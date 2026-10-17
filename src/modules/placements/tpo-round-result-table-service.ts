@@ -1,7 +1,7 @@
 import "server-only";
 import {and,eq,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,placementApplications,placementApplicationScreenings,
+import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRoleOptions,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
@@ -21,6 +21,7 @@ export async function getTpoRoundResultTable(context:RequestContext,raw:unknown)
  if(!scope)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
  const rows=await db.select({
   applicationId:placementApplications.id,student:users.displayName,role:placementJobRoleOptions.title,
+  rollNumber:learnerProfiles.rollNumber,
   applicationStatus:placementApplications.status,
   screeningStatus:placementApplicationScreenings.status,
   resultId:placementRoundResults.id,resultStatus:placementRoundResults.status,
@@ -29,6 +30,7 @@ export async function getTpoRoundResultTable(context:RequestContext,raw:unknown)
  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
   eq(collegeMemberships.collegeId,collegeId)))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
  .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
   eq(placementJobRoleOptions.jobId,scope.jobId)))
  .leftJoin(placementApplicationScreenings,
