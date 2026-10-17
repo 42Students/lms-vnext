@@ -9,7 +9,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
  * Never return private storage keys to the catalog or the editor. */
 export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
  const membership=ctx.membership;
- if(!membership||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
+ if(!membership||membership.status!=="ACTIVE"||ctx.user.platformStatus!=="ACTIVE"||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.manage");
  requirePermission(ctx,"courses.manage",{collegeId:membership.collegeId,
   organizationId:membership.organizationId});
