@@ -74,10 +74,12 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
       versions:range.items.map(item=>({id:item.id,expectedVersion:item.updatedAt})),
      });
     }} className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">Remove whole range</button>:null}
-    <div className="flex flex-wrap gap-1">{range.items.map(item=><button key={item.id} type="button" disabled={busy} onClick={()=>{
+    <details className="min-w-0">
+     <summary className="cursor-pointer text-sm font-semibold text-primary-text">Manage individual days ({range.items.length})</summary>
+     <div className="mt-2 flex max-h-48 flex-wrap gap-1 overflow-y-auto">{range.items.map(item=><button key={item.id} type="button" disabled={busy} onClick={()=>{
      if(!window.confirm("Remove "+item.day+" from blocked dates?"))return;
      void request("/api/placements/tpo/settings/blocked-dates/"+item.id,"DELETE",{expectedVersion:item.updatedAt});
-    }} className="min-h-9 rounded border border-border px-2 text-xs disabled:opacity-50">Remove {item.day}</button>)}</div></li>)}</ul>}
+    }} className="min-h-9 rounded border border-border px-2 text-xs disabled:opacity-50">Remove {item.day}</button>)}</div></details></li>)}</ul>}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
