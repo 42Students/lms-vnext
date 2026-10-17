@@ -24,6 +24,7 @@ import {LessonResourceMaterialsControl} from "./lesson-resource-materials-contro
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import { LearnerVideoPlayer } from "./learner-video-player";
+import {LearnerCourseStateRetry} from "./learner-course-state-retry";
 import {LearnerFormattedResponse} from "./learner-formatted-response";
 import {
   assignmentInteractionState,
@@ -725,10 +726,7 @@ export function LearnerCourseWorkspace({
         <aside role="alert" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
           <p className="font-semibold">Some course state could not be loaded</p>
           <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
-          <button type="button" onClick={()=>window.location.reload()}
-            className="mt-3 min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text">
-            Retry state
-          </button>
+          <LearnerCourseStateRetry/>
         </aside>
       ) : null}
       {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
