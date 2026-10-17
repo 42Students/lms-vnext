@@ -4,7 +4,7 @@ import {useEffect,useRef,useState,type CSSProperties,type ReactNode} from "react
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 
-export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,storageKey,selection}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;storageKey?:string;
+export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false,mobilePrimaryKeys,storageKey,selection}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;mobilePrimaryKeys?:readonly string[];storageKey?:string;
  selection?:{selected:readonly string[];onChange:(ids:string[])=>void;allIds?:readonly string[]};
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string}
 }){
@@ -13,6 +13,10 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  const selected=parseTpoGridColumns(params.get("columns")??undefined,permitted);
  const active=selected.length?selected:permitted;
  const display=chosenTpoGridColumns(columns,active);
+ const mobilePrimary = mobilePrimaryKeys?.length
+   ? display.filter(column=>mobilePrimaryKeys.includes(column.key))
+   : display.slice(0,5);
+ const mobileExtra = display.filter(column=>!mobilePrimary.some(primary=>primary.key===column.key));
  const [columnView,setColumnView]=useState<Record<string,{width:number;pinned:boolean}>>({});
  const viewKey=storageKey?storageKey+":layout-v2":null;
  const colWidth=(key:string)=>columnView[key]?.width??160;
@@ -108,7 +112,7 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
    <div className="hidden overflow-x-auto rounded border border-border md:block"><table className="w-full text-left text-sm"><caption className="sr-only">Current page TPO spreadsheet records</caption>
     <thead><tr>{selection?<th scope="col" className="px-3 py-2"><input type="checkbox" aria-label="Select all filtered students" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/></th>:null}{display.map(col=><th scope="col" className="px-3 py-2" key={col.key} style={layoutStyle(col.key)}>
      <span>{col.label}</span>
-     {col.filter?<select aria-label={"Filter "+col.label} className="mt-1 block min-h-9 w-full rounded border border-border bg-surface p-1 text-xs font-normal"
+     {col.filter?<select aria-label={"Filter "+col.label} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface p-1 text-xs font-normal"
        value={params.get(col.filter.urlKey)??""}
        onChange={event=>{
         const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{[col.filter!.urlKey]:event.target.value});
@@ -127,19 +131,16 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
        className="rounded border px-1">{columnView[col.key]?.pinned?"Unpin":"Pin"}</button>
      </div>:null}
     </th>)}{rowActions&&<th scope="col" className="px-3 py-2">Actions</th>}</tr></thead>
-    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<button type="button" className="min-h-10 text-left font-semibold text-primary-text underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
+    <tbody>{rows.map(row=><tr key={rowKey(row)} className="border-t border-border align-top">{selection?<td className="px-3 py-2"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/></td>:null}{display.map(col=><td key={col.key} className="break-words px-3 py-2" title={col.tooltip?.(row)} style={layoutStyle(col.key)}>{openPrimary?.columnKey===col.key?<button type="button" className="min-h-11 text-left font-semibold text-[var(--lms-link-text)] underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</td>)}{rowActions&&<td className="px-3 py-2">{rowActions(row)}</td>}</tr>)}</tbody>
    </table></div>
    {selection?<label className="flex min-h-11 items-center gap-2 text-sm md:hidden"><input type="checkbox" checked={fullySelected} onChange={event=>changePageSelection(event.target.checked)}/>Select all filtered students</label>:null}
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded border border-border p-3">
-    {selection?<label className="flex min-h-10 items-center gap-2 text-sm"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/>Select student row</label>:null}
-    {(mobileActionsCollapsible?display.slice(0,5):display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<button type="button" className="min-h-10 text-left font-semibold text-primary-text underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</span></div>)}
-    {mobileActionsCollapsible&&display.length>5?<details className="rounded-md border border-border p-2 text-sm"><summary className="min-h-10 cursor-pointer font-semibold">More student details</summary>
-      <dl className="mt-2 space-y-2">{display.slice(5).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
+    {selection?<label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={selection.selected.includes(rowKey(row))} aria-label={"Select "+(openPrimary?.ariaLabel(row)??rowKey(row))} onChange={event=>changeRowSelection(rowKey(row),event.target.checked,event.nativeEvent instanceof MouseEvent?event.nativeEvent.shiftKey:false)}/>Select student row</label>:null}
+    {(mobileActionsCollapsible?mobilePrimary:display).map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm" title={col.tooltip?.(row)}><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<button type="button" className="min-h-11 text-left font-semibold text-[var(--lms-link-text)] underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</span></div>)}
+    {mobileActionsCollapsible&&mobileExtra.length>0?<details className="rounded-md border border-border p-2 text-sm"><summary className="min-h-11 cursor-pointer font-semibold">More student details</summary>
+      <dl className="mt-2 space-y-2">{mobileExtra.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2"><dt className="font-semibold">{col.label}</dt><dd className="min-w-0 break-words [overflow-wrap:anywhere]" title={col.tooltip?.(row)}>{displayTpoGridCell(col.read(row))}</dd></div>)}</dl>
     </details>:null}
-    {rowActions&&(mobileActionsCollapsible?<details className="rounded-md border border-border p-2">
-      <summary className="min-h-10 cursor-pointer font-semibold">Actions</summary>
-      <div aria-label="Row actions" className="mt-2">{rowActions(row)}</div>
-    </details>:<div aria-label="Row actions">{rowActions(row)}</div>)}
+    {rowActions ? <div aria-label="Row actions" className="border-t border-border pt-3">{rowActions(row)}</div> : null}
    </li>)}</ul>
   </>}
  </section>;
