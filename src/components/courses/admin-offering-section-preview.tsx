@@ -41,7 +41,11 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
    <p className="text-sm font-semibold">Viewing {data.selected.sectionName} ({data.selected.sectionCode})</p>
    <p className="text-xs text-muted-foreground">This is a metadata-only view of shared and Section-specific content. It does not reveal private video, file or meeting links, and does not simulate an individual learner&apos;s completion or visibility.</p>
    {data.lessons.map(lesson=><div key={lesson.id} className="space-y-3 rounded-lg border border-border p-3">
-    <h3 className="font-semibold">{lesson.name}</h3>
+    <h3 className="font-semibold">{lesson.name}
+     <span className="ml-2 text-xs font-normal text-muted-foreground">
+      {lesson.visibleToStudents?"Lesson visible":"Lesson hidden"}
+     </span>
+    </h3>
     <div className="space-y-1"><h4 className="text-sm font-semibold">Videos, Resources and Live Classes ({lesson.contents.length})</h4>
      <ItemList items={lesson.contents}/></div>
     <div className="space-y-1"><h4 className="text-sm font-semibold">Assignments ({lesson.assignments.length})</h4>
