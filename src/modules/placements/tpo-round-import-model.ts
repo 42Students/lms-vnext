@@ -36,6 +36,14 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const heads=(grid.shift()??[]).map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
  if(new Set(heads.filter(Boolean)).size!==heads.filter(Boolean).length)
   throw Error("Duplicate column headers make this result import ambiguous. Keep one column of each type.");
+ const groups=[["applicationid","applicantid"],["email","studentemail"],
+  ["roll","rollnumber","studentroll"],["companyid","portalid","candidateid"],
+  ["result","outcome","status","decision"],["waitlistrank","rank"],
+  ["reason","message","studentmessage","comment"]];
+ for(const aliases of groups){
+  if(heads.filter(head=>aliases.includes(head)).length>1)
+   throw Error("This result file contains more than one column for the same field. Keep only one.");
+ }
  const locate=(...words:string[])=>heads.findIndex(x=>words.includes(x));
  const app=locate("applicationid","applicantid"),email=locate("email","studentemail"),
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
