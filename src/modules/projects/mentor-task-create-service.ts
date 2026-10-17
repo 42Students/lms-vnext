@@ -95,6 +95,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         subjectType:"project_task",subjectId:created.id,
         subjectLabel:created.title,summary:"Project task created",
         metadata:{projectId:scope.project.id,sprintId:sprint?.id??null,taskId:created.id,
+          hasApproach:Boolean(created.approach),
           status:created.status,assigneeMembershipId:created.assigneeMembershipId},
         groupKey:"project:"+scope.project.id,
         dedupeKey:"project-task:"+created.id+":created",
