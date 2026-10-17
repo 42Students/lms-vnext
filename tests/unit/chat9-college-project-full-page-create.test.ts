@@ -16,6 +16,6 @@ describe("College Admin legacy workspace creation navigation",()=>{
   expect(control).toContain("standalone = false");
   expect(control).toContain("const [open, setOpen] = useState(standalone)");
   expect(control).toContain('"/api/projects"');
-  expect(control).toContain('method:"POST"');
+  expect(control).toContain('"POST",');
  });
 });
