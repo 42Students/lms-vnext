@@ -77,7 +77,7 @@ export function RecruiterBulkStageControls({
       id: row.id,
       expectedStage: row.manualStage as "NEW" | "CONTACTED" | "NOT_NOW",
     }));
-    if(!reviewOpen){setReviewOpen(true);return;}
+    if(!reviewOpen||reviewSignature!==currentSignature){setReviewSignature(currentSignature);setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
