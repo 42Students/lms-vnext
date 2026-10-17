@@ -4,6 +4,8 @@ import {Drawer} from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 export type BellItem={id:string;title:string;body:string|null;actionHref:string|null;readAt:string|null;createdAt:string};
 export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:number;items:readonly BellItem[];revision?:number}){
  const [open,setOpen]=useState(false),[pending,setPending]=useState(false),[error,setError]=useState("");
@@ -18,15 +20,14 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
   if(!item.readAt&&!readIds.includes(item.id)){
    setPending(true);setError("");
    try{
-    const response=await fetch("/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read",{
-     method:"POST",credentials:"same-origin",
+    await apiFetch("/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read",{
+     method:"POST",credentials:"same-origin",timeoutMs:12000,
      headers:{"Content-Type":"application/json"},body:"{}",
     });
-    if(!response.ok)throw new Error("Read state was not confirmed");
     setReadIds(ids=>ids.includes(item.id)?ids:[...ids,item.id]);
 
-   }catch{
-    setError("Read state was not confirmed. Refresh before retrying.");
+   }catch(reason){
+    setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));
     return;
    }finally{setPending(false);}
   }
@@ -38,10 +39,12 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
   if(pending||unread===0)return;
   setPending(true);setError("");
   try{
-   const response=await fetch("/api/tpo/notifications/read-all",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:"{}"});
-   if(!response.ok)throw new Error("Unable to confirm read status");
+   await apiFetch("/api/tpo/notifications/read-all",{
+    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    headers:{"Content-Type":"application/json"},body:"{}",
+   });
    setAllReadRevision(revision);setReadIds(items.map(item=>item.id));router.refresh();
-  }catch{setError("Read state was not confirmed. Refresh before retrying.");}
+  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));}
   finally{setPending(false);}
  }
  return <div className="relative min-w-0">
