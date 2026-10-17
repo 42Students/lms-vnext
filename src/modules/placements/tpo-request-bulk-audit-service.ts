@@ -56,6 +56,19 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
     notInDesiredState:rows.filter(row=>row.status!==desired).map(row=>row.id)},
    dedupeKey,
   }).onConflictDoNothing().returning({id:activityEvents.id});
-  return {eventId:event?.id??null,replayed:!event,verifiedCount:count};
+  if(!event){
+   // Concurrent requests may both miss the initial read. The unique audit
+   // key chooses one winner; inspect it before calling the retry successful.
+   const [winner]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata})
+    .from(activityEvents)
+    .where(and(eq(activityEvents.collegeId,college.id),eq(activityEvents.dedupeKey,dedupeKey)))
+    .limit(1);
+   if(!winner||!sameTpoBulkRequestRun(winner.metadata,input))
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   const evidence=winner.metadata&&typeof winner.metadata==="object"&&!Array.isArray(winner.metadata)?
+    (winner.metadata as Record<string,unknown>).verifiedCount:null;
+   return {eventId:winner.id,replayed:true,verifiedCount:typeof evidence==="number"?evidence:count};
+  }
+  return {eventId:event.id,replayed:false,verifiedCount:count};
  });
 }
