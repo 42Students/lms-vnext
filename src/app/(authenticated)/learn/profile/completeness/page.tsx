@@ -64,7 +64,10 @@ export default async function ProfileCompleteness({searchParams}:{
         {readiness.items.map(item=><li key={item.section} className="min-w-0">
           <Link href={"/learn/profile?section="+encodeURIComponent(item.section)}
             className="flex min-h-12 items-center justify-between gap-3 rounded-lg border border-border p-3 text-sm text-foreground hover:border-primary hover:bg-primary-subtle">
-            <span className="min-w-0 break-words">{item.label}</span>
+            <span className="min-w-0 break-words">{item.label}
+              {(["personal-details","contacts","education","skills"].includes(item.section))?
+                <span className="ml-2 text-xs font-semibold text-muted-foreground">Required</span>:null}
+            </span>
             <span className={"shrink-0 text-xs font-semibold "+(item.completed?"text-success":"text-muted-foreground")}>
               {item.completed?"Filled":"Not filled"}
             </span>
