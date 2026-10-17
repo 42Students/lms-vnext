@@ -231,3 +231,10 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - TPO-home-R08: **DONE in source** — fail isolation in independent concurrent TPO home reads. Gap-named unit test and page-specific acceptance rows recorded.
 - Proposed SQL: `docs/proposed-migrations/chat13-public-company-share-code-and-columns.sql` and `docs/proposed-migrations/chat13-learner-round-attendance-confirmation.sql`. Until migrations are registered public company sharing fails closed; learner attendance writes fail closed. Never represent either as deployed.
 - Tests written, **not run** by lane. Full typecheck, integration, concurrency, UI and browser verification pending orchestrator. No page UX restyling.
+
+## 2026-10-18 Round 3 / final-sprint reconciliation
+- Round 3 restored/validated `LEARNER-placements-35` (registered migration 0135 test), `SA-placements-projects-16` (keep uncertain-create block), and `SA-tenants-modules-37` (all four course UI settings are GLOBAL only; reject college-scoped override injection).
+- The 11 final-sprint IDs are source-adjudicated and named in tests/acceptance: 10 DONE, `LEARNER-placements-19` NOT-A-GAP. Unit, DB and browser tests were not run by this lane.
+- `SA-academics-people-92` source DONE: acting-college Super Admin form fields, Indian mobile normalization and optional demographics verified with an expanded gap-ID-named test.
+- `SA-academics-people-60` BLOCKED: remote binary-video import requires private object storage plus a scanner and SSRF-resistant ingestion path. Do not implement arbitrary server URL fetching or mislabel a YouTube embed as an imported file; existing acceptance/tests document this controlled limitation.
+- Generated `docs/audit/gap-register.md` remains unchanged; orchestrator must regenerate it from citations and run acceptance gates.
