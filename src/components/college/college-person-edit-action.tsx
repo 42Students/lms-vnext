@@ -2,6 +2,7 @@
 
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {LEGACY_FACULTY_TYPES} from "@/modules/people/college-faculty-type-model";
 
 type Kind="FACULTY"|"LEARNER";
 type Department={id:string;name:string};
@@ -103,8 +104,13 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               </select>
             </label>
             <label className="grid gap-1 text-sm">Faculty Type
-              <input className={field} maxLength={128} value={person.employmentType??""}
-                onChange={e=>patch("employmentType",e.target.value)}/>
+              <select className={field} value={person.employmentType??""}
+                onChange={e=>patch("employmentType",e.target.value)}>
+                <option value="">Not specified</option>
+                {person.employmentType&&!LEGACY_FACULTY_TYPES.some(v=>v===person.employmentType)&&
+                  <option value={person.employmentType}>{person.employmentType} (existing)</option>}
+                {LEGACY_FACULTY_TYPES.map(type=><option key={type} value={type}>{type}</option>)}
+              </select>
             </label>
             <label className="grid gap-1 text-sm">Academic title
               <input className={field} maxLength={128} value={person.academicTitle??""}
