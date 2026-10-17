@@ -112,7 +112,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <button type="button" className={button} onClick={()=>open(active)}>Open</button>
      <button type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
-     <button type="button" className={button} disabled={busy} onClick={()=>void apply("PIN",active)}>
+     <button type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
       {active.pinned?"Unpin":"Pin"}
      </button>
      {deleteReview===active.id?<>
