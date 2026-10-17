@@ -5,7 +5,9 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
   const char=text[i];
   if(char==='"'){
    if(quoted&&text[i+1]==='"'){field+='"';i++;}
-   else quoted=!quoted;
+   else if(quoted){quoted=false;closedQuote=true;}
+   else if(field===""&&!startedQuoted){quoted=true;startedQuoted=true;}
+   else throw Error("Unexpected quote inside a CSV field.");
   }else if(char===","&&!quoted){row.push(field.trim());field="";}
   else if((char==="\n"||char==="\r")&&!quoted){
    if(char==="\r"&&text[i+1]==="\n")i++;
