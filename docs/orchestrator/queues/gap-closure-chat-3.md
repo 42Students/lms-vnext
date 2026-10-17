@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 | SA-tenants-modules-17 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-tenants-modules-19 | S3 | MISSING-TAB | OPEN |
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
-| SA-tenants-modules-R02 | S3 | MISSING-ACTION | OPEN |
+| SA-tenants-modules-R02 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-05 | S4 | A11Y | FIXED-ON-MAIN |
 | SA-tenants-modules-09 | S4 | STATE | DONE |
 | SA-tenants-modules-R01 | S4 | MISSING-FIELD | OPEN |
@@ -323,3 +323,7 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 ## Round 9 — additional verified dispositions
 
 `TPO-drives-11` is source-DONE: the lifecycle dashboard now supplies all five persisted, tenant-scoped Needs doing categories with actual SQL counts and clickable filtered links; ID-named `tests/unit/tpo-drives-gap-closure.test.ts` upgraded and acceptance documented. `COL-people-18` is a deliberate privacy NOT-A-GAP: generic Contacts masks learner email and phone, with a separate need-to-know workflow required. `tests/unit/college-people-gap-closure.test.ts` checks this policy. **Tests have not been run in this lane.**
+
+## Round 10 — recovery of archived tenants
+
+`SA-tenants-modules-R02` source-DONE. Both archived organizations and archived colleges can be restored by Super Admin in an authorized scope through same-origin POST endpoints, guarded accessible confirmation, archived-state optimistic SQL and audit events. Parent organization must be ACTIVE before restoring college; organization name cannot conflict with another active one. Organization list and College detail expose recovery. `tests/unit/superadmin-tenants-gap-closure.test.ts` has named R02 test; PostgreSQL/runtime and browser testing remain **unexecuted**. Do not treat this as automatic restoration of child membership, DNS, credential, or runtime readiness.
