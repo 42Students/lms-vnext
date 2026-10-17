@@ -487,6 +487,8 @@ export async function PlacementCalendarWorkspace({
   const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(!state.kind||state.kind==="BLOCKED")?
     toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
   const visibleEvents=state.kind==="BLOCKED"?blockedEvents:[...events,...blockedEvents];
+  if(audience==="TPO"&&blockedDays?.ready)
+   eventTypeCounts.set("BLOCKED",toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length);
   const needsEvents=needsWindow?.events??[];
   const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
   const {overdue,blockedRounds,busyDays}=summarizeTpoCalendarNeeds(needsEvents,blockedSet,now);
