@@ -393,7 +393,7 @@ export function RecruiterLeadDetailWorkspace({
                   base + "/contacted", "POST", { collegeId },
                 )}>Mark contacted</button>
               ) : null}
-              <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now…</button>
+              <button type="button" className={button} onClick={() => setNotNowOpen(true)}>Not now</button>
             </div>
           </header>
           {lead.unsubscribedAt?<div role="alert"
@@ -518,7 +518,7 @@ export function RecruiterLeadDetailWorkspace({
             </section>
 
             <section className="space-y-4 rounded-lg border border-border bg-surface p-5">
-              <h2 className="text-lg font-semibold">Log an interaction</h2>
+              <h2 className="text-lg font-semibold">Log activity</h2>
               <form className="space-y-3" onSubmit={e => void addActivity(e)}>
                 <div className="flex flex-wrap gap-2" role="group" aria-label="Interaction type">
                   {ACTIVITY_TYPES.map(type=><button type="button" key={type}
@@ -657,9 +657,9 @@ export function RecruiterLeadDetailWorkspace({
           {notNowOpen ? (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
               <form className="w-full max-w-md space-y-4 rounded-xl bg-surface p-6 shadow-xl"
-                role="dialog" aria-modal="true" aria-label="Mark recruiter not now"
+                role="dialog" aria-modal="true" aria-label="Not now"
                 onSubmit={e => void markNotNow(e)}>
-                <h2 className="text-lg font-semibold">Mark not now</h2>
+                <h2 className="text-lg font-semibold">Not now</h2>
                 <label className="block text-sm">Reason
                   <textarea className={input + " mt-1"} maxLength={255} rows={3}
                     value={notNowReason} onChange={e => setNotNowReason(e.target.value)} />
