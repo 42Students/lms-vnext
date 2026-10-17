@@ -47,6 +47,7 @@ function toIso(value: string) {
 }
 
 function MeetingFields({
+  isRequest=false,
   title,
   agenda,
   startsAt,
@@ -58,6 +59,7 @@ function MeetingFields({
   onEndsAt,
   onTimeZone,
 }: {
+  isRequest?:boolean;
   title: string;
   agenda: string;
   startsAt: string;
@@ -73,7 +75,7 @@ function MeetingFields({
     <div className="grid gap-4">
       <label>
         <span className="mb-1.5 block text-xs font-semibold text-body">
-          Title
+          {isRequest?"Title":"Title"}
         </span>
         <Input
           required
@@ -86,7 +88,7 @@ function MeetingFields({
       </label>
       <label>
         <span className="mb-1.5 block text-xs font-semibold text-body">
-          Agenda
+          {isRequest?"Agenda / reason":"Agenda"}
         </span>
         <Textarea
           value={agenda}
@@ -99,7 +101,7 @@ function MeetingFields({
       <div className="grid gap-3 sm:grid-cols-2">
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
-            Start
+            {isRequest?"Preferred start time":"Start"}
           </span>
           <Input
             type="datetime-local"
@@ -112,7 +114,7 @@ function MeetingFields({
         </label>
         <label>
           <span className="mb-1.5 block text-xs font-semibold text-body">
-            End
+            {isRequest?"Preferred end time":"End"}
           </span>
           <Input
             type="datetime-local"
@@ -181,7 +183,7 @@ export function RequestProjectMeetingControl({
         new Date(startsAt).getTime()
     ) {
       setError(
-        "Meeting end time must be after the start time.",
+        "End time must be after the start time.",
       );
       return;
     }
@@ -202,7 +204,7 @@ export function RequestProjectMeetingControl({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "Meeting requested",
+        title: "Meeting request sent to your mentor.",
       });
       router.refresh();
     } catch (caught) {
@@ -223,12 +225,12 @@ export function RequestProjectMeetingControl({
         variant="secondary"
         onClick={openDialog}
       >
-        Request meeting
+        Request a meeting
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Request mentor meeting"
+        title="Request a meeting"
         description="Suggest a time window and agenda. A mentor or admin can turn the request into a scheduled meeting."
       >
         <form
@@ -236,6 +238,7 @@ export function RequestProjectMeetingControl({
           className="grid gap-4"
         >
           <MeetingFields
+            isRequest
             title={title}
             agenda={agenda}
             startsAt={startsAt}
@@ -276,7 +279,7 @@ export function RequestProjectMeetingControl({
             >
               {pending
                 ? "Requesting…"
-                : "Request meeting"}
+                : "Send request"}
             </Button>
           </div>
         </form>
