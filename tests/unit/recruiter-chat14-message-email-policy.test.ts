@@ -1,10 +1,32 @@
 import {describe,expect,it} from "vitest";
 import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterReplyAddress,
- recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply}
+ recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply,recruiterReplyTokenForThread}
  from "@/modules/placements/recruiter-message-email-model";
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 preserves Reply-To aliases across digest deliveries",()=>{
+  const secret="unit-test-dedicated-opaque-token-secret-more-than-32";
+  const id="11111111-2222-4333-8444-555555555555";
+  const first=recruiterReplyTokenForThread(secret,id);
+  expect(first).toMatch(/^[a-f0-9]{32}$/);
+  expect(recruiterReplyTokenForThread(secret,id)).toBe(first);
+  expect(recruiterReplyTokenForThread(secret,"11111111-2222-4333-8444-555555555556")).not.toBe(first);
+ });
+ it("REC-calendar-messages-profile-R01 fails closed for invalid thread and weak secret",()=>{
+  expect(recruiterReplyTokenForThread("short","11111111-2222-4333-8444-555555555555")).toBe(null);
+  expect(recruiterReplyTokenForThread("x".repeat(32),"not-a-uuid")).toBe(null);
+ });
+ it("REC-calendar-messages-profile-R01 derives opaque tokens and never stores raw reply secrets",()=>{
+  const model=readFileSync("src/modules/placements/recruiter-message-email-model.ts","utf8");
+  const worker=readFileSync("src/modules/placements/recruiter-message-email-dispatch-service.ts","utf8");
+  expect(model).toContain('recruiter-reply:v1:');
+  expect(worker).toContain("RECRUITER_MESSAGE_REPLY_TOKEN_SECRET");
+  expect(worker).toContain("recruiterReplyTokenForThread(replySecret,candidate.thread_id)");
+  expect(worker).toContain('createHash("sha256").update(token)');
+  expect(worker).not.toContain('randomBytes(16).toString("hex")');
+ });
+
  it("REC-calendar-messages-profile-R01 extracts reply without duplicating quoted TPO conversation",()=>{
   expect(extractRecruiterEmailReply("Yes, Thursday works.\nOn Tue, Oct 18 someone wrote:\n> Confidential history"))
    .toBe("Yes, Thursday works.");
