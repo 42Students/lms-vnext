@@ -14,7 +14,7 @@ describe("Faculty attendance schedule editor",()=>{
     expect(validateFacultyScheduleWindow("","")).toMatch(/both/);
     expect(validateFacultyScheduleWindow("2026-02-29T09:00","2026-03-01T10:00")).toMatch(/valid/);
     expect(validateFacultyScheduleWindow("bad","2026-10-22T10:00")).toMatch(/valid/);
-    expect(validateFacultyScheduleWindow("2026-10-22T11:00","2026-10-22T10:00")).toMatch(/later/);
+    expect(validateFacultyScheduleWindow("2026-10-22T11:00","2026-10-22T10:00")).toMatch(/must be after start time/);
     expect(validateFacultyScheduleWindow("2026-10-22T09:00","2026-10-22T10:00")).toBeNull();
   });
 });

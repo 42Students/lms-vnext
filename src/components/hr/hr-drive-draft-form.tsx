@@ -102,6 +102,7 @@ export function HrDriveDraftForm({
   },[draft,storageKey,fixRequestId]);
 
   function saveForThisTab(){
+    if(!hrDraftContainsWork(draft)){setNotice("Enter some details before saving a draft.");return;}
     const raw=saveHrUnsentDraft(draft,Date.now());
     if(!raw){setNotice("This draft is too large to save on this device. Shorten long fields before saving.");return;}
     try{window.sessionStorage.setItem(storageKey,raw);window.localStorage.setItem(storageKey,raw);

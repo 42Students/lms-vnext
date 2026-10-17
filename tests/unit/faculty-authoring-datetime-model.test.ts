@@ -15,11 +15,12 @@ describe("Faculty assignment due date and lifecycle view",()=>{
   expect(authoringDueInstant("")).toBeNull();
   expect(()=>authoringDueInstant("invalid")).toThrow(/valid/);
  });
- it("does not offer archived or published draft edits",()=>{
+ it("offers edits for draft and published only, never archived",()=>{
   expect(assignmentActionAvailable(null,"CREATE")).toBe(true);
   expect(assignmentActionAvailable("DRAFT","EDIT")).toBe(true);
-  expect(assignmentActionAvailable("PUBLISHED","EDIT")).toBe(false);
+  expect(assignmentActionAvailable("PUBLISHED","EDIT")).toBe(true);
   expect(assignmentActionAvailable("PUBLISHED","ARCHIVE")).toBe(true);
   expect(assignmentActionAvailable("ARCHIVED","ARCHIVE")).toBe(false);
+  expect(assignmentActionAvailable("ARCHIVED","EDIT")).toBe(false);
  });
 });

@@ -4,7 +4,7 @@ import {emptyHrDriveDraft,hrDriveDraftSchema} from "@/modules/placements/hr-driv
 describe("HR draft round duplication",()=>{
  it("adds an editable distinct named round without mutating source",()=>{
   const draft={...emptyHrDriveDraft(),title:"Engineer",
-   description:"Role details adequate for preview validation.",location:"Hyderabad"};
+   description:"Role details adequate for preview validation.",location:"Hyderabad",ctcLpa:"10"};
   const one=duplicateHrDraftRound(draft,0);
   expect(one.rounds.map(r=>r.name)).toEqual(["Interview","Interview (copy)"]);
   const two=duplicateHrDraftRound(one,0);

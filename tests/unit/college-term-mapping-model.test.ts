@@ -23,9 +23,9 @@ describe("Semester-course mapping boundaries", () => {
   });
   it("updates mapping credits/order and rejects invalid positions or values", () => {
     expect(collegeTermCourseUpdateSchema.safeParse({ credits: 3, position: 2 }).success).toBe(true);
-    expect(collegeTermCourseUpdateSchema.safeParse({ credits: null, position: 1 }).success).toBe(true);
+    expect(collegeTermCourseUpdateSchema.safeParse({ credits: 10, position: 1 }).success).toBe(true);
     for (const body of [
-      { credits: 31, position: 1 }, { credits: 3, position: 0 },
+      { credits: 11, position: 1 }, { credits: 0, position: 1 }, { credits: null, position: 1 }, { credits: 3, position: 0 },
       { credits: 3, position: 2, collegeId: courseId },
     ]) expect(collegeTermCourseUpdateSchema.safeParse(body).success).toBe(false);
     expect(reorderTermCourseIds(["a", "b", "c"], "c", 1)).toEqual(["c", "a", "b"]);

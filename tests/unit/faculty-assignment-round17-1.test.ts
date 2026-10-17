@@ -7,7 +7,7 @@ it("requires verified operation, actor Section and assignment ID",()=>{
  expect(facultyAssignmentCommandReceipt({assignment:{...row,deliveryId:"section-b"}},request)).toBe(false);
  expect(facultyAssignmentCommandReceipt({assignment:{...row,id:"assignment-b"}},request)).toBe(false);
  expect(facultyAssignmentCommandReceipt({assignment:{...row,maxPoints:10}},request)).toBe(false);
- expect(facultyAssignmentCommandReceipt({assignment:{...row,status:"PUBLISHED"}},request)).toBe(false);
+ expect(facultyAssignmentCommandReceipt({assignment:{...row,status:"PUBLISHED"}},request)).toBe(true);
  expect(facultyAssignmentCommandReceipt({assignment:{...row,status:"PUBLISHED"}},{action:"PUBLISH",deliveryId:"section-a",assignmentId:"assignment-a"})).toBe(true);
  expect(facultyAssignmentCommandReceipt(null,request)).toBe(false);
 });

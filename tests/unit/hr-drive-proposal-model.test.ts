@@ -4,7 +4,7 @@ import {formatHrDriveProposal,hrDriveProposalSchema} from "@/modules/placements/
 const collegeId="11111111-1111-4111-8111-111111111111";
 const submissionId="22222222-2222-4222-8222-222222222222";
 const draft={...emptyHrDriveDraft(),title:"Data engineer",
- description:"Build robust data pipelines.",location:"Hyderabad"};
+ description:"Build robust data pipelines.",location:"Hyderabad",ctcLpa:"10"};
 it("renders a bounded, explicitly non-approval placement-cell proposal",()=>{
  const body=formatHrDriveProposal({collegeId,submissionId,draft});
  expect(body).toContain("NOT a submitted approval request");
