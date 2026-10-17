@@ -2,9 +2,7 @@ import "server-only";
 
 import type { RequestContext } from "@/modules/identity/context";
 import { getAcademicsWorkspace } from "@/modules/academics/workspace";
-import {
-  listCollegePeopleWithRuntime,
-} from "@/modules/people/runtime";
+import {listCollegeFacultyPicker} from "./college-faculty-picker-service";
 import { listCourses } from "./course-service";
 import { listCourseOfferings } from "./offering-service";
 import {
