@@ -157,7 +157,7 @@ let cloudPollFailureLogged = false;
 function noteCloudPollingFailure() {
   if (cloudPollFailureLogged) return;
   cloudPollFailureLogged = true;
-  process.stderr.write("[log-alerts] Cloud Logging poll unavailable; other scheduled checks continue\\n");
+  process.stderr.write("[log-alerts] Cloud Logging poll unavailable; other scheduled checks continue\n");
 }
 
 /** Operator-opted Cloud Logging backup. Production cannot silently query the dev namespace. */

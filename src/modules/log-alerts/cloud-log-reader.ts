@@ -66,7 +66,9 @@ export function parseCloudErrorEntry(value: unknown): CloudErrorRecord | null {
     id,
     timestamp: time,
     event: safeAlertLabel(json.event ?? "cloud.error", 80),
-    // Structured application logs begin with "Error: ..." while the reporter\n    // receives error.message; strip the standard name prefix for parity.\n    message: redactAlertText(message.replace(/^(?:[A-Za-z]*Error|Exception):\\s*/i, "")),
+    // Structured application logs begin with "Error: ..." while the reporter
+    // receives error.message; strip the standard name prefix for parity.
+    message: redactAlertText(message.replace(/^(?:[A-Za-z]*Error|Exception):\s*/i, "")),
     path: safeAlertPath(json.path ?? json.route ?? "/"),
     requestId: requestId && /^(?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(requestId)
       ? requestId : undefined,
