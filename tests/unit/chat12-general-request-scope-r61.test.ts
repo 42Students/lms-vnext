@@ -50,8 +50,16 @@ describe("chat-12 request admission and duplicate replay invariants",()=>{
   expect(source).toContain("eq(placementLearnerGeneralRequests.version,decision.version)");
   expect(source).toContain('eq(placementLearnerGeneralRequests.status,"PENDING")');
  });
- it("TPO-requests-verification-01 records the source of the sixth-kind migration incompatibility",()=>{
-  expect(read("src/db/schema/placement-general-requests.ts")).not.toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+ it("TPO-requests-verification-01 traces the original 0134 incompatibility to the registered 0135 correction",()=>{
+  const original=read("drizzle/0134_lanes_round_2.sql");
+  const registered=read("drizzle/0135_lanes_round_3.sql");
+  const schema=read("src/db/schema/placement-general-requests.ts");
+  expect(original.split("create table if not exists placement_learner_general_requests (")[1]?.split(");")[0]).not.toContain("'OFFER_ACCEPTANCE_DISPUTE'");
+  expect(registered).toContain("-- from chat-12-0134-general-requests-correction.sql");
+  expect(registered).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+  expect(schema).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
   expect(read("docs/proposed-migrations/chat-12-0134-general-requests-correction.sql")).toContain("OFFER_ACCEPTANCE_DISPUTE");
+  // Retain the live constraint guard for deployments whose 0135 has not yet run.
+  expect(source).toContain('await requireRegisteredKind(tx,input.kind)');
  });
 });
