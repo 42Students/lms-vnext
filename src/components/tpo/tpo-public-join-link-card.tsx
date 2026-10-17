@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import {useRouter} from "next/navigation";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
 } from "@/modules/placements/tpo-public-join-link-model";
@@ -13,6 +14,7 @@ export function TpoPublicJoinLinkCard({
   companyId?: string;
   companyName?: string;
 }) {
+  const router=useRouter();
   const [status, setStatus] = useState(initial);
   const [freshUrl, setFreshUrl] = useState("");
   const [busy, setBusy] = useState(false);
@@ -39,13 +41,22 @@ export function TpoPublicJoinLinkCard({
           action, confirmed: true,
         }),
       });
-      if (!response.ok) throw new Error("LINK_CHANGE_FAILED");
+      if (!response.ok) {
+        const body=await response.json().catch(()=>null) as {error?:string}|null;
+        if(body?.error==="DOMAIN_REQUIRED")
+          throw new Error("Add the company's email domain first, so only its people can join.");
+        if(body?.error==="STALE")
+          throw new Error("The join link changed. Refresh and try again.");
+        if(body?.error==="NOT_FOUND")
+          throw new Error("The company relationship was not found in your college.");
+        throw new Error("Couldn't make the link. Check your access and try again.");
+      }
       const data: { path: string; status: TpoPublicJoinLinkStatus } = await response.json();
       setStatus(data.status);
       setFreshUrl(window.location.origin + data.path);
       setFeedback(action === "REPLACE" ? "New link made" : "Link made");
-    } catch {
-      setFeedback(isCompany ? "Couldn't make the link" : "Couldn't save");
+    } catch(error) {
+      setFeedback(error instanceof Error?error.message:"Couldn't make the link");
     } finally {
       setBusy(false);
     }
@@ -98,7 +109,7 @@ export function TpoPublicJoinLinkCard({
         <>
           {status.domain ? (
             <p className="mt-2 text-sm text-body">
-              Anyone at <strong>{status.domain}</strong> joins your placements through this link, with their work email. Other emails can&apos;t use it.
+              Anyone at <strong>{companyName??status.domain}</strong> joins your placements through this link, with their work email. Other emails can&apos;t use it.
             </p>
           ) : (
             <p className="mt-2 text-sm text-body">
@@ -121,6 +132,8 @@ export function TpoPublicJoinLinkCard({
       {!status.ready ? (
         <p role="status" className="mt-3 text-sm text-body">
           {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
+          <button type="button" onClick={()=>router.refresh()}
+            className="ml-3 font-semibold text-primary-text underline">Retry</button>
         </p>
       ) : (
         <>
