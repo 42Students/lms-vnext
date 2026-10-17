@@ -72,9 +72,11 @@ export default async function HomePage({
 }: {
   searchParams: Promise<{
     auth?: string | string[];
+    recruiter?: string | string[];
   }>;
 }) {
   const params = await searchParams;
+  const recruiterValue=Array.isArray(params.recruiter)?params.recruiter[0]:params.recruiter;
   const authValue = Array.isArray(params.auth)
     ? params.auth[0]
     : params.auth;
@@ -186,7 +188,8 @@ export default async function HomePage({
               </a>
             </div>
           ) : (
-            <LoginForm collegeName={branding?.collegeName ?? null} defaultChannel={signin.primary}
+            <LoginForm collegeName={branding?.collegeName ?? null}
+             defaultChannel={recruiterValue==="email"&&signin.email?"EMAIL":signin.primary}
              allowedChannels={signin.email&&signin.phone?["EMAIL","PHONE"]:signin.email?["EMAIL"]:["PHONE"]}/>
           )}
         </div>
