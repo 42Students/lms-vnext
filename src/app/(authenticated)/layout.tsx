@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
+import { safeReturnTo } from "@/lib/return-to";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   SessionAuthenticationError,
@@ -121,7 +123,11 @@ export default async function AuthenticatedLayout({
     }
 
     if (shellData.kind === "session") {
-      redirect(sessionRedirect(shellData.code));
+      const destination = sessionRedirect(shellData.code);
+      const requested = safeReturnTo((await headers()).get("x-lms-path"));
+      redirect(requested
+        ? `${destination}${destination.includes("?") ? "&" : "?"}returnTo=${encodeURIComponent(requested)}`
+        : destination);
     }
 
     redirect("/?auth=access");

@@ -15,8 +15,8 @@ export const collegeNameSchema = z
 export const collegeCodeSchema = z
   .string()
   .trim()
-  .min(1, "College code is required")
-  .max(64, "College code must be 64 characters or less");
+  .toLowerCase()
+  .regex(/^[a-z0-9-]{3,63}$/, "Unique ID must be 3-63 chars, lowercase letters/numbers/hyphen only.");
 
 export const createCollegeInputSchema = z.object({
   organizationId: collegeOrganizationIdSchema,

@@ -52,6 +52,34 @@ export function groupAttendanceDays<T extends { id: string; startsAt: string }>(
   return [...days].map(([day, sessions]) => ({ day, sessions }));
 }
 
+/** One column per calendar day, including days with no class. IST date keys
+ * are computed from session timestamps; UTC arithmetic creates day labels
+ * without depending on the server's locale or daylight-saving settings. */
+export function attendanceMonthLabel(month:string){
+ if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))return "Choose a month";
+ const [year,value]=month.split("-"),names=[
+  "January","February","March","April","May","June","July",
+  "August","September","October","November","December",
+ ];
+ return names[Number(value)-1]+" "+year;
+}
+
+export function attendanceMonthDays<T extends {id:string;startsAt:string}>(
+ month:string,sessions:readonly T[],
+){
+ if(!/^\d{4}-(0[1-9]|1[0-2])$/.test(month))
+  throw new Error("Invalid attendance month");
+ const [year,m]=month.split("-").map(Number);
+ const count=new Date(Date.UTC(year!,m!,0)).getUTCDate();
+ const grouped=new Map(groupAttendanceDays(sessions).map(row=>[row.day,row.sessions]));
+ return Array.from({length:count},(_,index)=>{
+  const day=month+"-"+String(index+1).padStart(2,"0");
+  const dow=new Date(Date.UTC(year!,m!-1,index+1)).getUTCDay();
+  return {day,weekday:["S","M","T","W","T","F","S"][dow]!,
+   isSunday:dow===0,sessions:grouped.get(day)??[]};
+ });
+}
+
 export function adminAttendanceCellState(
   session: Session,
   record: Pick<Record, "status"> | undefined,

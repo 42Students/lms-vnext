@@ -5,7 +5,7 @@ describe("L22-002 authored project goal and deliverables",()=>{
   it("does not invent outcomes from missing authoring",()=>{
     const blueprint=projectTemplateBlueprintSchema.parse({});
     expect(learnerProjectGoalSummary(blueprint)).toEqual({
-      goal:null,description:null,deliverables:[],
+      goal:null,description:null,deliverables:[],definitionOfDone:[],personas:[],
     });
   });
   it("preserves the authored template version content",()=>{
@@ -15,7 +15,7 @@ describe("L22-002 authored project goal and deliverables",()=>{
     }});
     expect(learnerProjectGoalSummary(blueprint)).toEqual({
       goal:"Complete API",description:"Follow the agreed contract",
-      deliverables:["Release","Unit tests"],
+      deliverables:["Release","Unit tests"],definitionOfDone:[],personas:[],
     });
   });
 });

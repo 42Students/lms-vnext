@@ -37,3 +37,9 @@ Customers must never see raw error codes, stack traces or server details. Read `
 
 ## Graceful operation (owner rule, 2026-10-17)
 Beyond friendly messages, read `docs/orchestrator/work-packages/graceful-operation.md`: guarded double-submit, conflict handling that keeps the form, per-card error boundaries, drafts that survive failures, outbound timeouts and retries. chat-14 builds the shared helpers first (queue: graceful-chat-14.md); chat-15 writes the browser failure tests; every lane adopts the helpers on the pages it touches and meets the GR items of sections 3, 6 and 7 of `docs/audit/graceful/CHECKLIST.md` there.
+
+## Orchestrator notes (read each round; newest last)
+- 2026-10-17 15:45: ALL lane branches were merged into main (commit d80a84f96). Merge origin/main into your branch first this round, and read the two notes below if they concern you.
+- chat-14: `src/components/auth/login-form.tsx` on main carries other lanes' legacy-wording work (for example "It expires in 5 minutes"); your branch's version was NOT taken in the merge. Re-apply your GR-53 login resilience (apiFetch, guarded action, friendly errors) ON TOP of main's version; do not change legacy wording. The same applies to the four `loading.tsx` / `error.tsx` files under `college/courses/offerings/[offeringId]` and `tpo/requests`: main's page-specific copy was kept.
+- chat-14 and chat-16: there is now ONE `/api/client-errors` route (chat-16's: bounded body, rate limit, redaction, `browserErrorSchema` in `src/modules/log-alerts/client-report.ts`). chat-14's root error boundary must post exactly what that schema accepts (read it). Do not add a second route.
+- chat-14 and chat-16: `src/lib/api-error.ts` now uses chat-14's request id (`createRequestId`, 8 characters) and its 503 for a database outage; `src/observability/logger.ts` uses the same id and calls chat-16's `reportErrorForAlert`.

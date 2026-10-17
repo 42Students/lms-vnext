@@ -103,7 +103,8 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
       }))??undefined}
     /> : null}
   {!data.rows.length?<div className="space-y-3">
-    <EmptyState title="No matching applicants" description="No stored applications match the selected stage, channel, eligibility, date and name filters."/>
+    <EmptyState title="No matching applicants" description="No applicants match these filters. Clear the filters or check Registered, not applied to see who still needs to apply."/>
+    <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"#drive-registered-not-applied"} className="inline-flex min-h-11 items-center text-primary-text underline">Registered, not applied</Link>
     <Link href={tpoApplicantPipelineResetHref(jobId)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear applicant filters</Link>
    </div>:
    <Suspense fallback={<p role="status">Loading applicant grid…</p>}>

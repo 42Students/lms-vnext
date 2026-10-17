@@ -1,40 +1,63 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {attendancePolicyUpdateSchema} from "@/modules/attendance/policy-validation";
 export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresholdPercent,correctionWindowHours,maxCorrectionHours=168}:{
  collegeId:string;eligibilityThresholdPercent:number;correctionWindowHours:number;maxCorrectionHours?:number;
 }){
- const router=useRouter(),[threshold,setThreshold]=useState(String(eligibilityThresholdPercent)),
-  [hours,setHours]=useState(String(correctionWindowHours)),[saving,setSaving]=useState(false),
-  [message,setMessage]=useState("");
+ const router=useRouter();
+ const [threshold,setThreshold]=useState(String(eligibilityThresholdPercent));
+ const [hours,setHours]=useState(String(correctionWindowHours));
+ const [saving,setSaving]=useState(false),[confirming,setConfirming]=useState(false);
+ const [message,setMessage]=useState(""),[failed,setFailed]=useState(false);
+ const parsed=attendancePolicyUpdateSchema.safeParse({
+  collegeId,eligibilityThresholdPercent:Number(threshold),correctionWindowHours:Number(hours),
+ });
+ const withinRange=Number.isInteger(Number(hours))&&Number(hours)>=1&&Number(hours)<=maxCorrectionHours;
+ function requestSave(){
+  if(saving)return;
+  if(!parsed.success||!withinRange){
+   setMessage("Minimum attendance must be 1–100%; late marking must be 1–"+maxCorrectionHours+" hours.");
+   setFailed(true);return;
+  }
+  setMessage("");setFailed(false);setConfirming(true);
+ }
  async function save(){
-  const input={collegeId,eligibilityThresholdPercent:Number(threshold),correctionWindowHours:Number(hours)};
-  const parsed=attendancePolicyUpdateSchema.safeParse(input);
-  if(!parsed.success){setMessage("Eligibility must be 1–100%; correction window must be 1–"+maxCorrectionHours+" hours.");return;}
-  if(!window.confirm("Save attendance settings for this college?"))return;
-  setSaving(true);setMessage("");
+  if(saving||!parsed.success||!withinRange)return;
+  setSaving(true);setMessage("");setFailed(false);
   try{
-   const response=await fetch("/api/attendance/admin/policy",{method:"PUT",
-    headers:{"content-type":"application/json"},body:JSON.stringify(parsed.data)});
-   if(!response.ok)throw Error("Attendance settings could not be saved.");
-   setMessage("Attendance settings saved.");router.refresh();
-  }catch(error){setMessage(error instanceof Error?error.message:"Unable to save");}
+   const response=await fetch("/api/attendance/admin/policy",{
+    method:"PUT",credentials:"same-origin",headers:{"content-type":"application/json"},
+    body:JSON.stringify(parsed.data),
+   });
+   if(!response.ok)throw new Error("Failed");
+   setConfirming(false);setMessage("Attendance settings saved.");router.refresh();
+  }catch{setMessage("Attendance settings could not be saved. Try again.");setFailed(true);}
   finally{setSaving(false);}
  }
- return <section aria-label="College attendance settings" className="space-y-3 rounded-xl border border-border bg-surface p-4">
-  <h2 className="font-semibold">Attendance settings</h2>
-  <p className="text-sm text-body">Current vNext database bounds: 1–100% eligibility and 1–{maxCorrectionHours} hours Faculty correction window. Higher values require the registered attendance correction-window migration.</p>
-  <div className="flex flex-wrap items-end gap-3">
-   <label className="grid gap-1 text-sm">Eligibility threshold %
-    <input type="number" min={1} max={100} step={1} value={threshold}
-     onChange={e=>setThreshold(e.target.value)} className="min-h-11 rounded border border-border bg-background px-3"/></label>
-   <label className="grid gap-1 text-sm">Faculty correction window (hours)
+ return <section aria-label="Attendance policy" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  <h2 className="font-semibold">Attendance policy</h2>
+  <div className="grid gap-4 sm:grid-cols-2">
+   <label className="grid gap-1 text-sm font-semibold">Late marking allowed for
     <input type="number" min={1} max={maxCorrectionHours} step={1} value={hours}
-     onChange={e=>setHours(e.target.value)} className="min-h-11 rounded border border-border bg-background px-3"/></label>
-   <button type="button" disabled={saving} onClick={()=>void save()}
-    className="min-h-11 rounded bg-primary px-4 text-on-primary disabled:opacity-50">{saving?"Saving…":"Save settings"}</button>
+     onChange={e=>setHours(e.target.value)} aria-describedby="late-marking-help"
+     className="min-h-11 rounded border border-border bg-background px-3"/>
+    <span id="late-marking-help" className="text-xs font-normal text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold">Minimum attendance
+    <input type="number" min={1} max={100} step={1} value={threshold}
+     onChange={e=>setThreshold(e.target.value)} aria-describedby="minimum-attendance-help"
+     className="min-h-11 rounded border border-border bg-background px-3"/>
+    <span id="minimum-attendance-help" className="text-xs font-normal text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
+   </label>
   </div>
-  {message?<p role="status" className="text-sm">{message}</p>:null}
+  <button type="button" disabled={saving} onClick={requestSave}
+   className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary">{saving?"Saving…":"Save attendance policy"}</button>
+  {message?<p role={failed?"alert":"status"} className="text-sm text-body">{message}</p>:null}
+  <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance settings for this college?"
+   description="Changes apply to the selected college." confirmVariant="primary" confirmLabel="Save settings"
+   pending={saving} onConfirm={()=>void save()}>
+    <p className="text-sm text-body">Late marking: {hours} hours · Minimum attendance: {threshold}%</p>
+  </ConfirmDialog>
  </section>;
-}

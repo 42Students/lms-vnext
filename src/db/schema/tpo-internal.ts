@@ -9,6 +9,7 @@ import {
   foreignKey,
   index,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -51,6 +52,7 @@ export const placementTpoInternalThreads = pgTable(
   ],
 );
 
+/** The Everybody/Everyone channel is implicit for every active TPO membership. */
 export const placementTpoInternalMessages = pgTable(
   "placement_tpo_internal_messages",
   {
@@ -78,4 +80,72 @@ export const placementTpoInternalMessages = pgTable(
       sql`length(btrim(${t.body})) between 1 and 4000`,
     ),
   ],
+);
+
+/** The permanent Everyone channel has no invite roster: membership is derived
+ * from active college TPO roles on every read and write. */
+export const placementTpoTeamEveryoneMessages=pgTable(
+ "placement_tpo_team_everyone_messages",
+ {
+  id:uuid("id").defaultRandom().primaryKey(),
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  authorMembershipId:uuid("author_membership_id").notNull(),
+  body:text("body").notNull(),
+  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ },
+ t=>[
+  index("tpo_team_everyone_messages_college_time_idx").on(t.collegeId,t.createdAt),
+  foreignKey({
+   name:"tpo_team_everyone_messages_author_college_fk",
+   columns:[t.authorMembershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+  check("tpo_team_everyone_message_body_ck",sql`length(btrim(${t.body})) between 1 and 4000`),
+ ],
+);
+
+/** Muting suppresses unread alerts but never revokes access to Everyone. */
+export const placementTpoTeamEveryoneMutes=pgTable(
+ "placement_tpo_team_everyone_mutes",
+ {
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  membershipId:uuid("membership_id").notNull(),
+  mutedAt:timestamp("muted_at",{withTimezone:true}).notNull().defaultNow(),
+ },
+ t=>[
+  primaryKey({name:"tpo_team_everyone_mutes_pk",columns:[t.collegeId,t.membershipId]}),
+  foreignKey({
+   name:"tpo_team_everyone_mutes_member_college_fk",
+   columns:[t.membershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+ ],
+);
+
+/** TPO-inbox-team-R05: bell delivery acknowledgements are independent of
+ * member-specific conversation read positions. */
+export const placementTpoInternalReads=pgTable(
+ "placement_tpo_internal_reads",
+ {
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  threadId:uuid("thread_id").notNull(),
+  membershipId:uuid("membership_id").notNull(),
+  readThrough:timestamp("read_through",{withTimezone:true}).notNull(),
+  following:boolean("following").notNull().default(true),
+  mutedAt:timestamp("muted_at",{withTimezone:true}),
+ },
+ t=>[
+  primaryKey({name:"tpo_internal_reads_pk",columns:[t.threadId,t.membershipId]}),
+  foreignKey({
+   name:"tpo_internal_reads_thread_college_fk",
+   columns:[t.threadId,t.collegeId],
+   foreignColumns:[placementTpoInternalThreads.id,placementTpoInternalThreads.collegeId],
+  }).onDelete("restrict"),
+  foreignKey({
+   name:"tpo_internal_reads_member_college_fk",
+   columns:[t.membershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+  index("tpo_internal_reads_member_idx").on(t.collegeId,t.membershipId),
+ ],
 );

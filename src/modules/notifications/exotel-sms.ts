@@ -1,3 +1,4 @@
+import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { SmsProvider } from "./types";
 
@@ -82,7 +83,7 @@ export function createExotelSmsProvider(
       });
 
       try {
-        const response = await fetchImpl(
+        const response = await outboundFetch(
           // The ".json" suffix selects JSON; without it Exotel answers XML.
           `https://api.exotel.com/v1/Accounts/${config.accountSid}/Sms/send.json`,
           {
@@ -95,7 +96,9 @@ export function createExotelSmsProvider(
               Accept: "application/json",
             },
             body: form,
-            signal: AbortSignal.timeout(10_000),
+            timeoutMs: 10_000,
+            maxAttempts: 1, // OTP POST has no provider idempotency guarantee.
+            fetchImpl,
           },
         );
 

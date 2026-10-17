@@ -4,7 +4,7 @@ export function tpoStudentJourneySteps(s:TpoStudentSummary){
  const base=Math.max(0,s.activeLearners);
  const pct=(count:number)=>base?Math.round(count*10000/base)/100:0;
  return [
-  {label:"In placements",count:s.placementPool,percent:pct(s.placementPool)},
+  {label:"In placements",count:s.activeLearners,percent:pct(s.activeLearners)},
   {label:"Registered",count:s.placementPool,percent:pct(s.placementPool)},
   {label:"Applying",count:s.applying,percent:pct(s.applying)},
   {label:"Placed",count:s.placed,percent:pct(s.placed)},

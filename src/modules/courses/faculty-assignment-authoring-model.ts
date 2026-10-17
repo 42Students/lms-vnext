@@ -73,3 +73,8 @@ export function facultyAssignmentLegacyEdit(current: {
     expectedUpdatedAt: input.expectedUpdatedAt, confirmed: input.confirmed,
   });
 }
+
+/** Only the title may change after any learner submission; history is immutable. */
+export function facultyAssignmentEditLockedBySubmissions(changes: readonly string[],hasSubmissions:boolean){
+ return hasSubmissions&&changes.some(field=>field!=="title");
+}
