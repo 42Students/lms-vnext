@@ -51,12 +51,12 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   eq(departments.collegeId,collegeId)))
  .where(and(eq(lessonContents.contentType,kind),
   ne(lessonContents.status,"ARCHIVED")))
- .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title)).limit(250);
+ .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title)).limit(251);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
- return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existing:existing.map(row=>({...row,
+ return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>250,existing:existing.slice(0,250).map(row=>({...row,
   // Published playback and meeting links remain private to their authorized flows.
   // The editor can update metadata without replacing a hidden URL.
   externalUrl:row.status==="DRAFT"?row.externalUrl:null,
