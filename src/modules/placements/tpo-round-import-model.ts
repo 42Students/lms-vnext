@@ -33,7 +33,10 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  const grid=ext.endsWith(".xlsx")?parseResultXlsx(bytes):
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8")):
   (()=>{throw Error("Use a .xlsx or .csv file.");})();
- const heads=(grid.shift()??[]).map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
+ const header=grid.shift()??[];
+ if(header.length>80||grid.some(row=>row.length>80))
+  throw Error("The result file is too wide; keep at most 80 columns.");
+ const heads=header.map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
  if(new Set(heads.filter(Boolean)).size!==heads.filter(Boolean).length)
   throw Error("Duplicate column headers make this result import ambiguous. Keep one column of each type.");
  const groups=[["applicationid","applicantid"],["email","studentemail"],
