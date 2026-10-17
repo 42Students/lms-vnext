@@ -212,6 +212,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       await tx.update(states).set({
         burstMinuteAt: minute, burstCount: spent + 1,
       }).where(eq(states.stateKey, key));
+      await rememberEvent();
     });
     return outcome;
   } catch {

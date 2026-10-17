@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
-import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
+import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily, db10LogAlertObservedEvents as observed } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
@@ -248,6 +248,9 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     const [state] = await db.select().from(states)
       .where(eq(states.stateKey, "TELEGRAM_DIGEST")).limit(1);
     if (state?.lastDigestDay === day) return;
+    // Bound the privacy-preserving event fingerprint table's growth.
+    await db.delete(observed)
+      .where(lt(observed.observedAt, new Date(now.getTime() - 30 * 86_400_000)));
     // Digest covers the completed prior IST calendar date.
     const previous = new Date(Date.parse(day + "T00:00:00Z") - 86_400_000);
     const previousDay = previous.toISOString().slice(0, 10);
