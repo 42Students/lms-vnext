@@ -54,7 +54,7 @@ export function CollegeAssignmentReview({
     (published?" "+published+" grade(s) were published; retry after refreshing.":""));
   }finally{setBulkBusy(false);}
  }
- if(status!=="PUBLISHED")return null;
+ if(!["PUBLISHED","DRAFT"].includes(status))return null;
  if(!options.length)return <p className="text-xs text-muted-foreground">
   No active class delivery is available for reviewing submissions.
  </p>;
@@ -72,11 +72,11 @@ export function CollegeAssignmentReview({
   <div className="flex flex-wrap items-center gap-2">
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
-    maxPoints={maxPoints} status="PUBLISHED" filesEnabled={filesEnabled}/>
-   <button type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
+    maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
+   {status==="PUBLISHED"?<button type="button" disabled={bulkBusy} onClick={()=>void publishAllGrades(selected.deliveryId)}
     className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text disabled:opacity-60">
     {bulkBusy?"Publishing…":"Publish grades"}
-   </button>
+   </button>:null}
   </div>
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
  </div>;
