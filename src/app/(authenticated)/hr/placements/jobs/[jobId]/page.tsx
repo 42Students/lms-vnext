@@ -412,13 +412,19 @@ export default async function HrPlacementJobPage({
         </Link>
       </div>
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
-        {(["overview", "applicants", "offers", "rounds"] as const).map(tab => (
+        {(["overview", "applicants", "rounds", "offers"] as const).map(tab => (
           <Link key={tab} href={`/recruiter/drives/${workspace.job.id}?tab=${tab}${returnQuery}`}
             aria-current={filters.tab === tab ? "page" : undefined}
             className={`inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold capitalize ${filters.tab === tab ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
-            {tab}
+            {tab==="overview"?"Overview":tab==="applicants"?"Applicants ("+applicants.counts.all+")":
+              tab==="rounds"?"Rounds & interviews":"Offers ("+offersTotal+")"}
           </Link>
         ))}
+        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
+          aria-current={requestsTab?"page":undefined}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Requests{requestData?" ("+requestData.requests.length+")":""}
+        </Link>
         <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
           aria-current={discussionTab?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -427,11 +433,6 @@ export default async function HrPlacementJobPage({
         <Link href={hrDriveMessagesHref(workspace.job.id)}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Messages
-        </Link>
-        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
-          aria-current={requestsTab?"page":undefined}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Change requests
         </Link>
       </nav>
       {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
