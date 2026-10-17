@@ -64,7 +64,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  const available=new Set(selectable.map(verificationSelectionKey));
  const selectedRows=selectable.filter(row=>selection.has(verificationSelectionKey(row)));
  const preview=bulkAction?verificationBulkPreviewRows(
-  bulkAction==="VERIFY"?selectedRows.filter(row=>!row.missingMarksheet):selectedRows,bulkAction):null;
+  bulkAction==="VERIFY"?selectedRows.filter(row=>!row.missingMarksheet&&!row.missingIdentityProof):selectedRows,bulkAction):null;
  const missingProof=bulkAction==="VERIFY"?selectedRows.filter(row=>row.missingMarksheet):[];
  function resetBulkFeedback(){setAcknowledged(false);const state=emptyVerificationBulkFeedback();
   setBulkAction(state.pendingAction);setBulkReason(state.reason);setBulkError(state.error);setBulkResult(state.result);
