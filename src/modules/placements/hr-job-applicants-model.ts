@@ -21,6 +21,7 @@ export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
   screening: string; submittedAt: Date; email: string | null;
   rollNumber?: string | null;
+  branch?: string | null; phone?: string | null;
   ugPercentage?: string | null; tenthPercentage?: string | null;
   twelfthOrDiplomaPercentage?: string | null;
 };
