@@ -569,6 +569,12 @@ export const projectResources = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     url: text("url"),
+    resourceType: varchar("resource_type", { length: 24 }).notNull().default("LINK"),
+    pinned: boolean("pinned").notNull().default(false),
+    accessNotes: text("access_notes"),
+    sprintId: uuid("sprint_id").references(() => projectSprints.id,{onDelete:"restrict"}),
+    taskId: uuid("task_id").references(() => projectTasks.id,{onDelete:"restrict"}),
+
     required: boolean("required")
       .notNull()
       .default(false),
@@ -616,6 +622,12 @@ export const projectResources = pgTable(
       "project_resources_visibility_ck",
       sql`${table.visibility} in ('TEAM','MENTOR_ONLY')`,
     ),
+    check("project_resources_type_ck",
+      sql\`\${table.resourceType} in ('FILE','LINK','DOCUMENT','CODE','NOTE','ENVIRONMENT')\`),
+    check("project_resources_access_notes_ck",
+      sql\`\${table.accessNotes} is null or length(\${table.accessNotes}) <= 4000\`),
+    index("project_resources_sprint_idx").on(table.projectId,table.sprintId),
+    index("project_resources_task_idx").on(table.projectId,table.taskId),
     index("project_resources_visibility_idx")
       .on(table.projectId, table.visibility)
       .where(sql`${table.status} = 'ACTIVE'`),
