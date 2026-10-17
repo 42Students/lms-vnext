@@ -11,6 +11,12 @@ export function TpoDriveDeadlineForm({job}:{job:Deadline}){
   const dateText=String(values.get("newDeadline")??"");
   const parsed=new Date(dateText+"+05:30");
   if(!Number.isFinite(parsed.getTime())){setError("Enter a valid IST deadline.");return;}
+  if(parsed.getTime()<=Date.now()){
+    setError("Set the deadline to a future IST date and time.");return;
+  }
+  if(job.applicationDeadline&&parsed.getTime()<=new Date(job.applicationDeadline).getTime()){
+    setError("The new deadline must be later than the current deadline.");return;
+  }
   if(!window.confirm(job.applicationDeadline?
   "Extend the published application deadline? Applicants will have more time, and this action is audited.":
   "Set the published application deadline? Students will see when applications close, and this action is audited."))return;
