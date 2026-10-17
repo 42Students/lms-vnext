@@ -38,7 +38,10 @@
 
 | COL-academic-setup-28 | DONE | src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx and src/components/college/student-class-move-action.tsx; tests/unit/college-faculty-round6-gap-verification.test.ts — `it("COL-academic-setup-28 verifies batch roster, search and class-move entry")` |
 
+| COL-academic-setup-16 | PARTIAL | src/components/academics/college-section-lifecycle-action.tsx and src/components/academics/college-recurring-preview.tsx; tests/unit/college-mentor-round7-gap-verification.test.ts — `it("COL-academic-setup-16 uses styled confirmation for class lifecycle and recurring schedules")`. Batch edits already use inline dirty discard, but remaining create/edit modal parity and cross-page keyboard behavior still need browser review. |
+| COL-academic-setup-19 | NOT-A-GAP | docs/audit/owner-decisions-resolved.md explicitly keeps archive instead of hard delete; src/components/admin/department-actions.tsx already disables archive with dependency tooltip and has Retry delete after server rejection; tests/unit/college-mentor-round7-gap-verification.test.ts — `it("COL-academic-setup-19 retains owner-approved archive and dependency blocking")`. |
+
 ## Outstanding and partial
-COL-academic-setup-15/16/19/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
+COL-academic-setup-15/16/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
 
 Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integration coverage for S1/S2 behavior.

@@ -167,7 +167,7 @@ export function CreateProjectResourceControl({
       setVisibility("TEAM");
       showToast({
         tone: "success",
-        title: "Project resource added",
+        title: "Resource added.",
       });
       router.refresh();
     } catch (caught) {
@@ -193,7 +193,7 @@ export function CreateProjectResourceControl({
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title={isLearner ? "Share a resource" : "Add Project resource"}
+        title={isLearner ? "Share a resource" : "Add resource"}
         description="Share a safe HTTP(S) link or an internal text resource with the Project team."
       >
         <form
@@ -379,7 +379,7 @@ export function ProjectResourceActions({
       <Dialog
         open={editOpen}
         onOpenChange={setEditOpen}
-        title="Edit Project resource"
+        title="Edit resource"
       >
         <form
           onSubmit={save}

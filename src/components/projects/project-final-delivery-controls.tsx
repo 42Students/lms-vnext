@@ -468,14 +468,14 @@ export function FinalReviewControl({
         tone: "success",
         title:
           decision === "APPROVED"
-            ? "Final delivery approved"
-            : "Changes requested",
+            ? "Submission accepted."
+            : "Changes requested."
       });
       router.refresh();
     } catch (caught) {
       showToast({
         tone: "error",
-        title: "Final review failed",
+        title: "Submission review could not be saved",
         description:
           caught instanceof Error
             ? caught.message
@@ -498,8 +498,8 @@ export function FinalReviewControl({
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Review final delivery"
-        description="This decision is preserved as immutable Project review history."
+        title="Review submission"
+        description="Confirm your decision and feedback. The review will be saved in this project's history."
         footer={
           <>
             <Button
@@ -521,7 +521,7 @@ export function FinalReviewControl({
               {pending
                 ? "Saving…"
                 : decision === "APPROVED"
-                  ? "Approve delivery"
+                  ? "Accept submission"
                   : "Request changes"}
             </Button>
           </>
@@ -543,7 +543,7 @@ export function FinalReviewControl({
               }
             >
               <option value="APPROVED">
-                Approve
+                Accept submission
               </option>
               <option value="CHANGES_REQUESTED">
                 Request changes
