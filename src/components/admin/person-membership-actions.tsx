@@ -83,9 +83,11 @@ export function PersonMembershipActions({
           tone: "error",
           title: "Role update failed",
           description:
-            payload?.error === "LAST_MEMBERSHIP_ROLE"
-              ? "A membership must keep at least one role."
-              : "The role could not be changed.",
+            role==="COLLEGE_ADMIN"&&response.status===403
+              ? "Only a Super Admin can change the College Admin role."
+              : payload?.error === "LAST_MEMBERSHIP_ROLE"
+                ? "A membership must keep at least one role."
+                : "The role could not be changed.",
         });
         return;
       }
@@ -213,6 +215,7 @@ export function PersonMembershipActions({
         title={`Manage roles · ${displayName}`}
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
+        <p className="mb-3 text-sm text-body">The College Admin role can only be assigned or removed by a Super Admin.</p>
         <div className="space-y-2">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);
