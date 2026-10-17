@@ -35,6 +35,7 @@ export type TpoAuditUrlFilters = {
   from?: string;
   to?: string;
   q?: string;
+  who?:string;
   page?: number;
   pageSize?: number;
 };
@@ -59,6 +60,7 @@ export function tpoAuditHref(
   if (filters.q?.trim()) {
     params.set("q", filters.q.trim());
   }
+  if(filters.who?.trim())params.set("who",filters.who.trim());
 
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
