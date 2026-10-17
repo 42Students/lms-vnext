@@ -10,8 +10,9 @@ export function HrRecruiterBell(){
   try{
    const res=await fetch("/api/placements/recruiter/bell",{cache:"no-store"});
    if(!res.ok)throw Error("Unable to load");
-   const data=await res.json() as HrBellResponse;setState(data);setNow(Date.now());setError("");
+   const data=await res.json() as HrBellResponse;setState(data);setError("");
   }catch{setError("Couldn't refresh your notifications");}
+  finally{setNow(Date.now());}
  },[]);
  useEffect(()=>{
   // eslint-disable-next-line react-hooks/set-state-in-effect -- initial and 30s polling load.
