@@ -121,8 +121,11 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
    metadata:{askId:ask.id},
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("TEAM_ASK_CREATE_FAILED");
+  const [actor]=await tx.select({displayName:users.displayName}).from(users)
+   .where(eq(users.id,context.user.id)).limit(1);
+  const actorName=actor?.displayName?.trim()||"TPO colleague";
   await tx.insert(inAppNotifications).values({
-   userId:assignee.userId,eventId:event.id,title:"A teammate asked you",
+   userId:assignee.userId,eventId:event.id,title:actorName+" asked you",
    body:input.title.slice(0,120),
    actionHref:"/tpo/team/"+thread.id+"?ask="+ask.id,
   });
