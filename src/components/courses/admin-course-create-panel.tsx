@@ -190,7 +190,7 @@ export function AdminCourseCreatePanel({
         description: courseDescription.trim() || null,
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
-      (result) => { const id=createdRecordId(result,"course");if(id)setOfferingCourseId(id);
+      (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
         setCourseName("");setCourseCode("");setCourseDescription("");if(copy)router.replace("/college/courses"); },
       COLLEGE_COURSES_COPY.createFailed,
     );
