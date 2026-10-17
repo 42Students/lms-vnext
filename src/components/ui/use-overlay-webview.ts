@@ -2,6 +2,9 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
+/** Topmost overlay is the only overlay allowed to consume a Back action. */
+const activeOverlayStack: string[] = [];
+
 /**
  * Native host contract:
  * Before host Back navigates, dispatch a cancelable "lms:native-back" event on window.
@@ -20,15 +23,18 @@ export function useOverlayWebview({
   useEffect(() => {
     if (!open) { setAvailableHeight(undefined); return; }
     const marker = `lms-overlay:${id}`;
+    if (!activeOverlayStack.includes(marker)) activeOverlayStack.push(marker);
     const current = window.history.state as Record<string, unknown> | null;
     if (current?.lmsOverlay !== marker) {
       window.history.pushState({ ...(current ?? {}), lmsOverlay: marker }, "", window.location.href);
     }
     function hostBack(event: Event) {
+      if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       event.preventDefault();
       if (dismissible) callback.current();
     }
     function popstate() {
+      if (activeOverlayStack[activeOverlayStack.length - 1] !== marker) return;
       if (dismissible) callback.current();
       else window.history.pushState({ ...(window.history.state ?? {}), lmsOverlay: marker }, "", window.location.href);
     }
@@ -47,6 +53,8 @@ export function useOverlayWebview({
       window.removeEventListener("popstate", popstate);
       window.visualViewport?.removeEventListener("resize", resize);
       window.visualViewport?.removeEventListener("scroll", resize);
+      const pos = activeOverlayStack.lastIndexOf(marker);
+      if (pos >= 0) activeOverlayStack.splice(pos, 1);
       const latest = window.history.state as Record<string, unknown> | null;
       if (latest?.lmsOverlay === marker) window.history.back();
     };
