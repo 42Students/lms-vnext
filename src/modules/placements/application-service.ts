@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   cohorts,
@@ -886,7 +887,7 @@ export async function applyToPlacementJob(
           applicationId: application.id,
         });
 
-      await recordActivityEventInTransaction(
+      const submittedEvent=await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -911,6 +912,11 @@ export async function applyToPlacementJob(
             `placement-application:${application.id}:submitted`,
         },
       );
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:submittedEvent.id,collegeId:job.collegeId,
+        membershipId:membership.id,kind:"APPLICATION_STATUS_CHANGED",
+        subject:"Application submitted for "+roleOption.title,
+      });
 
       return application;
     },
