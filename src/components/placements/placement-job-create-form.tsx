@@ -24,6 +24,8 @@ export type PlacementAcademicTargetingChoice = {
     code: string;
     departmentName: string;
   }>;
+  sections:Array<{id:string;name:string;code:string;cohortId:string;cohortName:string;
+    programId:string;departmentName:string}>;
   cohorts: Array<{
     id: string;
     name: string;
@@ -141,6 +143,18 @@ export function PlacementJobCreateForm({
   // TPO-drives-43: never POST a second draft on retry after a partial create.
   const createdJobRef=useRef<{jobId:string;relationshipId:string;fingerprint:string}|null>(null);
   const [partialJobId,setPartialJobId]=useState<string|null>(null);
+  const [departmentFilter,setDepartmentFilter]=useState("ALL");
+  const [selectedSectionIds,setSelectedSectionIds]=useState<string[]>([]);
+  const departments=[...new Set(academicOptions.programs.map(program=>program.departmentName))]
+    .sort((a,b)=>a.localeCompare(b));
+  const visiblePrograms=departmentFilter==="ALL"?academicOptions.programs:
+    academicOptions.programs.filter(program=>program.departmentName===departmentFilter);
+  const visibleCohorts=academicOptions.cohorts.filter(cohort=>
+    visiblePrograms.some(program=>program.id===cohort.programId));
+  const visibleSections=academicOptions.sections.filter(section=>
+    visibleCohorts.some(cohort=>cohort.id===section.cohortId));
+  const effectiveProgramIds=selectedProgramIds.length?selectedProgramIds:
+    departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -163,9 +177,9 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset}));
+        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset}));
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset]);
+  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -174,14 +188,17 @@ export function PlacementJobCreateForm({
         if(!raw||!formRef.current)return;
         const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
-          selectedProgramIds?:string[];selectedCohortIds?:string[];
-          eligibilityPreset?:DriveEligibilityPreset};
+          selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
+          departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
         if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
           setCompanyRelationshipId(saved.companyRelationshipId);
         setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
         setSelectedCohortIds((saved.selectedCohortIds??[]).filter(id=>academicOptions.cohorts.some(c=>c.id===id)));
+        setSelectedSectionIds((saved.selectedSectionIds??[]).filter(id=>academicOptions.sections.some(c=>c.id===id)));
+        if(saved.departmentFilter==="ALL"||departments.includes(saved.departmentFilter??""))
+          setDepartmentFilter(saved.departmentFilter??"ALL");
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
         setEnteredDriveTitle(String(saved.values.title??""));
@@ -197,7 +214,7 @@ export function PlacementJobCreateForm({
     },0);
     return ()=>window.clearTimeout(task);
     // One-time restore scoped to this actor and college only.
-  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,markDirty]);
+  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,academicOptions.sections,markDirty]);
   useEffect(()=>{
     if(!dirty||!formRef.current||clearedBackup.current)return;
     const task=window.setTimeout(()=>{if(formRef.current)saveBrowserDraft(formRef.current);},400);
@@ -307,8 +324,9 @@ export function PlacementJobCreateForm({
       }
       const fingerprint=JSON.stringify({
         fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
-        selectedProgramIds:[...selectedProgramIds].sort(),
+        selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...selectedCohortIds].sort(),
+        selectedSectionIds:[...selectedSectionIds].sort(),
         companyMode,companyRelationshipId,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
@@ -467,10 +485,9 @@ export function PlacementJobCreateForm({
         `/api/placements/jobs/${jobId}/eligibility-policy`,
         "PUT",
         {
-          allowedProgramIds:
-            selectedProgramIds,
-          allowedCohortIds:
-            selectedCohortIds,
+          allowedProgramIds:effectiveProgramIds,
+          allowedCohortIds:selectedCohortIds,
+          allowedSectionIds:selectedSectionIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -1021,6 +1038,19 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid gap-5 p-5">
+          <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
+            <select className={inputClass} value={departmentFilter} onChange={event=>{
+              setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
+              setSelectedCohortIds([]);setSelectedSectionIds([]);
+            }}>
+              <option value="ALL">All departments</option>
+              {departments.map(department=><option key={department} value={department}>{department}</option>)}
+            </select>
+            <span className="text-xs font-normal text-muted-foreground">
+              Department selection targets every active program in that department.
+              Choose specific programs, batches and classes below to narrow the audience.
+            </span>
+          </label>
           <div className="grid gap-4 lg:grid-cols-2">
             <fieldset className="rounded-lg border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
@@ -1029,13 +1059,13 @@ export function PlacementJobCreateForm({
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
                 Leave all unchecked to make the opportunity available across programs.
               </p>
-              {academicOptions.programs.length === 0 ? (
+              {visiblePrograms.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active programs are available in this college yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.programs.map(
+                  {visiblePrograms.map(
                     (program) => (
                       <label
                         key={program.id}
@@ -1077,13 +1107,13 @@ export function PlacementJobCreateForm({
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
                 Cohorts can narrow the opportunity further before it is published.
               </p>
-              {academicOptions.cohorts.length === 0 ? (
+              {visibleCohorts.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active or planned cohorts are available yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.cohorts.map(
+                  {visibleCohorts.map(
                     (cohort) => (
                       <label
                         key={cohort.id}
@@ -1120,6 +1150,22 @@ export function PlacementJobCreateForm({
             </fieldset>
           </div>
 
+          <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <legend className="px-1 text-xs font-semibold text-body">Classes (sections)</legend>
+            <p className="mb-3 text-xs text-muted-foreground">
+              Leave unselected to include all classes in the selected programs and batches.
+              Class targeting uses the persisted section whitelist.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {visibleSections.slice(0,500).map(section=><label key={section.id}
+                className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={selectedSectionIds.includes(section.id)}
+                 onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
+                {section.name} · {section.cohortName}
+              </label>)}
+              {!visibleSections.length?<p className="text-sm text-muted-foreground">No active classes in this selection.</p>:null}
+            </div>
+          </fieldset>
           <label className="block text-sm font-semibold text-body">Eligibility preset
             <select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
               <option value="OPEN">Open to all</option>
