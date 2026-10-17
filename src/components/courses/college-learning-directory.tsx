@@ -598,7 +598,17 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {lessons&&data.totalPages>1?<form method="get" action={href} className="flex items-center gap-2">
+            {Array.from(new URL(collegeLearningHref(data.kind,{...data.query,page:1}),"https://local.invalid").searchParams.entries())
+              .filter(([key])=>key!=="page").map(([key,value])=>
+                <input key={key} type="hidden" name={key} value={value}/>)}
+            <label className="text-xs font-semibold">Jump to page
+              <input type="number" name="page" min={1} max={data.totalPages} defaultValue={data.query.page}
+                className="ml-2 w-20 rounded border border-border bg-surface p-2 text-foreground"/>
+            </label>
+            <button type="submit" className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">Go</button>
+          </form>:null}
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
             className="rounded-md border border-border px-4 py-2 font-semibold text-primary-text">Previous</Link> : null}
