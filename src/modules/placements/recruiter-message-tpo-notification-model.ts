@@ -4,7 +4,9 @@ export function recruiterMessageTpoRecipients(
 ):string[]{
  return [...new Set(rows.map(row=>row.userId))].filter(id=>id!==senderUserId);
 }
-export function recruiterMessageTpoHref():string{
- return "/tpo/messages/notifications";
+export function recruiterMessageTpoHref(threadId:string):string{
+ return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(threadId)
+   ? "/tpo/messages/"+encodeURIComponent(threadId)
+   : "/tpo/messages";
 }
 export const RECRUITER_MESSAGE_TPO_TITLE="New message from a recruiter";
