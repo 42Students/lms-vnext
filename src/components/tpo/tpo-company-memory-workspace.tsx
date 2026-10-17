@@ -70,6 +70,21 @@ function dateLabel(value: string) {
     : "Unknown time";
 }
 
+/** Legacy D MMM, h:mm A for the company activity log, in IST. */
+function legacyActivityTime(value:string){
+ const date=new Date(value);
+ if(!Number.isFinite(date.getTime()))return "Unknown time";
+ return new Intl.DateTimeFormat("en-IN",{
+  day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
+  timeZone:"Asia/Kolkata",
+ }).format(date).replace(/\b(am|pm)\b/g,s=>s.toUpperCase());
+}
+function legacyActivityDay(value:string){
+ const date=new Date(value);
+ if(!Number.isFinite(date.getTime()))return "Unknown day";
+ return new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",timeZone:"Asia/Kolkata"}).format(date);
+}
+
 export function TpoCompanyMemoryWorkspace({
   collegeId,
   companyName,
@@ -212,7 +227,7 @@ export function TpoCompanyMemoryWorkspace({
           ["Drives that ran", String(company.drivesRan)],
           ["Accepted-offer drives", String(company.acceptedOfferDrives)],
           ["students placed", company.studentsHired == null ? "Verification pending" : String(company.studentsHired)],
-          ["Last activity", latest ? latest.type.toLowerCase()+" / "+dateLabel(latest.createdAt) : "no activity yet"],
+          ["Last activity", latest ? latest.type.toLowerCase()+" / "+legacyActivityDay(latest.createdAt) : "no activity yet"],
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg border border-border bg-surface p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
@@ -337,7 +352,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.timeline.map(item => (
                   <li className="border-l-2 border-border pl-3" key={item.id}>
                     <p className="text-sm"><strong>{item.person}</strong> · {item.type.toLowerCase()}{item.note?": "+item.note:""}</p>
-                    <p className="text-xs text-muted-foreground">{dateLabel(item.createdAt)}</p>
+                    <p className="text-xs text-muted-foreground">{legacyActivityTime(item.createdAt)}</p>
                   </li>
                 ))}
               </ol>

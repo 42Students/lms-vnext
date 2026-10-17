@@ -89,12 +89,12 @@ export default async function CampaignHistory({searchParams}:PageProps){
       <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
         <div><dt>Total</dt><dd>{row.total}</dd></div>
-        <div><dt>Provider accepted</dt><dd>{row.acceptedByProvider}</dd></div>
+        <div><dt>Sent</dt><dd>{row.acceptedByProvider}</dd></div>
         <div><dt>Failed</dt><dd>{row.failed}</dd></div>
-        <div><dt>Suppressed</dt><dd>{row.suppressed}</dd></div>
+        <div><dt>Skipped</dt><dd>{row.suppressed}</dd></div>
       </dl>
     </li>)}
-  </ol>:<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No recorded batches for this college. This does not mean a campaign was delivered.</p>}
+  </ol>:<p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">No emails sent from Engage yet.</p>}
   <nav className="flex flex-wrap gap-3" aria-label="Campaign history pagination">
     {result.page>1?<Link href={"/tpo/recruiters/campaigns?page="+(result.page-1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Previous</Link>:null}
     {result.page<result.pages?<Link href={"/tpo/recruiters/campaigns?page="+(result.page+1)+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Next</Link>:null}

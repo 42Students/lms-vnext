@@ -43,7 +43,7 @@ export const tpoLeadSourceSchema = z.string().trim()
   .pipe(z.enum([
     "ALUMNI", "REFERRAL", "LINKEDIN", "JOB_PORTAL",
     "EVENT", "COLD_OUTREACH", "COMPANY_REACHED_OUT", "IMPORT",
-  ]));
+  ],{error:"Choose a source: Alumni, Referral, LinkedIn, Job portal, Event or job fair, Cold outreach, Company reached out, Import."}));
 
 export const createTpoLeadSchema = z.object({
   collegeId: id,
