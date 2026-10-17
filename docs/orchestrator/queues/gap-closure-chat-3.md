@@ -30,7 +30,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-33 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-34 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-drives-40 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-drives-42 | S2 | VALIDATION | OPEN |
+| TPO-drives-42 | S2 | VALIDATION | DONE |
 | TPO-drives-43 | S2 | STATE | OPEN |
 | TPO-drives-47 | S2 | MISSING-MODAL | OPEN |
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
@@ -54,12 +54,12 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-44 | S3 | COPY | OPEN |
 | TPO-drives-45 | S3 | VALIDATION | DONE |
 | TPO-drives-49 | S3 | STATE | DONE |
-| TPO-drives-50 | S3 | PERMISSION | OPEN |
+| TPO-drives-50 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-drives-51 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-drives-R03 | S3 | VALIDATION | DONE |
 | TPO-drives-R05 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-drives-R06 | S3 | MISSING-ACTION | DONE |
-| TPO-drives-36 | S4 | MISSING-ACTION | OPEN |
+| TPO-drives-36 | S4 | MISSING-ACTION | DONE |
 | TPO-drives-52 | S4 | MISSING-FIELD | OPEN |
 
 ## learner/learning-misc (36: OPEN 15, FIXED-ON-MAIN 19, UNCONFIRMED 2)
@@ -136,7 +136,7 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-25 | S3 | VALIDATION | FIXED-ON-MAIN |
 | COL-people-09 | S4 | MISSING-ACTION | NOT-A-GAP |
 | COL-people-12 | S4 | MISSING-ACTION | NOT-A-GAP |
-| COL-people-26 | S4 | A11Y | FIXED-ON-MAIN |
+| COL-people-26 | S4 | A11Y | DONE |
 | COL-people-27 | S4 | RESPONSIVE | DONE |
 
 ## public/auth-public-2-links-marketing (25: FIXED-ON-MAIN 13, OPEN 10, UNCONFIRMED 2)
