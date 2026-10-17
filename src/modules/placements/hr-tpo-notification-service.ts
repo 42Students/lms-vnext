@@ -40,7 +40,8 @@ export async function notifyTpoOfRecruiterAction(tx:Tx,context:RequestContext,in
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .where(and(eq(collegeMemberships.collegeId,input.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(!recipients.length)return;
- const href="/tpo/placements/jobs/"+encodeURIComponent(input.jobId)+"?tab="+meta.tab;
+ const href="/tpo/placements/jobs/"+encodeURIComponent(input.jobId)+
+  (input.action.startsWith("SLOT_")?"/interview-slots":"?tab="+meta.tab);
  await tx.insert(inAppNotifications).values(recipients.map(row=>({
   userId:row.userId,eventId:event.id,title:meta.title,
   body:"Review the recruiter's update in this drive.",

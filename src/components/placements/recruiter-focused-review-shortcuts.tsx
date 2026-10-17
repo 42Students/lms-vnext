@@ -37,6 +37,6 @@ export function RecruiterFocusedReviewShortcuts({closeHref,previousHref,nextHref
     if(opener?.isConnected)opener.focus();};
  },[router,closeHref,nextHref,previousHref]);
  return previousHref||nextHref
-  ? <p className="mt-3 text-xs text-muted-foreground">Keyboard: N next, P previous, Esc close. Official decisions are made in Rounds.</p>
+  ? <p className="mt-3 text-xs text-muted-foreground">Keyboard: N next, P previous, Esc close. S pass · W/H waitlist · R not selected · A absent · Z undo draft while results editor is focused. The placement cell applies official results.</p>
   : <p className="mt-3 text-xs text-muted-foreground">Press Esc to close this applicant review.</p>;
 }

@@ -37,6 +37,7 @@ export async function bulkChangeTpoLeadStages(
 
   return getDb().transaction(async (tx) => {
     const resultById = new Map<string, TpoBulkLeadStageResult>();
+    const changed: Array<{leadId:string;beforeStage:string;afterStage:string;beforeReason:string|null;afterReason:string|null;beforeUntil:string|null;afterUntil:string|null;afterUpdatedAt:string}> = [];
     for (const selected of sorted) {
       // Deterministic lock order; same-college lookup hides foreign UUIDs.
       const [current] = await tx.select()
@@ -69,8 +70,13 @@ export async function bulkChangeTpoLeadStages(
           eq(placementTpoLeads.collegeId, college.id),
           eq(placementTpoLeads.id, selected.id),
         ))
-        .returning({ id: placementTpoLeads.id });
+        .returning({ id: placementTpoLeads.id,updatedAt:placementTpoLeads.updatedAt });
       if (!updated) throw new Error("TPO_CRM_BULK_STAGE_CONFLICT");
+      if (!current) throw new Error("TPO_CRM_BULK_STAGE_MISSING_ORIGINAL");
+      changed.push({leadId:selected.id,beforeStage:current.manualStage,afterStage:input.action,
+       beforeReason:current.notNowReason,afterReason:input.action==="NOT_NOW"?input.reason:null,
+       beforeUntil:current.notNowUntil,afterUntil:input.action==="NOT_NOW"?input.revisitDate:null,
+       afterUpdatedAt:updated.updatedAt.toISOString()});
       await tx.insert(placementTpoLeadActivities).values({
         collegeId: college.id,
         leadId: updated.id,
@@ -97,7 +103,7 @@ export async function bulkChangeTpoLeadStages(
       module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_STAGE",
       subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
       summary:"Bulk recruiter lead stage update",
-      metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts},
+      metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts,undoVersion:1,changed},
     }).returning({id:activityEvents.id});
     if(!runAudit)throw new Error("TPO_RECRUITER_BULK_AUDIT_MISSING");
     return { results, counts, runAuditId:runAudit.id };
