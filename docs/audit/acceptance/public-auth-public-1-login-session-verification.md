@@ -42,3 +42,13 @@ DONE below means implemented plus a named acceptance test written, **not that th
 `PUB-auth-public-20/21/22/23/24/26/29/30/31/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.
+
+## Chat-9 decided UNCONFIRMED (round 7; source checks, CI pending)
+| Gap ID | Status | Decision and evidence |
+|---|---|---|
+| PUB-auth-public-22 | DONE source | Single active college renders its name, not a pointless selector. Multi-college selector remains. `src/components/shell/membership-switcher.tsx`; `tests/unit/chat9-unconfirmed-public-auth-round7.test.ts` PUB-auth-public-22. |
+| PUB-auth-public-23 | NOT-A-GAP | Clearing a session-scoped membership by accidentally selecting the blank placeholder is unsafe; the placeholder is disabled and no DELETE is issued by the switcher. Explicit account switching remains. `src/components/shell/membership-switcher.tsx`; same test PUB-auth-public-23. |
+| PUB-auth-public-26 | NOT-A-GAP | Retire college-specific roll-number/PIN login in favor of centralized email/phone OTP on resolved tenant hosts; do not revive a weaker school-specific credential or unverified college skin. `src/modules/auth/config.ts`; same test PUB-auth-public-26. |
+| PUB-auth-public-30 | DONE source (learner projects) | When college disables Projects, fail closed before reads and display exact legacy message instead of silently redirecting. `src/app/(authenticated)/learn/projects/page.tsx`; same test PUB-auth-public-30. Other disabled module routes to verify. |
+| PUB-auth-public-35 | NOT-A-GAP | Keep five-day absolute device-session lifetime; last_seen_at is observational, not a silent 30-day extension. `docs/audit/decisions/session-absolute-expiry.md`, `src/modules/auth/session-service.ts`; same test PUB-auth-public-35. |
+| PUB-auth-public-36 | DONE source | Existing Exotel DLT OTP body and ZeptoMail merge fields preserve verified template semantics; no delivery claim. `src/modules/notifications/exotel-sms.ts`, `src/modules/notifications/zeptomail-email.ts`; same test PUB-auth-public-36. |
