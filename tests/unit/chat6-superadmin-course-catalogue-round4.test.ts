@@ -35,6 +35,8 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(route).toContain('requireSuperAdminSelectedCollege(context,"courses.read")');
     expect(route).toContain("eq(departments.collegeId,scope.collegeId)");
     expect(route).toContain("COLLEGE_COURSE_EXPORT_CAP+1");
+    expect(route).toContain('eq(courses.status,"ACTIVE")');
+    expect(route).toContain('keys.indexOf(key)!==index');
     expect(route).toContain("renderCollegeCourseCatalogueCsv");
     expect(route).toContain("Cache-Control");
     expect(table).toContain("/api/admin/courses/catalogue/export");
