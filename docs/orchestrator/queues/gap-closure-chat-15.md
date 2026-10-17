@@ -231,3 +231,22 @@ Needs other owners: `LEARNER-learning-misc-07` storage allowed MIME families and
 - True blocked dependencies: `LEARNER-learning-misc-01` scanned private uploads, `LEARNER-learning-misc-07` storage-owner MIME/file policy and scanner, `LEARNER-learning-misc-12` Google Drive OAuth + scan-backed import. Stay outside `src/modules/storage` per lane rules. All recorded tests are authored but **unexecuted**; orchestrator must run Vitest, typecheck, DB replay and real browser acceptance.
 
 Latest assigned 41-item disposition (source-level only): **26 SOURCE-DONE, 10 PARTIAL, 3 BLOCKED, 2 NOT-A-GAP, 0 untouched OPEN**. This is not a claim of all gaps VERIFIED or complete. The remaining partial functionality and blockers above are the actual open acceptance obligations.
+
+## FINAL SPRINT chat-15 — October 18, 2026 (10/10 IDs dispositioned)
+
+Pulled main before changes. Each ID has a `[chat-15]` gap-tagged commit, a newly authored `tests/unit/chat15-final-sprint-*.test.ts` test, and a page acceptance citation. All GitHub mutations succeeded. **Tests, typecheck, migrations, DLT provider and browser acceptance NOT executed in lane; statuses below are source-level only.**
+
+| Gap ID | Disposition | Evidence / real remaining dependency |
+|---|---|---|
+| FAC-assessments-15 | WRONG / NOT-A-GAP | Published assignment submission locks were implemented. `chat15-final-sprint-faculty-wrong.test.ts` `FAC-assessments-15 WRONG: submitted assignments cannot move deadlines or points; title correction remains possible`; `docs/audit/acceptance/faculty-assessments-verification.md`. |
+| FAC-assessments-25 | WRONG / NOT-A-GAP | Course/Section/Lesson/Due/Draft status already exists. Same test file `FAC-assessments-25 WRONG: course, section, lesson, due-state and hidden draft are present`; faculty acceptance. |
+| FAC-assessments-26 | WRONG / NOT-A-GAP | Draft opens `View Report` with empty submission state. Same test file `FAC-assessments-26 WRONG: every assessment links to its report, even without submissions`; faculty acceptance. |
+| FAC-assessments-28 | WRONG / NOT-A-GAP | Existing report sections and Download PDF match. Same test file `FAC-assessments-28 WRONG: distinct quiz and assignment report sections have the requested copy`; faculty acceptance. |
+| TPO-batches-11 | SOURCE-DONE | Multi-select real batch State/Department/Program/Final year, chips/counts/reset/show, repeated URL facets across pagination; `chat15-final-sprint-tpo-batches-11.test.ts`; `docs/audit/acceptance/tpo-batches-verification.md`. |
+| TPO-batches-44 | SOURCE-DONE | Scoped batch learner 5-template in-app messaging and bulk private notes; `chat15-final-sprint-tpo-batches-44.test.ts`; TPO batches acceptance. Not an SMS delivery claim. |
+| TPO-batches-46 | SOURCE-DONE | Existing `placement_tpo_saved_views` under BATCH_STUDENTS; per-college/user/batch, 5 pins, CRUD, open, filtered CSV; `chat15-final-sprint-tpo-batches-46.test.ts`; TPO batches acceptance. |
+| TPO-batches-65 | SOURCE-DONE | Visible-page-only keyboard Ctrl/Cmd+A/C, mobile action menu, editable-input guard; `chat15-final-sprint-tpo-batches-65.test.ts`; TPO batches acceptance. |
+| COL-attendance-R02 | SOURCE IMPLEMENTED; **EXTERNAL/DB BLOCKED** | Guardian-consent-backed absence and correction SMS outbox, separate non-OTP Exotel DLT provider, College Admin registration, postcommit dispatch, bounded authorized recovery, stale-state/guardian-rotation rejection, no fake delivered status. `chat15-final-sprint-col-attendance-r02.test.ts`; `docs/audit/acceptance/college-operations-verification.md`. Pending orchestrator registration/replay of `docs/proposed-migrations/chat15-attendance-parent-sms-outbox.sql`; separate approved `EXOTEL_ATTENDANCE_*` DLT template/sender, verified guardian contact, runtime suite and provider acceptance. |
+| SA-placements-projects-91 | FIXED-ON-MAIN + NAMED TEST | Existing Super Admin sprint/task/review controls independently checked via `chat15-final-sprint-superadmin-projects.test.ts`; `docs/audit/acceptance/superadmin-placements-projects-b-projects-verification.md`. |
+
+**Remaining real acceptance blockers:** No learner profile guardian contact field is treated as a verified parent; source requires staff-attested independent guardian verification and documented opt-in. Existing Exotel integration only registers OTP templates and cannot legally send attendance SMS using OTP DLT. No registered DB tables for this new schema until migration approved. Do not claim SMS delivered or production enabled; provider ACCEPTED is not delivery.
