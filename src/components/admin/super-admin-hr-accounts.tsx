@@ -611,6 +611,10 @@ export function SuperAdminHrAccounts({
           >
             Edit
           </Button>
+          {account.status!=="DISABLED"?<Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+            onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+          <Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+            onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
         </div>
       ),
     },
