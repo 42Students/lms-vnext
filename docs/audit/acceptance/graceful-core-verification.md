@@ -12,3 +12,11 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-06 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-06 |
 | GR-07 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-07 |
 | GR-08 | DONE | `src/lib/with-api-guard.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-08 (wrapper; routes adopt separately) |
+| GR-10 | DONE | `src/components/ui/inline-notice.tsx`; `tests/unit/graceful-action-helpers.test.ts` — GR-10 |
+| GR-30 | DONE | `src/hooks/use-guarded-action.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-30 |
+| GR-32 | DONE | `src/lib/conflict-recovery.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-32 |
+| GR-33 | DONE | `src/lib/form-validation.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-33 |
+| GR-34 | DONE | `src/lib/action-idempotency.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-34 (server dedupe adoption pending) |
+| GR-50 | DONE | `src/lib/outbound.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-50 (provider adapters adoption pending) |
+| GR-52 | DONE | `src/lib/transaction-retry.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-52 |
+| GR-60 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-60 |
