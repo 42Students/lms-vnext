@@ -145,7 +145,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
   </section>:result.items.length?<ol className="grid gap-3 md:grid-cols-2">
    {result.items.map(row=><li key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-    <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}</h2>
+    <h2 className="break-words font-semibold text-foreground">{row.title}{row.isPinned?" · Pinned":""}
+     {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}
+    </h2>
     <p className="mt-1 text-xs text-muted-foreground">
       By {row.senderName?.trim()||"Placement team"} ·
       {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
