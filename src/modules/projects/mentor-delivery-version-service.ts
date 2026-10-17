@@ -42,6 +42,16 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
     .where(and(eq(projectSubmissions.projectId,scope.project.id),
       eq(projectSubmissions.id,params.submissionId))).limit(1);
   if(!row)throw new ProjectsServiceError("PROJECT_SUBMISSION_NOT_FOUND");
-  return {projectId:scope.project.id,projectTitle:scope.project.title,
+  const membershipIds=[...new Set([row.createdByMembershipId,row.submittedByMembershipId]
+    .filter((value):value is string=>Boolean(value)))];
+  const people=membershipIds.length?await getDb().select({
+    membershipId:collegeMemberships.id,displayName:users.displayName,
+  }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(inArray(collegeMemberships.id,membershipIds),
+      eq(collegeMemberships.collegeId,scope.collegeId))):[];
+  const personName=(id:string|null)=>people.find(person=>person.membershipId===id)?.displayName??null;
+  return {createdByName:personName(row.createdByMembershipId),
+    submittedByName:personName(row.submittedByMembershipId),
+    projectId:scope.project.id,projectTitle:scope.project.title,
     projectStatus:scope.project.status,version:mentorDeliveryVersionDisplay(row)};
 }
