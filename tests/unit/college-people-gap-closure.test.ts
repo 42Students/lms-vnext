@@ -183,9 +183,21 @@ describe("College People legacy audited page contracts",()=>{
   expect(sourceText).toContain("Some enrollment steps need attention.");
   expect(sourceText).not.toContain('(body?.failures??[]).join');
  });
- it("COL-people-27 Faculty and Learner rows render cards before desktop table",()=>{
-  expect(directory()).toContain("md:hidden");
-  expect(directory()).toContain("md:table");
+ it("COL-people-27 Faculty and Learner use responsive cards and bounded desktop table",()=>{
+  const page=directory();
+  expect(page).toContain("md:hidden");
+  expect(page).toContain("md:table");
+  expect(page).toContain("overflow-x-auto");
+  expect(page).toContain("min-w-0");
+  expect(page).toContain("Advanced filters");
+ });
+ it("COL-people-12 OTP lockout is a short-lived challenge, not an account state to clear",()=>{
+  const login=src("src/modules/auth/login-service.ts");
+  expect(login).toContain("ATTEMPT_LIFETIME_SECONDS = 300");
+  expect(login).toContain("OTP_ATTEMPTS_EXCEEDED");
+  expect(login).toContain("verificationAttempts");
+  const policy=src("src/modules/auth/login-validation.ts");
+  expect(policy).not.toContain("clearUserLockout");
  });
  it("COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy",()=>{
   const reassignment=src("src/components/projects/project-mentor-reassignment.tsx");
