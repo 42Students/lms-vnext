@@ -92,4 +92,14 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(tpoWaitlistPromotionSchema.safeParse({action:"OFFER_NEXT",confirmed:false,
    expectedPreviewToken:token,reason:"Vacant seat"}).success).toBe(false);
  });
+ it("TPO-drive-workspace-60 validates scoped two-way field changes and decision acknowledgements",()=>{
+  const id="11111111-1111-4111-8111-111111111111";
+  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"SUGGEST",field:"PAY",
+   proposedValue:"9 LPA",reason:"Updated employer budget"}).success).toBe(true);
+  expect(driveChangeCommandSchema.safeParse({action:"CREATE",mode:"ASK",field:"PAY",
+   proposedValue:"9 LPA",reason:"Updated employer budget",collegeId:"forged"}).success).toBe(false);
+  expect(driveChangeCommandSchema.safeParse({action:"ACCEPT",requestId:id,
+   expectedUpdatedAt:"2099-05-03T09:00:00Z",note:"Approved by placement cell"}).success).toBe(true);
+  expect(driveChangeCommandSchema.safeParse({action:"COMMENT",requestId:id,body:""}).success).toBe(false);
+ });
 });
