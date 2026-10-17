@@ -1,4 +1,4 @@
-import {batchDecisionLabel,batchSourceLabel} from "@/modules/placements/tpo-batch-labels-model";
+import {batchDecisionLabel,batchSourceLabel,batchRegistrationLabel} from "@/modules/placements/tpo-batch-labels-model";
 import {studentJourneyForBatch} from "@/modules/placements/tpo-batch-student-journey-model";
 import {getTpoBatchEligibilitySummary} from "@/modules/placements/tpo-batch-eligibility-summary-service";
 import {getTpoBatchRegistrationSummary} from "@/modules/placements/tpo-batch-registration-summary-service";
@@ -100,7 +100,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":batchDecisionLabel(s.decision)}</span></div>
   <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"} · Class: {s.ambiguous?"Multiple active classes":s.className??"Not assigned"}</p>
   <p className="text-xs text-muted-foreground">Branch: {s.branch} · Program: {s.program}</p>
-  <p className="text-xs text-muted-foreground">Registration: {s.registration?s.registration.choice?batchDecisionLabel(s.registration.choice):"Not recorded":"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
+  <p className="text-xs text-muted-foreground">Registration: {s.registration?batchRegistrationLabel(s.registration.choice):"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
   <p className="text-xs text-muted-foreground">Source: {batchSourceLabel(s.source)}{s.reason?" · "+s.reason:""}</p>
   {!finished&&!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
   <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
