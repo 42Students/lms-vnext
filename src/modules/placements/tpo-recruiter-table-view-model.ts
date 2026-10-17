@@ -2,7 +2,7 @@ export const ENGAGE_COLUMNS = ["Contact","Company","Status","Stage","Owner",
 "Last activity","Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone","Actions"] as const;
 export type EngageColumn = (typeof ENGAGE_COLUMNS)[number];
 export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>x!=="Email"&&x!=="Phone");
-export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME";
+export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME"|"DRIVES";
 export function normalizeEngageColumns(value:unknown): EngageColumn[]{
  if(!Array.isArray(value))return [...ENGAGE_DEFAULT_COLUMNS];
  const selected=ENGAGE_COLUMNS.filter(x=>value.includes(x));
