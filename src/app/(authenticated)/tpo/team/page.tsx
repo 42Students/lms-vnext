@@ -82,12 +82,13 @@ export default async function TpoTeamPage({searchParams}:{
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>{row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <span aria-label={row.unreadCount+" unread updates"}
           className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
           {row.unreadCount} unread
          </span>:null}
         </div>
+        <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
         {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
