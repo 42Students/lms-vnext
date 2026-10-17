@@ -14,6 +14,7 @@ test("GR-81 rejects stack frames, blank content and the framework overlay", asyn
 });
 
 test("GR-81 accepts actionable customer wording and creates actual intercepts", async ({ page }) => {
+  await page.goto("/"); // Establish localhost origin before a relative fetch.
   await page.setContent("<main><h1>Could not load this right now.</h1><p>Please try again in a minute.</p><button>Retry</button></main>");
   await expectNoRawErrors(page);
   const injection = await failApi(page, "**/api/graceful-probe", "json-500");
