@@ -22,9 +22,9 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
       "Details: "+row.message,
     ].join("\n"))].join("\n\n");
 }
-export function TrackerLiveLogsExplorer(){
+export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
-  const [query,setQuery]=useState("");
+  const [query,setQuery]=useState(initialQuery);
   const [items,setItems]=useState<Entry[]>([]);
   const [nextPage,setNextPage]=useState<string|null>(null);
   const [configured,setConfigured]=useState<boolean|null>(null);
@@ -56,7 +56,8 @@ export function TrackerLiveLogsExplorer(){
     const abort=new AbortController();
     const initial=async()=>{
       try{
-        const r=await apiFetch<Page>("/api/tracker/live-logs?windowMinutes=60",{signal:abort.signal});
+        const initialParams=new URLSearchParams({windowMinutes:"60",query:initialQuery});
+        const r=await apiFetch<Page>("/api/tracker/live-logs?"+initialParams.toString(),{signal:abort.signal});
         if(abort.signal.aborted)return;
         setItems(r.items);setNextPage(r.nextPageToken);setConfigured(r.configured);
       }catch{
@@ -65,7 +66,7 @@ export function TrackerLiveLogsExplorer(){
     };
     void initial();
     return ()=>abort.abort();
-  },[]);
+  },[initialQuery]);
   async function copy(text:string){
     try{await navigator.clipboard.writeText(text);setNotice("Copied.");}
     catch{setNotice("Copy is unavailable. Select the text manually.");}
