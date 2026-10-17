@@ -19,5 +19,7 @@ describe("LEARNER-placements-R04 notification catalog",()=>{
   expect(learnerPlacementEventUsesMatchingJobsPreference("DEADLINE_TODAY")).toBe(true);
   expect(learnerPlacementEventUsesMatchingJobsPreference("APPLICATION_STATUS_CHANGED")).toBe(false);
   expect(learnerPlacementEventUsesMatchingJobsPreference("MARKED_ABSENT")).toBe(false);
+  expect(learnerPlacementEventCopy("PROFILE_VERIFIED","Profile").actionHref).toBe("/learn/profile");
+  expect(learnerPlacementEventCopy("PROFILE_SENT_BACK","Profile").actionHref).toBe("/learn/profile");
  });
 });
