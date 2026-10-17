@@ -616,16 +616,16 @@ export const projectResources = pgTable(
     ),
     check(
       "project_resources_status_ck",
-      sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
+      sql`${table.status} in ('ACTIVE', 'DRAFT', 'ARCHIVED')`,
     ),
     check(
       "project_resources_visibility_ck",
       sql`${table.visibility} in ('TEAM','MENTOR_ONLY')`,
     ),
     check("project_resources_type_ck",
-      sql\`\${table.resourceType} in ('FILE','LINK','DOCUMENT','CODE','NOTE','ENVIRONMENT')\`),
+      sql`${table.resourceType} in ('FILE','LINK','DOCUMENT','CODE','NOTE','ENVIRONMENT')`),
     check("project_resources_access_notes_ck",
-      sql\`\${table.accessNotes} is null or length(\${table.accessNotes}) <= 4000\`),
+      sql`${table.accessNotes} is null or length(${table.accessNotes}) <= 4000`),
     index("project_resources_sprint_idx").on(table.projectId,table.sprintId),
     index("project_resources_task_idx").on(table.projectId,table.taskId),
     index("project_resources_visibility_idx")
