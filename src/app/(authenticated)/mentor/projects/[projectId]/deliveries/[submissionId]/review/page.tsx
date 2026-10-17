@@ -2,6 +2,7 @@ import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getMentorDeliveryVersion} from "@/modules/projects/mentor-delivery-version-service";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 export default async function MentorDeliveryVersionPage({params}:{
   params:Promise<{projectId:string;submissionId:string}>;
 }){
