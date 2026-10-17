@@ -68,3 +68,15 @@ describe("chat-13 Super Admin source reconciliation — placements and academic 
   expect(code).toContain("recordActivityEventInTransaction");
  });
 });
+
+describe("SA-placements-projects-30 deliberate global/college boundary",()=>{
+ it("SA-placements-projects-30 keeps global employer edits global but supports authorized college relationship creation and lifecycle",()=>{
+  const edit=source("src/modules/placements/super-admin-company-edit-service.ts");
+  expect(edit).toContain("isGlobalCompanyScope(context.adminScope)");
+  const college=source("src/components/admin/super-admin-college-company-actions.tsx");
+  for(const copy of ["Create company","Delete company","Restore company"])
+   expect(college).toContain(copy);
+  const directory=source("src/app/(authenticated)/admin/companies/page.tsx");
+  expect(directory).toContain("Sensitive CRM contacts and sharing defaults are not displayed.");
+ });
+});
