@@ -49,11 +49,25 @@ export async function expectNoRawErrors(page: Page): Promise<void> {
   // Text such as a raw SQL error can also leak from an icon's accessible
   // name, a tooltip, or a server-populated placeholder while the visible
   // page body remains completely friendly.
-  const labels = await page.locator("body [aria-label], body [title], body [placeholder]")
-    .evaluateAll((elements) => elements.flatMap((element) =>
-      ["aria-label", "title", "placeholder"]
-        .map((attribute) => element.getAttribute(attribute))
-        .filter((value): value is string => value !== null)));
+  // A response may leak in image descriptions, ARIA value descriptions, tooltips,
+  // or a hidden element named by aria-describedby/aria-labelledby. Checking
+  // visible innerText and direct aria-labels alone misses those surfaces.
+  const labels = await page.locator(
+    "body [aria-label], body [title], body [placeholder], body [alt], " +
+    "body [aria-description], body [aria-valuetext], body [data-tooltip], " +
+    "body [data-error], body [data-message], body [aria-describedby], body [aria-labelledby]",
+  ).evaluateAll((elements) => elements.flatMap((element) => {
+    const attributes = [
+      "aria-label", "title", "placeholder", "alt", "aria-description",
+      "aria-valuetext", "data-tooltip", "data-error", "data-message",
+    ];
+    const direct = attributes.map(name => element.getAttribute(name))
+      .filter((value): value is string => value !== null);
+    const related = ["aria-describedby", "aria-labelledby"].flatMap(name =>
+      (element.getAttribute(name) ?? "").trim().split(/\s+/).filter(Boolean)
+        .map(id => element.ownerDocument.getElementById(id)?.textContent ?? ""));
+    return [...direct, ...related];
+  }));
   for (const value of labels) {
     for (const pattern of forbidden) {
       pattern.lastIndex = 0;

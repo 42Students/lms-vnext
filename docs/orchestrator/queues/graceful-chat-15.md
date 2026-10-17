@@ -63,3 +63,36 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/82: `graceful-production-navigation.spec.ts` adds **32 production-only tests**: 8 roles including public × 2 layouts × offline/reconnect and missing-record recovery. Real role sessions must come from `GRACEFUL_PRODUCTION_AUTH_STORAGE_DIR`, never development bypass; missing credentials SKIP explicitly.
 - GR-80/81: The tests verify the intended role route before error injection, visible and cleared offline warning, actual recovery link traversal from a not-found screen, no raw error text, and no unhandled browser exceptions.
 - GR-83: The fake-provider persisted outbox/GR-51 witness and helper-unit + PostgreSQL integration execution remain unverified orchestrator dependencies. No checks executed by this builder.
+
+### Round-9 accessible backend-error evidence (authored, NOT RUN)
+
+- GR-81: `tests/e2e/graceful-accessibility-metadata.spec.ts` adds **32 hostile fixture cases** (8 metadata/ARIA-ref surfaces × 4 unknown API error codes) and **2 safe controls**. These exercise missing parts of the shared `expectNoRawErrors` gate: alt descriptions, ARIA value/description, tooltip/data-error/data-message values, and hidden referenced labels/help.
+- GR-80/82: Every existing role and production test using the shared no-raw-code gate now checks those accessibility disclosures too; browser runtime and production-build execution remain unverified.
+- GR-83: The isolated fake-provider persisted outbox witness, real PostgreSQL tests, and complete helper execution remain orchestrator-owned; no acceptance item has been marked DONE.
+
+- GR-80/81: [big-round email/error] `tests/e2e/graceful-unexpected-email-error.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs per test, nonleaking diagnostics, preserved contact and reenabled control (authored; not run).
+
+- GR-80/81: [big-round email/code] `tests/e2e/graceful-unexpected-email-code.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs per test, nonleaking diagnostics, preserved contact and reenabled control (authored; not run).
+
+- GR-80/81: [big-round email/message] `tests/e2e/graceful-unexpected-email-message.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
+
+- GR-80/81: [big-round phone/error] `tests/e2e/graceful-unexpected-phone-error.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
+
+- GR-80/81: [big-round phone/code] `tests/e2e/graceful-unexpected-phone-code.spec.ts` adds 10 real phone login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
+
+- GR-80/81: [big-round phone/message] `tests/e2e/graceful-unexpected-phone-message.spec.ts` adds 10 real phone login failure/retry cases, with two intercepted POSTs each; no provider calls (authored; not run).
+
+- GR-80/81: [big-round email/known-code] `tests/e2e/graceful-known-auth-email.spec.ts` adds 10 real customer-copy scenarios; asserts exact legacy wording, preserved form and intercepted start POST (not executed).
+
+- GR-80/81: [big-round phone/known-code] `tests/e2e/graceful-known-auth-phone.spec.ts` adds 10 real customer-copy scenarios; asserts exact legacy wording, preserved form and intercepted start POST (not executed).
+
+- GR-80/81: [big-round one-factor] `tests/e2e/graceful-verify-one-factor-domain-failures.spec.ts` adds 10 intercepted real OTP-verification domain outcomes (correct human copy, input preserved or intentionally reset, no provider send); authored, not run.
+
+- GR-80/81: [big-round two-factor] `tests/e2e/graceful-verify-two-factor-domain-failures.spec.ts` adds 10 intercepted real OTP-verification domain outcomes (correct human copy, input preserved or intentionally reset, no provider send); authored, not run.
+
+### Big-round closure accounting (2026-10-17)
+
+- The requested audit of `docs/audit/gap-register.md` found **0 OPEN/UNCONFIRMED/IN-BRANCH rows assigned to chat-15**. The register currently has 483 open/unconfirmed/in-branch rows across other proposed lanes, including 19 public rows assigned to chat-7. Chat-15 owns the four distinct GR-80–GR-83 browser-acceptance IDs in this queue, not the other lanes' page implementation gaps.
+- Ten grouped commits/pushes authored **100 concrete Playwright cases**, 10 per push: 60 unknown-provider-error form/retry cases (Email and Phone × error/code/message × ten backend identifiers), 20 intentional domain-code wording cases, and 20 OTP verification/restart recovery cases (one-factor/two-factor). Both OTP-start and verify requests use Playwright interception; no provider request or valid login is attempted.
+- **Source coverage only:** GR-80, GR-81, GR-82, GR-83 remain **BLOCKED for runtime certification**, not DONE. Orchestrator must execute unit/browser integration tests and independently staged production-build smoke, provision real signed-in role states, and prove the GR-51 fake-provider persisted outbox. No tests, typecheck, lint or CI were executed by this builder.
+- No new page implementations were claimed for chat-7/chat-9/other product lanes; no gaps were reassigned, and no migrations were proposed.
