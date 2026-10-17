@@ -55,6 +55,16 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
      <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
     </select>
    </label>
+   <label className="grid gap-1 text-sm">Waiting since
+    <select name="waitingSince" defaultValue={query.waitingSince}
+     className="min-h-11 rounded border border-border bg-surface px-2"
+     disabled={query.tab!=="WAITING"}>
+     <option value="ALL">Any time</option>
+     <option value="TODAY">Today</option>
+     <option value="WEEK">This week</option>
+     <option value="OVER_WEEK">Over a week</option>
+    </select>
+   </label>
    <label className="grid gap-1 text-sm">Batch
     <select name="batchId" defaultValue={query.batchId??""} className="min-h-11 rounded border border-border bg-surface px-2">
      <option value="">All batches</option>
