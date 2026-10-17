@@ -3,6 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Drawer} from "@/components/ui/drawer";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {safeInboundPreview} from "@/modules/inbound-mail/message-model";
 export type InboundMailRow={
  id:string;receivedAt:string;fromAddress:string;toAddress:string;
  subject:string;bodyPlain:string;status:string;version:number;
@@ -37,9 +38,11 @@ export function InboundMailList({rows}:{rows:readonly InboundMailRow[]}) {
     {rows.map(row=><article key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
        <h2 className="min-w-0 break-words text-base font-semibold">{row.subject||"(No subject)"}</h2>
-       <StatusBadge>{overrides[row.id]?.status??row.status}</StatusBadge>
+       <StatusBadge>{({NEW:"To read",TRIAGED:"Being handled",RESOLVED:"Done"} as Record<string,string>)[overrides[row.id]?.status??row.status]??"Unknown status"}</StatusBadge>
       </div>
-      <p className="mt-1 break-all text-sm text-body">{row.fromAddress}</p>
+      <p className="mt-1 break-all text-sm text-body">From {row.fromAddress} · To {row.toAddress}</p>
+      <p className="mt-2 line-clamp-2 break-words text-sm text-muted-foreground">{safeInboundPreview(row.bodyPlain)}</p>
+      <p className="mt-1 text-xs text-muted-foreground">Sender identity and conversation-routing status are not verified by this inbox.</p>
       <p className="mt-1 text-xs text-muted-foreground">{new Date(row.receivedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
       <button type="button" onClick={()=>{setMessage("");setSelected(row);}}
        className="mt-3 min-h-10 rounded-md border border-border px-4 text-sm font-semibold">Read message</button>
