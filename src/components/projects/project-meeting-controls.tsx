@@ -1,9 +1,10 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -298,6 +299,7 @@ export function ScheduleProjectMeetingControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [title, setTitle] = useState(
     meeting?.title ?? "",
   );
@@ -329,6 +331,24 @@ export function ScheduleProjectMeetingControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
+    startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
+    endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
+    meetingUrl!==(meeting?.meetingUrl??"")||meetingType!==(meeting?.meetingType??"GENERAL")||
+    linkedSprintId!==(meeting?.linkedSprintId??"")||linkedTaskId!==(meeting?.linkedTaskId??"");
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setConfirmDiscard(true);else setOpen(false);
+  }
 
   function openDialog() {
     setScheduleMinStart(toLocalInput(new Date(Date.now() + 60_000)));
@@ -423,12 +443,8 @@ export function ScheduleProjectMeetingControl({
           : "Meeting added.",
       });
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not schedule the meeting.",
-      );
+    } catch {
+      setError("Could not schedule this meeting. Review its latest details and try again.");
     } finally {
       setPending(false);
     }
@@ -449,7 +465,7 @@ export function ScheduleProjectMeetingControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)openDialog();else requestClose();}}
         title={
           meeting
             ? "Schedule Project meeting"
@@ -592,7 +608,7 @@ export function ScheduleProjectMeetingControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={requestClose}
             >
               Cancel
             </Button>
@@ -607,6 +623,11 @@ export function ScheduleProjectMeetingControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+        title="Discard unsaved project changes?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={()=>{setConfirmDiscard(false);setOpen(false);}}/>
     </>
   );
 }
