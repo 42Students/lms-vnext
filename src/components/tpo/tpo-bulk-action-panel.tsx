@@ -1,6 +1,8 @@
 "use client";
 
 import {useState} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
@@ -31,6 +33,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [outcomes,setOutcomes]=useState<BulkOutcome[]>([]);
  const [actionCounts,setActionCounts]=useState<TpoBulkActionCount[]>([]);
  const [busy,setBusy]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [companyShareUrl,setCompanyShareUrl]=useState<string|null>(null);
  const [shareDays,setShareDays]=useState(2);
  const [acknowledged,setAcknowledged]=useState(false);
@@ -43,19 +46,11 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const permitted=new Set(availableRows.map(row=>row.id));
  const safeSelected=selected.filter(id=>permitted.has(id));
  function invalidate(){setAcknowledged(false);setPreview(null);setPlan(null);setOutcomes([]);setActionCounts([]);setError("");}
- async function post(path:string,payload:unknown){
-  const response=await fetch("/api/placements/tpo/bulk-actions/"+path,{
+ async function post(path:string,payload:unknown):Promise<unknown>{
+  return apiFetch("/api/placements/tpo/bulk-actions/"+path,{
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
   });
-  if(!response.ok)throw new Error(
-    response.status===409?"The preview expired or rows changed. Preview again.":
-    response.status===503?"Bulk applications or round-stage storage are unavailable until database registration is verified.":
-    response.status===400?"Selection or screening details are invalid. Review and preview again.":
-    response.status===403?"You no longer have permission to perform this action.":
-    "The action could not be verified. Refresh and try again."
-  );
-  return response.json() as Promise<unknown>;
  }
  async function startPreview(choice:Action=action){
   if(busy||safeSelected.length===0)return;
@@ -103,17 +98,10 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   if(!window.confirm("Share exactly "+safeSelected.length+" selected, currently shortlisted applications with the company? The link can be viewed by anyone holding it."))return;
   setBusy(true);setError("");setCompanyShareUrl(null);
   try{
-   const response=await fetch("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
+   const data=await apiFetch<{token:string}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
     body:JSON.stringify({expiresInDays:shareDays,selectedApplicationIds:safeSelected}),
    });
-   if(!response.ok){
-    const error=await response.json().catch(()=>({error:"SHARE_FAILED"})) as {error?:string};
-    throw new Error(error.error==="MIGRATION_PENDING"?"Selected-applicant share storage is awaiting migration.":
-      error.error==="NOT_SHAREABLE"?"One or more selected applicants are no longer shortlisted. Refresh and select again.":
-      "Cannot issue selected-applicant share. Try again.");
-   }
-   const data=await response.json() as {token:string};
    setCompanyShareUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
    router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
@@ -297,7 +285,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     </label>
   ):null}
   {preview&&plan&&isTpoBulkPreviewCurrent(plan.ids,[...permitted])?<TpoBulkActionPreview rows={previewWithNames} outcomes={outcomes}
-    busy={busy||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void confirm()}/>:null}
+    busy={busy||guardedPending||outcomes.length>0||(["INELIGIBLE","REJECTED","SEND_MESSAGE","MOVE_TEST","MOVE_INTERVIEW"].includes(plan.action)&&!acknowledged)} actionLabel={tpoBulkActionLabel(plan.action)} onConfirm={()=>void runGuarded(confirm)}/>:null}
   {outcomes.length>0?<div className="space-y-2 rounded-lg border border-border p-3">
     <p role="status" className="text-sm font-semibold">
      {outcomes.filter(item=>item.status==="updated").length} updated ·
