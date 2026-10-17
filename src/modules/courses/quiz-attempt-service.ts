@@ -637,9 +637,9 @@ export async function listQuizAttempts(
     .from(quizAttempts)
     .innerJoin(
       collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        quizAttempts.membershipId,
+      and(
+       eq(collegeMemberships.id,quizAttempts.membershipId),
+       eq(collegeMemberships.collegeId,quiz.collegeId),
       ),
     )
     .innerJoin(
