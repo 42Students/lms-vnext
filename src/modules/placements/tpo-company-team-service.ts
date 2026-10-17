@@ -191,6 +191,36 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
    await tx.update(messages).set({askStatus:input.action==="ASK_DONE"?"DONE":"CANCELLED"})
     .where(eq(messages.id,message.id));
   }
+  const verb=input.action==="ASK_DONE"?"ask_done":
+    input.action==="ASK_CANCEL"?"ask_cancelled":
+    input.action==="DECISION"?"decision_changed":
+    input.action==="DELETE"?"message_deleted":"message_edited";
+  const [event]=await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId:college.id,
+    actorUserId:context.user.id,actorMembershipId:membership.id,module:"PLACEMENTS",
+    eventType:"placements.tpo_company_team."+verb,
+    subjectType:"company",subjectId:companyId,
+    summary:"Company Team "+verb.replaceAll("_"," "),
+    metadata:{messageId:message.id},
+  }).returning({id:activityEvents.id});
+  if(event&&(input.action==="ASK_DONE"||input.action==="ASK_CANCEL")){
+    const targetMembershipId=input.action==="ASK_DONE"?message.authorMembershipId:
+      message.askAssigneeMembershipId;
+    if(targetMembershipId&&targetMembershipId!==membership.id){
+      const [recipient]=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
+       .from(collegeMemberships)
+       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+        inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+       .where(and(eq(collegeMemberships.id,targetMembershipId),eq(collegeMemberships.collegeId,college.id),
+        eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+      if(recipient)await tx.insert(inAppNotifications).values({
+       userId:recipient.userId,eventId:event.id,
+       title:input.action==="ASK_DONE"?"Company Team ask completed":"Company Team ask cancelled",
+       body:message.body.slice(0,120),
+       actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+      });
+    }
+  }
   return {changed:true,id:message.id};
  });
 }
