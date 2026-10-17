@@ -148,6 +148,12 @@ function auditSources(
               ' · Uplift: ',coalesce(ae.metadata->'to'->>'upliftPct','unknown'),
               '% · Response hours: ',
               coalesce(ae.metadata->'to'->>'minResponseHours','unknown'))
+           when ae.event_type = 'placements.tpo_college_rules.changed'
+             then concat(
+              'Placed at: ',coalesce(ae.metadata->>'countsAsPlacedAt','not recorded'),
+              ' · Held offers: ',coalesce(ae.metadata->>'maxHeldOffers','not recorded'),
+              ' · Uplift: ',coalesce(ae.metadata->>'upliftPct','not recorded'),
+              '% · Response hours: ',coalesce(ae.metadata->>'minResponseHours','not recorded'))
            when ae.event_type = 'PLACEMENTS_SEASON_DETAILS_UPDATED'
              then concat('Season: ',coalesce(ae.metadata->'after'->>'name','unknown'),
               ' · Ends: ',coalesce(ae.metadata->'after'->>'endDate','unknown'))
