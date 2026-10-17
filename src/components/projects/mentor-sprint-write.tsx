@@ -20,6 +20,10 @@ export function MentorSprintCreate({
   const [description,setDescription]=useState("");
   const [goal,setGoal]=useState(""),[done,setDone]=useState("");
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
+  const [chosenReleaseId,setChosenReleaseId]=useState(releaseId);
+  const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const datesValid=(!startDate||!endDate||endDate>=startDate)&&
+    (!dueDate||!startDate||dueDate>=startDate);
 
   async function create() {
     if(!title.trim() || title.trim().length>200 || description.length>4000||
