@@ -7,7 +7,6 @@ export class TpoBatchLifecycleError extends Error{
 export function planTpoBatchLifecycle(row:{invitedAt:Date|null;finishedAt:Date|null;updatedAt:Date},
  action:TpoBatchLifecycleAction,expectedVersion:string){
  if(row.updatedAt.toISOString()!==expectedVersion)throw new TpoBatchLifecycleError("BATCH_ACTION_STALE");
- if(action==="FINISH"&&!row.invitedAt)throw new TpoBatchLifecycleError("BATCH_INVITATION_REQUIRED");
  return {changed:action==="FINISH"?row.finishedAt===null:row.finishedAt!==null,
   shouldFinish:action==="FINISH"};
 }
