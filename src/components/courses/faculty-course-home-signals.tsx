@@ -203,6 +203,18 @@ export function FacultyCourseHomeSignals({
             {signals.performance.studentAverages.length} students have a graded average.
             Select a score range below to review the corresponding students.
           </p>}
+        {signals.performance.weakestContent?<p className="mt-2 text-xs text-body">
+          {signals.performance.weakestContent.title} is the weakest spot right now, averaging
+          {" "}{signals.performance.weakestContent.averagePercent}% across
+          {" "}{signals.performance.weakestContent.graded} graded submissions.
+        </p>:null}
+        {signals.performance.strongestContent&&
+          signals.performance.strongestContent.id!==signals.performance.weakestContent?.id?
+          <p className="mt-1 text-xs text-body">
+            Strongest: {signals.performance.strongestContent.title}, averaging
+            {" "}{signals.performance.strongestContent.averagePercent}% across
+            {" "}{signals.performance.strongestContent.graded} graded submissions.
+          </p>:null}
         <div className="mt-4 space-y-3">
           {signals.performance.distribution.map((bucket) => {
             const total = Math.max(
