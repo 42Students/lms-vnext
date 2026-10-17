@@ -120,8 +120,14 @@ export function CreateProjectControl({
      .catch(()=>{if(!ctl.signal.aborted)setClasses([])});
     return ()=>ctl.abort();
   },[open,collegeId]);
+  const rosterActive=Boolean(open&&sectionId);
+  const [prevRosterActive,setPrevRosterActive]=useState(rosterActive);
+  if(prevRosterActive!==rosterActive){
+    setPrevRosterActive(rosterActive);
+    if(!rosterActive){setRoster([]);setLearnerMembershipIds([]);}
+  }
   useEffect(()=>{
-    if(!open||!sectionId){setRoster([]);setLearnerMembershipIds([]);return;}
+    if(!open||!sectionId)return;
     const ctl=new AbortController();
     void fetch("/api/projects/class-team-roster?collegeId="+encodeURIComponent(collegeId)+
       "&classId="+encodeURIComponent(sectionId),{signal:ctl.signal})

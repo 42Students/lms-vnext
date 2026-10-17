@@ -167,10 +167,12 @@ export function RecruiterLeadDetailWorkspace({
     };
   }, [load]);
 
+  const companyKey=lead?.companyName?collegeId+"|"+lead.companyName:"";
+  const [prevCompanyKey,setPrevCompanyKey]=useState(companyKey);
+  if(prevCompanyKey!==companyKey){setPrevCompanyKey(companyKey);setCompanySummary(null);setCompanyError("");}
   useEffect(()=>{
-    if(!lead?.companyName){setCompanySummary(null);setCompanyError("");return;}
+    if(!lead?.companyName)return;
     const controller=new AbortController();
-    setCompanySummary(null);setCompanyError("");
     void fetch("/api/placements/tpo/companies/detail?collegeId="+encodeURIComponent(collegeId)+
       "&name="+encodeURIComponent(lead.companyName),{
         credentials:"same-origin",cache:"no-store",signal:controller.signal,
@@ -345,7 +347,7 @@ export function RecruiterLeadDetailWorkspace({
         <p role="status" className="rounded-lg border border-border bg-surface p-6">Loading recruiter details…</p>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 rounded-lg border border-border bg-surface p-6">
-          <h1 className="text-lg font-semibold">This recruiter isn't in Engage</h1>
+          <h1 className="text-lg font-semibold">This recruiter isn&apos;t in Engage</h1>
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
           <Link href="/tpo/recruiters" className="inline-flex min-h-10 items-center text-primary-text underline">
             Go to Engage

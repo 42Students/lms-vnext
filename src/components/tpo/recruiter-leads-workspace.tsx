@@ -132,20 +132,30 @@ export function RecruiterLeadsWorkspace({
   }
 
   useEffect(()=>{
-    try{
-      const saved=window.localStorage.getItem("tpo-engage-sort-v1");
-      if(!saved)return;
-      const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
-      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME","DRIVES"].includes(value.sort??""))
-        setRosterSort(value.sort as EngageSort);
-      if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
-    }catch{ /* Browser storage is optional. */ }
+    let live=true;
+    void Promise.resolve().then(()=>{
+      if(!live)return;
+      try{
+        const saved=window.localStorage.getItem("tpo-engage-sort-v1");
+        if(!saved)return;
+        const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
+        if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME","DRIVES"].includes(value.sort??""))
+          setRosterSort(value.sort as EngageSort);
+        if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
+      }catch{ /* Browser storage is optional. */ }
+    });
+    return ()=>{live=false;};
   },[]);
   useEffect(()=>{
-    try{
-      const stored=window.localStorage.getItem("tpo-engage-visible-columns-v1");
-      if(stored)setVisibleColumns(normalizeEngageColumns(JSON.parse(stored)));
-    }catch{ /* Optional browser preference, never blocks roster */ }
+    let live=true;
+    void Promise.resolve().then(()=>{
+      if(!live)return;
+      try{
+        const stored=window.localStorage.getItem("tpo-engage-visible-columns-v1");
+        if(stored)setVisibleColumns(normalizeEngageColumns(JSON.parse(stored)));
+      }catch{ /* Optional browser preference, never blocks roster */ }
+    });
+    return ()=>{live=false;};
   },[]);
   function changeVisibleColumns(next:EngageColumn[]){
     const normalized=normalizeEngageColumns(next);
@@ -320,7 +330,7 @@ export function RecruiterLeadsWorkspace({
      setCommunicationError("Couldn't save. Retry this company status.");
     }
   }
-  const visibleCompanies=useMemo(()=>companies.filter(company=>{
+  const visibleCompanies=companies.filter(company=>{
     const needle=companySearch.trim().toLowerCase();
     if(needle&&!([company.name,...(company.people??[]).map(person=>person.name)]
       .join(" ").toLowerCase().includes(needle)))return false;
@@ -332,7 +342,7 @@ export function RecruiterLeadsWorkspace({
     if(companyCommunicationFilter!=="ALL"&&
       (communication[company.key]??"NOT_CONTACTED")!==companyCommunicationFilter)return false;
     return true;
-  }),[companies,companySearch,companyContacts,companyHistory,companyAliases,companyCommunicationFilter,communication]);
+  });
   const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
     company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
   const rosterRows=useMemo(()=>rows.map(row=>({
@@ -1107,7 +1117,7 @@ export function RecruiterLeadsWorkspace({
                 {companies.map(company=><option key={company.key} value={company.name}/>)}
               </datalist>
               <span className="mt-1 block text-xs text-muted-foreground">
-                Choose a company you've worked with, or type a new company name.
+                Choose a company you&apos;ve worked with, or type a new company name.
               </span>
             </label>
             <label className="block text-sm">Designation<input className={inputStyle + " mt-1"} maxLength={100}

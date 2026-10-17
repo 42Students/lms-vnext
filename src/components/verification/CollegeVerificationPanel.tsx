@@ -121,7 +121,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   </p>}
   {activeTab==="WAITING"&&selectable.length>0&&<section aria-label="Review one by one" className="space-y-2 rounded-md border p-3">
     <h2 className="font-semibold">Review one by one</h2>
-    <p className="text-sm">Each student's values next to their documents, with Verify and Send back. The next one opens by itself.</p>
+    <p className="text-sm">Each student&apos;s values next to their documents, with Verify and Send back. The next one opens by itself.</p>
     <button type="button" disabled={bulkBusy} onClick={()=>{
       setSequential({keys:queueKeys,index:0});setSelected(selectable[0]??null);setReviewFeedback("");
     }} className="rounded-md border px-3 py-2 text-sm font-semibold">
@@ -177,10 +177,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
       {bulkBusy?"Sending decisions…":"Confirm send back selected"}</button>}
     {bulkAction==="VERIFY"&&<>
      <h3 className="font-semibold">Verify without opening</h3>
-     <p className="text-sm">Only do this when you have checked these students' documents another way (for example against the college's own records). Each one is recorded with your name.</p>
+     <p className="text-sm">Only do this when you have checked these students&apos; documents another way (for example against the college&apos;s own records). Each one is recorded with your name.</p>
      <label className="flex items-start gap-2 text-sm">
        <input type="checkbox" checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
-       I have checked their documents another way (for example the college's own records).
+       I have checked their documents another way (for example the college&apos;s own records).
      </label>
      <p className="text-xs text-muted-foreground">A missing marksheet or ID document blocks blind verification. The server rechecks document receipts before any decision.</p>
      <button type="button" disabled={bulkBusy||!acknowledged||(preview?.eligible.length??0)===0}

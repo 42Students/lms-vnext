@@ -3,7 +3,8 @@ import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 export function AdminScopedLiveSearch({initial,path}:{initial:string;path:string}){
  const router=useRouter(),[value,setValue]=useState(initial);
- useEffect(()=>setValue(initial),[initial]);
+ const [prevInitial,setPrevInitial]=useState(initial);
+ if(prevInitial!==initial){setPrevInitial(initial);setValue(initial);}
  useEffect(()=>{
   if(value===initial)return;
   const handle=setTimeout(()=>{

@@ -38,7 +38,7 @@ export function TpoNoticeReadProgress({id}:{id:string}){
      finally{setBusy(false);}
     }}>Remind them</button>:null}
    {reminder?<p role="status">{reminder}</p>:null}
-   {data.unread.length?<details><summary className="cursor-pointer text-primary-text">Who hasn't read</summary>
+   {data.unread.length?<details><summary className="cursor-pointer text-primary-text">Who hasn&apos;t read</summary>
     <ul className="max-h-48 overflow-auto">{data.unread.map((name,index)=>
      <li key={index} className="py-0.5">{name}</li>)}</ul>
    </details>:null}

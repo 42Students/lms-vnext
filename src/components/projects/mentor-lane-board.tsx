@@ -30,7 +30,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
- useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
   const expiration=setTimeout(()=>setUndo(null),6000);
@@ -172,7 +173,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </span>:null}
   </div>
   <p role="status" className="text-xs text-body">
-    {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project's full history.
+    {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project&apos;s full history.
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
   </p>
   {matching.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">

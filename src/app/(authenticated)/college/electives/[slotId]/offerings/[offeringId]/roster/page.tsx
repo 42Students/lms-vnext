@@ -122,7 +122,7 @@ export default async function ElectiveRoster({
     {archived && <p className="text-sm text-muted-foreground">Archived offerings are read-only.</p>}
     <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
       <h2 className="text-lg font-semibold">Faculty</h2>
-      <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering's course delivery.</p>
+      <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <p className="text-sm text-muted-foreground">No faculty assigned.</p>}
       {assignments.map(item => <div key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
         <span>{item.displayName ?? item.membershipId} · {item.role}</span>

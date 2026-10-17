@@ -30,7 +30,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  }
  return <section aria-label="Edit company visibility" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h3 className="font-semibold">What companies see</h3>
-  <p className="text-xs text-muted-foreground">Your choices are saved in the college's sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
+  <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
   {Object.entries(labels).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span>{label}</span>
    <input type="checkbox" disabled={busy} checked={values[key as keyof Choice]}

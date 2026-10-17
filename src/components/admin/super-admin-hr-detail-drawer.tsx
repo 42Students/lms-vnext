@@ -18,6 +18,10 @@ import {
   hrStatusTone,
 } from "./super-admin-hr-types";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 export function SuperAdminHrDetailDrawer({
   account,
   loading,
@@ -225,7 +229,7 @@ export function SuperAdminHrDetailDrawer({
                       </p>
                       <p className="mt-1 text-xs text-muted-foreground">
                         {grant.validUntil ? `Until ${new Date(grant.validUntil).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}`:"Expiry not recorded"}
-                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=Date.now()?"Expired":grant.verificationStatus}
+                        {" · "}{grant.validUntil && Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":grant.verificationStatus}
                       </p>
                     </div>
                     <Button

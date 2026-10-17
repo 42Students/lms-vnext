@@ -13,9 +13,10 @@ function safeHref(value:string){
 export function AssignmentSubmissionLinks({submissionId}:{submissionId:string}){
  const [links,setLinks]=useState<Link[]>([]);
  const [error,setError]=useState<string|null>(null);
+ const [prevSubmissionId,setPrevSubmissionId]=useState(submissionId);
+ if(prevSubmissionId!==submissionId){setPrevSubmissionId(submissionId);setLinks([]);setError(null);}
  useEffect(()=>{
   const abort=new AbortController();
-  setLinks([]);setError(null);
   void (async()=>{
    try{
     const response=await fetch("/api/courses/assignment-submissions/"+

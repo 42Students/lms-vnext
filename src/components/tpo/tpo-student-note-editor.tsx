@@ -26,7 +26,7 @@ export function TpoStudentNoteEditor({membershipIds,afterSave}:{
  }
  return <section className="space-y-2 rounded border border-border p-3">
   <h4 className="font-semibold">Add a note</h4>
-  <p className="text-xs text-muted-foreground">Private to the college placement team, appended permanently to each selected student's history.</p>
+  <p className="text-xs text-muted-foreground">Private to the college placement team, appended permanently to each selected student&apos;s history.</p>
   <textarea aria-label="Internal student note" value={note} rows={3} maxLength={2000}
    onChange={e=>setNote(e.target.value)} onKeyDown={e=>{
     if((e.ctrlKey||e.metaKey)&&e.key==="Enter"){e.preventDefault();void save();}

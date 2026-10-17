@@ -27,7 +27,7 @@ export default async function CollegeAdminProfilePage({
     <PageHeader eyebrow="College Admin" title="Profile"/>
     <div role="alert" className="space-y-2 rounded-xl border border-border bg-surface p-5">
       <p className="font-semibold">Failed to load profile.</p>
-      <p className="text-sm text-body">Couldn't refresh profile. Your existing details have not been changed.</p>
+      <p className="text-sm text-body">Couldn&apos;t refresh profile. Your existing details have not been changed.</p>
       <Link href="/college/profile" prefetch={false} className="inline-flex min-h-10 items-center rounded border border-border px-4 font-semibold text-primary-text">Retry</Link>
     </div>
   </main>;

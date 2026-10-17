@@ -14,10 +14,12 @@ export function FacultyQuizLearnerPreview({quizId,deliveryId}:{
  const [preview,setPreview]=useState<Preview|null>(null);
  const [answers,setAnswers]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const previewKey=(open?"1|":"0|")+quizId+"|"+deliveryId;
+ const [prevPreviewKey,setPrevPreviewKey]=useState(previewKey);
+ if(prevPreviewKey!==previewKey){setPrevPreviewKey(previewKey);if(open){setLoading(true);setError(null);}}
  useEffect(()=>{
   if(!open)return;
   const controller=new AbortController();
-  setLoading(true);setError(null);
   void (async()=>{
    try{
     const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quizId)+

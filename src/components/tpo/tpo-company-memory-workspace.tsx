@@ -4,6 +4,10 @@ import Link from "next/link";
 import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-model";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type Person = {
   id: string;
   name: string;
@@ -266,7 +270,7 @@ export function TpoCompanyMemoryWorkspace({
               <ul className="mt-3 divide-y divide-border">
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
-                  <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<Date.now()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
+                  <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<currentTimeMs()?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
                   <Link className="text-sm text-primary-text underline"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}

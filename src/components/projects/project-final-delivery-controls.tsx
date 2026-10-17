@@ -85,13 +85,15 @@ export function LearnerFinalDeliveryControl({
     useState<string | null>(null);
   const [autosaveStatus,setAutosaveStatus]=useState<"idle"|"saving"|"saved"|"failed">("idle");
   const failedSnapshot=useRef<string|null>(null);
-  const lastSavedSnapshot=useRef(JSON.stringify({
+  const [savedSnapshot,setSavedSnapshot]=useState(()=>JSON.stringify({
     summary:(draft?.summary??"").trim(),
     sourceUrl:draft?.sourceUrl?.trim()||undefined,
     demoUrl:draft?.demoUrl?.trim()||undefined,
     notes:draft?.notes?.trim()||undefined,
     attachments:safeDraftAttachments(draft?.attachments),
   }));
+  const lastSavedSnapshot=useRef(savedSnapshot);
+  function markSaved(snapshot:string){markSaved(snapshot);setSavedSnapshot(snapshot);}
   function currentPayload(){
     return {
       summary:summary.trim(),
@@ -110,13 +112,13 @@ export function LearnerFinalDeliveryControl({
     setAttachments(safeDraftAttachments(draft?.attachments));
     setLinkName("");setLinkUrl("");setAutosaveStatus("idle");
     failedSnapshot.current=null;
-    lastSavedSnapshot.current=JSON.stringify({
+    markSaved(JSON.stringify({
       summary:(draft?.summary??"").trim(),
       sourceUrl:draft?.sourceUrl?.trim()||undefined,
       demoUrl:draft?.demoUrl?.trim()||undefined,
       notes:draft?.notes?.trim()||undefined,
       attachments:safeDraftAttachments(draft?.attachments),
-    });
+    }));
   }
 
   async function save(
@@ -141,7 +143,7 @@ export function LearnerFinalDeliveryControl({
           attachments,
         },
       );
-      lastSavedSnapshot.current=JSON.stringify(currentPayload());
+      markSaved(JSON.stringify(currentPayload()));
       failedSnapshot.current=null;
       setAutosaveStatus("saved");
       setOpen(false);
@@ -188,7 +190,7 @@ export function LearnerFinalDeliveryControl({
     return ()=>window.clearTimeout(timer);
   },[open,draft,projectId,summary,sourceUrl,demoUrl,notes,attachments,pending]);
 
-  const unsaved=JSON.stringify(currentPayload())!==lastSavedSnapshot.current;
+  const unsaved=JSON.stringify(currentPayload())!==savedSnapshot;
 
   async function submitDraft() {
     if (!draft) return;

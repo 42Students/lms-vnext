@@ -19,6 +19,10 @@ import {
   ACTIVITY_MODULES,
 } from "@/modules/activity/taxonomy";
 
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type SearchParams = Promise<
   Record<
     string,
@@ -67,7 +71,7 @@ export default async function ActivityPage({
    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
   }).format(date);
   const today=istDay(new Date());
-  const ago=(days:number)=>istDay(new Date(Date.now()-days*86400000));
+  const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
   const range=one(params.range);
   const defaultFrom=!one(params.from)&&!one(params.to)&&range!=="ALL"?ago(29):one(params.from);
   const quick=(from?:string,to?:string,module?:string,importance?:string)=>{

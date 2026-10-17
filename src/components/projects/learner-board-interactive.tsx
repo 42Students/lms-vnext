@@ -18,7 +18,8 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  const router=useRouter();
  const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
- useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
+ if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
  useEffect(()=>{
   if(!undo)return;
   const timeout=setTimeout(()=>setUndo(null),6000);

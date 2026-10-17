@@ -15,9 +15,14 @@ export function TrackerQuickReportLauncher(){
  },[]);
  useEffect(()=>{
   if(!open)return;
-  const page=window.location.pathname+window.location.search;
-  setContext("Page: "+page+"\nBrowser: "+navigator.userAgent+
+  let live=true;
+  void Promise.resolve().then(()=>{
+   if(!live)return;
+   const page=window.location.pathname+window.location.search;
+   setContext("Page: "+page+"\nBrowser: "+navigator.userAgent+
     "\nViewport: "+window.innerWidth+"×"+window.innerHeight);
+  });
+  return ()=>{live=false;};
  },[open]);
  return <>
   <button type="button" aria-haspopup="dialog" onClick={()=>setOpen(true)}

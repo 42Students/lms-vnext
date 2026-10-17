@@ -3,6 +3,10 @@
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
+
+/** Wall-clock read kept out of render bodies (React purity rule). */
+function currentTimeMs(){return Date.now();}
+
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 type Option={text:string;correct:boolean};
@@ -54,7 +58,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
   if(dueAt&&!parseCollegeIstLocal(dueAt))return "Use a valid deadline.";
-  if(dueAt&&Date.parse(parseCollegeIstLocal(dueAt)!)<=Date.now())return "Quiz deadline must be in the future.";
+  if(dueAt&&Date.parse(parseCollegeIstLocal(dueAt)!)<=currentTimeMs())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){

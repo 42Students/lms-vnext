@@ -51,7 +51,7 @@ export default async function TpoStudentNoticesSettings(){
    </section>
   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
    <h2 className="text-lg font-semibold">Emails switched on</h2>
-   <p role="status" className="text-sm text-warning-text">Couldn't check which emails are switched on.</p>
+   <p role="status" className="text-sm text-warning-text">Couldn&apos;t check which emails are switched on.</p>
    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
    <Link href="/tpo/settings/templates" className="inline-flex min-h-10 text-sm text-primary-text underline">View available message templates</Link>
   </section>

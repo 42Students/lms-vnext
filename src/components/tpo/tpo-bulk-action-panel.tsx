@@ -234,7 +234,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    </button>
    {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<div className="space-y-2 rounded-lg border border-border bg-surface p-3">
      <h4 className="font-semibold">Other actions</h4>
-     <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate's authorized detail.</p>
+     <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate&apos;s authorized detail.</p>
      <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
       <select value={shareDays} onChange={event=>setShareDays(Number(event.target.value))}
         disabled={busy} className="min-h-10 rounded border border-border px-3">
