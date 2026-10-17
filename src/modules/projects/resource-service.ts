@@ -6,6 +6,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {randomUUID} from "node:crypto";
 import {
@@ -136,9 +137,15 @@ export async function createProjectResource(
         .returning();
 
       if(!resource)throw new ProjectsServiceError("PROJECT_RESOURCE_NOT_FOUND");
-      await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
+      const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
       },resource));
+      await notifyActiveProjectMembers(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        roles:["MENTOR","LEARNER"],exceptUserId:context.user.id,
+        title:"New project resource",body:"A resource was added to your project.",
+        actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
+      });
       return resource;
     });
   } catch (error) {
@@ -239,9 +246,15 @@ export async function updateProjectResource(
       );
     }
 
-    await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
+    const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },updated,randomUUID()));
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR","LEARNER"],exceptUserId:context.user.id,
+      title:"Project resource updated",body:"A project resource has changed.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
+    });
     return updated;
   });
 }
