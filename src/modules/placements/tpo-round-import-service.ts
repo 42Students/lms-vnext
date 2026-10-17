@@ -160,6 +160,7 @@ export async function stageTpoRoundImport(
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
+  if(!inputRows.length)throw Error("An empty result file cannot mark the entire round not cleared.");
   if(rejected.length||unresolvedSkippedRows)throw Error("Resolve ambiguous source identities before automatically marking missing learners not cleared. Skipping an unmatched row cannot identify which learner to protect.");
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
