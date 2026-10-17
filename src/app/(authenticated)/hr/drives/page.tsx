@@ -8,11 +8,9 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
-import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterVisiblePortfolioCounts } from "@/modules/placements/recruiter-portfolio-counts-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
-import {hrDriveAttention} from "@/modules/placements/hr-drive-attention-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
@@ -53,9 +51,6 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
   const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
-  // Only a bounded preview is needed for the deadline-attention panel.
-  const jobs = (await listOwnRecruiterPlacementJobs(context,selectedCollege,{limit:100}))
-    .filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
   // eslint-disable-next-line react-hooks/purity -- the request clock drives IST deadline filters.
@@ -75,7 +70,15 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {view: "WAITING", label: "Sent for review", count: totals.waiting},
     {view: "CLOSED", label: "Completed and cancelled", count: totals.closed},
   ] as const;
-  const attention=hrDriveAttention(jobs,selectedCollege,now);
+  const deadlineBase={...query.data,collegeId:selectedCollege,view:"LIVE" as const,
+    q:"",employment:"ALL" as const,mode:"ALL" as const,page:1,sort:"DEADLINE" as const};
+  const [soon,past]=await Promise.all([
+    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"SOON"},now,{pageSize:5}),
+    searchOwnRecruiterDrives(context,selectedCollege,{...deadlineBase,deadline:"PAST"},now,{
+      pageSize:5,descendingDeadline:true,
+    }),
+  ]);
+  const attention={soon:soon.rows,past:past.rows};
   const visibleCounts=await recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id));
   return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
