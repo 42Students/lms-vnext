@@ -32,7 +32,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null };
+type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null;takeaways?:string|null };
 type OfferingOption = {
   id: string;
   courseName: string;
@@ -110,6 +110,7 @@ export function AdminCourseCreatePanel({
   const [shortTitle,setShortTitle]=useState(duplicated?.shortTitle??copy?.name?.slice(0,120)??"");
   const [officialCode,setOfficialCode]=useState(duplicated?.officialCode??"");
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"#1677FF");
+  const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const superAdmin=courseBasePath.startsWith("/admin/");
 
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
@@ -196,11 +197,12 @@ export function AdminCourseCreatePanel({
         shortTitle:superAdmin?shortTitle.trim():undefined,
         officialCode:superAdmin?officialCode.trim()||null:undefined,
         cardColor:superAdmin?cardColor:null,
+        takeaways:superAdmin?takeaways.trim()||null:undefined,
         description: courseDescription.trim() || null,
       }),
       COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -308,6 +310,11 @@ export function AdminCourseCreatePanel({
             <div>
               <FieldLabel htmlFor="course-official-code">Official course code (optional)</FieldLabel>
               <Input id="course-official-code" value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+            </div>
+            <div className="sm:col-span-2">
+              <FieldLabel htmlFor="course-takeaways">Course takeaways (optional)</FieldLabel>
+              <Textarea id="course-takeaways" value={takeaways}
+                onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </div>
             <div>
               <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
