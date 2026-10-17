@@ -83,6 +83,23 @@ export function LearnerFinalDeliveryControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [autosaveStatus,setAutosaveStatus]=useState<"idle"|"saving"|"saved"|"failed">("idle");
+  const lastSavedSnapshot=useRef(JSON.stringify({
+    summary:(draft?.summary??"").trim(),
+    sourceUrl:draft?.sourceUrl?.trim()||undefined,
+    demoUrl:draft?.demoUrl?.trim()||undefined,
+    notes:draft?.notes?.trim()||undefined,
+    attachments:safeDraftAttachments(draft?.attachments),
+  }));
+  function currentPayload(){
+    return {
+      summary:summary.trim(),
+      sourceUrl:sourceUrl.trim()||undefined,
+      demoUrl:demoUrl.trim()||undefined,
+      notes:notes.trim()||undefined,
+      attachments,
+    };
+  }
 
   function resetFromDraft() {
     setSummary(draft?.summary ?? "");
