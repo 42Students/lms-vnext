@@ -61,6 +61,7 @@ function learnerLabel(attempt: Attempt) {
 
 export function FacultyQuizReview({
   quizId,
+  quizTitle,
   deliveryId,
   status,
   resultsPublished,
@@ -70,6 +71,7 @@ export function FacultyQuizReview({
   autoOpen=false,
 }: {
   quizId: string;
+  quizTitle?:string;
   deliveryId: string;
   status:
     | "DRAFT"
@@ -204,7 +206,7 @@ export function FacultyQuizReview({
           variant="secondary"
           onClick={load}
         >
-          Review attempts
+          Submissions
         </Button>
 
         {actions.canPublishResults ? (
@@ -247,17 +249,17 @@ export function FacultyQuizReview({
       <Drawer
         open={open}
         onOpenChange={setOpen}
-        title="Quiz attempts"
+        title={quizTitle??"Submissions"}
         description="Review immutable Section-scoped attempts and choose whether released results are visible to learners."
       >
       <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 text-sm font-semibold text-foreground">
-            Quiz attempts
+            {quizTitle??"Submissions"}
           </p>
           <p className="mt-1 text-xs text-muted-foreground">
-            Scores and answer review are read from
+            Submitted scores and answer review are read from
             immutable submitted snapshots.
           </p>
         </div>
@@ -322,11 +324,11 @@ export function FacultyQuizReview({
       attempts &&
       attempts.length === 0 ? (
         <p className="mt-4 text-sm text-muted-foreground">
-          No Quiz attempts have been submitted for
-          this Section yet.
+          No submissions yet
         </p>
       ) : null}
 
+      {!loading && attempts ? <p className="text-sm font-semibold text-foreground">{attempts.length} submission(s)</p> : null}
       {!loading && attempts &&
       attempts.length > 0 ? (
         <div className="mt-4 space-y-3">

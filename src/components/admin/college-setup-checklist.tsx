@@ -30,7 +30,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
             className="flex flex-wrap items-center justify-between gap-3 py-3">
             <div className="min-w-0">
               <p className="text-sm font-semibold text-foreground">{step.label}</p>
-              <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">
+              <p className="mt-1 text-xs text-muted-foreground">
                 {step.count > 0
                   ? `${step.count} qualifying record${step.count === 1 ? "" : "s"}`
                   : "No qualifying records"}

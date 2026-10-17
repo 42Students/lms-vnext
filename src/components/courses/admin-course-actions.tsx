@@ -97,6 +97,13 @@ export function CourseActions({
     useState(course.description ?? "");
   const { pending, run } =
     useCourseMutation();
+  const dirty = name!==course.name || code!==course.code ||
+    description!==(course.description??"");
+  function closeEdit(next:boolean) {
+    if(!next && pending)return;
+    if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
+    setEditOpen(next);
+  }
 
   function openEdit() {
     setName(course.name);
@@ -131,7 +138,7 @@ export function CourseActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={closeEdit}
         title="Edit Course"
         description="Department ownership is immutable after Course creation."
         footer={
