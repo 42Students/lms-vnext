@@ -49,7 +49,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
         </dl>
       </article>)}
-    </div> : <EmptyState title="No assessments found" description="No persisted assessments match the selected college and filters." />}
+    </div> : <EmptyState title={assignment?"No assignments found for this college":"No quizzes found for this college"} description="Try adjusting your filters." />}
     <nav aria-label={title + " pages"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <span className="text-muted-foreground">Page {data.page} of {data.totalPages} · 25 per page</span>
       <div className="flex gap-2">

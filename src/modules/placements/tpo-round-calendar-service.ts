@@ -11,6 +11,7 @@ import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
 import { actOnPlacementRound } from "./round-service";
 import { projectTpoScheduleConflicts } from "./tpo-schedule-conflicts-model";
+import {canScheduleOnCollegeBlockedDay} from "./tpo-blocked-day-decision";
 import { parseIstRoundLocalTime, tpoRoundCalendarMutationSchema } from "./tpo-round-calendar-model";
 
 async function requireTpo(context: RequestContext) {
@@ -104,7 +105,8 @@ export async function decideTpoCalendarRound(context: RequestContext, raw: unkno
   if(!blockedReady)throw new Error("Blocked-date storage is unavailable. Round scheduling is not permitted until dates can be checked.");
   const [blocked]=await getDb().select({day:placementTpoBlockedDates.day})
    .from(placementTpoBlockedDates).where(and(eq(placementTpoBlockedDates.collegeId,college.id),eq(placementTpoBlockedDates.day,day))).limit(1);
-  if(blocked&&!input.acknowledgedBlockedDate)throw new Error("This college has blocked the selected day. Review and explicitly acknowledge the conflict.");
+  const decision=canScheduleOnCollegeBlockedDay({storageReady:blockedReady,blocked:Boolean(blocked),acknowledged:input.acknowledgedBlockedDate===true});
+  if(!decision.allowed)throw new Error("This college has blocked the selected day. Review and explicitly acknowledge the conflict.");
   if (start.getTime() <= Date.now()) throw new Error("Round must be scheduled in the future");
   if (input.mode === "ON_CAMPUS") {
     if (!round.durationMinutes || round.durationMinutes <= 0)

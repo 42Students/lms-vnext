@@ -1,5 +1,6 @@
 import { AcademicSetupSteps } from "@/components/admin/academic-setup-steps";
 import Link from "next/link";
+import { legacyAcademicStatus } from "@/modules/academics/legacy-academic-status";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeCohortCreateForm, CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { listCollegeBatches } from "@/modules/academics/college-academic-directory-service";
@@ -49,7 +50,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             Status
             <select name="status" defaultValue={data.query.status}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : status}</option>)}
+              {statuses.map(status => <option key={status} value={status}>{status === "INACTIVE" ? "Inactive (planned / archived)" : legacyAcademicStatus(status, true)}</option>)}
             </select>
           </label>
           <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
@@ -84,7 +85,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               <td className="p-2">{row.academicYear??(row.currentAcademicYearStart ? `${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}` : "Not recorded")}</td>
               <td className="p-2">{row.currentTermNumber ?? "—"}</td>
               <td className="p-2">{row.activeEnrolledLearners}</td>
-              <td className="p-2">{row.status}{row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Date(row.inactiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>:null}</td>
+              <td className="p-2">{legacyAcademicStatus(row.status, true)}{row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Date(row.inactiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>:null}</td>
               <td className="p-2"><CollegeCohortRowActions row={row} periods={periods} /></td>
             </tr>)}</tbody>
           </table></div>}

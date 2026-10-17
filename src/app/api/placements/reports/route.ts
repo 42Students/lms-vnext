@@ -259,11 +259,10 @@ function ctcCsv(workspace: DetailedWorkspace) {
 
 function unplacedCsv(workspace: DetailedWorkspace) {
   return placementReportCsv(
-    ["Student", "Branch", "Membership ID"],
+    ["Student", "Branch"],
     workspace.details.unplaced.map((learner) => [
       learner.displayName,
       learner.departmentName,
-      learner.membershipId,
     ]),
   );
 }

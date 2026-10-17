@@ -1,5 +1,6 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
+import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
@@ -49,6 +50,7 @@ type SearchParams = {
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
+  q?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
   columns?: string | string[];
@@ -185,7 +187,7 @@ export default async function TpoStudentsPage({
     cgpaRecorded:first(raw.cgpaRecorded)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
-    search: first(raw.search) || undefined,
+    search: first(raw.search) || first(raw.q) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
   });
@@ -320,27 +322,15 @@ export default async function TpoStudentsPage({
         title={TPO_OWNER_PAGE_COPY.students}
         description={query.batchId?
           "Batch student journeys, including completed learners from a finished batch.":
-          "Read-only college-wide placement participation, branch performance and student journeys."}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
-            {manageAllowed ? <TpoStudentSavedViews /> : null}
-            {manageAllowed ? <TpoAcademicImportWorkspace /> : null}
-            <Link
-              href="/tpo/students/requests"
-              className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body hover:text-primary-text"
-            >
-              Student Requests
-            </Link>
-            <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-body">Preparation support</Link>
-            <a
-              href={exportHref}
-              className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary hover:bg-primary-hover"
-            >
-              Export filtered CSV
-            </a>
-          </div>
-        }
+          "Everyone in placements, from the batches you made eligible."}
+        actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
+      <nav aria-label="Student roster tools" className="flex flex-wrap items-center gap-2">
+        {manageAllowed?<TpoStudentSavedViews />:null}
+        <Link href="/tpo/students/requests" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Student Requests</Link>
+        <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Preparation support</Link>
+        <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
+      </nav>
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
@@ -459,13 +449,7 @@ export default async function TpoStudentsPage({
             Placement registration data unavailable
           </h2>
           <p className="mt-2 text-sm leading-6 text-body">
-            The placement registration table has not yet been
-            registered in the database. The registered placement
-            pool therefore shows 0, and learners without a
-            provisional placed outcome appear as Not registered.
-            This is missing source data, not proof that learners
-            declined registration. Placed learners retain their
-            separately evidenced Placed journey state.
+            Placement registration information is unavailable. Registration counts may be incomplete.
           </p>
         </section>
       ) : null}
@@ -485,9 +469,7 @@ export default async function TpoStudentsPage({
           role="status"
           className="rounded-xl border border-border bg-surface p-4 text-sm leading-6 text-body"
         >
-          External-offer data is not available in the registered
-          database. Provisional placed and branch figures can
-          omit externally placed learners.
+          External offer information is unavailable. Placed counts may be incomplete.
         </section>
       ) : null}
 
@@ -503,11 +485,10 @@ export default async function TpoStudentsPage({
                 : "No active placement season is configured. Season-scoped applications and offers are not included."}
             </p>
           </div>
-          <StatusBadge tone="warning">
-            Readiness unverified
-          </StatusBadge>
+
         </div>
 
+        <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-lg border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold">{step.label}</h3>
@@ -668,9 +649,7 @@ export default async function TpoStudentsPage({
         )}
 
         <p className="px-5 py-3 text-xs leading-5 text-muted-foreground">
-          *Provisional rate. An unavailable registration table
-          produces no usable denominator; — means the registered
-          pool is zero. Browser and legacy parity remain unverified.
+          *Rate uses the registered placement pool; — means no registered students.
         </p>
       </section>
 
@@ -680,10 +659,8 @@ export default async function TpoStudentsPage({
             <h2 className="text-lg font-semibold text-foreground">
               Students roster
             </h2>
-            <p className="mt-1 text-sm text-body">
-              {roster.total} matching learner
-              {roster.total === 1 ? "" : "s"}
-              {" · "}showing {firstItem}–{lastItem}
+            <p className="mt-1 text-sm text-body" aria-live="polite">
+              {roster.total} students in this view · showing {firstItem}–{lastItem}
             </p>
           </div>
           <Link
@@ -739,7 +716,7 @@ export default async function TpoStudentsPage({
               name="search"
               defaultValue={query.search ?? ""}
               maxLength={150}
-              placeholder="Name, roll, email or batch"
+              placeholder="Search name, roll no., email"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
             />
           </label>
@@ -771,22 +748,23 @@ export default async function TpoStudentsPage({
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
             {roster.total > 0
               ? "This page is outside the matching result range. Return to the first page."
-              : "No students match these filters. Try another journey, branch or search term."}
+              : "Nobody is in placements yet."}
+            {roster.total===0?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
             <div className="mt-3">
               <Link
                 href={roster.total>0?scopedHref({
                   ...currentFilters,
                   page: 1,
-                }):tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
+                }):"/tpo/batches"}
                 className="font-semibold text-primary-text hover:underline"
               >
-                {roster.total>0?"First matching page":"Clear roster filters"}
+                {roster.total>0?"First matching page":"Open Placement eligibility"}
               </Link>
             </div>
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
+          <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 

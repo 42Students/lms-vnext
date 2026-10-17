@@ -45,7 +45,9 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    const result=await response.json().catch(()=>null) as {
     error?:string;outcomes?:BulkReviewOutcome[];summary?:{attempted:number;succeeded:number;failed:number}
    }|null;
-   if(!response.ok||!Array.isArray(result?.outcomes))throw Error(result?.error??"Bulk decision could not be saved");
+   if(!response.ok||!Array.isArray(result?.outcomes))throw Error(response.status===409
+    ?"This changed while you were working. Refresh the student list and review again."
+    :"Could not save the selected verification decisions. Please try again.");
    setReceiptRows(eligible);
    setOutcomes(result.outcomes);
    setPreview(false);setAck(false);

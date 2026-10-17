@@ -16,7 +16,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
  sprints:Sprint[];membershipId:string|null;readOnly?:boolean;
 }){
  const router=useRouter();
- const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [tasks,setTasks]=useState(initialTasks),[busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [undo,setUndo]=useState<{taskId:string;status:EditableStatus;blockerReason:string|null}|null>(null);
  const [prevInitialTasks,setPrevInitialTasks]=useState(initialTasks);
  if(prevInitialTasks!==initialTasks){setPrevInitialTasks(initialTasks);setTasks(initialTasks);}
@@ -68,6 +68,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
    setTasks(rows=>rows.map(row=>row.id===task.id?{
      ...row,...payload.task,updatedAt:new Date(payload.task.updatedAt),
    }:row));
+   setNotice('Pulled "'+task.title+'" into '+(sprints.find(s=>s.id===sprintId)?.title??"sprint")+'.');
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not pull task");}
   finally{setBusy(false);}
@@ -81,7 +82,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   <p className="text-sm text-body">{readOnly
     ?"This workspace is read-only. Task moves and backlog pulls are disabled."
     :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
-  {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
+  {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
+  {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
+  {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null>
   {undo?<button type="button" disabled={busy} className="min-h-10 text-sm font-semibold text-primary-text underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move

@@ -16,6 +16,7 @@ import {learnerDriveOverview,learnerDriveAvailabilityDriveCounts} from "@/module
 import {learnerDrivePageState} from "@/modules/placements/learner-drive-pagination-model";
 import {learnerJobsMobileFilterLabel} from "@/modules/placements/learner-jobs-mobile-model";
 import {learnerDrivesEmptyState} from "@/modules/placements/learner-drives-empty-state-model";
+import {learnerSavedDriveSummary} from "@/modules/placements/learner-saved-drives-model";
 
 const PAGE_SIZE = 20;
 
@@ -26,9 +27,11 @@ function humanize(value: string) {
 export function LearnerJobsBrowse({
   items,
   snapshotNowIso,
+  savedJobIds,
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso: string;
+  savedJobIds:readonly string[];
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -75,16 +78,33 @@ export function LearnerJobsBrowse({
   const employmentCounts=useMemo(()=>learnerJobEmploymentTypeCounts(items),[items]);
   const availabilityCounts=useMemo(()=>learnerDriveAvailabilityDriveCounts(items),[items]);
   const allDrives=useMemo(()=>learnerDriveOverview(items),[items]);
-  const visible = filterLearnerPlacementJobs(items, filters, Date.parse(snapshotNowIso));
+  const savedSummary=learnerSavedDriveSummary(items.map(row=>row.job.id),savedJobIds);
+  const savedOnly=urlState.savedOnly;
+  const matchingItems=savedOnly?items.filter(item=>savedSummary.visibleIds.has(item.job.id)):items;
+  const visible = filterLearnerPlacementJobs(matchingItems, filters, Date.parse(snapshotNowIso));
   const parsedPage=urlState.page;
   const pagination=learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
   const paged=visible.slice(pagination.startIndex,pagination.endIndex);
-  const empty=learnerDrivesEmptyState(items.length,visible.length,filters);
+  const savedExpired=paged.filter(item=>item.deadlinePassed);
+  const savedOpen=paged.filter(item=>!item.deadlinePassed);
+  const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
   return (
     <div className="space-y-5">
+      <nav aria-label="Drive bookmarks" className="flex flex-wrap items-center gap-3">
+        <button type="button" aria-pressed={!savedOnly}
+          onClick={()=>updateQuery({saved:null})}
+          className={!savedOnly?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-4 text-sm text-body"}>
+          All drives
+        </button>
+        <button type="button" aria-pressed={savedOnly}
+          onClick={()=>updateQuery({saved:"1"})}
+          className={savedOnly?"min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary":"min-h-11 rounded-md border border-border px-4 text-sm text-body"}>
+          Saved ({savedSummary.saved})
+        </button>
+      </nav>
       <section className="rounded-xl border border-border bg-surface p-3 sm:p-5" aria-label="Find placement drives">
         <button type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
           onClick={()=>setMobileOpen(value=>!value)}
@@ -155,7 +175,7 @@ export function LearnerJobsBrowse({
               })}
               className="h-4 w-4 accent-[var(--lms-primary)]"
             />
-            Eligible to apply only
+            Eligible only
           </label>
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
             <input
@@ -166,7 +186,7 @@ export function LearnerJobsBrowse({
               })}
               className="h-4 w-4 accent-[var(--lms-primary)]"
             />
-            Closing within seven days
+            Closing in 7 days
           </label>
           <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
             Sort by
@@ -176,7 +196,7 @@ export function LearnerJobsBrowse({
               className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
-              <option value="ctc">Highest pay</option>
+              <option value="ctc">Highest CTC</option>
               <option value="title">Role A–Z</option>
             </select>
           </label>
@@ -216,7 +236,12 @@ export function LearnerJobsBrowse({
         </p>
       ):null}
 
-      {empty.kind==="NO_PUBLISHED" ? (
+      {savedOnly && matchingItems.length===0?<div className="space-y-3 rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">No saved drives yet</h2>
+        <p className="text-sm text-body">Save drives from All Drives by tapping the heart. They will appear here.</p>
+        <button type="button" className="min-h-11 text-sm font-semibold text-primary-text underline"
+          onClick={()=>updateQuery({saved:null})}>Browse all jobs</button>
+      </div>:empty.kind==="NO_PUBLISHED" ? (
         <div className="space-y-3">
           <EmptyState title={empty.title} description={empty.description} />
           <Link href="/learn/my-placements"
@@ -235,7 +260,17 @@ export function LearnerJobsBrowse({
           </button>:null}
         </div>
       ) : (
-        <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} returnQuery={params.toString()} />
+        savedOnly?<div className="space-y-5">
+          {savedOpen.length?<LearnerPlacementJobs items={savedOpen} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+          {savedExpired.length?<section aria-label="Expired saved jobs" className="space-y-3">
+            <h2 className="text-lg font-semibold text-foreground">Expired saved jobs</h2>
+            <p className="text-sm text-body">These saved drives no longer accept applications, but you can review their details or remove the bookmark.</p>
+            <LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>
+          </section>:null}
+        </div>:<LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso}
+          returnQuery={params.toString()} savedJobIds={savedJobIds} />
       )}
 
       {totalPages > 1 ? (

@@ -173,7 +173,7 @@ export function LearnerPlacementOffers({
         tone: "success",
         title:
           action === "ACCEPT"
-            ? "Offer accepted"
+            ? "Congratulations! You accepted "+(offers.find(row=>row.offerId===offerId)?.companyName??"the company")+"'s offer."
             : "Offer declined",
         description:
           action === "ACCEPT"
@@ -491,7 +491,7 @@ export function LearnerPlacementOffers({
       <Dialog
         open={declineOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}
-        title="Confirm offer decline"
+        title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
         description="Declining is recorded as an official response and cannot be undone from the Learner workspace."
         footer={<>
           <Button variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
@@ -499,7 +499,7 @@ export function LearnerPlacementOffers({
           </Button>
           <Button disabled={pendingId !== null || declineReason.length > 2000}
             onClick={() => { if (declineOffer) void respond(declineOffer.offerId, "DECLINE"); }}>
-            {pendingId !== null ? "Saving…" : "Confirm decline"}
+            {pendingId !== null ? "Saving…" : "Decline offer"}
           </Button>
         </>}
       >
@@ -522,7 +522,7 @@ export function LearnerPlacementOffers({
       <Dialog
         open={confirmOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) dismissAccept(); }}
-        title="Review offer before accepting"
+        title={confirmOffer?"Accept "+confirmOffer.companyName+"\u0027s offer?":"Accept offer?"}
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
           <>
@@ -530,7 +530,7 @@ export function LearnerPlacementOffers({
               onClick={dismissAccept}>Keep offer pending</Button>
             <Button disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
-              {pendingId !== null ? "Saving…" : "Confirm acceptance"}
+              {pendingId !== null ? "Saving…" : "Yes, accept"}
             </Button>
           </>
         }

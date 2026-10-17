@@ -17,13 +17,13 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  const choices=context.adminScope?.collegeId?await getSuperAdminStudentRegisterOptions(context):null;
  return <div className="space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
-    <a href="#register-student" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Register student ↓</a>
+    <a href="#register-student" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Register New Student ↓</a>
     <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
-  {choices?<section id="register-student" className="space-y-2"><h2 className="text-lg font-semibold">Register student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Students" path="/admin/students" statuses={statuses}
+  {choices?<section id="register-student" className="space-y-2"><h2 className="text-lg font-semibold">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
+  <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Selected-college learner roster with roll number, assigned class and authorized administrative contact fields. Account status changes stay scoped to college membership."
   searchParams={searchParams}
