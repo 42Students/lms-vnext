@@ -98,7 +98,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     </select>
    </label>
    <label className="text-sm font-semibold">Sprint
-    <select value={sprint} onChange={e=>setSprint(e.target.value)}
+    <select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
      <option value="">All sprints</option>
      {sprints.filter(item=>!release||item.releaseId===release).map(item=>
