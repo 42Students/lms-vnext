@@ -1,8 +1,10 @@
 "use client";
 import {useState} from "react";
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
+type Answer={id:string;promptSnapshot:string;questionType:string;pointsPossible:number;pointsAwarded:number;
+ correct:boolean;selectedOptionIds:string[];optionsSnapshot:{id:string;text:string;sequence:number;correct:boolean}[]};
 type Attempt={id:string;membershipId:string;learnerDisplayName:string|null;learnerEmail:string|null;
- score:number;maxScore:number;attemptNumber:number;submittedAt:string;answers:{id:string}[]};
+ score:number;maxScore:number;attemptNumber:number;submittedAt:string;answers:Answer[]};
 export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,deliveries,status}:{
  quizId:string;offeringId:string;specificDeliveryId:string|null;deliveries:Delivery[];status:string;
 }){
