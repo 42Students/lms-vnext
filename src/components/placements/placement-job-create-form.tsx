@@ -144,6 +144,7 @@ export function PlacementJobCreateForm({
   ] = useState(
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
+  const [companySearch,setCompanySearch]=useState("");
   const [pending, setPending] =
     useState(false);
   const [
@@ -552,7 +553,15 @@ export function PlacementJobCreateForm({
           ) : null}
 
           {companyMode === "EXISTING" ? (
-            <label>
+            <div className="space-y-3">
+              <label className="block text-xs font-semibold text-body">
+                Find employer by name or website domain
+                <input type="search" value={companySearch} maxLength={100}
+                  onChange={event=>setCompanySearch(event.target.value)}
+                  placeholder="Search your companies"
+                  className={inputClass+" mt-2"}/>
+              </label>
+              <label>
               <span className="mb-1.5 block text-xs font-semibold text-body">
                 Employer
               </span>
@@ -568,7 +577,9 @@ export function PlacementJobCreateForm({
                   )
                 }
               >
-                {companies.map((company) => (
+                {companies.filter(company=>company.relationshipId===companyRelationshipId||
+                  (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))
+                  .map((company) => (
                   <option
                     key={
                       company.relationshipId
@@ -585,6 +596,10 @@ export function PlacementJobCreateForm({
                 ))}
               </select>
             </label>
+            {companySearch.trim()&&!companies.some(company=>
+              (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
+              <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
+            </div>
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
               <label>
