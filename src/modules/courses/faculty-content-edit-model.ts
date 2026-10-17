@@ -1,5 +1,5 @@
 import { authoringDueInstant } from "./faculty-authoring-datetime-model";
-export type EditableContent = "RESOURCE" | "YOUTUBE" | "LIVE_CLASS";
+export type EditableContent = "RESOURCE" | "YOUTUBE" | "LIVE_CLASS" | "VIDEO";
 export function facultyContentPatch(input: {
   kind: EditableContent;
   title: string;
@@ -15,7 +15,7 @@ export function facultyContentPatch(input: {
   const url = input.url.trim();
   if (!title || title.length > 255) throw new Error("Title must have 1-255 characters.");
   if (notes.length > 5000) throw new Error("Notes cannot exceed 5000 characters.");
-  if (input.kind !== "RESOURCE" && !url) throw new Error("An HTTPS URL is required.");
+  if (input.kind !== "RESOURCE" && input.kind !== "VIDEO" && !url) throw new Error("An HTTPS URL is required.");
   if (url) {
     let parsed: URL;
     try { parsed = new URL(url); } catch { throw new Error("Enter a valid HTTPS URL."); }
@@ -31,6 +31,7 @@ export function facultyContentPatch(input: {
         throw new Error("Use a youtube.com or youtu.be link.");
     }
   }
+  if(input.kind==="VIDEO") return {title,notes:notes||null};
   const base = { title, notes: notes || null, externalUrl: url || null };
   if (input.kind === "RESOURCE") {
     if (!notes && !url && !input.hasStoredResource) throw new Error("Add notes or a resource link.");
@@ -76,7 +77,7 @@ export function facultyContentSaveReceiptMatches(id:string, expected:ReturnType<
  if(typeof row!=="object" || row===null) return false;
  const data=row as Record<string,unknown>;
  if(data.id!==id || data.title!==expected.title ||
-    data.notes!==expected.notes || data.externalUrl!==expected.externalUrl) return false;
+    data.notes!==expected.notes || ("externalUrl" in expected && data.externalUrl!==expected.externalUrl)) return false;
  if("durationSeconds" in expected && data.durationSeconds!==expected.durationSeconds) return false;
  if("startsAt" in expected && data.startsAt!==expected.startsAt) return false;
  if("endsAt" in expected && data.endsAt!==expected.endsAt) return false;
