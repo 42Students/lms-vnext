@@ -345,6 +345,10 @@ export function buildFacultyCourseHomeSignals(
         a.name.localeCompare(b.name),
     );
   const atRiskTotal=allAtRisk.length;
+  const atRiskCounts={
+    critical:allAtRisk.filter(row=>row.severity>=3).length,
+    moderate:allAtRisk.filter(row=>row.severity<3).length,
+  };
   const atRisk=allAtRisk.slice(0,8);
 
   return {
@@ -369,6 +373,7 @@ export function buildFacultyCourseHomeSignals(
       studentAverages,
     },
     atRisk,
+    atRiskCounts,
     atRiskTotal,
   };
 }
