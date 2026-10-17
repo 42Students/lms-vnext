@@ -78,6 +78,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      <label className="grid gap-1 text-sm">Package (LPA, optional)<input type="number" min={0} max={1000} step="0.01"
       value={lpa} onChange={e=>setLpa(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     </div>:null}
+    <label className="grid gap-1 text-sm">Find student
+     <input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
+      placeholder="Search name, email or role" className="min-h-10 rounded border border-border bg-surface px-3"/>
+    </label>
     <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?recordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
