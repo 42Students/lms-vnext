@@ -7,6 +7,24 @@ import type {RequestContext} from "@/modules/identity/context";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("chat-4 College academic and people gap closure",()=>{
+ it("COL-academic-setup-R01 hides elective CRUD while the module is switched off",async()=>{
+  const {resolveModuleAccessFromRules}=await import("@/modules/module-access/service");
+  const chain=[{scopeType:"COLLEGE" as const,scopeId:"tenant"},
+    {scopeType:"GLOBAL" as const,scopeId:null}];
+  const disabled=resolveModuleAccessFromRules(chain,[
+    {scopeType:"COLLEGE",scopeId:"tenant",module:"electives",enabled:false,locked:false},
+  ]);
+  expect(disabled.electives.enabled).toBe(false);
+  expect(resolveModuleAccessFromRules(chain,[]).electives.enabled).toBe(true);
+  const page=source("src/app/(authenticated)/college/electives/page.tsx");
+  expect(page).toContain("Electives is turned off for this college");
+  expect(page.indexOf("if(!moduleAccess.electives.enabled)")).toBeLessThan(page.indexOf("listCollegeElectives(context"));
+  for(const file of [
+   "src/modules/electives/college-slot-mutation-service.ts",
+   "src/modules/electives/college-elective-lifecycle-service.ts",
+   "src/modules/electives/service.ts",
+  ])expect(source(file)).toContain("assertCollegeElectivesEnabled(context)");
+ });
  it("COL-people-R01 guards live mentor projects, not teaching assignments",async()=>{
   const {mentorSuspensionMessage}=await import("@/modules/people/active-mentor-project-guard");
   expect(mentorSuspensionMessage(2)).toBe("Cannot suspend this faculty member: they mentor 2 active project workspace(s). Reassign those projects to another mentor first.");

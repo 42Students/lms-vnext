@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {academicPeriods,departments,electiveOfferings,electiveSlots,lmsGroupMembers,programs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import {assertCollegeElectivesEnabled} from "./college-elective-module-guard";
 
 import {assertPersistedGroupActor} from "@/modules/groups/actor-access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -24,6 +25,7 @@ export async function changeCollegeElectiveLifecycle(context:RequestContext,rawI
   transaction:TxRunner=(fn)=>getDb().transaction(fn)) {
   const id=z.string().uuid().parse(rawId),input=electiveLifecycleSchema.parse(raw);
   const actor=await resolveActingCollege(context,"academics.manage");
+  await assertCollegeElectivesEnabled(context);
   return transaction(async tx=>{
     const [slot]=await tx.select().from(electiveSlots)
       .where(and(eq(electiveSlots.id,id),eq(electiveSlots.collegeId,actor.collegeId),
