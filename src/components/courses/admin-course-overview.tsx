@@ -446,6 +446,7 @@ export function AdminCourseOverview({
         offerings={workspace.offerings.filter(offering => offering.status === "ACTIVE")}
         deliveries={workspace.deliveries}
         faculty={workspace.faculty}
+        facultyTruncated={workspace.facultyTruncated}
       />
 
       <section className="space-y-3">
