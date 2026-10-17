@@ -479,6 +479,7 @@ export async function listOwnNotificationPage(
     unreadOnly?: boolean;
     limit?: number;
     beforeCreatedAt?: Date;
+    unreadSince?: Date;
     beforeId?: string;
     collegeId?: string;
   } = {},
