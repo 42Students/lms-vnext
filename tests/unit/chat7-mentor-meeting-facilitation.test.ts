@@ -20,4 +20,19 @@ describe("mentor meeting facilitated notes",()=>{
   expect(control).toContain("Action items");
   expect(control).toContain("expectedUpdatedAt:new Date(meeting.updatedAt).toISOString()");
  });
+ it("MEN-projects-meetings-27 accepts each legacy follow-up status and retrospective label",()=>{
+  for(const status of ["OPEN","IN_PROGRESS","DONE","BLOCKED"]){
+    const parsed=mentorMeetingFacilitationSchema.safeParse({
+      ...emptyMentorMeetingFacilitation,followUpStatus:status,
+    });
+    expect(parsed.success).toBe(true);
+  }
+  const control=read("src/components/projects/project-meeting-controls.tsx");
+  for(const label of ["What went well?","What didn't go well?","Actions for next sprint",
+    "In progress","Blocked"]){
+    expect(control).toContain(label);
+  }
+  const request=control.split("export function ScheduleProjectMeetingControl")[0];
+  expect(request).not.toContain("value={facilitation[field]}");
+ });
 });
