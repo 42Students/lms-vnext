@@ -174,6 +174,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.season.started",
   PLACEMENTS_SEASON_CLOSED:
     "placements.season.closed",
+  PLACEMENTS_COMPANY_VERIFIED: "placements.company.verified",
+  PLACEMENTS_COMPANY_UNVERIFIED: "placements.company.unverified",
   PLACEMENTS_COMPANY_LINKED:
     "placements.company.linked",
   PLACEMENTS_JOB_DRAFT_CREATED:
