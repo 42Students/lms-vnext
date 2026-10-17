@@ -3,7 +3,8 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {postTpoCompanyTeamMessage,tpoCompanyTeamPostSchema} from "@/modules/placements/tpo-company-team-service";
+import {postTpoCompanyTeamMessage} from "@/modules/placements/tpo-company-team-service";
+import {tpoCompanyTeamPostSchema} from "@/modules/placements/tpo-company-team-model";
 export const runtime="nodejs";
 export async function POST(request:Request,{params}:{params:Promise<{companyId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
