@@ -2,6 +2,8 @@
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
  threadId:string;unread:boolean;actorUserId:string;
 }){
@@ -10,16 +12,17 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  const draftKey=recruiterMessageDraftKey(actorUserId,threadId);
  const markedOnOpen=useRef<string|null>(null);
+ const pending=useRef(false);
+ const [discardReview,setDiscardReview]=useState(false);
  useEffect(()=>{
   if(!unread||markedOnOpen.current===threadId)return;
   markedOnOpen.current=threadId;
-  void fetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(threadId)+"/read",{
-    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({confirmed:true}),
-  }).then(response=>{
-    if(!response.ok)throw new Error("Could not mark this conversation read.");
-    router.refresh();
-  }).catch(()=>{setError("Messages could not be marked read. Use Mark as read to retry.");});
+  void apiFetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(threadId)+"/read",{
+    method:"POST",credentials:"same-origin",timeoutMs:12000,
+    headers:{"Content-Type":"application/json"},body:JSON.stringify({confirmed:true}),
+  }).then(()=>router.refresh()).catch(reason=>{
+    setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));
+  });
  },[threadId,unread,router]);
 
  useEffect(()=>{
@@ -29,7 +32,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   return ()=>window.removeEventListener("beforeunload",warn);
  },[body]);
  function persistDraft(value:string){
-  setBody(value);
+  setDiscardReview(false);setBody(value);
   try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}catch{/* Storage is optional. */}
  }
  function restoreDraft(){
@@ -38,27 +41,26 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
    if(saved&&saved.length<=4000)setBody(saved);}catch{/* Storage is optional. */}
  }
  function discardDraft(){
-  if(!body.trim()||window.confirm("Discard draft?"))persistDraft("");
+  if(!body.trim())return;
+  if(!discardReview){setDiscardReview(true);return;}
+  persistDraft("");setDiscardReview(false);
  }
  async function post(mode:"messages"|"read"){
-  setBusy(true);setError("");setSuccess("");
+  if(pending.current||busy||(mode==="messages"&&!body.trim()))return;
+  pending.current=true;setBusy(true);setError("");setSuccess("");
   try{
-   const response=await fetch("/api/placements/tpo/messages/threads/"+
-     encodeURIComponent(threadId)+"/"+mode,{
-     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-     body:JSON.stringify(mode==="messages"?{body}:{confirmed:true}),
+   await apiFetch("/api/placements/tpo/messages/threads/"+
+    encodeURIComponent(threadId)+"/"+mode,{
+     method:"POST",credentials:"same-origin",timeoutMs:15000,
+     headers:{"Content-Type":"application/json"},
+     body:JSON.stringify(mode==="messages"?{body:body.trim()}:{confirmed:true}),
    });
-   if(!response.ok){
-    const payload=await response.json() as {error?:string};
-    throw new Error(response.status===403?"You do not have permission to write in this conversation.":
-     payload.error==="THREAD_NOT_FOUND"?"This conversation is no longer available.":
-     "Couldn't save. Please try again.");
-   }
    if(mode==="messages"){persistDraft("");setSuccess("Message sent");}
    else setSuccess("Messages marked read");
    router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Couldn't save. Please try again.");}
-  finally{setBusy(false);}
+  }catch(reason){
+   setError(reason instanceof Error?reason.message:friendlyApiError({network:true}));
+  }finally{pending.current=false;setBusy(false);}
  }
  return <section className="rounded-xl border border-border bg-surface p-5 space-y-3" aria-label="Reply to recruiter">
   <h2 className="font-semibold text-foreground">Reply</h2>
@@ -83,6 +85,7 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
      className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
       Send message
     </button>
+    {discardReview?<p role="status" className="w-full text-sm">Discard your unsent message? Select Discard draft again to confirm, or keep typing to cancel.</p>:null}
     {unread?<button type="button" disabled={busy} onClick={()=>void post("read")}
      className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold disabled:opacity-50">
       Mark as read

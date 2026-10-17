@@ -1,6 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import {apiFetch} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
+import {LearnerNotificationBell} from "./learner-notification-bell";
 import { LEARNER_COURSE_SEARCH_PLACEHOLDER } from "@/modules/courses/learner-course-copy-model";
 import { useEffect, useMemo, useRef, useState } from "react";
 
@@ -14,25 +17,16 @@ type LearnerCourse = {
 export function LearnerTopbarTools() {
   const [query, setQuery] = useState("");
   const [courses, setCourses] = useState<LearnerCourse[]>([]);
-  const [unreadCount, setUnreadCount] = useState<number | null>(null);
+  const [loadFailed,setLoadFailed]=useState(false);
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([
-      fetch("/api/courses/learner", { cache: "no-store" })
-        .then(async (response) => response.ok ? response.json() : { courses: [] })
-        .catch(() => ({ courses: [] })),
-      fetch("/api/notifications?unreadOnly=true&limit=20", { cache: "no-store" })
-        .then(async (response) => response.ok ? response.json() : { notifications: [] })
-        .catch(() => ({ notifications: [] })),
-    ]).then(([coursePayload, notificationPayload]) => {
-      if (cancelled) return;
-      setCourses(Array.isArray(coursePayload?.courses) ? coursePayload.courses : []);
-      setUnreadCount(Array.isArray(notificationPayload?.notifications) ? notificationPayload.notifications.length : 0);
-    });
+    void apiFetch<{courses?:LearnerCourse[]}>("/api/courses/learner",{cache:"no-store"})
+      .then(value=>{if(cancelled)return;setCourses(Array.isArray(value.courses)?value.courses:[]);setLoadFailed(false);})
+      .catch(()=>{if(!cancelled)setLoadFailed(true);});
 
     return () => {
       cancelled = true;
@@ -89,6 +83,7 @@ export function LearnerTopbarTools() {
             aria-label="Course search results"
             className="absolute left-0 top-[calc(100%+0.5rem)] z-50 max-h-96 w-[min(26rem,80vw)] overflow-y-auto rounded-xl border border-border bg-surface p-2 shadow-xl"
           >
+            {loadFailed?<div className="p-2"><InlineNotice tone="error" message="Could not load courses. Please try again." onDismiss={()=>setLoadFailed(false)}/></div>:null}
             {matches.length > 0 ? (
               matches.map((course) => (
                 <Link
@@ -117,21 +112,7 @@ export function LearnerTopbarTools() {
         ) : null}
       </div>
 
-      <Link
-        href="/learn/notifications"
-        aria-label={unreadCount && unreadCount > 0 ? `Notifications, ${unreadCount} unread` : "Notifications"}
-        className="relative inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-base text-foreground transition hover:bg-primary-subtle hover:text-primary-text"
-      >
-        <span aria-hidden="true">🔔</span>
-        {unreadCount && unreadCount > 0 ? (
-          <span
-            aria-hidden="true"
-            className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-on-primary"
-          >
-            {unreadCount > 99 ? "99+" : unreadCount}
-          </span>
-        ) : null}
-      </Link>
+      <LearnerNotificationBell />
     </div>
   );
 }

@@ -1,11 +1,13 @@
 "use client";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
-import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCommandError,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
+import {facultyAssignmentDraftDirty,facultyAssignmentDraftIssue,facultyAssignmentCommandReceipt,facultyAssignmentMaySubmit,facultyAssignmentConfirmationOnEdit,facultyAssignmentSwitchNeedsConfirmation,facultyAssignmentArchiveWarning,facultyAssignmentPublishIssue,facultyAssignmentCanSaveDraft} from "@/modules/courses/faculty-assignment-editor-ui-model";
 type Existing={
  id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxPoints:number;sequence:number;status:string;updatedAt:string;
@@ -20,6 +22,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
  const [error,setError]=useState<string|null>(null);
  const [success,setSuccess]=useState<string|null>(null);
  const [pending,setPending]=useState(false);
+ const [publishNow,setPublishNow]=useState(true);
  const [selected,setSelected]=useState("");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [title,setTitle]=useState("");
@@ -65,6 +68,10 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     const issue=facultyAssignmentDraftIssue({title,description,maxPoints});
     if(issue){setError(issue);return;}
   }
+  if(action==="CREATE" && publishNow){
+    const issue=facultyAssignmentPublishIssue(authoringDueInstant(dueAt),new Date());
+    if(issue){setError(issue);return;}
+  }
   if(action==="PUBLISH" && existing){
     const publishIssue=facultyAssignmentPublishIssue(existing.dueAt,new Date());
     if(publishIssue){setError(publishIssue);return;}
@@ -89,18 +96,36 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
     title,description:description||null,dueAt:authoringDueInstant(dueAt),maxPoints,
     ...(methodsEnabled&&methodsDirty?{allowedMethods}:{}),
    }:{...base,assignmentId:existing?.id,expectedUpdatedAt:existing?.updatedAt};
-   const response=await fetch("/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+"/command",{
+   const endpoint="/api/courses/faculty/assignments/"+encodeURIComponent(deliveryId)+"/command";
+   const receipt=await apiFetch<unknown>(endpoint,{
     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
    });
-   if(!response.ok){
-     const body:unknown=await response.json().catch(()=>null);
-     throw new Error(facultyAssignmentCommandError(response.status,body));
-   }
-   const receipt:unknown=await response.json().catch(()=>null);
    if(!facultyAssignmentCommandReceipt(receipt,{action,deliveryId,
       assignmentId:existing?.id,title,maxPoints}))throw new Error("Assignment save status is uncertain. Reload the Section before retrying.");
-   setConfirmed(false);setMethodsDirty(false);setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Unable to save changes.");}
+   setConfirmed(false);setMethodsDirty(false);
+   if(action==="CREATE" && publishNow){
+     const created=(receipt as {assignment?:{id?:unknown;updatedAt?:unknown}}).assignment;
+     if(typeof created?.id!=="string"||typeof created.updatedAt!=="string"){
+       setError("Assignment was created as a draft. Reload before publishing it.");
+     }else{
+       try{
+         const published=await apiFetch<unknown>(endpoint,{
+           method:"POST",headers:{"Content-Type":"application/json"},
+           body:JSON.stringify({action:"PUBLISH",assignmentId:created.id,
+             expectedUpdatedAt:created.updatedAt,confirmed:true}),
+         });
+         if(!facultyAssignmentCommandReceipt(published,{action:"PUBLISH",deliveryId,
+           assignmentId:created.id}))throw new Error("Assignment was saved as a draft, but publishing could not be confirmed.");
+         setSuccess("Assignment created and published.");
+       }catch(reason){
+         setSuccess("Assignment created as a draft. Publish it when it is ready for learners.");
+         setError(reason instanceof Error?reason.message:friendlyApiError({}));
+       }
+     }
+   }else if(action==="CREATE")setSuccess("Assignment created as a draft. Publish it when it is ready for learners.");
+   else setSuccess("Assignment "+action.toLowerCase()+" completed. Refresh if another author changed this Section.");
+   router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{mutationLock.current=false;setPending(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
@@ -138,8 +163,15 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}
   <div className="flex flex-wrap gap-2">
-   {!existing?<button type="button" disabled={pending||!lessonId}
-    onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>
+   {!existing?<div className="flex flex-wrap items-center gap-3">
+    <label className="flex min-h-10 items-center gap-2 text-sm">
+      <input type="checkbox" checked={publishNow} disabled={pending}
+        onChange={event=>setPublishNow(event.target.checked)}/>
+      Publish now
+    </label>
+    <button type="button" disabled={pending||!lessonId}
+    onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">{publishNow?"Create and publish":"Create draft"}</button>
+   </div>
    : <>
     <button type="button" disabled={!assignmentActionAvailable(existing.status,"EDIT")||pending||(!methodsDirty&&!facultyAssignmentCanSaveDraft(existing,{title,description,dueAt,maxPoints},pending,true))}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">Save draft</button>

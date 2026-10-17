@@ -7,6 +7,7 @@ import { isSuperAdmin } from "@/modules/identity/context";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 
 /** SA-placements-projects-100: authenticated reporter intake until OD-27 is resolved. */
+export const metadata={title:"Report Issue · 42 Tracker"};
 export default async function TrackerReportPage() {
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) redirect("/dashboard");

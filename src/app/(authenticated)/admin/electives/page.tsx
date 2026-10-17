@@ -19,7 +19,7 @@ export default async function SuperAdminElectivesPage({
   const parsed = adminElectiveQuerySchema.safeParse({ q: params.q, status: params.status,
     programId: params.programId || undefined, semesterNumber: params.semesterNumber || undefined });
   if (!parsed.success) return <div className="space-y-4">
-    <PageHeader eyebrow="Super Admin · Academics" title="Electives" />
+    <PageHeader  title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
       action={<Link href="/admin/electives" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
@@ -29,10 +29,10 @@ export default async function SuperAdminElectivesPage({
     context.adminScope?.collegeId ? listCollegeElectiveSlotOptions(context) : Promise.resolve(null),
   ]);
   return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Elective slots"
-      description="Read-only elective slot records from the selected college. No learner picks, capacity guarantees or offering availability are inferred." />
-    {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Choose a college"
-      description="Use the Super Admin scope selector to choose a college before inspecting its elective slots." /> :
+    <PageHeader  title="Electives"
+      description="Manage elective slots and their offerings for this college." />
+    {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Select a college to continue"
+      description="Choose a college in the header above to see its electives." /> :
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">

@@ -44,7 +44,8 @@ describe("chat-7 graceful operation on touched pages",()=>{
  });
  it("GR-90 Recruiter result errors use plain toast copy and retain unsubmitted selections",()=>{
   const text=src("src/components/placements/recruiter-result-controls.tsx");
-  expect(text).toContain("Could not save this result. Please try again.");
+  expect(text).toContain("friendlyApiError({})");
+  expect(text).toContain("apiFetch(");
   expect(text).toContain("failed selections remain checked for retry.");
  });
 });

@@ -1,4 +1,8 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -30,6 +34,8 @@ export function TpoStudentsBulkAdd({
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleOptionId, setRoleOptionId] = useState("");
   const [busy, setBusy] = useState(false);
+  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [roleError, setRoleError] = useState("");
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkDriveResult[]>([]);
@@ -44,12 +50,10 @@ export function TpoStudentsBulkAdd({
     if (!jobId) return;
     setBusy(true);
     try {
-      const response = await fetch(
-        "/api/placements/jobs/" + encodeURIComponent(jobId) + "/roles",
-        { credentials: "same-origin", cache: "no-store" },
+      const body=await apiFetch<{roles?:Role[]}>(
+        "/api/placements/jobs/"+encodeURIComponent(jobId)+"/roles",
+        {credentials:"same-origin",cache:"no-store"},
       );
-      if (!response.ok) throw new Error("Cannot load roles for this drive.");
-      const body = (await response.json()) as { roles?: Role[] };
       const active = (body.roles ?? []).filter((role) => role.status === "ACTIVE");
       setRoles(active);
       setRoleOptionId(active[0]?.id ?? "");
@@ -85,27 +89,19 @@ export function TpoStudentsBulkAdd({
       setError("The current-page selection or role is invalid. Review the roster.");
       return;
     }
-    if (!window.confirm(
-      "Add " + candidates.length + " selected learner(s) to " +
-      (drives.find((drive) => drive.id === driveId)?.title ?? "this drive") +
-      "? Eligibility and participation are checked individually by the server. " +
-      "Ineligible learners will not be added and existing applications are preserved.",
-    )) return;
+    // The confirmation is an accessible in-page dialog, opened by the
+    // "Review and add selected" button; the server still rechecks eligibility.
+    setConfirmOpen(false);
     setBusy(true);
     setError("");
     setResults([]);
     try {
-      const response = await fetch(
-        "/api/placements/jobs/" + encodeURIComponent(driveId) + "/bulk-add",
-        {
-          method: "POST", credentials: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        },
-      );
-      const body = (await response.json().catch(() => null)) as
-        | { results?: BulkDriveResult[]; error?: string } | null;
-      if (!response.ok || !body?.results) throw new Error(body?.error ?? "Bulk add failed.");
+      const body=await apiFetch<{results:BulkDriveResult[]}>(
+        "/api/placements/jobs/"+encodeURIComponent(driveId)+"/bulk-add",{
+          method:"POST",credentials:"same-origin",
+          headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),
+        });
+      if(!Array.isArray(body?.results))throw Error("Could not confirm the selected additions. Refresh applications and try again.");
       setResults(body.results);
       setSelected([]);
       router.refresh();
@@ -188,13 +184,24 @@ export function TpoStudentsBulkAdd({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm text-body">{selected.length} learner(s) selected</span>
             <button type="button" disabled={busy || !roleOptionId || selected.length === 0}
-              onClick={() => void submit()}
+              onClick={() => setConfirmOpen(true)}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
             </button>
           </div>
         </>
       )}
+      <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
+        title="Add selected students to a drive"
+        description={"Add "+selected.length+" selected learner(s) to "+
+          (drives.find(drive=>drive.id===driveId)?.title??"this drive")+
+          "? Eligibility and participation are checked individually by the server. Ineligible learners will not be added and existing applications are preserved."}
+        footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button disabled={busy||guardedPending||!selected.length||!roleOptionId} onClick={()=>void runGuarded(submit)}>
+            {busy?"Checking learners…":"Confirm add selected"}
+          </Button></>}>
+        <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
+      </Dialog>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">

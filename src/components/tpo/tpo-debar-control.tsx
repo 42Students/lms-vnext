@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
@@ -44,31 +45,13 @@ export function TpoDebarControl({
           : { action },
         direct,
       );
-      const response = await fetch(
-        "/api/placements/tpo/students/" +
-          encodeURIComponent(membershipId) +
-          "/participation",
-        {
-          method: "PUT",
-          credentials: "same-origin",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(decision),
-        },
-      );
-
-      if (!response.ok) {
-        setFeedback({
-          tone: "error",
-          message: response.status === 409
-            ? "The learner decision has changed. Reload to review the latest state before confirming again."
-            : "Could not save the learner restriction. Check permissions, the learner enrollment and your input.",
+      const result=await apiFetch<{
+        changed:boolean;direct:TpoMembershipDecisionSnapshot;
+      }>(
+        "/api/placements/tpo/students/"+encodeURIComponent(membershipId)+"/participation",{
+          method:"PUT",credentials:"same-origin",
+          headers:{"Content-Type":"application/json"},body:JSON.stringify(decision),
         });
-        return;
-      }
-      const result: {
-        changed: boolean;
-        direct: TpoMembershipDecisionSnapshot;
-      } = await response.json();
       setDirect(result.direct);
       setReason("");
       setConfirmed(false);
@@ -84,9 +67,9 @@ export function TpoDebarControl({
     } catch (error) {
       setFeedback({
         tone: "error",
-        message: error instanceof Error
-          ? error.message
-          : "A network error prevented saving. No change is assumed.",
+        message: error instanceof FriendlyFetchError&&error.status===409
+          ?"This changed while you were working. Your reason is kept below; refresh and try again."
+          :error instanceof Error?error.message:"Could not save this decision. Please try again.",
       });
     } finally {
       setPending(false);

@@ -49,7 +49,7 @@ export default async function MentorProjectsPage({
   if (
     available?.projects.enabled !== true
   ) {
-    return <MentorProjectsUnavailable />;
+    return <MentorProjectsUnavailable loadFailed={available===null} />;
   }
 
   const params = await searchParams;

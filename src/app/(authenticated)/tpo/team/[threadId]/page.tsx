@@ -43,11 +43,25 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    </button>
   </form>
   <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="space-y-3">
-   {result.messages.map(message=><li id={"team-message-"+message.id} key={message.id}
-    className="min-w-0 rounded-xl border border-border bg-surface p-4">
-    <p className="text-xs text-muted-foreground">{message.authorMembershipId===context.membership?.id?"You":"Team member"} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(message.createdAt)} IST</p>
-    <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
-   </li>)}
+   {result.messages.map((message,index)=>{
+    const day=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
+     timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
+    }).format(date);
+    const own=message.authorMembershipId===context.membership?.id;
+    const showDay=index===0||day(result.messages[index-1].createdAt)!==day(message.createdAt);
+    return <li id={"team-message-"+message.id} key={message.id} className="min-w-0">
+     {showDay?<p className="my-3 text-center text-xs font-semibold text-muted-foreground">{day(message.createdAt)}</p>:null}
+     <div className={own?
+      "ml-auto max-w-[88%] rounded-xl border border-border bg-surface-secondary p-4":
+      "mr-auto max-w-[88%] rounded-xl border border-border bg-surface p-4"}>
+      <p className="text-xs text-muted-foreground">
+       {own?"You":message.authorName?.trim()||"Team member"} ·
+       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
+      </p>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
+     </div>
+    </li>;
+   })}
   </ol>
   <TpoTeamMessageScroll highlightId={highlightId}/>
   <nav aria-label="Team message history pages" className="flex flex-wrap items-center gap-3 text-sm">

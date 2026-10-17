@@ -1,6 +1,8 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 type Lesson={id:string;name:string;courseName:string;contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number};
 type Report={selectedLessons:number;matchedContents:number;changed:number;unchanged:number;failures:{id:string;reason:string}[]};
 export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesson[]}){
@@ -12,14 +14,12 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   if(!confirm((show?"Make content visible":"Hide content")+" in "+selected.length+" lesson(s) for students?"))return;
   setPending(true);setReport(null);setError(null);
   try{
-   const response=await fetch("/api/admin/lessons/bulk-status",{method:"POST",
+   const data=await apiFetch<Report>("/api/admin/lessons/bulk-status",{method:"POST",
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonIds:selected,visibleToStudents:show,confirmed:true}),
    });
-   const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(data?.error??"Bulk visibility update failed.");
-   setReport(data as Report);router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not update lessons.");}
+   setReport(data);router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setPending(false);}
  }
  return <section aria-label="Lesson bulk visibility" className="space-y-3 rounded-xl border border-border bg-surface p-4">
@@ -50,7 +50,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {report?<div role="status" className="space-y-1 rounded-md border border-border p-3 text-sm">
    <p>{report.changed} content records updated · {report.unchanged} unchanged · {report.failures.length} failed</p>
-   {report.failures.length?<ul className="list-disc pl-5">{report.failures.slice(0,25).map(row=><li key={row.id}>{row.id}: {row.reason}</li>)}</ul>:null}
+   {report.failures.length?<ul className="list-disc pl-5">{report.failures.slice(0,25).map(row=><li key={row.id}>Lesson update was not applied. Review the selection and retry.</li>)}</ul>:null}
   </div>:null}
  </section>;
 }

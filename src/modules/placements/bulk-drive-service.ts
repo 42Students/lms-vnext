@@ -8,7 +8,7 @@ import {
   collegeMemberships, membershipRoles, placementApplications,
   placementApplicationScreenings, placementApplicationStatusHistory,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
-  placementJobs, placementSeasons, placementDebarments, users,
+  placementJobs, placementSeasons, placementDebarments, inAppNotifications, users,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -283,7 +283,7 @@ async function addOne(
     await tx.insert(placementApplicationScreenings).values({
       applicationId: created.id,
     });
-    await recordActivityEventInTransaction(tx, context, {
+    const activity=await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_SUBMITTED,
       collegeId: job.collegeId,
       subjectType: "placement_application", subjectId: created.id,
@@ -295,6 +295,12 @@ async function addOne(
       groupKey: "placement-job:" + job.id + ":applications",
       dedupeKey: "placement-application:" + created.id + ":submitted",
     });
+    await tx.insert(inAppNotifications).values({
+      userId:learner.userId,eventId:activity.id,
+      title:"You were added to a placement drive",
+      body:"Your placement cell added you to a drive. Open My Placements to review the application.",
+      actionHref:"/learn/my-placements",
+    }).onConflictDoNothing();
     return bulkDriveOutcome(membershipId, { eligible: true });
   });
 }

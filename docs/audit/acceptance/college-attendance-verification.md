@@ -9,7 +9,7 @@ Audit `docs/audit/pages/college/attendance.md`; protocol `docs/orchestrator/brie
 | COL-attendance-05 | DONE | Correction success persists as role=status and specific learner/session message; `admin-attendance-workspace.tsx`, test COL-attendance-05 |
 | COL-attendance-06 | DONE | Record drawer shows status and saves once with disabled busy buttons; removed extra window.confirm; `admin-attendance-workspace.tsx`, test COL-attendance-06 |
 | COL-attendance-07 | NOT-A-GAP | Preserve vNext first-class excused/medical/late for accuracy (owner approved intentional improvements). These are counted as non-present in percentage, not mislabelled in the UI; `admin-grid-model.ts`, test COL-attendance-07 |
-| COL-attendance-09 | OPEN | Course options derive from actual deliveries; per-term + past labels need server term metadata, not guessed; test COL-attendance-09 |
+| COL-attendance-09 | OPEN | Same Course across academic periods now exposes explicit term/delivery selector and validates exact selection in page loader; historical past-term labels still need supplied status metadata, so OPEN. Test COL-attendance-09 |
 | COL-attendance-10 | OPEN | Elective slot details absent from the selected course option model; must not mark ordinary courses elective; test COL-attendance-10 |
 | COL-attendance-11 | DONE | Invalid filters and missing selected college are rendered as calm in-page error with reset; route error boundary has Retry; `attendance/page.tsx`, test COL-attendance-11 |
 | COL-attendance-12 | DONE | Per-IST-calendar-day CSV P/A/N, ✖ if none, bounded to the loaded college/month; multiple sessions separated by slash, spreadsheet formula neutralization; test COL-attendance-12 |

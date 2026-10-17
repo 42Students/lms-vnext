@@ -321,7 +321,7 @@ export function SuperAdminHrAccountDialog({
               }
             >
               <option value="ACTIVE">Active</option>
-              <option value="ARCHIVED">Archived</option>
+              <option value="ARCHIVED">Suspended</option>
             </Select>
 
             {account.status === "DISABLED" ? (

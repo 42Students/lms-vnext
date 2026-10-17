@@ -38,13 +38,13 @@ export default async function SuperAdminAttendancePage({
     return (
       <div className="space-y-6">
         <PageHeader
-          eyebrow="Super Admin · Academics"
+          
           title="Attendance"
           description="Attendance oversight requires an exact college safety scope."
         />
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college in the Super Admin scope selector before reviewing or correcting attendance."
+          title="Select a college to continue"
+          description="Choose a college in the header above to see its attendance."
         />
       </div>
     );
@@ -119,7 +119,7 @@ export default async function SuperAdminAttendancePage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Super Admin · Academics"
+        
         title="Attendance"
         description={`Scoped attendance oversight for ${options.college.name}.`}
       />

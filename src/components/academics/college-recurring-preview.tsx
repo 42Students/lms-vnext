@@ -2,7 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { collegePreviewErrorLabel } from "@/modules/academics/college-recurring-preview-ui-model";
+import {apiFetch} from "@/lib/api-fetch";
 
 type Option = { id: string; name: string };
 type ClassOption = Option & { cohortName: string; periodStart: string; periodEnd: string; updatedAt: string };
@@ -49,7 +49,7 @@ export function CollegeRecurringPreview({
     setResult(null);
     startTransition(async () => {
       try {
-        const response = await fetch("/api/academics/sections/recurring-preview", {
+        const payload=await apiFetch<Result>("/api/academics/sections/recurring-preview", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify({
@@ -58,9 +58,7 @@ export function CollegeRecurringPreview({
             deliveryId: deliveryId || null,
           }),
         });
-        const payload: unknown = await response.json();
-        if (!response.ok) throw new Error(collegePreviewErrorLabel(payload));
-        setResult(payload as Result);
+        setResult(payload);
         setLastPreviewKey(previewKey());
       } catch (err) {
         setError(err instanceof Error ? err.message : "Schedule preview failed");
@@ -80,7 +78,8 @@ export function CollegeRecurringPreview({
     setSkipped([]);
     startTransition(async () => {
       try {
-        const response = await fetch("/api/academics/sections/recurring-execute", {
+        const value=await apiFetch<{created?:number;skipped?:Array<{localDate:string;reasons:string[]}>}>(
+          "/api/academics/sections/recurring-execute",{
           method: "POST", headers: {"content-type":"application/json"},
           body: JSON.stringify({
             sectionId,from,to,weekdays,startTime,endTime,title,
@@ -89,8 +88,6 @@ export function CollegeRecurringPreview({
             expectedSectionUpdatedAt:version,confirm:true,
           }),
         });
-        const value = await response.json() as {created?:number;error?:string;skipped?:Array<{localDate:string;reasons:string[]}>};
-        if (!response.ok) throw new Error(value.error ?? "Scheduling failed");
         setCreated(value.created ?? 0);
         setSkipped(value.skipped ?? []);
         setResult(null);

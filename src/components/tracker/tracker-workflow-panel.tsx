@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -44,67 +46,40 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
   const [retestNote, setRetestNote] = useState("");
 
   function save() {
+    if(pending)return;
     startTransition(async () => {
-      const response = await fetch(
-        `/api/tracker/issues/${encodeURIComponent(issue.publicId)}/workflow`,
-        {
-          method: "PATCH",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            expectedVersion: issue.version,
-            status,
-            resolution,
-            affectedLayer: affectedLayer || null,
-            rootCause,
-            fixNotes,
-            frontendCommitSha,
-            backendCommitSha,
-            regressionTestStatus,
-            productionVerified,
+      try {
+        await apiFetch(`/api/tracker/issues/${encodeURIComponent(issue.publicId)}/workflow`,{
+          method:"PATCH",headers:{"content-type":"application/json"},
+          body:JSON.stringify({
+            expectedVersion:issue.version,status,resolution,
+            affectedLayer:affectedLayer||null,rootCause,fixNotes,
+            frontendCommitSha,backendCommitSha,regressionTestStatus,productionVerified,
           }),
-        },
-      );
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        showToast({
-          tone: "error",
-          title: response.status === 409 ? "Issue changed elsewhere" : "Tracker update failed",
-          description: response.status === 409
-            ? "Refresh the issue before applying your changes."
-            : payload?.error ?? "The workflow could not be updated.",
         });
-        return;
+        showToast({tone:"success",title:"Engineering details saved"});
+        router.refresh();
+      }catch(reason){
+        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Tracker update failed",
+          description:reason instanceof Error?reason.message:friendlyApiError({})});
       }
-      showToast({ tone: "success", title: "Tracker issue updated" });
-      router.refresh();
     });
   }
 
-  function retest(result: "PASS" | "FAIL") {
-    startTransition(async () => {
-      const response = await fetch(
-        `/api/tracker/issues/${encodeURIComponent(issue.publicId)}/retest`,
-        {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({
-            expectedVersion: issue.version,
-            result,
-            note: retestNote || null,
-          }),
-        },
-      );
-      const payload = await response.json().catch(() => null);
-      if (!response.ok) {
-        showToast({
-          tone: "error",
-          title: response.status === 409 ? "Issue changed elsewhere" : "Retest failed",
-          description: payload?.error ?? "Refresh and try again.",
+  function retest(result:"PASS"|"FAIL"){
+    if(pending)return;
+    startTransition(async()=>{
+      try{
+        await apiFetch(`/api/tracker/issues/${encodeURIComponent(issue.publicId)}/retest`,{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify({expectedVersion:issue.version,result,note:retestNote||null}),
         });
-        return;
+        showToast({tone:"success",title:result==="PASS"?"Retest passed — issue closed":"Retest failed — issue reopened"});
+        router.refresh();
+      }catch(reason){
+        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest could not be recorded",
+          description:reason instanceof Error?reason.message:friendlyApiError({})});
       }
-      showToast({ tone: "success", title: `Retest recorded: ${result}` });
-      router.refresh();
     });
   }
 
@@ -152,10 +127,14 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         <label className="text-sm font-semibold text-body">
           Frontend commit SHA
           <Input className="mt-1" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
+          {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
         </label>
         <label className="text-sm font-semibold text-body">
           Backend commit SHA
           <Input className="mt-1" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
+          {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
+            target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">View on GitHub ↗</a>:null}
         </label>
         <label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
           <input type="checkbox" checked={productionVerified} onChange={(e) => setProductionVerified(e.target.checked)} />
@@ -168,11 +147,13 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
 
       {issue.status === "READY_FOR_RETEST" ? (
         <div className="space-y-3 border-t border-border pt-4">
-          <h3 className="m-0 text-base font-semibold text-foreground">Retest</h3>
+          <h3 className="m-0 text-base font-semibold text-foreground">Ready for retest</h3>
+          <p className="text-sm font-semibold text-body">Does it work now?</p>
+          <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
           <Textarea value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
           <div className="flex gap-2">
-            <Button disabled={pending} onClick={() => retest("PASS")}>Pass retest</Button>
-            <Button variant="danger" disabled={pending} onClick={() => retest("FAIL")}>Fail retest</Button>
+            <Button disabled={pending} onClick={() => retest("PASS")}>Works now</Button>
+            <Button variant="danger" disabled={pending} onClick={() => retest("FAIL")}>Still broken</Button>
           </div>
         </div>
       ) : null}

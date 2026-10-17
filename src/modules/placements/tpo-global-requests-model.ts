@@ -2,9 +2,9 @@ import {parseActivityDateBoundary} from "@/modules/activity/date-boundary";
 import {z} from "zod";
 export const GLOBAL_TPO_REQUEST_TYPES=["ALL","APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"] as const;
 export const globalTpoRequestsQuerySchema = z.object({
-  status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED"]).default("PENDING"),
+  status: z.enum(["PENDING","APPROVED","REJECTED","CANCELLED","ALL"]).default("PENDING"),
   requestType: z.enum(GLOBAL_TPO_REQUEST_TYPES).default("ALL"),
-  age: z.enum(["ALL","TODAY","ONE_TO_TWO_DAYS","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
+  age: z.enum(["ALL","TODAY","ONE_TO_TWO_DAYS","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS","LAST_30_DAYS"]).default("ALL"),
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
   urgentOnly: z.union([z.literal("true"),z.literal(true)]).transform(()=>true).optional(),
@@ -108,8 +108,8 @@ export function globalTpoRequestFirstPageHref(query:{
 }
 
 /** Fixed clock injection makes the age cutoff reproducible in tests. */
-export function tpoRequestAgeCutoff(age:"ALL"|"TODAY"|"ONE_TO_TWO_DAYS"|"OLDER_THAN_1_DAY"|"OLDER_THAN_2_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS",asOf:Date){
- if(age==="ALL"||age==="TODAY"||age==="ONE_TO_TWO_DAYS")return undefined;
+export function tpoRequestAgeCutoff(age:"ALL"|"TODAY"|"ONE_TO_TWO_DAYS"|"OLDER_THAN_1_DAY"|"OLDER_THAN_2_DAYS"|"OLDER_THAN_7_DAYS"|"OLDER_THAN_30_DAYS"|"LAST_30_DAYS",asOf:Date){
+ if(age==="ALL"||age==="TODAY"||age==="ONE_TO_TWO_DAYS"||age==="LAST_30_DAYS")return undefined;
  return new Date(asOf.getTime()-(age==="OLDER_THAN_1_DAY"?1:age==="OLDER_THAN_2_DAYS"?2:age==="OLDER_THAN_7_DAYS"?7:30)*86400000);
 }
 
@@ -125,5 +125,6 @@ export function tpoRequestDateBounds(age:z.infer<typeof globalTpoRequestsQuerySc
   return {after:parseActivityDateBoundary(day,"from"),before:new Date(parseActivityDateBoundary(day,"to").getTime()+1)};
  }
  if(age==="ONE_TO_TWO_DAYS")return {after:new Date(asOf.getTime()-2*86400000),before:new Date(asOf.getTime()-86400000)};
+ if(age==="LAST_30_DAYS")return {after:new Date(asOf.getTime()-30*86400000),before:undefined};
  return {after:undefined,before:tpoRequestAgeCutoff(age,asOf)};
 }

@@ -25,7 +25,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       ])
     : [null, null];
   return <div className="space-y-6">
-      <AcademicSetupSteps step={6} />
+      {data ? <AcademicSetupSteps step={6} /> : null}
+    {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
@@ -74,7 +75,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.cohortName}</td>
               <td className="p-2">{row.description?.trim() || "—"}</td>
-              <td className="p-2">{row.activeLearners}</td>
+              <td className="p-2">{row.activeLearners}{row.capacity!==null && row.activeLearners>=row.capacity ? <span className="ml-2 rounded border border-border px-2 text-xs font-semibold text-error" title="Class is full; learners cannot be moved into it.">Class full</span> : null}</td>
               <td className="p-2">{row.capacity ?? "—"}</td>
               <td className="p-2"><CollegeClassRowActions row={row} /></td>
             </tr>)}</tbody>

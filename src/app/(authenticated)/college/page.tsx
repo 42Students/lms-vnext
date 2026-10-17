@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeEditDialog } from "@/components/admin/college-edit-dialog";
 import { CollegeSetupChecklist } from "@/components/admin/college-setup-checklist";
 import { CollegeDashboardCards } from "@/components/admin/college-dashboard-cards";
+import {CollegeDashboardSectionFailure} from "@/components/admin/college-dashboard-section-failure";
 import {CollegeClosingQuizzesCard} from "@/components/admin/college-closing-quizzes-card";
 import {getCollegeClosingQuizzes} from "@/modules/admin-ui/college-dashboard-quizzes-service";
 import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-actions";
@@ -42,7 +43,10 @@ export default async function CollegeOverviewPage() {
     );
   }
 
-  const [dashboard, attendance, lowAttendance, unstaffed, pendingGrades, setupGaps,closingQuizzes] = await Promise.all([
+  // A secondary feed failing must not hide other dashboard sections or suggest
+  // that missing data is a real zero. Keep each result independently visible.
+  const [dashboardResult,attendanceResult,riskResult,staffingResult,
+    gradingResult,setupResult,closingResult]=await Promise.allSettled([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
@@ -51,6 +55,13 @@ export default async function CollegeOverviewPage() {
     getCollegeDashboardSetupGaps(context),
     getCollegeClosingQuizzes(context),
   ]);
+  const dashboard=dashboardResult.status==="fulfilled"?dashboardResult.value:null;
+  const attendance=attendanceResult.status==="fulfilled"?attendanceResult.value:null;
+  const lowAttendance=riskResult.status==="fulfilled"?riskResult.value:null;
+  const unstaffed=staffingResult.status==="fulfilled"?staffingResult.value:null;
+  const pendingGrades=gradingResult.status==="fulfilled"?gradingResult.value:null;
+  const setupGaps=setupResult.status==="fulfilled"?setupResult.value:null;
+  const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
   return (
     <div className="space-y-6">
@@ -118,8 +129,9 @@ export default async function CollegeOverviewPage() {
           </p>
         </div>
       </section>
-      <CollegeDashboardCards cards={dashboard.cards} />
-      <CollegeClosingQuizzesCard data={closingQuizzes}/>
+      {dashboard?<CollegeDashboardCards cards={dashboard.cards}/>:<CollegeDashboardSectionFailure title="At a glance"/>}
+      {closingQuizzes?<CollegeClosingQuizzesCard data={closingQuizzes}/>:<CollegeDashboardSectionFailure title="Closing quizzes"/>}
+      {attendance?<>
       <section aria-label="Today" className="space-y-3">
         <h2 className="text-xl font-semibold text-foreground">Today</h2>
         <div className="grid gap-3 sm:grid-cols-3">
@@ -136,6 +148,8 @@ export default async function CollegeOverviewPage() {
           </div>)}
         </div>
       </section>
+      </>:<CollegeDashboardSectionFailure title="Today"/>}
+      {attendance?<>
       <section aria-label="Attendance not taken" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -165,7 +179,8 @@ export default async function CollegeOverviewPage() {
         {attendance.unattendedCount > attendance.unattended.length &&
           <p className="text-xs text-muted-foreground">Showing the 20 most recent sessions. Open attendance to review more.</p>}
       </section>
-
+      </>:<CollegeDashboardSectionFailure title="Attendance not taken"/>}
+      {lowAttendance?<>
       <section aria-label="Low attendance" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">
@@ -197,6 +212,8 @@ export default async function CollegeOverviewPage() {
         {lowAttendance.rows.length === 200 &&
           <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
       </section>
+      </>:<CollegeDashboardSectionFailure title="Low attendance"/>}
+      {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Courses with no teacher</h2>
@@ -221,6 +238,8 @@ export default async function CollegeOverviewPage() {
           </li>)}
         </ul>}
       </section>
+      </>:<CollegeDashboardSectionFailure title="Courses with no teacher"/>}
+      {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-foreground">Waiting to be graded</h2>
@@ -242,6 +261,8 @@ export default async function CollegeOverviewPage() {
             </li>)}
           </ul>}
       </section>
+      </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
+      {setupGaps?<>
       <section aria-label="Setup gaps" className="space-y-3 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">Setup gaps</h2>
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
@@ -257,8 +278,9 @@ export default async function CollegeOverviewPage() {
           No setup gaps found.
         </p>}
       </section>
+      </>:<CollegeDashboardSectionFailure title="Setup gaps"/>}
       <CollegeAdminQuickActions />
-      <CollegeSetupChecklist phases={dashboard.setup.phases} />
+      {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
     </div>
   );
 }

@@ -50,6 +50,10 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
  it("COL-attendance-09 course options remain based on actual deliveries not a guessed past-term label",()=>{
   expect(workspace()).toContain("offeredCourses");
   expect(workspace()).toContain("selectedCourseId");
+  expect(workspace()).toContain("termDeliveries.length>1");
+  expect(workspace()).toContain("academicPeriodName");
+  expect(workspace()).toContain('params.set("deliveryId"');
+  expect(page()).toContain("entry.deliveryId===query.deliveryId");
  });
  it("COL-attendance-10 non-elective course labels cannot be asserted as elective without a slot",()=>{
   expect(workspace()).toContain("{course.code} · {course.name}");

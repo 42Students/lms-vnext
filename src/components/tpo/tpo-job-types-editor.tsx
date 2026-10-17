@@ -1,4 +1,6 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {TpoCustomJobTypePlaced} from "./tpo-custom-job-type-placed";
 import {useRouter} from "next/navigation";
@@ -16,20 +18,18 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
  async function send(url:string,method:"POST"|"PATCH",payload:Record<string,unknown>){
   setBusy(true);setError("");setMessage("");
   try{
-   const response=await fetch(url,{method,credentials:"same-origin",
+   await apiFetch(url,{method,credentials:"same-origin",
     headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
-   const data=await response.json() as {error?:string};
-   if(!response.ok)throw Error(
-    data.error==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
-    data.error==="TPO_JOB_TYPE_LIMIT"?"You can add up to 30 custom job types.":
-    data.error==="TPO_JOB_TYPE_EXISTS"?"This job type already exists.":
-    data.error==="TPO_JOB_TYPE_BUILTIN"?"This is a fixed job type.":
-    data.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
-    data.error??"Job types were not saved."
-   );
    setMessage("Job types saved");router.refresh();
    if(method==="POST"){setLabel("");setCountsAsPlaced(null);}
-  }catch(e){setError(e instanceof Error?e.message:"Unable to save setting.");}
+  }catch(e){
+   const code=e instanceof FriendlyFetchError?e.code:null;
+   setError(code==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
+    code==="TPO_JOB_TYPE_LIMIT"?"You can add up to 30 custom job types.":
+    code==="TPO_JOB_TYPE_EXISTS"?"This job type already exists.":
+    code==="TPO_JOB_TYPE_BUILTIN"?"This is a fixed job type.":
+    code==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
+    e instanceof Error?e.message:"Job types were not saved.");}
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4">
@@ -76,7 +76,7 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     })} className="min-h-10 rounded border border-border px-3 text-sm disabled:opacity-50">
       {item.active?"Switch off":"Reactivate"}
     </button></li>)}</ul>}
-  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {error?<InlineNotice tone="error" message={error} onDismiss={()=>setError("")}/>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
  </section>;
 }

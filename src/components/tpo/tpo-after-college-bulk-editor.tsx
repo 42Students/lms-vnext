@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -36,15 +37,10 @@ export function TpoAfterCollegeBulkEditor({
 
   async function post(changes: { membershipId: string;
     outcome: AfterCollegeOutcome; expectedVersion: string }[]) {
-    const response = await fetch("/api/placements/tpo/students/after-college/bulk", {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ changes }),
+    return apiFetch<Result>("/api/placements/tpo/students/after-college/bulk",{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({changes}),
     });
-    const payload = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(response.status === 409
-      ? "Student records changed. Refresh and select them again."
-      : payload?.error ?? "Bulk update failed");
-    return payload as Result;
   }
 
   async function save() {
