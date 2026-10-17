@@ -149,10 +149,13 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
 
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-muted-foreground">
             <span className="rounded-full bg-muted px-2.5 py-1">
-              {course.sectionName}
+              {course.sectionName} ({course.cohortName})
             </span>
             <span className="rounded-full bg-muted px-2.5 py-1">
               {course.academicPeriodName}
+            </span>
+            <span className="rounded-full bg-muted px-2.5 py-1" title="Academic year / period">
+              {course.academicPeriodCode}
             </span>
             {course.teachingRole!=="PRIMARY"?<span className="rounded-full bg-muted px-2.5 py-1">
               Your role: {course.teachingRole.replaceAll("_"," ").toLowerCase()}
