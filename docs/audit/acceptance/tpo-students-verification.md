@@ -68,3 +68,9 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 
 | TPO-students-13 | OPEN (bulk undo parity pending) | Legacy ineligibility presets and Other are available on single and bulk decisions; `tests/unit/chat12-ineligibility-presets-round5.test.ts` named `TPO-students-13` |
 | TPO-students-16 | OPEN (bulk undo/audit parity pending) | Preview and confirmation failures show friendly retry copy and skipped-row clipboard uses newlines; `tests/unit/chat12-ineligibility-presets-round5.test.ts` named `TPO-students-16` |
+
+| TPO-students-20 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-20` |
+| TPO-students-23 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-23` |
+| TPO-students-31 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-31` |
+| TPO-students-43 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-43` |
+| TPO-students-52 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-52` |
