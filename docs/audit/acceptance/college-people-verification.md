@@ -17,7 +17,6 @@ Tests authored, **not executed**, for every source-checked gap below: `tests/uni
 | COL-people-09 | NOT-A-GAP (approved redesign) | Owner decision OD-23 explicitly replaces permanent deletion with suspend/end membership and session-safe lifecycle. Faculty and learner lifecycle actions only offer Suspend/Reactivate; `tests/unit/college-people-gap-closure.test.ts` — `COL-people-09 is an approved non-destructive membership lifecycle instead of permanent delete`. Avoid destructive deletion of attendance and historical records. |
 | COL-people-10 | DONE | College-scoped person audit and rich profile modal covering education/skills/publications/identity summaries; unit and PG tests COL-people-10 |
 | COL-people-11 | DONE | Upcoming faculty schedule reassignment transaction, overlapping-session skip, result breakdown and activity audit; unit test COL-people-11; DB writer acceptance not run |
-| COL-people-12 | OPEN | OTP per-user lockout may not exist; confirm before adding unsafe bypass |
 | COL-people-13 | OPEN | Legacy Name/Mobile/Gender/Status column arrangement is not fully mirrored |
 | COL-people-14 | DONE | All twelve exact legacy Faculty Type labels in select, normalizer keeps unrecognized persisted variants; unit test COL-people-14 |
 | COL-people-15 | OPEN | Legacy three-select filter layout and suggestions not complete |
@@ -52,7 +51,6 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 | --- | --- | --- |
 | COL-people-15 | DONE | Primary Faculty filters are search, status, Department, Employment type; primary Student filters are search, status, Class, Program, Batch. Technical filters remain under a native accessible Advanced filters disclosure, preserving deep links and server scopes. `college-role-directory-workspace.tsx`; `tests/unit/college-people-gap-closure.test.ts`, case COL-people-15. |
 | COL-people-27 | DONE (source verified) | Mobile card list at widths below md, bounded desktop overflow and responsive advanced filter grid remain; `college-role-directory-workspace.tsx`; named COL-people-27 test. Browser viewport measurement unexecuted. |
-| COL-people-12 | NOT-A-GAP | vNext OTP lockout is per short-lived sign-in attempt (`ATTEMPT_LIFETIME_SECONDS = 300`, `verificationAttempts`), not a persistent user-account lock. No unsafe account-unlock mutation is introduced. `src/modules/auth/login-service.ts`; named COL-people-12 test. |
 | COL-people-13 | OPEN | Headings now use person-facing language; legacy Mobile, Gender, and live presence metrics require authorized source data and are not fabricated. |
 
 ## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
