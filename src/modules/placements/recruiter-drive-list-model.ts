@@ -77,9 +77,11 @@ export function recruiterDrivesHref(query: RecruiterDriveListQuery) {
 
 export const HR_DRIVE_PAGE_SIZE=20;
 export function paginateRecruiterDrives<T>(rows:readonly T[],page:number) {
-  const first=(page-1)*HR_DRIVE_PAGE_SIZE;
-  return {total:rows.length,page,pageSize:HR_DRIVE_PAGE_SIZE,
-    pages:Math.ceil(rows.length/HR_DRIVE_PAGE_SIZE),rows:rows.slice(first,first+HR_DRIVE_PAGE_SIZE)};
+  const pages=Math.ceil(rows.length/HR_DRIVE_PAGE_SIZE);
+  const safePage=Math.min(Math.max(1,Math.trunc(page)||1),Math.max(1,pages));
+  const first=(safePage-1)*HR_DRIVE_PAGE_SIZE;
+  return {total:rows.length,page:safePage,pageSize:HR_DRIVE_PAGE_SIZE,
+    pages,rows:rows.slice(first,first+HR_DRIVE_PAGE_SIZE)};
 }
 
 export function sortRecruiterDrives<T extends RecruiterDriveListItem>(rows:readonly T[],sort:RecruiterDriveListQuery["sort"]):T[]{
