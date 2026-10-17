@@ -315,4 +315,20 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(control).toContain("Existing workspaces remain unchanged.");
  });
 
+
+ it("SA-placements-projects-72 opens scoped Review dialog and locks only after confirmation",()=>{
+  const dialog=source("src/components/projects/project-admin-submission-review.tsx");
+  const page=source("src/components/projects/project-admin-submissions-page.tsx");
+  for(const phrase of ["Review — ","Feedback for the learner","Request changes",
+   "Accept submission","Lock submission","Lock this submission?",
+   "The learner will no longer be able to edit or resubmit it."])
+   expect(dialog).toContain(phrase);
+  expect(dialog).toContain("<Dialog");
+  expect(dialog).toContain("<ConfirmDialog");
+  expect(dialog).toContain("await apiFetch(");
+  expect(dialog).toContain("pendingRef.current");
+  expect(dialog).not.toContain("window.confirm");
+  expect(page).toContain("workspaceTitle={submission.projectTitle}");
+ });
+
 });
