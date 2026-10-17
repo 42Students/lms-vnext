@@ -169,6 +169,10 @@ export async function stageTpoRoundImport(
   used.add(match);
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
+ const explicitRanks=entries.filter(row=>row.outcome==="HOLD"&&row.rank!==null)
+  .map(row=>row.rank!);
+ if(new Set(explicitRanks).size!==explicitRanks.length)
+  throw Error("Duplicate waitlist ranks in the import. Resolve the ranked rows before staging results.");
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   if(inputRows.some(row=>row.invalidRank&&!skippedLines.has(row.line)))
    throw Error("Correct or skip invalid waitlist ranks before failing absent results.");
