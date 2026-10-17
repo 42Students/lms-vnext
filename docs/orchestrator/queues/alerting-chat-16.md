@@ -29,6 +29,6 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 
 ## Notes (blockers, one line each)
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including the daily table before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.
-- BLOCKED GR-117: chat-14 owns the root error boundary and must call `reportClientError` from `src/lib/report-client-error.ts`; the endpoint itself is implemented.
+- RESOLVED GR-117: chat-14 root boundary sends `{ requestId, kind }`; this endpoint accepts 8-character references and the two approved crash kinds (one route only).
 - BLOCKED GR-118/GR-120/GR-122: provision external `INTERNAL_ALERT_TICK_SECRET`, production `TELEGRAM_ALERT_WEBHOOK_SECRET`, and independently reachable `DATABASE_URL` for health-watch; verify the cluster service DNS and webhook registration.
 
