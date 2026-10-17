@@ -11,6 +11,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
   const {run}=useGuardedAction({timeoutMs:35000});
   const [decision,setDecision]=useState<"SHORTLISTED"|"REJECTED">("SHORTLISTED");
   const [note,setNote]=useState("");
+  const [internalReason,setInternalReason]=useState("");
   const [reviewed,setReviewed]=useState(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
           "/applicants/" + encodeURIComponent(applicationId) + "/review",{
           method:"POST",credentials:"same-origin",
           headers:{"content-type":"application/json"},
-          body:JSON.stringify({confirmed:true,expectedUpdatedAt,decision,note:note.trim()}),
+          body:JSON.stringify({confirmed:true,expectedUpdatedAt,decision,note:note.trim(),...(decision==="REJECTED"&&internalReason.trim()?{internalReason:internalReason.trim()}:{})}),
         });
       setSaved(true);
       setReviewed(false);
@@ -69,10 +70,15 @@ export function TpoApplicantReviewForm({jobId, applicationId, expectedUpdatedAt}
       <div className="flex flex-wrap gap-2">
         {["Did not meet criteria","Application incomplete","Company screening decision","Other"].map(preset=>
           <button type="button" key={preset} disabled={pending||saved}
-            onClick={()=>{setNote(preset==="Other"?"":preset);setReviewed(false);}}
+            onClick={()=>{setInternalReason(preset==="Other"?"":preset);setReviewed(false);}}
             className="min-h-10 rounded border border-border px-3 text-primary-text">{preset}</button>)}
       </div>
-      <p className="text-xs text-body">The written reason is visible to the learner. Do not include confidential employer notes.</p>
+      <label className="block text-sm">Internal not-selected reason (not shown to the learner)
+        <textarea value={internalReason} maxLength={500} rows={2}
+          onChange={event=>{setInternalReason(event.target.value);setReviewed(false);}}
+          disabled={pending||saved} className="mt-1 w-full rounded-md border border-border bg-surface p-3"/>
+      </label>
+      <p className="text-xs text-body">The decision note above is learner-visible. Internal reason presets stay private; do not copy confidential employer notes into the learner message.</p>
     </fieldset>:null}
     <label className="flex items-start gap-2 text-sm text-body">
       <input type="checkbox" checked={reviewed} disabled={pending||saved}
