@@ -84,4 +84,17 @@ describe("College Academic Setup open-register functional checks",()=>{
   expect(result).toContain("Narrow your filters.");
  });
 
+ it("COL-academic-setup-29 uses same-origin guarded batch archive without exposing backend codes",()=>{
+  const code=read("src/components/academics/college-cohort-management.tsx");
+  expect(code).toContain('await apiFetch("/api/college/batches/"+encodeURIComponent(row.id)');
+  expect(code).not.toContain('new Error(payload.error??"BATCH_REMOVAL_FAILED")');
+  expect(code).toContain("expectedUpdatedAt:new Date(row.updatedAt).toISOString()");
+ });
+ it("COL-academic-setup-33 uses guarded graduation action without echoing provider error data",()=>{
+  const code=read("src/components/academics/college-cohort-management.tsx");
+  expect(code).toContain('await apiFetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate"');
+  expect(code).not.toContain('throw new Error(payload?.error ?? "Graduation failed")');
+  expect(code).toContain("academicSetupErrorMessage(error,");
+ });
+
 });
