@@ -76,7 +76,7 @@ export function AdminCourseCreatePanel({
   courses,
   offerings,
   deliveries,
-  faculty,duplicateCourseId,
+  faculty,facultyTruncated=false,duplicateCourseId,
 }: {
   departments: readonly Option[];
   periods: readonly PeriodOption[];
@@ -86,6 +86,7 @@ export function AdminCourseCreatePanel({
   offerings: readonly OfferingOption[];
   deliveries: readonly DeliveryOption[];
   faculty: readonly FacultyOption[];
+  facultyTruncated?:boolean;
   duplicateCourseId?:string;
 }) {
   const router = useRouter();
