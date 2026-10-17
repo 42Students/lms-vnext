@@ -12,6 +12,7 @@ import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {readRecruiterThreadMessages,TpoMessagingError} from "@/modules/placements/tpo-messaging-service";
 import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
+import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
@@ -36,6 +37,8 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId)
   : null;
  const conversationSubject=result.thread.jobId ? matchingDrive?.job.title??"Drive unavailable" : "General";
+ const changeRequests=matchingDrive?
+  await getDriveChangeRequests(context,matchingDrive.job.id):null;
  const messages=[...result.messages].reverse().map(message=>({
   ...message,proposal:recruiterProposalMessageMarker(message.senderType,message.body),
  }));
@@ -52,6 +55,15 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <p className="text-sm text-body">{result.total} messages · {result.unread} unread placement cell messages · Page {result.page} of {result.pages}</p>
   <p className="text-xs text-muted-foreground">Messages on this page are shown oldest to newest. Use Older and Newer to browse the rest of the conversation.</p>
   {result.unread>0?<RecruiterConversationReadControl threadId={result.thread.id}/>:null}
+  {changeRequests?.party==="COMPANY" && changeRequests.requests.length>0?
+    <section aria-label="Drive change request updates" className="rounded-xl border border-border bg-surface p-4">
+      <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
+      <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
+      <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
+        className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+        Review requests, answers and decisions
+      </Link>
+    </section>:null}
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">
