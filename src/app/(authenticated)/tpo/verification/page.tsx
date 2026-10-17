@@ -27,6 +27,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
  const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
  return <main className="min-w-0 space-y-4">
+  <header className="space-y-1">
+   <h1 className="text-xl font-semibold">Verification</h1>
+   <p className="text-sm text-body">Check students&apos; education and identity against their documents. Verified marks are what eligibility uses.</p>
+  </header>
   <nav className="flex flex-wrap items-center gap-3">
     <Link href="/tpo/students" className="text-sm text-primary-text underline">Back to students</Link>
     {queue.available&&queue.enabled&&queue.permitted?
@@ -88,9 +92,15 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
    <Link href="/tpo/verification" className="self-center text-primary-text underline">Reset filters</Link>
   </form>
+  {queue.available&&queue.enabled&&queue.permitted&&queue.counts?
+   <p role="status" className="text-sm text-body">
+    {queue.counts.WAITING} waiting · {queue.counts.SENT_BACK} sent back · {queue.counts.VERIFIED} verified
+    {queue.hasMore?" · More students on the next page":""}
+   </p>:null}
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
-   <p>Could not check your verification access</p>
+   <p>Verification records are not available right now. Please try again or contact your college admin.</p>
+   <Link href="/tpo/verification" className="font-semibold text-primary-text underline">Retry</Link>
   </section>:!queue.enabled||!queue.permitted?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">You cannot verify profiles here</h1>
    <p className="text-sm">{!queue.enabled
