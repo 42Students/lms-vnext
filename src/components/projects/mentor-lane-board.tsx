@@ -124,6 +124,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
       className="ml-2 min-h-10 rounded border border-border bg-background p-2">
       <option value="">All lanes</option>
+      <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </select>
