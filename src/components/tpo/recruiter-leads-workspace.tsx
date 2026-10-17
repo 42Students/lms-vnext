@@ -122,6 +122,16 @@ export function RecruiterLeadsWorkspace({
   const [sortAscending,setSortAscending]=useState(false);
   useEffect(()=>{
     try{
+      const saved=window.localStorage.getItem("tpo-engage-sort-v1");
+      if(!saved)return;
+      const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
+      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME"].includes(value.sort??""))
+        setRosterSort(value.sort as EngageSort);
+      if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
+    }catch{ /* Browser storage is optional. */ }
+  },[]);
+  useEffect(()=>{
+    try{
       const stored=window.localStorage.getItem("tpo-engage-visible-columns-v1");
       if(stored)setVisibleColumns(normalizeEngageColumns(JSON.parse(stored)));
     }catch{ /* Optional browser preference, never blocks roster */ }
