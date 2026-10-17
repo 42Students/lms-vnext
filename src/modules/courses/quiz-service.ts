@@ -538,6 +538,11 @@ export async function updateCourseQuiz(
         if(!lockedQuiz||lockedQuiz.status==="ARCHIVED")throw new CoursesServiceError("QUIZ_NOT_FOUND");
         if(input.expectedUpdatedAt&&new Date(input.expectedUpdatedAt).getTime()!==lockedQuiz.updatedAt.getTime())
           throw new CoursesServiceError("FACULTY_QUIZ_STALE_VERSION");
+        const [liveAttemptStats]=await tx.select({
+          count:sql<number>`count(*)::int`,
+          maxAttempt:sql<number>`coalesce(max(${quizAttempts.attemptNumber}),0)::int`,
+        }).from(quizAttempts).where(eq(quizAttempts.quizId,quizId));
+        const liveAttempts=liveAttemptStats?.count??0;
         if(input.dueAt!==undefined && (
           (lockedQuiz.dueAt?.getTime()??null)!==
            (input.dueAt?new Date(input.dueAt).getTime():null))) {
