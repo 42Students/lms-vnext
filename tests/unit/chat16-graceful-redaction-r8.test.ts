@@ -32,7 +32,7 @@ describe("chat-16 GR-113 SA-placements-projects-113 redaction regression",()=>{
     ["Error SQL params=[42, 'private']", "private"],
     ["Error /api/users/alice?email=alice%40example.com", "alice%40example.com"],
     ["Error /home/alice/private/company-file", "/home/alice"],
-    [String.raw`Error C:\\Users\\Alice\\Desktop\\private.txt`, String.raw`C:\\Users\\Alice`],
+    [String.raw`Error C:\Users\Alice\Desktop\private.txt`, String.raw`C:\Users\Alice`],
     ["Error token=privateSession", "privateSession"],
     ["Error otp=998877", "998877"],
     ["Error session_id=person-session", "person-session"],
