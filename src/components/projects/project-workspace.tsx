@@ -1421,20 +1421,14 @@ export function ProjectWorkspace({
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
                     {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </details>:null}
-              <details className="mt-3 text-sm">
-                <summary className="cursor-pointer font-semibold text-primary-text">
-                  Past meetings / Meeting history ({
-                    workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
-                      (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).length
-                  })
-                </summary>
-                <ul className="mt-2 space-y-1">
-                  {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
-                    (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
-                    <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)} ·
-                      {" "+label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
-                </ul>
-              </details>
+              <MentorMeetingHistory meetings={workspace.meetings
+                .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
+                  (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime))
+                .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())
+                .map(m=>({id:m.id,title:m.title,
+                  startsAt:new Date(m.startsAt).toISOString(),
+                  status:label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime)),
+                }))}/>
             </section>;
           })():null}
           <div className="space-y-3">
