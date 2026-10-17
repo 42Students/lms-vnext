@@ -27,7 +27,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-08 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-calendar-reports-09 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-calendar-reports-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-calendar-reports-11 | S3 | MISSING-FILTER | DONE-BRANCH |
 | TPO-calendar-reports-14 | S3 | RESPONSIVE | DONE-BRANCH |
 | TPO-calendar-reports-15 | S3 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-16 | S3 | COPY | DONE-BRANCH |
