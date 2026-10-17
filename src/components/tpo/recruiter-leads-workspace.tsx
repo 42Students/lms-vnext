@@ -113,7 +113,7 @@ export function RecruiterLeadsWorkspace({
   initialAdd?: boolean;
   initialCompany?: string;
   initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
-    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention",string>>;
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention"|"drives",string>>;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
