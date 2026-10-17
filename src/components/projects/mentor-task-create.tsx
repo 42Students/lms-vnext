@@ -64,11 +64,11 @@ export function MentorTaskCreate({
   return <>
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
     <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
-      description="Create a task in a sprint or product backlog. Status, assignee and details are recorded."
+      description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
       footer={<>
         <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
         <Button disabled={busy||!valid} onClick={()=>void create()}>
-          {busy?"Creating…":"Confirm create"}
+          {busy?"Creating…":"Create task"}
         </Button>
       </>}>
       <div className="grid gap-4">
@@ -76,7 +76,7 @@ export function MentorTaskCreate({
           <select value={selectedSprintId} disabled={busy} onChange={event=>{
             setSelectedSprintId(event.target.value);setStatus("TODO");
           }} className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
-            <option value="">Product backlog</option>
+            <option value="">Leave blank for the backlog</option>
             {choices.map(item=><option key={item.id} value={item.id}>
               {item.title} ({item.status.replaceAll("_"," ").toLowerCase()})
             </option>)}
