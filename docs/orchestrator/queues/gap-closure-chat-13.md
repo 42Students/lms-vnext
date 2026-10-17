@@ -186,3 +186,5 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-67 — DONE: Verification drawer supports section-specific SEND_BACK workflows and feedback.
 - SA-tenants-modules-68 — DONE: Verification drawer shows persisted decision history and masked-ID posture.
 - Never confuse keys stored in platform_setting_overrides with active runtime settings. Provider integration is not implemented by an inventory editor.
+
+- Migration reconfirmed by `tests/unit/chat13-superadmin-company-migration-0133.test.ts` (written, not run).
