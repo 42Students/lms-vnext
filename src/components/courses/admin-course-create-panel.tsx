@@ -212,7 +212,10 @@ export function AdminCourseCreatePanel({
         displayOrder: Number(offeringDisplayOrder),
       }),
       "Course Offering created",
-      () => {
+      (result) => {
+        const id=createdRecordId(result,"offering");
+        if(id)setDeliveryOfferingId(id);
+        setDeliverySectionId("");
         setOfferingConfirmOpen(false);
         setOfferingCourseId("");
         setOfferingCohortId("");
