@@ -28,6 +28,7 @@ export function PublicRecruiterJoinForm({
   const [companyName, setCompanyName] = useState("");
   const [code, setCode] = useState("");
   const [sentTo, setSentTo] = useState("");
+  const [knownCompany,setKnownCompany]=useState<string|null>(null);
   const [joined, setJoined] = useState(false);
   const [alreadyJoined,setAlreadyJoined]=useState(false);
   const [signInEmail,setSignInEmail]=useState("");
@@ -39,7 +40,7 @@ export function PublicRecruiterJoinForm({
     ? preview.companyName?.trim() || preview.companyDomain || "your company" : "your company";
 
   async function sendCode() {
-    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
+    const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope,stage:"SEND"});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
     if (validation || !parsed.success) {
       setError(validation??"Enter your work email and name before requesting a code.");
@@ -58,6 +59,9 @@ export function PublicRecruiterJoinForm({
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
         setError(knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company));return;
       }
+      const responseData=await response.json().catch(()=>null) as {companyName?:string|null}|null;
+      setKnownCompany(responseData?.companyName??null);
+      if(responseData?.companyName)setCompanyName(responseData.companyName);
       setSentTo(parsed.data.email);
       setCode("");
     } catch {
@@ -164,7 +168,8 @@ export function PublicRecruiterJoinForm({
                   Only for the placement cell to call you. You never sign in with it.
                 </span>
               </label>
-              {scope === "COLLEGE" ? (
+              {scope === "COLLEGE"&&knownCompany?<p role="status" className="text-sm font-semibold">You are joining as {knownCompany}.</p>:null}
+              {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
                 <label className="flex flex-col gap-1 text-sm font-semibold text-body">
                   Company name
                   <input type="text" value={companyName} maxLength={200}

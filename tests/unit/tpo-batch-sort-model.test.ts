@@ -8,8 +8,8 @@ describe("TPO batch directory sorting", () => {
     expect(sortTpoBatchNames(rows, "NAME_DESC").map(r => r.id)).toEqual(["c", "b", "a"]);
     expect(rows.map(r => r.id)).toEqual(["c", "b", "a"]);
   });
-  it("rejects invalid URL values", () => {
-    expect(tpoBatchSortSchema.parse(undefined)).toBe("NAME_ASC");
+  it("TPO-batches-09 defaults to the placement working set and rejects invalid URL values", () => {
+    expect(tpoBatchSortSchema.parse(undefined)).toBe("WORKING_SET");
     expect(tpoBatchSortSchema.safeParse("anything").success).toBe(false);
   });
 });

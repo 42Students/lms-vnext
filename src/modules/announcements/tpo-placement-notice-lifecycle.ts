@@ -4,6 +4,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
+import {inAppNotifications} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -58,6 +59,20 @@ export async function mutateTpoNotice(context:RequestContext,raw:unknown){
    deleting?isNull(db10Announcements.deletedAt):isNotNull(db10Announcements.deletedAt),
   )).returning({id:db10Announcements.id,version:db10Announcements.version});
   if(!updated)throw new Error("ANNOUNCEMENT_STALE");
+  // Withdraw already-delivered notice alerts inside the same transaction.
+  // No fabricated retraction count: only the original creation event's
+  // actual persisted recipients are removed, never other event types.
+  if(deleting){
+   const events=await tx.select({id:activityEvents.id}).from(activityEvents).where(and(
+    eq(activityEvents.collegeId,college.id),
+    eq(activityEvents.organizationId,college.organizationId),
+    eq(activityEvents.subjectType,"announcement"),eq(activityEvents.subjectId,updated.id),
+    eq(activityEvents.eventType,"placements.tpo_notice.created"),
+   ));
+   for(const event of events){
+    await tx.delete(inAppNotifications).where(eq(inAppNotifications.eventId,event.id));
+   }
+  }
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:membership.id,

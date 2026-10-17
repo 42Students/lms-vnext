@@ -4,6 +4,8 @@ import { PublicRecruitFromUs } from "@/components/placements/public-recruit-from
 import { resolveRequestTenant } from "@/modules/auth/request-tenant";
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import { publicPlacementDisclosure } from "@/modules/placements/public-placement-disclosure-model";
+import {getPublicPlacementPageContent} from "@/modules/placements/public-page/content-service";
+import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,formatPublicPlacementMetric} from "@/modules/placements/public-page/content-model";
 import { getPublicPlacementStatistics } from "@/modules/placements/public-page/read-service";
 import { readOptionalPublicPlacementData } from "@/modules/placements/public-page/optional-read-model";
 import { publicPageAvailabilityMessage } from "@/modules/placements/public-page/public-page-availability-model";
@@ -22,6 +24,9 @@ export default async function PublicPlacementsPage() {
     ? await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(tenant.collegeId))
     : null;
   const published = publicRead?.available ? publicRead.value : null;
+  const contentRead=tenant.kind==="college"?await readOptionalPublicPlacementData(()=>getPublicPlacementPageContent(tenant.collegeId)):null;
+  const content=contentRead?.available?contentRead.value:null;
+  const metricKeys=content?.metricKeys??DEFAULT_PUBLIC_METRICS;
   // An unknown host or an explicitly unpublished college page must be a 404.
   // An unavailable database is not evidence that the college unpublished it.
   if(tenant.kind!=="college"||(brandRead?.available&&!college)||
@@ -31,10 +36,6 @@ export default async function PublicPlacementsPage() {
     { label: "Offers received", count: published?.offers ?? null },
     { label: "Recruiting employers", count: published?.employers ?? null },
   ]);
-  const money = (value: number | null | undefined) => value == null
-    ? "Not enough data yet" : new Intl.NumberFormat("en-IN", {
-      style: "currency", currency: "INR", maximumFractionDigits: 0,
-    }).format(value);
   return (
     <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-10 sm:px-8">
       <header className="space-y-3">
@@ -62,22 +63,24 @@ export default async function PublicPlacementsPage() {
           Public placement statistics are temporarily unavailable. No individual student information is shown.
         </p>
       ) : null}
-      <section aria-label="Placement results" className="mt-8 grid min-w-0 gap-3 sm:grid-cols-3">
-        {metrics.map((metric) => (
-          <article key={metric.label} className="min-w-0 rounded-xl border border-border bg-surface p-5">
-            <h2 className="text-sm font-medium text-muted-foreground">{metric.label}</h2>
-            <p className="mt-3 break-words text-lg font-semibold text-foreground">{metric.display}</p>
-          </article>
-        ))}
+      {published&&content?.about?<section className="mt-7 space-y-2">
+       <h2 className="text-lg font-semibold">About your placements</h2>
+       <p className="whitespace-pre-wrap break-words text-sm text-body">{content.about}</p>
+      </section>:null}
+      {published?<p className="mt-8 text-xs text-muted-foreground">Live numbers over the last 12 months.</p>:null}
+      <section aria-label="Placement results" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
+        {metricKeys.map(key=><article key={key}
+         className="min-w-0 rounded-xl border border-border bg-surface p-5">
+         <h2 className="text-sm font-medium text-muted-foreground">{PUBLIC_METRIC_LABELS[key]}</h2>
+         <p className="mt-3 break-words text-lg font-semibold text-foreground">
+          {formatPublicPlacementMetric(key,{
+           population:published?.population??null,placed:published?.placed??null,
+           offers:published?.offers??null,employers:published?.employers??null,
+           highestCtcInr:published?.highestCtcInr??null,medianCtcInr:published?.medianCtcInr??null,
+          })}
+         </p>
+        </article>)}
       </section>
-      {published && (published.medianCtcInr !== null || published.highestCtcInr !== null)
-        ? <section aria-label="Package summary" className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
-          {([["Median", published.medianCtcInr], ["Highest package", published.highestCtcInr]] as const)
-            .map(([label, value]) => <article key={label} className="rounded-xl border border-border bg-surface p-5">
-              <h2 className="text-sm font-medium text-muted-foreground">{label}</h2>
-              <p className="mt-2 text-lg font-semibold text-foreground">{money(value)}</p>
-            </article>)}
-        </section> : null}
       <PublicRecruitFromUs collegeName={college?.collegeName ?? ""}
         enabled={Boolean(published) && process.env.DB09_TPO_API_READY === "DB09_VERIFIED" &&
           process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED"} />

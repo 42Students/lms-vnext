@@ -102,7 +102,7 @@ export async function getTpoDriveCancelPreview(
       )
       .limit(1);
     const counts = await impact(tx, job.id);
-    const cancellable = job.status === "PUBLISHED" && season?.status === "ACTIVE";
+    const cancellable = job.status === "DRAFT" || (job.status === "PUBLISHED" && season?.status === "ACTIVE");
     return {
       id: job.id,
       title: job.title,
@@ -172,7 +172,7 @@ export async function cancelTpoDriveWithPreview(
         and(
           eq(placementJobs.id, jobId),
           eq(placementJobs.collegeId, collegeId),
-          eq(placementJobs.status, "PUBLISHED"),
+          inArray(placementJobs.status, ["DRAFT", "PUBLISHED"]),
           sql`date_trunc('milliseconds',${placementJobs.updatedAt})=${input.expectedUpdatedAt}::timestamptz`,
         ),
       )

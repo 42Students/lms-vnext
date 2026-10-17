@@ -34,3 +34,5 @@ the selection and return plain retry guidance.
 | COL-course-tabs-14 | PARTIAL | `src/components/courses/college-lesson-reorder-actions.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-14` | Drag-and-drop and one-list reorder/rollback are not implemented |
 | COL-course-tabs-16 | PARTIAL | `src/components/courses/college-content-authoring-control.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-16` | Per-Section custom ordering still requires DB05 |
 | COL-course-tabs-18 | PARTIAL | `src/components/courses/college-content-aggregate.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-18` | Course and Lesson picker filtering across pages remains incomplete |
+
+| COL-course-tabs-27 | PARTIAL | `src/components/courses/college-learning-directory.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-27`: lessons and progress now have syntactically valid independently keyed mobile-card branches; assignments/quizzes remain horizontal-scroll layouts requiring separate responsive acceptance. |

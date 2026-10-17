@@ -1,10 +1,11 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq} from "drizzle-orm";
+import {inArray,and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads} from "@/db/schema/tpo-internal";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {internalThreadSchema} from "./tpo-team-internal-model";
@@ -15,7 +16,7 @@ import {placementTableExists} from "./staged-tables";
 export async function createTpoInternalThread(context:RequestContext,raw:unknown) {
  const input=internalThreadSchema.parse(raw);
  const own=context.membership;
- if(!own||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!own||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  if(input.recipientMembershipId===own.id)throw new Error("TEAM_RECIPIENT_NOT_FOUND");
  const college=await requirePlacementManageScope(context,own.collegeId);
  if(!await placementTableExists("placement_tpo_internal_threads"))throw new Error("TEAM_TABLES_PENDING");
@@ -27,7 +28,7 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-     eq(membershipRoles.role,"TPO")))
+     inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
    .where(and(eq(collegeMemberships.id,input.recipientMembershipId),
      eq(collegeMemberships.collegeId,college.id),
      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))

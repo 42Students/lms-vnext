@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { CollegeDepartmentInsights } from "@/components/college/college-department-insights";
 import { getCollegeAttendancePolicy } from "@/modules/attendance/policy-service";
 import { ErrorState } from "@/components/ui/error-state";
@@ -17,7 +18,9 @@ export default async function CollegeDepartmentAttendancePage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  const collegeId=context.membership?.collegeId ??
+    (isSuperAdmin(context)?context.adminScope?.collegeId:null);
+  if(!collegeId)redirect("/dashboard");
   const parsed = collegeDepartmentInsightsQuerySchema.safeParse(
     departmentInsightsQueryFromSearchParams(await searchParams),
   );
@@ -29,7 +32,7 @@ export default async function CollegeDepartmentAttendancePage({
   </div>;
   const [data, policy] = await Promise.all([
     listCollegeDepartmentInsights(context, "ATTENDANCE", parsed.data),
-    getCollegeAttendancePolicy(context, context.membership.collegeId),
+    getCollegeAttendancePolicy(context, collegeId),
   ]);
   return <CollegeDepartmentInsights data={data} correctionPolicy={policy.policy} />;
 }

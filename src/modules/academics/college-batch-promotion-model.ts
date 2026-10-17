@@ -20,7 +20,7 @@ export type CollegePromotionQuery = z.infer<typeof collegePromotionQuerySchema>;
 
 export type PromotionBlocker =
   | "BATCH_NOT_ACTIVE" | "PROGRESSION_MISSING" | "TERM_OUTSIDE_PROGRAM"
-  | "NEXT_TERM_UNCONFIGURED" | "ACADEMIC_YEAR_MISSING"
+  | "NEXT_TERM_UNCONFIGURED" | "NEXT_TERM_NO_MAPPED_COURSES" | "ACADEMIC_YEAR_MISSING"
   | "PERIOD_NOT_CONFIGURED" | "PERIOD_OUTSIDE_COLLEGE"
   | "NO_LEARNERS" | "PREVIEW_TOO_LARGE"
   | "ENROLLMENT_INACTIVE" | "MEMBERSHIP_INACTIVE"
@@ -31,6 +31,7 @@ export function batchPromotionPlan(input: {
   currentTermNumber: number | null;
   durationTerms: number;
   nextTermConfigured: boolean;
+  nextTermHasCourses?: boolean;
   currentYearStart: number | null;
   overrideYearStart?: number;
   currentPeriodConfigured: boolean;
@@ -55,6 +56,8 @@ export function batchPromotionPlan(input: {
   const graduating = termValid && input.currentTermNumber === input.durationTerms;
   if (termValid && !graduating && !input.nextTermConfigured)
     blockers.push("NEXT_TERM_UNCONFIGURED");
+  if (termValid && !graduating && input.nextTermConfigured && input.nextTermHasCourses === false)
+    blockers.push("NEXT_TERM_NO_MAPPED_COURSES");
   return {
     action: !termValid ? "UNAVAILABLE" : graduating ? "GRADUATE" : "PROMOTE",
     targetTermNumber: !termValid ? null : graduating ? null : input.currentTermNumber! + 1,

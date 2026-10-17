@@ -88,7 +88,7 @@ export function ProjectParticipantListControls({
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
           <option value="">All statuses</option>
-          {(mentor?mentorStatusOptions:statusOptions).map(
+          {(mentor || learner ? mentorStatusOptions : statusOptions).map(
             ([value, label]) => (
               <option
                 key={value}
@@ -98,9 +98,6 @@ export function ProjectParticipantListControls({
               </option>
             ),
           )}
-          {learner?<><option value="IN_PROGRESS">In progress</option>
-            <option value="READY">Ready</option>
-            <option value="BLOCKED">Blocked</option></>:null}
         </select>
       </label>
 

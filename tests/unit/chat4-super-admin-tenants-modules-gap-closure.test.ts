@@ -98,6 +98,29 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   expect(s).toContain("setSequenceIndex");
   expect(s).toContain("nextInSequence");
  });
+ it("SA-tenants-modules-67 presents exact section-specific verification reasons and success copy",async()=>{
+  const {tpoVerificationSectionReasons}=await import("@/modules/verification/review-reasons");
+  expect(tpoVerificationSectionReasons("EDUCATION")).toEqual([
+   "The marksheet is unclear or cropped","The marks do not match the marksheet","A marksheet is missing",
+  ]);
+  expect(tpoVerificationSectionReasons("IDENTITY")).toEqual([
+   "The document does not match the number","Wrong document uploaded","The document is unclear or cropped",
+  ]);
+  const drawer=source("src/components/verification/VerificationReviewDrawer.tsx");
+  expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
+  expect(drawer).toContain('apiBase==="/api/admin/verification"');
+  expect(drawer).toContain('"Send "+(row.section==="EDUCATION"?"Education":"Identity")+" back"');
+  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  for(const panelPath of [
+   "src/components/verification/TpoVerificationPanel.tsx",
+   "src/components/verification/SuperAdminVerificationPanel.tsx",
+  ]){
+   const panel=source(panelPath);
+   expect(panel).toContain("Education");
+   expect(panel).toContain(" verified. The student has been told.");
+   expect(panel).toContain("Sent back. The student sees your reason.");
+  }
+ });
  it("SA-tenants-modules-44 tells Super Admin the current activity scope",()=>{
   const s=source("src/app/(authenticated)/activity/page.tsx");
   expect(s).toContain('aria-label="Activity scope"');

@@ -34,7 +34,7 @@ export function quizInteractionState(input: {
     canReviewResults:
       input.status === "CLOSED" &&
       input.resultsPublished &&
-      input.attemptsUsed > 0,
+      (input.attemptsUsed > 0 || input.progressStatus === "MISSED"),
     waitingForResults:
       input.status === "CLOSED" &&
       input.attemptsUsed > 0 &&

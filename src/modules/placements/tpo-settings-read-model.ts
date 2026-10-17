@@ -1,6 +1,7 @@
 export type TpoTeamEvidenceRole =
   | "TPO"
   | "TPO_ADMIN"
+  | "COLLEGE_ADMIN"
   | "FACULTY_COORDINATOR"
   | "STUDENT_COORDINATOR";
 
@@ -32,6 +33,7 @@ export type TpoTeamMember = {
 const ROLE_ORDER: readonly TpoTeamEvidenceRole[] = [
   "TPO_ADMIN",
   "TPO",
+  "COLLEGE_ADMIN",
   "FACULTY_COORDINATOR",
   "STUDENT_COORDINATOR",
 ];
@@ -42,6 +44,7 @@ export const TPO_TEAM_ROLE_LABELS: Record<
 > = {
   TPO: "TPO membership",
   TPO_ADMIN: "TPO Admin assignment",
+  COLLEGE_ADMIN:"College Admin",
   FACULTY_COORDINATOR: "Faculty Coordinator",
   STUDENT_COORDINATOR: "Student Coordinator",
 };

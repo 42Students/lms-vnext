@@ -3,17 +3,18 @@ import {and,asc,eq,gt,lt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {academicPeriods,attendancePolicies,attendanceSessions,cohorts,departments,programs,
   sectionScheduleEvents,sections} from "@/db/schema";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {getCollegeAttendancePolicy} from "./policy-service";
 import {collegeCorrectionReadSchema,istCorrectionWindow,projectCorrectionSessions}
   from "./college-correction-read-model";
 
 export async function getCollegeCorrectionRead(context:RequestContext,raw:unknown) {
   const query=collegeCorrectionReadSchema.parse(raw);
-  const member=context.membership;
-  if(!member)throw new Error("Active college membership required");
-  // Existing authorized policy service enforces active COLLEGE_ADMIN and exact college.
-  const {college,policy}=await getCollegeAttendancePolicy(context,member.collegeId);
+  const collegeId=context.membership?.collegeId ??
+    (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
+  if(!collegeId)throw new Error("Select an authorized college to read attendance corrections.");
+  // Same central college scope guard protects members and acting Super Admins.
+  const {college,policy}=await getCollegeAttendancePolicy(context,collegeId);
   const db=getDb();
   const [configured]=await db.select({collegeId:attendancePolicies.collegeId})
     .from(attendancePolicies).where(eq(attendancePolicies.collegeId,college.id)).limit(1);

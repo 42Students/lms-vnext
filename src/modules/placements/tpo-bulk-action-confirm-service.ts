@@ -34,6 +34,7 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
      input.selections,input.previewToken))throw new TpoBulkPreviewError();
  const current=await loadTpoBulkCurrent(context,plan);
  const outcomes:BulkOutcome[]=[];
+ const undoRows:{membershipId:string;actionId:string;afterUpdatedAt:string|null}[]=[];
  for(const selected of input.selections){
    const state=current.get(selected.id);
    if(!state?.ready||state.version!==selected.version){
@@ -52,6 +53,8 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
          ...(plan.action==="INELIGIBLE"?{reason:plan.note}:{}),
          expected:record.direct,
        });
+       if(response.changed&&response.actionId)undoRows.push({membershipId:selected.id,
+        actionId:response.actionId,afterUpdatedAt:response.direct.updatedAt});
        outcomes.push({id:selected.id,status:response.changed?"updated":"skipped",reason:null});
      }else{
        if(plan.action==="MOVE_TEST"||plan.action==="MOVE_INTERVIEW"){
@@ -88,7 +91,7 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
  const updated=outcomes.filter(item=>item.status==="updated").length;
  const skipped=outcomes.filter(item=>item.status==="skipped").length;
  const failed=outcomes.filter(item=>item.status==="failed").length;
- await recordActivityEvent(context,{
+ const audit=await recordActivityEvent(context,{
    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_BULK_RUN,
    collegeId:context.membership!.collegeId,
    organizationId:context.membership!.organizationId,
@@ -96,9 +99,9 @@ export async function confirmTpoBulkAction(context:RequestContext,raw:unknown){
    subjectId:plan.jobId??context.membership!.collegeId,
    summary:"Placement bulk action: "+plan.action+" — "+updated+" updated, "+skipped+" skipped",
    metadata:{target:plan.target,action:plan.action,selected:plan.ids.length,
-    updated,skipped,failed,jobId:plan.jobId??null},
+    updated,skipped,failed,jobId:plan.jobId??null,undoRows:plan.target==="STUDENTS"?undoRows:[]},
  });
- return {outcomes,counts:{
+ return {outcomes,runAuditId:plan.target==="STUDENTS"&&undoRows.length?audit.id:null,counts:{
    updated:outcomes.filter(item=>item.status==="updated").length,
    skipped:outcomes.filter(item=>item.status==="skipped").length,
    failed:outcomes.filter(item=>item.status==="failed").length,

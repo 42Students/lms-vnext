@@ -22,6 +22,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [chosenName,setChosenName]=useState("");
  const [previewPage,setPreviewPage]=useState(1);
  const [acknowledged,setAcknowledged]=useState(false);
+ const unresolved=preview?.preview.filter((row,index)=>row.status==="unusable"&&!skippedByUser.includes(index)).length??0;
  async function chooseFile(file:File|null){
   if(!file)return;
   setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);setAcknowledged(false);
@@ -53,6 +54,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  }
  async function commit(){
   if(!preview||preview.ready===0||busy||!acknowledged)return;
+  if(unresolved>0){setError(unresolved+" row(s) need attention before you can confirm. Pick a suggestion or skip the row.");return;}
   const selections=preview.preview.map((row,index)=>({row,index}))
     .filter(item=>!skippedByUser.includes(item.index));
   const selected=selections.filter(item=>item.row.status==="matched");
@@ -92,6 +94,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview file"}</button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
+   {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
    <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
     {(["ALL","MATCHED","UNUSABLE"] as const).map(tab=><button key={tab} type="button" role="tab"
      aria-selected={previewTab===tab} onClick={()=>{setPreviewTab(tab);setPreviewPage(1);}}
@@ -102,7 +105,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     .filter(({row})=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable"))
     .slice((previewPage-1)*8,previewPage*8)
     .map(({row,i})=><li className="min-w-0 break-all rounded border border-border p-2" key={i}>
-    <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
+    {row.status==="unusable"?<button type="button" disabled={busy||skippedByUser.includes(i)}
+     onClick={()=>setSkippedByUser(current=>current.includes(i)?current:[...current,i])}
+     className="mr-2 min-h-9 rounded border border-border px-2 text-primary-text">
+     {skippedByUser.includes(i)?"Row skipped":"Skip row"}</button>:
+     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy}/>Include</label>}
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
     <p>{row.status==="matched"&&row.currentStatus===row.proposedStatus?
@@ -123,9 +130,9 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
        checked={acknowledged} disabled={busy}
        onChange={event=>setAcknowledged(event.target.checked)}/>
      I reviewed the matched learners and understand that applying these decisions will be audited.
-     Unmatched or skipped rows will not be changed.
+     Unusable rows must be explicitly skipped before the matched decisions can be saved.
    </label>
-   <button type="button" disabled={busy||preview.ready===0||!acknowledged} onClick={()=>void commit()}
+   <button type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
     className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm import</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
