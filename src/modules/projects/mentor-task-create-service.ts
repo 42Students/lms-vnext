@@ -12,6 +12,7 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {requireProjectLifecycleAccess} from "./access";
 import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
+import {notifyProjectMemberships} from "./project-notification-service";
 
 /** PR-S2-04: create task metadata on registered 0090 fields. */
 export async function createMentorProjectTask(context:RequestContext,rawParams:unknown,rawInput:unknown){
