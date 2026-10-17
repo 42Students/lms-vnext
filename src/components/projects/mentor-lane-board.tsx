@@ -14,7 +14,7 @@ type Task={id:string;title:string;status:string;priority:string;sprintId:string|
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date};
-type Release={id:string;title:string};
+type Release={id:string;title:string;status:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
 type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType:string};
