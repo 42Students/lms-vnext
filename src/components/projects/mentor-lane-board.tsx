@@ -50,7 +50,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const visible=matching.slice(0,visibleLimit);
  const lanes=groupLearnerBoardLanes(visible,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
- async function move(id:string,status:string){
+ async function move(id:string,status:string,isUndo=false){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
