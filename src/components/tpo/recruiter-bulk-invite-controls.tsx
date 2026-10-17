@@ -10,9 +10,12 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [notice,setNotice]=useState("");
  const [reviewSnapshot,setReviewSnapshot]=useState<string|null>(null);
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
- const eligibleSnapshot=eligible.map(row=>row.id).sort().join("|");
+ const eligibleSnapshot=eligible.map(row=>[row.id,row.emailNorm??"",row.manualStage,row.inviteSentAt??""].join(":")).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
+  if(retryOnly&&target.some(row=>bulkInviteDisposition(row))){
+   setNotice("A failed recruiter is no longer eligible. Refresh the roster and review before issuing another link.");return;
+  }
   if(!retryOnly&&reviewSnapshot!==eligibleSnapshot){
     setReviewSnapshot(eligibleSnapshot);
     setNotice("Review the recipients and confirm. Existing invitation links for these recruiters will be replaced.");
@@ -46,10 +49,11 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
   catch{setNotice("Could not copy. Select the text and copy it manually.");}
  }
  const failed=results.filter(row=>!row.url&&!row.emailed);
+ const retryableFailed=failed.filter(item=>rows.some(row=>row.id===item.id&&!bulkInviteDisposition(row)));
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
  return <section className="rounded-lg border border-border bg-surface p-4" aria-label="Invite selected recruiters">
   <button type="button" className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold"
-   disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setOpen(value=>!value);}}>
+   disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setNotice("");setOpen(value=>!value);}}>
    Invite selected recruiters ({rows.length})
   </button>
   {open?<div className="mt-3 space-y-3">
@@ -80,8 +84,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
      </label><button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
       onClick={()=>void copy(linkLines)}>Copy invite links</button></>:null}
     {failed.length?<><ul>{failed.map(item=><li key={item.id} className="text-sm">{item.name}: {item.reason}</li>)}</ul>
-     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
-      onClick={()=>void createLinks(rows.filter(row=>failed.some(item=>item.id===row.id)),true)}>Retry failed</button></>:null}
+     {retryableFailed.length?<button type="button" disabled={busy} className="min-h-10 rounded border border-border px-3 text-sm"
+      onClick={()=>void createLinks(rows.filter(row=>retryableFailed.some(item=>item.id===row.id)),true)}>Retry eligible failures ({retryableFailed.length})</button>:null}
+     {retryableFailed.length!==failed.length?<p role="status" className="text-xs">Some failed contacts are no longer eligible. They will not be retried.</p>:null}</>:null}
     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm"
       onClick={()=>{setResults([]);setOpen(false);}}>Close results</button>
    </div>:null}

@@ -99,7 +99,7 @@ export default async function TpoLeadsReportPage({
         }
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/leads" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <nav aria-label="Recruiter engagement cross-check" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">

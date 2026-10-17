@@ -69,13 +69,20 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       summary:"Mentor rescheduled project meeting",
       metadata:{projectId:scope.project.id,meetingId:updated.id,
         previousStartsAt:meeting.startsAt.toISOString(),
-        startsAt:updated.startsAt.toISOString(),timeZone:meeting.timeZone},
+        startsAt:updated.startsAt.toISOString(),endsAt:updated.endsAt.toISOString(),
+        timeZone:meeting.timeZone},
       groupKey:"project:"+scope.project.id+":meetings",
     });
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
       title:"Project meeting",body:"The time of "+updated.title+" has changed.",
       actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+      exceptUserId:context.user.id,
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+      title:"Project meeting",body:"The time of "+updated.title+" has changed.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
       exceptUserId:context.user.id,
     });
     return updated;

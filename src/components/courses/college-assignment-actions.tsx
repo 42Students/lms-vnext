@@ -5,20 +5,25 @@ import {useRouter} from "next/navigation";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 type Assignment={id:string;title:string;points:number;dueAt:Date|null;status:string};
+function istInput(value:Date|string|null){
+ if(!value)return "";
+ return new Intl.DateTimeFormat("sv-SE",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+ }).format(new Date(value)).replace(" ","T");
+}
 
 export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const router=useRouter();
  const [editing,setEditing]=useState(false);
+ const [expectedUpdatedAt,setExpectedUpdatedAt]=useState<string|null>(null);
  const [methods,setMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsLoaded,setMethodsLoaded]=useState(false);
  const [methodsDirty,setMethodsDirty]=useState(false);
  const [description,setDescription]=useState("");
  const [title,setTitle]=useState(assignment.title);
  const [points,setPoints]=useState(String(assignment.points));
- const [dueAt,setDueAt]=useState(assignment.dueAt?new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
-  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
- }).format(new Date(assignment.dueAt)).replace(" ","T"):"");
+ const [dueAt,setDueAt]=useState(istInput(assignment.dueAt));
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
@@ -35,8 +40,9 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    const due=dueAt?new Date(dueAt+":00+05:30"):null;
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
    path=path;method="PATCH";
-   if(!methodsLoaded){setError("Load the saved submission methods before editing.");return;}
-   body={title:title.trim(),description:description.trim()||null,maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
+   if(!methodsLoaded||!expectedUpdatedAt){setError("Reload the saved assignment before editing.");return;}
+   body={expectedUpdatedAt,confirmed:true,title:title.trim(),description:description.trim()||null,
+    maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
   }else{
    const question=action==="ARCHIVE"?
     "Delete this assignment? Existing submissions must be preserved and will block deletion.":
@@ -48,7 +54,12 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
   try{
    const response=await fetch(path,{method,headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
-   if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Could not update assignment.");
+   if(!response.ok)throw new Error(
+     data?.error==="ASSIGNMENT_HAS_SUBMISSIONS"?
+      "Students have submitted this assignment. Refresh; editing is no longer allowed.":
+     data?.error==="FACULTY_ASSIGNMENT_STALE_VERSION"?
+      "Another author edited the assignment. Close this form and reopen it before saving.":
+     typeof data?.error==="string"?data.error:"Could not update assignment.");
    setEditing(false);setNotice(action==="SAVE"?"Assignment updated.":action==="ARCHIVE"?
     "Assignment deleted.":"Assignment published.");
    router.refresh();
@@ -61,12 +72,19 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text"
     onClick={()=>void (async()=>{
       if(editing){setEditing(false);return;}
-      setError("");setMethodsLoaded(false);
+      setError("");setNotice("");setMethodsLoaded(false);setExpectedUpdatedAt(null);
       try{
        const response=await fetch("/api/courses/assignments/"+encodeURIComponent(assignment.id),{cache:"no-store"});
        const data=await response.json().catch(()=>null);
        if(!response.ok||data?.assignment?.id!==assignment.id)throw Error(
         data?.error??"Could not load assignment settings.");
+       setTitle(data.assignment.title);setPoints(String(data.assignment.maxPoints));
+       setDueAt(istInput(data.assignment.dueAt));
+       setExpectedUpdatedAt(data.assignment.updatedAt);
+       if(data.assignment.hasSubmissions){
+        setError("This assignment already has submissions. Editing its published instructions, due date or points is disabled.");
+        return;
+       }
        setDescription(data.assignment.description??"");
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);

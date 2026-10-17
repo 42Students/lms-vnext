@@ -126,3 +126,18 @@ Start point: fast-forward merged `origin/main@933c7301475d408d9c23cd72e270ad424c
 - BLOCKED TPO-settings-audit-80: preferences only persist per current user; suppression of individual outbound/email/in-app events remains to be wired into the notification producer with policy decision to avoid suppressing mandatory alerts.
 - BLOCKED Existing S1/S2 high-impact owners/producer changes, recruiter policy enforcement, unverified external messages, private file storage and browser/live tests remain pending; no closure without evidence.
 
+
+
+## FAST v2 continuation 6 — chat-9 report and personal preferences source pass (2026-10-17)
+
+Merged latest `origin/main` by fast-forward at start. Small `[chat-9]` gap-tagged commits only to `chatgpt/chat-9-b`; **no tests, typecheck, lint, builds, CI waits or main pushes**. WP-01–WP-09 retain source-pass DONE with deferred gaps, **not runtime acceptance**.
+
+- WP-09 `TPO-calendar-reports-50`: report preset storage is user+college+report scoped, clears on account change, retains joining state/expiry window, and now covers 17 reports (additional: expiry, placed-by-branch, season pipeline, company intelligence, joining followups, branch-season, accreditation). Prior generic college-only local key is not migrated across users.
+- WP-09 `TPO-calendar-reports-51`: additional seven report-root fullscreen presentations, with browser state initialized on mount; 17 report pages now expose the shared presentation control.
+- WP-09 `TPO-settings-audit-R04`: saved audit views isolated by user and college; the current TPO identity is passed from the authorized audit page.
+- WP-09 `TPO-settings-audit-80`: first explicit save of default notification preferences persists a row; default-valued preferences are no longer falsely reported as already persisted.
+- BLOCKED `TPO-calendar-reports-50`/`TPO-settings-audit-R04`: cross-device and multi-user server persistence/sharing require reviewed saved-view permission policy; browser-local identity isolation is in place.
+- BLOCKED `TPO-calendar-reports-51`: device fullscreen capability, fullscreen CSS and responsive acceptance require runtime browser checks explicitly deferred.
+- BLOCKED `TPO-settings-audit-80`: notification delivery/suppression consumers are separately owned and must not suppress mandatory alerts.
+- BLOCKED `TPO-calendar-reports-07`: drag-and-drop follow-up rescheduling requires a verified writable calendar interaction and conflict behavior; current recorded move flow remains available.
+- BLOCKED Remaining independently owned producer/security/schema/deployment/live-verification gaps remain open and are not certified by this fast source pass.

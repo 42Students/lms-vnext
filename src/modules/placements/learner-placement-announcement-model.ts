@@ -3,6 +3,8 @@ export type LearnerPlacementNoticeSource = {
   title: string;
   message: string;
   createdAt: Date;
+  updatedAt?: Date;
+  version?: number;
   isPinned: boolean;
   senderType?: string;
   receiverType?: string;
@@ -34,6 +36,9 @@ export function learnerPlacementNoticeFeed(rows: readonly LearnerPlacementNotice
     title: row.title,
     message: row.message,
     createdAt: row.createdAt.toISOString(),
+    updatedAt: row.version !== undefined && row.version > 1 && row.updatedAt &&
+      Number.isFinite(row.updatedAt.getTime()) && row.updatedAt > row.createdAt
+      ? row.updatedAt.toISOString() : null,
     isPinned: row.isPinned,
     ...(row.senderType ? { senderLabel:learnerNoticeSourceLabel(row.senderType) } : {}),
     ...(row.receiverType ? { audienceLabel:learnerNoticeAudienceLabel(row.receiverType) } : {}),

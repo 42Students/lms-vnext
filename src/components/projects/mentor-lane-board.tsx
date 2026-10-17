@@ -31,6 +31,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
  [visibleLimit,setVisibleLimit]=useState(150);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ useEffect(()=>{
+  if(!undo)return;
+  const expiration=setTimeout(()=>setUndo(null),6000);
+  return ()=>clearTimeout(expiration);
+ },[undo]);
  function remember(name:string,value:string){
   setVisibleLimit(150);
   const query=new URLSearchParams(window.location.search);
@@ -50,7 +55,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const visible=matching.slice(0,visibleLimit);
  const lanes=groupLearnerBoardLanes(visible,sprints);
  const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
- async function move(id:string,status:string){
+ async function move(id:string,status:string,isUndo=false){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
@@ -58,7 +63,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   const blockerReason=status==="BLOCKED"&&!task.blockerReason?.trim()
     ? window.prompt("What's blocking this task?")?.trim() : undefined;
   if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason)return;
-  if(!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
+  if(!isUndo&&!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
@@ -66,7 +71,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      status,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),confirmed:true,
      ...(blockerReason?{blockerReason}:{}),
     }) as {task:Task};
-   setUndo({id,status:task.status});
+   setUndo(isUndo?null:{id,status:task.status});
    setTasks(rows=>rows.map(row=>row.id===id?{...row,...result.task}:row));
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Task transition failed.");}
@@ -176,7 +181,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
-    onClick={()=>{const prior=undo;setUndo(null);void move(prior.id,prior.status);}}>Undo last move</button>:null}
+    onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</button>:null}
   <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
    {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
     className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
