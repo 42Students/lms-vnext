@@ -53,7 +53,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
-      {title:title.trim(),...(url.trim()?{externalUrl:url.trim()}:{}),...extra}:
+      {title:title.trim(),...(kind==="RESOURCE"?{externalUrl:url.trim()||null}:(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
       {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
        sequence:0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
