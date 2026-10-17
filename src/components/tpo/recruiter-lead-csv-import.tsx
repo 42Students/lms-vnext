@@ -32,6 +32,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ImportResponse | null>(null);
   const [skipRows,setSkipRows]=useState<number[]>([]);
+  const [reviewReady,setReviewReady]=useState(false);
   const launchRef=useRef<HTMLButtonElement>(null);
   const modalRef=useRef<HTMLElement>(null);
   const fileRef=useRef<HTMLInputElement>(null);
@@ -56,7 +57,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setResult(null);
     setSkipRows([]);
     setPreview(null);
-    setSkipRows([]);
+    setReviewReady(false);
     setCsv("");
     setError("");
     setFileName(file?.name ?? "");
@@ -86,11 +87,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   async function commit() {
     const included=(preview?.valid??0)-skipRows.length;
     if (!preview || !csv || included<=0 || busy) return;
-    if (!window.confirm(
-      "Import " + included + " recruiter lead row(s) from " + fileName +
-      "? " + preview.invalid + " invalid row(s) will be skipped. Existing contacts " +
-      "will be reported as duplicates. Each created lead receives an immutable audit entry.",
-    )) return;
+    if (!reviewReady) {
+      setReviewReady(true);
+      return;
+    }
     setBusy(true);
     setError("");
     setResult(null);
@@ -125,6 +125,8 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setError("");
     setResult(null);
     setFileName("");
+    setSkipRows([]);
+    setReviewReady(false);
     launchRef.current?.focus();
   }
 
@@ -198,12 +200,15 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                           <td className="px-3 py-2">{item.error ?? (skipRows.includes(item.row)?"Skip row":"New")}</td>
                           <td className="px-3 py-2"><input type="checkbox" aria-label={"Include row "+item.row}
                             disabled={!item.lead || busy || Boolean(result)} checked={Boolean(item.lead)&&!skipRows.includes(item.row)}
-                            onChange={e=>setSkipRows(previous=>e.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row])}/></td>
+                            onChange={e=>{setReviewReady(false);setSkipRows(previous=>e.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/></td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
                 </div>
+                {reviewReady&&!result ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-foreground">
+                  Import {preview.valid-skipRows.length} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
+                </p>:null}
                 {!result ? (
                   <button
                     type="button"
@@ -211,7 +216,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                     disabled={busy || preview.valid-skipRows.length <= 0}
                     onClick={() => void commit()}
                   >
-                    {busy ? "Importing…" : "Review and confirm import"}
+                    {busy ? "Importing…" : reviewReady ? "Confirm import" : "Review and confirm import"}
                   </button>
                 ) : null}
               </div>
