@@ -205,12 +205,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
-        "Showing "+(Math.min(pageResult.total,(query.data.page-1)*pageResult.pageSize+1))+"–"+
-        Math.min(pageResult.total,query.data.page*pageResult.pageSize)+" of "+pageResult.total}</p>
+        "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
+        Math.min(pageResult.total,pageResult.page*pageResult.pageSize)+" of "+pageResult.total}</p>
       <div className="flex gap-2">
-        {query.data.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page-1})}
+        {pageResult.page>1?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page-1})}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Previous</Link>:null}
-        {query.data.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:query.data.page+1})}
+        {pageResult.page<pageResult.pages?<Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:pageResult.page+1})}
           className="rounded-md border border-border px-3 py-2 text-sm text-primary-text">Next</Link>:null}
       </div></nav>:null}
     <Link href="/hr/round-results" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 py-2 text-sm font-semibold text-primary-text hover:border-primary">Review round results →</Link>
