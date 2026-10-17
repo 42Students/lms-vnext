@@ -64,3 +64,12 @@ Pending graceful-operation dependency: `src/lib/friendly-error.ts`, `src/lib/api
 | TPO-batches-28 | DONE | Secondary counts now fail independently, preserving the main directory and explaining unavailable evidence; `tests/unit/tpo-batches-chat5-round4-fallback.test.ts` — `TPO-batches-28 treats optional counts as independently fallible without hiding the batch list`. |
 
 | TPO-batches-27 | DONE | `src/modules/placements/tpo-batch-workspace-read-service.ts` and `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` show stored academic years, legacy back link and effective state; `tests/unit/tpo-batches-chat5-round4-fallback.test.ts` — `TPO-batches-27 shows academic years, a placement-eligibility back link, and effective status`. |
+
+## Round 4 — batch decision and roll identity checks
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-23 | DONE | Whole-batch status and ineligible banner are rendered by `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx`; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-23 preserves an explicit whole-batch decision and class override explanation`. |
+| TPO-batches-43 | OPEN | Preset reason buttons and three-character validation are present in `src/components/tpo/tpo-batch-inline-decision.tsx`, but legacy dedicated modal parity remains incomplete; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason`. |
+| TPO-batches-47 | DONE | `src/modules/placements/tpo-bulk-ui-model.ts` now treats duplicate roll identifiers as ambiguous, never choosing a last-wins member; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-47 never matches an ambiguous roll number to an arbitrary student`. |
+| TPO-batches-62 | DONE | Batch overview translates old tab query parameters into actual routable workspace subpages; `tests/unit/tpo-batches-bulk-legacy-chat5.test.ts` — `TPO-batches-62 restores old tab URL aliases without a conflicting dynamic path`. |
