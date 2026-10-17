@@ -149,7 +149,9 @@ export async function ProjectAdminAtRiskPage({
                   {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
                 </dd></div>
                 <div><dt className="font-semibold">Inactive</dt><dd>
-                  {project.inactiveDays} days
+                  <span aria-label={"Inactive for "+project.inactiveDays+" days"}>
+                    {project.inactiveDays} {project.inactiveDays===1?"day":"days"}
+                  </span>
                 </dd></div>
                 <div><dt className="font-semibold">Blocker</dt><dd className="break-words">
                   {project.blockerReason ?? "—"}
