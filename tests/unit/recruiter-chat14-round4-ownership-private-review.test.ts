@@ -168,6 +168,15 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(migration).toContain("CREATE TABLE IF NOT EXISTS placement_recruiter_private_reviews");
   expect(migration).toContain("UNIQUE (recruiter_user_id, application_id)");
  });
+ it("REC-home-drives-41 degrades safely when the proposed private-review table is not installed",()=>{
+  const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts");
+  expect(route).toContain('placementTableExists("placement_recruiter_private_reviews")');
+  expect(route).toContain('error:"SERVICE_UNAVAILABLE"');
+  expect(route).toContain('status:503,headers');
+  expect(route).toContain('if(!hasActiveRecruiter(context))');
+  expect(route).toContain('status:404,headers');
+  expect(route).toContain('"Cache-Control":"private, no-store"');
+ });
  it("REC-home-drives-41 validates and authorizes private reviews without company-wide notes",()=>{
   const service=source("src/modules/placements/recruiter-private-rating-service.ts");
   expect(service).toContain("rating:z.number().int().min(1).max(5).nullable()");
