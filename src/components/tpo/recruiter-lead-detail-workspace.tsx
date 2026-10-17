@@ -289,7 +289,6 @@ export function RecruiterLeadDetailWorkspace({
   async function createInviteLink() {
     if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
-    if(lead?.manualStage==="NOT_NOW"){setActionError("This recruiter is marked Not now. Update their stage before inviting.");return;}
     if(!lead?.emailNorm||!lead.companyRelationshipId){
       setActionError("Add a work email and link a company before inviting.");
       return;
@@ -370,7 +369,7 @@ export function RecruiterLeadDetailWorkspace({
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?<a className={button}
+              {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
                  href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
                <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
