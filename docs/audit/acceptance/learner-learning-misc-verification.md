@@ -67,3 +67,11 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 |---|---|---|
 | LEARNER-learning-misc-25 | NOT-A-GAP for arbitrary legacy HTML and unsupported short-answer grading | vNext's authored schema supports validated single/multiple-choice answers, and learner prompts are rendered as escaped text. Rendering untrusted HTML or guessing short-answer grading would be less safe; richer authored questions require separate vetted schema, sanitizer and grading design. `quiz-validation.ts`, `learner-quiz-attempt.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-25 does not execute arbitrary learner-visible question HTML`. |
 | LEARNER-learning-misc-41 | NOT-A-GAP (canonical route policy) | No legacy slug migration is planned for vNext. New calendar and attendance links use authorized delivery IDs, and the course route checks delivery membership before rendering. Do not translate arbitrary slug strings to another student's course. `learner-class-schedule.tsx`, `[deliveryId]/[...courseTab]/page.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-41 keeps authorized delivery IDs as canonical learner course links`. |
+
+## Chat-3 round 13 — submission/quiz dispositions (source, tests unrun)
+
+| ID | Status | Decision and named regression |
+| --- | --- | --- |
+| LEARNER-learning-misc-03 | DONE (source) | Faculty allowed-submission methods are fetched, rendered and enforced at the learner form and authorized server boundary, instead of permitting every TEXT/LINK/FILE for all assignments. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-03; server `assignment-method-policy.ts`. |
+| LEARNER-learning-misc-04 | DONE (source) | Faculty-allowed multipart TEXT/LINK/FILE pieces use one submission, with a no-file text/link case supported without forged upload receipts. `tests/unit/chat15-multipart-no-file.test.ts` named LEARNER-learning-misc-04; production bucket safety remains a separate storage dependency. |
+| LEARNER-learning-misc-22 | NOT-A-GAP | Preserve explicit unanswered confirmation and zero credit, plus jump-to-unanswered, rather than legacy's contradictory "can submit" UI + server rejection. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-22. |
