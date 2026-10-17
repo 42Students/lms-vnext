@@ -13,6 +13,8 @@ export const RECRUITER_ATTENTION_LABELS: Readonly<Record<RecruiterAttentionChip,
 export function recruiterAttentionFromPersistedFacts(input: {
   createdAt: Date;
   lastContactAt: Date | null;
+  lastActivityAt?: Date | null;
+  stage?: string;
   nextFollowupAt: Date | null;
   inviteBouncedAt: Date | null;
   inviteSentAt: Date | null;
@@ -20,8 +22,7 @@ export function recruiterAttentionFromPersistedFacts(input: {
   manualStage: string;
   unsubscribedAt: Date | null;
 }, now: Date): { chips: RecruiterAttentionChip[]; quietDays: number } {
-  if (input.manualStage === "NOT_NOW" || input.unsubscribedAt ||
-    input.recruiterUserId) return { chips: [], quietDays: 0 };
+  if (input.manualStage === "NOT_NOW" || input.unsubscribedAt) return { chips: [], quietDays: 0 };
   const days = (at: Date) => {
     const localDay = (d: Date) => {
       const parts = new Intl.DateTimeFormat("en-CA", {
@@ -34,11 +35,11 @@ export function recruiterAttentionFromPersistedFacts(input: {
   };
   const chips: RecruiterAttentionChip[] = [];
   if (input.nextFollowupAt && days(input.nextFollowupAt) > 0) chips.push("OVERDUE");
-  if (!input.nextFollowupAt) chips.push("NO_NEXT_STEP");
-  const quietDays = days(input.lastContactAt ?? input.createdAt);
+  if (!input.nextFollowupAt && input.stage !== "RECRUITED") chips.push("NO_NEXT_STEP");
+  const quietDays = days(input.lastActivityAt ?? input.lastContactAt ?? input.createdAt);
   if (quietDays >= 14) chips.push("QUIET");
   if (input.inviteBouncedAt) chips.push("BOUNCED");
-  // Invitation sent to a contact who has not joined remains unverified.
-  if (input.inviteSentAt && !input.recruiterUserId) chips.push("UNVERIFIED");
+  // Invitation-sent is not proof of an unverified joined recruiter.
+  // Only a persisted verification state may add the UNVERIFIED chip.
   return { chips, quietDays };
 }

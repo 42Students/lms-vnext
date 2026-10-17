@@ -1,20 +1,27 @@
 export const ENGAGE_COLUMNS = ["Contact","Company","Status","Stage","Owner",
-"Last activity","Next follow-up","Invite","Added","Flags","Source","Email","Phone","Actions"] as const;
+"Last activity","Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone","Actions"] as const;
 export type EngageColumn = (typeof ENGAGE_COLUMNS)[number];
 export const ENGAGE_DEFAULT_COLUMNS: readonly EngageColumn[] = ENGAGE_COLUMNS.filter(x=>x!=="Email"&&x!=="Phone");
-export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME";
+export type EngageSort = "ADDED"|"LAST_ACTIVITY"|"NEXT_FOLLOWUP"|"NAME"|"DRIVES";
 export function normalizeEngageColumns(value:unknown): EngageColumn[]{
  if(!Array.isArray(value))return [...ENGAGE_DEFAULT_COLUMNS];
  const selected=ENGAGE_COLUMNS.filter(x=>value.includes(x));
  return selected.includes("Contact")?selected:[...ENGAGE_DEFAULT_COLUMNS];
 }
 export function sortEngageRows<T extends {id:string;name:string;createdAt:string;
- lastActivityAt:string|null;nextFollowupAt:string|null}>(
+ lastActivityAt:string|null;nextFollowupAt:string|null;drivesRan?:number|null}>(
  rows:readonly T[],by:EngageSort,ascending:boolean):T[]{
  const dateValue=(row:T)=>by==="ADDED"?row.createdAt:
   by==="LAST_ACTIVITY"?row.lastActivityAt:row.nextFollowupAt;
  return [...rows].sort((a,b)=>{
   if(by==="NAME")return (ascending?1:-1)*a.name.localeCompare(b.name)||a.id.localeCompare(b.id);
+  if(by==="DRIVES"){
+   const x=a.drivesRan,y=b.drivesRan;
+   if(x==null&&y==null)return a.id.localeCompare(b.id);
+   if(x==null)return 1;
+   if(y==null)return -1;
+   return (ascending?1:-1)*(x-y)||a.id.localeCompare(b.id);
+  }
   const x=dateValue(a),y=dateValue(b);
   if(!x&&!y)return a.id.localeCompare(b.id);
   if(!x)return 1;
