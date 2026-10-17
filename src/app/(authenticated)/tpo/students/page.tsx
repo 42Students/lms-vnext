@@ -229,10 +229,10 @@ export default async function TpoStudentsPage({
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
   const rosterIds=roster.items.map(row=>row.membershipId);
   const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
-    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:1,pageSize:100,
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",waitingSince:"ALL",search:"",page:1,pageSize:100,
   },rosterIds):null;
   const nextRosterReviews=rosterVerifications?.hasMore?await getTpoVerificationQueue(context,{
-    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:2,pageSize:100,
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",waitingSince:"ALL",search:"",page:2,pageSize:100,
   },rosterIds):null;
   const waitingRosterRows=[...(rosterVerifications?.rows??[]),...(nextRosterReviews?.rows??[])];
 
