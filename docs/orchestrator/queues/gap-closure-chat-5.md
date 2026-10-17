@@ -262,5 +262,12 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-drive-workspace-40 OPEN: strict 1,000-row CSV/XLSX import and named tests exist; company-portal identity mapping remains unimplemented, do not claim source ID matches.
 
 
+- TPO-drive-workspace-41 ROUND-2: bulk recorder now wired into /rounds/[roundId]/results with college-scoped roll search/paste, unique matching, 25-row limit and named tests; round roster over 500 fails closed.
+- TPO-drive-workspace-05 ROUND-2: cloned drafts now clear old cohort IDs and filter old passing years, with named pure-model test; TPO must review eligibility before publishing.
+- TPO-drive-workspace-22 ROUND-2 OPEN: roll/email/phone now appear in the spreadsheet, but branch/batch/academic proof/full legacy field set not yet shown.
+- TPO-drive-workspace-49 ROUND-2 OPEN: saved salary bands, export and response timing verified, but fixed/variable full rules, column/filter parity still missing; deliberately not marked DONE.
+- TPO-drive-workspace-11 ROUND-2 OPEN: college-admin tpo.access permission path has TPO-only route/service guards; needs coordinated permission and persisted-actor implementation, not an implicit role bypass.
+- TPO-drive-workspace-54 BLOCKED: PDF/PNG/JPG letter upload needs authenticated object storage and malware scanner; URL-based letter evidence can be built separately.
+
 ## Needs shell (chat-9 only)
 
