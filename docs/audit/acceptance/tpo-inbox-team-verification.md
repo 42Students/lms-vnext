@@ -32,4 +32,6 @@
 
 Source-level follow-up still required for `TPO-inbox-team-30/48/49/50/51/52/53/64`: named tests capture implemented pieces, but full legacy acceptance has not yet been demonstrated. These remain queued.
 
+| TPO-inbox-team-R07 | DONE | Loaded log semantics, native link keyboard navigation, All conversations back label and Team slash hint; `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`, `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`, `src/components/tpo/tpo-team-search.tsx`; `tests/unit/tpo-inbox-team-round2.test.ts` **TPO-inbox-team-R07 gives native keyboard links…**. |
+
 Other queued gaps remain outstanding until individually inspected and recorded.
