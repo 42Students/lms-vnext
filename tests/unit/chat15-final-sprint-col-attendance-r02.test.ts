@@ -54,6 +54,8 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
   const route=source("src/app/api/attendance/admin/parent-contacts/retry/route.ts");
   const editor=source("src/components/attendance/admin-attendance-parent-contact-editor.tsx");
   expect(service).toContain('const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:currentAttendance===undefined');
+  expect(service).toContain("contact.verifiedAt.getTime()<=entry.createdAt.getTime()");
+  expect(service).toContain("contact.consentAt.getTime()<=entry.createdAt.getTime()");
   expect(service).toContain('eq(attendanceParentSmsOutbox.collegeId,collegeId)');
   expect(service).toContain('orderBy(asc(attendanceParentSmsOutbox.createdAt)).limit(25)');
   expect(service).toContain("await requireAttendanceCollege(ctx,collegeId)");
