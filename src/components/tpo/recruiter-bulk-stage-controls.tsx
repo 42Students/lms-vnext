@@ -46,8 +46,9 @@ export function RecruiterBulkStageControls({
   const selected = available.filter((row) => chosenIds.includes(row.id));
   const currentSignature=[action,reason.trim(),revisitDate,...selected.map(row=>row.id+":"+row.manualStage).sort()].join("|");
   const retryable=results.filter(item=>item.status==="ineligible"&&available.some(row=>row.id===item.leadId));
+  const todayIst=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
   const isValid = selected.length > 0 && selected.length <= 100 &&
-    (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255));
+    (action !== "NOT_NOW" || (reason.trim().length > 0 && reason.trim().length <= 255 && (!revisitDate||revisitDate>=todayIst)));
 
   function choose(id: string, value: boolean) {
     setError("");
