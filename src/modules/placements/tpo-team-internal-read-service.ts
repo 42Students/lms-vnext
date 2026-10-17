@@ -9,7 +9,9 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoInternalThreads,tpoInternalMessages} from "./tpo-team-staged-schema";
 /** Read only threads where the active TPO membership is a named participant. */
-export async function listMyTpoInternalThreads(context:RequestContext){
+export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=""){
+ const search=rawSearch.trim().slice(0,120);
+ const q=search.length>=2?search:"";
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
