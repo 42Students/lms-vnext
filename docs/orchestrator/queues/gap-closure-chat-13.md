@@ -8,16 +8,16 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-placements-projects-25 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-01 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-02 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-placements-projects-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-09 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-10 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
-| SA-placements-projects-12 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-17 | S2 | MISSING-TAB | FIXED-ON-MAIN |
+| SA-placements-projects-25 | S1 | MISSING-ACTION | DONE |
+| SA-placements-projects-01 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-02 | S2 | MISSING-FILTER | DONE |
+| SA-placements-projects-06 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-07 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-09 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-10 | S2 | MISSING-PAGE | DONE |
+| SA-placements-projects-12 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-13 | S2 | MISSING-ACTION | DONE |
+| SA-placements-projects-17 | S2 | MISSING-TAB | DONE |
 | SA-placements-projects-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-20 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-22 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
