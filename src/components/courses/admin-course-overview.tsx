@@ -490,12 +490,12 @@ export function AdminCourseOverview({
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </select>
          </label>
-         <label className="grid gap-1 text-sm font-semibold">Per page
+         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
           <select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
            className="min-h-10 rounded border border-border bg-background p-2">
            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
           </select>
-         </label>
+         </label>:null}
          <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
