@@ -9,7 +9,11 @@ import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 
 /** SA-placements-projects-100: authenticated reporter intake until OD-27 is resolved. */
 export const metadata={title:"Report Issue · 42 Tracker"};
-export default async function TrackerReportPage() {
+export default async function TrackerReportPage({
+  searchParams,
+}:{searchParams:Promise<{context?:string|string[]}>}) {
+  const raw=await searchParams;
+  const contextPrefill=typeof raw.context==="string"?raw.context.slice(0,450):"";
   const context = await getCurrentRequestContext();
   if (context.user.platformStatus !== "ACTIVE") redirect("/dashboard");
   const ready = trackerAdminRuntimeEnabled();
@@ -25,6 +29,6 @@ export default async function TrackerReportPage() {
       <p className="mt-2 text-sm text-body">
         Migration 0076 must be verified and DB10_TRACKER_READY=DB10_VERIFIED set before reports can be saved.
       </p>
-    </div> : <TrackerReportForm canSearchSimilar={isSuperAdmin(context)} />}
+    </div> : <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)} />}
   </div>;
 }
