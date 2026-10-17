@@ -118,7 +118,7 @@ export function FacultyLessonAuthoring({
     setTitle("");
     setNotes("");
     setUrl("");
-    setDurationSeconds("300");
+    setDurationSeconds("");
     setContentPoints("1");
     setStartsAt("");
     setEndsAt("");
@@ -705,7 +705,7 @@ export function FacultyLessonAuthoring({
               {mode === "YOUTUBE" ? (
                 <label className="block">
                   <FieldLabel>
-                    Duration (seconds)
+                    Actual video duration (seconds)
                   </FieldLabel>
                   <Input
                     type="number"
