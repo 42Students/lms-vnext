@@ -33,8 +33,8 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-R04 | S2 | SIDE-EFFECT | OPEN |
 | LEARNER-placements-R05 | S2 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-placements-01 | S3 | MISSING-FIELD | OPEN |
-| LEARNER-placements-03 | S3 | COPY | OPEN |
-| LEARNER-placements-05 | S3 | COPY | OPEN |
+| LEARNER-placements-03 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-placements-05 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-08 | S3 | MISSING-FIELD | UNCONFIRMED |
 | LEARNER-placements-09 | S3 | STATE | OPEN |
 | LEARNER-placements-11 | S3 | COPY | FIXED-ON-MAIN |

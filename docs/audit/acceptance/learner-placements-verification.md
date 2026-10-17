@@ -125,3 +125,7 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 | LEARNER-placements-58 | NOT-A-GAP (queue reconciliation) | `src/modules/placements/learner-application-detail-service.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-58 retains bounded learner company preview without inventing a data-access event history`. Reviewed intentional behavior, not a newly implemented feature. |
 
 | LEARNER-placements-R08 | NOT-A-GAP (queue reconciliation) | `src/modules/placements/learner-job-service.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-R08 prevents out-of-audience drive disclosure`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-03 | DONE | `src/app/(authenticated)/learn/my-placements/{applications,jobs,schedule,offers,placement}/page.tsx`; `tests/unit/learner-placements-chat7-legacy-headings-r7.test.ts` — named test LEARNER-placements-03. New source-level tests authored but not run. |
+
+| LEARNER-placements-05 | DONE | `src/modules/placements/learner-dashboard-hero-priority-model.ts`; `tests/unit/learner-placements-chat7-legacy-headings-r7.test.ts` — named test LEARNER-placements-05. New source-level tests authored but not run. |
