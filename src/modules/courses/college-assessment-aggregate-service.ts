@@ -252,6 +252,7 @@ export async function listCollegeAssessmentAggregate(
         eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
       ))
       .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
+        eq(courseOfferings.status,"ACTIVE"),
         isNull(courseSectionDeliveries.endedAt),
         eq(sections.status,"ACTIVE")))
       .orderBy(asc(sections.name),asc(sections.code)):[];
