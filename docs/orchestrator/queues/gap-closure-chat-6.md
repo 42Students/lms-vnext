@@ -82,7 +82,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-113 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-114 | S3 | COPY | DONE |
 | SA-academics-people-115 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-academics-people-78 | S3 | COPY | OPEN |
+| SA-academics-people-78 | S3 | COPY | DONE |
 | SA-academics-people-79 | S3 | COPY | DONE |
 | SA-academics-people-87 | S3 | MISSING-ACTION | NOT-A-GAP |
 | SA-academics-people-89 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -111,14 +111,14 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-64 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-65 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-67 | S2 | MISSING-COLUMN | OPEN |
-| SA-academics-people-72 | S2 | MISSING-MODAL | OPEN |
+| SA-academics-people-72 | S2 | MISSING-MODAL | BLOCKED |
 | SA-academics-people-77 | S2 | MISSING-ACTION | DONE |
 | SA-academics-people-48 | S3 | COPY | DONE |
 | SA-academics-people-51 | S3 | MISSING-ACTION | DONE |
 | SA-academics-people-54 | S3 | MISSING-FILTER | OPEN |
 | SA-academics-people-55 | S3 | COPY | OPEN |
 | SA-academics-people-57 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-60 | S3 | MISSING-ACTION | OPEN |
+| SA-academics-people-60 | S3 | MISSING-ACTION | BLOCKED |
 | SA-academics-people-61 | S3 | MISSING-FILTER | OPEN |
 | SA-academics-people-62 | S3 | MISSING-COLUMN | OPEN |
 | SA-academics-people-66 | S3 | MISSING-FILTER | OPEN |
@@ -173,16 +173,16 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 |---|---|---|---|
 | SA-placements-projects-101 | S2 | PERMISSION | OPEN |
 | SA-placements-projects-102 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-103 | S2 | MISSING-FIELD | OPEN |
-| SA-placements-projects-113 | S2 | MISSING-PAGE | OPEN |
+| SA-placements-projects-103 | S2 | MISSING-FIELD | BLOCKED |
+| SA-placements-projects-113 | S2 | MISSING-PAGE | BLOCKED |
 | SA-placements-projects-119 | S2 | MISSING-PAGE | OPEN |
-| SA-placements-projects-120 | S2 | MISSING-ACTION | OPEN |
+| SA-placements-projects-120 | S2 | MISSING-ACTION | BLOCKED |
 | SA-placements-projects-104 | S3 | STATE | DONE |
 | SA-placements-projects-105 | S3 | COPY | DONE |
 | SA-placements-projects-106 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-109 | S3 | MISSING-FIELD | OPEN |
 | SA-placements-projects-110 | S3 | COPY | DONE |
-| SA-placements-projects-112 | S3 | COPY | OPEN |
+| SA-placements-projects-112 | S3 | COPY | DONE |
 | SA-placements-projects-114 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-115 | S3 | MISSING-ACTION | UNCONFIRMED |
 | SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
@@ -192,7 +192,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-107 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
-| SA-placements-projects-118 | S4 | PERMISSION | OPEN |
+| SA-placements-projects-118 | S4 | PERMISSION | NOT-A-GAP |
 | SA-placements-projects-123 | S4 | COPY | UNCONFIRMED |
 
 ## learner/profile-misc (19: OPEN 6, FIXED-ON-MAIN 13)
@@ -201,10 +201,10 @@ Audit: `docs/audit/pages/learner/profile-misc.md` (and `profile-misc-review.md` 
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| LEARNER-profile-misc-01 | S1 | MISSING-ACTION | OPEN |
-| LEARNER-profile-misc-03 | S1 | MISSING-FIELD | OPEN |
-| LEARNER-profile-misc-02 | S2 | MISSING-ACTION | OPEN |
-| LEARNER-profile-misc-04 | S3 | MISSING-MODAL | OPEN |
+| LEARNER-profile-misc-01 | S1 | MISSING-ACTION | BLOCKED |
+| LEARNER-profile-misc-03 | S1 | MISSING-FIELD | BLOCKED |
+| LEARNER-profile-misc-02 | S2 | MISSING-ACTION | BLOCKED |
+| LEARNER-profile-misc-04 | S3 | MISSING-MODAL | BLOCKED |
 | LEARNER-profile-misc-07 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-profile-misc-09 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-profile-misc-13 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -300,3 +300,7 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - Super Admin Tracker -104/-105/-108/-110/-111: prior named tests and acceptance verified; -106/-107: new named source-contract tests in `tests/unit/chat6-tracker-bulk-saved-views-verification.test.ts`, acceptance appended. No tests executed by lane; browser/DB workflows await orchestrator.
 
 - College Dashboard -10/-14/-15/-16 matched existing failure-isolation and copy/a11y tests, with dispositions in `docs/audit/acceptance/college-dashboard-verification.md`. Learner -23 matched notification copy and named test under `docs/audit/acceptance/learner-profile-misc-verification.md`. No tests run.
+
+- SA-academics-people-78: existing named test `chat6-superadmin-people-verified-closure.test.ts` and people acceptance match the no-college wording.
+- SA-placements-projects-112: real Light/Dark tracker mode, exact nav and keyboard skip control, named test `chat6-tracker-theme-nav-verification.test.ts`, acceptance updated. -118 is OD-27 Super Admin-only logs (new named policy test).
+- Provider-only blockers: SA-academics-people-60/-72 and LEARNER-profile-misc-01/-02/-03/-04 need private scanned object storage; SA-placements-projects-103 needs same for screenshots; -113 needs Cloud Logging provider integration; -120 needs GitHub findings-import credentials. All have acceptance notes; do not fake uploads or provider responses.
