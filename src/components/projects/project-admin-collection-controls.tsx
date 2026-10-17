@@ -172,6 +172,7 @@ export function ProjectAdminPagination({
     if (query.q) params.set("q", query.q);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
     if (query.riskBucket) params.set("riskBucket", query.riskBucket);
+    if (query.riskSort) params.set("riskSort", query.riskSort);
     if (query.status) {
       params.set("status", query.status);
     }
