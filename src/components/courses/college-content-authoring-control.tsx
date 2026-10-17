@@ -55,7 +55,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       throw Error("Remove credentials and fragments from the HTTPS link.");
     const host=target.hostname.toLowerCase().replace(/^\[|\]$/g,"");
     if(host==="localhost"||host.endsWith(".localhost")||host==="::1"||
-       host==="0.0.0.0"||/^127(?:\.\d{1,3}){3}$/.test(host))
+       host==="0.0.0.0"||host==="::"||host.startsWith("fe80:")||
+       /^127(?:\.\d{1,3}){3}$/.test(host)||/^10(?:\.\d{1,3}){3}$/.test(host)||
+       /^192\.168(?:\.\d{1,3}){2}$/.test(host)||/^169\.254(?:\.\d{1,3}){2}$/.test(host)||
+       /^172\.(?:1[6-9]|2\d|3[01])(?:\.\d{1,3}){2}$/.test(host))
       throw Error("Use a publicly reachable HTTPS link.");
 
     if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
