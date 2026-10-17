@@ -85,3 +85,35 @@ Source-verified against the audited legacy behavior on the branch. Tests named b
 | Gap ID | Status | Evidence and exact integration request |
 | --- | --- | --- |
 | REC-calendar-messages-profile-24 | OPEN — chat-9 integration after UX-playbook approval | `src/modules/placements/recruiter-shell-navigation-model.ts` and `tests/unit/recruiter-chat14-shell-handoff.test.ts` define the exact legacy five mobile rows Today → `/hr/home`, Drives → `/hr/drives`, Calendar → `/hr/calendar`, Messages → `/hr/conversations`, Company → `/hr/company` with college-scoped links, nested active highlighting, and an explicit no-inferred-brand result when grants are ambiguous. Shell owner chat-9 must use only the selected authorized college's name and the separately authorized college logo, allow a college chooser for multiple active grants, preserve hamburger navigation, respect safe-area bottom inset, and use the audited UX playbook. No shared-shell or page visual code changed in chat-14. |
+
+
+## Final-sprint chat-2 independent verification (2026-10-18; tests not executed)
+
+These 22 IDs were explicitly assigned to chat-2 in `docs/orchestrator/queues/final-sprint.md`. The tests verify the *current* scoped implementation; PARTIAL rows do not claim parity that does not exist.
+
+| ID | Verdict | Named regression test / factual evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-03 | DONE — source | `chat2-final-sprint-recruiter-calendar.test.ts` — ID-named end-time and actual `durationMinutes` reader, IST card |
+| REC-calendar-messages-profile-05 | DONE — source | Same file — original subtitle, Previous/Next week labels and newly restored exact empty-state copy |
+| REC-calendar-messages-profile-06 | DONE — source | Same file — `collegeName` on each authorized college event |
+| REC-calendar-messages-profile-07 | DONE — source | Same file — rounds/interviews to Rounds and deadline to Overview of the authorized recruiter drive |
+| REC-calendar-messages-profile-09 | DONE — source | `chat2-final-sprint-recruiter-messages.test.ts` — unread/conversation toolbar and authorized message-body search |
+| REC-calendar-messages-profile-10 | DONE — source | Same file — company + job subject, General label, n new and relative activity |
+| REC-calendar-messages-profile-11 | DONE — source | Same file — inline General history, reply, guarded General creation |
+| REC-calendar-messages-profile-13 | DONE — source | Same file — focused/visible 4-second refresh with no GET side effects |
+| REC-calendar-messages-profile-14 | DONE — source | Same file — explicit client POST read acknowledgment on opening a thread |
+| REC-calendar-messages-profile-15 | DONE — source | Same file — safe 400/403 feedback, send success versus refresh failure, Ctrl/Cmd+Enter |
+| REC-calendar-messages-profile-18 | PARTIAL — OPEN | Same file — scoped request cards, sender attribution, proposal marker and request link; full legacy event-line types not all rendered |
+| REC-calendar-messages-profile-20 | NOT-A-GAP | Same file — accessible Older/Newer + oldest/newest navigation intentionally retains bounded, chronological pages rather than loading unbounded history |
+| REC-calendar-messages-profile-R02 | DONE — source | Same file — current authorized drive or General conversation subject and real drive link |
+| REC-calendar-messages-profile-26 | DONE — source | `chat2-final-sprint-recruiter-profile-company.test.ts` — bounded separate First name / Last name |
+| REC-calendar-messages-profile-29 | DONE — source | Same file — actual college access expiry and no-end-date fallback |
+| REC-calendar-messages-profile-30 | NOT-A-GAP | Same file — deliberate self-service Leave Access (owner OD-20) with explicit confirmation and no automatic regrant |
+| REC-calendar-messages-profile-32 | PARTIAL — OPEN | Same file — company initial, safe clickable site, primary domain, industry fallback, privacy note; full verified-by-42 evidence and multi-domain list not present, no invented verification |
+| REC-calendar-messages-profile-33 | NOT-A-GAP | Same file — TPO's private Trusted relationship bit is not exposed; safe `Linked by the placement cell` fact only |
+| REC-calendar-messages-profile-34 | DONE — source | Same file — authorized current-college own-company team and actual attributed drive counts |
+| REC-calendar-messages-profile-35 | DONE — source | Same file — corrected `Offered` now sums pending+accepted+declined; other accepted/declined/joined/withdrawn totals remain separate, no fake counts |
+| REC-calendar-messages-profile-36 | DONE — source | Same file — exact Recruiter, Your profile and Your work with college header, without page restyling |
+| REC-calendar-messages-profile-41 | PARTIAL — OPEN | Same file — work email is readonly and student contact-sharing boundary is explicit; reviewer-drive invite paragraph needs real linked drive data and cannot be invented |
+
+Source checks and pure-model tests were written, not run. No recruiter company trust secrets, foreign-college threads or invented offer counts are exposed.
