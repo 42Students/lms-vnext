@@ -63,3 +63,9 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-56 | PARTIAL | `src/modules/projects/cohort-preflight-service.ts`, `src/components/projects/class-team-workspace-creator.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` tests `SA-placements-projects-56`: scoped server preflight, per-learner decision table (to create, covered, duplicate), partial outcome/export. The legacy standalone team creation fields and per-student failure detail still need implementation |
 | SA-placements-projects-57 | DONE | `src/app/(authenticated)/admin/projects/workspaces/new/page.tsx`, `src/components/projects/class-team-workspace-creator.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-57`: legacy heading, mode names, team help text |
 | SA-placements-projects-87 | DONE | `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx`, `src/components/projects/super-admin-template-college-bulk.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-87`: per-college authorization, bulk page selection, confirm, partial-failure retry |
+
+### Round 5: transactional roster parity
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-placements-projects-93 | DONE | `src/components/projects/college-project-student-roster-dialog.tsx`, `src/components/projects/college-project-mentor-dialog.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-93`: searchable multi-select roster with role label; expected version and single transactional API mutation; removal-count confirmation with exact Replace roster label; in-tab mentor reassignment dialog |
