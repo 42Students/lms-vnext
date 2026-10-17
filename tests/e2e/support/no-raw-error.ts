@@ -10,6 +10,8 @@ const forbidden = [
   /\b(?:SELECT|INSERT|UPDATE|DELETE)\s+[^\n]+\b(?:FROM|INTO|SET)\b/i,
   /\brelation\s+["'`][^"'`]+/i,
   /\bviolates\b/i,
+  /\bnull\b/i, /\bSQLSTATE\b/i, /Unexpected token/i,
+  /\b(?:HTTP\s*)?(?:403|404|429|500|502|503|504)\b/i,
 ];
 
 export async function expectNoRawErrors(page: Page): Promise<void> {

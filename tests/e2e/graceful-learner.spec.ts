@@ -24,7 +24,7 @@ test.describe("GR-80 Learner profile editing and autosave", () => {
       await authenticateGracefulRole(context, "learner");
       const { dialog, headline } = await editProfile(page);
       const errors = captureUncaughtErrors(page);
-      const failure = await failApi(page, "**/api/profile/me", kind);
+      const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/profile/me", kind);
       try {
         await dialog.getByRole("button", { name: "Save profile" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);

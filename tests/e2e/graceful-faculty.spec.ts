@@ -28,7 +28,7 @@ test.describe("GR-80 Faculty authoring gracefully survives failed saves", () => 
       await page.getByRole("spinbutton", { name: "Maximum points" }).fill("20");
       await page.getByRole("checkbox", { name: /I confirm this Section assignment change/ }).check();
       const failure = await failApi(
-        page, `**/api/courses/faculty/assignments/${deliveryId}/command`, kind,
+        page, kind === "backend-down" ? "**/api/**" : `**/api/courses/faculty/assignments/${deliveryId}/command`, kind,
       );
       try {
         await page.getByRole("button", { name: "Create draft" }).click();

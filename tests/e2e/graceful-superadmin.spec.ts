@@ -22,7 +22,7 @@ test.describe("GR-80 Super Admin college setup failure recovery", () => {
       const code = page.locator("#college-code");
       await name.fill("Graceful College Draft");
       await code.fill("GRACEFUL-TEST-DRAFT");
-      const failure = await failApi(page, "**/api/colleges", kind);
+      const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/colleges", kind);
       try {
         await page.getByRole("button", { name: "Create College" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);

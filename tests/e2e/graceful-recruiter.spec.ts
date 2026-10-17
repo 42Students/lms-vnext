@@ -37,7 +37,7 @@ test.describe("GR-80 Recruiter messaging preserves unsent replies", () => {
       const body = form.getByRole("textbox", { name: "Message" });
       await body.fill("Recruiter browser draft must not disappear");
       const failure = await failApi(
-        page, /\/api\/placements\/recruiter\/conversations\/[^/]+\/reply$/, kind,
+        page, kind === "backend-down" ? "**/api/**" : /\/api\/placements\/recruiter\/conversations\/[^/]+\/reply$/, kind,
       );
       try {
         await form.getByRole("button", { name: "Send reply" }).click();

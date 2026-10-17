@@ -43,7 +43,7 @@ for (const action of actions) {
         const field = page.locator(action.field).first();
         await expect(field).toBeVisible();
         await field.fill(action.value);
-        const failure = await failApi(page, action.endpoint, kind);
+        const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : action.endpoint, kind);
         try {
           await page.getByRole("button", { name: action.button, exact: true }).click();
           await expect.poll(failure.hits).toBeGreaterThan(0);
