@@ -14,11 +14,11 @@ function safeViews(value:unknown):View[]{
    usedAt:typeof x.usedAt==="number"&&Number.isFinite(x.usedAt)?x.usedAt:0}];
  });
 }
-export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters:{
+export function TpoAuditSavedViews({collegeId,userId,filters}:{collegeId:string;userId:string;filters:{
  kind:string;from?:string;to?:string;q:string;who?:string;
 }}){
  const router=useRouter();
- const key="lms.tpo.audit.views."+collegeId;
+ const key="lms.tpo.audit.views."+collegeId+"."+userId;
  const [views,setViews]=useState<View[]>([]);
  const [name,setName]=useState("");
  const [selected,setSelected]=useState("");
@@ -58,7 +58,7 @@ export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters
  }
  return <details className="rounded-xl border border-border bg-surface p-4">
   <summary className="cursor-pointer font-semibold">Saved audit views ({views.length}/12)</summary>
-  <p className="mt-1 text-xs text-muted-foreground">Views are stored only in this browser for the current college. Server-wide syncing and sharing are not enabled.</p>
+  <p className="mt-1 text-xs text-muted-foreground">Views are stored only in this browser for your TPO account and this college. Server-wide syncing and sharing are not enabled.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-44 flex-1 gap-1 text-xs">View name
     <input value={name} maxLength={50} onChange={e=>setName(e.target.value)}
