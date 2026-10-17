@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getPlacementReportDetails} from "@/modules/placements/report-service";
+import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
  from "@/modules/placements/tpo-unplaced-filtered-export-model";
@@ -18,13 +19,18 @@ export async function GET(request:Request){
    getTpoStudentsIntelligence(context,{collegeId,batchId:input.batchId,branchId:input.branchId,
     page:1,pageSize:100},{includeExportRows:true}),
   ]);
+  const activity=await getTpoUnplacedLastApplications(context,{collegeId,
+   seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
   const roster=new Map((students.exportRows??[]).map(row=>[row.membershipId,row]));
   const matching=workspace.details.unplaced.filter(row=>roster.has(row.membershipId));
   const rows=matching.slice(0,5000).map(student=>{
    const item=roster.get(student.membershipId)!;
    return {displayName:student.displayName,rollNumber:item.rollNumber??null,
-    batch:item.cohortName,branch:item.branchName,applications:item.applicationCount,
-    stillInDrive:item.activeApplicationCount>0};
+    batch:item.cohortName,branch:item.branchName,applications:activity.get(student.membershipId)?.applications??0,
+    stillInDrive:activity.get(student.membershipId)?.stillInDrive??false,
+    lastApplied:activity.get(student.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{
+     timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+    })??null};
   });
   return new Response("\uFEFF"+tpoUnplacedFilteredCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
