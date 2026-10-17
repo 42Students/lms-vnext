@@ -210,6 +210,10 @@ export async function createPlacementJob(
           input.minimumAnnualCtcInr ?? null,
         maximumAnnualCtcInr:
           input.maximumAnnualCtcInr ?? null,
+        isDream: input.isDream,
+        fixedCtcLpa:input.fixedCtcLpa==null?null:input.fixedCtcLpa.toFixed(2),
+        variableCtcLpa:input.variableCtcLpa==null?null:input.variableCtcLpa.toFixed(2),
+        stipendPerMonthInr:input.stipendPerMonthInr??null,
         applicationMode:
           input.applicationMode,
         externalApplicationUrl:
