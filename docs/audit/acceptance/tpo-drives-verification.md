@@ -86,3 +86,5 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-38 | OPEN | UI explicitly states employer skill requirements cannot be configured here. No persisted skill tags or applicant match setup; needs server/domain support, no fake UI. Test TPO-drives-38. |
 | TPO-drives-47 | OPEN | UI directs lead invitations to Engage instead of claiming this form emails recruiters; drive-specific invitation, public review link, email/clipboard UX remain. Test TPO-drives-47. |
 | TPO-drives-50 | OPEN | Edit checks TPO actor and college scope, but recruiter-originated approved drive fields are not yet protected by a company-owned-field policy and last-saved attribution. Test TPO-drives-50. |
+
+| TPO-drives-22 | DONE (visible wording) | Create and Edit use `Create drive`, `Create draft`, `Publish`, `Save changes`, `Back to drives` and `Open drive page`. Edit now uses accessible confirmation and guarded friendly API. Named test TPO-drives-22. Full legacy wizard semantics still tracked in other IDs. |
