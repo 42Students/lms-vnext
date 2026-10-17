@@ -26,11 +26,13 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const router=useRouter();
  const draftKey="tpo-team-start:"+actorUserId;
  const pending=useRef(false);
+ const createKey=useRef<string|null>(null);
  const [recipient,setRecipient]=useState(""),[topic,setTopic]=useState("");
  useEffect(()=>{
   const handle=window.setTimeout(()=>{
    try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
     const parsed=JSON.parse(raw) as {recipient?:string;topic?:string};
+    createKey.current=sessionStorage.getItem(draftKey+":createKey");
     if(parsed.topic&&parsed.topic.length<=160)setTopic(parsed.topic);
     if(parsed.recipient&&members.some(member=>member.membershipId===parsed.recipient))setRecipient(parsed.recipient);
    }catch{/* Storage is optional. */}
@@ -38,21 +40,25 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   return ()=>window.clearTimeout(handle);
  },[draftKey,members]);
  function updateDraft(nextRecipient:string,nextTopic:string){
-  setRecipient(nextRecipient);setTopic(nextTopic);
-  try{sessionStorage.setItem(draftKey,JSON.stringify({recipient:nextRecipient,topic:nextTopic}));}catch{/* Optional. */}
+  setRecipient(nextRecipient);setTopic(nextTopic);createKey.current=null;
+  try{sessionStorage.setItem(draftKey,JSON.stringify({recipient:nextRecipient,topic:nextTopic}));
+   sessionStorage.removeItem(draftKey+":createKey");}catch{/* Optional. */}
  }
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function create(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();if(pending.current||busy||!recipient||!topic.trim())return;
   pending.current=true;setBusy(true);setError("");
   try{
+   if(!createKey.current){createKey.current=crypto.randomUUID();
+    try{sessionStorage.setItem(draftKey+":createKey",createKey.current);}catch{/* Optional. */}}
    const result=await postForm("/api/placements/tpo/team/threads",{
-    recipientMembershipId:recipient,topic:topic.trim(),
+    recipientMembershipId:recipient,topic:topic.trim(),idempotencyKey:createKey.current,
    });
    if(!result.ok||!result.href){
     setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","CREATE"));return;
    }
-   try{sessionStorage.removeItem(draftKey);}catch{/* Optional. */}
+   try{sessionStorage.removeItem(draftKey);
+    sessionStorage.removeItem(draftKey+":createKey");}catch{/* Optional. */}
    router.push(result.href);router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","CREATE"));}
   finally{pending.current=false;setBusy(false);}
