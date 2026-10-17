@@ -142,7 +142,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
       >= ${filters.minOffers}`:undefined,
     filters.journey==="TAKING_APPLICATIONS"?and(eq(placementJobs.status,"PUBLISHED"),
-      gte(placementJobs.applicationDeadline,now)):
+      or(isNull(placementJobs.applicationDeadline),gte(placementJobs.applicationDeadline,now))):
     filters.journey==="RUNNING_ROUNDS"?and(eq(placementJobs.status,"PUBLISHED"),
       sql`exists(select 1 from placement_job_rounds jr
         where jr.job_id=${placementJobs.id} and jr.status in ('SCHEDULED','COMPLETED'))`):
