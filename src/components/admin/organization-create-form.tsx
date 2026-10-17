@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import {useFormDraft} from "@/hooks/use-form-draft";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
@@ -11,7 +12,9 @@ import {createdOrganizationStepHref} from "@/modules/colleges/admin-tenant-organ
 export function OrganizationCreateForm({ advanceToCollege = false }: { advanceToCollege?: boolean } = {}) {
   const router = useRouter();
   const {showToast}=useToast();
-  const [name, setName] = useState("");
+  const {draft,setDraft,restored,clearDraft}=useFormDraft("admin-create-organization",{name:""});
+  const name=draft.name;
+  const setName=(value:string)=>setDraft({...draft,name:value});
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -29,6 +32,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           body:JSON.stringify({name:cleanName}),
         });
         showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
+        clearDraft();
         if(advanceToCollege){
           const href=createdOrganizationStepHref(payload);
           if(!href){
@@ -37,7 +41,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           }
           router.push(href);router.refresh();return;
         }
-        setName("");router.refresh();
+        setName("");clearDraft();router.refresh();
       } catch(cause) {
         setError(cause instanceof FriendlyFetchError && cause.status===409
           ? "Organization name already exists"
@@ -71,6 +75,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
       <Button type="submit" disabled={pending || !name.trim()}>
         {pending ? "Creating…" : "Create Organization"}
       </Button>
+      {restored?<p role="status" className="text-xs text-body">Draft restored</p>:null}
       {error ? (
         <p role="alert" className="m-0 text-xs font-semibold text-error sm:w-full">
           {error}
