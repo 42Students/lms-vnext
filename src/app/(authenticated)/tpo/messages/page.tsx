@@ -195,9 +195,7 @@ export default async function TpoMessagesPage({
         )}
 
         <p className="mt-2 text-xs leading-5 text-muted-foreground">
-          The outbound email/SMS messaging schema is draft-only.
-          No delivery, bounce, sent-message or inbox counts
-          are inferred from it. Notification bodies and private contact details are not exposed in this overview.
+          This page shows messages and notifications recorded for your college.
         </p>
       </section>
 
