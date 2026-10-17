@@ -5,7 +5,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementOffers,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementJobRounds,placementJobs,placementOffers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
@@ -104,6 +104,29 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
    if(!offer||offer.status!=="ACCEPTED"||offer.acceptanceChannel!=="EXTERNAL_IMPORT"||
      !offer.acceptedDisputableUntil||offer.acceptedDisputableUntil.getTime()<=Date.now())
       throw new TpoGeneralRequestError("TARGET_CHANGED");
+  }
+  if(input.kind==="ABSENCE_DISPUTE"){
+   // An arbitrary application/round pair must never be accepted as a tenant
+   // request. Validate the actual application owner and round's job together.
+   const [participation]=await tx.select({id:placementApplications.id})
+    .from(placementApplications)
+    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+    .innerJoin(placementJobRounds,and(
+      eq(placementJobRounds.id,input.roundId),
+      eq(placementJobRounds.jobId,placementJobs.id)))
+    .where(and(eq(placementApplications.id,input.applicationId),
+      eq(placementApplications.membershipId,member.id),
+      eq(placementJobs.collegeId,member.collegeId))).limit(1);
+   if(!participation)throw new TpoGeneralRequestError("SCOPE");
+  }
+  if(input.kind==="PLACEMENT_AFTER_PLACEMENT"){
+   // Job IDs are not proof of eligibility; refuse cross-college/nonexistent
+   // targets before a request can enter a placement cell's decision queue.
+   const [requestedJob]=await tx.select({id:placementJobs.id})
+    .from(placementJobs).where(and(
+      eq(placementJobs.id,input.requestedJobId),
+      eq(placementJobs.collegeId,member.collegeId))).limit(1);
+   if(!requestedJob)throw new TpoGeneralRequestError("SCOPE");
   }
   if(input.kind==="REGISTRATION_CHANGE"){
    const rows=await tx.select({cohortId:learnerProgramEnrollments.cohortId})
