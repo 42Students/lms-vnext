@@ -279,4 +279,25 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(page).toContain("<ActivityCenter");
  });
 
+
+ it("SA-placements-projects-56 keeps cohort creation preflight, skip logic and partial-failure outcome",()=>{
+  const src=source("src/components/projects/class-team-workspace-creator.tsx");
+  expect(src).toContain("cohort-preflight");
+  expect(src).toContain("Before creating: one workspace per student");
+  expect(src).toContain("Already covered learners are skipped.");
+  expect(src).toContain("Latest cohort creation outcome");
+  expect(src).toContain("No workspaces were created — the selected class may have no active learners.");
+  expect(src).toContain("student(s) failed. Review or export the report below before retrying.");
+  expect(src).toContain("Export outcome CSV");
+ });
+ it("SA-placements-projects-57 restores creator mode wording and split-team help",()=>{
+  const src=source("src/components/projects/class-team-workspace-creator.tsx");
+  const route=source("src/app/(authenticated)/admin/projects/workspaces/new/page.tsx");
+  for(const label of ["One team","Split a class into teams","One workspace per student",
+    "Pick a class and a team size, preview the teams, move anyone between teams"])
+   expect(src).toContain(label);
+  expect(route).toContain('title="Create project workspace"');
+  expect(route).toContain("Every workspace starts from a template — pick one below.");
+ });
+
 });
