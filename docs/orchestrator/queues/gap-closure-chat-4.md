@@ -140,8 +140,8 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-course-detail-R02 | S2 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-home-courses-01 | S2 | COPY / MISSING-PAGE (landing) | UNCONFIRMED |
 | LEARNER-home-courses-14 | S2 | MISSING-FIELD / SIDE-EFFECT | UNCONFIRMED |
-| LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | OPEN |
-| LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | OPEN |
+| LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | DONE |
+| LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
 | LEARNER-course-detail-R04 | S3 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
 | LEARNER-home-courses-03 | S3 | STATE / COPY | OPEN |
@@ -149,21 +149,21 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | LEARNER-home-courses-09 | S3 | COPY / STATE | DONE |
-| LEARNER-home-courses-12 | S3 | COPY | OPEN |
-| LEARNER-home-courses-16 | S3 | COPY | OPEN |
+| LEARNER-home-courses-12 | S3 | COPY | DONE |
+| LEARNER-home-courses-16 | S3 | COPY | DONE |
 | LEARNER-home-courses-19 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-21 | S3 | STATE | FIXED-ON-MAIN |
 | LEARNER-home-courses-R01 | S3 | STATE | DONE |
 | LEARNER-home-courses-06 | S4 | COPY | DONE |
 | LEARNER-home-courses-07 | S4 | MISSING-FILTER | DONE |
-| LEARNER-home-courses-10 | S4 | STATE | OPEN |
+| LEARNER-home-courses-10 | S4 | STATE | DONE |
 | LEARNER-home-courses-11 | S4 | STATE | DONE |
 | LEARNER-home-courses-13 | S4 | COPY | DONE |
 | LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | FIXED-ON-MAIN |
 | LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | FIXED-ON-MAIN |
 | LEARNER-home-courses-22 | S4 | PERFORMANCE | OPEN |
-| LEARNER-home-courses-23 | S4 | COPY | OPEN |
+| LEARNER-home-courses-23 | S4 | COPY | DONE |
 
 ## college/course-tabs (23: FIXED-ON-MAIN 16, OPEN 4, UNCONFIRMED 3)
 
@@ -183,12 +183,12 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-12 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-13 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-course-tabs-17 | S2 | MISSING-ACTION | OPEN |
+| COL-course-tabs-17 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-14 | S3 | MISSING-ACTION | OPEN |
 | COL-course-tabs-15 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-18 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-19 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| COL-course-tabs-22 | S3 | STATE | OPEN |
+| COL-course-tabs-22 | S3 | STATE | DONE |
 | COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
@@ -206,9 +206,9 @@ Audit: `docs/audit/pages/college/verification-misc.md` (and `verification-misc-r
 | COL-verification-misc-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-verification-misc-05 | S2 | MISSING-FIELD | DONE |
 | COL-verification-misc-07 | S2 | SIDE-EFFECT | DONE |
-| COL-verification-misc-10 | S2 | STATE | OPEN |
+| COL-verification-misc-10 | S2 | STATE | DONE |
 | COL-verification-misc-11 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-verification-misc-17 | S2 | PERMISSION | OPEN |
+| COL-verification-misc-17 | S2 | PERMISSION | DONE |
 | COL-verification-misc-02 | S3 | MISSING-FIELD | DONE |
 | COL-verification-misc-06 | S3 | COPY | OPEN |
 | COL-verification-misc-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
