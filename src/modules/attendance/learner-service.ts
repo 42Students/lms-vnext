@@ -60,6 +60,7 @@ export async function getLearnerAttendanceWorkspace(
   context: RequestContext,
   options: {
     includeHistorical?: boolean;
+    deliveryId?: string;
     /** Trusted server-side half-open IST calendar window. */
     window?: { from: Date; to: Date };
   } = {},
@@ -124,7 +125,11 @@ export async function getLearnerAttendanceWorkspace(
     };
   }
 
-  const deliveryIds = deliveries.map(
+  const authorizedDeliveries=options.deliveryId?
+    deliveries.filter(delivery=>delivery.deliveryId===options.deliveryId):deliveries;
+  if(options.deliveryId&&authorizedDeliveries.length===0)
+    throw new AuthorizationError("courses.read");
+  const deliveryIds = authorizedDeliveries.map(
     (delivery) => delivery.deliveryId,
   );
   const rows = await getDb()
@@ -252,7 +257,7 @@ export async function getLearnerAttendanceWorkspace(
         row.recordStatus as LearnerAttendanceRow["recordStatus"],
     }));
 
-  const courseList = deliveries.map(
+  const courseList = authorizedDeliveries.map(
     (delivery) => ({
       deliveryId: delivery.deliveryId,
       courseId: delivery.courseId,
