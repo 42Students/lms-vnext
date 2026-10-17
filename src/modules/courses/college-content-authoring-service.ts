@@ -51,7 +51,9 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
   eq(departments.collegeId,collegeId)))
  .where(and(eq(lessonContents.contentType,kind),
-  ne(lessonContents.status,"ARCHIVED")))
+  ne(lessonContents.status,"ARCHIVED"),
+  ne(courseLearningPaths.status,"ARCHIVED"),eq(courseOfferings.status,"ACTIVE"),
+  eq(courses.status,"ACTIVE"))
  .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id)).limit(251);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
