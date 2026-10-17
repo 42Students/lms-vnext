@@ -54,4 +54,12 @@ describe("chat-16 mentor editor safeguards",()=>{
     expect(guard).toContain("window.location.assign(navigateTo)");
     expect(guard).toContain('window.addEventListener("beforeunload",beforeUnload)');
   });
+  it("MEN-projects-meetings-75 protects upload metadata and file edits on leave",()=>{
+    const panel=source("src/components/projects/project-resource-files-panel.tsx");
+    expect(panel).toContain("useProjectEditorDiscardGuard(true,dirty,busy,discardDraft)");
+    expect(panel).toContain("selected||uploadTitle.trim()||uploadDescription.trim()||linkedResourceId");
+    expect(panel).toContain('title="Discard resource changes?"');
+    expect(panel).toContain("onClick={discardGuard.requestClose}");
+    expect(panel).toContain("onConfirm={discardGuard.confirmDiscard}");
+  });
 });
