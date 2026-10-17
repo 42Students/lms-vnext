@@ -9,9 +9,12 @@ export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined
  if(expiresAt.getTime()<=asOf.getTime())return "EXPIRED";
  return expiresAt.getTime()-asOf.getTime()<=7*86400000?"DUE_SOON":"OPEN";
 }
-export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL"){
+export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL",
+ expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date()){
  const term=search.trim().toLocaleLowerCase("en-IN");
- return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&(kind==="ALL"||f.offer.kind===kind)&&(!term||
+ return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
+  (kind==="ALL"||f.offer.kind===kind)&&
+  (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
   [f.candidate.displayName,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
