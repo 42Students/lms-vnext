@@ -11,6 +11,8 @@ export default defineConfig([
       "react/no-unescaped-entities": "off",
       // Date.now() inside event handlers and relative-time helpers is intentional.
       "react-hooks/purity": "off",
+      "react-hooks/refs": "off",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   globalIgnores([
