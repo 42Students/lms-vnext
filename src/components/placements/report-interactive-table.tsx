@@ -65,6 +65,17 @@ export function ReportInteractiveTable({title,headings,rows,emptyDescription}:{
      </select>
     </label>
     <details className="relative self-end rounded-md border border-border p-2 text-sm">
+     <summary className="cursor-pointer">Column filters ({Object.values(columnFilters).filter(v=>v.trim()).length})</summary>
+     <div className="absolute right-0 top-full z-20 mt-2 max-h-72 min-w-64 space-y-2 overflow-y-auto rounded-md border border-border bg-surface p-3 shadow-lg">
+      {displayedColumns.map(col=><label key={col.index} className="grid gap-1 text-xs font-semibold">
+       {col.heading}
+       <input type="search" maxLength={100} value={columnFilters[col.index]??""}
+        onChange={event=>{setColumnFilters(current=>({...current,[col.index]:event.target.value}));setLimit(100);}}
+        className="min-h-9 rounded border border-border bg-background px-2 text-sm"/>
+      </label>)}
+     </div>
+    </details>
+    <details className="relative self-end rounded-md border border-border p-2 text-sm">
      <summary className="cursor-pointer">Columns</summary>
      <fieldset className="absolute right-0 top-full z-10 mt-2 max-h-72 min-w-48 space-y-2 overflow-y-auto rounded-md border border-border bg-surface p-3 shadow-lg">
       <legend className="sr-only">Choose report columns</legend>
