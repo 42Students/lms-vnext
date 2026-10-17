@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
@@ -1025,6 +1026,13 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
+      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations
+        events={visibleEvents.filter(event=>event.kind==="ROUND").map(event=>({
+         id:event.id,roundId:event.roundId,jobId:event.jobId,jobTitle:event.jobTitle,
+         title:event.title,companyName:event.companyName,status:event.status,
+         kind:event.roundKind??"OTHER",startsAt:event.startsAt.toISOString(),
+         endsAt:event.endsAt?.toISOString()??null,venue:event.venue??null,
+        }))} /> : null}
       <section
         aria-label="Calendar agenda"
         className="space-y-4"
