@@ -6,10 +6,20 @@ import {restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage
 export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;collegeId:string}){
  const [hasDraft,setHasDraft]=useState(false);
  useEffect(()=>{
-  try{
-   const raw=window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey);
-   queueMicrotask(()=>setHasDraft(!!restoreHrUnsentDraft(raw,Date.now())));
-  }catch{/* Storage may be unavailable */ }
+  function readDraft(){
+   try{
+    const local=restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now());
+    const session=restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now());
+    setHasDraft(Boolean(local||session));
+   }catch{setHasDraft(false);}
+  }
+  readDraft();
+  window.addEventListener("storage",readDraft);
+  window.addEventListener("focus",readDraft);
+  return ()=>{
+   window.removeEventListener("storage",readDraft);
+   window.removeEventListener("focus",readDraft);
+  };
  },[storageKey]);
  if(!hasDraft)return null;
  return <aside role="status" className="rounded-xl border border-warning bg-surface p-4">
