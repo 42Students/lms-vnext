@@ -103,7 +103,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 |---|---|---|---|
 | SA-academics-people-58 | S1 | MISSING-ACTION | BLOCKED |
 | SA-academics-people-59 | S1 | PERMISSION | BLOCKED |
-| SA-academics-people-49 | S2 | MISSING-FIELD | OPEN |
+| SA-academics-people-49 | S2 | MISSING-FIELD | NOT-A-GAP |
 | SA-academics-people-50 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-52 | S2 | MISSING-ACTION | OPEN |
 | SA-academics-people-53 | S2 | PERMISSION | OPEN |
@@ -242,7 +242,7 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 ## Chat-6 unconfirmed decisions (18, resolved as choices; not all functionally complete)
 
-See `docs/audit/acceptance/chat-6-unconfirmed-decisions.md` and `tests/unit/chat6-unconfirmed-decisions-round13.test.ts`. Decisions: SA-academics-people-R04, -49, -75, -111; SA-placements-projects-14, -37, -39, -58, -68, -72, -77, -115; SA-tenants-modules-30, -31, -38, -54, -60, -68. OPEN decisions deliberately stay OPEN if behavior is missing; DONE indicates verified existing source. In particular, SA-academics-people-49 still lacks independent min-progress computation, SA-placements-projects-115 still lacks server-side issue creation/log detail, and SA-placements-projects-72 still lacks durable Lock.
+See `docs/audit/acceptance/chat-6-unconfirmed-decisions.md` and `tests/unit/chat6-unconfirmed-decisions-round13.test.ts`. Decisions: SA-academics-people-R04, -49, -75, -111; SA-placements-projects-14, -37, -39, -58, -68, -72, -77, -115; SA-tenants-modules-30, -31, -38, -54, -60, -68. OPEN decisions deliberately stay OPEN if behavior is missing; DONE indicates verified existing source. In particular, SA-academics-people-49 has a verified hidden GLOBAL min-progress threshold, SA-placements-projects-115 still lacks server-side issue creation/log detail, and SA-placements-projects-72 still lacks durable Lock.
 
 ## Notes (blockers, one line each)
 
