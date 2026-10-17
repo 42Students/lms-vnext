@@ -261,6 +261,13 @@ export function AdminCourseCreatePanel({
        <a href="#setup-delivery" className="font-semibold text-primary-text underline">3. Section Delivery</a>
        <a href="#setup-faculty" className="font-semibold text-primary-text underline">4. Assign Course Faculty</a>
       </nav>
+      <p role="status" className="rounded border border-border bg-surface p-3 text-sm text-body xl:col-span-2">
+       {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
+        nextSetupStep==="OFFERING"?"Course created. Choose a Cohort and Academic Period for its Offering.":
+        nextSetupStep==="DELIVERY"?"Offering created. Choose the compatible Section for the Delivery.":
+        nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
+        "Teaching assignment saved. The Course setup flow is complete."}
+      </p>
       <form onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
