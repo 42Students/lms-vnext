@@ -95,6 +95,7 @@ export type TpoStudentRow = {
   applicationCount: number;
   activeApplicationCount: number;
   offerCount: number;
+  offersAwaitingAnswer: number;
   acceptedOfferCount: number;
   verifiedExternalOfferCount: number;
   placed: boolean;
@@ -130,6 +131,7 @@ export type TpoStudentRosterFilter = {
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   minApplications?:number;maxApplications?:number;
   minOffers?:number;maxOffers?:number;
+  offerWaiting?:boolean;
   classId?:string;
   search?: string;
   page: number;
@@ -202,6 +204,8 @@ export function deriveTpoStudent(
   const placed =
     acceptedOfferCount > 0 ||
     source.verifiedExternalOfferCount > 0;
+
+  const offersAwaitingAnswer=source.offers.filter(offer=>offer.status==="ISSUED").length;
 
   const offerCount = source.offers.filter(
     (offer) =>
@@ -299,6 +303,7 @@ export function deriveTpoStudent(
     applicationCount: source.applications.length,
     activeApplicationCount: dashboard.activeApplicationCount,
     offerCount,
+    offersAwaitingAnswer,
     acceptedOfferCount,
     verifiedExternalOfferCount:
       source.verifiedExternalOfferCount,
@@ -428,6 +433,7 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.maxApplications===undefined||row.applicationCount<=filter.maxApplications)
     .filter(row=>filter.minOffers===undefined||row.offerCount>=filter.minOffers)
     .filter(row=>filter.maxOffers===undefined||row.offerCount<=filter.maxOffers)
+    .filter(row=>filter.offerWaiting===undefined||(row.offersAwaitingAnswer>0)===filter.offerWaiting)
     .filter((row) => {
       if (!search) return true;
 
