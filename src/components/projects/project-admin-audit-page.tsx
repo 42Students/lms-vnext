@@ -293,6 +293,19 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
+      <section aria-label="Audit page summary" className="grid gap-3 sm:grid-cols-3">
+        {([
+          {label:"Actions shown",value:result.groups.reduce((sum,g)=>sum+g.count,0)},
+          {label:"People who made changes",value:new Set(result.groups.map(g=>g.latest.actor?.id)
+            .filter((id):id is string=>Boolean(id))).size},
+          {label:"Destructive actions",value:result.groups.filter(g=>
+            /archive|delete|revoke|remove|unassign/i.test(g.latest.event.eventType))
+            .reduce((sum,g)=>sum+g.count,0)},
+        ]).map(item=><div key={item.label} className="rounded-xl border border-border bg-surface p-4">
+          <p className="text-xs font-semibold text-muted-foreground">{item.label}</p>
+          <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
+        </div>)}
+      </section>
       <ProjectAuditPageExport rows={result.groups.map(group=>({
         id:group.latest.event.id,action:group.latest.event.eventType,
         summary:group.latest.event.summary,entity:group.latest.event.subjectLabel??"",
