@@ -709,6 +709,8 @@ export function RecruiterLeadsWorkspace({
                   <option value="ALL">Any contact method</option>
                   <option value="EMAIL">Has an email</option>
                   <option value="PHONE">Has a phone</option>
+                   <option value="BOTH">Has both</option>
+                   <option value="EITHER">Email or phone</option>
                   <option value="NEITHER">Neither</option>
                 </select>
               </label>
