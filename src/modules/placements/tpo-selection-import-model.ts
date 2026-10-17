@@ -54,7 +54,8 @@ export function prepareSelectionImport(text:string,candidates:readonly Selection
   if(matches.length!==1){unmatched.push({line:i+2,value:identifier,reason:matches.length?"Ambiguous student":"No eligible matching applicant"});return;}
   const candidate=matches[0]!;
   if(seen.has(candidate.applicationId)){unmatched.push({line:i+2,value:identifier,reason:"Duplicate in file"});return;}
-  const amount=packageColumn<0||!row[packageColumn]?null:Number(row[packageColumn]);
+  const packageText=packageColumn<0?"":row[packageColumn]?.trim()??"";
+  const amount=packageText===""?null:/^\d{1,4}(?:\.\d{1,2})?$/.test(packageText)?Number(packageText):NaN;
   if(amount!==null&&(!Number.isFinite(amount)||amount<0||amount>1000)){
    unmatched.push({line:i+2,value:identifier,reason:"Package must be between 0 and 1000 LPA"});return;
   }
