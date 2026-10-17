@@ -115,3 +115,10 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-49 | DONE source | Company engagement counts recorded events and completed rounds only. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-49. |
 | TPO-calendar-reports-50 | DONE source | Up to 12 browser-local filters keyed by user/college/report; error state on storage failure. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-50. |
 | TPO-calendar-reports-51 | DONE source | Fullscreen presentation has exit and failure state; no fake success. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-51. |
+
+## Round 9 calendar interaction and report component verification (not a restyle)
+| TPO-calendar-reports-03 | DONE source | Registered weekly hour-grid with 07:00–21:00 axis, overlap placement and current-time marker. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-03. Tests not executed. |
+| TPO-calendar-reports-04 | DONE source | Hour click opens a prefixed follow-up dialog, with cancel and explicit blocked-day conflict. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-04. Tests not executed. |
+| TPO-calendar-reports-09 | DONE source | Today and next-week summaries distinguish missing reads from zero scheduled. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-09. Tests not executed. |
+| TPO-calendar-reports-39 | DONE source | Journey strip uses actual filtered report metrics and offers-made scope. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-39. Tests not executed. |
+| TPO-calendar-reports-40 | PARTIAL | Branch percent bar chart uses measured values; exact legacy chart parity on every report still requires verification. `tests/unit/chat9-round9-calendar-behavior.test.ts` case TPO-calendar-reports-40. Tests not executed. |
