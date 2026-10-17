@@ -222,7 +222,7 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
