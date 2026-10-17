@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
@@ -14,7 +14,7 @@ export default async function CollegeProjectTemplateDetailPage({
 }) {
   const context = await getCurrentRequestContext();
   const collegeId = context.membership?.collegeId;
-  if (!collegeId) notFound();
+  if (!collegeId) return <ProjectAdminMissingCollege/>;
   const { templateId } = await params;
   const detail =
     await getAssignedProjectTemplateDetail(

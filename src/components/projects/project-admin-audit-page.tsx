@@ -70,7 +70,7 @@ export async function ProjectAdminAuditPage({
         <PageHeader
           eyebrow="Projects"
           title="Project audit"
-          description="Who changed what, and when — scoped to the selected college."
+          description="Who changed what, and when — check daily for anything unexpected."
         />
         <EmptyState
           title="Select a college to continue"
