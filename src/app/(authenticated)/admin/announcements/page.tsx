@@ -9,6 +9,7 @@ import {
 } from "@/components/announcements/announcement-admin-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import {SuperAdminCollegeBroadcastForm} from "@/components/announcements/super-admin-college-broadcast-form";
+import {getSuperAdminBroadcastReceiptCounts} from "@/modules/announcements/super-admin-broadcast-receipts-service";
 import {listSuperAdminBroadcastColleges} from "@/modules/announcements/super-admin-college-broadcast-service";
 import {
   listAnnouncementsForAdmin,

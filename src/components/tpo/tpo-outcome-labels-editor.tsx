@@ -3,7 +3,7 @@ import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
-type Label={id:string|null;label:string;outcome:AfterCollegeOutcome};
+type Label={id?:string|null;label:string;outcome:AfterCollegeOutcome};
 function validate(label:string,labels:readonly Label[],index:number){
  const name=label.trim().toLocaleLowerCase("en-IN");
  if(name.length<2||name.length>60)return "2-60 characters";

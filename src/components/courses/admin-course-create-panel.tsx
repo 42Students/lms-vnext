@@ -31,7 +31,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { departmentName: string; departmentId:string;description:string|null };
+type CourseOption = Option & { code:string; departmentName: string; departmentId:string;description:string|null };
 type OfferingOption = {
   id: string;
   courseName: string;

@@ -80,6 +80,7 @@ export default async function TpoPlacementSummaryPage({
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
+        userId={context.user.id}
         path="/tpo/reports/placement-summary"
       />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/placement-summary" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>

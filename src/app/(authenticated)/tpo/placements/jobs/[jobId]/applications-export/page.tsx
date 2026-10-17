@@ -70,7 +70,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
       <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
       <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>
       <div><dt>Academic year</dt><dd className="font-semibold text-foreground">{row.academicYear??"Not recorded"}</dd></div>
-      <div><dt>CGPA</dt><dd className="font-semibold text-foreground">{row.cgpaHundredths===null?"Not recorded":(row.cgpaHundredths/100).toFixed(2)}</dd></div>
+      <div><dt>CGPA</dt><dd className="font-semibold text-foreground">{row.cgpaHundredths==null?"Not recorded":(row.cgpaHundredths/100).toFixed(2)}</dd></div>
       <div><dt>Active backlogs</dt><dd className="font-semibold text-foreground">{row.activeBacklogs??"Not recorded"}</dd></div>
       <div><dt>Past backlogs</dt><dd className="font-semibold text-foreground">{row.pastBacklogs??"Not recorded"}</dd></div>
       <div><dt>Academic evidence</dt><dd className="font-semibold text-foreground">{row.evidenceSource??"Not recorded"}</dd></div>

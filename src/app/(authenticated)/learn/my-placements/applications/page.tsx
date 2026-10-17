@@ -82,7 +82,7 @@ export default async function LearnerPlacementApplicationsPage() {
           scheduledRounds={rounds.map(row=>({
             applicationId:row.applicationId,roundId:row.roundId,roundName:row.roundName,
             scheduledAt:(row.exception?.scheduledAt??row.scheduledAt)?.toISOString()??null,
-            mode:row.exception?.mode??row.mode,venue:row.exception?.venue??row.venue,
+            mode:row.exception?.mode??row.mode??"",venue:row.exception?.venue??row.venue,
             isRescheduled:Boolean(row.exception),booked:row.booked,
           }))}/>
       </Suspense>

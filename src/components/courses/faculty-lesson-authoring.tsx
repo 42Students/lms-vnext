@@ -153,9 +153,9 @@ export function FacultyLessonAuthoring({
     });
 
     if (!response.ok) throw new Error(await courseApiError(response));
-    const body:unknown=await response.json().catch(()=>null);
-    if(!body||typeof body!=="object")throw new Error("Saved response was incomplete; refresh before retrying.");
-    return body as {content?:{id:string}};
+    const saved:unknown=await response.json().catch(()=>null);
+    if(!saved||typeof saved!=="object")throw new Error("Saved response was incomplete; refresh before retrying.");
+    return saved as {content?:{id:string}};
   }
 
   function quizPayload() {

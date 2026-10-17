@@ -66,6 +66,7 @@ export default async function TpoOffersAcceptanceReportPage({
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
+        userId={context.user.id}
         path="/tpo/reports/offers-acceptance"
       />
 

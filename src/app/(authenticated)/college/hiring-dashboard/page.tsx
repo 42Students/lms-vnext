@@ -45,7 +45,7 @@ export default async function CollegeHiringDashboardPage({
         Placement Evidence by Department
       </Link>} />
     <CollegeReportNavigation/>
-    <ReportFilters workspace={workspace} path="/college/hiring-dashboard" />
+    <ReportFilters workspace={workspace} userId={context.user.id} path="/college/hiring-dashboard" />
     <ReportMetrics metrics={workspace.report.metrics} />
     <CollegeHiringFunnel data={funnel} selectedSeasonId={workspace.selectedSeasonId}
       selectedJobId={workspace.selectedJobId}/>

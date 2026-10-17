@@ -22,7 +22,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   ]);
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   const now = new Date();
-  const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now);
+  type WorkspaceRound = typeof workspace.rounds[number];
+  const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now) as {
+    ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
+  };
   const today = initialCareerCalendarDay();
   const rounds = workspace.rounds.map(row => ({
     ...row,
@@ -98,7 +101,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           <p className="text-sm text-body">{row.roleTitle} · {fmt(row.exception?.scheduledAt ?? row.scheduledAt)}</p>
           {details(row)}
           <LearnerScheduleReschedule applicationId={row.applicationId} roundId={row.roundId}
-            mode={row.exception?.mode??row.mode} venue={row.exception?.venue??row.venue}
+            mode={(row.exception?.mode??row.mode)==="VIRTUAL"?"VIRTUAL":"ON_CAMPUS"} venue={row.exception?.venue??row.venue}
             meetingUrl={row.exception?.meetingUrl??row.meetingUrl}/>
           <Link className="text-sm font-semibold text-primary-text underline" href={"/learn/my-placements/applications/"+row.applicationId}>See where your applications stand</Link>
         </article>)}

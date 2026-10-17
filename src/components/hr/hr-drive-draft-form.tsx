@@ -52,7 +52,7 @@ export function HrDriveDraftForm({
   editMode?:"EDIT"|"RESUBMIT";
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
-  const [branchInput,setBranchInput]=useState(initial.branches.join(", "));
+  const [branchInput,setBranchInput]=useState((initial.branches??[]).join(", "));
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
   const [submitting,setSubmitting] = useState(false);
@@ -77,7 +77,7 @@ export function HrDriveDraftForm({
       const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved)return;
       // Adopt only a matching college/user browser draft. Never overwrite an edit/resubmit.
-      queueMicrotask(()=>{setDraft(saved);setBranchInput(saved.branches.join(", "));setNotice("We restored your unsent draft");});
+      queueMicrotask(()=>{setDraft(saved);setBranchInput((saved.branches??[]).join(", "));setNotice("We restored your unsent draft");});
     }catch{/* Browser storage unavailable */ }
   },[storageKey,fixRequestId,sourceJobId]);
 
@@ -114,7 +114,7 @@ export function HrDriveDraftForm({
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
       if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
         !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
-      setDraft(saved);setBranchInput(saved.branches.join(", "));setShowPreview(false);
+      setDraft(saved);setBranchInput((saved.branches??[]).join(", "));setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
   }

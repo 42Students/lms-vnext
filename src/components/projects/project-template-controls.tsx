@@ -105,7 +105,6 @@ export function CreateProjectTemplateControl() {
       });
       setOpen(false);
       reset();
-      setDuplicateOpen(false);
       router.push(
         "/admin/projects/templates/" +
           result.template.id,

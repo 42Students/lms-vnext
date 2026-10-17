@@ -5,7 +5,7 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
-import { DRIVE_APPLICATION_EXPORT_CAP, driveApplicationsHref } from "@/modules/placements/college-drive-applications-model";
+import { DRIVE_APPLICATION_EXPORT_CAP, driveApplicationsHref, driveApplicationsQuerySchema } from "@/modules/placements/college-drive-applications-model";
 import { collegeShortlistedQuery, collegeShortlistedHref } from "@/modules/placements/college-shortlisted-query";
 
 /** Dedicated legacy shortlisted surface, with persisted college-scoped applicant status. */
@@ -23,7 +23,7 @@ export default async function CollegeDriveShortlistedPage({
   const parsed=collegeShortlistedQuery(await searchParams);
   if (!parsed.success) return <ErrorState title="Invalid applicant filters"
     description="The requested search or page is invalid." />;
-  const query={...parsed.data,status:"SUBMITTED" as const,screening:"SHORTLISTED" as const};
+  const query=driveApplicationsQuerySchema.parse({...parsed.data,status:"SUBMITTED",screening:"SHORTLISTED"});
   const data=await listCollegeDriveApplications(context,jobId,query);
   if(query.page>data.totalPages) {
     redirect(collegeShortlistedHref(jobId,{q:query.q,page:data.totalPages}));

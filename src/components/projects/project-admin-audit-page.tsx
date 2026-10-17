@@ -217,8 +217,8 @@ export async function ProjectAdminAuditPage({
           </span>
           <select className={inputClass} name="action" defaultValue={eventType??""}>
             <option value="">All actions</option>
-            {Object.values(ACTIVITY_EVENT_TYPES).filter((value):value is string=>
-              typeof value==="string"&&value.startsWith("projects."))
+            {(Object.values(ACTIVITY_EVENT_TYPES) as string[]).filter(value=>
+              value.startsWith("projects."))
               .sort().map(value=><option key={value} value={value}>
                 {value.replace(/^projects\./,"").replaceAll("."," · ").replaceAll("_"," ")}
               </option>)}

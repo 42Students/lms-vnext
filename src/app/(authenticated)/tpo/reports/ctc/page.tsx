@@ -71,7 +71,7 @@ export default async function TpoCtcReportPage({
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/ctc" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
-      <ReportFilters workspace={workspace} path="/tpo/reports/ctc" />
+      <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/ctc" />
 
       <section
         aria-label="Compensation metrics"

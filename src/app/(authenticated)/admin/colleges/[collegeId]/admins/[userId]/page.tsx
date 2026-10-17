@@ -4,12 +4,15 @@ import {listCollegeAdminSessions} from "@/modules/colleges/admin-session-service
 import {PageHeader} from "@/components/ui/page-header";
 import {AdminRevokeSessions} from "@/components/admin/admin-revoke-sessions";
 
+type DeviceRow={id:string;device_name:string|null;user_agent:string|null;ip_address:string|null;
+ last_seen_at:Date;created_at:Date;expires_at:Date};
 export const dynamic="force-dynamic";
 export default async function AdminDeviceSessionsPage({params}:{
  params:Promise<{collegeId:string;userId:string}>;
 }){
  const {collegeId,userId}=await params;
- const data=await listCollegeAdminSessions(await getCurrentRequestContext(),collegeId,userId);
+ const sessions=await listCollegeAdminSessions(await getCurrentRequestContext(),collegeId,userId);
+ const data={target:sessions.target,devices:sessions.devices as DeviceRow[]};
  const format=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
   dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
  }).format(new Date(value));

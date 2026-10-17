@@ -61,7 +61,7 @@ export default async function TpoUnplacedReportPage({
    await getTpoUnplacedLastApplications(context,{
     collegeId:context.membership.collegeId,seasonId:workspace.selectedSeasonId,
     jobId:workspace.selectedJobId,
-   }):new Map<string,Date>();
+   }):new Map<string,{lastSubmittedAt:Date|null;applications:number;stillInDrive:boolean}>();
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
   const academic=await getTpoUnplacedAcademicEvidence(context,context.membership.collegeId,unplaced.map(item=>item.membershipId));
@@ -105,7 +105,7 @@ export default async function TpoUnplacedReportPage({
       {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
       <p className="text-xs text-muted-foreground">Applications and last-applied dates use the selected season and drive. Academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
-      <ReportFilters workspace={workspace} path="/tpo/reports/unplaced" />
+      <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
 
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-surface p-4">
