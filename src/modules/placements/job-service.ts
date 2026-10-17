@@ -2,6 +2,7 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import {deliverRecordedJobApplicantsPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   placementCompanyRelationships,
@@ -627,7 +628,7 @@ export async function closePlacementJob(
     }
 
     await withdrawJobIssuedOffers(tx, closed.id, context.user.id, now);
-    await recordActivityEventInTransaction(
+    const closedEvent=await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -647,6 +648,10 @@ export async function closePlacementJob(
           `placement-job:${closed.id}:closed`,
       },
     );
+    await deliverRecordedJobApplicantsPlacementEvent(tx,{
+      eventId:closedEvent.id,collegeId:closed.collegeId,jobId:closed.id,
+      kind:"DRIVE_CLOSED",subject:closed.title,
+    });
 
     return closed;
   });
