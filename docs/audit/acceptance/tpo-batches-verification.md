@@ -177,3 +177,10 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | ID | Status | Named regression evidence |
 |---|---|---|
 | TPO-batches-29 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-verified.test.ts` — named `TPO-batches-29` contract; see earlier code evidence in this file. |
+
+## [chat-5] Remaining batch state improvements
+
+| Gap ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-17 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/loading.tsx` and `error.tsx` now provide accessible animated card skeleton, friendly failed-refresh copy, and keyboard-safe Retry. `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-17 renders accessible batch card skeleton and retry without falsely reporting changed decisions`. A retained stale-data cache is still missing. |
+| TPO-batches-49 | OPEN (partial) | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now surfaces the reminder prompt only when `projectTpoBatchNextStep` proves the window open and learners still need to register, with a reviewed `#batch-reminder` link; `tests/unit/chat5-next-batch-states.test.ts` — `TPO-batches-49 suggests a reminder only while eligible learner choices remain and registration is open`. Other suggestion chips not complete. |
