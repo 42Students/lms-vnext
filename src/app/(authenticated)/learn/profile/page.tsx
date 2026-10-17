@@ -1,11 +1,10 @@
 import Link from "next/link";
-import {learnerProfileSectionRecoveryNotice} from "@/modules/people/learner-profile-section-recovery-model";
+import {learnerProfileSectionRecoveryNotice,learnerProfileResolveSection} from "@/modules/people/learner-profile-section-recovery-model";
 import {learnerSavedCodingProfiles} from "@/modules/placements/learner-saved-coding-profiles-model";
 import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
 import {learnerProfileAcademicRecovery} from "@/modules/people/learner-profile-recovery-model";
 import {LearnerProfileAcademicRetry} from "@/components/profile/learner-profile-academic-retry";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { learnerProfileSectionSchema } from "@/modules/people/learner-profile-checklist";
 import { LearnerProfileWorkspace } from "@/components/profile/learner-profile-workspace";
 import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
@@ -21,8 +20,7 @@ export default async function LearnerProfilePage({
   searchParams: Promise<{ section?: string | string[] }>;
 }) {
   const query = await searchParams;
-  const parsedSection = learnerProfileSectionSchema.safeParse(query.section);
-  const initialSection = parsedSection.success ? parsedSection.data : null;
+  const initialSection = learnerProfileResolveSection(query.section);
   const sectionNotice=learnerProfileSectionRecoveryNotice(query.section);
   const context = await getCurrentRequestContext();
 
