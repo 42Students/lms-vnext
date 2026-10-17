@@ -4,6 +4,7 @@ import {
   type ActivityCenterGroup,
 } from "@/components/activity/activity-center";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
+import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -292,6 +293,12 @@ export async function ProjectAdminAuditPage({
         </div>
       </form>
 
+      <ProjectAuditPageExport rows={result.groups.map(group=>({
+        id:group.latest.event.id,action:group.latest.event.eventType,
+        summary:group.latest.event.summary,entity:group.latest.event.subjectLabel??"",
+        importance:group.latest.event.importance,
+        occurredAt:group.latest.event.occurredAt.toISOString(),
+      }))}/>
       <ActivityCenter
         groups={groups}
         nextHref={
