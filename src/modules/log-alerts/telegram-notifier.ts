@@ -10,7 +10,12 @@ export type TelegramAlertOptions = {
 let notedAbsentConfiguration = false;
 
 export function telegramAlertsConfigured(): boolean {
-  return Boolean(process.env.TELEGRAM_ALERT_BOT_TOKEN && process.env.TELEGRAM_ALERT_CHAT_ID);
+  const configured = Boolean(process.env.TELEGRAM_ALERT_BOT_TOKEN && process.env.TELEGRAM_ALERT_CHAT_ID);
+  if (!configured && !notedAbsentConfiguration) {
+    notedAbsentConfiguration = true;
+    process.stderr.write("[log-alerts] Telegram alerts are not configured\n");
+  }
+  return configured;
 }
 
 export function limitTelegramAlert(text: string): string {
