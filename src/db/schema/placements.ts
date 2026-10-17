@@ -477,6 +477,18 @@ export const placementJobs = pgTable(
       }),
     title: text("title").notNull(),
     description: text("description").notNull(),
+    /** Supplemental display-only legacy terms; eligibility remains in the enforced policy. */
+    legacyPostingDetails:jsonb("legacy_posting_details").$type<{
+      responsibilities:string;
+      assessmentUrl:string|null;
+      assessmentDeadline:string|null;
+      importantDates:Array<{label:string;at:string}>;
+      candidatePreferences:{
+        preferredDegree:string;specialization:string;graduationYear:number|null;
+        minGpa:number|null;city:string;
+      };
+      customEligibilityRules:Array<{label:string;value:string}>;
+    }>(),
     employmentType: varchar("employment_type", { length: 24 })
       .notNull(),
     workMode: varchar("work_mode", { length: 24 }).notNull(),
