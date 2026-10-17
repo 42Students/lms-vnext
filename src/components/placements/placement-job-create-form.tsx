@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -256,6 +257,11 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       if(reviewPublish){
+        // TPO-drives-42: verify company selection before any employer or job is written.
+        if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))
+          throw new Error("Pick the company from the list before publishing.");
+        if(companyMode==="NEW"&&String(data.get("companyName")??"").trim().length<2)
+          throw new Error("Enter the company name before publishing.");
         const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
@@ -523,10 +529,7 @@ export function PlacementJobCreateForm({
       showToast({
         tone: "error",
         title: "Could not create opportunity",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+        description: tpoDriveFormErrorMessage(error),
       });
     }
     });
@@ -933,18 +936,38 @@ export function PlacementJobCreateForm({
             />
             <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Application deadline
-            </span>
-            <input
-              className={inputClass}
-              name="applicationDeadline"
-              type="datetime-local"
-              aria-describedby="drive-deadline-ist-help"
-            />
-            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Choose 11:59 PM if applications close at the end of the day.</span>
-          </label>
+          <div>
+            <label>
+              <span className="mb-1.5 block text-xs font-semibold text-body">
+                Application deadline
+              </span>
+              <input id="tpo-drive-application-deadline"
+                className={inputClass}
+                name="applicationDeadline"
+                type="datetime-local"
+                aria-describedby="drive-deadline-ist-help"
+              />
+            </label>
+            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Select a date and time, or use the end-of-day action for 11:59 PM.</span>
+            <button type="button" aria-controls="tpo-drive-application-deadline"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+              onClick={()=>{
+                const form=formRef.current;
+                const field=form?.elements.namedItem("applicationDeadline");
+                if(!(field instanceof HTMLInputElement)||!form||!field.value){
+                  showToast({tone:"error",title:"Choose a date first",description:"Select a date in IST before using the 11:59 PM deadline."});
+                  return;
+                }
+                try{
+                  field.value=driveDeadlineIstEndOfDay(field.value);
+                  clearedBackup.current=false;
+                  saveBrowserDraft(form);
+                  markDirty();
+                }catch{
+                  showToast({tone:"error",title:"Deadline not updated",description:"Enter a valid application deadline in IST."});
+                }
+              }}>Use 11:59 PM IST</button>
+          </div>
         </div>
       </section>
 
@@ -1151,7 +1174,7 @@ export function PlacementJobCreateForm({
       <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Interview rounds are configured in the saved drive workspace; recruiter lead invitations are managed separately under Engage.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
