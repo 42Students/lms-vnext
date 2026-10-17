@@ -32,6 +32,10 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
  const result=await listHrConversations(context,parsed.data);
+ const generalResult=result.status==="READY"?await listHrConversations(context,{
+  collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
+ }):null;
+ const generalThread=generalResult?.status==="READY" ? generalResult.items.find(row=>!row.jobId)??null:null;
  const displayNow=new Date();
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
@@ -69,14 +73,14 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
-    {result.items.find(row=>!row.jobId)?<details className="mt-3 rounded-lg border border-border p-3">
+    {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
-      {result.items.find(row=>!row.jobId)?.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
-        {result.items.find(row=>!row.jobId)!.preview!.text}
+      {generalThread.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+        {generalThread.preview!.text}
       </p>:null}
-      <div className="mt-3"><RecruiterConversationReplyForm threadId={result.items.find(row=>!row.jobId)!.id}/></div>
-      <Link href={"/hr/conversations/"+result.items.find(row=>!row.jobId)!.id}
+      <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
+      <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
     </details>:null}
     <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
