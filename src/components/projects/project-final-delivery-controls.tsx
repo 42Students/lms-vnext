@@ -167,7 +167,7 @@ export function LearnerFinalDeliveryControl({
     if(!open||!draft||pending||!summary.trim())return;
     const payload=currentPayload();
     const snapshot=JSON.stringify(payload);
-    if(snapshot===lastSavedSnapshot.current)return;
+    if(snapshot===lastSavedSnapshot.current||snapshot===failedSnapshot.current)return;
     const timer=window.setTimeout(async()=>{
       setAutosaveStatus("saving");setPending(true);
       try{
