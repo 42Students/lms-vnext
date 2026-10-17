@@ -56,7 +56,9 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    if(!release||release.status==="SHIPPED")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   }
   const [last]=await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
-   .where(eq(projectTasks.sprintId,sprint.id)).orderBy(desc(projectTasks.sequence)).limit(1);
+   .where(and(eq(projectTasks.projectId,projectId),
+     sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
+   .orderBy(desc(projectTasks.sequence)).limit(1);
   const [task]=await tx.insert(projectTasks).values({
    projectId,sprintId:sprint.id,templateKey:keyFor(membership.id),
    sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
