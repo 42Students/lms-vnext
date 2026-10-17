@@ -48,7 +48,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-87 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-92 | S3 | STATE | DONE |
 | SA-placements-projects-55 | S4 | MISSING-FILTER | DONE |
-| SA-placements-projects-93 | S4 | MISSING-ACTION | OPEN |
+| SA-placements-projects-93 | S4 | MISSING-ACTION | DONE |
 
 ## tpo/home (39: OPEN 18, FIXED-ON-MAIN 18, UNCONFIRMED 3)
 
@@ -127,7 +127,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-45 | S4 | STATE | DONE |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-50 | S4 | MISSING-FILTER | OPEN |
+| SA-tenants-modules-50 | S4 | MISSING-FILTER | DONE |
 | SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-61 | S4 | VALIDATION | DONE |
 
@@ -305,3 +305,10 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - `SA-placements-projects-58`: DONE (workload overload, deep links, success, partial-failure dialog and failed-only retry).
 - `SA-placements-projects-56`: still OPEN/PARTIAL; scoped learner preflight now lists individual to-create/covered/duplicate decisions; remaining standalone team create fields and per-student failure details are not yet closed.
 - Tests authored or repaired but **not run**; orchestrator must verify TypeScript, lint, unit and PostgreSQL.
+
+## Chat-4 recovery continuation — verified UI closure (2026-10-17)
+
+- `SA-placements-projects-93` DONE: existing transactional Manage students and Reassign mentor dialogs are both reachable from Team; replaced native confirm with accessible exact removal-count `ConfirmDialog` / `Replace roster`, retaining selections on conflict.
+- `SA-tenants-modules-50` DONE: saved URL view/search/area/status/severity/kind/page filters under the legacy local-storage key; restoring only bounded allowlisted board-relative params, Clear resets saved view to default.
+- SA-tenants-modules-46/47/48 and other unfinished filters/actions remain OPEN; no importer or drawer action is misrepresented as implemented.
+- Tests were written but NOT RUN by chat-4; orchestrator is responsible for integrated verification.
