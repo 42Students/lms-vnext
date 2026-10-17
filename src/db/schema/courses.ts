@@ -324,6 +324,7 @@ export const courseLessons = pgTable(
     status: courseLessonStatusEnum("status")
       .notNull()
       .default("ACTIVE"),
+    visibleToStudents: boolean("visible_to_students").notNull().default(true),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -336,6 +337,9 @@ export const courseLessons = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("course_lessons_active_visible_idx")
+      .on(table.learningPathId, table.visibleToStudents, table.sequence)
+      .where(sql`${table.status} = 'ACTIVE'`),
     uniqueIndex("course_lessons_active_name_uq")
       .on(
         table.learningPathId,
