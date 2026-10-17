@@ -19,6 +19,7 @@ import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
 import {tpoBatchPlacementState,tpoBatchMatchesPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-set-model";
+import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priority-sort-model";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[]}>}){
@@ -43,7 +44,9 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const stateFiltered=selected.filter(batch=>!data.ready||eligibility===null||tpoBatchMatchesPlacementState({
   finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null,
  },parsed.data.state));
- const sorted=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered,sortParsed.data);
+ const candidates=data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered;
+ const sorted=sortParsed.data==="WORKING_SET"?
+  sortTpoBatchWorkingPriority(candidates,eligibility??new Map()):sortTpoBatchNames(candidates,sortParsed.data);
  const showOlder=(Array.isArray(raw.showOlder)?raw.showOlder[0]:raw.showOlder)==="1";
  const currentYear=new Date().getFullYear();
  const workingSet=visibleTpoBatchWorkingSet(sorted,currentYear,showOlder,
@@ -70,7 +73,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    <label className="text-sm">Program<select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
    <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
    <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
-   <label className="text-sm">Sort<select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></select></label>
+   <label className="text-sm">Sort<select name="sort" defaultValue={sortParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="WORKING_SET">Recommended order</option><option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option><option value="DEADLINE_ASC">Deadline earliest</option><option value="DEADLINE_DESC">Deadline latest</option></select></label>
    <label className="text-sm">Page size<select name="pageSize" defaultValue={String(pageParsed.data.pageSize)} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="12">12</option><option value="24">24</option><option value="48">48</option></select></label>
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Search</button>
   </form>
