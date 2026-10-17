@@ -27,6 +27,7 @@ describe("TPO Add-to-Drive bulk scope preview",()=>{
   expect(ui).toContain('result.status==="added"||result.status==="already-added"');
   expect(ui).toContain("formatTpoStudentsBulkOutcome(result)");
   expect(ui).toContain("reviewedSelection!==selectionFingerprint");
+  expect(ui).toContain("selectionFingerprint=JSON.stringify({jobId:driveId,roleOptionId");
   expect(ui).toContain("Review existing applications again before confirming.");
  });
 });
