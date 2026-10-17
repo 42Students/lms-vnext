@@ -56,7 +56,7 @@ describe("learner Course page parity contract", () => {
     expect(content).toContain("readOnly");
   });
 
-  it("keeps storage-backed Course content behind an authenticated delivery-scoped route", () => {
+  it("LEARNER-course-detail-R04 keeps Course files behind learner-scoped signed retrieval", () => {
     const route = read(
       "src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts",
     );
@@ -64,10 +64,12 @@ describe("learner Course page parity contract", () => {
       "src/components/courses/learner-video-player.tsx",
     );
 
-    expect(route).toContain("getLearnerCourseWorkspace");
+    expect(route).toContain("getLearnerCourseFileReference");
     expect(route).toContain("getPrivateR2Config");
-    expect(route).toContain('"Accept-Ranges": "bytes"');
-    expect(route).toContain('status: 206');
+    expect(route).toContain("presignUrl(");
+    expect(route).toContain("expiresSeconds:900");
+    expect(route).toContain("status:302");
+    expect(route).toContain('"Cache-Control":"private, no-store"');
     expect(route).toContain('download');
     expect(player).toContain("<video");
     expect(player).toContain("positionSeconds");
