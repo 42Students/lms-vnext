@@ -3,11 +3,13 @@ import Link from "next/link";
 import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
+import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
 type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;job:string}[];
- notes:{id:string;body:string;createdAt:string;job:string}[];truncated:boolean};
+ notes:{id:string;body:string;createdAt:string;job:string}[];
+ studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];truncated:boolean};
 export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  student:TpoStudentRow;rows:readonly TpoStudentRow[];
  onNavigate:(membershipId:string)=>void;onClose:()=>void;
@@ -16,17 +18,19 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  const [detail,setDetail]=useState<PanelDetail|null>(null);
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
- async function chooseTab(next:Tab){
-  setTab(next);setError("");
-  if(next!=="Requests"&&next!=="Notes"||detail)return;
-  setLoading(true);
-  try{
-   const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
+ async function fetchDetail(){
+  setLoading(true);setError("");
+  try{const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
    const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.student)throw Error("Could not load student records");
+   if(!response.ok||!body?.student)throw Error(body?.error??"Could not load student records");
    setDetail(body as PanelDetail);
   }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
   finally{setLoading(false);}
+ }
+ async function chooseTab(next:Tab){
+  setTab(next);setError("");
+  if(next!=="Requests"&&next!=="Notes"||detail)return;
+  await fetchDetail();
  }
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
@@ -111,6 +115,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
     </>:null}
     {tab==="Notes"?<>
       <h3 className="font-semibold">Internal Notes</h3>
+      <TpoStudentNoteEditor membershipIds={[student.membershipId]} afterSave={()=>void fetchDetail()}/>
+      {detail?.studentNotes?.map(row=><article key={row.id} className="space-y-1 rounded border border-border p-3">
+       <p>{row.note}</p><p className="text-xs text-muted-foreground">{when(row.createdAt)} · Author {row.authorUserId}</p>
+      </article>)}
       {detail&&!detail.notes.length?<p>No private application notes recorded for this student.</p>:null}
       {detail?.notes.map(row=><article key={row.id} className="space-y-1 rounded border border-border p-3">
         <p>{row.body}</p>
