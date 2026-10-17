@@ -52,12 +52,12 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-37 | S3 | VALIDATION | DONE |
 | SA-placements-projects-39 | S3 | SIDE-EFFECT | DONE |
 | SA-placements-projects-43 | S3 | COPY | DONE |
-| SA-placements-projects-44 | S3 | COPY | FIXED-ON-MAIN |
-| SA-placements-projects-46 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-placements-projects-47 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-placements-projects-48 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-50 | S3 | COPY | FIXED-ON-MAIN |
-| SA-placements-projects-33 | S4 | MISSING-TAB | FIXED-ON-MAIN |
+| SA-placements-projects-44 | S3 | COPY | DONE |
+| SA-placements-projects-46 | S3 | MISSING-FILTER | DONE |
+| SA-placements-projects-47 | S3 | MISSING-EXPORT | DONE |
+| SA-placements-projects-48 | S3 | MISSING-FIELD | DONE |
+| SA-placements-projects-50 | S3 | COPY | DONE |
+| SA-placements-projects-33 | S4 | MISSING-TAB | DONE |
 
 ## superadmin/academics-people-1-academic-setup (45 records; status column reflects source verification)
 
@@ -65,10 +65,10 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-academics-people-16 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-17 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-academics-people-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-19 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| SA-academics-people-16 | S1 | MISSING-ACTION | DONE |
+| SA-academics-people-17 | S2 | MISSING-COLUMN | DONE |
+| SA-academics-people-18 | S2 | MISSING-ACTION | DONE |
+| SA-academics-people-19 | S2 | MISSING-COLUMN | DONE |
 | SA-academics-people-20 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-22 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-29 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
