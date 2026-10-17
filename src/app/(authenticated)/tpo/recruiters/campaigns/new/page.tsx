@@ -12,7 +12,11 @@ export default async function NewTpoCampaignPage({searchParams}:{searchParams:Pr
  const requested=(await searchParams).selected;
  const raw=typeof requested==="string"?requested:"";
  const invalidSelection=Array.isArray(requested);
- const selectedLeadIds=[...new Set(raw.split(",").filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))].slice(0,100);
+ const candidateIds=raw?raw.split(","):[];
+ const validIds=candidateIds.filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+ const selectedLeadIds=[...new Set(validIds)];
+ const unsafeSelection=invalidSelection||(raw.length>0&&(candidateIds.length>100||
+   validIds.length!==candidateIds.length||selectedLeadIds.length===0));
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
  const ready=await tpoCampaignDraftStorageReady();
