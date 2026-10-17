@@ -109,6 +109,13 @@ export const projectTemplateBlueprintSchema = z
           .array(z.string().trim().min(1).max(500))
           .max(50)
           .default([]),
+        courseLabel:z.string().trim().max(160).optional(),
+        phase:z.string().trim().max(120).optional(),
+        definitionOfDone:z.array(z.string().trim().min(1).max(500)).max(50).optional(),
+        personas:z.array(z.string().trim().min(1).max(500)).max(50).optional(),
+        submissionType:z.enum(["LINK","FILE","TEXT"]).optional(),
+        submissionInstructions:z.string().trim().max(4000).optional(),
+
       })
       .strict()
       .default({ deliverables: [] }),
