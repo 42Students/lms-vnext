@@ -22,3 +22,5 @@ Partial (NOT claimed DONE): LEARNER-home-courses-15 (legacy Next up copy adjuste
 LEARNER-home-courses-01/02/03/05/08/10/12/14/16(partial)/18/22 remain open until full functionality is implemented.
 | LEARNER-course-detail-R01 | DONE | `src/modules/courses/progress-service.ts`, `src/components/courses/learner-video-player.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-course-detail-R01` |
 | LEARNER-course-detail-R03 | DONE | `src/modules/courses/learner-course-service.ts`, `src/components/courses/learner-live-class-link.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-course-detail-R03` |
+| LEARNER-home-courses-10 | DONE | `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-10` |
+| LEARNER-home-courses-12 | DONE | `src/modules/courses/learner-course-tab-context-model.ts`, `src/components/courses/learner-course-document-title.tsx`, `src/components/courses/learner-course-tabs.tsx`; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts`, `LEARNER-home-courses-12` |
