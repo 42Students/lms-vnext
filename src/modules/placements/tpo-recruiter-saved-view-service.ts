@@ -9,7 +9,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {ENGAGE_COLUMNS,ENGAGE_DEFAULT_COLUMNS} from "./tpo-recruiter-table-view-model";
 
 const SAVED_FILTER_KEYS=["q","stage","owner","status","invite","source","company","reach",
- "designation","nextFollowup","lastActivity","added","need","attention"] as const;
+ "designation","nextFollowup","lastActivity","added","need","attention","drives"] as const;
 const viewBody=z.strictObject({
  action:z.enum(["CREATE","UPDATE","DELETE","PIN"]),
  id:z.string().uuid().optional(),
