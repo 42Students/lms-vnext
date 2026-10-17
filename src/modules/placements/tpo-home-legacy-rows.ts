@@ -40,8 +40,11 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   const day=new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Asia/Kolkata"}).format(date);
   const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
   const inDay=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+  const tomorrow=new Intl.DateTimeFormat("en-CA",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).format(new Date(now.getTime()+86400000));
   const time=new Intl.DateTimeFormat("en-IN",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date);
-  return (today===inDay?"Today":day)+" "+time;
+  return (today===inDay?"Today":tomorrow===inDay?"Tomorrow":day)+" "+time;
  };
  return [
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
