@@ -199,9 +199,14 @@ export default async function TpoStudentsPage({
   const summary = data.summary;
   const roster = data.roster;
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
-  const rosterVerifications=manageAllowed&&roster.items.length?await getTpoVerificationQueue(context,{
+  const rosterIds=roster.items.map(row=>row.membershipId);
+  const rosterVerifications=manageAllowed&&rosterIds.length?await getTpoVerificationQueue(context,{
     tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:1,pageSize:100,
-  },roster.items.map(row=>row.membershipId)):null;
+  },rosterIds):null;
+  const nextRosterReviews=rosterVerifications?.hasMore?await getTpoVerificationQueue(context,{
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:2,pageSize:100,
+  },rosterIds):null;
+  const waitingRosterRows=[...(rosterVerifications?.rows??[]),...(nextRosterReviews?.rows??[])];
 
   const counts: Record<TpoStudentJourneyState, number> = {
     NOT_REGISTERED: summary.notRegistered,
@@ -633,8 +638,8 @@ export default async function TpoStudentsPage({
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
-        {rosterVerifications?.enabled&&rosterVerifications.permitted&&rosterVerifications.rows.length>0?
-          <TpoRosterVerificationBulk rows={rosterVerifications.rows}/>:null}
+        {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
+          <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
         {manageAllowed?<TpoStudentNudgePanel
           key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
           rows={roster.items.map(student=>({
