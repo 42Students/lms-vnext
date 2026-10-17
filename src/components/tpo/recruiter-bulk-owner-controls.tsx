@@ -93,7 +93,7 @@ export function RecruiterBulkOwnerControls({
       setError("The selected owner is no longer in the list; reload staff.");
       return;
     }
-    if(!reviewOpen){setReviewOpen(true);return;}
+    if(!reviewOpen||reviewSignature!==currentSignature){setReviewSignature(currentSignature);setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
