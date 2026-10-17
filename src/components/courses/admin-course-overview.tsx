@@ -451,6 +451,22 @@ export function AdminCourseOverview({
             {COLLEGE_COURSES_COPY.existingTitle}
           </h2>
         </div>
+        {catalogue&&catalogueQuery?<form method="get" action="/college/courses"
+         className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
+         <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Search courses
+          <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
+           placeholder="Name, code or department" className="min-h-10 rounded border border-border bg-background p-2"/>
+         </label>
+         <label className="grid gap-1 text-sm font-semibold">Sort
+          <select name="sort" defaultValue={catalogueQuery.sort}
+           className="min-h-10 rounded border border-border bg-background p-2">
+           <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
+           <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
+          </select>
+         </label>
+         <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
+        </form>:null}
         <DataTable
           columns={courseColumns}
           rows={workspace.courses}
