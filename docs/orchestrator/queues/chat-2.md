@@ -312,3 +312,25 @@ No tests, typecheck, lint, build, CI waits, live email sends or deployment opera
 - `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 role expansion awaits permission-owner decision.
 
 FAST v2: No tests, lint, typecheck, build, CI waiting, deployment or live email sending. All source-level work is runtime-unverified.
+
+## FAST v2 source continuation — latest integrated main (chat-2)
+
+- WP-01 S1 `TPO-recruiters-12`: Reconciled prior erroneous NOT_NOW invite block against explicit legacy S1 audit; manual invitation remains allowed, opt-outs remain denied.
+- WP-01 S1 `TPO-recruiters-03`: Implemented URL/saved-view persisted company drive-count range filter (0, 1–2, 3–5, 6+) from scoped company-to-lead IDs; missing facts never count as zero.
+- WP-01 S1 `TPO-recruiters-01/19`: Company drives now available in the column chooser, row table and formula-guarded CSV/Excel export with unknown values blank.
+- WP-05 S2 `TPO-recruiters-20`: Added deterministic numeric company-drive sorting with unknown last; user preference persists.
+- WP-05 S2 `TPO-recruiters-25`: Quiet now uses any persisted activity; recruited leads without follow-up are not mislabeled No next step; joined leads retain actionable chips; sending an invite no longer asserts a joined-but-unverified account.
+- WP-05 S2 `TPO-recruiters-18`: Fixed Zod-4 sparse saved-view filter allowlist using `partialRecord`, including the new drive range.
+- WP-01..WP-08 remain IN-PROGRESS; S1/S2 source additions above do not complete the full legacy gap definitions.
+
+### Blocked items
+- `PUB-auth-public-50/52/53/54/55`: OD-09 OTP-gated sensitive candidate disclosures and resume ZIP require owner-approved privacy/storage policy.
+- `TPO-campaigns-public-01/02/05`: live email templates, provider credentials and durable receipt worker unavailable.
+- `TPO-recruiters-13/14/17`: bulk email delivery, audited undo and scheduled reminders require registered provider/worker.
+- `TPO-settings-audit-52`: indefinite recruiter access requires security policy approval.
+- `TPO-companies-05/TPO-inbox-team-23/26/34`: Team object threads, asks and away model require shared persistence schema.
+- `REC-calendar-messages-profile-R01`: inbound email-reply webhook/consent unavailable.
+- `TPO-companies-06`: placed-count policy not approved; no unsupported placement count inferred.
+- `TPO-companies-R03/TPO-inbox-team-R02`: OD-07 new cross-role permissions require owner approval.
+
+No tests, typecheck, lint, build, CI waiting or live delivery performed (FAST v2). Source changes not runtime-verified.
