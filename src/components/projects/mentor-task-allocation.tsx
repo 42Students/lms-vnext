@@ -82,7 +82,13 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
      }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null>
-  <div className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
+  <button type="button" aria-expanded={filtersOpen} aria-controls="mentor-allocation-filters"
+    onClick={()=>setFiltersOpen(open=>!open)}
+    className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+    Filters{activeFilterCount?" ("+activeFilterCount+")":""}
+  </button>
+  <div id="mentor-allocation-filters" hidden={!filtersOpen}
+    className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
       className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
