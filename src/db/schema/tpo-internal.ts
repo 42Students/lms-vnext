@@ -121,3 +121,29 @@ export const placementTpoTeamEveryoneMutes=pgTable(
   }).onDelete("restrict"),
  ],
 );
+
+/** TPO-inbox-team-R05: bell delivery acknowledgements are independent of
+ * member-specific conversation read positions. */
+export const placementTpoInternalReads=pgTable(
+ "placement_tpo_internal_reads",
+ {
+  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+  threadId:uuid("thread_id").notNull(),
+  membershipId:uuid("membership_id").notNull(),
+  readThrough:timestamp("read_through",{withTimezone:true}).notNull(),
+ },
+ t=>[
+  primaryKey({name:"tpo_internal_reads_pk",columns:[t.threadId,t.membershipId]}),
+  foreignKey({
+   name:"tpo_internal_reads_thread_college_fk",
+   columns:[t.threadId,t.collegeId],
+   foreignColumns:[placementTpoInternalThreads.id,placementTpoInternalThreads.collegeId],
+  }).onDelete("restrict"),
+  foreignKey({
+   name:"tpo_internal_reads_member_college_fk",
+   columns:[t.membershipId,t.collegeId],
+   foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId],
+  }).onDelete("restrict"),
+  index("tpo_internal_reads_member_idx").on(t.collegeId,t.membershipId),
+ ],
+);
