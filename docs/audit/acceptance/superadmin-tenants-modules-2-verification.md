@@ -17,3 +17,5 @@ Source evidence only; unit, database and browser execution remain with the orche
 | SA-tenants-modules-31 | DONE | src/modules/module-access/admin-trace-service.ts; src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx; tests/unit/chat13-placement-access-trace-gap31.test.ts — SA-tenants-modules-31 exact college/scope and real actor/date/status (tests authored, not run) |
 
 SA-tenants-modules-31 in-page drawer supplement: src/components/admin/learner-module-access-drawer.tsx and src/app/api/admin/features/[collegeId]/trace/route.ts, with source tests SA-tenants-modules-31 (written, not run).
+
+SA-tenants-modules-32 bulk provenance supplement: src/modules/module-access/super-admin-student-bulk-rule-service.ts emits MODULE_ACCESS_BULK_SET with actual studentCount and discloses summary-audit failures without concealing saved per-learner events; test SA-tenants-modules-32 (written, not run).
