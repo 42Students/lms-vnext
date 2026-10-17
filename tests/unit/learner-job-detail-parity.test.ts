@@ -11,7 +11,16 @@ describe("Learner published placement Job Detail", () => {
     expect(page).toContain("row.job.id===jobId");
     expect(page).toContain("notFound()");
     expect(page).toContain("initialSaved={savedJobs.some(row=>row.jobId===jobId)}");
-    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back}");
+    // Own historical applications remain readable after a drive is closed or
+    // cancelled; an arbitrary unowned unpublished job still returns not-found.
+    expect(page).toContain("getOwnLearnerDriveJourney(context,jobId)");
+    expect(page).toContain("if(rows.length===0&&!journey)notFound()");
+    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)}");
+    expect(page).toContain("returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}");
+    const historical=read("src/modules/placements/learner-historical-drive-service.ts");
+    expect(historical).toContain("requireLearnerPlacementAccess(context)");
+    expect(historical).toContain("eq(placementJobs.collegeId,member.collegeId)");
+    expect(historical).toContain("eq(placementApplications.membershipId,member.id)");
   });
   it("uses a dedicated detail instead of generic uncontextualized cards", () => {
     const source = read("src/components/placements/learner-placement-job-detail.tsx");
