@@ -8,7 +8,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| FAC-assessments-01 | S1 | MISSING-FIELD | FIXED-ON-MAIN |
+| FAC-assessments-01 | S1 | MISSING-FIELD | BLOCKED |
 | FAC-assessments-02 | S2 | MISSING-FIELD | DONE |
 | FAC-assessments-03 | S2 | MISSING-FIELD | DONE |
 | FAC-assessments-04 | S2 | VALIDATION | DONE |
@@ -36,7 +36,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-19 | S4 | VALIDATION | DONE |
 | FAC-assessments-20 | S4 | MISSING-FIELD | NOT-A-GAP |
 | FAC-assessments-21 | S4 | MISSING-ACTION | DONE |
-| FAC-assessments-22 | S4 | MISSING-FIELD | FIXED-ON-MAIN |
+| FAC-assessments-22 | S4 | MISSING-FIELD | BLOCKED |
 | FAC-assessments-24 | S4 | COPY | DONE |
 | FAC-assessments-25 | S4 | MISSING-COLUMN | NOT-A-GAP |
 | FAC-assessments-26 | S4 | MISSING-ACTION | NOT-A-GAP |
@@ -101,8 +101,8 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-academics-people-58 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-59 | S1 | PERMISSION | FIXED-ON-MAIN |
+| SA-academics-people-58 | S1 | MISSING-ACTION | BLOCKED |
+| SA-academics-people-59 | S1 | PERMISSION | BLOCKED |
 | SA-academics-people-49 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-50 | S2 | MISSING-FIELD | OPEN |
 | SA-academics-people-52 | S2 | MISSING-ACTION | OPEN |
@@ -185,7 +185,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-112 | S3 | COPY | DONE |
 | SA-placements-projects-114 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-115 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
+| SA-placements-projects-116 | S3 | MISSING-ACTION | BLOCKED |
 | SA-placements-projects-117 | S3 | MISSING-EXPORT | DONE |
 | SA-placements-projects-121 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-122 | S3 | MISSING-FILTER | DONE |
