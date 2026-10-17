@@ -25,6 +25,7 @@ import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-serv
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
+import {TpoStudentsDriveVisibility} from "@/components/tpo/tpo-students-drive-visibility";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import {tpoStudentRosterClearHref} from "@/modules/placements/tpo-student-roster-clear-model";
@@ -955,6 +956,11 @@ export default async function TpoStudentsPage({
             id:student.membershipId,label:student.displayName+" · "+student.branchName
           }))??undefined:undefined}/>
 
+        {manageAllowed?<TpoStudentsDriveVisibility
+          learners={roster.items.map(student=>({id:student.membershipId,name:student.displayName}))}
+          drives={managedJobs.filter(item=>["DRAFT","PUBLISHED"].includes(item.job.status)).map(item=>({
+           id:item.job.id,name:item.company.name+" · "+item.job.title,status:item.job.status,
+          }))}/>:null}
         {manageAllowed&&(await placementTableExists("placement_tpo_prep_assignments"))?<TpoStudentsAssignPrep/>:null}
         {manageAllowed?<TpoStudentsBulkDebar learners={roster.items.map(student=>({
           id:student.membershipId,name:student.displayName,debarred:student.debarred===true
