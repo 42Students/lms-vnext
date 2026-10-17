@@ -21,8 +21,8 @@ describe("TPO Team remaining gap increments, not full object-thread parity",()=>
   const controls=source("src/components/tpo/tpo-team-follow-controls.tsx");
   expect(read).toContain("unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0");
   expect(read).toContain("m.author_membership_id<>");
-  expect(controls).toContain("Following");
-  expect(controls).toContain("Muted");
+  expect(controls).toContain("Stop following");
+  expect(controls).toContain("Unmute");
  });
  it("TPO-inbox-team-22 creates scoped idempotent asks with done/cancel lifecycle; Home integration remains queued",()=>{
   const service=source("src/modules/placements/tpo-team-asks-service.ts");
