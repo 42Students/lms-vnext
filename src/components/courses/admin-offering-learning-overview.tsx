@@ -403,10 +403,12 @@ export function AdminOfferingLearningOverview({
         </dl>
       </section>
 
+      <div id="lesson-authoring">
       <CreateLessonForm
         learningPathId={learningPath.id}
         nextSequence={nextLessonSequence}
       />
+      </div>
 
       {workspace.lessons.length === 0 ? (
         <section className="rounded-xl border border-dashed border-border bg-surface p-6">
@@ -431,6 +433,7 @@ export function AdminOfferingLearningOverview({
 
               return (
                 <section
+                  id={"lesson-"+lesson.id}
                   key={lesson.id}
                   className="rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                 >
