@@ -28,7 +28,7 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
   const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
-   .where(eq(placementTpoJobTypes.collegeId,collegeId));
+   .where(and(eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.isBuiltin,false)));
   if(count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   const [created]=await tx.insert(placementTpoJobTypes).values({
    collegeId,label:input.label,active:true,countsAsPlaced:input.countsAsPlaced,isBuiltin:false,
