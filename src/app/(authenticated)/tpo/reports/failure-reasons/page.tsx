@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -100,6 +101,8 @@ export default async function TpoFailureReasonsPage({
         <p className="mt-1">{methodology}</p>
       </section>
 
+      <ReportBarChart title="Recorded adverse outcomes by type" units="events"
+       rows={failures.byKind.map(row=>({label:FAILURE_KIND_LABELS[row.kind],value:row.count}))}/>
       <ReportTable
         title="Outcomes by type"
         headings={["Outcome", "Recorded count"]}
