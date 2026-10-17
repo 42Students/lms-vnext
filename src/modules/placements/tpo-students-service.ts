@@ -141,7 +141,7 @@ export const tpoStudentRequestsQuerySchema = z
       ])
       .optional(),
     requestType: z.enum(["APPLICATION_WITHDRAWAL","ROUND_RESCHEDULE","OFFER_EXTENSION"]).optional(),
-    sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).optional(),
+    sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).optional(),
     requestedBefore:z.date().optional(),
     requestedAfter:z.date().optional(),
     urgentOnly:z.boolean().default(false),
