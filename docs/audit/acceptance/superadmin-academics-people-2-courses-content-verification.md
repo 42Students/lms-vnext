@@ -17,3 +17,5 @@ Remaining: course field/policy parity, lesson-level operations, class-by-course 
 
 | SA-academics-people-73 | DONE | `src/components/courses/admin-course-actions.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-73 warns before closing unsaved course edits and blocks close while saving` |
 | SA-academics-people-76 | NOT-A-GAP | `src/components/courses/college-lesson-reorder-actions.tsx`, `src/components/courses/faculty-content-order-editor.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-76 keyboard operable move buttons are an approved equivalent to drag reorder` |
+
+| SA-academics-people-51 | DONE | `src/app/(authenticated)/admin/courses/page.tsx`, `src/components/courses/admin-course-overview.tsx`, `src/components/courses/admin-course-create-panel.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-51 Super Admin duplicate course prepopulates draft and returns to correct route` |
