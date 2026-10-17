@@ -546,7 +546,7 @@ export async function markTpoLeadNotNow(
       note: leadNotNowAuditNote(current.manualStage),
       createdByUserId: context.user.id,
     });
-    await tx.insert(activityEvents).values({
+    const [event]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:input.collegeId,
       actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_STAGE_SET",
@@ -554,6 +554,10 @@ export async function markTpoLeadNotNow(
       summary:"Recruiter lead marked Not now",
       metadata:{beforeStage:current.manualStage,afterStage:"NOT_NOW",
        hasRevisitDate:Boolean(input.revisitDate)},
+    }).returning({id:activityEvents.id});
+    if(event)await notifyActiveTposOfRecruiterEvent(tx,{
+     collegeId:college.id,eventId:event.id,leadId,
+     title:"Recruiter marked Not now",body:"A recruiter lead is not ready for placement contact.",
     });
     return tpoLeadView(updated);
   });
