@@ -6,6 +6,7 @@ import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
 import {CollegeAssignmentActions} from "./college-assignment-actions";
+import {CollegeQuizActions} from "./college-quiz-actions";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import {collegeAssessmentExportHref} from "@/modules/courses/college-assessment-export-model";
 import {
@@ -217,7 +218,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                     <dd>{item.gradedLearners} graded</dd></div>:null}
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
                 </dl>
-                {!isAssignment?<QuizListActions item={item}/>:null}
+                {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/></>:null}
                 {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
                 {isAssignment?<CollegeAssignmentReview
                  assignmentId={item.id} offeringId={item.offeringId}
@@ -276,7 +277,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                      specificDeliveryId={item.deliveryId} maxPoints={item.points}
                      status={item.status} deliveries={data.reviewDeliveries}
                      filesEnabled={assignmentFilesEnabled}/>:
-                     <QuizListActions item={item}/>}
+                     <><QuizListActions item={item}/><CollegeQuizActions quiz={item}/></>}
                   </td>
                 </tr>
               ))}
