@@ -87,7 +87,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <select name="cohortId" defaultValue={data.cohortId??""}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">All batches</option>
-          {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.name}</option>)}
+          {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
         </select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
