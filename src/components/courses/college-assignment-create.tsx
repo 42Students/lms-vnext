@@ -112,6 +112,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     <textarea rows={3} maxLength={10000} value={description} disabled={pending}
      onChange={e=>setDescription(e.target.value)}
      className="rounded border border-border bg-surface p-2"/></label>
+   <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
+    sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
+    "All currently eligible Sections in the selected Course Offering"}.
+    Draft assignments are hidden until they are published.</p>
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
     <button type="button" disabled={pending||!title.trim()} onClick={()=>void create()}
