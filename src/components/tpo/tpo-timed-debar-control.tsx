@@ -58,7 +58,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
      className="min-h-11 rounded border border-border p-2"/></label>:null}
    <button type="button" className="min-h-11 rounded border border-border px-3 font-semibold disabled:opacity-50"
     disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
-      duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1)}
+      duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
     onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</button>
    {active.length>0?<p className="text-xs text-muted-foreground">Lift the current debarment before creating another.</p>:null}
   </div>

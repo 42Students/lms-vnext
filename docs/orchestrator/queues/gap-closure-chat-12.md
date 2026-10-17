@@ -130,3 +130,17 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-requests-verification-06, -21: chat-9 owns Requests sidebar pending-count badge and conditional Verification sidebar visibility; consult queue/access flags, never leak a denied preview.
 
 
+
+
+## Round 7–11 handoff (chat-12)
+
+- Main was fast-forwarded into `chatgpt/chat-12-b` before edits (base `14b9175c69f75ef28e9c509f6b118a592c26dbb2`). No edits were sent to main.
+- Reconciled the chat-12 failures in `docs/orchestrator/unit-failures-r1.md` with the current guarded-action and `apiFetch` implementations. Added regression coverage for CSV conflict recovery, after-college 409s, safe verification failures, responsive column reset and readable empty states. **Tests authored, not run; orchestrator must execute and report failures.**
+- Inspected and authored named checks for **39 originally OPEN and 2 UNCONFIRMED queue IDs** across Students and Requests/Verification; see the two `docs/audit/acceptance/*-verification.md` files. **Most of these IDs are partial, not DONE**, and queue statuses intentionally remain OPEN pending complete parity and acceptance.
+- Implemented the Students URL guard for previously rejected stage, debarment, profile and academic filters; distinct Show all/Reset columns; clipboard error announcement; timed debarment range bound; modal confirmation for company shares.
+- Implemented guarded ten-at-a-time same-kind learner-request decisions with per-row results; changed nullable approval notes to valid strings; corrected Requests header copy and hardened recruiter REQUEST decision UI with friendly errors and duplicate-submission guard.
+- TPO-requests-verification-01 remains OPEN: drafted **proposal-only** `docs/proposed-migrations/chat-12-learner-request-kinds.sql`. It must not run until scope-safe readers, Zod discriminated payloads, per-kind transactional effects, and approved migration are delivered.
+- TPO-requests-verification-13 remains OPEN in part: per-row decisions exist, but full proof-aware skips, audit per bulk run and legacy whole-view limits are not closed.
+- TPO-requests-verification-37/38/R03 remain OPEN in part: persisted REQUEST, TPO bell, recruiter scope and review UI exist, but trusted auto-approval with pending-account exception, reviewed before/after diffs and recruiter decision email still need implementation.
+- TPO-students-06/07/10/12/14/16/17/34/36/R03 remain OPEN in part: timed/bulk debar/notifications, course prep assignment, drive overrides, cross-page selection, academic side effects, Excel export and unified grid selection need full workflows.
+- TPO-requests-verification-06/21 need shell work by chat-9 only: Requests sidebar badge and permission-aware Verification row.
