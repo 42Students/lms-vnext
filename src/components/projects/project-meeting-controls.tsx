@@ -643,8 +643,8 @@ export function ScheduleProjectMeetingControl({
             <legend className="px-1 text-sm font-semibold">Meeting notes and follow-up</legend>
             {([
               ["notes","Notes"],["actionItems","Action items"],
-              ["wentWell","What went well?"],["improve","What could improve?"],
-              ["nextTime","What to try next?"],["followUpNotes","Follow-up notes"],
+              ["wentWell","What went well?"],["improve","What didn't go well?"],
+              ["nextTime","Actions for next sprint"],["followUpNotes","Follow-up notes"],
             ] as const).map(([field,label])=>
               <label key={field} className="grid gap-1 text-xs font-semibold text-body">
                 {label}
@@ -664,10 +664,12 @@ export function ScheduleProjectMeetingControl({
               Follow-up status
               <Select value={facilitation.followUpStatus}
                 onChange={event=>setFacilitation(prev=>({...prev,
-                  followUpStatus:event.target.value as "NOT_PLANNED"|"OPEN"|"DONE"}))}>
+                  followUpStatus:event.target.value as "NOT_PLANNED"|"OPEN"|"IN_PROGRESS"|"DONE"|"BLOCKED"}))}>
                 <option value="NOT_PLANNED">Not planned</option>
                 <option value="OPEN">Open</option>
+                <option value="IN_PROGRESS">In progress</option>
                 <option value="DONE">Done</option>
+                <option value="BLOCKED">Blocked</option>
               </Select>
             </label>
           </fieldset>
