@@ -90,6 +90,17 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
  });
  const active=sortedRows.find(row=>row.membershipId===selected)??null;
+ const selectedScoped=noteSelection.filter(id=>shared?.allIds?.includes(id)??rows.some(row=>row.membershipId===id));
+ const allSelected=Boolean(shared?.allIds?.length&&selectedScoped.length===shared.allIds.length);
+ const xlsxHref=(()=>{
+  const query=new URLSearchParams(params.toString());
+  query.delete("student");query.delete("page");query.delete("pageSize");
+  if(!selectedScoped.length)return null;
+  if(!allSelected&&selectedScoped.length>200)return null;
+  query.set("ids",allSelected?"ALL":selectedScoped.join(","));
+  query.set("view",params.get("afterCollege")||params.get("journeyState")||"Students");
+  return "/api/placements/tpo/students/export-xlsx?"+query.toString();
+ })();
  function downloadSelection(){
   const permitted=new Set(rows.map(row=>row.membershipId));
   const chosen=sortedRows.filter(row=>noteSelection.includes(row.membershipId)&&permitted.has(row.membershipId));
@@ -154,7 +165,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
-  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected of {rows.length} on this visible page.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
+   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Export selected XLSX</a>:
+    selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
     onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
     Export selected CSV
