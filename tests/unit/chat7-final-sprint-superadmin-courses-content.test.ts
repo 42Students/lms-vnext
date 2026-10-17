@@ -13,10 +13,12 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(createCourseInputSchema.safeParse({...example,shortTitle:""}).success).toBe(false);
   expect(createCourseInputSchema.safeParse({...example,cardColor:"red"}).success).toBe(false);
   expect(updateCourseInputSchema.safeParse({shortTitle:"OS",officialCode:null}).success).toBe(true);
+  expect(updateCourseInputSchema.safeParse({takeaways:"Build operating systems"}).success).toBe(true);
+  expect(createCourseInputSchema.safeParse({...example,takeaways:"x".repeat(2001)}).success).toBe(false);
   const ui=read("src/components/courses/admin-course-create-panel.tsx");
   const edit=read("src/components/courses/admin-course-actions.tsx");
   const service=read("src/modules/courses/course-service.ts");
-  for(const text of ["Short display name","Official course code (optional)","Card colour"]){
+  for(const text of ["Short display name","Official course code (optional)","Card colour","Course takeaways (optional)"]){
    expect(ui).toContain(text);expect(edit).toContain(text);
   }
   expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,120)");
