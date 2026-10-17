@@ -330,7 +330,6 @@ export function LearnerCourseDiscussion({
         ? {id:highlightedPinned.id,pinned:true,updatedAt:highlightedPinned.updatedAt}
         : null);
     if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
-    if(!window.confirm((current.pinned?"Unpin":"Pin")+" this Section message?"))return;
     setPinningId(messageId);setModerationError(null);
     try {
       const payload = await apiFetch<{message?:{id:string;pinned:boolean;updatedAt:string}}>(
@@ -374,6 +373,7 @@ export function LearnerCourseDiscussion({
             ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
             : "Keep course conversations in one place and follow along easily."}
         </p>
+        <p className="mt-1 text-xs text-muted-foreground">Students can post questions here anytime. The placement of a pinned message can be changed later.</p>
       </div>
 
       {loadError && loadedOnce.current && messages.length > 0 ? (
