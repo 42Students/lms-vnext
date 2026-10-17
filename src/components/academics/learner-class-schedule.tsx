@@ -135,6 +135,23 @@ function EventNotes({description}: {description:string|null}) {
   );
 }
 
+/** A stable, semantic-token colour per course (never a random colour per render).
+ * Course code remains visible so meaning is not conveyed through colour alone. */
+function learnerCourseTint(event:LearnerScheduleEvent){
+  const key=event.deliveryId??event.courseId??event.sectionId;
+  let hash=0;
+  for(const char of key)hash=(Math.imul(hash,31)+char.charCodeAt(0))|0;
+  return ["border-l-primary","border-l-success","border-l-warning","border-l-info"][Math.abs(hash%4)]!;
+}
+function scheduleEventTooltip(event:LearnerScheduleEvent){
+  return [
+    "Course: "+(event.courseName??"General section event"),
+    "Class: "+event.sectionName,
+    "Location: "+(event.location??"Not specified"),
+    "Time: "+timeRange(event),
+  ].join("\n");
+}
+
 function EventCard({
   event,
   courseBasePath,
@@ -146,10 +163,12 @@ function EventCard({
 }) {
   const content = (
     <div
+      title={scheduleEventTooltip(event)}
       className={
-        compact
-          ? "rounded-lg border border-border bg-surface px-3 py-2"
-          : "rounded-lg border border-border bg-surface p-3"
+        (compact
+          ? "rounded-lg border border-border bg-surface px-3 py-2 "
+          : "rounded-lg border border-border bg-surface p-3 ") +
+        "border-l-4 " + learnerCourseTint(event)
       }
     >
       <div className="flex flex-wrap items-center gap-2">
