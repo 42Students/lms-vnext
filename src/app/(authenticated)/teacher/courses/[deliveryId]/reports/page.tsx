@@ -16,7 +16,7 @@ params:Promise<{deliveryId:string}>;searchParams:Promise<Search>}){
  const data=await getFacultyReportsHub(await getCurrentRequestContext(),parsed.data);
  const root="/teacher/courses/"+encodeURIComponent(deliveryId);
  return <div className="space-y-6">
- <PageHeader eyebrow="Faculty · Course Reports" title="Section reports"
+ <PageHeader title="Section reports"
  description={data.delivery.courseName+" · "+data.delivery.sectionName}
  actions={<Link href={root+"/home"} className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">Section workspace</Link>}/>
  <p className="text-sm text-body">{data.rosterSize} current eligible learners.</p>
