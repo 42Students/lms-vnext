@@ -79,6 +79,17 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      </details>
     </li>)}</ul>
    </>:null}
+    {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
+      <span>Page {page} · up to 25 attempts per page</span>
+      <div className="flex items-center gap-3">
+       <button type="button" disabled={loading||page<=1}
+        onClick={()=>{setLearnerSearch("");void open(page-1);}}
+        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Previous</button>
+       <button type="button" disabled={loading||!hasMore}
+        onClick={()=>{setLearnerSearch("");void open(page+1);}}
+        className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">Next</button>
+      </div>
+     </nav>:null}
   </div>:null}
  </div>;
 }
