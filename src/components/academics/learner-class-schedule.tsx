@@ -166,8 +166,7 @@ function learnerHourlySlots(events:readonly LearnerScheduleEvent[]){
   return Array.from({length:last-first+1},(_,index)=>first+index);
 }
 function learnerHourLabel(hour:number){
-  return new Intl.DateTimeFormat("en-IN",{hour:"numeric",hour12:true,
-    timeZone:"Asia/Kolkata"}).format(new Date(Date.UTC(2020,0,1,hour-5,30)));
+  return String(hour%12||12)+":00 "+(hour<12?"AM":"PM");
 }
 function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
   days:readonly Date[];
