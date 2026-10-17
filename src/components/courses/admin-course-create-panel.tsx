@@ -363,7 +363,7 @@ export function AdminCourseCreatePanel({
               {faculty.map((person) => <option key={person.membershipId} value={person.membershipId}>{person.displayName}{person.email ? " · " + person.email : ""}</option>)}
             </Select>
             {facultyTruncated?<p role="status" className="mt-1 text-xs text-muted-foreground">
-             Showing the first 500 active Faculty accounts. Use the dedicated Faculty Assignment page for additional Faculty.
+             Showing only the first 500 active Faculty accounts. Faculty beyond this list cannot be selected in this picker.
             </p>:null}
           </div>
           <div>
