@@ -22,8 +22,7 @@ describe("graceful shared UI primitives", () => {
   it("GR-36 explains disabled controls", () => {
     const html = renderToStaticMarkup(createElement(DisabledReason, {
       reason: "Complete your profile first.",
-      children: createElement("button", { disabled: true }, "Submit"),
-    }));
+    }, createElement("button", { disabled: true }, "Submit")));
     expect(html).toContain("Complete your profile first.");
     expect(html).toContain("aria-describedby");
   });
