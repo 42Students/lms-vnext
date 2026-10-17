@@ -46,6 +46,8 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
     sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
    )).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
+  // MEN-projects-meetings-27: an unsent mentor draft is not announced to learners.
+  if(current.status==="DRAFT")return updated;
   const event=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,

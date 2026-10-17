@@ -57,3 +57,13 @@ Not verified: resource uploads (requires private bucket and scanning), enrollmen
 | FAC-courses-05 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-list.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-05 course list exposes assignment and section metrics`. |
 | FAC-courses-08 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-list.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-08 empty/filter-miss messages distinguish conditions`. |
 | FAC-courses-29 | DONE (source checked; CI pending) | `src/components/courses/faculty-course-roster.tsx`; `tests/unit/chat7-round2-faculty-01.test.ts` — `FAC-courses-29 roster empty messaging matches class enrollment reality`. |
+
+## Chat-7 round 3 — course metadata, safe content and accessibility
+
+| Gap ID | Review | Evidence |
+|---|---|---|
+| FAC-courses-03 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-faculty-contracts.test.ts` — `FAC-courses-03` gap-named regression; no page restyling. |
+| FAC-courses-06 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-faculty-contracts.test.ts` — `FAC-courses-06` gap-named regression; no page restyling. |
+| FAC-courses-16 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-faculty-contracts.test.ts` — `FAC-courses-16` gap-named regression; no page restyling. |
+| FAC-courses-24 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-faculty-contracts.test.ts` — `FAC-courses-24` gap-named regression; no page restyling. |
+| FAC-courses-34 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-faculty-contracts.test.ts` — `FAC-courses-34` gap-named regression; no page restyling. |
