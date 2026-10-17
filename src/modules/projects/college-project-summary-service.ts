@@ -52,12 +52,18 @@ export async function updateCollegeProjectSummary(context:RequestContext,project
    updatedAt:new Date(Math.max(Date.now(),row.updatedAt.getTime()+1)),
   }).where(and(eq(projectInstances.id,row.id),eq(projectInstances.collegeId,scope.collegeId))).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
-  await recordActivityEventInTransaction(tx,context,{
+  const updatedEvent=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_SUMMARY_UPDATED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project",subjectId:row.id,subjectLabel:updated.title,
    summary:"Project workspace summary updated",
    metadata:{from:{title:row.title,status:row.status,progressPercent:row.progressPercent},to:{title:updated.title,status:updated.status,progressPercent:updated.progressPercent},fields:["summary","phase","dueLabel","courseLabel","sectionId","blocker","nextAction","dates","sprintLengthWeeks","estimationUnit"]},
+  });
+  await notifyActiveProjectMembers(tx,updatedEvent.id,{
+   projectId:updated.id,collegeId:scope.collegeId,roles:["LEARNER"],
+   exceptUserId:context.user.id,title:"Project updated",
+   body:updated.title+" has been updated.",
+   actionHref:"/learn/projects/"+updated.id,
   });
   return updated;
  });
