@@ -9,6 +9,14 @@ describe("scheduled Telegram alerts", () => {
     expect(isValidTickSecret("wrong", "expected")).toBe(false);
     expect(isValidTickSecret("expected", "expected")).toBe(true);
   });
+  it("GR-118 sweeps fixed signatures only after 24 hours and never marks them reported before send", async () => {
+    const { decideAlert } = await import("@/modules/log-alerts/policy");
+    const now = new Date("2099-07-01T03:30:00Z");
+    expect(decideAlert({
+      known: true, muted: false, fixStatus: "FIXED", fixedAt: new Date("2099-06-29T00:00:00Z"),
+      recentCount: 1, lastSpikeAt: null, now,
+    })).toBe("REGRESSION");
+  });
   it("GR-116 preserves excess burst counts for a later summary", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("13 more");
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
