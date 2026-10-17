@@ -1,7 +1,7 @@
 import type { RequestContext } from "@/modules/identity/context";
-import { eq } from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { projectTemplateVersions } from "@/db/schema/projects";
+import {projectTaskComments,projectTemplateVersions} from "@/db/schema/projects";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
 import {
   getProjectInstanceWorkspace,
@@ -71,7 +71,14 @@ export async function getProjectWorkspaceView(
     .where(eq(projectTemplateVersions.id, workspace.project.templateVersionId))
     .limit(1);
 
+  const taskCommentCounts=await getDb().select({
+    taskId:projectTaskComments.taskId,
+    total:sql<number>`count(*)::int`,
+  }).from(projectTaskComments).where(eq(projectTaskComments.projectId,workspace.project.id))
+    .groupBy(projectTaskComments.taskId);
+
   return {
+    taskCommentCounts,
     templateOverview: templateVersion?.blueprint.overview ?? null,
     ...workspace,
     members,

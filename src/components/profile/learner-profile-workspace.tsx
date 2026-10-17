@@ -10,7 +10,7 @@ import {learnerProfileCanRefresh,learnerProfileReconcile} from "@/modules/people
 import Link from "next/link";
 import { learnerProfileChecklist, type LearnerProfileSection } from "@/modules/people/learner-profile-checklist";
 import {learnerProfileCareerCoverage} from "@/modules/people/learner-profile-career-coverage-model";
-import {learnerProfilePublicationsAwards,newLearnerPublicationEntry} from "@/modules/people/learner-profile-publications-awards-model";
+import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry,isLearnerShowcaseKey,type LearnerShowcaseKind,type LearnerShowcaseDetails} from "@/modules/people/learner-profile-publications-awards-model";
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
@@ -50,7 +50,7 @@ const collectionLabels: Record<CollectionKey, string> = {
   achievements: "Academic Achievements",
   languages: "Languages",
   extracurriculars: "Extra-curricular Activities",
-  metadata: "Additional information",
+  metadata: "Additional Information",
 };
 
 const fields: Record<CollectionKey, Field[]> = {
@@ -185,7 +185,10 @@ export function LearnerProfileWorkspace(props: {
   const [collection, setCollection] = useState<CollectionKey | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [itemDraft, setItemDraft] = useState<Record<string, unknown>>({});
+  const [itemBaseline,setItemBaseline]=useState<Record<string,unknown>>({});
   const [educationError,setEducationError] = useState<string|null>(null);
+  const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
+  const [showcaseError,setShowcaseError]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
   const [pending, startTransition] = useTransition();
@@ -279,6 +282,23 @@ export function LearnerProfileWorkspace(props: {
     setDetailsOpen(true);
   }
 
+  function closeDetails() {
+    if(pending)return;
+    if(JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline)&&
+      !window.confirm("Discard profile changes?"))return;
+    setDetailsOpen(false);
+  }
+
+  function closeCollection() {
+    if(pending)return;
+    if(JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline)&&
+      !window.confirm("Discard your changes?"))return;
+    setCollection(null);
+    setEditingId(null);
+    setItemDraft({});
+    setItemBaseline({});
+  }
+
   function openContacts() {
     setContactDraft({ ...document.contacts });
     setContactError(null);
@@ -338,16 +358,48 @@ export function LearnerProfileWorkspace(props: {
 
   function openCollection(section: CollectionKey, item?: Record<string, unknown>) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
+    const initial = item ? {...item} : newItem(section);
     setCollection(section);
     setEditingId(item ? String(item.id) : null);
-    setItemDraft(item ? { ...item } : newItem(section));
+    setItemDraft(initial);
+    setItemBaseline(initial);
   }
 
-  function addPublication() {
+  function openShowcase(kind: LearnerShowcaseKind, entry?: LearnerShowcaseDetails & {id:string}) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
-    setCollection("metadata");
-    setEditingId(null);
-    setItemDraft(newLearnerPublicationEntry(crypto.randomUUID()));
+    setShowcaseError(null);
+    setShowcaseDraft({
+      kind, id:entry?.id??null, title:entry?.title??"",
+      organization:entry?.organization??"", date:entry?.date??"",
+      url:entry?.url??"", description:entry?.description??"",
+    });
+  }
+
+  function saveShowcase() {
+    if(!showcaseDraft||pending)return;
+    const {kind,id,...fields}=showcaseDraft;
+    if(!fields.title.trim()){setShowcaseError(kind==="award"?"Award title is required":"Publication title is required");return;}
+    if(fields.url.trim()) {
+      try {
+        const parsed = new URL(fields.url.trim());
+        if(parsed.protocol!=="https:"&&parsed.protocol!=="http:")throw new Error();
+      }catch{setShowcaseError("Enter a valid http or https URL");return;}
+    }
+    const record=newLearnerShowcaseEntry(id??crypto.randomUUID(),kind,{
+      title:fields.title.trim(),organization:fields.organization.trim(),
+      date:fields.date,url:fields.url.trim(),description:fields.description.trim(),
+    });
+    if(record.value.length>5000){setShowcaseError("Please shorten this entry.");return;}
+    const next=id
+      ?document.metadata.map(item=>item.id===id?record:item)
+      :[...document.metadata,record];
+    saveDocument({...document,metadata:next},()=>{setShowcaseDraft(null);setShowcaseError(null);});
+  }
+
+  function deleteShowcase(kind:LearnerShowcaseKind,id:string) {
+    if(pending||!window.confirm(kind==="award"?"Delete this award?":"Delete this publication?"))return;
+    const next=document.metadata.filter(item=>item.id!==id);
+    saveDocument({...document,metadata:next});
   }
 
   function saveOwnedSection(
@@ -484,9 +536,21 @@ export function LearnerProfileWorkspace(props: {
           <Link href="/learn/profile/completeness" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
             Review full checklist
           </Link>
-          <StatusBadge tone={percent >= 80 ? "success" : percent >= 50 ? "warning" : "neutral"}>
-            {coverage.completed} of {coverage.total} career sections filled
-          </StatusBadge>
+          <div className="flex items-center gap-3" aria-label={percent+" percent complete"}>
+            <svg viewBox="0 0 64 64" width="64" height="64" role="img" aria-label={percent+"% complete"}>
+              <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7"
+                className="stroke-border"/>
+              <circle cx="32" cy="32" r="26" fill="none" strokeWidth="7" strokeLinecap="round"
+                className="stroke-primary" pathLength="100"
+                strokeDasharray={String(percent)+" 100"} transform="rotate(-90 32 32)"/>
+              <text x="32" y="36" textAnchor="middle" className="fill-foreground"
+                fontSize="15" fontWeight="700">{percent}%</text>
+            </svg>
+            <div className="flex flex-wrap gap-2">
+              <StatusBadge tone="success">{coverage.completed} Completed</StatusBadge>
+              <StatusBadge tone="neutral">{coverage.total-coverage.completed} Remaining</StatusBadge>
+            </div>
+          </div>
         </div>
         <p className="mt-2 text-sm text-body">
           This reflects fields saved in your profile, not verification or placement eligibility.
@@ -581,64 +645,52 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Blood group" value={document.personalDetails.bloodGroup} />
           </div>
         </Card>
-        <Card id="identity" title="Identity">
+        <Card id="identity" title="Identity Documents">
           <div className="grid gap-4 sm:grid-cols-2">
             <Value label="Aadhaar number" value={document.identity.aadhaarNumber ? "•••• •••• " + document.identity.aadhaarNumber.slice(-4) : ""} />
             <Value label="PAN number" value={document.identity.panNumber ? document.identity.panNumber.slice(0, 2) + "••••••" + document.identity.panNumber.slice(-2) : ""} />
           </div>
           <p className="mt-4 text-xs leading-5 text-muted-foreground">Aadhaar/PAN files remain blocked on secure Cloud Storage; saved numbers are masked in the UI.</p>
         </Card>
-        <Card id="hobbies" title="Hobbies">
+        <Card id="hobbies" title="Hobbies & Interests">
           {document.hobbies.length ? <div className="flex flex-wrap gap-2">{document.hobbies.map((hobby) => <StatusBadge key={hobby}>{hobby}</StatusBadge>)}</div> : <p className="m-0 text-sm text-muted-foreground">No hobbies added yet.</p>}
         </Card>
-        <Card title="Publications and awards (saved entries)">
-          <p className="text-xs leading-5 text-muted-foreground">
-            These are learner-entered profile records, not verified publications or awards.
-            Structured publication/award verification is not available here.
-          </p>
-          <div className="mt-3 space-y-3">
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold text-foreground">Awards &amp; Recognitions (learner entered)</p>
-                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                  onClick={()=>openCollection("achievements")}>Add award</Button>
-              </div>
-              {authoredPublicationsAwards.achievements.length ?
-                <ul className="mt-1 space-y-2 text-sm text-body">
-                  {authoredPublicationsAwards.achievements.map(item=><li key={item.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
-                    <span className="break-words">{item.title}{item.year?" · "+item.year:""}</span>
-                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                      onClick={()=>openCollection("achievements",document.achievements.find(entry=>entry.id===item.id))}>
-                      Edit</Button>
-                  </li>)}
-                </ul> : <p className="mt-1 text-sm text-muted-foreground">No recorded achievements.</p>}
-              <Link href="/learn/profile?section=achievements" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review achievements</Link>
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold text-foreground">Publications &amp; Research (learner entered)</p>
-                <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                  onClick={addPublication}>Add publication</Button>
-              </div>
-              {authoredPublicationsAwards.publications.length ?
-                <ul className="mt-1 space-y-2 text-sm text-body">
-                  {authoredPublicationsAwards.publications.map(item=><li key={item.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border p-2">
-                    <span className="break-words">{item.value}</span>
-                    <Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
-                      onClick={()=>openCollection("metadata",document.metadata.find(entry=>entry.id===item.id))}>
-                      Edit</Button>
-                  </li>)}
-                </ul> : <p className="mt-1 text-sm text-muted-foreground">No publication-labelled entries recorded.</p>}
-              <Link href="/learn/profile?section=metadata" className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Review additional information</Link>
-            </div>
-          </div>
-        </Card>
+        {(["award","publication"] as const).map(kind=>{
+          const entries=kind==="award"?authoredPublicationsAwards.awards:authoredPublicationsAwards.publications;
+          return <Card key={kind} id={kind==="award"?"awards":"publications"}
+            title={kind==="award"?"Awards & Recognitions":"Publications & Research"}
+            action={<Button size="sm" disabled={pending||contactPending}
+              onClick={()=>openShowcase(kind)}>Add {kind}</Button>}>
+            <p className="mb-3 text-xs leading-5 text-muted-foreground">
+              Learner-entered information, not independently verified by the college.
+            </p>
+            {entries.length?<ul className="space-y-2">
+              {entries.map(entry=><li key={entry.id}
+                className="rounded-lg border border-border bg-surface-subtle p-3">
+                <p className="break-words text-sm font-semibold text-foreground">{entry.title}</p>
+                {entry.organization?<p className="mt-1 text-xs text-body">{entry.organization}</p>:null}
+                {entry.date?<p className="mt-1 text-xs text-body">{entry.date}</p>:null}
+                {entry.description?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{entry.description}</p>:null}
+                {entry.url?<a className="mt-2 block break-all text-sm text-primary-text underline"
+                  href={entry.url} target="_blank" rel="noopener noreferrer">View link</a>:null}
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button size="sm" variant="secondary" disabled={pending||contactPending}
+                    onClick={()=>openShowcase(kind,entry)}>Edit</Button>
+                  <Button size="sm" variant="danger" disabled={pending||contactPending}
+                    onClick={()=>deleteShowcase(kind,entry.id)}>Delete</Button>
+                </div>
+              </li>)}
+            </ul>:<p className="text-sm text-muted-foreground">
+              {kind==="award"?"No awards recorded yet.":"No publications recorded yet."}
+            </p>}
+          </Card>;
+        })}
       </div>
 
       {(Object.keys(collectionLabels) as CollectionKey[]).map((section) => {
-        const items = document[section] as Array<Record<string, unknown>>;
+        const items = (section === "metadata"
+          ? document.metadata.filter(item=>!isLearnerShowcaseKey(item.key))
+          : document[section]) as Array<Record<string, unknown>>;
         return (
           <Card key={section} id={section} title={collectionLabels[section]} action={<Button size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
             onClick={() => openCollection(section)}>Add</Button>}>
@@ -726,10 +778,10 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={detailsOpen}
-        onOpenChange={setDetailsOpen}
+        onOpenChange={open=>{if(!open)closeDetails();}}
         title="Edit learner profile"
         description="Account phone/email stay authoritative. These are your self-service profile fields."
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => setDetailsOpen(false)}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={closeDetails}>Cancel</Button><Button disabled={pending} onClick={() => saveDocument(detailsDraft, () => setDetailsOpen(false),detailsBaseline)}>{pending ? "Saving…" : "Save profile"}</Button></>}
       >
         <div className="max-h-[65vh] space-y-6 overflow-y-auto pr-1">
           <fieldset className="grid gap-4">
@@ -784,6 +836,41 @@ export function LearnerProfileWorkspace(props: {
         </div>
       </Dialog>
 
+      <Dialog open={showcaseDraft!==null}
+        onOpenChange={open=>{if(!open&&!pending){setShowcaseDraft(null);setShowcaseError(null);}}}
+        title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
+        description="Save a learner-entered record. This does not verify the award or publication."
+        footer={<>
+          <Button variant="secondary" disabled={pending}
+            onClick={()=>{setShowcaseDraft(null);setShowcaseError(null);}}>Cancel</Button>
+          <Button disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
+        </>}>
+        {showcaseDraft?<div className="grid gap-4">
+          <label className="text-sm font-semibold text-body">Title
+            <Input className="mt-1" maxLength={240} value={showcaseDraft.title}
+              onChange={event=>setShowcaseDraft({...showcaseDraft,title:event.target.value})}/>
+          </label>
+          <label className="text-sm font-semibold text-body">
+            {showcaseDraft.kind==="award"?"Issuing organization":"Journal or publisher"}
+            <Input className="mt-1" maxLength={240} value={showcaseDraft.organization}
+              onChange={event=>setShowcaseDraft({...showcaseDraft,organization:event.target.value})}/>
+          </label>
+          <label className="text-sm font-semibold text-body">Date
+            <Input className="mt-1" type="date" value={showcaseDraft.date}
+              onChange={event=>setShowcaseDraft({...showcaseDraft,date:event.target.value})}/>
+          </label>
+          <label className="text-sm font-semibold text-body">Reference link
+            <Input className="mt-1" type="url" maxLength={1500} value={showcaseDraft.url}
+              onChange={event=>setShowcaseDraft({...showcaseDraft,url:event.target.value})}/>
+          </label>
+          <label className="text-sm font-semibold text-body">Description
+            <Textarea className="mt-1" maxLength={1800} value={showcaseDraft.description}
+              onChange={event=>setShowcaseDraft({...showcaseDraft,description:event.target.value})}/>
+          </label>
+          {showcaseError?<p role="alert" className="text-sm text-error">{showcaseError}</p>:null}
+        </div>:null}
+      </Dialog>
+
       <Dialog open={jobPrefsEditing}
         onOpenChange={open=>{if(!open&&!pending)setJobPrefsEditing(false);}}
         title="Edit Job Preferences"
@@ -826,9 +913,9 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={collection !== null}
-        onOpenChange={(open) => { if (!open) { setCollection(null); setEditingId(null); setItemDraft({}); } }}
+        onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button variant="secondary" disabled={pending} onClick={() => { setCollection(null); setEditingId(null); setItemDraft({}); }}>Cancel</Button><Button disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 sm:grid-cols-2">

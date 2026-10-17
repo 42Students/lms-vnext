@@ -118,3 +118,9 @@ The first WP remains IN-PROGRESS; none of its remaining dependent S1 gaps should
 before real PostgreSQL and UI tests pass. The builder-only branch contains the changes
 listed in the WP checkpoint. Other four WPs remain TODO and were not started in this
 round. Shared shell paths remain owned by chat-9 and were not edited during this round.
+
+## chat-7 FAST v2 branch checkpoint (2026-10-17)
+
+- **Branch:** `chatgpt/chat-7-b` from main; [chat-7] commits only; pending orchestrator merge. WPs 01-05 stay IN-PROGRESS pending all non-blocked gaps.
+- **Implemented in this branch:** LEARNER-profile-misc-05 (separate learner-authored awards/publications CRUD with safe legacy imports); LEARNER-profile-misc-09 (completion ring and Completed/Remaining); LEARNER-profile-misc-10 (discard confirmation for unsaved profile edits); LEARNER-learning-misc-31 (course-consistent schedule tint and hover details); REC-home-drives-14 (scoped already-shared applicant/offer counts on drive cards); REC-home-drives-28 (persistent live draft preview). These are source changes, not verified audit closure.
+- **BLOCKED, MOVE ON:** LEARNER-profile-misc-01/-02/-03 and REC-home-drives-43/-23 (secure private files/scanner-backed storage not configured); REC-home-drives-38 (sensitive applicant disclosures require approved consent policy); REC-home-drives-51 (proposed recruiter selection-list tables not registered; 0115 TPO selections and 0121 company shares are different contracts); REC-calendar-messages-profile-25/-46 (verified identity / pending-invite authorization); LEARNER-profile-misc-04 (private video introduction storage).

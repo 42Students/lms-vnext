@@ -14,7 +14,7 @@ import type { LearnerTaskBoardUrlFilters } from "@/modules/projects/learner-boar
 import { learnerBoardTaskHref } from "@/modules/projects/learner-board-task-detail-model";
 
 export function LearnerBoardTaskDetailDialog({
-  projectId, filters, task, sprintTitle, currentMembershipId, assigneeName,
+  projectId, filters, task, sprintTitle, currentMembershipId, assigneeName, commentCount=0, submissionUrl=null,
 }: {
   projectId:string;
   filters:LearnerTaskBoardUrlFilters;
@@ -26,6 +26,8 @@ export function LearnerBoardTaskDetailDialog({
   currentMembershipId:string|null;
   sprintTitle:string|null;
   assigneeName:string|null;
+  commentCount?:number;
+  submissionUrl?:string|null;
 }) {
   const ref=useRef<HTMLDialogElement>(null);
   const navigatingRef=useRef(createLearnerBoardTaskDialogNavigationGuard());
@@ -65,6 +67,12 @@ export function LearnerBoardTaskDetailDialog({
           <dd className="whitespace-pre-wrap break-words">{facts.blockerReason}</dd>
         </div> : null}
       </dl>
+      <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold text-body">
+        <span>{commentCount} comment{commentCount===1?"":"s"}</span>
+        {submissionUrl&&/^https?:\/\//i.test(submissionUrl)?
+          <a href={submissionUrl} target="_blank" rel="noopener noreferrer"
+            className="text-primary-text underline">Submission link attached ↗</a>:null}
+      </div>
       <section className="mt-5">
         <h3 className="font-semibold">Details</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.description??"No task description provided."}</p>

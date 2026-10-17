@@ -11,6 +11,8 @@ import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
+import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
+import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
@@ -669,7 +671,7 @@ export function ProjectWorkspace({
             Release → sprint → task state from normalized
             Project records.
           </p>
-          {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
+          {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
         <div className="space-y-4">
           {workspace.releases.map((release) => (
@@ -704,10 +706,10 @@ export function ProjectWorkspace({
                   <StatusBadge tone={tone(release.status)}>
                     {label(release.status)}
                   </StatusBadge>
-                  {mode==="MENTOR"&&!readOnly?<MentorReleaseEditor
+                  {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor
                     projectId={workspace.project.id} release={release}
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
-                  {mode === "MENTOR" && !readOnly && release.status !== "SHIPPED" ? (
+                  {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
                       releaseId={release.id} />
                   ) : null}
@@ -753,6 +755,11 @@ export function ProjectWorkspace({
                         >
                           {label(sprint.status)}
                         </StatusBadge>
+                        {mode!=="LEARNER"&&!readOnly&&sprint.status==="PLANNED"&&release.status!=="SHIPPED"?
+                          <MentorSprintDeleteControl projectId={workspace.project.id}
+                            sprintId={sprint.id} title={sprint.title}
+                            taskCount={(tasksBySprint.get(sprint.id)??[]).length}
+                            updatedAt={sprint.updatedAt.toISOString()}/>:null}
                         {mode !== "LEARNER" && !readOnly ? <>
                           {["PLANNED","ACTIVE"].includes(sprint.status) &&
                             release.status !== "SHIPPED" ? (
@@ -1337,6 +1344,28 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode==="MENTOR" && workspace.meetings.length ? (() => {
+            const upcoming=workspace.meetings.filter(m=>m.status==="SCHEDULED"&&new Date(m.endsAt)>renderTime)
+              .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
+            return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
+              <h3 className="text-sm font-semibold">Next meeting</h3>
+              {upcoming[0]?<p className="mt-1 text-sm">{upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}</p>:
+                <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
+              {upcoming.length>1?<details className="mt-2 text-sm">
+                <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
+                <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
+                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}</li>)}</ul>
+              </details>:null}
+              <details className="mt-3 text-sm">
+                <summary className="cursor-pointer font-semibold text-primary-text">Past meetings / Meeting history</summary>
+                <ul className="mt-2 space-y-1">
+                  {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
+                    (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
+                    <li key={m.id}>{m.title} · {label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
+                </ul>
+              </details>
+            </section>;
+          })():null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
@@ -1443,39 +1472,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          {workspace.activity.length === 0 ? (
-            <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-              No persisted Project activity yet.
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {workspace.activity.map((event) => (
-                <article
-                  key={event.id}
-                  className="rounded-xl border border-border bg-surface p-4"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="m-0 text-sm font-semibold text-foreground">
-                        {event.summary}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {event.actorDisplayName ?? "System"}
-                        {" · "}
-                        {formatDateTime(event.occurredAt)}
-                      </p>
-                    </div>
-                    <StatusBadge tone={tone(event.importance)}>
-                      {event.eventType
-                        .split(".")
-                        .slice(1)
-                        .join(" ")}
-                    </StatusBadge>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
+          <ProjectActivityFilteredList events={workspace.activity}/>
 
 
         </section>

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {deleteMentorProjectTask} from "@/modules/projects/mentor-task-delete-service";
 import {
   updateProjectTaskStatus,
 } from "@/modules/projects/lifecycle-service";
@@ -41,4 +42,13 @@ export async function PATCH(
   } catch (error) {
     return apiErrorResponse(error);
   }
+}
+
+export async function DELETE(request:Request,{params}:RouteContext){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const {projectId,taskId}=await params;
+  return NextResponse.json(await deleteMentorProjectTask(
+   await getCurrentRequestContext(),projectId,taskId,await request.json()));
+ }catch(error){return apiErrorResponse(error);}
 }
