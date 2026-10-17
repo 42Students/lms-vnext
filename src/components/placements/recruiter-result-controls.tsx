@@ -272,7 +272,14 @@ export function RecruiterResultControls({
         return;
       }
     }
-    if(!window.confirm("Send "+participants.length+" results? These candidate outcomes will be staged for the placement cell to verify."))return;
+    const summary=participants.slice(0,12).map((person,index)=>{
+      const decision=drafts[round.id+":"+person.applicationId]!;
+      return (index+1)+". "+(person.displayName||"Applicant")+" — "+
+        decision.outcome+(decision.outcome==="HOLD"?" (rank "+decision.waitlistRank+")":"");
+    }).join("\n");
+    if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
+      summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
+      "\n\nNo result is final until the placement cell applies it."))return;
     setBulkPending(round.id);
     const succeeded:string[]=[];
     let failures=0;
