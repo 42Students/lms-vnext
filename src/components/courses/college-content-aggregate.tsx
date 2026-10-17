@@ -263,9 +263,9 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         </div>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
-        Read-only authoring metadata. Publishing state does not by itself grant learner visibility.
-        No storage key, file download, signed URL, resource text or external playback URL is returned.
-        Content creation, revision and publication remain in the offering workspace.
+        This catalogue shows authorization-scoped content metadata. Publishing state does not by itself grant learner visibility.
+        No storage key, file download, signed URL or external playback URL is returned here.
+        Use the authoring controls above or the offering workspace to manage content.
       </p>
     </div>
   );
