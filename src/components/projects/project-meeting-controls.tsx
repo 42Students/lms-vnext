@@ -651,6 +651,21 @@ export function ProjectMeetingTransitionActions({
   const [note, setNote] = useState("");
   const [pending, setPending] =
     useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
+  const dirty=Boolean(note.trim());
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setConfirmDiscard(true);else setOpen(null);
+  }
 
   const manager =
     mode === "MENTOR" || mode === "ADMIN";
@@ -713,14 +728,11 @@ export function ProjectMeetingTransitionActions({
             : withdrawing?"Meeting request withdrawn.":"Meeting cancelled",
       });
       router.refresh();
-    } catch (caught) {
+    } catch {
       showToast({
         tone: "error",
         title: "Meeting update failed",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        description: "Review the meeting status and try again.",
       });
     } finally {
       setPending(false);
@@ -757,7 +769,7 @@ export function ProjectMeetingTransitionActions({
       <Dialog
         open={open !== null}
         onOpenChange={(next) => {
-          if (!next) setOpen(null);
+          if (!next) requestClose();
         }}
         title={
           open === "COMPLETE"
@@ -774,7 +786,7 @@ export function ProjectMeetingTransitionActions({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(null)}
+              onClick={requestClose}
             >
               Back
             </Button>
@@ -819,6 +831,11 @@ export function ProjectMeetingTransitionActions({
           />
         </label>:null}
       </Dialog>
+      <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
+        title="Discard unsaved project changes?"
+        description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={()=>{setConfirmDiscard(false);setOpen(null);setNote("");}}/>
     </>
   );
 }
