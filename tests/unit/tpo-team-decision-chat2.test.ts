@@ -13,6 +13,7 @@ describe("TPO Team decisions",()=>{
   expect(service).toContain(".for(\"update\")");
   expect(service).toContain("eq(placementTpoInternalMessages.threadId,thread.id)");
   expect(service).toContain("decision_unmarked");
+  expect(service).toContain("TEAM_MESSAGE_REMOVED");
  });
  it("TPO-inbox-team-23 renders a pinned decision strip, per-message tag and guarded toggle",()=>{
   const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");

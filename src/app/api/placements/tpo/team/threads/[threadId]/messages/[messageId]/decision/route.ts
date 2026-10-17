@@ -21,7 +21,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
   const code=error instanceof Error?error.message:"";
   if(["TEAM_THREAD_NOT_FOUND","TEAM_MESSAGE_NOT_FOUND"].includes(code))
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
-  if(code==="TEAM_STALE_DECISION")
+  if(["TEAM_STALE_DECISION","TEAM_MESSAGE_REMOVED"].includes(code))
    return NextResponse.json({error:"STALE_MESSAGE"},{status:409});
   if(code==="TEAM_TABLES_PENDING")
    return NextResponse.json({error:"UNAVAILABLE"},{status:503});

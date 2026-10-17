@@ -40,6 +40,13 @@ export async function setTpoTeamDecision(context:RequestContext,raw:unknown){
     eq(placementTpoInternalMessages.threadId,thread.id),
    )).limit(1);
   if(!message)throw new Error("TEAM_MESSAGE_NOT_FOUND");
+  const [removed]=await tx.select({id:activityEvents.id}).from(activityEvents)
+   .where(and(eq(activityEvents.collegeId,college.id),
+    eq(activityEvents.subjectType,"team_thread"),eq(activityEvents.subjectId,thread.id),
+    eq(activityEvents.eventType,"placements.tpo_team.message_deleted"),
+    sql`${activityEvents.metadata}->>'messageId' = ${message.id}`,
+   )).limit(1);
+  if(removed)throw new Error("TEAM_MESSAGE_REMOVED");
   const [last]=await tx.select({eventType:activityEvents.eventType})
    .from(activityEvents).where(and(
     eq(activityEvents.collegeId,college.id),
