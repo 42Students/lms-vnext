@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
 import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
+import type {listCollegeCourseCatalogue} from "@/modules/courses/college-course-catalogue-service";
 import { COLLEGE_COURSES_COPY, courseVisibleToStudentsLabel, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
@@ -52,13 +53,14 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,
+  duplicateCourseId,catalogueQuery,catalogueData,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
   duplicateCourseId?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
+  catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
 }) {
   const catalogue=catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null;
   const deliveryCountByOffering = new Map<
