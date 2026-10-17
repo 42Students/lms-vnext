@@ -39,6 +39,7 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -65,6 +66,7 @@ function studentsHref(
     branchId?: string;
     programId?:string;
     afterCollege?:string;
+    classId?:string;
     batchId?: string;
     search?: string;
     page?: number;
@@ -84,6 +86,7 @@ function studentsHref(
   }
   if(filters.programId)params.set("programId",filters.programId);
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
+  if(filters.classId)params.set("classId",filters.classId);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
   if (filters.search) {
@@ -149,6 +152,7 @@ export default async function TpoStudentsPage({
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
     afterCollege:first(raw.afterCollege)||undefined,
+    classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -227,13 +231,14 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
       programId:query.programId,
       afterCollege:query.afterCollege,
+      classId:query.classId,
       search: query.search,
     },
     true,
@@ -245,6 +250,7 @@ export default async function TpoStudentsPage({
     branchId: query.branchId,
     programId:query.programId,
     afterCollege:query.afterCollege,
+    classId:query.classId,
     batchId: query.batchId,
     search: query.search,
     pageSize: query.pageSize,
