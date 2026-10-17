@@ -16,6 +16,8 @@ export async function POST(request:Request){
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const thread=await createTpoInternalThread(await getCurrentRequestContext(),parsed.data);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({id:thread.id,href:"/tpo/team/"+thread.id});
   return NextResponse.redirect(new URL("/tpo/team/"+thread.id,request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
