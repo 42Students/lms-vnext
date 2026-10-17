@@ -112,6 +112,13 @@ export function hrDraftFromAuthorizedJob(job: {
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
+  const safeExternalLink=(()=>{
+    try{
+      const candidate=new URL(job.externalApplicationUrl??"");
+      return candidate.protocol==="https:"&&Boolean(candidate.hostname)&&
+        !candidate.username&&!candidate.password?candidate.toString():"";
+    }catch{return "";}
+  })();
   const type = z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]).safeParse(job.employmentType);
   const mode = z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]).safeParse(job.workMode);
   const allowedRoundKinds = z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]);
@@ -128,7 +135,7 @@ export function hrDraftFromAuthorizedJob(job: {
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
     driveMode:job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
-    externalApplicationUrl:job.externalApplicationUrl?.startsWith("https://")?job.externalApplicationUrl:"",
+    externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
     rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,
