@@ -7,7 +7,7 @@ export function tpoNoticeTextParts(body:string):TpoNoticeTextPart[]{
  const pattern=/https:\/\/[^\s<>"']+/g;
  let previous=0;
  for(const match of body.matchAll(pattern)){
-  const start=match.index;
+  const start=match.index??previous;
   if(start>previous)result.push({kind:"text",value:body.slice(previous,start)});
   const token=match[0];
   const suffix=token.match(/[.,;!?)\]]+$/)?.[0]??"";
