@@ -19,7 +19,7 @@ const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL}):nu
 const collegeAdmin:RequestContext={
  user:{id:SEED_IDS.collegeAdminUser,identityUid:"chat11-college-company",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
-  organizationId:SEED_IDS.organization,showDeleted:"0",roles:["COLLEGE_ADMIN"]},
+  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
 const companyIds:string[]=[],relationshipIds:string[]=[];
 afterAll(async()=>{
