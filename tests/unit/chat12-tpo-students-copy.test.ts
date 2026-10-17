@@ -11,7 +11,8 @@ describe("Chat-12 TPO Students legacy wording",()=>{
  });
  it("TPO-students-47 restores roster search, empty and failure wording",()=>{
   const page=read("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(page).toContain('placeholder="Search name, roll no., email"');
+  expect(page).toContain("<TpoDebouncedStudentSearch");
+  expect(read("src/components/tpo/tpo-debounced-student-search.tsx")).toContain('placeholder="Search name, roll no., email"');
   expect(page).toContain("Nobody is in placements yet.");
   expect(page).toContain("Decide who is in on Placement eligibility; they show up here.");
   expect(read("src/app/(authenticated)/tpo/students/error.tsx")).toContain("Could not load students");

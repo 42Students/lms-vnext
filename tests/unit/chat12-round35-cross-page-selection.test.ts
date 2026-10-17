@@ -7,7 +7,8 @@ it("TPO-students-17 preserves a tenant-scoped whole-view 5000-row selection acro
  expect(provider).toContain('window.sessionStorage.setItem(key');
  expect(provider).toContain("allowed.has(id)");
  expect(page).toContain("roster.total<=5000");
- expect(page).not.toContain("roster.page+");
+ expect(page).toContain("page:undefined,pageSize:undefined,columns:undefined");
+ expect(page).toContain("scopeKey={context.membership.id");
  expect(grid).toContain("selectAllIds=selection?.allIds??visibleRowIds");
  expect(grid).toContain("visibleRowIds.slice(Math.min(anchor.current,index)");
  expect(grid).toContain("event.nativeEvent.shiftKey");

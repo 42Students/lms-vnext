@@ -13,4 +13,15 @@ describe("chat-15 bounded calendar retrieval",()=>{
   expect(src).toContain("gte(sectionScheduleEvents.endsAt,visibleWindow.from)");
   expect(readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/calendar/page.tsx"),"utf8")).toContain("getLearnerClassSchedule(context,window)");
  });
+ it("LEARNER-learning-misc-34 bounds attendance calendar and detail reads to IST month",()=>{
+  const may=learnerAttendanceMonthWindow("2099-05");
+  expect(may.from.toISOString()).toBe("2099-04-30T18:30:00.000Z");
+  expect(may.to.toISOString()).toBe("2099-05-31T18:30:00.000Z");
+  const service=readFileSync(join(process.cwd(),"src/modules/attendance/learner-service.ts"),"utf8");
+  expect(service).toContain("lt(sectionScheduleEvents.startsAt, options.window.to)");
+  const attendance=readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/attendance/page.tsx"),"utf8");
+  expect(attendance).toContain("window:learnerAttendanceMonthWindow(selected)");
+  const calendar=readFileSync(join(process.cwd(),"src/modules/attendance/learner-attendance-calendar-service.ts"),"utf8");
+  expect(calendar).toContain("window: learnerAttendanceMonthWindow(query.month)");
+ });
 });
