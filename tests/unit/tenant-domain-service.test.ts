@@ -242,7 +242,7 @@ describe("tenant-domain service", () => {
 
     await expect(
       createTenantDomain(
-        superAdminContext,
+        adminContext,
         {
           collegeId: "22222222-2222-4222-8222-222222222222",
           host: "other.example.edu",
@@ -312,12 +312,12 @@ describe("tenant-domain service", () => {
       () => "second-token",
     );
 
-    await verifyTenantDomain(adminContext, first.id, repository, {
+    await verifyTenantDomain(superAdminContext, first.id, repository, {
       async verify() {
         return { verified: true, result: "VERIFIED" };
       },
     });
-    await verifyTenantDomain(adminContext, second.id, repository, {
+    await verifyTenantDomain(superAdminContext, second.id, repository, {
       async verify() {
         return { verified: true, result: "VERIFIED" };
       },
