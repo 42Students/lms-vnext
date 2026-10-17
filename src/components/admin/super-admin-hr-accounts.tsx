@@ -776,6 +776,10 @@ export function SuperAdminHrAccounts({
                       <Button variant="ghost" size="sm" disabled={!account.accountManageable}
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
+                      {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+                      <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                        onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>
                   </article>
                 ))}
