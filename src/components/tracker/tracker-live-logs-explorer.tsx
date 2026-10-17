@@ -29,13 +29,13 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
  * embedded newlines without changing the immutable source records. */
 export function trackerLogCsv(rows:readonly Entry[]):string{
  const cell=(value:string)=>{
-  const clean=value.replace(/[\\r\\n]+/g," ");
-  const inert=/^\\s*[=+\\-@]/.test(clean)?"'"+clean:clean;
+ const clean=value.replace(/[\r\n]+/g," ");
+ const inert=/^\s*[=+\-@]/.test(clean)?"'"+clean:clean;
   return '"'+inert.replaceAll('"','""')+'"';
  };
  return ["Time,Event,Route,Component,Reference,Message",
   ...rows.map(row=>[row.time,row.event,row.path,row.component??"",row.requestId??"",row.message]
-   .map(cell).join(","))].join("\\n");
+   .map(cell).join(","))].join("\n");
 }
 export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
