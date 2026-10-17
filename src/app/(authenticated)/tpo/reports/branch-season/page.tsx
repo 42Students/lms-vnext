@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -21,6 +23,7 @@ export default async function TpoBranchSeasonPage({
   );
   return (
     <div className="space-y-6">
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/branch-season" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <Link href="/tpo/reports/by-branch" className="text-sm font-semibold text-primary-text hover:underline">
         ← By Branch report
       </Link>
