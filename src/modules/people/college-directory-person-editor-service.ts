@@ -7,6 +7,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {facultyProfileDocumentSchema} from "./faculty-profile-document";
 import {learnerProfileDocumentSchema} from "./profile-validation";
 
@@ -24,14 +25,13 @@ const inputSchema=z.strictObject({
   rollNumber:z.string().trim().max(128).optional(),
   registrationNumber:z.string().trim().max(128).optional(),
 });
-function scope(context:RequestContext){
-  const m=context.membership;
-  if(!m||m.status!=="ACTIVE")throw Error("COLLEGE_MEMBERSHIP_REQUIRED");
-  requirePermission(context,"people.manage",{collegeId:m.collegeId,organizationId:m.organizationId});
-  return m;
+async function scope(context:RequestContext){
+  // The selected Super Admin college is real and checked by the central
+  // acting-college resolver; never invent a College Admin membership.
+  return resolveActingCollege(context,"people.manage");
 }
 export async function getCollegePersonEditor(context:RequestContext,rawId:unknown,kind:"FACULTY"|"LEARNER"){
-  const own=scope(context),id=uuid.parse(rawId);
+  const own=await scope(context),id=uuid.parse(rawId);
   const [row]=await getDb().select({
     id:collegeMemberships.id,status:collegeMemberships.status,
     name:users.displayName,phone:users.phoneE164,email:users.email,
@@ -59,7 +59,7 @@ export async function getCollegePersonEditor(context:RequestContext,rawId:unknow
     employmentType:row.employmentType,rollNumber:row.roll,registrationNumber:row.registration};
 }
 export async function saveCollegePersonEditor(context:RequestContext,rawId:unknown,raw:unknown){
-  const own=scope(context),id=uuid.parse(rawId),input=inputSchema.parse(raw);
+  const own=await scope(context),id=uuid.parse(rawId),input=inputSchema.parse(raw);
   return getDb().transaction(async tx=>{
     const [member]=await tx.select({id:collegeMemberships.id,status:collegeMemberships.status})
       .from(collegeMemberships).innerJoin(membershipRoles,and(
