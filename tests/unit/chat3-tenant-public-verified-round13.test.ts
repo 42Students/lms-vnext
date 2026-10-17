@@ -36,4 +36,35 @@ describe("Chat-3 owner-backed tenant/public gap dispositions",()=>{
   expect(server).toContain("placementCompanyApplicantShareViews");
   expect(server).not.toContain("createInAppNotification");
  });
+ it("SA-tenants-modules-06 has two scoped URL-persisted tenant setup steps",()=>{
+  const page=src("src/app/(authenticated)/admin/tenants/setup/page.tsx");
+  for(const value of ["tenantSetupTab(query.tab,id!==null)","1. Tenant structure",
+    "2. Launch setup","Current step","College setup","Web address","Look and feel"])
+    expect(page).toContain(value);
+  expect(page).toContain('requirePermission(context,"admin-scope.select")');
+ });
+ it("SA-tenants-modules-17 has a college-scoped administrator creation and lifecycle workspace",()=>{
+  const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx");
+  for(const token of ['forcedRole="COLLEGE_ADMIN"','forcedRole="TPO"','listCollegeAdminSessionTargets',
+    "CollegeAdminLifecycleAction","View active devices","View history"])
+    expect(page).toContain(token);
+  const service=src("src/modules/colleges/admin-session-service.ts");
+  expect(service).toContain('requirePermission(ctx,"college.manage"');
+  expect(page).toContain('hasMentorRole={item.roles.includes("MENTOR")}');
+ });
+ it("SA-tenants-modules-19 retains college-scoped activity read and authorized CSV without a duplicate GET write",()=>{
+  const page=src("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
+  expect(page).toContain('href={`/activity?collegeId=${encodeURIComponent(item.id)}`}');
+  expect(page).toContain('href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}');
+  expect(src("src/app/(authenticated)/activity/page.tsx")).toContain("collegeId: one(params.collegeId)");
+  expect(src("src/app/api/activity/admin-export/route.ts")).toContain("exportSuperAdminActivity");
+ });
+ it("PUB-auth-public-61 does not accept guessed legacy slugs in place of scoped course delivery identities",()=>{
+  const courses=src("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
+  const schedule=src("src/components/academics/learner-class-schedule.tsx");
+  expect(courses).toContain("deliveryId");
+  expect(schedule).toContain("deliveryId");
+  expect(schedule).toContain("courseBasePath");
+ });
+
 });
