@@ -282,8 +282,6 @@ export async function PlacementDriveWorkspace({
                 Review close consequences
               </Link>
             ) : null}
-            {isTpo&&job.status==="DRAFT"?
-              <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
             {isTpo && job.status === "PUBLISHED" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
@@ -371,6 +369,14 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {isTpo?<TpoDriveRefreshControl/>:null}
+      {isTpo&&job.status==="DRAFT"?
+       <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
+      {isTpo&&!lifecycleReadiness?
+       <p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+        Could not load: Publication readiness. Publishing is unavailable until these checks recover.
+        Refresh the drive to try again.
+       </p>:null}
       <section aria-label="Drive status and details" className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <strong className="rounded-md border border-border bg-surface-secondary px-2 py-1">{headerFacts.status}</strong>
