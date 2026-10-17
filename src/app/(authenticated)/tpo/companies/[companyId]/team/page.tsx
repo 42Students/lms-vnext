@@ -3,7 +3,7 @@ import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
-import {readTpoCompanyTeam} from "@/modules/placements/tpo-company-team-service";
+import {readTpoCompanyTeam,TpoCompanyTeamError} from "@/modules/placements/tpo-company-team-service";
 import {PageHeader} from "@/components/ui/page-header";
 import {TpoCompanyTeamComposer} from "@/components/tpo/tpo-company-team-composer";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
@@ -15,8 +15,18 @@ export default async function TpoCompanyTeamPage({params}:{
  if(!context.membership||!hasPlacementTeamMembership(context))redirect("/dashboard");
  const {companyId}=await params;
  if(!z.string().uuid().safeParse(companyId).success)notFound();
- const result=await readTpoCompanyTeam(context,companyId);
- if(result.status==="NOT_FOUND")notFound();
+ // The shared company-team service now rejects unknown/foreign company IDs
+ // with a typed error rather than a NOT_FOUND result variant.
+ let result:Awaited<ReturnType<typeof readTpoCompanyTeam>>;
+ try{
+  result=await readTpoCompanyTeam(context,companyId);
+ }catch(error){
+  if(error instanceof TpoCompanyTeamError&&error.code==="NOT_FOUND")notFound();
+  throw error;
+ }
+ // Company scope requires an ACTIVE relationship before returning READY;
+ // keep the existing archived read-only fallback without inventing a canPost field.
+ const canPost=result.status==="READY";
  return <main className="space-y-5">
   <PageHeader eyebrow="TPO · Team" title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
@@ -40,7 +50,7 @@ export default async function TpoCompanyTeamPage({params}:{
     </ol>
     {!result.messages.length?<p role="status" className="text-sm text-body">
      No company Team messages yet.</p>:null}
-    {result.canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:
+    {canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:
      <p role="status" className="text-sm text-body">
       This relationship is archived. Its discussion is read-only.
      </p>}
