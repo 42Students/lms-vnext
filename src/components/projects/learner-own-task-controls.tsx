@@ -49,7 +49,7 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
     <input required maxLength={200} value={title} onChange={e=>setTitle(e.target.value)}
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
    <label className="text-sm font-semibold">Sprint
-    <select required value={sprintId} onChange={e=>setSprintId(e.target.value)}
+    <select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
