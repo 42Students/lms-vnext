@@ -497,6 +497,8 @@ export function RecruiterLeadsWorkspace({
     if(saving)return;
     const dirty=Object.values(form).some(value=>value.trim());
     if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
+    contactCheckSeq.current++;
+    setChecking(false);
     setAdding(false);setDuplicate(null);setSaveError("");setReviewingCreate(false);
     createLaunchRef.current?.focus();
   }
