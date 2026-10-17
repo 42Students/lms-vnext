@@ -1,5 +1,8 @@
 import {z} from "zod";
-export const batchStudentViewSchema=z.object({q:z.string().trim().max(100).default(""),decision:z.enum(["ALL","ELIGIBLE","INELIGIBLE","NOT_DECIDED","NEEDS_REVIEW"]).default("ALL"),source:z.enum(["ALL","LEARNER","CLASS","BATCH","NONE"]).default("ALL"),registration:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),order:z.enum(["NAME_ASC","NAME_DESC","REVIEW_FIRST"]).default("NAME_ASC")}).strict();
+export const batchStudentViewSchema=z.object({q:z.string().trim().max(100).default(""),classId:z.uuid().optional(),decision:z.enum(["ALL","ELIGIBLE","INELIGIBLE","NOT_DECIDED","NEEDS_REVIEW"]).default("ALL"),source:z.enum(["ALL","LEARNER","CLASS","BATCH","NONE"]).default("ALL"),registration:z.enum(["ALL","RECORDED","UNRECORDED"]).default("ALL"),order:z.enum(["NAME_ASC","NAME_DESC","REVIEW_FIRST"]).default("NAME_ASC")}).strict();
+export function filterBatchStudentClass<T extends {classId?:string|null}>(rows:readonly T[],classId?:string):T[]{
+ return classId?rows.filter(row=>row.classId===classId):[...rows];
+}
 export function filterBatchStudentNames<T extends {name:string}>(rows:readonly T[],q:string):T[]{
  const term=q.trim().toLocaleLowerCase("en-IN");
  if(!term)return [...rows];
@@ -24,9 +27,10 @@ export function sortBatchStudentView<T extends {membershipId:string;name:string;
   ||(order==="NAME_DESC"?b.name.localeCompare(a.name,"en-IN"):a.name.localeCompare(b.name,"en-IN"))
   ||a.membershipId.localeCompare(b.membershipId));
 }
-export function batchStudentPageHref(batchId:string,page:number,filters:{q:string;decision?:string;source?:string;registration?:string;order?:string}){
+export function batchStudentPageHref(batchId:string,page:number,filters:{q:string;classId?:string;decision?:string;source?:string;registration?:string;order?:string}){
  const params=new URLSearchParams({page:String(page)});
  if(filters.q)params.set("q",filters.q);
+ if(filters.classId)params.set("classId",filters.classId);
  if(filters.decision&&filters.decision!=="ALL")params.set("decision",filters.decision);
  if(filters.source&&filters.source!=="ALL")params.set("source",filters.source);
  if(filters.registration&&filters.registration!=="ALL")params.set("registration",filters.registration);
@@ -34,7 +38,7 @@ export function batchStudentPageHref(batchId:string,page:number,filters:{q:strin
  return "/tpo/batches/"+encodeURIComponent(batchId)+"/students?"+params.toString();
 }
 
-export function parseBatchStudentSearchParams(raw:{q?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}){
+export function parseBatchStudentSearchParams(raw:{q?:string|string[];classId?:string|string[];decision?:string|string[];source?:string|string[];registration?:string|string[];order?:string|string[]}){
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
- return batchStudentViewSchema.safeParse({q:first(raw.q),decision:first(raw.decision),source:first(raw.source),registration:first(raw.registration),order:first(raw.order)});
+ return batchStudentViewSchema.safeParse({q:first(raw.q),classId:first(raw.classId)||undefined,decision:first(raw.decision),source:first(raw.source),registration:first(raw.registration),order:first(raw.order)});
 }
