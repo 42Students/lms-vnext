@@ -100,6 +100,7 @@ export function AdminCourseCreatePanel({
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
   const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
+  const [nextSetupStep,setNextSetupStep]=useState<"COURSE"|"OFFERING"|"DELIVERY"|"FACULTY"|"DONE">("COURSE");
 
   const copy=collegeCourseDuplicatePrefill(courses,duplicateCourseId);
   const [courseDepartmentId, setCourseDepartmentId] = useState(copy?.departmentId??"");
