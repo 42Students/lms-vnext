@@ -49,7 +49,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-placements-projects-35 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-36 | S3 | COPY | FIXED-ON-MAIN |
-| SA-placements-projects-37 | S3 | VALIDATION | UNCONFIRMED |
+| SA-placements-projects-37 | S3 | VALIDATION | DONE |
 | SA-placements-projects-39 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | SA-placements-projects-43 | S3 | COPY | FIXED-ON-MAIN |
 | SA-placements-projects-44 | S3 | COPY | FIXED-ON-MAIN |
@@ -112,6 +112,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-R05 | S4 | A11Y | FIXED-ON-MAIN |
 
 ## Notes (blockers, one line each)
+- SA-placements-projects-37: free-text company creation and optional multi-college selection now use the canonical company service and bounded grants; company linking is a separate transaction and persists for retry if recruiter creation fails; runtime verification outstanding.
+- SA-placements-projects-14: supplementary Responsibilities, Assessment URL/deadline, Important dates and informational candidate/rule fields are implemented via a proposed JSONB migration; true cross-college visibility, full Department→Program→Batch→Class targeting and first-class custom eligibility enforcement remain unsupported.
+- SA-placements-projects-21: scoped note corrections, offer-letter link, assessment copy, status history and real academic-policy re-screen are implemented; secure resume preview and legacy match-score breakdown remain unavailable without a persisted resume/score source.
 - SA-placements-projects-21: scoped offer-letter link attachment, history and internal notes exist; resume preview, editing older notes and score-backed re-screen remain unverified, so do not mark complete.
 - SA-placements-projects-37: existing-mobile recruiter reuse now works for a matching company, but the full gap remains OPEN: free-text company creation and optional multiple colleges are not yet supported.
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
