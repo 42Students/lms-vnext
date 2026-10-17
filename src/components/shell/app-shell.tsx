@@ -105,7 +105,7 @@ export async function AppShell({
 
       <div className="min-h-screen md:pl-64">
         <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
-          <div className="mx-auto X sm:px-6 lg:px-8">
+          <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
               <MobileNavigation items={navigation} />
               <div className="min-w-0">
