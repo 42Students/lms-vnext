@@ -188,3 +188,12 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - Never confuse keys stored in platform_setting_overrides with active runtime settings. Provider integration is not implemented by an inventory editor.
 
 - Migration reconfirmed by `tests/unit/chat13-superadmin-company-migration-0133.test.ts` (written, not run).
+
+
+## chat-13 2026-10-18 round accounting
+- **39** eligible OPEN/UNCONFIRMED Super Admin register records reviewed across Academics/People A, Placements A, Projects B, Tenant Settings/Module Access, and Tracker/Activity; explicit chat-3/6/16 queue claims excluded.
+- **30 source-resolved/adjudicated**: A=12, B=7, C=11 (includes intentional NOT-A-GAP decisions). These are **not CI-verified**; the generated `docs/audit/gap-register.md` is intentionally not hand-edited.
+- **9 not fully closed**: SA-placements-projects-13 (published audience edit), SA-placements-projects-56 (complete individual workspace creation), SA-placements-projects-77 (full mutation audit), SA-tenants-modules-36 (provider-backed SMS consumer), SA-tenants-modules-37 (course and polling runtime consumers), SA-tenants-modules-38 (live placements settings enforcement), SA-tenants-modules-39 (ops-cap consumers), SA-tenants-modules-46 (manual audited GitHub sync), SA-tenants-modules-54 (verified inbound provider signature/credentials).
+- Registered migration `drizzle/0133_lanes_round_1.sql` was checked directly for SA-placements-projects-24/26/27/28. A migration file in source is not proof that a production database has applied it.
+- Original typecheck report is stale for this slice: `src/db/schema/placements.ts` currently imports `foreignKey`. Three reported failing chat13 unit-test contract expectations for SA-placements-projects-14/21/36 are present in current code. `tests/unit/chat13-ci-r1-repair-guards.test.ts` protects these source contracts. No fresh typecheck, unit or database tests were executed by this lane.
+- No page visual restyling was performed while UX playbook approval is pending.
