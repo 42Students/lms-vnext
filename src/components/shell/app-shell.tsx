@@ -16,8 +16,6 @@ import { accountMenuVariant } from "./college-account-copy";
 import { PageTitle } from "./page-title";
 import { SidebarNav } from "./sidebar-nav";
 import { MobileNavigation } from "./mobile-navigation";
-import {TpoMobileFooter} from "./tpo-mobile-footer";
-import {TpoTopbarMessages} from "./tpo-topbar-messages";
 import {hasTpoTooling} from "@/modules/placements/tpo-workspace-access-model";
 import {canOpenTpoWorkspace} from "@/modules/placements/tpo-workspace-access-model";
 import { LearnerTopbarTools } from "./learner-topbar-tools";
@@ -127,7 +125,6 @@ export async function AppShell({
             </div>
             <div className="flex min-w-0 max-w-full flex-wrap items-center justify-end gap-2 sm:gap-3">
               {learner ? <LearnerTopbarTools /> : null}
-              {hasTpoTooling(context)?<TpoTopbarMessages/>:null}
               {superAdmin && adminScopeChoices ? (
                 <AdminScopeSwitcher
                   choices={adminScopeChoices}
@@ -155,7 +152,7 @@ export async function AppShell({
                 </Link>
               ) : null}
               {hasActiveRecruiter(context)?<HrRecruiterBell/>:null}
-              <AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)} variant={accountVariant} />
+              <AccountActions showNotifications={!learner&&!hasActiveRecruiter(context)&&!hasTpoTooling(context)} variant={accountVariant} />
             </div>
           </div>
         </header>
@@ -163,7 +160,6 @@ export async function AppShell({
         <main className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
-        {canOpenTpoWorkspace(context)?<TpoMobileFooter/>:null}
       </div>
     </div>
     </ToastProvider>
