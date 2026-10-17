@@ -72,6 +72,9 @@ export async function listCollegeCourseSetupRelations(
  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,college.id)))
  .innerJoin(cohorts,eq(cohorts.id,courseOfferings.cohortId))
+ .innerJoin(programs,eq(programs.id,cohorts.programId))
+ .innerJoin(programDepartment,and(eq(programDepartment.id,programs.departmentId),
+  eq(programDepartment.collegeId,college.id)))
  .innerJoin(academicPeriods,and(
   eq(academicPeriods.id,courseOfferings.academicPeriodId),
   eq(academicPeriods.collegeId,college.id)))
