@@ -113,7 +113,7 @@ export function RecruiterLeadsWorkspace({
   initialAdd?: boolean;
   initialCompany?: string;
   initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
-    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added",string>>;
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention",string>>;
 }) {
   const [rows, setRows] = useState<Lead[]>([]);
   const [selectedIds,setSelectedIds]=useState<string[]>([]);
@@ -153,8 +153,8 @@ export function RecruiterLeadsWorkspace({
   const [activityFilter,setActivityFilter]=useState(initialFilters.lastActivity??"ALL");
   const [addedFilter,setAddedFilter]=useState(initialFilters.added??"ALL");
   const [stage, setStage] = useState<(typeof STAGES)[number]>(STAGES.includes(initialFilters.stage as (typeof STAGES)[number])?initialFilters.stage as (typeof STAGES)[number]:"ALL");
-  const [need, setNeed] = useState<EngageNeed>("ALL");
-  const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>("ALL");
+  const [need, setNeed] = useState<EngageNeed>(["ALL","UNASSIGNED","NOT_CONTACTED"].includes(initialFilters.need??"")?initialFilters.need as EngageNeed:"ALL");
+  const [attention, setAttention] = useState<"ALL" | RecruiterAttentionChip>(initialFilters.attention&&initialFilters.attention in RECRUITER_ATTENTION_LABELS?initialFilters.attention as RecruiterAttentionChip:"ALL");
   const [view, setView] = useState<"table" | "board" | "companies">(initialView);
   const [companies, setCompanies] = useState<CompanySummary[]>([]);
   const [companySearch,setCompanySearch]=useState("");
