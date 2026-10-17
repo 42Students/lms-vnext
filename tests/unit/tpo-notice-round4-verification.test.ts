@@ -8,7 +8,7 @@ const edit=()=>src("src/modules/announcements/tpo-placement-edit-service.ts");
 const receipt=()=>src("src/modules/announcements/tpo-notice-read-receipts-service.ts");
 describe("TPO placement announcement round-4 evidence",()=>{
  it("TPO-inbox-team-45 shows the audience count and guards zero recipients during compose",()=>{
-  expect(page()).toContain("<TpoNoticeScheduleControls count={audience?.potentiallyVisibleMemberships??null}");
+  expect(page()).toContain("<TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}");
   expect(page()).toContain("audience.potentiallyVisibleMemberships>0");
   expect(page()).toContain("retryPreviewHref");
  });
@@ -86,6 +86,7 @@ describe("TPO placement announcement round-4 evidence",()=>{
  });
  it("TPO-inbox-team-R04 paginates notices instead of silently hiding rows past 100",()=>{
   expect(src("src/modules/announcements/tpo-placement-read-service.ts")).toContain(".limit(101).offset((safePage-1)*100)");
-  expect(page()).toContain('name="page"');
+  expect(page()).toContain('aria-label="Announcement pages"');
+  expect(page()).toContain("Show older");
  });
 });
