@@ -430,6 +430,8 @@ export async function publishPlacementJob(
   const [activeRole] = await getDb()
     .select({
       id: placementJobRoleOptions.id,
+      minCtc:placementJobRoleOptions.minimumAnnualCtcInr,
+      maxCtc:placementJobRoleOptions.maximumAnnualCtcInr,
     })
     .from(placementJobRoleOptions)
     .where(
@@ -447,9 +449,12 @@ export async function publishPlacementJob(
     .limit(1);
 
   if (!activeRole) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_ROLE_OPTION_REQUIRED",
-    );
+    throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_REQUIRED");
+  }
+  if(!current.applicationDeadline||current.applicationDeadline<=new Date()||
+    (current.minimumAnnualCtcInr===null&&current.maximumAnnualCtcInr===null&&
+      current.stipendPerMonthInr===null&&activeRole.minCtc===null&&activeRole.maxCtc===null)){
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
   }
 
   const db = getDb();
