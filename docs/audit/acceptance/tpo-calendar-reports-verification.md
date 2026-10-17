@@ -72,3 +72,7 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-22 | OPEN | `src/app/(authenticated)/tpo/calendar/error.tsx` shows retry and no fabricated counts, but no last-good cached snapshot or partial-data notice. |
 | TPO-calendar-reports-25 | OPEN | Hour keyboard Add and focus restore are source-covered; existing follow-up Enter-to-Move absent. |
 | TPO-calendar-reports-53 | OPEN | `src/app/(authenticated)/tpo/reports/error.tsx` retries safely, but stale-refresh, unknown slug and per-filter copy are not all paritied. |
+
+## Round 6 calendar accessibility and report copy
+| TPO-calendar-reports-25 | DONE source | `src/components/placements/tpo-week-hour-calendar.tsx`: keyboard-activatable native button opens existing Move form for an OPEN follow-up, with Close and Escape; `tests/unit/chat9-round6-calendar-settings.test.ts` — `TPO-calendar-reports-25 activates Move on a follow-up with Enter instead of navigating to a recruiter page`. |
+| TPO-calendar-reports-38 | DONE source | Canonical five report-page descriptions now take exact strings from `tpo-legacy-report-copy.ts`; `tests/unit/chat9-round6-calendar-settings.test.ts` — `TPO-calendar-reports-38 uses the exact legacy description of each canonical report rather than persisted implementation copy`. |
