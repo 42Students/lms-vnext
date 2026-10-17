@@ -36,7 +36,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold">Telegram alerts</h2>
     <div className="flex flex-wrap gap-3">
-      <button type="button" disabled={!configured||pending} onClick={()=>setOpen(true)}
+      <button type="button" disabled={pending} onClick={()=>setOpen(true)}
         className="min-h-10 rounded border border-border px-3 text-sm font-semibold disabled:opacity-50">
         Daily digest
       </button>
@@ -59,7 +59,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         <div><dt>Deploy</dt><dd>{deploy??"Not recorded"}</dd></div>
       </dl>
       <div className="mt-3 flex flex-wrap gap-3">
-        <button type="button" disabled={pending} onClick={()=>setConfirm("DIGEST")}
+        <button type="button" disabled={!configured||pending} onClick={()=>setConfirm("DIGEST")}
           className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
           Send to Telegram now
         </button>

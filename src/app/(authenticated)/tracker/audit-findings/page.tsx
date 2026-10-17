@@ -8,7 +8,7 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
-import {independentAuditFindingsReady,listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -28,9 +28,15 @@ export default async function IndependentFindingsPage({searchParams}:{
    Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
    Bug reports are not substituted for independent audit findings.
   </p></div>;
- const data=await listIndependentAuditFindings(ctx,parsed);
+ const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
  const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
  return <div className="min-w-0 space-y-5">{header}
+  <section aria-label="Findings import status" className="rounded-xl border border-border bg-surface p-4 text-sm">
+   <h2 className="font-semibold">Findings import status</h2>
+   {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
+    <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
+   <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
+  </section>
   <nav aria-label="Finding views" className="flex flex-wrap gap-2">
    {(["OPEN","RELEASE","ALL"] as const).map(value=><Link key={value} aria-current={parsed.view===value?"page":undefined}
      href={independentFindingHref({...parsed,view:value,page:1})}
