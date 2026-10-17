@@ -71,7 +71,7 @@ export function HrDriveDraftForm({
   useEffect(()=>{
     if(fixRequestId||sourceJobId)return;
     try{
-      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now());
+      const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved)return;
       // Adopt only a matching college/user browser draft. Never overwrite an edit/resubmit.
       queueMicrotask(()=>{setDraft(saved);setNotice("We restored your unsent draft");});
@@ -107,7 +107,7 @@ export function HrDriveDraftForm({
   }
   function restoreFromThisTab(){
     try{
-      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey),Date.now());
+      const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
       if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
         !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
