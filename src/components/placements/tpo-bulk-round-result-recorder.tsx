@@ -65,7 +65,7 @@ export function TpoBulkRoundResultRecorder({
       setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
         ? "Choose a valid first waitlist rank. Ranks must be 1–100000."
         : selected.length===0?"Select at least one learner."
-        : selected.length>25?"Select at most 25 learners."
+        : pendingTotal>25?"This bulk action exceeds 25 results. Stage a smaller group or use the reviewed CSV import."
         : "Enter a learner-facing message before staging this outcome.");
       return;
     }
