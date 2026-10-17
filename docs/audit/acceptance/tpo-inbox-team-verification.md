@@ -47,3 +47,12 @@ Other queued gaps remain outstanding until individually inspected and recorded.
 - `TPO-inbox-team-50/51`: persisted HTTPS CTA validation uses the existing schema; same test file covers validation, but broader modal/edit acceptance is still open.
 
 **Tests written, not run.**
+
+## Round 3: independent Team preferences and graceful read actions
+- `TPO-inbox-team-20`: **PARTIAL, not closed** — scoped Follow/Stop following and Mute/Unmute are persisted on `placement_tpo_internal_reads`; unread suppresses unfollowed/muted threads; `tests/unit/tpo-inbox-team-graceful-round3.test.ts` test **TPO-inbox-team-20 follows by default…**, `tests/integration/db09-tpo-team-read-receipts.test.ts` test **TPO-inbox-team-20 persists follow/mute…**. Owner-run PostgreSQL test requires `TPO_TEAM_READ_RECEIPTS_SCHEMA_READY=1` after migration proposal registration. Legacy mentions and advanced follow semantics remain open.
+- `TPO-inbox-team-54`: **PARTIAL, not closed** — From 42 read action now catches invalid responses with plain text and guarded timeout, `tests/unit/tpo-inbox-team-graceful-round3.test.ts` test **TPO-inbox-team-54 and GR-90…**; unread badge/New-tag still open.
+- `TPO-inbox-team-67`: **PARTIAL, not closed** — last-30-days unread cutoff exists; legacy older-unread navigation is still open; named unit test `TPO-inbox-team-67` in the round-3 suite.
+- `TPO-inbox-team-68`: **PARTIAL, not closed** — loading skeleton and Retry boundary exist; stale-data display remains to implement; named unit test `TPO-inbox-team-68`.
+- `TPO-inbox-team-R04`: **PARTIAL, not closed** — 100-row pagination and next cursor exists but author-only filtering needs review; named unit test `TPO-inbox-team-R04`.
+
+No tests were executed by chat-2; orchestrator owns execution and migration registration.
