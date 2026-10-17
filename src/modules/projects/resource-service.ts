@@ -142,9 +142,15 @@ export async function createProjectResource(
       },resource));
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
-        roles:["MENTOR","LEARNER"],exceptUserId:context.user.id,
+        roles:["MENTOR"],exceptUserId:context.user.id,
         title:"New project resource",body:"A resource was added to your project.",
         actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
+      });
+      await notifyActiveProjectMembers(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,
+        roles:["LEARNER"],exceptUserId:context.user.id,
+        title:"New project resource",body:"A resource was added to your project.",
+        actionHref:"/learn/projects/"+scope.project.id+"?tab=resources",
       });
       return resource;
     });
@@ -251,9 +257,15 @@ export async function updateProjectResource(
     },updated,randomUUID()));
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
-      roles:["MENTOR","LEARNER"],exceptUserId:context.user.id,
+      roles:["MENTOR"],exceptUserId:context.user.id,
       title:"Project resource updated",body:"A project resource has changed.",
       actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["LEARNER"],exceptUserId:context.user.id,
+      title:"Project resource updated",body:"A project resource has changed.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=resources",
     });
     return updated;
   });
