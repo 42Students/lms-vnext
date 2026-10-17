@@ -1,8 +1,8 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementJobRounds, placementJobs } from "@/db/schema";
+import { placementJobRounds, placementJobs, placementRoundResults } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { confirmedTpoRoundResultSchema } from "./tpo-confirmed-round-result-model";
@@ -51,6 +51,17 @@ export async function confirmTpoBulkRoundResults(
     .limit(1);
   if (!round) throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
   await requirePlacementManageScope(context, round.collegeId);
+
+  const requestedRanks=input.entries.filter(x=>x.result.outcome==="HOLD")
+   .map(x=>x.result.waitlistRank).filter((x):x is number=>typeof x==="number");
+  if(requestedRanks.length){
+   const taken=await getDb().select({rank:placementRoundResults.waitlistRank})
+    .from(placementRoundResults).where(and(eq(placementRoundResults.roundId,roundId),
+     eq(placementRoundResults.outcome,"HOLD"),
+     inArray(placementRoundResults.status,["STAGED","APPLIED"]),
+     inArray(placementRoundResults.waitlistRank,requestedRanks)));
+   if(taken.length)throw new PlacementsServiceError("PLACEMENT_RESULT_WAITLIST_RANK_TAKEN");
+  }
 
   const results: TpoBulkRoundResultOutcome[] = [];
   for (const entry of input.entries) {
