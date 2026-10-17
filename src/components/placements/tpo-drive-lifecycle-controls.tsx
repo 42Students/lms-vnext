@@ -136,8 +136,8 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
             <label className="flex gap-2"><input type="radio" name="publish-delivery"
               checked={!notifyByEmail} onChange={()=>setNotifyByEmail(false)}/>
               App only</label>
-            <label className="flex gap-2"><input type="radio" name="publish-delivery"
-              checked={notifyByEmail} onChange={()=>setNotifyByEmail(true)}/>
+            <label className="flex gap-2 opacity-60"><input type="radio" name="publish-delivery"
+              checked={false} disabled/>
               App and email (email delivery not configured)</label>
           </fieldset>:null}
           <div className="flex gap-3">

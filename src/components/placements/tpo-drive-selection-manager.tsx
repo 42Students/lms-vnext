@@ -25,6 +25,13 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
   if(mode==="RECORD"&&(!role.trim()||lpa!==""&&(!Number.isFinite(Number(lpa))||Number(lpa)<0||Number(lpa)>1000))){
    setError("Provide a role and a package between 0 and 1000 LPA, or leave package blank.");return;
   }
+  if(mode==="VERIFY_AND_RELEASE"){
+    const selected=selections.filter(item=>chosen.includes(item.id));
+    const ineligible=selected.filter(item=>!item.offerReady);
+    if(!window.confirm("Verify and release "+chosen.length+" selection(s)? "+
+      ineligible.length+" currently need eligibility review and may be skipped. "+
+      "Official offers and learner notifications are issued immediately for successful rows. This cannot be undone from this dialog."))return;
+  }
   const body=mode==="RECORD"?{action:"RECORD",entries:chosen.map(applicationId=>({
    applicationId,roleTitle:role.trim(),annualCtcInr:lpa===""?null:Math.round(Number(lpa)*100000),
   }))}:{action:"VERIFY_AND_RELEASE",confirmed:true,selectionIds:chosen,
@@ -67,6 +74,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     <p className="text-sm text-body">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
       :"Releasing issues offers immediately. Eligibility, held-offer limits and response deadlines are rechecked for each student. Skipped rows will be reported."}</p>
+    {mode==="VERIFY_AND_RELEASE" && chosen.length>0 ? <p role="status" className="rounded border border-border p-3 text-sm">
+      {chosen.length} selections · {selections.filter(s=>chosen.includes(s.id)&&s.offerReady).length} ready to verify · {selections.filter(s=>chosen.includes(s.id)&&!s.offerReady).length} need review.
+      Successful releases issue official offers and notify learners.
+    </p>:null}
     {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
      <select className="min-h-11 rounded border border-border bg-surface px-3" defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);

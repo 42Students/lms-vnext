@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
-export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[]}>}){
+export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
@@ -16,7 +16,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const joiningRaw=Array.isArray(q.joining)?q.joining[0]:q.joining;
  const kindRaw=Array.isArray(q.kind)?q.kind[0]:q.kind;
  const expiryRaw=Array.isArray(q.expiry)?q.expiry[0]:q.expiry;
- const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{}),...(expiryRaw?{expiry:expiryRaw}:{})});
+ const minCtcRaw=Array.isArray(q.minCtcLpa)?q.minCtcLpa[0]:q.minCtcLpa;
+ const maxCtcRaw=Array.isArray(q.maxCtcLpa)?q.maxCtcLpa[0]:q.maxCtcLpa;
+ const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{}),...(expiryRaw?{expiry:expiryRaw}:{}),...(minCtcRaw?{minCtcLpa:minCtcRaw}:{}),...(maxCtcRaw?{maxCtcLpa:maxCtcRaw}:{})});
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
@@ -24,9 +26,11 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
- const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"")+(parsed.data.kind!=="ALL"?"&kind="+parsed.data.kind:"")+(parsed.data.expiry!=="ALL"?"&expiry="+parsed.data.expiry:"");
+ const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"")+(parsed.data.kind!=="ALL"?"&kind="+parsed.data.kind:"")+(parsed.data.expiry!=="ALL"?"&expiry="+parsed.data.expiry:"")+(parsed.data.minCtcLpa!==undefined?"&minCtcLpa="+parsed.data.minCtcLpa:"")+(parsed.data.maxCtcLpa!==undefined?"&maxCtcLpa="+parsed.data.maxCtcLpa:"");
  const csvFilters=new URLSearchParams({status:data.status,joining:parsed.data.joining,kind:parsed.data.kind,expiry:parsed.data.expiry});
  if(searchQuery)csvFilters.set("q",searchQuery);
+ if(parsed.data.minCtcLpa!==undefined)csvFilters.set("minCtcLpa",String(parsed.data.minCtcLpa));
+ if(parsed.data.maxCtcLpa!==undefined)csvFilters.set("maxCtcLpa",String(parsed.data.maxCtcLpa));
  const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
  const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn]] as const;
  return <div className="space-y-6">
@@ -60,10 +64,20 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="UNKNOWN">No expiry recorded</option>
     </select>
    </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Minimum package (LPA)
+    <input type="number" name="minCtcLpa" min={0} max={1000} step="0.01"
+      defaultValue={parsed.data.minCtcLpa??""}
+      className="min-h-11 w-36 rounded-md border border-border bg-surface px-3 text-foreground"/>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Maximum package (LPA)
+    <input type="number" name="maxCtcLpa" min={0} max={1000} step="0.01"
+      defaultValue={parsed.data.maxCtcLpa??""}
+      className="min-h-11 w-36 rounded-md border border-border bg-surface px-3 text-foreground"/>
+   </label>
    <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, email, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:

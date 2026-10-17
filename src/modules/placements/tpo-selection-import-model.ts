@@ -1,5 +1,5 @@
 /** TPO-drive-workspace-48: parse small company selection CSVs before explicit review. */
-export function parseSelectionCsv(text:string):string[][] {
+export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] {
  const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;
  for(let i=0;i<text.length;i++){
   const char=text[i];
@@ -11,6 +11,7 @@ export function parseSelectionCsv(text:string):string[][] {
    if(char==="\r"&&text[i+1]==="\n")i++;
    row.push(field.trim());field="";
    if(row.some(value=>value!==""))rows.push(row);
+   else if(strictBlankRows)throw Error("Remove blank data rows from the file.");
    row=[];
   }else field+=char;
  }

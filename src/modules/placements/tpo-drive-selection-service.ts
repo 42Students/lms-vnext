@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, count } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementApplications, placementJobs, placementOffers } from "@/db/schema";
 import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
@@ -25,6 +25,15 @@ async function scopedJob(context: RequestContext, rawJobId: unknown) {
   return job;
 }
 
+
+/** Persisted selection count only; verified against college-owned job scope. */
+export async function countUnreleasedTpoSelections(context:RequestContext,rawJobId:unknown){
+ const job=await scopedJob(context,rawJobId);
+ const [row]=await getDb().select({total:count()}).from(placementDriveSelections)
+  .where(and(eq(placementDriveSelections.jobId,job.id),
+    inArray(placementDriveSelections.status,["SELECTED","VERIFIED"])));
+ return row?.total??0;
+}
 
 export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId: unknown) {
   const job = await scopedJob(context, rawJobId);

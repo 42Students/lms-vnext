@@ -59,7 +59,11 @@ export function TpoBulkRoundResultRecorder({
     if (busy || selected.length === 0 || selected.length > 25 ||
       (outcome !== "PASS" && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
-      setError("Select learners and provide a learner-facing message for Not Selected.");
+      setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
+        ? "Choose a valid first waitlist rank. Ranks must be 1–100000."
+        : selected.length===0?"Select at least one learner."
+        : selected.length>25?"Select at most 25 learners."
+        : "Enter a learner-facing message before staging this outcome.");
       return;
     }
     const entries = selected.flatMap((id,index) => {
@@ -214,6 +218,12 @@ export function TpoBulkRoundResultRecorder({
               className="mt-1 block min-h-10 w-40 rounded border border-border bg-surface px-3"/>
             <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
           </label>:null}
+          {selected.length>0?<div role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">
+            <p className="font-semibold">Result staging preview</p>
+            <p>{selected.length} unmarked applicant(s) selected · {outcome==="PASS"?"Cleared":outcome==="FAIL"?"Not cleared":outcome==="HOLD"?"Waitlisted":"Marked absent"}.</p>
+            {outcome==="HOLD"?<p>Ranks {firstWaitlistRank}–{firstWaitlistRank+selected.length-1} in selection order. Existing rank collisions are rejected.</p>:null}
+            <p>Saved as staged only. Learners are not told until the separate Apply results step.</p>
+          </div>:null}
           <button
             type="button"
             onClick={() => void stageSelected()}
