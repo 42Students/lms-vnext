@@ -111,7 +111,11 @@ export default async function TpoLeadsReportPage({
 
       <section aria-label="Recruiter engagement by company" className="space-y-3">
        <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
-       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Drives that ran and students placed use the selected placement season or drive. A company without matching recorded drives shows zero for that selected scope.</p>
+       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A company without matching recorded drives shows zero for that selected scope; a recorded drive is not proof it ran.</p>
+       <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
+        ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+        ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+       }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
        <ReportTable title="Engage and placement outcomes by company"
         headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
         rows={result.companyEngagement.map(row=>{
