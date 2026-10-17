@@ -123,10 +123,12 @@ export async function stageTpoRoundImport(
   throw new Error("A skipped or matched row is not present in the uploaded file. Preview the file again.");
  const explicitlySkippedApplications=new Set<string>();
  const problemApplications=new Set<string>();
+ let unresolvedSkippedRows=0;
  for(const row of inputRows){
   if(skippedLines.has(row.line)){
    const unique=matchSource(row,roster.roster);
    if(unique.length===1)explicitlySkippedApplications.add(unique[0]!.applicationId);
+   else unresolvedSkippedRows++;
    continue;
   }
   const exact=matchSource(row,roster.roster);
@@ -154,7 +156,7 @@ export async function stageTpoRoundImport(
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
-  if(rejected.length)throw Error("Resolve or explicitly skip every unmatched/invalid source row before auto-marking missing learners not cleared.");
+  if(rejected.length||unresolvedSkippedRows)throw Error("Resolve ambiguous source identities before automatically marking missing learners not cleared. Skipping an unmatched row cannot identify which learner to protect.");
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
      !explicitlySkippedApplications.has(candidate.applicationId)&&
