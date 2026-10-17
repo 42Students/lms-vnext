@@ -9,6 +9,7 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {randomUUID} from "node:crypto";
+import {z} from "zod";
 import {
   projectInstances,
   projectResources,
@@ -346,5 +347,56 @@ export async function archiveProjectResource(
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },archived));
     return archived;
+  });
+}
+
+/** MEN-projects-meetings-56: reorder ACTIVE resources without colliding with
+ * unique positions occupied by archived records. All IDs are scoped to one
+ * authorized project; a stale/partial array cannot silently lose an item.
+ */
+export const projectResourceReorderSchema=z.strictObject({
+  orderIds:z.array(z.string().uuid()).min(1).max(250).refine(
+    ids=>new Set(ids).size===ids.length,{message:"Resource order contains duplicates"},
+  ),
+});
+export async function reorderProjectResources(
+  context:RequestContext,projectIdInput:string,rawInput:unknown,
+){
+  const scope=await requireProjectLifecycleAccess(context,projectIdInput);
+  const {orderIds}=projectResourceReorderSchema.parse(rawInput);
+  return getDb().transaction(async tx=>{
+    const [project]=await tx.select({status:projectInstances.status})
+      .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+      .for("update").limit(1);
+    if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+    ensureMutableProject(project.status);
+    const all=await tx.select({id:projectResources.id,sequence:projectResources.sequence,
+      status:projectResources.status}).from(projectResources)
+      .where(eq(projectResources.projectId,scope.project.id))
+      .orderBy(asc(projectResources.sequence)).for("update");
+    const active=all.filter(item=>item.status==="ACTIVE");
+    if(active.length!==orderIds.length||active.length>250 ||
+        active.some(row=>!orderIds.includes(row.id))){
+      throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
+    const old=active.map(row=>row.id);
+    if(old.every((id,i)=>id===orderIds[i]))return {changed:false,count:active.length};
+    const maxSequence=Math.max(-1,...all.map(item=>item.sequence));
+    if(!Number.isSafeInteger(maxSequence)||maxSequence>2147483647-active.length-1){
+      throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
+    }
+    // Phase 1 reserves disjoint positive sequence values. The check constraint
+    // disallows negative sentinels, and archived positions must never move.
+    for(let i=0;i<orderIds.length;i++){
+      await tx.update(projectResources).set({sequence:maxSequence+1+i})
+        .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
+    }
+    // Phase 2 fills only the ACTIVE positions vacated above.
+    for(let i=0;i<orderIds.length;i++){
+      await tx.update(projectResources)
+        .set({sequence:active[i]!.sequence,updatedAt:new Date()})
+        .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
+    }
+    return {changed:true,count:active.length};
   });
 }
