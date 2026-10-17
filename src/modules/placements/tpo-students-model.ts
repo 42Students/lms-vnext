@@ -20,6 +20,7 @@ export type TpoStudentApplicationSignal = {
   id: string;
   status: string;
   screeningStatus: string | null;
+  companyName?:string|null;
 };
 
 export type TpoStudentOfferSignal = {
@@ -55,6 +56,10 @@ export type TpoStudentSource = {
     cgpaHundredths: number | null;
     activeBacklogs: number | null;
     pastBacklogs: number | null;
+    tenthPctBasisPoints?:number|null;twelfthPctBasisPoints?:number|null;
+    diplomaPctBasisPoints?:number|null;undergraduatePctBasisPoints?:number|null;
+    passingYear?:number|null;gapYears?:number|null;isLateralEntry?:boolean|null;
+    academicSource?:string|null;verifiedAt?:Date|null;
   };
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
@@ -92,6 +97,8 @@ export type TpoStudentRow = {
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
   cgpa: number | null;
+  tenthPct?:number|null;twelfthPct?:number|null;diplomaPct?:number|null;ugPct?:number|null;
+  passingYear?:number|null;gapYears?:number|null;isLateralEntry?:boolean|null;marksVerified?:boolean|null;
   activeBacklogs: number | null;
   pastBacklogs: number | null;
   applicationCount: number;
@@ -103,6 +110,8 @@ export type TpoStudentRow = {
   placed: boolean;
   journeyState: TpoStudentJourneyState;
   bestSoFar: string;
+  bestCompany?:string|null;
+  interviewedCompanies?:readonly string[];
   maximumAppliedRoundSequence: number | null;
   ambiguousSection: boolean;
 };
@@ -128,11 +137,15 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
+  legacyStage?:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED";
+  minRoundReached?:number;needsAttention?:boolean;
   branchId?: string;
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   minApplications?:number;maxApplications?:number;
   minCgpa?:number;maxCgpa?:number;
+  minTenthPct?:number;minTwelfthPct?:number;minDiplomaPct?:number;minUgPct?:number;
+  passingYear?:number;maxGapYears?:number;marksVerified?:boolean;isLateralEntry?:boolean;
   maxActiveBacklogs?:number;maxPastBacklogs?:number;
   cgpaRecorded?:boolean;
   minOffers?:number;maxOffers?:number;
@@ -305,6 +318,14 @@ export function deriveTpoStudent(
       source.academicEvidence.cgpaHundredths === null
         ? null
         : source.academicEvidence.cgpaHundredths / 100,
+    tenthPct:source.academicEvidence.tenthPctBasisPoints==null?null:source.academicEvidence.tenthPctBasisPoints/100,
+    twelfthPct:source.academicEvidence.twelfthPctBasisPoints==null?null:source.academicEvidence.twelfthPctBasisPoints/100,
+    diplomaPct:source.academicEvidence.diplomaPctBasisPoints==null?null:source.academicEvidence.diplomaPctBasisPoints/100,
+    ugPct:source.academicEvidence.undergraduatePctBasisPoints==null?null:source.academicEvidence.undergraduatePctBasisPoints/100,
+    passingYear:source.academicEvidence.passingYear??null,
+    gapYears:source.academicEvidence.gapYears??null,
+    isLateralEntry:source.academicEvidence.isLateralEntry??null,
+    marksVerified:source.academicEvidence.academicSource==="VERIFIED"&&source.academicEvidence.verifiedAt!=null,
     activeBacklogs: source.academicEvidence.activeBacklogs,
     pastBacklogs: source.academicEvidence.pastBacklogs,
     applicationCount: source.applications.length,
@@ -317,6 +338,12 @@ export function deriveTpoStudent(
     placed,
     journeyState,
     bestSoFar,
+    bestCompany:latestDepth&&!placed&&offerCount===0
+      ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
+    interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{
+      const name=source.applications.find(application=>application.id===result.applicationId)?.companyName;
+      return name?[name]:[];
+    }))],
     maximumAppliedRoundSequence,
     ambiguousSection: source.ambiguousSection,
   };
@@ -434,6 +461,10 @@ export function filterTpoStudentRoster(
         row.branchId === filter.branchId,
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>!filter.legacyStage||tpoStudentMatchesLegacyStage(row,filter.legacyStage))
+    .filter(row=>filter.minRoundReached===undefined||
+      (row.maximumAppliedRoundSequence!=null&&row.maximumAppliedRoundSequence>=filter.minRoundReached))
+    .filter(row=>filter.needsAttention===undefined||tpoStudentNeedsAttention(row)===filter.needsAttention)
     .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
     .filter(row=>!filter.profileStatus||row.verification.status===filter.profileStatus)
     .filter(row=>filter.minApplications===undefined||row.applicationCount>=filter.minApplications)
@@ -443,6 +474,14 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.offerWaiting===undefined||(row.offersAwaitingAnswer>0)===filter.offerWaiting)
     .filter(row=>filter.minCgpa===undefined||(row.cgpa!==null&&row.cgpa>=filter.minCgpa))
     .filter(row=>filter.maxCgpa===undefined||(row.cgpa!==null&&row.cgpa<=filter.maxCgpa))
+    .filter(row=>filter.minTenthPct===undefined||(row.tenthPct!=null&&row.tenthPct>=filter.minTenthPct))
+    .filter(row=>filter.minTwelfthPct===undefined||(row.twelfthPct!=null&&row.twelfthPct>=filter.minTwelfthPct))
+    .filter(row=>filter.minDiplomaPct===undefined||(row.diplomaPct!=null&&row.diplomaPct>=filter.minDiplomaPct))
+    .filter(row=>filter.minUgPct===undefined||(row.ugPct!=null&&row.ugPct>=filter.minUgPct))
+    .filter(row=>filter.passingYear===undefined||row.passingYear===filter.passingYear)
+    .filter(row=>filter.maxGapYears===undefined||(row.gapYears!=null&&row.gapYears<=filter.maxGapYears))
+    .filter(row=>filter.marksVerified===undefined||row.marksVerified===filter.marksVerified)
+    .filter(row=>filter.isLateralEntry===undefined||row.isLateralEntry===filter.isLateralEntry)
     .filter(row=>filter.maxActiveBacklogs===undefined||(row.activeBacklogs!==null&&row.activeBacklogs<=filter.maxActiveBacklogs))
     .filter(row=>filter.maxPastBacklogs===undefined||(row.pastBacklogs!==null&&row.pastBacklogs<=filter.maxPastBacklogs))
     .filter(row=>filter.cgpaRecorded===undefined||(row.cgpa!==null)===filter.cgpaRecorded)
@@ -495,4 +534,20 @@ export function selectTpoStudentWorkingSet(
 /** An actual application counts as legacy placement registration when no explicit choice exists. */
 export function tpoStudentRegisteredForPlacements(choice:string|null,applicationCount:number):boolean{
  return choice==="PLACEMENTS"||(choice===null&&applicationCount>0);
+}
+
+export function tpoStudentMatchesLegacyStage(row:TpoStudentRow,stage:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED"):boolean{
+ switch(stage){
+  case "ELIGIBLE":return row.participationStatus==="ELIGIBLE";
+  case "INVITED":return row.registrationOpen===true;
+  case "REGISTERED":return row.registeredForPlacements;
+  case "VERIFIED":return row.verification.status==="VERIFIED";
+  case "PLACED":return row.placed;
+ }
+}
+export function tpoStudentNeedsAttention(row:TpoStudentRow):boolean{
+ return row.participationStatus==="INELIGIBLE"||
+  row.verification.status==="WAITING"||row.verification.status==="SENT_BACK"||
+  row.offersAwaitingAnswer>0||row.ambiguousSection||
+  row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING";
 }

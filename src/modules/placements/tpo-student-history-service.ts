@@ -84,6 +84,8 @@ export async function getTpoStudentPlacementHistory(
 
   const applications = await db.select({
     id: placementApplications.id,
+    jobId:placementJobs.id,
+    eligibilitySnapshot:placementApplications.eligibilitySnapshot,
     jobTitle: placementJobs.title,
     companyName: placementCompanies.name,
     seasonName: placementSeasons.name,
@@ -218,7 +220,14 @@ export async function getTpoStudentPlacementHistory(
       membershipStatus: learner.membershipStatus,
     },
     ...projectTpoStudentPlacementHistory(
-      applications, offers, rounds, applicationEvents, offerEvents,
+      applications.map(application=>({
+        ...application,
+        addedByCollege:application.eligibilitySnapshot!==null&&
+          typeof application.eligibilitySnapshot==="object"&&
+          !Array.isArray(application.eligibilitySnapshot)&&
+          "source" in application.eligibilitySnapshot&&
+          application.eligibilitySnapshot.source==="TPO_BULK_ADD",
+      })), offers, rounds, applicationEvents, offerEvents,
     ),
     total,
     page: query.page,

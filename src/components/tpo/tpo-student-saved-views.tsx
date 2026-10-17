@@ -1,5 +1,8 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type Selection={journeyState?:string;branchId?:string;batchId?:string;search?:string;
@@ -32,6 +35,8 @@ export function TpoStudentSavedViews(){
  const [busy,setBusy]=useState(false);
  const [error,setError]=useState("");
  const [notice,setNotice]=useState("");
+ const [deleteTarget,setDeleteTarget]=useState<View|null>(null);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  async function load(){
   setBusy(true);setError("");
   try{const body=await apiFetch<View[]>(api,{cache:"no-store"});
@@ -93,12 +98,20 @@ export function TpoStudentSavedViews(){
 
      <button type="button" disabled={busy} onClick={()=>void use(view)}
       className="min-h-9 rounded border border-border px-3 text-xs">Open</button>
-     <button type="button" disabled={busy} onClick={()=>{
-       if(window.confirm('Delete saved view "'+view.name+'"?'))void send({action:"DELETE",id:view.id});
-      }} className="min-h-9 rounded border border-border px-3 text-xs">Delete</button>
+     <button type="button" disabled={busy} onClick={()=>setDeleteTarget(view)} className="min-h-9 rounded border border-border px-3 text-xs">Delete</button>
     </div>)}
     {!rows.length?<p className="text-sm text-muted-foreground">No saved student views.</p>:null}
    </div>
+   <Dialog open={deleteTarget!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setDeleteTarget(null);}}
+    title="Delete saved view" description={"Delete saved view "+(deleteTarget?.name??"")+"?"}
+    footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setDeleteTarget(null)}>Cancel</Button>
+      <Button disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{
+        if(!deleteTarget)return;
+        const result=await send({action:"DELETE",id:deleteTarget.id});
+        if(result)setDeleteTarget(null);
+      })}>Delete view</Button></>}>
+      <p className="text-sm">The saved view will be removed. Student records will not be changed.</p>
+   </Dialog>
    {chosen?<p className="text-xs text-muted-foreground">Selected view: {chosen.name}. Update saves the filters currently visible on this page.</p>:null}
    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
    {notice?<p role="status" className="text-sm">{notice}</p>:null}
