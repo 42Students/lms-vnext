@@ -133,7 +133,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-36 | S4 | VALIDATION | DONE |
 | COL-academic-setup-38 | S4 | COPY | NOT-A-GAP |
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
-| COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
+| COL-academic-setup-41 | S4 | RESPONSIVE | DONE |
 
 ## mentor/projects-meetings-part2 (25: DONE 21, OPEN 4)
 
