@@ -120,6 +120,17 @@ export function RecruiterLeadsWorkspace({
   const [visibleColumns,setVisibleColumns]=useState<EngageColumn[]>([...ENGAGE_DEFAULT_COLUMNS]);
   const [rosterSort,setRosterSort]=useState<EngageSort>("LAST_ACTIVITY");
   const [sortAscending,setSortAscending]=useState(false);
+  function changeRosterSort(value:EngageSort){
+    setRosterSort(value);
+    try{window.localStorage.setItem("tpo-engage-sort-v1",JSON.stringify({sort:value,ascending:sortAscending}));}
+    catch{/* Browser storage is optional. */}
+  }
+  function changeSortAscending(value:boolean){
+    setSortAscending(value);
+    try{window.localStorage.setItem("tpo-engage-sort-v1",JSON.stringify({sort:rosterSort,ascending:value}));}
+    catch{/* Browser storage is optional. */}
+  }
+
   useEffect(()=>{
     try{
       const saved=window.localStorage.getItem("tpo-engage-sort-v1");
@@ -890,7 +901,7 @@ export function RecruiterLeadsWorkspace({
           ) : view === "table" ? (
             <div className="space-y-3">
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
-                sort={rosterSort} onSort={setRosterSort} ascending={sortAscending} onAscending={setSortAscending}/>
+                sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}/>
               <div className="overflow-x-auto rounded-lg border border-border bg-surface">
               <table className="w-full text-left text-sm" tabIndex={0}
                 onKeyDown={event=>{
