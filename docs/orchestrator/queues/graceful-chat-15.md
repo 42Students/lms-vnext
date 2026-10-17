@@ -69,3 +69,5 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-81: `tests/e2e/graceful-accessibility-metadata.spec.ts` adds **32 hostile fixture cases** (8 metadata/ARIA-ref surfaces × 4 unknown API error codes) and **2 safe controls**. These exercise missing parts of the shared `expectNoRawErrors` gate: alt descriptions, ARIA value/description, tooltip/data-error/data-message values, and hidden referenced labels/help.
 - GR-80/82: Every existing role and production test using the shared no-raw-code gate now checks those accessibility disclosures too; browser runtime and production-build execution remain unverified.
 - GR-83: The isolated fake-provider persisted outbox witness, real PostgreSQL tests, and complete helper execution remain orchestrator-owned; no acceptance item has been marked DONE.
+
+- GR-80/81: [big-round email/error] `tests/e2e/graceful-unexpected-email-error.spec.ts` adds 10 real login failure/retry cases, with two intercepted POSTs per test, nonleaking diagnostics, preserved contact and reenabled control (authored; not run).
