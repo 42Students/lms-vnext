@@ -1,8 +1,9 @@
 "use client";
-export default function FacultyProfileDetailsError({reset}:{reset:()=>void}){
- return <section role="alert" className="space-y-4 rounded-xl border border-border bg-surface p-5">
-  <h2 className="font-semibold text-foreground">Faculty profile could not load</h2>
-  <p className="text-sm text-body">Your previous information has not been changed.</p>
-  <button type="button" onClick={reset} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Retry</button>
- </section>;
+
+import { Button } from "@/components/ui/button";
+import { ErrorState } from "@/components/ui/error-state";
+
+export default function FacultyProfileDetailsError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  return <ErrorState title="Faculty profile could not load" description="Your previous information has not been changed."
+    action={<Button variant="secondary" onClick={reset}>Retry</Button>} />;
 }
