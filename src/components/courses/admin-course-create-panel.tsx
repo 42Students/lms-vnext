@@ -215,7 +215,7 @@ export function AdminCourseCreatePanel({
       "Course Offering created",
       (result) => {
         const id=createdRecordId(result,"offering");
-        if(id)setDeliveryOfferingId(id);
+        if(id){setDeliveryOfferingId(id);setNextSetupStep("DELIVERY");}
         setDeliverySectionId("");
         setOfferingConfirmOpen(false);
         setOfferingCourseId("");
