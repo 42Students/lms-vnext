@@ -2,6 +2,7 @@ import Link from "next/link";
 import {createHash} from "node:crypto";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
 import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
+import {TpoTeamDecisionToggle} from "@/components/tpo/tpo-team-decision-toggle";
 import {TpoTeamOpenRead} from "@/components/tpo/tpo-team-open-read";
 import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
@@ -50,6 +51,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Mark this conversation&apos;s alerts as read
    </button>
   </form>
+  {result.messages.some(message=>message.decision&&!message.removed)?
+   <aside aria-label="Decisions here" className="space-y-2 rounded-lg border border-border bg-surface p-4">
+    <h2 className="text-sm font-semibold">Decided:</h2>
+    {result.messages.filter(message=>message.decision&&!message.removed).slice(-5).map(message=>
+     <Link key={message.id} href={"#team-message-"+message.id}
+      className="block truncate text-sm text-primary-text underline">{message.body}</Link>)}
+   </aside>:null}
   <ol role="log" aria-live="polite" aria-busy={false} aria-label="Private team messages" className="space-y-3">
    {result.messages.map((message,index)=>{
     const day=(date:Date)=>new Intl.DateTimeFormat("en-IN",{
@@ -66,10 +74,13 @@ export default async function InternalThread({params,searchParams}:{params:Promi
        {own?"You":message.authorName?.trim()||"Team member"} ·
        {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"}).format(message.createdAt)} IST
       </p>
+      {message.decision&&!message.removed?<span className="rounded border border-border px-2 py-0.5 text-xs font-semibold text-success">Decision</span>:null}
       <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
        {message.removed?"Message removed":message.body}
       </p>
       {message.edited&&!message.removed?<span className="text-xs text-muted-foreground">edited</span>:null}
+      {!message.removed?<TpoTeamDecisionToggle threadId={result.thread.id}
+       messageId={message.id} marked={message.decision}/>:null}
       {own&&!message.removed?<TpoTeamMessageActions
        threadId={result.thread.id} messageId={message.id} body={message.body}
        expectedBodyHash={createHash("sha256").update(message.body).digest("hex")}

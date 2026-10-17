@@ -211,3 +211,7 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 
 | TPO-inbox-team-24 | PARTIAL — OPEN | Scoped optimistic private-message edit (author only, first 15 min), delete tombstone, guarded UI and event-backed edited/removed indicators with explicit same-origin POST, `tests/unit/tpo-team-message-corrections-chat2.test.ts` tests named `TPO-inbox-team-24`. Newly mentioned recipients and ask cancellation need ask/mention persistence. |
 | TPO-inbox-team-25 | PARTIAL — OPEN | Actual event-backed “edited” tag and “Message removed” UI now render with existing author names/day separators/alignment; same suite names `TPO-inbox-team-25`. Rich system-event lines remain. |
+
+## Chat-2 round 5 — pinned decisions
+
+| TPO-inbox-team-23 | PARTIAL — OPEN | Same-college participants can optimistically mark/unmark a persisted Team message as decision with audited state changes; the thread displays decision tags and a last-five “Decided:” strip, and guards retry with friendly errors. `tests/unit/tpo-team-decision-chat2.test.ts` names `TPO-inbox-team-23`. Conversation-level Decisions filter and cross-message context panel still pending. |
