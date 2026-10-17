@@ -22,6 +22,7 @@ import {
   courses,
   departments,
   quizAttempts,
+  users,
 } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -203,10 +204,12 @@ export async function listCollegeAssessmentAggregate(
     offeringId: courseSectionDeliveries.offeringId,
     deliveryId: courseSectionDeliveries.id,
     eligible: countDistinct(collegeMemberships.id),
+    members:sql<string[]>`array_agg(distinct ${collegeMemberships.id})`,
   }).from(courseSectionDeliveries)
     .innerJoin(courseOfferings, eq(courseOfferings.id,courseSectionDeliveries.offeringId))
     .innerJoin(sections, and(
       eq(sections.id,courseSectionDeliveries.sectionId),
+      eq(sections.status,"ACTIVE"),
       eq(sections.cohortId,courseOfferings.cohortId),
       eq(sections.academicPeriodId,courseOfferings.academicPeriodId),
     ))
@@ -229,6 +232,7 @@ export async function listCollegeAssessmentAggregate(
       eq(membershipRoles.membershipId,collegeMemberships.id),
       eq(membershipRoles.role,"LEARNER"),
     ))
+    .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
     .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
       isNull(courseSectionDeliveries.endedAt)))
     .groupBy(courseSectionDeliveries.offeringId,courseSectionDeliveries.id):[];
@@ -251,13 +255,16 @@ export async function listCollegeAssessmentAggregate(
         isNull(courseSectionDeliveries.endedAt),
         eq(sections.status,"ACTIVE")))
       .orderBy(asc(sections.name),asc(sections.code)):[];
-  const eligibleByOffering=new Map<string,number>();
+  const eligibleByOfferingMembers=new Map<string,Set<string>>();
   const eligibleByDelivery=new Map<string,number>();
   for(const entry of eligibleRows){
-    eligibleByOffering.set(entry.offeringId,
-      (eligibleByOffering.get(entry.offeringId)??0)+entry.eligible);
+    const audience=eligibleByOfferingMembers.get(entry.offeringId)??new Set<string>();
+    for(const member of entry.members)audience.add(member);
+    eligibleByOfferingMembers.set(entry.offeringId,audience);
     eligibleByDelivery.set(entry.deliveryId,entry.eligible);
   }
+  const eligibleByOffering=new Map<string,number>(
+    [...eligibleByOfferingMembers].map(([id,ids])=>[id,ids.size] as const));
 
   // Count only submissions from currently active learners in the actual
   // section delivery; resubmissions and repeat quiz attempts count once.
@@ -272,13 +279,16 @@ export async function listCollegeAssessmentAggregate(
           eq(courseSectionDeliveries.id,assignmentSubmissions.deliveryId),
           isNull(courseSectionDeliveries.endedAt),
         ))
+        .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
         .innerJoin(sectionEnrollments,and(
           eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
+          eq(sectionEnrollments.academicPeriodId,courseSectionDeliveries.academicPeriodId),
           eq(sectionEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(learnerProgramEnrollments,and(
           eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
           eq(learnerProgramEnrollments.membershipId,assignmentSubmissions.membershipId),
+          eq(learnerProgramEnrollments.cohortId,courseOfferings.cohortId),
           eq(learnerProgramEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(collegeMemberships,and(
@@ -290,6 +300,7 @@ export async function listCollegeAssessmentAggregate(
           eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"LEARNER"),
         ))
+        .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
         .where(inArray(assignmentSubmissions.assignmentId,ids))
         .groupBy(assignmentSubmissions.assignmentId) :
       await db.select({
@@ -301,13 +312,16 @@ export async function listCollegeAssessmentAggregate(
           eq(courseSectionDeliveries.id,quizAttempts.deliveryId),
           isNull(courseSectionDeliveries.endedAt),
         ))
+        .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
         .innerJoin(sectionEnrollments,and(
           eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
+          eq(sectionEnrollments.academicPeriodId,courseSectionDeliveries.academicPeriodId),
           eq(sectionEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(learnerProgramEnrollments,and(
           eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
           eq(learnerProgramEnrollments.membershipId,quizAttempts.membershipId),
+          eq(learnerProgramEnrollments.cohortId,courseOfferings.cohortId),
           eq(learnerProgramEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(collegeMemberships,and(
@@ -319,6 +333,7 @@ export async function listCollegeAssessmentAggregate(
           eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"LEARNER"),
         ))
+        .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
         .where(inArray(quizAttempts.quizId,ids))
         .groupBy(quizAttempts.quizId);
   const statsById=new Map(submissionStats.map(item=>[item.id,item]));
