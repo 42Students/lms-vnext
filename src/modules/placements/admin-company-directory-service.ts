@@ -33,6 +33,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   }
   else if (selected?.organizationId) filters.push(eq(colleges.organizationId, selected.organizationId));
   if (query.trust !== "ALL") filters.push(eq(placementCompanyRelationships.isTrusted, query.trust === "TRUSTED"));
+  if (query.verified === "VERIFIED") filters.push(isNotNull(placementCompanies.verifiedAt));
+  if (query.verified === "NOT_VERIFIED") filters.push(isNull(placementCompanies.verifiedAt));
   if (query.status !== "ALL") {
     filters.push(eq(placementCompanyRelationships.status, query.status));
   }
@@ -64,6 +66,7 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     relationshipStatus: placementCompanyRelationships.status,
     companyStatus: placementCompanies.status,
     trusted: placementCompanyRelationships.isTrusted,
+    verifiedAt: placementCompanies.verifiedAt,
     website: placementCompanies.websiteUrl,
     primaryDomain:placementCompanies.primaryDomain,
     companyCollegeCount:sql<number>`(select count(*)::integer from placement_company_relationships cr where cr.company_id = ${placementCompanies.id})`.mapWith(Number),
