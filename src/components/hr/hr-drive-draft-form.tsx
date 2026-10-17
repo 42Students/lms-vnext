@@ -419,6 +419,11 @@ export function HrDriveDraftForm({
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
+            {draft.driveMode==="OFF_CAMPUS"?
+              <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
+                ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
+                  className="font-semibold text-primary-text underline">{result.data.externalApplicationUrl}</a>
+                : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
               {hrDraftPreviewRounds(draft).map(step=>(
