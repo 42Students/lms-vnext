@@ -100,15 +100,15 @@ export function HrDriveDraftForm({
 
   function saveForThisTab(){
     const raw=saveHrUnsentDraft(draft,Date.now());
-    if(!raw){setNotice("Validate the draft before saving it for this tab.");return;}
+    if(!raw){setNotice("This draft is too large to save on this device. Shorten long fields before saving.");return;}
     try{window.sessionStorage.setItem(storageKey,raw);window.localStorage.setItem(storageKey,raw);
-      setNotice("Validated unsent draft saved for this browser tab (24-hour expiry).");}
+      setNotice("Unsent draft saved on this device, even if some fields are unfinished (24-hour expiry).");}
     catch{setNotice("This browser cannot save a draft. Copy the preview instead.");}
   }
   function restoreFromThisTab(){
     try{
       const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey),Date.now());
-      if(!saved){setNotice("No valid, unexpired saved draft for this exact college and job.");return;}
+      if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
       setDraft(saved);setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}

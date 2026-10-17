@@ -38,6 +38,7 @@ export default async function LearnerCoursesPage() {
         credits: course.credits,
         sectionName: course.sectionName,
         sectionCode: course.sectionCode,
+        cohortName: course.cohortName,
         academicPeriodId: course.academicPeriodId,
         academicPeriodName: course.academicPeriodName,
         programName: course.programName,

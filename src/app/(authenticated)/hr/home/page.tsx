@@ -71,7 +71,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayEightDayWindow(now);
-  const jobs=await listOwnRecruiterPlacementJobs(context,selectedId);
+  const jobs=await listOwnRecruiterPlacementJobs(context,selectedId,{limit:500});
+  const recentJobCapReached=jobs.length===500;
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),
@@ -126,6 +127,10 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
         className={item.collegeId === selectedId ? "rounded-full bg-primary px-3 py-2 text-sm text-on-primary" : "rounded-full border border-border px-3 py-2 text-sm text-body"}>{item.collegeName}</Link>)}</nav> : null}
+    {recentJobCapReached?<aside role="status" className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+      Today is displaying the 500 most recently created employer drives for this college.
+      Older drives may not appear in these quick summaries. Open Drives for full history.
+    </aside>:null}
     {summaryPartiallyUnavailable?<div role="alert" className="rounded-lg border border-warning bg-surface p-4 text-sm text-body">
       <p className="font-semibold">Drive summary is partially unavailable.</p>
       <p className="mt-1">Your available drive information is shown below. Some notifications or calendar events may be missing.</p>

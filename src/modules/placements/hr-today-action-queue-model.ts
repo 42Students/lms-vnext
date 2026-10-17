@@ -1,6 +1,6 @@
 import { recruiterTodayHref } from "./hr-today-deeplink-model";
-type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null}};
-type Due={id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date};
+type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null;applicationDeadline?:Date|null}};
+type Due={id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date;status?:string};
 type UnreadThread={id:string;href:string;label:string;unread:number};
 /** REC-home-drives-01: only verified scoped signals become next-up actions.
  * A recorded result due date is not proof results are still outstanding. */
@@ -20,12 +20,26 @@ export function buildRecruiterActionQueue(input:{
  const due=(input.resultsDue??[]).filter(item=>authorized.has(item.jobId)&&
    Number.isFinite(item.dueAt.getTime()))
   .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id))
-  .slice(0,5).map(item=>({key:"due:"+item.id, tone:(input.now&&item.dueAt.getTime()<input.now.getTime()?"URGENT":"SOON") as "URGENT"|"SOON", at:item.dueAt,
+  .slice(0,5).map(item=>({key:"due:"+item.id, tone:(input.now&&item.status==="SCHEDULED"&&item.dueAt.getTime()<input.now.getTime()?"URGENT":"SOON") as "URGENT"|"SOON", at:item.dueAt,
     label:"Check results deadline · "+item.roundName,
     description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
     href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
    row.job.status==="PUBLISHED"&&row.job.archivedAt===null).slice(0,3);
+ const deadlines = input.now ? live
+  .filter(row=>row.job.applicationDeadline instanceof Date &&
+    Number.isFinite(row.job.applicationDeadline.getTime()))
+  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-86400000)
+  .sort((a,b)=>a.job.applicationDeadline!.getTime()-b.job.applicationDeadline!.getTime())
+  .slice(0,3)
+  .map(row=>({
+    key:"deadline:"+row.job.id,
+    tone:(row.job.applicationDeadline!.getTime()<input.now!.getTime()?"URGENT":"SOON") as "URGENT"|"SOON",
+    at:row.job.applicationDeadline!,
+    label:"Check application deadline · "+row.job.title,
+    description:"Review the published deadline and available shared applications.",
+    href:"/recruiter/drives/"+encodeURIComponent(row.job.id)+"?tab=overview",
+  })) : [];
  const reviews=live.map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
    label:"Review shared applicants · "+row.job.title,
    description:"Open the employer-visible shortlist and notes. No unshared applications are included.",
@@ -34,5 +48,5 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- return [...conversations,...due,...reviews,...notices];
+ return [...conversations,...due,...deadlines,...reviews,...notices];
 }

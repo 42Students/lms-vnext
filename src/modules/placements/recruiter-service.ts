@@ -386,6 +386,7 @@ export async function revokePlacementRecruiterGrant(
 export async function listOwnRecruiterPlacementJobs(
   context: RequestContext,
   collegeId?: string,
+  options: {limit?:number} = {},
 ) {
   if (!hasActiveRecruiter(context)) {
     throw new AuthorizationError(
@@ -405,7 +406,7 @@ export async function listOwnRecruiterPlacementJobs(
     (grant) => grant.companyRelationshipId,
   );
 
-  const rows = await getDb()
+  const selection = getDb()
     .select({
       job: placementJobs,
       relationshipId:
@@ -462,7 +463,10 @@ export async function listOwnRecruiterPlacementJobs(
         eq(colleges.status, "ACTIVE"),
       ),
     )
-    .orderBy(desc(placementJobs.createdAt));
+    .orderBy(desc(placementJobs.createdAt))
+    .$dynamic();
+  const rows = options.limit === undefined ? await selection :
+    await selection.limit(Math.max(1,Math.min(500,Math.trunc(options.limit))));
 
   // A row whose relationship/college pair is not an exact grant (e.g. a grant
   // id paired with another college) is silently excluded, never surfaced.
