@@ -60,7 +60,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-04 | S2 | MISSING-FIELD | DONE |
 | TPO-home-05 | S2 | MISSING-FIELD | DONE |
 | TPO-home-06 | S2 | MISSING-FIELD | DONE |
-| TPO-home-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-07 | S2 | MISSING-FIELD | DONE |
 | TPO-home-08 | S2 | MISSING-FIELD | DONE |
 | TPO-home-09 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-13 | S2 | MISSING-FIELD | DONE |
@@ -106,7 +106,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-47 | S2 | MISSING-ACTION | OPEN |
 | SA-tenants-modules-51 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-54 | S2 | SIDE-EFFECT | BLOCKED |
-| SA-tenants-modules-57 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| SA-tenants-modules-57 | S2 | MISSING-FIELD | DONE |
 | SA-tenants-modules-63 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-65 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-41 | S3 | MISSING-FILTER | DONE |
@@ -159,7 +159,7 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-10 | S4 | STATE | DONE |
 | LEARNER-home-courses-11 | S4 | STATE | DONE |
 | LEARNER-home-courses-13 | S4 | COPY | DONE |
-| LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | FIXED-ON-MAIN |
+| LEARNER-home-courses-15 | S4 | COPY / MISSING-ACTION | DONE |
 | LEARNER-home-courses-18 | S4 | PERFORMANCE | OPEN |
 | LEARNER-home-courses-20 | S4 | MISSING-FIELD / PERMISSION | DONE |
 | LEARNER-home-courses-22 | S4 | PERFORMANCE | OPEN |
@@ -340,3 +340,5 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - NOT-A-GAP: SA-tenants-modules-60, LEARNER-home-courses-01, COL-course-tabs-23, TPO-home-27.
 - BLOCKED: SA-tenants-modules-54, SA-tenants-modules-46.
 - Source or explicit previously accepted owner decisions, each with a named regression test in acceptance; test execution remains **unverified**. SA-tenants-modules-46 requires GitHub provider access to 42Students/lms-findings (current connection returns 404), SA-tenants-modules-54 requires verified inbound mail provider credentials. No page restyling done.
+
+- Additional source-verified functional gaps: SA-tenants-modules-57 (only live TPO recipients), TPO-home-07 (Engage CRM counts), LEARNER-home-courses-15 (quick links/Start learning); see ID-named tests and acceptance. Runtime/browser verification not performed.
