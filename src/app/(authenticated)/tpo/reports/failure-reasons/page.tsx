@@ -121,6 +121,22 @@ export default async function TpoFailureReasonsPage({
        emptyDescription="No applied round decisions were recorded for the selected placement scope."/>
       <p className="text-xs text-muted-foreground">Share of the round = applied FAIL decisions divided by all applied round decisions. It does not count candidates who have no recorded round result, and is not a share of registered students.</p>
 
+      <a href={"/api/placements/tpo/reports/round-failures?"+new URLSearchParams({
+        ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+        ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{})
+       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+       Download round-and-branch failures CSV
+      </a>
+      <ReportTable
+       title="Round failures by current branch"
+       headings={["Round","Branch","Failed decisions","Applied decisions","Share of branch's recorded round decisions"]}
+       rows={workspace.roundBranchFailureShares.map(row=>[
+        row.roundName,row.branchName,row.failed,row.decisions,
+        row.shareOfRoundPercent===null?"Unavailable":row.shareOfRoundPercent+"%",
+       ])}
+       emptyDescription="No applied round decisions are available by current academic branch."/>
+      <p className="text-xs text-muted-foreground">Branch uses the learner's current active academic enrollment; past branch membership is not reconstructed. A missing branch is labelled Not recorded. Percentages use only applied round decisions for that round and branch.</p>
+      
       <ReportTable
         title="Outcomes by type"
         headings={["Outcome", "Recorded count"]}
