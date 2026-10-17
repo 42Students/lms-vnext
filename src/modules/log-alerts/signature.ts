@@ -16,6 +16,9 @@ export function normaliseErrorForSignature(message: unknown): string {
     .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi, "[id]")
     .replace(/\b\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?)?/gi, "[time]")
     .replace(/\b0x[0-9a-f]+\b/gi, "[hex]")
+    // GR-05 correlation references are eight hexadecimal digits. They are not
+    // incident identity and must not fragment an otherwise identical signature.
+    .replace(/\b[0-9a-f]{8}\b/gi, "[id]")
     .replace(/\b\d+(?:\.\d+)?\b/g, "[number]");
   return redactAlertText(canonical).replace(/\s+/g, " ").toLowerCase();
 }
