@@ -5,6 +5,7 @@ export default function TpoReportsLoading() {
       aria-label="Loading TPO reports"
       className="space-y-5"
     >
+      <p role="status" className="text-sm font-semibold text-body">Refreshing report…</p>
       <div className="h-24 animate-pulse rounded-xl bg-muted" />
       <div className="h-32 animate-pulse rounded-xl bg-muted" />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
