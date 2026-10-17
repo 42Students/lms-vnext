@@ -379,9 +379,9 @@ export function HrDriveDraftForm({
           <button type="button" disabled={!result.success}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
             onClick={() => void copyPreview()}>Copy validated draft</button>
-          <button type="button" disabled={!result.success}
+          <button type="button" disabled={submitting}
             className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text disabled:opacity-50"
-            onClick={saveForThisTab}>Save validated draft in this tab</button>
+            onClick={saveForThisTab}>Save unsent draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text"
             onClick={restoreFromThisTab}>Restore saved draft</button>
           <button type="button" className="min-h-11 rounded-md border border-border px-4 text-sm text-body"
