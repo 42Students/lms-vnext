@@ -9,7 +9,7 @@ describe("SA-placements-projects-77 project template audit integrity",()=>{
  it.each([
   ["CREATED","created"],["REVISED","revised"],["PUBLISHED","published"],
   ["UNPUBLISHED","unpublished"],["DUPLICATED","duplicated"],["ARCHIVED","archived"],
-  ["ASSIGNED","assigned"],["UNASSIGNED","unassigned"],
+  ["COLLEGE_ASSIGNED","college_assigned"],["COLLEGE_REVOKED","college_revoked"],
  ] as const)("SA-placements-projects-77 registers template %s events", (name,suffix)=>{
   const key=("PROJECTS_TEMPLATE_"+name) as keyof typeof ACTIVITY_EVENT_TYPES;
   const event=ACTIVITY_EVENT_TYPES[key];
@@ -17,12 +17,15 @@ describe("SA-placements-projects-77 project template audit integrity",()=>{
   expect(template).toContain("ACTIVITY_EVENT_TYPES."+key);
  });
  it("SA-placements-projects-77 records create revise publish unpublish and duplicate in the same transaction",()=>{
-  for(const snippet of ["Super Admin created project template","Super Admin revised project template",
-    "Super Admin published project template","Super Admin unpublished project template",
-    "Super Admin duplicated project template"]){
+  for(const snippet of ["Project template created","Project template revised",
+    "Project template published","Project template unpublished",
+    "Project template duplicated"]){
    expect(template).toContain(snippet);
   }
   expect((template.match(/recordActivityEventInTransaction\(tx,context/g)||[]).length).toBeGreaterThanOrEqual(8);
+  expect(template).toContain("organizationId:college.organizationId,collegeId:college.id");
+  expect(template).toContain("PROJECTS_TEMPLATE_COLLEGE_ASSIGNED");
+  expect(template).toContain("PROJECTS_TEMPLATE_COLLEGE_REVOKED");
  });
  it("SA-placements-projects-77 archives after locking template and prevents active assignment archival",()=>{
   const archive=template.slice(template.indexOf("export async function archiveProjectTemplate("),
