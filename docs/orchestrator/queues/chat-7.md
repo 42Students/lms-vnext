@@ -261,3 +261,19 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **BLOCKED REC-home-drives-21/-33/-R03:** trusted-recruiter auto-approval and per-recruiter drive ownership rules require security/product decisions; skip.
 - **BLOCKED REC-calendar-messages-profile-25/-46, REC-home-drives-09, LEARNER-profile-misc-18:** verified phone/invite authority and authoritative per-viewer disclosure feed are unavailable; skip.
 - **WP-01..05:** IN-PROGRESS; remaining S1/S2 blockers and S2 completeness not certified. Source-only FAST v2 round, no checks run.
+
+
+## FAST v2 chat-7 continuation — 2026-10-17, recruiter S1/S2 follow-through
+
+- **Branch sync:** fast-forwarded chatgpt/chat-7-b from its already-merged prior tip onto origin/main `5759f883` before editing; all source commits are tagged `[chat-7]` and only target the builder branch. Orchestrator merges continued concurrently after that sync.
+- **WP-01 / REC-home-drives-24, REC-home-drives-25, REC-home-drives-26:** TPO recruiter request approval now copies eligibility branches and passing year, stipend and LPA breakdown into persisted job fields and primary role compensation. Off-campus requests require an HTTPS external application URL and use EXTERNAL_ONLY publication mode instead of silently forcing INTERNAL; Hire Again copies saved eligibility/pay facts and validated off-campus link.
+- **WP-02 / REC-home-drives-01:** recruiter Today prioritizes college- and job-scoped open change requests, future interview rounds with no offered slot, prepared-but-not-offered time blocks and offer follow-up counts from already-shared applicants. These are actionable links, not inferred unshared learner records.
+- **WP-02 / REC-home-drives-14:** paged Recruiter Drives includes counts and direct Answer action for open placement-cell change requests for each authorized job.
+- **WP-02 / REC-home-drives-42:** focused review now shows explicit keyboard help for draft decisions, a navigable applicant progress indicator and TPO-only application warning.
+- **WP-02 / REC-home-drives-48, REC-home-drives-R01:** TPO has a college-authorized, read-only route for persisted recruiter interview-slot proposals; recruiter slot notices link there. A proposal/internal reservation is explicitly not represented as a confirmed learner interview.
+- **BLOCKED REC-home-drives-48:** college acceptance of proposed slot and confirmed venue need a registered acknowledgement lifecycle; TPO review currently remains read-only.
+- **BLOCKED REC-home-drives-21/-33/-R03:** trusted autoapproval and recruiter-specific private drive scope still require authorization policy confirmation.
+- **BLOCKED REC-home-drives-38/-51:** approved applicant disclosure policy and durable selection-list verification lifecycle remain outstanding.
+- **BLOCKED LEARNER-profile-misc-01/-02/-03/-04, REC-home-drives-23/-43:** no attested private media/document storage and download path; skipped.
+- **BLOCKED REC-calendar-messages-profile-25/-46, REC-home-drives-09, LEARNER-profile-misc-18:** verified identity, invite acceptance, and per-viewer data access feed are unavailable; skipped.
+- **WP statuses:** 01–05 stay IN-PROGRESS because some legacy paths/side effects are unfinished and none of the source edits were acceptance-verified; no tests, lint, build, typecheck or CI performed.
