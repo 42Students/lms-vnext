@@ -188,7 +188,12 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        <p className="font-semibold">{task.title}</p>
        <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
        {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:null}
-       {group.membershipId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
+       {group.membershipId===null&&task.status!=="DONE"&&task.status!=="IN_REVIEW"?
+         <p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
+       {group.membershipId!==null&&!activeMemberIds.has(group.membershipId)?
+         <p className="mt-1 text-xs font-semibold text-warning-text">
+           Reassign from former member
+         </p>:null}
        {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
         <select aria-label={"Assign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
