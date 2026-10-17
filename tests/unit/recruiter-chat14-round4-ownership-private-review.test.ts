@@ -33,6 +33,15 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(results).toContain("if(recruiterCanStage && !(await recruiterOwnJobExists(context.user.id,job.id)))");
   expect(results).toContain('new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND")');
  });
+ it("REC-home-drives-38 never exposes roll number or email without an active relationship share column",()=>{
+  const code=source("src/modules/placements/hr-job-read-service.ts");
+  expect(code).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
+  expect(code).toContain('share?.columns?.includes("roll")');
+  expect(code).toContain('share?.columns?.includes("email")');
+  expect(code).toContain("rollNumber:shareRoll?row.rollNumber:null");
+  expect(code).toContain("email:shareEmail?row.email:null");
+  expect(code).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
+ });
  it("REC-home-drives-47 permits recruiter-owned unpublished rounds without reopening closed drives",()=>{
   const service=source("src/modules/placements/hr-round-editor-service.ts");
   expect(service.match(/inArray\(placementJobs.status,\["DRAFT","PUBLISHED"\]\)/g)?.length).toBe(2);
