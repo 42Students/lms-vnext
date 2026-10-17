@@ -785,7 +785,7 @@ export function RecruiterLeadsWorkspace({
               {visible.some(row=>selectedIds.includes(row.id))?<button type="button" className={buttonStyle}
                 disabled={visible.filter(row=>selectedIds.includes(row.id)).length>100}
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
-                Send an email to selected ({Math.min(visible.filter(row=>selectedIds.includes(row.id)).length,100)})
+                Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
               </button>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
