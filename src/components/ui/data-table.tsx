@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { cx } from "@/lib/class-names";
 
 export type DataTableColumn<Row> = {
@@ -24,16 +25,19 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   </div>;
   const primary = columns.find(column => column.mobilePriority === "primary") ?? columns.find(column => column.mobilePriority !== "hidden");
   const secondary = columns.filter(column => column.key !== primary?.key && column.mobilePriority !== "hidden");
+  const shown = secondary.slice(0, 3);
+  const extra = secondary.slice(3);
   return <div data-slot="data-table" className="min-w-0">
     <div className="space-y-3 sm:hidden" role="list" aria-label={caption ?? "Records"}>
       {rows.map(row => (
         <article key={getRowKey(row)} role="listitem" className="min-w-0 rounded-xl border border-border bg-surface p-4">
           {primary ? <h3 className="break-words text-base font-semibold leading-6 text-foreground">{primary.cell(row)}</h3> : null}
-          {secondary.length ? <dl className="mt-3 grid min-w-0 grid-cols-1 gap-2 text-sm leading-5">
-            {secondary.map(column => <div key={column.key} className="min-w-0"><dt className="font-medium text-body">{column.mobileLabel ?? column.header}</dt>
+          {shown.length ? <dl className="mt-3 grid min-w-0 grid-cols-1 gap-2 text-sm leading-5">
+            {shown.map(column => <div key={column.key} className="min-w-0"><dt className="font-medium text-body">{column.mobileLabel ?? column.header}</dt>
               <dd className="mt-0.5 min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}
           </dl> : null}
-          {rowHref ? <a href={rowHref(row)} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View details</a> : null}
+          {extra.length ? <details className="mt-3 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">More details</summary><dl className="grid gap-2 text-sm">{extra.map(column => <div key={column.key} className="min-w-0"><dt className="text-body">{column.mobileLabel ?? column.header}</dt><dd className="min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}</dl></details> : null}
+          {rowHref ? <Link href={rowHref(row)} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View details</Link> : null}
         </article>
       ))}
     </div>
