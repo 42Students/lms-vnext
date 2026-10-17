@@ -83,3 +83,5 @@ Tests have not been run.
 | TPO-campaigns-public-06 | DONE (source verified): Engage view=campaigns resolves to Emails history and retains the exact legacy send-selection instruction. Test: `tests/unit/chat9-final-TPO-campaigns-public-06.test.ts` (`TPO-campaigns-public-06 verifies the implemented contract`). Test authored; execution pending orchestrator. |
 
 | TPO-campaigns-public-08 | DONE (source verified): unavailable-provider warning appears in Email history, composer, and send control, with actual Send disabled until verified provider ready; saving a draft does not send. Test: `tests/unit/chat9-final-TPO-campaigns-public-08.test.ts` (`TPO-campaigns-public-08 verifies the implemented contract`). Test authored; execution pending orchestrator. |
+
+| TPO-campaigns-public-11 | DONE (source verified): purpose filters survive history Previous/Next; export queries all filtered receipts independently of current page with size guard rather than silently truncating to 25. Test: `tests/unit/chat9-final-TPO-campaigns-public-11.test.ts` (`TPO-campaigns-public-11 verifies the implemented contract`). Test authored; execution pending orchestrator. |
