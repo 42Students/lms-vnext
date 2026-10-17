@@ -52,7 +52,7 @@ export function extractRecruiterEmailReply(raw:string):string|null{
   const trimmed=line.trim();
   if(/^On .{8,240} wrote:$/i.test(trimmed)||trimmed==="-----Original Message-----"||
      trimmed==="-- Forwarded message --"||/^From:\s+.{3,}$/i.test(trimmed)||
-     /^>/.test(trimmed)||/^_{8,}$/.test(trimmed)||trimmed==="-- " )break;
+     /^>/.test(trimmed)||/^_{8,}$/.test(trimmed)||trimmed==="--" )break;
   reply.push(line.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,""));
  }
  const body=reply.join("\n").trim();
