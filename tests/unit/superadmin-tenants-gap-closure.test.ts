@@ -81,5 +81,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(signin).toContain("Phone only");
   expect(signin).toContain("Sign-in settings saved");
   expect(signin).toContain("expectedVersion");
+  expect(signin).toContain("apiFetch<void>");
+  expect(signin).toContain("useGuardedAction");
  });
 });
