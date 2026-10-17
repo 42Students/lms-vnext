@@ -3,6 +3,7 @@
 import {
   useState,
   useRef,
+  useEffect,
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -84,6 +85,7 @@ function nullableInteger(
 }
 
 export function PlacementJobCreateForm({
+  userId,
   collegeId,
   activeSeason,
   companies,
@@ -91,6 +93,7 @@ export function PlacementJobCreateForm({
   basePath,
   initialCompanyName = "",
 }: {
+  userId: string;
   collegeId: string;
   activeSeason: PlacementSeasonChoice | null;
   companies: readonly PlacementCompanyChoice[];
@@ -101,6 +104,10 @@ export function PlacementJobCreateForm({
   const router = useRouter();
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
+  const formRef=useRef<HTMLFormElement>(null);
+  const clearedBackup=useRef(false);
+  const [restoredBackup,setRestoredBackup]=useState(false);
+  const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
       companies.length > 0
@@ -134,6 +141,63 @@ export function PlacementJobCreateForm({
     selectedCohortIds,
     setSelectedCohortIds,
   ] = useState<string[]>([]);
+
+  // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
+  // No passwords, tokens, email invitations or learner records are present here.
+  function saveBrowserDraft(form:HTMLFormElement){
+    if(clearedBackup.current)return;
+    try{
+      const values:Record<string,string>={};
+      const checked:string[]=[];
+      for(const field of Array.from(form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+        if(field instanceof HTMLInputElement&&field.type==="checkbox"){
+          if(field.checked)checked.push(field.name);
+        }else values[field.name]=field.value;
+      }
+      localStorage.setItem(backupKey,JSON.stringify({values,checked,
+        companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset}));
+    }catch{/* Storage may be unavailable in private mode; form still works. */}
+  }
+  useEffect(()=>{
+    // Defer restoration until the uncontrolled form fields have mounted.
+    const task=window.setTimeout(()=>{
+      try{
+        const raw=localStorage.getItem(backupKey);
+        if(!raw||!formRef.current)return;
+        const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
+          companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
+          selectedProgramIds?:string[];selectedCohortIds?:string[];
+          eligibilityPreset?:DriveEligibilityPreset};
+        if(!saved||!saved.values||typeof saved.values!=="object")return;
+        if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
+        if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
+          setCompanyRelationshipId(saved.companyRelationshipId);
+        setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
+        setSelectedCohortIds((saved.selectedCohortIds??[]).filter(id=>academicOptions.cohorts.some(c=>c.id===id)));
+        if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
+          setEligibilityPreset(saved.eligibilityPreset!);
+        setEnteredDriveTitle(String(saved.values.title??""));
+        setNewEmployerName(String(saved.values.companyName??""));
+        setNewEmployerDomain(String(saved.values.companyDomain??""));
+        for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+          if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
+          else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
+        }
+        markDirty();
+        setRestoredBackup(true);
+      }catch{/* Corrupt or disabled browser storage must not break creation. */}
+    },0);
+    return ()=>window.clearTimeout(task);
+    // One-time restore scoped to this actor and college only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[backupKey]);
+  useEffect(()=>{
+    if(!dirty||!formRef.current||clearedBackup.current)return;
+    const task=window.setTimeout(()=>{if(formRef.current)saveBrowserDraft(formRef.current);},400);
+    return ()=>window.clearTimeout(task);
+    // Form state changes require refreshed snapshots; uncontrolled fields save in onChange.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[dirty,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset,enteredDriveTitle,newEmployerName,newEmployerDomain]);
 
   function toggleId(
     value: string,
@@ -445,6 +509,8 @@ export function PlacementJobCreateForm({
         `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
       );
       clearDirty();
+      clearedBackup.current=true;
+      try{localStorage.removeItem(backupKey);}catch{}
       createdJobRef.current=null;
       setPartialJobId(null);
       router.refresh();
@@ -463,8 +529,11 @@ export function PlacementJobCreateForm({
 
   return (
     <form
+      ref={formRef}
       onSubmit={submit}
       onChange={event=>{
+        clearedBackup.current=false;
+        saveBrowserDraft(event.currentTarget);
         markDirty();
         const fields=new FormData(event.currentTarget);
         setHasEnteredEligibilityRule([
@@ -1087,6 +1156,12 @@ export function PlacementJobCreateForm({
           </button>
         </div>
       </section>
+      {restoredBackup?<p role="status" className="text-sm text-body">A saved drive draft was restored from this browser. Review the values before submitting.</p>:null}
+      {dirty?<button type="button" onClick={()=>{
+        clearedBackup.current=true;
+        try{localStorage.removeItem(backupKey);}catch{}
+        setRestoredBackup(false);
+      }} className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Discard saved browser backup</button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
         <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.

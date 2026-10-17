@@ -150,4 +150,15 @@ describe("chat-3 Drives round 4",()=>{
   expect(service).toContain("sourceJobId:source.id");
   expect(service).toContain("cleared:[");
  });
+ it("TPO-drives-41 long Create draft is restored only within the actor and college scope",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  expect(body).toContain('const backupKey="lms:drive-create:"+userId+":"+collegeId');
+  expect(workspace).toContain("userId={context.user.id}");
+  expect(body).toContain("localStorage.setItem(backupKey");
+  expect(body).toContain("localStorage.getItem(backupKey)");
+  expect(body).toContain("localStorage.removeItem(backupKey)");
+  expect(body).toContain("Discard saved browser backup");
+  expect(body).toContain("useGuardedAction");
+ });
 });
