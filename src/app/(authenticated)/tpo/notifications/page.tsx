@@ -90,6 +90,7 @@ export default async function TpoNotificationsPage({
       ) : (
         <>
           <NotificationList
+            variant="tpo"
             items={items}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No notifications yet."}
