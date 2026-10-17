@@ -76,8 +76,8 @@ export async function AppShell({
   return (
     <ToastProvider>
       <PageTitle superAdmin={superAdmin} />
-      <div className="min-h-screen bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface md:flex">
+      <div className="min-h-dvh bg-background text-foreground">\n        <a href="#lms-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:p-3 focus:text-[var(--lms-link-text)] focus:outline-2 focus:outline-[var(--lms-teal-deep)]">Skip to content</a>
+      <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-[var(--lms-sidebar-border)] bg-surface lg:flex">
         <div className="flex min-h-20 items-center border-b border-[var(--lms-sidebar-border)] px-5">
           <div>
             <p className="m-0 text-xs font-bold uppercase tracking-[0.16em] text-primary-text">
@@ -107,7 +107,7 @@ export async function AppShell({
         </div>
       </aside>
 
-      <div className="min-h-screen md:pl-64">
+      <div className="min-h-screen lg:pl-64">
         <header className="sticky top-0 z-10 border-b border-border bg-surface/95 backdrop-blur">
           <div className="mx-auto flex w-full flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
             <div className="flex min-w-0 items-center gap-3">
@@ -163,7 +163,7 @@ export async function AppShell({
         </header>
 
         <ShellConnectivityNotice />
-        <main className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
         </main>
       </div>
