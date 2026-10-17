@@ -118,7 +118,12 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(sourceCode).toContain("ugPercentage:shareUg?percentage(");
   expect(sourceCode).toContain("tenthPercentage:shareTenth?percentage(");
   expect(sourceCode).toContain("twelfthOrDiplomaPercentage:shareTwelfth?");
-  expect(sourceCode).not.toContain("profileDocument");
+  expect(sourceCode).toContain("projectRecruiterProfileLinks(profileDocument");
+  expect(sourceCode).toContain("applications.map(({membershipId,profileDocument,...row})");
+  expect(sourceCode).toContain("placementCompanyVisibilitySettings.showCgpaExact");
+  expect(sourceCode).toContain("placementCompanyVisibilitySettings.showTenthTwelfth");
+  expect(sourceCode).toContain('visibility?.cgpa');
+  expect(sourceCode).toContain('visibility?.academic');
   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain("selectedApplicant.ugPercentage");
   expect(page).toContain("selectedApplicant.tenthPercentage");
@@ -194,7 +199,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const component=source("src/components/hr/recruiter-profile-details-editor.tsx");
   expect(component).toContain('document.addEventListener("click",intercept,true)');
   expect(component).toContain('title="Discard your unsaved profile changes?"');
-  expect(component).toContain('consequence="Your unsaved changes will be lost."');
+  expect(component).toContain('consequence="Your changes have not been saved."');
   expect(component).toContain('runGuarded(()=>fetch(');
   expect(component).toContain("Unsaved changes");
  });
