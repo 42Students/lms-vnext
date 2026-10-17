@@ -131,6 +131,14 @@ export function summarizeTpoAuditKinds(
 export function formatTpoAuditEventType(
   value: string,
 ): string {
+  const legacy:Record<string,string>={
+   PLACEMENTS_COLLEGE_RULES_UPDATED:"Placement rules changed",
+   "placements.tpo_job_type.created":"Job types changed",
+   "placements.tpo_job_type.updated":"Job types changed",
+   "placements.tpo_job_type.deleted":"Job types changed",
+   "placements.tpo_bulk_undo.applied":"Bulk action undone",
+  };
+  if(Object.prototype.hasOwnProperty.call(legacy,value))return legacy[value];
   return value
     .replaceAll(/[._]/g, " ")
     .replaceAll(/\s+/g, " ")

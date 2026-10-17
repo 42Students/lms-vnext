@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {headers} from "next/headers";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementCalendarWorkspace } from "@/components/placements/placement-calendar-workspace";
 import { hasMembershipRole } from "@/modules/identity/context";
-import {parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
+import {initialTpoCalendarView,parseTpoCalendarUrl} from "@/modules/placements/tpo-calendar-url-model";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 
 type SearchParams = {
@@ -32,8 +33,9 @@ export default async function TpoCalendarPage({
   await requirePersistedTpoMembership(context,context.membership.collegeId);
   const raw=await searchParams;
   const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+  const agent=(await headers()).get("user-agent")??"";
   const parsed=parseTpoCalendarUrl({
-    date:first(raw.date),view:first(raw.view),company:first(raw.company),kind:first(raw.kind),
+    date:first(raw.date),view:first(raw.view)??initialTpoCalendarView(agent),company:first(raw.company),kind:first(raw.kind),
   });
   if(!parsed.success)return <main className="space-y-4">
     <h1 className="text-xl font-semibold">Invalid calendar filters</h1>

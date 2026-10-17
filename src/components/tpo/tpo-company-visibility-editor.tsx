@@ -4,9 +4,9 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 const labels={
- showCgpaExact:"Recruiters see exact CGPA",
- showTenthTwelfth:"Recruiters see board percentages",
- showProjectLinks:"Recruiters see project links",
+ showCgpaExact:"Show the exact UG % (off shows a band such as 75–80%)",
+ showTenthTwelfth:"Show 10th and 12th / diploma %",
+ showProjectLinks:"Show project links (GitHub, portfolio)",
  showAssessmentScores:"Recruiters see assessment scores",
  showAttendance:"Recruiters see attendance",
 } as const;
@@ -33,6 +33,7 @@ export function TpoCompanyVisibilityEditor({collegeId,initial,version}:{
  return <section aria-label="Edit company visibility" className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h3 className="font-semibold">What companies see</h3>
   <p className="text-xs text-muted-foreground">Your choices are saved in the college&apos;s sharing policy. Individual recruiter rights, consent and export permissions remain separate safeguards.</p>
+  <section aria-label="How sharing works" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm"><h4 className="font-semibold">How sharing works</h4><ul className="mt-2 list-disc space-y-1 pl-5"><li>The college sets the fields recruiters may see.</li><li>Learner consent and verification still apply.</li><li>Some values appear only as a band when exact sharing is off.</li><li>These settings do not grant access to a learner or drive.</li><li>Changes to sharing settings affect future views and exports.</li></ul></section>
   {Object.entries(labels).map(([key,label])=><label key={key} className="flex min-h-11 items-center justify-between gap-3 border-b border-border py-2 text-sm">
    <span>{label}</span>
    <input type="checkbox" disabled={busy} checked={values[key as keyof Choice]}
