@@ -368,6 +368,7 @@ export function FacultyCourseWorkspace({
   display,
   view = "ALL",
   contentFilter="ALL",
+  selectedLessonId=null,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
@@ -376,6 +377,7 @@ export function FacultyCourseWorkspace({
   display: CourseDisplayContentView | null;
   view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
   contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
+  selectedLessonId?:string|null;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -533,6 +535,22 @@ export function FacultyCourseWorkspace({
               {label}
             </Link>)}
           </nav>
+          {selectedLessonId?<nav aria-label="Lesson navigation" className="flex flex-wrap items-center gap-3 rounded-lg border border-border p-3">
+            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
+              Back to Blueprint
+            </Link>
+            {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
+              <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
+                {index>0?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1].id)}>
+                  Previous lesson
+                </Link>:null}
+                <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
+                {index+1<workspace.lessons.length?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1].id)}>
+                  Next lesson
+                </Link>:null}
+              </div>
+            ):null)}
+          </nav>:null}
           {workspace.lessons.length === 0 ? (
             <EmptyState
               title="No lessons yet"
@@ -540,8 +558,9 @@ export function FacultyCourseWorkspace({
             />
           ) : (
             <div className="space-y-5">
-              {workspace.lessons.map(
-                (lesson, lessonIndex) => {
+              {workspace.lessons.filter(lesson=>!selectedLessonId||lesson.id===selectedLessonId).map(
+                (lesson) => {
+                  const lessonIndex=workspace.lessons.findIndex(row=>row.id===lesson.id);
                   const visibleContents=lesson.contents.filter(item=>
                     contentFilter==="ALL"||
                     contentFilter==="LECTURES"&&["VIDEO","YOUTUBE"].includes(item.contentType)||
@@ -594,6 +613,20 @@ export function FacultyCourseWorkspace({
                         </span>
                       </summary>
 
+                      {!selectedLessonId?<Link href={"?lesson="+encodeURIComponent(lesson.id)}
+                        className="mb-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        View lesson details →
+                      </Link>:<div className="mb-3 flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.contents.length} content
+                        </span>
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.assignments.length} assignments
+                        </span>
+                        <span className="rounded-full border border-border bg-surface px-2 py-1">
+                          {lesson.quizzes.length} quizzes
+                        </span>
+                      </div>}
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
