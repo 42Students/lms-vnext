@@ -1,0 +1,70 @@
+{
+  "version": "audit1-2026-10-18",
+  "synthetic": true,
+  "approval": "pending UX orchestrator and browser baselines",
+  "viewports": [
+    320,
+    360,
+    390,
+    768,
+    1280
+  ],
+  "states": [
+    "ready",
+    "loading",
+    "empty",
+    "error",
+    "partial",
+    "denied",
+    "readOnly",
+    "stale"
+  ],
+  "references": [
+    {
+      "role": "collegeAdmin",
+      "route": "/college/contacts",
+      "archetype": "directory",
+      "rows": [
+        {
+          "name": "Example Contact",
+          "status": "ACTIVE",
+          "email": "masked@example.invalid",
+          "phone": "••••1234"
+        }
+      ]
+    },
+    {
+      "role": "faculty",
+      "route": "/teacher/profile/details",
+      "archetype": "editor",
+      "profile": {
+        "displayName": "Example Faculty",
+        "version": 1
+      }
+    },
+    {
+      "role": "mentor",
+      "route": "/mentor/projects/example-project",
+      "archetype": "detailTabs",
+      "tabs": [
+        "Overview",
+        "People & Meetings",
+        "Releases and Sprints",
+        "Board",
+        "Task Allocation",
+        "Resources",
+        "Activity"
+      ]
+    },
+    {
+      "role": "tpo",
+      "route": "/tpo/home",
+      "archetype": "dashboard",
+      "metrics": {
+        "drives": 4,
+        "pending": 2,
+        "messages": 0
+      }
+    }
+  ]
+}
