@@ -239,9 +239,9 @@ Every row is an existing `docs/orchestrator/ui-ux/pages-*.md` route. “Apply”
 
 | Page | Archetype → key components |
 |---|---|
-| `/learn` | dashboard → PageHeader StatTile Card |
+| `/learn` | **Alias only**: redirects to `/learn/courses`; audit that directory, not a fictitious learner dashboard |
 | `/learn/courses` | directory → FilterBar DataTable-as-cards Pagination |
-| `/learn/courses/[deliveryId]` | detail → Breadcrumbs Tabs Card |
+| `/learn/courses/[deliveryId]` | **Alias only**: redirects to `/learn/courses/[deliveryId]/home`; actual leaf: `[deliveryId]/[...courseTab]/page.tsx` → detail / workspace tabs and lesson composition |
 | `/learn/allAssignments/[assignmentId]` | form/detail → Card FileUpload ConfirmDialog |
 | `/teacher/courses` | directory → DataTable Pagination |
 | `/teacher/courses/[deliveryId]/gradebook` | report → StatTile DataTable |
@@ -253,7 +253,7 @@ Every row is an existing `docs/orchestrator/ui-ux/pages-*.md` route. “Apply”
 | `/tpo/placements/jobs/[jobId]` | drive workspace detail → Tabs Card ConfirmDialog |
 | `/tpo/messages` | inbox → DataTable Card |
 | `/tpo/calendar` | calendar → FilterBar Card |
-| `/college/people` | directory → FilterBar DataTable Pagination |
+| `/college/people` | **Alias only**: redirects to `/college/contacts`; audit the real Contacts directory/filters, not the alias |
 | `/college/contacts` | directory → FilterBar DataTable mobile cards |
 | `/college/branding` | settings/editor → Card Input FileUpload |
 | `/recruiter/drives` | directory → FilterBar DataTable |
@@ -307,3 +307,237 @@ Award whole points only on witnessed evidence; no credit for untested claims. A 
 - Dashboard: `src/app/(authenticated)/tpo/home/page.tsx` (TPO): StatTiles with existing legacy row titles, real metrics and next-up queue.
 
 Do not tick other lanes' UX checklists until a browser audit actually passes. These four pages are patterns, not fixtures; keep their original permission/data integrations and exact legacy wording.
+
+## 15. Audit-1 precise mobile exceptions for complex pages
+
+These override the generic archetype *only in composition*, not brand, text or permissions. Use the **same authorized data** at every viewport. The full column set in TPO roster is specified by `src/components/tpo/tpo-students-spreadsheet.tsx`; the grid is `tpo-spreadsheet-grid.tsx`, not the **Branch intelligence** aggregation table in the route. Both are now phone cards.
+
+### 15.1. TPO Students (source `/tpo/students`, `TpoStudentsSpreadsheet`)
+
+| Priority | 320/360/390 fields and actions | Tablet/desktop and permission |
+|---|---|---|
+| Primary/always visible | Student (click to open panel), student number, Stage, Profile verification, Needs attention, Offers waiting | `mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]}`; keep spreadsheet table at ≥768px |
+| Action/always visible | Open student panel; Outcome; **After college** editor; Placement history; Change participation | Render actual actions **outside** More details; disable unauthorized mutations but retain authorized read-only status |
+| Details/disclosure | Branch, Batch, gender, year, masked phone, degree, CGPA, 10th/12th/diploma/UG, backlogs, eligibility reason/level/date, registration, applications, all remaining visible configured columns | Accessible disclosure preserves every permitted column; only `exportOnly` email never goes on card |
+| Selection | Select student row and Select all filtered students, 44×44 target including label | Bulk selection rights depend on server-scoped authorized membership IDs; never select invisible college data |
+| Aggregates | Branch intelligence phone card: Branch link, Learners, Registered, Applying, Rate; disclosure: Placed in pool and overall | Desktop `min-w-[52rem]` table is **hidden** on phone; aggregation not a student roster |
+| States | denied: no unpermitted bulk actions; read-only: status and history remain; unknown verification: “Verification unavailable”, not “Verified”; stale: receipt/reload before mutation | No assumption that absent CGPA, phone, joining outcome, or readiness equals zero |
+
+```text
+320px / 360px / 390px (16px gutter, no sideways page scroll):
+[Students roster][results 25/page]
+[Search......................][Filters (N)]
+[Student + student number]     ← tap opens authorized quick panel
+[Stage] [Verification]
+[Needs attention] [Offers waiting]
+[Select][Open panel][After college][History][Participation] ← wrap 44px actions
+[More student details ▾]      ← every nonexport field recoverable
+[Previous] [Next]
+```
+
+### 15.2. Recruiter/HR job detail (`/hr/placements/jobs/[jobId]` and `/recruiter/drives/[jobId]` re-export)
+
+| Order | Phone behaviour | Permission/state |
+|---|---|---|
+| 1 | PageHeader: actual job title, status, parent Drives link | No access → existing permission redirect/denied, no stale recruiter identifiers |
+| 2 | Tabs in *existing legacy order*: Overview, Applicants, Rounds, Offers, Requests, Discussion when authorized | Tabs are same-tab routes; disabled/unavailable tabs inert, no opening external popups |
+| 3 | Applicants: name, stage, application status; actions Review applicant and next/previous (44px); advanced criteria under labelled details | Only recruiter-scoped applicants; unavailable stage count “—”, not zero |
+| 4 | Rounds: round name, kind, date, interview slot, result-entry action; collision indicator+affected candidate names | Interviews must keep timezone IST and show conflicting room/person before saving |
+| 5 | Offers: candidate, offer state, acceptance deadline; full stage history under disclosure | Selection mutations require server permissions and explicit confirmation |
+| 6 | External portfolio/GitHub/project links: same-tab `http(s)` anchor plus selectable URL option when host blocks | Never `target=_blank` or `window.open`, never paste untrusted scheme as link |
+
+```text
+320/360/390px:
+[← Drives][Job title + status]
+[Overview Applicants Rounds ... →]  (scrollable, 44px links)
+[Applicants | filtered total]
+[Candidate][Stage][Status]
+[Review applicant] [Next/Previous]
+[More criteria ▾]
+[Round title][IST start/end][Room conflict ⚠ + textual description]
+[Edit / Enter results (only if allowed)]
+```
+
+### 15.3. Placement calendar (`placement-calendar-workspace.tsx`)
+
+| Phone priority | Exact behaviour |
+|---|---|
+| P0 | Active week/day label with Previous/Today/Next 44px controls; `en-IN` / `Asia/Kolkata` labels |
+| P1 | Chronological agenda cards: meeting/round name, start–end IST, company, room, participants, status |
+| P2 | Collision and unavailable resources shown as explicit alert-text + role-appropriate action; do not hide overlap |
+| P3 | Filter categories/dates in BottomSheet; retain draft and URL until Apply; no 320px timetable grid |
+| P4 | Desktop weekly grid at ≥1024px; tablet 640–1023 shows agenda by default with opt-in weekly grid in scroll region |
+| Permission | TPO may act on scoped drives, college admin sees college scope, super admin must use acting-college scope; read-only agenda keeps accessible details |
+
+```text
+320/360/390px:
+[Calendar / period]
+[< Previous][Today][Next] [Filters (N)]
+[Date heading]
+[09:30–10:30 IST] [Meeting type]
+[Company • Room • Attendees]
+[Conflict: ...] [View/reschedule (if permitted)]
+[Date heading]
+[Next agenda item]
+```
+
+### 15.4. Native host/back/keyboard capability contract
+
+| Capability | Browser | Android WebView | iOS WKWebView | Required fallback |
+|---|---|---|---|---|
+| Back with modal open | same-URL modal history marker; first Back dismisses | Host **must** dispatch cancelable `lms:native-back` before native navigation, obey `dispatchEvent() === false` | Same host event when toolbar swipe/back occurs | If host cannot dispatch, same-URL history marker handles conventional webview back; never `router.back()` to exit quiz |
+| On-screen keyboard | `visualViewport.resize`/scroll updates `--lms-visual-height` | Resize, scroll active input, keep footer in overlay scrolling container | Same plus bottom safe area | Full-screen dialog scrollable; no fixed save bar outside panel |
+| Native file picker | `input[type=file]` | Host enables input chooser and grants temporary read permission | WKWebView file chooser if allowed | `FileUpload fallback` parent-supplied URL/path control where domain supports it; never pretend file saved |
+| Download/share | same-tab URL and normal anchor | Host may intercept safe URL | Host may intercept safe URL | Visible selectable URL and return path; no popup-only action |
+| Safe area | `env(safe-area-inset-*)` | edge-to-edge insets from host | notch/home indicator | `pb-[max(1rem,env(safe-area-inset-bottom))]` on footer |
+| Zoom/selection | leave default | don't intercept pinch/text selection | don't intercept long press | input font ≥16px; touch targets ≥44px |
+
+**Host Back integration:**
+```js
+const backEvent = new Event("lms:native-back", { cancelable: true });
+const handled = !window.dispatchEvent(backEvent);
+if (!handled) nativeNavigateBack();
+```
+Do not send a second Back while `pending`; treat a prevented non-dismissible modal as handled without dismissing. On phone keyboard `visualViewport.height` is applied to the overlay's CSS custom height; footer stays *inside* the scrolling modal. If an embedded host lacks `visualViewport`, use `window.innerHeight`. A sticky nonmodal action bar must not remain fixed when an input is focused and viewport height is less than 480px—move actions into normal document flow with `focus-within:static` (or put them in the scrollable form). Do not persist unsaved personal forms locally unless the permission/privacy owner approves: use **in-memory draft only**, `beforeunload` plus explicit app-route guard, no autosave and no silent clear.
+
+**Exact shell:** sidebar is `w-64=256px` at `lg:1024px` and up, phone/tablet menu below `lg`; shell content `lg:pl-64`. Container `px-4` until 640px, `sm:px-6` at ≥640, `lg:px-8` at ≥1024. Two columns only at ≥1024. 768px remains one-column content with full-width navigation trigger.
+
+### 15.5. Guarded form with focus-to-first-error (use with FormField)
+
+```tsx
+"use client";
+import { useRef, useState, type FormEvent } from "react";
+import { FormField } from "@/components/ui/form-field";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+function ProfileForm({ initial }: { initial: string }) {
+  const [value, setValue] = useState(initial);
+  const [error, setError] = useState("");
+  const [pending, setPending] = useState(false);
+  const inFlight = useRef(false);
+  async function save(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (inFlight.current) return;
+    if (!value.trim()) {
+      setError("Required"); // Replace with exact legacy field error if available
+      requestAnimationFrame(() => document.getElementById("profile-name")?.focus());
+      return;
+    }
+    inFlight.current = true;
+    setPending(true);
+    try {
+      // await authorized version-aware server mutation; preserve value on failure
+    } finally { inFlight.current = false; setPending(false); }
+  }
+  return <form onSubmit={save} className="space-y-6" aria-busy={pending}>
+    <FormField id="profile-name" label="Name" required error={error}>
+      {field => <Input {...field} value={value} onChange={e => {
+        setValue(e.target.value);
+        if (error) setError("");
+      }} onBlur={() => setError(value.trim() ? "" : "Required")} />}
+    </FormField>
+    <Button type="submit" loading={pending}>Save</Button>
+  </form>;
+}
+```
+
+### 15.6. Component API/action examples (no guessed props)
+
+Every entry supplies a concrete caller obligation **in addition to** §5 and §5.1. Props not listed are the native element props if the component wraps a native element. “Loading” on passive components is an enclosing Skeleton state, not a dead prop.
+
+| Implementation | Typed call/example | Don't / invalid or disabled and phone test |
+|---|---|---|
+| `button.tsx` | `<Button variant="primary" size="md" loading={pending} type="submit">Save</Button>` | no white-on-teal; disabled native, no duplicate submit, ≥44px |
+| `input.tsx` | `<FormField id="email" label="Email" error={error}>{p=><Input {...p} type="email" inputMode="email" />}</FormField>` | don't use placeholder alone; `aria-describedby` owned by FormField, 16px on phone |
+| `select.tsx` | `<FormField id="stage" label="Stage">{p=><Select {...p}><option value="all">All</option></Select>}</FormField>` | never select silently on disabled, keyboard native |
+| `textarea.tsx` | `<FormField id="note" label="Note">{p=><Textarea {...p} rows={4} />}</FormField>` | keep typed work after server error |
+| `selection-controls.tsx` | `<Checkbox name="selected" label="Select student" checked={yes} onChange={e=>setYes(e.target.checked)} />`; `Radio name="scope" value="college" label="College" />`; `<Switch label="Enabled" checked={yes} onChange={...}/>` | native checked; never use a fake toggle; 44px label |
+| DatePicker via `input.tsx` | `<Input id="date" type="date" />` | no UTC conversion of bare date; parent FormField and validation |
+| `dialog.tsx` | `<Dialog open={open} onOpenChange={setOpen} title={title} footer={<Button>Save</Button>}>...</Dialog>` | no dismiss when pending; `dismissible={false}` prevents Back |
+| `drawer.tsx` | `<Drawer open={open} onOpenChange={setOpen} title={title}>...</Drawer>` | tablet side; phone full screen; scroll inside |
+| `bottom-sheet.tsx` | `<BottomSheet open={open} onOpenChange={setOpen} title="Filters">...</BottomSheet>` | don't remount uncontrolled form on resize |
+| `confirm-dialog.tsx` | `<ConfirmDialog open={open} onOpenChange={setOpen} title={title} description={consequence} onConfirm={confirm} pending={pending}/>` | no window.confirm; cancel focus; pending locks |
+| `confirm-action-dialog.tsx` | `<ConfirmActionDialog open={open} onCancel={close} onConfirm={confirm} title={title} consequence={detail}/>` | inherited legacy prop names work |
+| `toast.tsx` | `useToast().showToast({title:"Saved",tone:"success"})` in Provider | don't use toast as only validation; 44px dismiss |
+| `tabs.tsx` | panel: `<Tabs items={items} value={value} onValueChange={setValue} ariaLabel="Sections"/>`; route: `<Tabs renderPanel={false} items={links} value={value} ariaLabel="Sections"/>` | disabled links render `aria-disabled` text; panels without callback noninteractive |
+| `data-table.tsx` | `<DataTable rows={rows} columns={columns} getRowKey={r=>r.id} rowHref={r=>"/detail/"+r.id}/>` | specify primary, secondary, action priority; `hidden` needs explicit reason plus detail route; don't bury actions |
+| `card.tsx` | `<Card as="section" title={legacyTitle} footer={actions}>...</Card>` | no hover-only controls; semantic h2 follows h1 |
+| `status-badge.tsx` | `<StatusBadge tone="warning">Awaiting</StatusBadge>` | keep literal status text; don't rely on colour |
+| `empty-state.tsx` | `<EmptyState title={legacyEmpty} description={legacyHint} action={authorizedLink}/>` | never show if fetch failed; no invented copy |
+| `error-state.tsx` | `<ErrorState description={safeMessage} action={<Button onClick={retry}>Retry</Button>}/>` | no stack/status code, preserve draft |
+| `skeleton.tsx` | `<Skeleton variant="row" count={5} label="Loading students" />` | one live status, no duplicate labels |
+| `loading-state.tsx` | `<LoadingState label="Loading workspace…"/>` | loading not zero/empty |
+| `page-loading.tsx` | `<PageLoading label="Loading…" variant="card" count={3}/>` | 12s visible retry, no perpetual spinner |
+| `pagination.tsx` | `<Pagination page={page} pageCount={pages} hrefForPage={n=>makeHref(n)}/>` | preserve URL filters; route announcer re-focuses main |
+| `filter-bar.tsx` | `<FilterBar search={searchControl} filters={getForm} activeCount={n}/>` | one mounted subtree; always-visible Search, sheet below 640px |
+| `page-header.tsx` | `<PageHeader title={legacyTitle} actions={actions}/>` | exactly one page h1; actions wrap on 320px |
+| `breadcrumbs.tsx` | `<Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:"Overview"}]}/>` | last crumb current, never use browser back alone |
+| `tooltip.tsx` | `<InfoPopover content={help}><span aria-label="More information">ⓘ</span></InfoPopover>` | not hover-only; include essential help permanently |
+| `file-upload.tsx` | `<FileUpload label="Resume" accept=".pdf,application/pdf" maxBytes={5_000_000} onFiles={setFiles} fallback={urlControl} />` | accept is hint; client checks size/type and clears stale parent on error; server revalidates |
+| `avatar.tsx` | `<Avatar name={personName} src={approvedUrl} size="md"/>` | fall back to initials on image error |
+| `stat-tile.tsx` | `<StatTile label="Students" value={count ?? "—"} href="/tpo/students" />` | en-IN grouping; unavailable != zero |
+| `inline-notice.tsx` | `<InlineNotice tone="info" message={legacyMessage}/>` | message may be persistent; no raw server error |
+| `third-party-link.tsx` | `<ThirdPartyLink href={approvedHttpsUrl} label="Join meeting"/>` | same tab + selectable URL; no popup-only behaviour |
+| `form-field.tsx` | `<FormField id="name" label="Name" helper={hint} error={error}>{p=><Input {...p}/>}</FormField>` | owns label, `aria-invalid`, `aria-describedby` and adjacent alert |
+
+### 15.7. Eight-state specimens for every archetype
+
+Use existing copy from `docs/audit/legacy-copy-A.md`, `legacy-copy-B.md`, or the account `docs/parity/*.md` for the text. Bracketed labels below are **state metadata**, not new user-facing strings. Every denied action is absent or inert by central permission, never “Retry”.
+
+| Archetype | READY | LOADING | EMPTY | ERROR | PARTIAL | DENIED | READ-ONLY | STALE |
+|---|---|---|---|---|---|---|---|---|
+| Dashboard | real scoped KPIs + next | KPI×4 skeleton | EmptyState authorized setup | ErrorState retry main fetch | remaining KPIs, `—` auxiliary | ErrorState no retry | numbers without mutate | timestamp banner/Refresh |
+| Directory | filtered rows/page | row×5 skeleton | matching zero + clear | ErrorState retains query | rows plus notice | no unauthorized row | links to detail only | refresh without reset |
+| Detail | tab summary | card+rows skeleton | missing record not-found | ErrorState parent link | good tabs render, failed tab notice | no sensitive tab | status and history remain | version conflict + Refresh |
+| Editor | editable FormField | form skeleton before mount | blank first-time form | inline errors, preserve | some sections fail, draft kept | no Save | disabled with reason | safe reload confirmation |
+| Wizard | current step/save draft | step card skeleton | first step ready | inline retry | completed steps remain | block transition | preview only | version token refresh |
+| Calendar | agenda dates/links | agenda×5 skeleton | empty day with next date | ErrorState retains date | some event sources unavailable notice | no restricted events | only View action | calendar refresh |
+| Report | chart text+table | kpi×4 skeleton | no period data | ErrorState retry | other metrics + unavailable label | no sensitive report | exports restricted | timestamp data stale |
+| Settings | named groups | form skeleton | default group from server | inline and summary error | unrelated groups continue | no mutation | disabled controls, reason | version conflict |
+| Inbox | thread rows | row×5 skeleton | no messages | retry keeps draft | one thread fails notice | no private thread | archived transcript | refresh unread |
+| Public/auth | login field group | form skeleton | login always renders | inline service problem | only optional org info missing | no access state with parent link | form disabled if service closed | expired code banner |
+| Error/empty | readable heading/recovery | bounded skeleton if retry | EmptyState | ErrorState + Retry | render available portion | no Retry for 403 | safe read-only content | Retry/Refresh after stale |
+
+**Per-role state-route contract:** Learner `/learn/courses` (directory), `/quiz` (wizard), `/learn/allAssignments/[assignmentId]` (form); Faculty `/teacher/profile/details` (editor), `/teacher/courses/[deliveryId]/gradebook` (report), `/teacher/calendar` (calendar); Mentor `/mentor/projects/[projectId]` (detail), `/mentor/reviews` (directory), `/mentor/calendar` (calendar); TPO `/tpo/home` (dashboard), `/tpo/students` (dense directory), `/tpo/calendar` (calendar), `/tpo/messages` (inbox); College Admin `/college/contacts` (directory), `/college/branding` (settings), `/college/batch-promotion` (wizard); Recruiter `/recruiter/home` (dashboard), `/recruiter/drives/[jobId]` (detail), `/recruiter/messages` (inbox); Super Admin `/admin/colleges` (directory), `/admin/module-access` (settings), `/admin/audit` (report). The authority for disabled/denied is the central permission/context service, not a role guessed from the route.
+
+## 16. Atomic 100-point scoring ledger — supersedes subjective §14 interpretation
+
+**Each atom scores 0 or full points with objective evidence.** A check that has no active form, table, or modal still has a testable “not applicable” counterpart: inspect whether any control or route triggers it; award full points only if the page has no such operation. No discretionary redistribution or guessed credit. Record source commit, viewport, test URL, screenshot hash, axe run and keyboard/manual transcript per atom. Any unexecuted required check scores zero. A BLOCKER/MAJOR prohibits PASS independently of score.
+
+| ID | Points | Exactly when awarded |
+|---|---:|---|
+| BR1 | 5 | No raw off-palette interactive colour; tokens match globals/parity |
+| BR2 | 5 | All visible role copy/nav labels match canonical legacy text |
+| BR3 | 5 | All sampled text ≥4.5:1 (large ≥3:1), controls ≥3:1; automated pair report attached |
+| MO1 | 6 | Screenshots at 320/360/390 show zero document horizontal scroll and no clipped primary content |
+| MO2 | 4 | All actionable bounds measured ≥44×44, adjacent touch spacing ≥8px |
+| MO3 | 4 | Keyboard open+notch/home bar at phone widths leaves Save and Back usable |
+| MO4 | 4 | All table/filter/modal phone compositions match §4/15 |
+| MO5 | 2 | Native Back and upload/download alternatives exercised or absence of these capabilities evidenced |
+| ST1 | 3 | Loading skeleton reserves same approximate height as ready view |
+| ST2 | 4 | Empty, error and retry screens exercised with authorized action |
+| ST3 | 4 | Partial, denied, read-only, stale injected with correct data scoping |
+| ST4 | 4 | Offline/write error preserves unsent data, no false success |
+| FO1 | 4 | Every field visible label, blur+submit error, focus first invalid field |
+| FO2 | 3 | Concurrent submits suppressed, pending feedback announced |
+| FO3 | 3 | Destructive guard and unsaved draft/route guard tested (or none exists and evidenced) |
+| AX1 | 3 | Exactly one main + one h1, landmarks and heading levels in order |
+| AX2 | 6 | Keyboard Tab/Space/Enter/Escape/arrows, modal focus trap/return tested |
+| AX3 | 5 | Correct accessible name, described error and async announcements tested |
+| AX4 | 3 | All statuses accompanied by text; colour-independent meaning |
+| AX5 | 3 | reduced-motion system setting produces no essential animation |
+| HI1 | 3 | One primary action and PageHeader as §3, exact legacy label |
+| HI2 | 3 | Spacing/radius/type values all from §2 (no unreviewed one-offs) |
+| HI3 | 4 | Uses shared patterns, no duplicate role-specific primitives |
+| PE1 | 4 | ≤100 rows without pagination OR page/virtualization beyond 100; no major layout shift |
+| PE2 | 3 | Delayed/faulting auxiliary data bounded, page remains useful |
+| PE3 | 3 | Linked passing typecheck, tests, Playwright and WebView/AT evidence on same commit |
+| **Total** | **100** | 15+20+15+10+20+10+10 |
+
+**Benchmark scorecards (example evidence, not claimed test runs):** A 320px TPO student page with horizontal table, 40px actions and no error recovery scores BR=10, MO=0, ST=7, FO=7, AX=10, HI=6, PE=4 → **44/100 BLOCKED**. A Faculty profile editor with correct labels but no saved draft on disconnect scores 15+18+8+7+15+10+6 = **79/100 BLOCKED**. A fully verified modern directory meeting every test atom, with 25-row pagination and all eight fixture states, scores **100/100 candidate PASS** only after the three audits; this is a hypothetical benchmark, not a claim that a current route earned 100.
+
+## 17. Anti-drift enforcement and reference screenshots
+
+The repository `scripts/check-ux-anti-drift.mjs` and `npm run ux:guard` are normative for changed shared UI and audited critical routes. Forbidden native confirm/popup and 40px interaction classes must be resolved or enter an explicit expiring waiver recorded in `docs/design-system/UX-GUARD-WAIVERS.md`. Every page PR must attach `320/360/390/768/1280` screenshots, state/permissions fixtures, en-IN/IST and legacy-copy diff, and confirm the per-page §16 ledger. Raw screenshot baselines require an actual Playwright/browser runner and manual approval; **no screenshot hash is invented by documentation**. Golden fixtures are stored at `tests/fixtures/ux-reference-states.json`, with role scope and never real student data. The approval owner is the UX orchestrator after audits 1, 2 and 3.
+
