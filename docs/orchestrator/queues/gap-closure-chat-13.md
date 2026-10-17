@@ -166,3 +166,23 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-placements-projects-77 — OPEN (source): Full template, mentor, submission, release and review mutation audit coverage not yet proven end-to-end
 - SA-placements-projects-87 — DONE (source): Template-college assignment/removal selection and retry
 - SA-placements-projects-93 — DONE (source): Student roster replacement with scoped selection and confirm
+
+## chat-13 register reconciliation batch C — 17 records
+- SA-tenants-modules-31 — DONE: Scoped learner trace shows actual placement-cell decision and provenance.
+- SA-tenants-modules-32 — DONE: Unified access history shows descendant/student/college and bulk audit events.
+- SA-tenants-modules-36 — PARTIAL: Typed SMS fields persist; live provider/DLT consumption not verified.
+- SA-tenants-modules-37 — PARTIAL: Typed course/polling fields persist; runtime progress and chat consumers still use source constants.
+- SA-tenants-modules-38 — PARTIAL: Typed interview/application fields persist; active policy consumer enforcement remains unverified.
+- SA-tenants-modules-39 — PARTIAL: Typed operational caps persist; enforcement consumers are not wired.
+- SA-tenants-modules-40 — DONE: Other stored keys can be added/removed with audit/version checks.
+- SA-tenants-modules-43 — DONE: Activity feed groups by day and retains safe metadata descriptions.
+- SA-tenants-modules-45 — DONE: Activity uses a bounded 50-event page and grouped timeline.
+- SA-tenants-modules-46 — PARTIAL: Recorded import state is shown; manual GitHub Sync now is not configured.
+- SA-tenants-modules-47 — DONE: Finding detail mutations include severity, assignee, duplicate, fix commit, comment and status.
+- SA-tenants-modules-48 — DONE: Audit board has Open / Release / All and severity filters.
+- SA-tenants-modules-50 — DONE: Audit board remembers allowlisted filters in localStorage.
+- SA-tenants-modules-54 — BLOCKED: Inbound mail provider signature/credentials must be verified before intake can run.
+- SA-tenants-modules-60 — NOT-A-GAP: Selected-college broadcast preserves separate receipt/retry/audit records; one synthetic row would obscure deliveries.
+- SA-tenants-modules-67 — DONE: Verification drawer supports section-specific SEND_BACK workflows and feedback.
+- SA-tenants-modules-68 — DONE: Verification drawer shows persisted decision history and masked-ID posture.
+- Never confuse keys stored in platform_setting_overrides with active runtime settings. Provider integration is not implemented by an inventory editor.
