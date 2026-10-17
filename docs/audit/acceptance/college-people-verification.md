@@ -54,3 +54,9 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 | COL-people-27 | DONE (source verified) | Mobile card list at widths below md, bounded desktop overflow and responsive advanced filter grid remain; `college-role-directory-workspace.tsx`; named COL-people-27 test. Browser viewport measurement unexecuted. |
 | COL-people-12 | NOT-A-GAP | vNext OTP lockout is per short-lived sign-in attempt (`ATTEMPT_LIFETIME_SECONDS = 300`, `verificationAttempts`), not a persistent user-account lock. No unsafe account-unlock mutation is introduced. `src/modules/auth/login-service.ts`; named COL-people-12 test. |
 | COL-people-13 | OPEN | Headings now use person-facing language; legacy Mobile, Gender, and live presence metrics require authorized source data and are not fabricated. |
+
+
+## Chat-11 delegated permission decisions — 2026-10-18
+
+| COL-people-12 | NOT-A-GAP | Do not provide a College Admin 'Clear OTP lockout': the five-minute challenge caps verification attempts, not a permanent user-account lock, so a manual unlock would create an unsafe bypass. `src/modules/auth/login-service.ts`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-people-12 does not add unsafe permanent OTP account unlock for five-minute challenges`. |
+| COL-people-20 | DONE (source-level) | Require active Super Admin permission before both grant and revoke of COLLEGE_ADMIN, even when the actor can edit other scoped college roles. `src/modules/people/membership-service.ts`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-people-20 requires Super Admin for granting or revoking the college admin role`. |
