@@ -49,8 +49,8 @@ export async function PlacementJobCreateWorkspace({
     <div className="space-y-6">
       <PageHeader
         eyebrow={eyebrow}
-        title="New placement opportunity"
-        description="Create or reuse an employer, define the job and lock explainable eligibility before the drive begins."
+        title="Create drive"
+        description="Build the opportunity students will see"
       />
       <PlacementJobCreateForm
         collegeId={collegeId}
