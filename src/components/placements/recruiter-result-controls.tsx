@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 type ResultOutcome =
   | "PASS"
@@ -107,6 +108,7 @@ export function RecruiterResultControls({
     return initial;
   });
   const [bulkPending,setBulkPending]=useState<string|null>(null);
+  const [confirmRoundId,setConfirmRoundId]=useState<string|null>(null);
   const bulkSubmissionLock=useRef(false);
   const singleSubmissionLock=useRef(false);
   const [activeRoundId,setActiveRoundId]=useState<string|null>(()=>
@@ -279,14 +281,11 @@ export function RecruiterResultControls({
           "The employer result is staged for the college placement team to review and apply.",
       });
       router.refresh();
-    } catch (error) {
+    } catch {
       showToast({
         tone: "error",
         title: "Could not stage result",
-        description:
-          error instanceof Error
-            ? humanize(error.message)
-            : "Please try again.",
+        description: "Could not save this result. Please try again.",
       });
     } finally {
       singleSubmissionLock.current=false;
@@ -295,7 +294,7 @@ export function RecruiterResultControls({
   }
 
 
-  async function stageSelected(round:RecruiterRound){
+  async function stageSelected(round:RecruiterRound,reviewed=false){
     if(bulkSubmissionLock.current||singleSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
     const chosen=new Set(selected[round.id]??[]);
     const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
@@ -321,11 +320,6 @@ export function RecruiterResultControls({
         description:"Give every selected waitlisted candidate a distinct rank."});
       return;
     }
-    const summary=participants.slice(0,12).map((person,index)=>{
-      const decision=drafts[round.id+":"+person.applicationId]!;
-      return (index+1)+". "+(person.displayName||"Applicant")+" — "+
-        decision.outcome+(decision.outcome==="HOLD"?" (rank "+decision.waitlistRank+")":"");
-    }).join("\n");
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       const raw=draft.scorePercent.trim();
@@ -334,9 +328,7 @@ export function RecruiterResultControls({
         return;
       }
     }
-    if(!window.confirm("Send "+participants.length+" results?\n\n"+
-      summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
-      "\n\nNo result is final until the placement cell applies it."))return;
+    if(!reviewed){setConfirmRoundId(round.id);return;}
     bulkSubmissionLock.current=true;
     setBulkPending(round.id);
     const succeeded:string[]=[];
@@ -814,6 +806,23 @@ export function RecruiterResultControls({
           );
         })
       )}
+      <ConfirmDialog open={confirmRoundId!==null} onOpenChange={open=>{if(!open)setConfirmRoundId(null);}}
+        title={"Send "+(selected[confirmRoundId??""]??[]).length+" results?"}
+        confirmLabel="Send results" pending={bulkPending!==null}
+        description="No result is final until the placement cell applies it."
+        onConfirm={()=>{
+          const round=rounds.find(item=>item.id===confirmRoundId);
+          if(round){setConfirmRoundId(null);void stageSelected(round,true);}
+        }}>
+        <p className="text-sm text-body">Review the current candidate outcomes before sending. The placement cell verifies each result.</p>
+        <ul className="mt-2 max-h-64 space-y-1 overflow-auto text-xs text-body">
+          {(rounds.find(item=>item.id===confirmRoundId)?.participants??[])
+            .filter(person=>(selected[confirmRoundId??""]??[]).includes(person.applicationId))
+            .slice(0,12).map(person=><li key={person.applicationId} className="break-words">
+              {person.displayName??"Applicant"} · {drafts[(confirmRoundId??"")+":"+person.applicationId]?.outcome??"No result"}
+            </li>)}
+        </ul>
+      </ConfirmDialog>
     </div>
   );
 }

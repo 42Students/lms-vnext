@@ -8,7 +8,6 @@ export function TpoNoticeUndoToast({id,version,createdAt}:{
  const [now,setNow]=useState<number|null>(null);
  useEffect(()=>{
   const refresh=()=>setNow(Date.now());
-  refresh();
   const interval=window.setInterval(refresh,250);
   return ()=>window.clearInterval(interval);
  },[]);

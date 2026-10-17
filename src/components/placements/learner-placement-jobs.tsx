@@ -12,6 +12,7 @@ import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail
 import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
+import {LearnerSaveDriveButton} from "@/components/placements/learner-save-drive-button";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -34,6 +35,7 @@ export type LearnerPlacementJobItem = {
     externalApplicationUrl: string | null;
     applicationDeadline: string | null;
     publishedAt?: string | null;
+    stipendPerMonthInr?:number|null;
   };
   roleOption: {
     id: string;
@@ -45,6 +47,9 @@ export type LearnerPlacementJobItem = {
     minimumAnnualCtcInr: number | null;
     maximumAnnualCtcInr: number | null;
     isPrimary: boolean;
+    fixedLpa?:string|null;
+    variableLpa?:string|null;
+    joiningBonusLpa?:string|null;
   };
   company: {
     id: string;
@@ -174,7 +179,7 @@ function JobActions({
   const [showSharedDetails, setShowSharedDetails] = useState(false);
   const { job, roleOption, application } = item;
   const reason = withdrawReason.trim();
-  const validWithdrawalReason = reason.length >= 3 && reason.length <= 2000;
+  const validWithdrawalReason = reason.length >= 3 && reason.length <= 900;
 
   async function apply(
     channel: "INTERNAL" | "EXTERNAL",
@@ -291,7 +296,7 @@ function JobActions({
           onOpenChange={(open) => {
             if (!open && pendingAction === null) setConfirmation(null);
           }}
-          title="Request application withdrawal"
+          title="Withdraw Application"
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
@@ -323,7 +328,7 @@ function JobActions({
             className="mt-2 min-h-28 w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           />
           <p className="mt-2 text-xs text-muted-foreground">
-            3–2000 characters. Requesting withdrawal does not immediately
+            3–900 characters. Requesting withdrawal does not immediately
             remove your application or its results.
           </p>
           {reason.length > 0 && !validWithdrawalReason ? (
@@ -479,11 +484,12 @@ function JobActions({
 }
 
 export function LearnerPlacementJobs({
-  items,snapshotNowIso=null,returnQuery="",
+  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso?:string|null;
   returnQuery?:string;
+  savedJobIds?:readonly string[];
 }) {
   if (items.length === 0) {
     return (
@@ -535,6 +541,8 @@ export function LearnerPlacementJobs({
                   {item.job.description}
                 </p>
               </div>
+              <div className="flex flex-wrap items-center gap-3">
+              <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
               <StatusBadge
                 tone={eligibilityTone(
                   item.eligibility.status,
@@ -542,6 +550,7 @@ export function LearnerPlacementJobs({
               >
                 {humanize(item.eligibility.status)}
               </StatusBadge>
+              </div>
             </div>
 
             <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">

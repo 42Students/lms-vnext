@@ -14,13 +14,17 @@ import {placementTableExists} from "@/modules/placements/staged-tables";
 import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
 
 export const tpoNoticeCreateSchema=z.object({
- title:z.string().trim().min(1).max(255),
- message:z.string().trim().min(1).max(10000),
+ title:z.string().trim().min(1).max(200),
+ message:z.string().trim().min(1).max(8000),
  pinned:z.boolean().default(false),
+ buttonLabel:z.string().trim().min(1).max(60).optional(),
+ buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
  audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
  targetId:z.string().uuid().optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().superRefine((data,ctx)=>{
+ if(Boolean(data.buttonLabel)!==Boolean(data.buttonUrl))
+  ctx.addIssue({code:"custom",path:["buttonUrl"],message:"The link has to start with https://"});
  const target=["BATCHES","BRANCHES","DRIVE"].includes(data.audience);
  if(target&&!data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Choose an audience target"});
  if(!target&&data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Unexpected audience target"});
@@ -44,6 +48,7 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
    organizationId:college.organizationId,collegeId:college.id,
    receiverType:"COLLEGE",receiverId:college.id,senderUserId:context.user.id,
    senderType:"TPO",title:data.title,message:data.message,isPinned:data.pinned,
+   buttonLabel:data.buttonLabel??null,buttonUrl:data.buttonUrl??null,
    scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
   }).returning({id:db10Announcements.id,version:db10Announcements.version});
   if(!notice)throw new Error("NOTICE_CREATE_FAILED");

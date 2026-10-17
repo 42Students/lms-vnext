@@ -4,7 +4,9 @@ export const calendarFollowupCreateSchema = z.object({
   leadId: z.string().uuid(),
   dueAt: z.iso.datetime({ offset: true }),
   note: z.string().trim().max(500).nullable().optional(),
-}).strict();
+}).strict().refine(input=>new Date(input.dueAt).getTime()>Date.now(),{
+ path:["dueAt"],message:"Pick a future date and time",
+});
 
 export const calendarFollowupMoveSchema = z.object({
   dueAt: z.iso.datetime({ offset: true }),

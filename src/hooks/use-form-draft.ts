@@ -1,0 +1,79 @@
+"use client";
+
+/**
+ * GR-60: const { draft, setDraft, restored, clearDraft, dirty } =
+ *   useFormDraft("drive-create", initialForm); clearDraft() after confirmed save.
+ * Browser-only, per-form draft persistence; no data sent to providers.
+ * Do not persist passwords, one-time codes or other secrets.
+ */
+import { useEffect, useRef, useState } from "react";
+
+export function parseStoredDraft<T>(stored: string | null): T | null {
+  if (!stored) return null;
+  try {
+    const value: unknown = JSON.parse(stored);
+    return value !== null && typeof value === "object" ? value as T : null;
+  } catch { return null; }
+}
+
+export function useFormDraft<T>(key: string, initialValue: T, options: {
+  debounceMs?: number; enabled?: boolean;
+} = {}) {
+  const { debounceMs = 500, enabled = true } = options;
+  const storageKey = `lms:draft:${key}`;
+  const [draft, updateDraft] = useState<T>(initialValue);
+  const [ready, setReady] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const [dirty, setDirty] = useState(false);
+  const cleared = useRef(false);
+
+  useEffect(() => {
+    if (!enabled) return;
+    const timer = setTimeout(() => {
+      try {
+        const parsed = parseStoredDraft<T>(localStorage.getItem(storageKey));
+        if (parsed !== null && !cleared.current) {
+          updateDraft(parsed);
+          setRestored(true);
+          setDirty(true);
+        }
+      } catch { /* private browsing may disable storage */ }
+      setReady(true);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [enabled, storageKey]);
+
+  useEffect(() => {
+    if (!enabled || !ready || !dirty || cleared.current) return;
+    const timer = setTimeout(() => {
+      try { localStorage.setItem(storageKey, JSON.stringify(draft)); }
+      catch { /* form remains in React state */ }
+    }, Math.max(0, debounceMs));
+    return () => clearTimeout(timer);
+  }, [enabled, ready, dirty, draft, storageKey, debounceMs]);
+
+  useEffect(() => {
+    if (!dirty) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [dirty]);
+
+  const setDraft = (next: T | ((current: T) => T)) => {
+    cleared.current = false;
+    updateDraft(next);
+    setDirty(true);
+  };
+  const clearDraft = () => {
+    cleared.current = true;
+    setDirty(false);
+    setRestored(false);
+    try { localStorage.removeItem(storageKey); }
+    catch { /* clearing is best effort if storage is unavailable */ }
+  };
+
+  return { draft, setDraft, restored, dirty, clearDraft };
+}
