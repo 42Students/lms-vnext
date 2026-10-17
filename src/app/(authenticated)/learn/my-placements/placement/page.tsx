@@ -5,7 +5,6 @@ import { LearnerPlacementAlerts } from "@/components/placements/learner-placemen
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
 import { LearnerPlacementRegistration } from "@/components/placements/learner-placement-registration";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
-import { PageHeader } from "@/components/ui/page-header";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
 import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
@@ -24,7 +23,7 @@ export default async function LearnerPlacementCellPage() {
   const requestWorkspace=requestRead.value;
   return (
     <div className="space-y-7">
-      <PageHeader eyebrow="My Placements" title="Placement cell" description="Your official offer, request and placement-cell support workspace." />
+
       <section id="registration" className="scroll-mt-24" aria-label="Registration">
         <LearnerPlacementRegistration registration={registration}/>
       </section>
