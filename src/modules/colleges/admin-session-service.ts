@@ -23,7 +23,7 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
    inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]))).limit(1);
  if(!member)throw new AuthorizationError("college.manage");
- return {college,userId,name:member.name};
+ return {college,userId,name:member.name,membershipId:member.id};
 }
 
 /** Only administrators associated with this college may be selected. */
