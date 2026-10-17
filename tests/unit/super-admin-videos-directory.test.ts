@@ -3,7 +3,7 @@ import { adminContentHref,adminContentQuerySchema,contentTypesForKind,adminConte
 describe("Super Admin Videos directory pure model",()=>{
  it("includes hosted and YouTube videos, not other content",()=>{
   expect(contentTypesForKind("VIDEOS")).toEqual(["VIDEO","YOUTUBE"]);
-  expect(adminContentTypeLabel("YOUTUBE")).toBe("YouTube");
+  expect(adminContentTypeLabel("YOUTUBE")).toBe("YouTube Video");
  });
  it("enforces bounded query and stable navigation",()=>{
   expect(adminContentQuerySchema.safeParse({page:0}).success).toBe(false);
