@@ -15,6 +15,7 @@ export function learnerProjectMobileFilterSummary(
   if (query.work === "NO_TASKS") labels.push("No tracked tasks");
   if (query.status) labels.push(query.status === "CURRENT" ? "Current" : query.status);
   if (query.attention === "LEARNER_ACTION") labels.push("Needs my action");
+  if (query.attention === "BLOCKED") labels.push("Blocked");
   if (query.pageSize && query.pageSize !== 25) labels.push(String(query.pageSize)+" rows");
   return {count:labels.length,labels};
 }

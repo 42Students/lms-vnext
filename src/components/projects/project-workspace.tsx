@@ -9,6 +9,7 @@ import {WorkspaceBriefEditor} from "./workspace-brief-editor";
 import {parseWorkspaceBrief} from "@/modules/projects/workspace-brief-model";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
+import { ProjectDeliveryEvidenceDownload } from "./project-delivery-evidence-download";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
@@ -1246,7 +1247,10 @@ export function ProjectWorkspace({
                             {href && row.kind === "LINK" ?
                               <a href={href} rel="noopener noreferrer" target="_blank"
                                 className="text-primary-text hover:underline">Open link · {name}</a> :
-                              <span>File · {name}</span>}
+                              row.kind === "FILE" && typeof row.fileId === "string"
+                                ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}
+                                    fileId={row.fileId} name={name}/>
+                                : <span>File · {name} (not available)</span>}
                           </p>;
                         })}
                       </section>
