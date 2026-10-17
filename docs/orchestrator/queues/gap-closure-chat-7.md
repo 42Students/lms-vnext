@@ -221,7 +221,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-04 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-courses-05 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | FAC-courses-08 | S3 | COPY | FIXED-ON-MAIN |
-| FAC-courses-09 | S3 | PERFORMANCE | OPEN |
+| FAC-courses-09 | S3 | PERFORMANCE | DONE |
 | FAC-courses-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | FAC-courses-12 | S3 | MISSING-PAGE | FIXED-ON-MAIN |
 | FAC-courses-15 | S3 | VALIDATION | FIXED-ON-MAIN |
