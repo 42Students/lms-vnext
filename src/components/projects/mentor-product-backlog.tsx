@@ -42,7 +42,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       Add backlog task
     </button>
     {adding?<form onSubmit={async e=>{
-      e.preventDefault();setBusy(true);setError("");
+      e.preventDefault();setError("");
+      if(!title.trim()||!Number.isInteger(points?Number(points):0)||
+        (points!==""&&(Number(points)<0||Number(points)>1000))){
+        setError("Enter a task title and a valid estimate from 0 to 1000.");return;
+      }
+      setBusy(true);
       try{
         await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
