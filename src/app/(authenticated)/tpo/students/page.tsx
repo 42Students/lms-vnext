@@ -41,6 +41,10 @@ type SearchParams = {
   programId?: string | string[];
   afterCollege?:string|string[];
   legacyStage?:string|string[];minRoundReached?:string|string[];needsAttention?:string|string[];
+  interviewedWith?:string|string[];debarred?:string|string[];
+  gender?:string|string[];birthYear?:string|string[];minSkills?:string|string[];
+  minProjects?:string|string[];minCertifications?:string|string[];minExperiences?:string|string[];
+  hasProfileLinks?:string|string[];
   minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
   passingYear?:string|string[];maxGapYears?:string|string[];marksVerified?:string|string[];isLateralEntry?:string|string[];
   profileStatus?:string|string[];
@@ -76,6 +80,7 @@ function studentsHref(
   filters: {
     journeyState?: string;
     legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
+    interviewedWith?:string;
     gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
     branchId?: string;
     programId?:string;
@@ -104,6 +109,7 @@ function studentsHref(
   }
   if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
   if(filters.debarred!==undefined)params.set("debarred",filters.debarred?"YES":"NO");
+  if(filters.interviewedWith)params.set("interviewedWith",filters.interviewedWith);
   if(filters.gender)params.set("gender",filters.gender);
   if(filters.hasProfileLinks!==undefined)params.set("hasProfileLinks",filters.hasProfileLinks?"YES":"NO");
   for(const key of ["birthYear","minSkills","minProjects","minCertifications","minExperiences"] as const)
@@ -192,6 +198,7 @@ export default async function TpoStudentsPage({
     journeyState:first(raw.journeyState)||undefined,
     legacyStage:first(raw.legacyStage)||undefined,
     debarred:first(raw.debarred)||undefined,
+    interviewedWith:first(raw.interviewedWith)||undefined,
     gender:first(raw.gender)||undefined,birthYear:first(raw.birthYear)||undefined,
     minSkills:first(raw.minSkills)||undefined,minProjects:first(raw.minProjects)||undefined,
     minCertifications:first(raw.minCertifications)||undefined,minExperiences:first(raw.minExperiences)||undefined,
@@ -309,6 +316,7 @@ export default async function TpoStudentsPage({
       profileStatus:query.profileStatus,
       legacyStage:query.legacyStage,
       debarred:query.debarred,
+      interviewedWith:query.interviewedWith,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
       minRoundReached:query.minRoundReached,
@@ -341,6 +349,7 @@ export default async function TpoStudentsPage({
     profileStatus:query.profileStatus,
     legacyStage:query.legacyStage,
       debarred:query.debarred,
+      interviewedWith:query.interviewedWith,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
     minRoundReached:query.minRoundReached,
@@ -414,6 +423,11 @@ export default async function TpoStudentsPage({
             {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
               <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
           </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Interviewed with (company)
+          <input type="search" name="interviewedWith" maxLength={100}
+           defaultValue={query.interviewedWith??""} placeholder="Company name"
+           className="min-h-11 w-40 rounded border border-border bg-surface px-3"/>
         </label>
         <label className="text-sm font-semibold">Debarred
           <select name="debarred" defaultValue={query.debarred===undefined?"":query.debarred?"YES":"NO"}

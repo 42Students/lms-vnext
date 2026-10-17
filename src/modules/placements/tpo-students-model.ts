@@ -143,6 +143,7 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   legacyStage?:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED";
   minRoundReached?:number;needsAttention?:boolean;
+  interviewedWith?:string;
   debarred?:boolean;
   gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
   minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
@@ -478,6 +479,8 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.minExperiences===undefined&&(row.profileFacts?.experiences??0)>=filter.minExperiences)
     .filter(row=>filter.hasProfileLinks===undefined||row.profileFacts?.links===filter.hasProfileLinks)
     .filter(row=>!filter.legacyStage||tpoStudentMatchesLegacyStage(row,filter.legacyStage))
+    .filter(row=>!filter.interviewedWith||(row.interviewedCompanies??[]).some(company=>
+     company.toLocaleLowerCase("en-IN").includes(filter.interviewedWith!.toLocaleLowerCase("en-IN"))))
     .filter(row=>filter.minRoundReached===undefined||
       (row.maximumAppliedRoundSequence!=null&&row.maximumAppliedRoundSequence>=filter.minRoundReached))
     .filter(row=>filter.needsAttention===undefined||tpoStudentNeedsAttention(row)===filter.needsAttention)
