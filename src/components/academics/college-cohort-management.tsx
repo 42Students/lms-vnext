@@ -180,12 +180,10 @@ export function CollegeCohortRowActions({ row, periods }: {
     setPendingLifecycleAction(null);setNotice("");
     startTransition(async () => {
       try {
-        const response = await fetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate", {
+        await apiFetch("/api/college/batches/" + encodeURIComponent(row.id) + "/graduate", {
           method: "POST", headers: { "content-type": "application/json" },
           body: JSON.stringify({ confirm: true }),
         });
-        const payload = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(payload?.error ?? "Graduation failed");
         setNotice(`Marked “${row.name}” as graduated (Completed).`);
         router.refresh();
       } catch (error) {
