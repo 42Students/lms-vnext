@@ -289,7 +289,7 @@ export default async function HrPlacementJobPage({
                   className="mt-2 h-2 overflow-hidden rounded-full bg-border">
                   <div className="h-full bg-primary" style={{width:(stage.ofPrevious??0)+"%"}}/>
                 </div>
-                <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"} · {stage.ofApplied===null?"Applied percentage unavailable":stage.ofApplied+"% of shared applicants"}</p>
               </li>)}
             </ol>
           </section>
