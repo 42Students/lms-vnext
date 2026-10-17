@@ -134,6 +134,33 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
  });
  if(existing.status==="RELEASED"&&existing.offerId)
   return {promoted:1,offerId:existing.offerId,seatNumber:existing.seatNumber};
+ // An earlier issuance can have committed before recording RELEASED. Never
+ // issue another offer when the application already holds one.
+ const active=await getDb().select({
+  id:placementOffers.id,kind:placementOffers.kind,roleTitle:placementOffers.roleTitle,
+  annualCtcInr:placementOffers.annualCtcInr,
+ }).from(placementOffers).where(and(
+  eq(placementOffers.applicationId,next.applicationId),
+  inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(2);
+ if(active.length){
+  const found=active.length===1&&active[0]!.kind==="OFFER"&&
+   active[0]!.roleTitle===next.roleTitle&&active[0]!.annualCtcInr===next.annualCtcInr
+   ?active[0]:null;
+  if(!found)throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
+  await getDb().transaction(async tx=>{
+   await requireTpoJobActor(tx,context);
+   const [saved]=await tx.update(placementWaitlistPromotions).set({
+    status:"RELEASED",offerId:found.id,releasedAt:new Date(),
+   }).where(and(eq(placementWaitlistPromotions.id,existing.id),
+    eq(placementWaitlistPromotions.status,"PENDING"))).returning({id:placementWaitlistPromotions.id});
+   if(!saved)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+   await auditTpoJobChange(tx,context,{id:preview.job.id,title:preview.job.title},
+    "PLACEMENTS_TPO_WAITLIST_PROMOTED","reconciled offer for waitlisted applicant",{
+     applicationId:next.applicationId,offerId:found.id,seatNumber:existing.seatNumber,
+    });
+  });
+  return {promoted:1,offerId:found.id,seatNumber:existing.seatNumber};
+ }
  const offer=await issuePlacementOffer(context,next.applicationId,{
   kind:"OFFER",roleTitle:next.roleTitle,annualCtcInr:next.annualCtcInr,
  });
