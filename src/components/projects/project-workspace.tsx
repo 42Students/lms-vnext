@@ -1465,6 +1465,11 @@ export function ProjectWorkspace({
                         {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
                       </StatusBadge>
                     </div>
+                    {meeting.status==="REQUESTED"? (
+                      <p className="mt-2 text-xs font-semibold text-warning-text">
+                        Waiting for a mentor response
+                      </p>
+                    ) : null}
                     {meeting.requestedByMembershipId ? (
                       <p className="mt-2 text-xs text-body">
                         Organised by {" "}
