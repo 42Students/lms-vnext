@@ -67,3 +67,9 @@ Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integ
 - COL-academic-setup-29/33: `src/components/academics/college-cohort-management.tsx` now uses the guarded `apiFetch` for archive (including expectedUpdatedAt) and graduation, instead of parsing and rethrowing untrusted backend error codes. `tests/unit/chat11-academic-register-regressions-round11.test.ts` has named lifecycle regression cases; tests have not been run.
 
 | COL-academic-setup-21 (chat-14 final sprint) | WRONG | The original assertion is contradicted by persisted department name sorting, result counter, department search and a remembered program rows-per-page setting. `src/components/admin/department-directory.tsx`, `admin-program-directory.tsx`; `tests/unit/chat14-final-col-academic-setup-21.test.ts`. |
+
+### chat-9 reassessment — COL-academic-setup-21
+
+| ID | Status | Evidence |
+|---|---|---|
+| COL-academic-setup-21 | NOT-A-GAP (audit mismatch; source verified) | `src/components/admin/department-directory.tsx` retains sortable Department Name, search/clear, rows-per-page and the result count; `src/modules/admin-ui/department-directory.ts` sorts and pages data. `tests/unit/chat9-final-named-gap-verification.test.ts` → `COL-academic-setup-21 is NOT-A-GAP: departments are sorted, searchable and pageable with a result count`. Retains the chat-14 WRONG finding as a source-verified decision. |
