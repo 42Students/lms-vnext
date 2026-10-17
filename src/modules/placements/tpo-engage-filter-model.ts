@@ -60,7 +60,7 @@ export function filterEngageRoster<T extends EngageRosterRow>(
   if(filters.added&&filters.added!=="ALL"&&
     !isInRange(row.createdAt,filters.added,now))return false;
   if(!query)return true;
-  return [row.name,row.companyName,row.emailNorm,row.phoneNorm].filter(Boolean)
+  return [row.name,row.companyName,row.emailNorm,row.phoneNorm,row.designation,row.source].filter(Boolean)
    .join(" ").toLowerCase().includes(query);
  });
 }
