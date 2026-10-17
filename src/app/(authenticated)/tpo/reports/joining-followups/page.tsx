@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -19,6 +21,7 @@ export default async function TpoJoiningFollowupsPage({searchParams}:{searchPara
  if(report.season)params.set("seasonId",report.season.id);
  params.set("state",report.state);
  return <div className="space-y-6">
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/joining-followups" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
   <PageHeader eyebrow="TPO · Joining" title="Joining follow-ups"
    description="Accepted-offer joining evidence, pending confirmations and deferred dates."
    actions={report.season?<a href={"/api/placements/reports/joining-followups?"+params.toString()}
