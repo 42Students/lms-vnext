@@ -92,6 +92,17 @@ export function ProjectAdminFilters({
       </label>
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
+      {includeRiskSort ? (
+        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+          Sort by
+          <select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
+            className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground">
+            <option value="INACTIVE">Inactive</option>
+            <option value="SEVERITY">Severity</option>
+            <option value="WORKSPACE">Workspace</option>
+          </select>
+        </label>
+      ) : null}
       {includeSubmissionStatus ? (
         <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
           Submission status
