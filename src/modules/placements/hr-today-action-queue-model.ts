@@ -9,6 +9,7 @@ export function buildRecruiterActionQueue(input:{
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
  returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
  changeRequests?:readonly {id:string;jobId:string;jobTitle:string;field:string;createdAt:Date}[];
+ roundsNeedingSlots?:readonly {id:string;jobId:string;jobTitle:string;name:string;scheduledAt:Date|null}[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
   row.companyId===input.companyId&&row.job.archivedAt===null&&
@@ -19,6 +20,12 @@ export function buildRecruiterActionQueue(input:{
    label:"Answer change request · "+row.jobTitle,
    description:"The placement cell asked about "+row.field.toLowerCase().replaceAll("_"," ")+".",
    href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"?tab=requests"}));
+ const slots=(input.roundsNeedingSlots??[])
+  .filter(row=>authorized.has(row.jobId)&&row.scheduledAt!==null)
+  .slice(0,8).map(row=>({key:"slots:"+row.id,tone:"SOON" as const,at:row.scheduledAt,
+   label:"Add slots · "+row.name,
+   description:"Propose an interviewer time for "+row.jobTitle+"; the placement cell confirms the schedule.",
+   href:"/recruiter/drives/"+encodeURIComponent(row.jobId)+"/interview-slots"}));
  const conversations=(input.unreadConversations??[]).filter(item=>item.unread>0)
   .slice(0,5).map(item=>({key:"thread:"+item.id, tone:"SOON" as const, at:null as Date|null,
     label:"Open messages · "+item.label,
@@ -62,7 +69,7 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- const actions=[...changeRequests,...returned,...conversations,...due,...deadlines,...reviews,...notices];
+ const actions=[...changeRequests,...returned,...slots,...conversations,...due,...deadlines,...reviews,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
  return actions.sort((a,b)=>{
   const rank=priority[a.tone]-priority[b.tone];
