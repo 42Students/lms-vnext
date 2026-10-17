@@ -24,7 +24,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-23 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-24 | S2 | VALIDATION | FIXED-ON-MAIN |
 | TPO-drives-26 | S2 | MISSING-ACTION | DONE |
-| TPO-drives-28 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drives-28 | S2 | MISSING-FIELD | OPEN |
 | TPO-drives-31 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-32 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-33 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -45,7 +45,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-25 | S3 | MISSING-FIELD | DONE |
 | TPO-drives-27 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-29 | S3 | MISSING-FIELD | OPEN |
-| TPO-drives-30 | S3 | MISSING-FIELD | OPEN |
+| TPO-drives-30 | S3 | MISSING-FIELD | DONE |
 | TPO-drives-35 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-37 | S3 | VALIDATION | DONE |
 | TPO-drives-38 | S3 | MISSING-FIELD | OPEN |
@@ -206,7 +206,7 @@ Audit: `docs/audit/pages/college/courses-content.md` (and `courses-content-revie
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | COL-courses-content-01 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-courses-content-02 | S2 | MISSING-FIELD | UNCONFIRMED |
+| COL-courses-content-02 | S2 | MISSING-FIELD | OPEN |
 | COL-courses-content-03 | S2 | MISSING-ACTION | OPEN |
 | COL-courses-content-07 | S2 | MISSING-ACTION | DONE |
 | COL-courses-content-08 | S2 | MISSING-FIELD | DONE |
@@ -231,7 +231,7 @@ Audit: `docs/audit/pages/college/attendance.md` (and `attendance-review.md` if p
 | COL-attendance-05 | S3 | STATE | DONE |
 | COL-attendance-06 | S3 | STATE | DONE |
 | COL-attendance-07 | S3 | VALIDATION | NOT-A-GAP |
-| COL-attendance-09 | S3 | COPY | UNCONFIRMED |
+| COL-attendance-09 | S3 | COPY | DONE |
 | COL-attendance-11 | S3 | STATE | DONE |
 | COL-attendance-16 | S3 | PERMISSION | DONE |
 | COL-attendance-10 | S4 | COPY | OPEN |
