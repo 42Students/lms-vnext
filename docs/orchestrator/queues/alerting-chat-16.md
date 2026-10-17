@@ -44,6 +44,11 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 - Queue availability: GR-111..GR-125 are the full assigned list (15 unique items). There are zero additional OPEN checklist rows to close; existing BLOCKED runtime/secret/migration prerequisites are recorded below. New GR IDs must be assigned by the orchestrator before a 30-item round is possible.
 - The refreshed CI report lists no further chat-16 failures after GR-118. Correctness is source-inspected ONLY and must be confirmed by orchestrator CI.
 
+## Latest round — branch synchronized; no unassigned GR IDs invented
+- GR-118 / GR-125: `graceful-alert-ops-contract` still appears on main's 18:50 historical failure list. On the lane branch, the Cloud Logging poll caps work at one complete provider page of 12 per tick, retaining the next-page token and delivery-gated cursor; source assertion still matches. Tests have not been run.
+- GR-118 / GR-119 / GR-125: best-effort overflow flushing and regression sweeping now cannot prevent a separately healthy Cloud Logging poll or 09:00 IST digest; a new named regression test verifies failure isolation and the scheduled call sites. This does not waive the durable lease or provider-delivery conditions.
+- OPEN allocation: zero additional GR-111..GR-125 rows. The request for 30+ new closures cannot be completed until additional GR IDs are assigned; do not mark runtime-dependent items done without migration and cluster evidence.
+
 ## Notes (blockers, one line each)
 - RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including daily counts, observed-event deduplication, and resumable Cloud Logging page-window columns before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.

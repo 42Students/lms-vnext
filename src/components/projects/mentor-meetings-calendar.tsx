@@ -46,9 +46,6 @@ function MeetingRow({
         {" – "}{prettyTime(meeting.endsAt)}
         {meeting.linkedSprintTitle ? " · Sprint: " + meeting.linkedSprintTitle : ""}
       </p>
-      {meeting.status === "REQUESTED" ? (
-        <p className="mt-2 text-sm text-body">Awaiting your response in the project workspace.</p>
-      ) : null}
       {meeting.projectStatus === "ARCHIVED" ? (
         <p className="mt-2 text-xs text-muted-foreground">Archived project · Read-only</p>
       ) : null}
