@@ -52,3 +52,13 @@ Pending graceful-operation dependency: `src/lib/friendly-error.ts`, `src/lib/api
 | TPO-batches-26 | OPEN | `src/modules/placements/tpo-batch-lifecycle-service.ts`, `tpo-batch-lifecycle-model.ts`, `src/db/schema/placement-batches.ts`, and `src/components/tpo/tpo-batch-lifecycle-control.tsx`; `tests/unit/tpo-batches-lifecycle-chat5-round4.test.ts` — `TPO-batches-26 permits never-invited retirement without forging an invite`. Database registration/replay of `docs/proposed-migrations/tpo-batches-finish-without-invite.sql` still required. |
 | TPO-batches-39 | OPEN | `src/components/tpo/tpo-batch-eligibility-import.tsx` uses shared `apiFetch`, retains CSV and preview on failure, and requires explicit review; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-32 retains user edits after a changed import or failed write`. Full legacy review modal remains open. |
 | TPO-batches-40 | OPEN | The import no longer exposes raw UUIDs or provider errors and no longer uses a native confirmation; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-35 uses an inline consequence acknowledgement rather than native confirm`. Exact legacy button/modal copy still incomplete. |
+
+## Round 4 — effective state, priority and partial-failure improvements
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-03 | DONE | `src/modules/placements/tpo-batch-state-label-model.ts`, `tpo-batch-directory-filter-model.ts`, and `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-working-set-chat5.test.ts` — `TPO-batches-03 filters using effective eligibility rather than invitation lifecycle`. Supersedes the partial status in the earlier round. |
+| TPO-batches-04 | DONE | The same directory now counts "Open for placements" using persisted effective eligibility; `tests/unit/tpo-batches-working-set-chat5.test.ts` — `TPO-batches-04 counts only batches with eligible learners as open for placements`. |
+| TPO-batches-09 | DONE | `src/modules/placements/tpo-batch-priority-sort-model.ts` and directory sort switch; `tests/unit/tpo-batches-chat5-round4-fallback.test.ts` — `TPO-batches-09 ranks active eligible batches before nonempty, empty and finished`. |
+| TPO-batches-15 | DONE | `src/app/(authenticated)/tpo/batches/page.tsx` suppresses internal lifecycle migration jargon; `tests/unit/tpo-batches-chat5-round4-fallback.test.ts` — `TPO-batches-15 never displays internal migration names when lifecycle data is unavailable`. |
+| TPO-batches-28 | DONE | Secondary counts now fail independently, preserving the main directory and explaining unavailable evidence; `tests/unit/tpo-batches-chat5-round4-fallback.test.ts` — `TPO-batches-28 treats optional counts as independently fallible without hiding the batch list`. |
