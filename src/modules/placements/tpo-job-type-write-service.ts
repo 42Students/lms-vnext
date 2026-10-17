@@ -9,7 +9,7 @@ import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {isTpoBuiltinJobType} from "./tpo-builtin-job-types";
-const createSchema=z.object({label:tpoJobTypeNameSchema}).strict();
+const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"){
   super(code);this.name="TpoConfigError";
@@ -31,13 +31,13 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
    .where(eq(placementTpoJobTypes.collegeId,collegeId));
   if(count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   const [created]=await tx.insert(placementTpoJobTypes).values({
-   collegeId,label:input.label,active:true,
+   collegeId,label:input.label,active:true,countsAsPlaced:input.countsAsPlaced,isBuiltin:false,
   }).returning({id:placementTpoJobTypes.id,label:placementTpoJobTypes.label});
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:context.user.id,
    actorMembershipId:context.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.created",
    subjectType:"JOB_TYPE",subjectId:created.id,summary:"TPO added a college job type",
-   metadata:{label:created.label},
+   metadata:{label:created.label,countsAsPlaced:input.countsAsPlaced},
   });
   return created;
  });
