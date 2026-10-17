@@ -536,10 +536,12 @@ export function FinalReviewControl({
             >
               Cancel
             </Button>
-            <Button disabled={pending||staleReview||
-              (decision==="CHANGES_REQUESTED"&&!feedback.trim())}
-              onClick={()=>setConfirmReview(true)}>
-              {decision==="APPROVED"?"Accept submission":"Request changes"}
+            <Button disabled={pending} onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}>
+              Accept submission
+            </Button>
+            <Button variant="secondary" disabled={pending||!feedback.trim()}
+              onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}>
+              Request changes
             </Button>
           </>
         }
@@ -577,11 +579,12 @@ export function FinalReviewControl({
       </Dialog>
       <ConfirmDialog open={confirmReview} onOpenChange={setConfirmReview}
         title={decision==="APPROVED"?"Accept this submission?":"Request changes on this submission?"}
-        description={decision==="APPROVED"?"The learner will be notified their submission was accepted.":
-          "The learner will see your feedback and be able to edit and resubmit it."}
+        description={decision==="APPROVED"
+          ?"The submission will be accepted and the student will see the decision."
+          :"The student will receive your feedback and can submit a revision."}
         confirmLabel={decision==="APPROVED"?"Accept submission":"Request changes"}
-        confirmVariant="primary" pending={pending}
-        onConfirm={()=>void review()}/>
+        confirmDisabled={decision==="CHANGES_REQUESTED"&&!feedback.trim()}
+        pending={pending} onConfirm={()=>void review()}/>
       <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
         title="Discard final review feedback?"
         description="You have unsaved project changes. Leave this page and discard them?"
