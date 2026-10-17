@@ -261,5 +261,10 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - Five unit test files total, each named case includes its gap ID; authored but NOT RUN (orchestrator executes). Acceptance records live under `docs/audit/acceptance/`.
 
 
+### Chat-6 verified follow-up, 2026-10-17
+
+- 25 gap-specific tests authored, NOT RUN, across four new source-contract test files. Faculty: FAC-assessments-11/14 DONE, -20 NOT-A-GAP. Super Admin People: SA-academics-people-89/98/102/104/105/107/113/116 DONE. College dashboard: COL-dashboard-03/04/05/06/07/08/09/14/15/16 DONE. College placements: COL-placements-07/08/09/21 DONE.
+- New learner profile S1 blockers documented as LEARNER-profile-misc-01/03/04; private upload/preview must not be simulated. Larger open gaps and DB/browser-only acceptance remain for the orchestrator.
+
 ## Needs shell (chat-9 only)
 
