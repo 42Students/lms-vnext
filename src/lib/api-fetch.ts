@@ -59,6 +59,7 @@ export async function apiFetch<T = unknown>(
   try {
     const response = await fetch(input, { ...options, signal: controller.signal });
     const headerId = response.headers.get("x-request-id");
+    if (response.ok && (response.status === 204 || response.status === 205)) return undefined as T;
     let payload: unknown;
     try {
       payload = await response.json();

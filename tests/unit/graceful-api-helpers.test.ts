@@ -66,6 +66,13 @@ describe("graceful API helpers", () => {
       fetchMock.mockRestore();
     }
   });
+  it("GR-04 accepts a successful no-content response without a parse failure", async () => {
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
+      new Response(null, { status: 204 }),
+    );
+    await expect(apiFetch("/api/empty")).resolves.toBeUndefined();
+    fetchMock.mockRestore();
+  });
   it("GR-04 makes a network failure safe", async () => {
     const fetchMock = vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new TypeError("ECONNRESET"));
     await expect(apiFetch("/api/test")).rejects.toMatchObject({

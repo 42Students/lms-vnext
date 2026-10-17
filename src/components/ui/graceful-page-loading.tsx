@@ -16,8 +16,8 @@ export function GracefulPageLoading() {
   return (
     <section role="status" aria-live="polite" className="w-full min-w-0 space-y-4 rounded-lg border border-border bg-surface p-6">
       <p className="text-sm text-muted-foreground">Loading your page...</p>
-      <div aria-hidden="true" className="h-5 w-2/5 animate-pulse rounded bg-border" />
-      <div aria-hidden="true" className="h-24 w-full animate-pulse rounded bg-border" />
+      <div aria-hidden="true" className={`h-5 w-2/5 rounded bg-border ${slow ? "" : "animate-pulse"}`} />
+      <div aria-hidden="true" className={`h-24 w-full rounded bg-border ${slow ? "" : "animate-pulse"}`} />
       {slow && (
         <div className="flex flex-wrap items-center gap-3">
           <p className="text-sm text-foreground">This is taking longer than expected. Please try again.</p>

@@ -14,9 +14,10 @@ export function isStaleChunkError(error: Error): boolean {
     .test(error.message);
 }
 
-export function GracefulErrorBoundary({ error, reset }: {
+export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }: {
   error: Error & { digest?: string };
   reset: () => void;
+  homeHref?: string;
 }) {
   const [requestId, setRequestId] = useState<string | null>(null);
   const stale = isStaleChunkError(error);
@@ -49,7 +50,7 @@ export function GracefulErrorBoundary({ error, reset }: {
     message={stale ? "A new version is available, reloading..." :
       "Something went wrong on our side. Please try again in a moment."}
     retry={reset}
-    homeHref="/dashboard"
+    homeHref={homeHref}
     requestId={requestId}
   />;
 }

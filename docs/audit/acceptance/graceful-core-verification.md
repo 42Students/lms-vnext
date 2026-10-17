@@ -24,7 +24,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-12 | DONE | `src/components/public/graceful-error-boundary.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-12 |
 | GR-13 | DONE | `src/app/(authenticated)/*/not-found.tsx` and root; `tests/unit/graceful-root-screens.test.ts` — GR-13 |
 | GR-14 | DONE | `src/app/forbidden/page.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-14 |
-| GR-15 | DONE | `src/lib/return-to.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-15 (end-to-end sign-in wiring follows) |
+| GR-15 | DONE | `src/lib/return-to.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-15 (session-response guard, authenticated layout and OTP return are wired; browser acceptance pending) |
 | GR-16 | DONE | `src/components/public/offline-banner.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-16 |
 | GR-17 | DONE | `src/proxy.ts`, `docs/operations/maintenance.md`; `tests/unit/graceful-root-screens.test.ts` — GR-17 |
 | GR-22 | DONE | `src/app/layout.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-22 |
