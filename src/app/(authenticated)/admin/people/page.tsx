@@ -82,7 +82,7 @@ export default async function SuperAdminPeoplePage({
 }) {
   const { page: pageParam,q:rawQ,role:rawRole,status:rawStatus,pageSize:rawPageSize } = await searchParams;
   const q=(rawQ??"").trim().slice(0,100);
-  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN","SUPER_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
+  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","COLLEGE_ADMIN"].includes(rawRole??"ALL")?rawRole??"ALL":"ALL";
   const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(rawStatus??"ALL")?rawStatus??"ALL":"ALL";
   const pageSize=[10,20,50].includes(Number(rawPageSize))?Number(rawPageSize):10;
   const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
