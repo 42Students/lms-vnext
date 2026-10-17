@@ -257,10 +257,10 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-19 | S3 | COPY | DONE-BRANCH |
 | COL-projects-20 | S3 | STATE | DONE-BRANCH |
 | COL-projects-09 | S4 | STATE | UNCONFIRMED |
-| COL-projects-18 | S4 | MISSING-FILTER | UNCONFIRMED |
+| COL-projects-18 | S4 | MISSING-FILTER | DONE-BRANCH |
 | COL-projects-21 | S4 | COPY | OPEN |
 | COL-projects-22 | S4 | MISSING-FILTER | NOT-A-GAP |
-| COL-projects-23 | S4 | RESPONSIVE | OPEN |
+| COL-projects-23 | S4 | RESPONSIVE | DONE-BRANCH |
 
 ## Notes (blockers, one line each)
 - BLOCKED TPO-calendar-reports-23: ROUND_REMINDER provider-backed delivery and evening-before verification require real configured email provider credentials; no fake sends or delivery success claimed.
@@ -354,3 +354,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - COL-projects-16/-19/-20 DONE source and COL-projects-22 NOT-A-GAP; tests/unit/chat9-round6-college-projects-parity.test.ts authored, tests NOT run.
 
 - Round 6: TPO-settings-audit-42/-07 DONE-BRANCH; no 200-course truncation and responsive grouped navigation; tests written not run.
+
+- COL-projects-10/-11 VERIFIED-ON-MAIN, -18/-23 DONE-BRANCH. Tests authored, not run; browser narrow-width acceptance outstanding.

@@ -279,7 +279,7 @@ export function ProjectWorkspace({
       {sectionBaseHref ? (
         <nav
           aria-label="Project workspace sections"
-          className="flex gap-2 overflow-x-auto border-b border-border pb-3"
+          className="flex max-w-full gap-2 overflow-x-auto border-b border-border pb-3 focus-visible:outline-2" tabIndex={0}
         >
           {PROJECT_WORKSPACE_SECTIONS.map((section) => (
             <Link
@@ -1650,7 +1650,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()}/>
+          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()} resourceAudit={mode==="ADMIN"}/>
 
 
         </section>
