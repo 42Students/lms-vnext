@@ -269,7 +269,7 @@ export function RecruiterResultControls({
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId];
       if(!draft||draft.outcome!=="PASS"&&!draft.candidateMessage.trim()||
-        draft?.outcome==="HOLD"&&(!draft.waitlistRank||Number(draft.waitlistRank)<=0)){
+        draft?.outcome==="HOLD"&&(!draft.waitlistRank||!Number.isInteger(Number(draft.waitlistRank))||Number(draft.waitlistRank)<=0||Number(draft.waitlistRank)>10000)){
         showToast({tone:"error",title:"Complete candidate outcomes",description:"Every selected row needs a valid outcome, waitlist rank when held, and a message for non-pass results."});
         return;
       }
