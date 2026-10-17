@@ -92,7 +92,7 @@ export default async function HrPlacementJobPage({
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
-  const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
+  const requestData=(requestsTab||discussionTab)?await getDriveChangeRequests(context,workspace.job.id):null;
   const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;
   const selectedThread=driveConversation?.threads[0]??null;
   const threadMessages=selectedThread?
