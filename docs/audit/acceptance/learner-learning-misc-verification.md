@@ -33,3 +33,16 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 ## Other unfinished work
 
 `LEARNER-learning-misc-01` private object upload depends on real bucket/scanner; `-02`, `-04`, `-07`, `-11`, `-12`, `-13`, `-15`, `-16`, `-19`, `-22`, `-24`, `-25`, `-27`, `-28`, `-29`, `-34` need remaining feature/domain parity. Earlier claims for `-41` and smaller copy/response cases require independent acceptance; this document never treats missing data as success.
+
+| LEARNER-learning-misc-13 | DONE (authored; not run) | `tests/unit/chat15-assessment-legacy-copy.test.ts` case `LEARNER-learning-misc-13`, assignment Due/Created legacy labels. |
+| LEARNER-learning-misc-29 | DONE (authored; not run) | `tests/unit/chat15-assessment-legacy-copy.test.ts` case `LEARNER-learning-misc-29`, quiz pills and submitted list. |
+
+| LEARNER-learning-misc-24 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-24`; quiz service/interactions and read-only review. |
+| LEARNER-learning-misc-27 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-27`; quiz service/interactions and read-only review. |
+| LEARNER-learning-misc-28 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` case `LEARNER-learning-misc-28`; quiz service/interactions and read-only review. |
+
+| LEARNER-learning-misc-16 | DONE (source authored; test unexecuted) | `tests/unit/chat15-quiz-table-legacy.test.ts`, seven legacy table columns, safe released/not-released grade and mobile cards. |
+
+| LEARNER-learning-misc-19 | DONE (source authored, test unexecuted) | `tests/unit/chat15-class-scope-quiz-empty.test.ts` + authoritative section membership test in learner-assessment-service, legacy no-class/failed-class states with retry. |
+
+| LEARNER-learning-misc-34 | PARTIAL | `tests/unit/chat15-calendar-window-bounds.test.ts` and SQL overlap bounded class schedule; attendance range work outstanding. |

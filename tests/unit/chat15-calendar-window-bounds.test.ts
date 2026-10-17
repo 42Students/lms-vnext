@@ -1,0 +1,15 @@
+import {describe,expect,it} from "vitest";
+import {learnerCalendarVisibleWindow} from "@/modules/academics/learner-calendar-window-model";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+describe("chat-15 bounded calendar retrieval",()=>{
+ it("LEARNER-learning-misc-34 bounds academic schedule to IST visible month and week spillover",()=>{
+  const window=learnerCalendarVisibleWindow("2099-05",new Date("2099-05-15T00:00:00Z"));
+  expect(window.from.toISOString()).toBe("2099-03-31T18:30:00.000Z");
+  expect(window.to.toISOString()).toBe("2099-06-30T18:30:00.000Z");
+  const src=readFileSync(join(process.cwd(),"src/modules/academics/learner-schedule-service.ts"),"utf8");
+  expect(src).toContain("lt(sectionScheduleEvents.startsAt,visibleWindow.to)");
+  expect(src).toContain("gte(sectionScheduleEvents.endsAt,visibleWindow.from)");
+  expect(readFileSync(join(process.cwd(),"src/app/(authenticated)/learn/calendar/page.tsx"),"utf8")).toContain("getLearnerClassSchedule(context,window)");
+ });
+});

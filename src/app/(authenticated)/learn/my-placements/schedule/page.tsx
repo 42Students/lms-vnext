@@ -67,7 +67,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
       <div className="flex flex-wrap gap-3">
         {join&&/^https:\/\//i.test(join)?<a href={join} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Join online round</a>:null}
-        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Open test</a>:null}
+        {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Take online assessment</a>:null}
       </div>
       {row.exception ? (
         <p role="status" className="text-xs font-semibold text-primary-text">
@@ -77,6 +77,15 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       <p className="text-xs font-semibold text-body">
         {row.booked ? "Booked for this round" : "Round scheduled · Individual booking not yet recorded"}
       </p>
+      {outcomeText==="Marked absent" ? (
+        <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
+          Marked absent. If this is wrong, tell the placement cell.
+          <Link href="/learn/my-placements/placement#requests"
+            className="ml-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            Wrong? Tell the placement cell
+          </Link>
+        </p>
+      ) : null}
       {outcomeText?<p role="status" className="font-semibold text-foreground">{outcomeText} · Confirmed round result</p>:
         <p className="text-xs text-muted-foreground">Expected · The round schedule is not an attendance confirmation or final outcome.</p>}
     </div>;

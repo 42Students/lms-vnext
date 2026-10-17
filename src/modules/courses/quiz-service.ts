@@ -312,8 +312,9 @@ export async function getCourseQuiz(
   const revealCorrect =
     access !== "LEARNER" ||
     (quiz.status === "CLOSED" &&
-      quiz.resultsPublished &&
-      attemptCount > 0);
+       quiz.resultsPublished &&
+       quiz.dueAt !== null &&
+       quiz.dueAt.getTime() <= Date.now());
 
   const grouped = new Map<
     string,
@@ -760,9 +761,10 @@ export async function setCourseQuizResults(
     const [locked]=await tx.select().from(courseQuizzes)
       .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
     if(!locked)throw new CoursesServiceError("QUIZ_NOT_FOUND");
-    const eligibleStatus=locked.status==="CLOSED" ||
-      (locked.status==="PUBLISHED" && locked.dueAt!==null &&
-       locked.dueAt.getTime()<=Date.now());
+    const dueIsPast=locked.dueAt!==null && locked.dueAt.getTime()<=Date.now();
+    const eligibleStatus=input.published
+      ? dueIsPast && (locked.status==="CLOSED"||locked.status==="PUBLISHED")
+      : locked.status==="CLOSED";
     if(!eligibleStatus || !legacyQuizResultsWriteAllowed(manage,"CLOSED",
       locked.resultsPublished,input.published))
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
