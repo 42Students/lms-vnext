@@ -127,6 +127,7 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   branchId?: string;
   programId?: string;
+  profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   classId?:string;
   search?: string;
   page: number;
@@ -420,6 +421,7 @@ export function filterTpoStudentRoster(
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
     .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
+    .filter(row=>!filter.profileStatus||row.verification.status===filter.profileStatus)
     .filter((row) => {
       if (!search) return true;
 
