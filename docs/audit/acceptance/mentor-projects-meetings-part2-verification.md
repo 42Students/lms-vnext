@@ -44,3 +44,5 @@ MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses
 
 | MEN-projects-meetings-65 | DONE | src/components/projects/project-final-delivery-controls.tsx, project-delivery-reopen-control.tsx; tests/unit/chat11-mentor-delivery-decision-round3.test.ts and tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-65 has separate accept, request-change, and revision-reopen confirmations")` |
 | MEN-projects-meetings-66 | DONE | src/modules/projects/mentor-final-delivery-decision-service.ts and submission-service.ts; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-66 persists mentor decisions and same-transaction learner notices")` |
+
+| MEN-projects-meetings-64 | DONE | src/components/projects/project-workspace.tsx, project-delivery-evidence-download.tsx; tests/unit/chat11-mentor-final-evidence.test.ts — `it("MEN-projects-meetings-64 shows author, submitted time, learner notes, typed links, and all recorded version events")` and `it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant")` |

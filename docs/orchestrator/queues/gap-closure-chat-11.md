@@ -135,13 +135,13 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
-## mentor/projects-meetings-part2 (25: FIXED-ON-MAIN 3, DONE 14, OPEN 8)
+## mentor/projects-meetings-part2 (25: DONE 15, OPEN 8, FIXED-ON-MAIN 2)
 
 Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meetings-part2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`.
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| MEN-projects-meetings-64 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
+| MEN-projects-meetings-64 | S2 | MISSING-MODAL | DONE |
 | MEN-projects-meetings-66 | S2 | SIDE-EFFECT | DONE |
 | MEN-projects-meetings-72 | S2 | SIDE-EFFECT | OPEN |
 | MEN-projects-meetings-53 | S3 | MISSING-FIELD | OPEN |
