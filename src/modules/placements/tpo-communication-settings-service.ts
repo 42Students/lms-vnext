@@ -10,6 +10,10 @@ import {placementTableExists} from "./staged-tables";
 const changeSchema=z.discriminatedUnion("section",[
  z.object({section:z.literal("SMS_CAP"),smsMonthlyCap:z.number().int().min(0).max(100000),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
  z.object({section:z.literal("SIGNATURE"),emailSignature:z.string().trim().max(300),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
+ z.object({section:z.literal("OPTIONAL_EMAILS"),
+  notifyDriveOpenEmail:z.boolean(),notifyResultApplied:z.boolean(),
+  notifyNudges:z.boolean(),notifyPrepAssigned:z.boolean(),
+  expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
  z.object({section:z.literal("PREP_THRESHOLD"),prepThresholdPct:z.number().int().min(0).max(100),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
  z.object({section:z.literal("RECRUITER_DURATION"),recruiterAccessMonths:z.union([z.literal(3),z.literal(6),z.literal(12),z.literal(24)]),expectedVersion:z.iso.datetime({offset:true}).nullable()}).strict(),
 ]);
@@ -45,6 +49,9 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
   const changes=input.section==="SMS_CAP"?{smsMonthlyCap:input.smsMonthlyCap}:
    input.section==="SIGNATURE"?{emailSignature:input.emailSignature}:
    input.section==="PREP_THRESHOLD"?{prepThresholdPct:input.prepThresholdPct}:
+   input.section==="OPTIONAL_EMAILS"?{
+    notifyDriveOpenEmail:input.notifyDriveOpenEmail,notifyResultApplied:input.notifyResultApplied,
+    notifyNudges:input.notifyNudges,notifyPrepAssigned:input.notifyPrepAssigned}:
    {recruiterAccessMonths:input.recruiterAccessMonths};
   const [updated]=await tx.update(placementTpoCollegeSettings).set({...changes,updatedAt:new Date()})
    .where(eq(placementTpoCollegeSettings.collegeId,collegeId))
@@ -56,10 +63,14 @@ export async function updateTpoCommunicationSettings(context:RequestContext,raw:
    eventType:"placements.tpo_communication_setting.updated",subjectType:"TPO_SETTINGS",
    subjectId:collegeId,summary:input.section==="SMS_CAP"?"TPO changed the optional SMS monthly cap":
     input.section==="SIGNATURE"?"TPO changed the email signature":
-    input.section==="PREP_THRESHOLD"?"TPO changed preparation readiness threshold":"TPO changed recruiter access duration",
+    input.section==="PREP_THRESHOLD"?"TPO changed preparation readiness threshold":
+    input.section==="OPTIONAL_EMAILS"?"TPO changed optional student email preferences":"TPO changed recruiter access duration",
    metadata:input.section==="SMS_CAP"?{field:"smsMonthlyCap",value:input.smsMonthlyCap}:
     input.section==="SIGNATURE"?{field:"emailSignature",length:input.emailSignature.length}:
     input.section==="PREP_THRESHOLD"?{field:"prepThresholdPct",value:input.prepThresholdPct}:
+    input.section==="OPTIONAL_EMAILS"?{field:"studentOptionalEmails",changes:{
+     driveOpenEmail:input.notifyDriveOpenEmail,resultApplied:input.notifyResultApplied,
+     nudges:input.notifyNudges,prepAssigned:input.notifyPrepAssigned}}:
     {field:"recruiterAccessMonths",value:input.recruiterAccessMonths},
   });
   return {saved:true,version:updated.updatedAt.toISOString()};
