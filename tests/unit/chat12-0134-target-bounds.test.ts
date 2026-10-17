@@ -20,7 +20,8 @@ describe("General learner requests against registered 0134",()=>{
  it("TPO-requests-verification-01 proposes additive correction without changing numbered 0134",()=>{
   const proposed=src("docs/proposed-migrations/chat-12-0134-general-requests-correction.sql");
   expect(proposed).toContain("PROPOSAL ONLY");
-  expect(proposed).toContain("ALTER COLUMN target_key TYPE text");
+  expect(proposed).not.toContain("ALTER COLUMN target_key TYPE text");
+  expect(proposed).toContain("retain this stronger canonical contract");
   expect(proposed).toContain("OFFER_ACCEPTANCE_DISPUTE");
  });
 });

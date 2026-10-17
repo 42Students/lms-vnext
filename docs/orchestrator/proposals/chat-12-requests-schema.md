@@ -13,3 +13,11 @@ Current drive job lifecycle lacks an institutional `REQUEST` state with recruite
 ## Validation required after migration
 
 Write gap-ID named tests for eligibility/scope, old data backfill compatibility, request-kind payload discriminants, concurrent decisions, partial failure rollback, duplicate submission, duplicate email/bell suppression, and recruiter/learner notification recipients. Live acceptance belongs to the orchestrator, not this builder.
+
+## 2026-10-18 conflict resolution (chat-12)
+
+**Decision:** The canonical contract is the first effective definition in registered migration 0134: `target_key varchar(150)`, `status varchar(20)`, JSON-object CHECK, composite `(membership_id,college_id)` FK, pending-target unique index, reviewer/time invariant and immutable events with 20-character status. The later `IF NOT EXISTS` definition does not replace this table. Its extra indexes are redundant but harmless.
+
+The second proposal adds a useful sixth learner kind (`OFFER_ACCEPTANCE_DISPUTE`), which is added by **only** a new proposal-only kind CHECK in `docs/proposed-migrations/chat-12-0134-general-requests-correction.sql`. The 150-character target bound handles all supported identities; widening to text is unnecessary. The service inspects the live CHECK before attempting this sixth kind, otherwise gives a controlled unavailable error. Drizzle continues to model *the actually registered 0134* until the new DDL is approved; never edit 0134.
+
+For `placement_tpo_prep_assignments`, the original 0134 `due_at NOT NULL`, composite membership FK, unique member/offering and due-after-created CHECK remain authoritative; optional legacy due dates need a separate migration/decision. Named source tests are authored; PostgreSQL tests are pending execution.
