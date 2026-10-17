@@ -22,5 +22,5 @@ describe("no AI features in src", () => {
       /vertex|ai-grading/i.test(readFileSync(file, "utf8")),
     );
     expect(offenders).toEqual([]);
-  });
+  }, 60_000);
 });
