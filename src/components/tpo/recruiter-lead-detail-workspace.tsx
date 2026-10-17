@@ -289,6 +289,7 @@ export function RecruiterLeadDetailWorkspace({
   async function createInviteLink() {
     if (!window.confirm("Create an invitation valid for 7 days? Any previous link will stop working.")) return;
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
+    if(lead?.manualStage==="NOT_NOW"){setActionError("This recruiter is marked Not now. Update their stage before inviting.");return;}
     if(!lead?.emailNorm||!lead.companyRelationshipId){
       setActionError("Add a work email and link a company before inviting.");
       return;
