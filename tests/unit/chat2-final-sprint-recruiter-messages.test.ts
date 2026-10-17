@@ -74,4 +74,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(page).toContain("Open drive:");
   expect(page).toContain('"/hr/conversations?collegeId="+result.thread.collegeId');
  });
+ it("REC-calendar-messages-profile-09 independent final-sprint acceptance regression",()=>{
+  expect(src("src/modules/placements/hr-conversation-inbox-service.ts")).toContain("inArray(placementTpoMessages.threadId,accessibleIds)");
+  expect(src("src/modules/placements/hr-conversation-inbox-service.ts")).toContain("messageMatches.map(row=>row.threadId)");
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("Search by drive or message");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-09 |");
+ });
+
 });
