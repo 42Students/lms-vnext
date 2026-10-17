@@ -738,11 +738,11 @@ export function ProjectMeetingTransitionActions({
 
   const mayComplete =
     manager &&
-    meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED";
+    (meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED");
   const mayCancel =
     (manager &&
       (meeting.status === "REQUESTED" ||
-        meeting.status === "SCHEDULED")) ||
+        meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED")) ||
     learnerOwnRequest;
   const withdrawing=learnerOwnRequest&&!manager;
 
