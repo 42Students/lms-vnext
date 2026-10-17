@@ -27,7 +27,7 @@ describe("TPO settings review evidence",()=>{
  });
  it("COL-projects-09 verifies recorded primary mentor is used before fallback teammate",()=>{
   const s=src("src/modules/projects/admin-insights-service.ts");
-  expect(s).toContain("mentor.isPrimary");
+  expect(s).toContain("candidate.isPrimary");
  });
  it("COL-projects-17 verifies college audit filtered view and CSV route",()=>{
   const s=src("src/components/projects/project-admin-audit-page.tsx");
