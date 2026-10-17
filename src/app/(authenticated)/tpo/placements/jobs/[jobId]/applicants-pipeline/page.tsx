@@ -10,7 +10,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { getTpoApplicantPipeline } from "@/modules/placements/tpo-applicant-pipeline-service";
 import {tpoApplicationFilterError} from "@/modules/placements/tpo-applications-url-guard";
-type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
+type Props={params:Promise<{jobId:string}>;searchParams:Promise<{stage?:string|string[];search?:string|string[];page?:string|string[];channel?:string|string[];eligibility?:string|string[];flag?:string|string[];sort?:string|string[];submittedWithin?:string|string[];columns?:string|string[]}>};
 import {parseTpoApplicantPipelineLink,tpoApplicantPipelineResetHref} from "@/modules/placements/tpo-applicant-pipeline-model";
 function first(v:string|string[]|undefined){return Array.isArray(v)?v[0]:v;}
 export default async function TpoApplicantPipelinePage({params,searchParams}:Props){
@@ -27,7 +27,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const columns=first(query.columns)?.slice(0,800);
  const filters=parseTpoApplicantPipelineLink({jobId,
   stage:first(query.stage),search:first(query.search),page:first(query.page),
-  channel:first(query.channel),eligibility:first(query.eligibility),
+  channel:first(query.channel),eligibility:first(query.eligibility),flag:first(query.flag),
   sort:first(query.sort),submittedWithin:first(query.submittedWithin),
  });
  if(!filters.success)return <main className="space-y-4">
@@ -40,7 +40,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  const data=await getTpoApplicantPipeline(context,filters.data);
  const stages=["ALL","SUBMITTED","PENDING","HOLD","SHORTLISTED","REJECTED","WITHDRAWN"] as const;
  function pageHref(page:number){return {pathname:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline",
-  query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
+  query:{stage:data.stage,search:data.search,channel:data.channel,eligibility:data.eligibility,flag:data.flag,sort:data.sort,submittedWithin:data.submittedWithin,...(columns?{columns}:{}),page}};}
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Drive applicants" title={data.job.title}
    description="Current application and screening states from persisted records. Withdrawal is distinct from rejection."/>
@@ -75,6 +75,14 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
      <option value="ALL">All evidence states</option><option value="ELIGIBLE">Eligible</option>
      <option value="ELIGIBLE_WITH_MISSING_EVIDENCE">Eligible · evidence missing</option>
     </select></label>
+   <label className="min-w-40 flex-1 text-sm font-semibold text-body">Applicant flags
+    <select name="flag" defaultValue={data.flag} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">Any flag</option>
+     <option value="WITHDRAWAL_REQUESTED">Withdrawal requested</option>
+     <option value="NO_SHOW">No-show</option>
+     <option value="PLACED_ELSEWHERE">Accepted another offer</option>
+     <option value="ADDED_BY_COLLEGE">Added by college</option>
+    </select></label>
    <label className="min-w-32 flex-1 text-sm font-semibold text-body">Order by
     <select name="sort" defaultValue={data.sort} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
@@ -92,7 +100,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
   {data.rows.length > 0 && context.membership &&
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?
     <TpoBulkActionPanel
-      key={["applications", jobId, data.page, data.stage, data.search, data.channel, data.eligibility, data.sort, data.submittedWithin].join(":")}
+      key={["applications", jobId, data.page, data.stage, data.search, data.channel, data.eligibility, data.flag, data.sort, data.submittedWithin].join(":")}
       target="APPLICATIONS" jobId={jobId}
       rows={data.rows.map((row) => ({
         id:row.id,label:(row.student ?? "Applicant") + " · " + row.role,

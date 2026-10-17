@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {Fragment} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export type ActivityCenterGroup = {
@@ -38,6 +39,12 @@ function humanize(value: string) {
     .join(" ");
 }
 
+function activityDay(value:string){
+ return new Intl.DateTimeFormat("en-CA",{year:"numeric",month:"2-digit",day:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(value));
+}
+function activityDayHeading(value:string){
+ return new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(value));
+}
 function formatWhen(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
@@ -69,9 +76,13 @@ function tone(
 export function ActivityCenter({
   groups,
   nextHref,
+  todayKey,
+  yesterdayKey,
 }: {
   groups: readonly ActivityCenterGroup[];
   nextHref: string | null;
+  todayKey?: string;
+  yesterdayKey?: string;
 }) {
   if (groups.length === 0) {
     return (
@@ -89,9 +100,13 @@ export function ActivityCenter({
   return (
     <div className="space-y-4">
       <div className="grid gap-3">
-        {groups.map((group) => {
+        {groups.map((group,index) => {
           const item = group.latest;
+          const day=activityDay(group.latest.event.occurredAt);
+          const previousDay=index>0?activityDay(groups[index-1].latest.event.occurredAt):null;
           return (
+            <Fragment key={group.key+":"+item.event.id}>
+            {day!==previousDay?<h3 className="mt-5 text-sm font-semibold text-muted-foreground">{day===todayKey?"Today":day===yesterdayKey?"Yesterday":activityDayHeading(item.event.occurredAt)}</h3>:null}
             <article
               key={
                 group.key +
@@ -167,7 +182,17 @@ export function ActivityCenter({
                   </Link>
                 </div>
               </div>
+              <details className="mt-3 border-t border-border pt-3 text-xs text-muted-foreground">
+                <summary className="cursor-pointer font-semibold">Details</summary>
+                <dl className="mt-2 grid gap-1 sm:grid-cols-2">
+                  <div><dt>Action</dt><dd>{humanize(item.event.eventType)}</dd></div>
+                  <div><dt>Entity</dt><dd className="break-all">{item.event.subjectType}: {item.event.subjectId}</dd></div>
+                  <div><dt>Exact time (IST)</dt><dd>{formatWhen(item.event.occurredAt)}</dd></div>
+                  <div><dt>Events grouped</dt><dd>{group.count>1?"several at once ("+group.count+")":"1"}</dd></div>
+                </dl>
+              </details>
             </article>
+            </Fragment>
           );
         })}
       </div>
@@ -178,7 +203,7 @@ export function ActivityCenter({
             href={nextHref}
             className="inline-flex min-h-10 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-foreground transition hover:border-primary hover:bg-primary-subtle hover:text-primary-text"
           >
-            Older activity
+            Load more activity
           </Link>
         </div>
       ) : null}

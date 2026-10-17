@@ -11,7 +11,8 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  const {threadId}=await params;
  const form=await request.formData().catch(()=>null);
  const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body"),
-  idempotencyKey:form?.get("idempotencyKey")||undefined});
+  idempotencyKey:form?.get("idempotencyKey")||undefined,
+  markDecision:form?.get("markDecision")==="true"});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const result=await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);

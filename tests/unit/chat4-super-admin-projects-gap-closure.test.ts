@@ -183,4 +183,152 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(s).toContain("Blocker");
   expect(s).toContain("Next action");
  });
+
+ it("SA-placements-projects-55 uses the legacy workspaces search URL key, size 20 and page sizes",()=>{
+  const page=source("src/app/(authenticated)/admin/projects/page.tsx");
+  const controls=source("src/components/projects/project-admin-collection-controls.tsx");
+  expect(page).toContain("one(params.search) ?? one(params.q)");
+  expect(page).toContain("one(params.pageSize) ?? 20");
+  expect(page).toContain("<ProjectAdminFilters query={query} legacyWorkspaces />");
+  expect(controls).toContain('legacyWorkspaces ? "search" : "q"');
+  expect(controls).toContain("!legacyWorkspaces || size !== 25");
+  expect(controls).toContain('basePath === "/admin/projects" ? "search" : "q"');
+ });
+ it("SA-placements-projects-58 shows average-based mentor overload, not a fixed cap",async()=>{
+  const {isProjectMentorOverloaded,projectMentorWorkloadAverage}=await import("@/modules/projects/mentor-overload-model");
+  expect(projectMentorWorkloadAverage([2,4,8])).toBeCloseTo(14/3);
+  expect(isProjectMentorOverloaded(8,[2,4,8])).toBe(true);
+  expect(isProjectMentorOverloaded(7,[2,4,8])).toBe(false);
+  expect(isProjectMentorOverloaded(8,[8,8,8])).toBe(false);
+  expect(isProjectMentorOverloaded(0,[])).toBe(false);
+  const page=source("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  expect(page).toContain("isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts)");
+  expect(page).toContain("Filter by current mentor");
+  expect(page).toContain("Move multiple active workspaces to a new mentor at once.");
+ });
+ it("SA-placements-projects-67 confirms readiness safely and retains failed drafts",()=>{
+  const form=source("src/components/projects/project-readiness-override-form.tsx");
+  const page=source("src/components/projects/project-admin-readiness-page.tsx");
+  expect(form).toContain("<ConfirmDialog");
+  expect(form).toContain('confirmLabel="Apply override"');
+  expect(form).toContain("await apiFetch(");
+  expect(form).toContain("if (pendingRef.current) return");
+  expect(form).toContain('if (nextState !== state) setNote("")');
+  expect(form).toContain("Force Unlock/Block will have no effect here");
+  expect(form).not.toContain("window.confirm");
+  expect(page).toContain("one(searchParams.projectId) ?? one(searchParams.workspaceId)");
+ });
+ it("SA-placements-projects-68 keeps readiness within all ten workspace sections",()=>{
+  const view=source("src/components/projects/project-workspace-readiness.tsx");
+  const route=source("src/app/(authenticated)/admin/projects/[projectId]/readiness/page.tsx");
+  for(const section of ["summary","overview","team","sprints","tasks","resources","meetings","readiness","delivery","audit"])
+   expect(view).toContain('["'+section+'","');
+  expect(view).toContain('aria-label="Workspace sections"');
+  expect(view).toContain('aria-current={segment==="readiness"?"page":undefined}');
+  expect(route).toContain("<ProjectWorkspaceReadiness");
+ });
+ it("SA-placements-projects-92 preserves origin, reason, breadcrumb and admin shortcut URLs",()=>{
+  const route=source("src/app/(authenticated)/admin/projects/[projectId]/[section]/page.tsx");
+  const page=source("src/components/projects/admin-project-section-page.tsx");
+  const workspace=source("src/components/projects/project-workspace.tsx");
+  expect(route).toContain("from={one(query.from)}");
+  expect(route).toContain("reason={one(query.reason)}");
+  expect(page).toContain('from === "at-risk" || from === "submissions"');
+  expect(page).toContain("sectionQuerySuffix={sectionQuerySuffix}");
+  expect(workspace).toContain('aria-label="Workspace breadcrumb"');
+  expect(workspace).toContain("section + sectionQuerySuffix");
+  expect(workspace).toContain("Opened from At-risk projects");
+  expect(workspace).toContain("Manage override");
+  expect(workspace).toContain("View full project audit");
+ });
+
+
+ it("SA-placements-projects-65 records the readiness override author",()=>{
+  const service=source("src/modules/projects/readiness-override-service.ts");
+  const display=source("src/components/projects/project-workspace-readiness.tsx");
+  expect(service).toContain("overriddenBy:users.displayName");
+  expect(service).toContain("leftJoin(users,eq(users.id,activityEvents.actorUserId))");
+  expect(display).toContain("Overridden by {readiness.readinessOverride.overriddenBy}");
+ });
+ it("SA-placements-projects-66 protects scoped readiness links and shows 25-row picker",()=>{
+  const picker=source("src/components/projects/admin-readiness-workspace-picker.tsx");
+  const list=source("src/components/projects/project-admin-readiness-page.tsx");
+  expect(picker).toContain("pageSize=25");
+  expect(picker).toContain("Search workspace title or ID");
+  expect(list).toContain("outsideScope=Boolean(chosenId&&!selected)");
+  expect(list).toContain("This workspace belongs to a different college — switch colleges in the header and try again.");
+  expect(list).toContain("Target date");
+ });
+ it("SA-placements-projects-71 offers guarded page CSV export and review evidence fields",()=>{
+  const exportFile=source("src/components/projects/project-submissions-page-export.tsx");
+  const page=source("src/components/projects/project-admin-submissions-page.tsx");
+  expect(exportFile).toContain("project-submissions-page.csv");
+  expect(exportFile).toContain('function csvField(');
+  expect(exportFile).toContain("Pending (days)");
+  expect(page).toContain("<ProjectSubmissionsPageExport");
+  expect(page).toContain("Reviewed by");
+  expect(page).toContain("Revisions");
+  expect(page).toContain("Reassign mentor");
+ });
+ it("SA-placements-projects-75 retains audit filters and global log navigation",()=>{
+  const page=source("src/components/projects/project-admin-audit-page.tsx");
+  expect(page).toContain("People who made changes");
+  expect(page).toContain("Destructive actions");
+  expect(page).toContain("View activity log");
+  expect(page).toContain("Refresh");
+  expect(page).toContain("<ActivityCenter");
+ });
+
+
+ it("SA-placements-projects-56 keeps cohort creation preflight, skip logic and partial-failure outcome",()=>{
+  const src=source("src/components/projects/class-team-workspace-creator.tsx");
+  expect(src).toContain("cohort-preflight");
+  expect(src).toContain("Before creating: one workspace per student");
+  expect(src).toContain("Already covered learners are skipped.");
+  expect(src).toContain("Latest cohort creation outcome");
+  expect(src).toContain("No workspaces were created — the selected class may have no active learners.");
+  expect(src).toContain("student(s) failed. Review or export the report below before retrying.");
+  expect(src).toContain("Export outcome CSV");
+ });
+ it("SA-placements-projects-57 restores creator mode wording and split-team help",()=>{
+  const src=source("src/components/projects/class-team-workspace-creator.tsx");
+  const route=source("src/app/(authenticated)/admin/projects/workspaces/new/page.tsx");
+  for(const label of ["One team","Split a class into teams","One workspace per student",
+    "Pick a class and a team size, preview the teams, move anyone between teams"])
+   expect(src).toContain(label);
+  expect(route).toContain('title="Create project workspace"');
+  expect(route).toContain("Every workspace starts from a template — pick one below.");
+ });
+
+
+ it("SA-placements-projects-87 checks assignment permission per college and retries only failures",()=>{
+  const page=source("src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx");
+  const control=source("src/components/projects/super-admin-template-college-bulk.tsx");
+  expect(page).toContain("<SuperAdminTemplateCollegeBulk");
+  expect(page).toContain('can(context,"project-template.assign"');
+  expect(control).toContain("Select all on page");
+  expect(control).toContain("Assign selected");
+  expect(control).toContain("Remove selected");
+  expect(control).toContain("<ConfirmDialog");
+  expect(control).toContain("setSelected(failed)");
+  expect(control).toContain('currentOperation==="assign"?"POST":"DELETE"');
+  expect(control).toContain("Existing workspaces remain unchanged.");
+ });
+
+
+ it("SA-placements-projects-72 opens scoped Review dialog and locks only after confirmation",()=>{
+  const dialog=source("src/components/projects/project-admin-submission-review.tsx");
+  const page=source("src/components/projects/project-admin-submissions-page.tsx");
+  for(const phrase of ["Review — ","Feedback for the learner","Request changes",
+   "Accept submission","Lock submission","Lock this submission?",
+   "The learner will no longer be able to edit or resubmit it."])
+   expect(dialog).toContain(phrase);
+  expect(dialog).toContain("<Dialog");
+  expect(dialog).toContain("<ConfirmDialog");
+  expect(dialog).toContain("await apiFetch(");
+  expect(dialog).toContain("pendingRef.current");
+  expect(dialog).not.toContain("window.confirm");
+  expect(page).toContain("workspaceTitle={submission.projectTitle}");
+ });
+
 });
