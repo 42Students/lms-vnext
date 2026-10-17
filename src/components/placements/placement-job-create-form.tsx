@@ -119,6 +119,7 @@ export function PlacementJobCreateForm({
   // TPO-drives-45: apply the 11:59 PM IST default only to the first newly chosen date.
   const deadlineTimeChosen=useRef(false);
   const [restoredBackup,setRestoredBackup]=useState(false);
+  const [lastLocalSaveAt,setLastLocalSaveAt]=useState<number|null>(null);
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
@@ -194,6 +195,7 @@ export function PlacementJobCreateForm({
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
         companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset,partialDraft:createdJobRef.current}));
+      setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
   },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
   useEffect(()=>{
@@ -661,6 +663,11 @@ export function PlacementJobCreateForm({
       }}
       className="space-y-6"
     >
+      <p role="status" aria-live="polite" className="text-xs text-body">
+        {pending?"Saving changes…":lastLocalSaveAt?
+          "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
+          "Draft form changes are saved locally on this device. Create draft to save them to the server."}
+      </p>
       <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">Setup review</h2>
         <ol className="mt-3 grid gap-3 sm:grid-cols-4">
