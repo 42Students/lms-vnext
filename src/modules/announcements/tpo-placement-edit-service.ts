@@ -17,7 +17,7 @@ export const editTpoNoticeSchema=z.object({
  message:z.string().trim().min(1).max(8000),
  pinned:z.boolean(),
  buttonLabel:z.string().trim().min(1).max(60).optional(),
- buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\\s]+$/,"The link has to start with https://").optional(),
+ buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().refine(data=>Boolean(data.buttonLabel)===Boolean(data.buttonUrl),{path:["buttonUrl"],message:"The link has to start with https://"});
 
