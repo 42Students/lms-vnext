@@ -1,9 +1,41 @@
-import {describe,expect,it} from "vitest";
+import {describe,expect,it,vi} from "vitest";
 import {readFileSync} from "node:fs";
 import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message-email-provider";
 
 const source=(p:string)=>readFileSync(p,"utf8");
 describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()=>{
+ it("REC-calendar-messages-profile-R01 rejects plain HTTP ZeptoMail endpoints without sending bearer credentials",async()=>{
+  const transport=vi.fn(async()=>new Response("accepted",{status:202}));
+  const result=await sendRecruiterMessageDigest({
+   recipient:"recruiter@example.test",recipientName:"Recruiter",collegeName:"College",
+   companyName:"Company",replyTo:"r-"+("a".repeat(32))+"@reply.example.com",
+   messages:[{body:"Test"}],
+  },{
+   APP_ENV:"production",RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED:"true",
+   RECRUITER_MESSAGE_REPLY_DOMAIN:"reply.example.com",
+   RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY:"dedicated-digest",
+   ZEPTOMAIL_OTP_TEMPLATE_KEY:"other-otp-key",ZEPTOMAIL_TOKEN:"secret",
+   ZEPTOMAIL_API_URL:"http://mail.example.test/send",
+  },transport as typeof fetch);
+  expect(result).toBe(false);
+  expect(transport).not.toHaveBeenCalled();
+ });
+ it("REC-calendar-messages-profile-R01 refuses unsupported Reply-To domains before the provider call",async()=>{
+  const transport=vi.fn(async()=>new Response("accepted",{status:202}));
+  const result=await sendRecruiterMessageDigest({
+   recipient:"recruiter@example.test",recipientName:"Recruiter",collegeName:"College",
+   companyName:"Company",replyTo:"r-"+("a".repeat(32))+"@other.example.com",
+   messages:[{body:"Test"}],
+  },{
+   APP_ENV:"production",RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED:"true",
+   RECRUITER_MESSAGE_REPLY_DOMAIN:"reply.example.com",
+   RECRUITER_MESSAGE_DIGEST_TEMPLATE_KEY:"dedicated-digest",
+   ZEPTOMAIL_OTP_TEMPLATE_KEY:"other-otp-key",ZEPTOMAIL_TOKEN:"secret",
+  },transport as typeof fetch);
+  expect(result).toBe(false);
+  expect(transport).not.toHaveBeenCalled();
+ });
+
  it("REC-calendar-messages-profile-R01 proposed SQL mirrors the Drizzle reply token uniqueness boundary",()=>{
   const db=source("src/db/schema/recruiter-message-email.ts");
   const proposal=source("docs/proposed-migrations/recruiter-message-email-bridge.sql");
