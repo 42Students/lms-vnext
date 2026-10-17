@@ -114,6 +114,7 @@ export type TpoMessagesQuery =
  */
 async function loadRecruiterThreads(
   collegeId: string,
+  searchText: string,
 ): Promise<TpoInboxRecord[]> {
   const db = getDb();
 
@@ -131,6 +132,17 @@ async function loadRecruiterThreads(
       lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
          where m.thread_id=placement_tpo_message_threads.id
          order by m.created_at desc,m.id desc limit 1)`,
+      bodySearchMatch: sql<boolean>`exists (
+        select 1 from placement_tpo_messages search_message
+        where search_message.thread_id = placement_tpo_message_threads.id
+          and position(lower(${searchText}) in lower(search_message.body)) > 0
+      )`,
+      companyName: sql<string|null>`(
+        select lead.company_name from placement_tpo_leads lead
+        where lead.college_id = ${collegeId}::uuid
+          and lead.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
+        order by lead.updated_at desc, lead.id desc limit 1
+      )`,
       lastSender:sql<string|null>`(select m.sender_type from placement_tpo_messages m
          where m.thread_id=placement_tpo_message_threads.id
          order by m.created_at desc,m.id desc limit 1)`,
@@ -205,6 +217,8 @@ async function loadRecruiterThreads(
       unreadCount: unreadRecruiterMessages,
       lastPreview:row.lastPreview,
       waitingForYou:row.lastSender==="RECRUITER",
+      companyName:row.companyName,
+      bodySearchMatch:row.bodySearchMatch,
     };
   });
 }
@@ -354,7 +368,7 @@ export async function getTpoMessagesInbox(
     : "PLACEMENT_NOTIFICATIONS" as const;
 
   const records = recruiterConversationsAvailable
-    ? await loadRecruiterThreads(collegeId)
+    ? await loadRecruiterThreads(collegeId, query.q.trim())
     : await loadTpoPlacementNotifications(collegeId);
 
   const from = query.from
