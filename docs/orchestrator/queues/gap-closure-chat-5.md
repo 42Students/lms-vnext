@@ -137,7 +137,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-56 | S3 | COPY | DONE |
 | TPO-batches-60 | S3 | COPY | DONE |
 | TPO-batches-61 | S3 | MISSING-ACTION | DONE |
-| TPO-batches-63 | S3 | SIDE-EFFECT | OPEN |
+| TPO-batches-63 | S3 | SIDE-EFFECT | DONE |
 | TPO-batches-64 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-batches-R04 | S3 | VALIDATION | OPEN |
 | TPO-batches-12 | S4 | STATE | DONE |
