@@ -69,7 +69,8 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       summary:"Mentor rescheduled project meeting",
       metadata:{projectId:scope.project.id,meetingId:updated.id,
         previousStartsAt:meeting.startsAt.toISOString(),
-        startsAt:updated.startsAt.toISOString(),timeZone:meeting.timeZone},
+        startsAt:updated.startsAt.toISOString(),endsAt:updated.endsAt.toISOString(),
+        timeZone:meeting.timeZone},
       groupKey:"project:"+scope.project.id+":meetings",
     });
     await notifyActiveProjectMembers(tx,event.id,{
