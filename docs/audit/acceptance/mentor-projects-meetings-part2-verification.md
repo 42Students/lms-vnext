@@ -16,6 +16,12 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 | MEN-projects-meetings-71 | DONE | src/app/(authenticated)/mentor/notifications/page.tsx; tests/unit/mentor-meetings-round4-source-failure.test.ts — `it("MEN-projects-meetings-71 preserves other sources and shows Retry sources when a feed fails")` |
 
 
+| MEN-projects-meetings-53 | DONE | Resource form and persisted optional metadata/sprint-task associations: src/components/projects/project-resource-controls.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-53 persists resource metadata and associated sprint/task IDs")` |
+| MEN-projects-meetings-55 | DONE | Mentor resource directory with type/status/sprint/task filters: src/components/projects/project-resource-list.tsx; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-55 defaults to active and exposes all legacy resource filters")` |
+| MEN-projects-meetings-56 | DONE | Active resource drag/keyboard reorder and scoped server mutation: src/components/projects/project-resource-list.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-56 reorders active resources and keeps a safe error fallback")` |
+| MEN-projects-meetings-63 | DONE | Mentor lock action, origin-guarded route and atomic delivery history/notice: src/components/projects/mentor-delivery-lock-control.tsx; src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts; src/modules/projects/mentor-delivery-lock-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-63 protects mentor delivery locking and persists history")` |
+| MEN-projects-meetings-77 | DONE | Task scoped select and blocker controls: src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
+
 ## Partial (still open)
 
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
@@ -37,7 +43,7 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 - MEN-projects-meetings-75: Resource create/edit dialogs now confirm dirty discards and protect page unload; task, sprint, meeting, and delivery editors still need matching recovery. Test: `it("MEN-projects-meetings-75 keeps dirty project resource drafts on close or unload")` in `tests/unit/mentor-resource-dirty-round5.test.ts`.
 
 ## Remaining
-MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+MEN-projects-meetings-58/75 and partial editor/document integration (57/72/76). The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
 
 
 ## Chat-11 mentor decision closure
@@ -46,9 +52,3 @@ MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses
 | MEN-projects-meetings-66 | DONE | src/modules/projects/mentor-final-delivery-decision-service.ts and submission-service.ts; tests/unit/chat11-attendance-delivery-recovery.test.ts — `it("MEN-projects-meetings-66 persists mentor decisions and same-transaction learner notices")` |
 
 | MEN-projects-meetings-64 | DONE | src/components/projects/project-workspace.tsx, project-delivery-evidence-download.tsx; tests/unit/chat11-mentor-final-evidence.test.ts — `it("MEN-projects-meetings-64 shows author, submitted time, learner notes, typed links, and all recorded version events")` and `it("MEN-projects-meetings-64 opens verified evidence through a same-origin short-lived grant")` |
-
-| MEN-projects-meetings-53 | DONE | Resource form and persisted optional metadata/sprint-task associations: src/components/projects/project-resource-controls.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-53 persists resource metadata and associated sprint/task IDs")` |
-| MEN-projects-meetings-55 | DONE | Mentor resource directory with type/status/sprint/task filters: src/components/projects/project-resource-list.tsx; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-55 defaults to active and exposes all legacy resource filters")` |
-| MEN-projects-meetings-56 | DONE | Active resource drag/keyboard reorder and scoped server mutation: src/components/projects/project-resource-list.tsx; src/modules/projects/resource-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-56 reorders active resources and keeps a safe error fallback")` |
-| MEN-projects-meetings-63 | DONE | Mentor lock action, origin-guarded route and atomic delivery history/notice: src/components/projects/mentor-delivery-lock-control.tsx; src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts; src/modules/projects/mentor-delivery-lock-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-63 protects mentor delivery locking and persists history")` |
-| MEN-projects-meetings-77 | DONE | Task scoped select and blocker controls: src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
