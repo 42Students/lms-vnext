@@ -82,7 +82,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         {row.booked ? "Booked for this round" : "Round scheduled · Individual booking not yet recorded"}
       </p>
       {row.booked&&!outcomeText&&
-        (row.exception?.scheduledAt??row.scheduledAt)?.getTime()!>now.getTime()?
+        ((row.exception?.scheduledAt??row.scheduledAt)?.getTime()??0)>now.getTime()?
          <LearnerRoundConfirmAttendance applicationId={row.applicationId}
            roundId={row.roundId} confirmed={Boolean(row.learnerConfirmedAt)}/>:null}
       {outcomeText==="Marked absent" ? (
