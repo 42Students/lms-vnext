@@ -21,5 +21,8 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
 - MEN-projects-meetings-65: Accept/request-change copy is improved, but the legacy separate decision dialogs and stale-state UX are not fully restored. Test: `it("MEN-projects-meetings-65 uses submission decision wording and exact feedback")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
 
+| MEN-projects-meetings-55 | DONE | src/components/projects/project-resource-list.tsx; tests/unit/mentor-resource-list-round5.test.ts — `it("MEN-projects-meetings-55 searches resources, filters types and visibility with clear filters and stats")`. Sprint/task filters require corresponding resource associations and remain a separate data-model gap. |
+| MEN-projects-meetings-57 | DONE | src/components/projects/project-resource-list.tsx; project-resource-open-link.tsx; tests/unit/mentor-resource-list-round5.test.ts — `it("MEN-projects-meetings-57 lists human-facing resource labels, last update, state and safe links")`. |
+
 ## Remaining
-MEN-projects-meetings-53/55/56/57/58/60/63/64/65/66/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+MEN-projects-meetings-53/56/58/60/63/64/65/66/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
