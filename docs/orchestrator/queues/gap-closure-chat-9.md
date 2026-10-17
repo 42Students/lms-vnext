@@ -44,7 +44,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-52 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-calendar-reports-54 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-56 | S3 | VALIDATION | FIXED-ON-MAIN |
-| TPO-calendar-reports-57 | S3 | STATE | OPEN |
+| TPO-calendar-reports-57 | S3 | STATE | NOT-A-GAP |
 | TPO-calendar-reports-R02 | S3 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-R03 | S3 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-calendar-reports-R04 | S3 | MISSING-FIELD | DONE-BRANCH |
@@ -249,7 +249,7 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-12 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-projects-13 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-projects-04 | S3 | MISSING-ACTION | OPEN |
-| COL-projects-05 | S3 | MISSING-PAGE | OPEN |
+| COL-projects-05 | S3 | MISSING-PAGE | NOT-A-GAP |
 | COL-projects-08 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-15 | S3 | MISSING-MODAL | OPEN |
 | COL-projects-16 | S3 | MISSING-COLUMN | DONE-BRANCH |
@@ -258,7 +258,7 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-20 | S3 | STATE | DONE-BRANCH |
 | COL-projects-09 | S4 | STATE | FIXED-ON-MAIN |
 | COL-projects-18 | S4 | MISSING-FILTER | DONE-BRANCH |
-| COL-projects-21 | S4 | COPY | OPEN |
+| COL-projects-21 | S4 | COPY | DONE-BRANCH |
 | COL-projects-22 | S4 | MISSING-FILTER | NOT-A-GAP |
 | COL-projects-23 | S4 | RESPONSIVE | DONE-BRANCH |
 
