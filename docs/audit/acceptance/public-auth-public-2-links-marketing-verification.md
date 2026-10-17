@@ -8,11 +8,11 @@ Audit `docs/audit/pages/public/auth-public-2-links-marketing.md`. Protocol `docs
 | PUB-auth-public-45 | OPEN | Joined state provides sign-in link; PENDING_HR state not independently verified |
 | PUB-auth-public-46 | DONE | RecruiterInviteLanding uses shared apiFetch with timeout/non-JSON failure handling; 404 invalid differs from 5xx/offline load_error Retry, and OTP actions are guarded; named test PUB-auth-public-46 |
 | PUB-auth-public-47 | OPEN | Company and college context exists; every historical invitation-specific sentence not confirmed |
-| PUB-auth-public-50 | OPEN | One-time company share code gate not wired into public share GET and SQL authorization |
+| PUB-auth-public-50 | DONE (source; migration proposed) | `src/modules/placements/company-share/{token-model,manage-service,public-service,access-service,readiness}.ts`, `src/app/company-share/[token]/{page.tsx,access/route.ts}`, `src/app/api/placements/company-share/[token]/export/route.ts`, `docs/proposed-migrations/chat13-public-company-share-code-and-columns.sql`, test `tests/unit/chat13-final-sprint-public-share.test.ts` — `PUB-auth-public-50`; token-only reads fail closed before scoped applicants, six-digit code distributed separately. |
 | PUB-auth-public-51 | OPEN | Email me a code instead for company share not yet available |
-| PUB-auth-public-52 | OPEN | Wrong-code share lockout/bell not independently implemented |
-| PUB-auth-public-53 | OPEN | Chosen applicant column whitelist and shortlist stage disclosure still only 3 columns |
-| PUB-auth-public-55 | OPEN | Private all-resume ZIP awaits signed receipt/download and scanner |
+| PUB-auth-public-52 | DONE (source; migration proposed) | `src/modules/placements/company-share/access-service.ts` serialized 10-wrong-code/hour lockout, durable `LOCKED` audit event and `SHARE_LOCKED` TPO notice, generic failure; test `tests/unit/chat13-final-sprint-public-share.test.ts` — `PUB-auth-public-52`. |
+| PUB-auth-public-53 | DONE (source, resume withheld) | Typed 13-choice, maximum 11 TPO-selected fields, sanitized per-applicant values and matched CSV export in `src/modules/placements/company-share/column-model.ts`, page, issuer and public service; `RESUME` deliberately null pending scanner-backed signed delivery; test `tests/unit/chat13-final-sprint-public-share.test.ts` — `PUB-auth-public-53`. |
+| PUB-auth-public-55 | BLOCKED (verified storage prerequisite) | Owner decision OD-09 explicitly defers `Download all resumes (ZIP)` until private storage, malware scan, delivery and audit are live; unsafe URL/ZIP is NOT implemented. `tests/unit/chat13-final-sprint-public-share-zip.test.ts` — `PUB-auth-public-55`; no claim of download capability. |
 | PUB-auth-public-56 | DONE | Company-share page renders college, company, share date and expiry / confidentiality warning; named test PUB-auth-public-56 |
 | PUB-auth-public-59 | DONE | Public share now displays exact invalid/expired warning; thrown server load errors render independent Retry boundary; `tests/unit/public-auth-links-gap-closure.test.ts` — PUB-auth-public-59 |
 | PUB-auth-public-67 | DONE | /privacy-policy redirects to 13-section historic privacy policy, April 20 2026, Android ID and privacy email; named test PUB-auth-public-67 |
@@ -20,7 +20,7 @@ Audit `docs/audit/pages/public/auth-public-2-links-marketing.md`. Protocol `docs
 | PUB-auth-public-48 | DONE | Exact legacy declined subtitle rendered after Not hiring; named test PUB-auth-public-48 |
 | PUB-auth-public-49 | OPEN | Invite state notification side effects require PG verification |
 | PUB-auth-public-54 | OPEN | CSV all selected columns/role filename and download event not present |
-| PUB-auth-public-57 | OPEN | Shortlist-by date metadata not rendered |
+| PUB-auth-public-57 | DONE (source; migration proposed) | TPO-created `shortlistBy` persisted separately from link expiry, validated and rendered `Please shortlist by ...` in IST; `src/modules/placements/company-share/manage-service.ts`, `src/app/company-share/[token]/page.tsx`; test `tests/unit/chat13-final-sprint-public-share.test.ts` — `PUB-auth-public-57`. |
 | PUB-auth-public-60 | OPEN | SHARE_OPENED bell not verified |
 | PUB-auth-public-58 | DONE | Tenant-name confidential overlay on applicant list; named test PUB-auth-public-58 |
 | PUB-auth-public-61 | OPEN | Historical course slug continue link alias not implemented |
@@ -60,3 +60,6 @@ A verified implementation is a source-level closure awaiting orchestrator execut
 | ID | Disposition | Reason |
 | --- | --- | --- |
 | PUB-auth-public-61 | NOT-A-GAP | Old course slug/resume routes have no safe resolver or migration; new student links use authorized delivery IDs and navigate only within verified course membership. Do not map an arbitrary legacy slug to a possibly different college's delivery. `tests/unit/chat3-tenant-public-verified-round13.test.ts` PUB-auth-public-61. |
+
+## Chat-13 final sprint note
+The API fails closed while new code columns are absent. Registration of the proposed migration, auth-secret configuration, actual 10-failure/notification concurrency integration, rendered page tests, and active storage-scanner availability remain orchestrator checks. Tests were written but have not been run by this lane.
