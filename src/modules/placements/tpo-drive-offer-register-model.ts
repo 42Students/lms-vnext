@@ -1,7 +1,7 @@
 import {z} from "zod";
 import {placementReportCsv} from "./report-model";
 export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(["ALL","ISSUED","ACCEPTED","DECLINED","WITHDRAWN"]).default("ALL"),page:z.coerce.number().int().min(1).max(10000).default(1),q:z.string().trim().max(100).default(""),joining:z.enum(["ALL","PENDING","JOINED","DEFERRED","DID_NOT_JOIN"]).default("ALL"),kind:z.enum(["ALL","OFFER","LOI"]).default("ALL"),expiry:z.enum(["ALL","EXPIRED","DUE_SOON","OPEN","UNKNOWN"]).default("ALL")}).strict();
-export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
+export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 export const OFFER_REGISTER_PAGE_SIZE=25;
 export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined,asOf:Date):"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"|"NOT_APPLICABLE"{
  if(status!=="ISSUED")return "NOT_APPLICABLE";
@@ -15,7 +15,7 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
  return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
   (kind==="ALL"||f.offer.kind===kind)&&
   (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
-  [f.candidate.displayName,f.candidate.email,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
+  [f.candidate.displayName,f.candidate.email,f.candidate.phone,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
@@ -32,7 +32,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
  return {counts,totalMatching:match.length,page,pageSize:OFFER_REGISTER_PAGE_SIZE,totalPages,rows:match.slice(start,start+OFFER_REGISTER_PAGE_SIZE).map(({offer,candidate,joining})=>({
-  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,status:offer.status,
+  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,status:offer.status,
   issued:offer.issuedAt.toISOString(),responded:offer.respondedAt?.toISOString()??null,
   expires:offer.expiresAt?.toISOString()??null,respondByHours:offer.status==="ISSUED"&&offer.expiresAt?Math.max(0,Math.ceil((offer.expiresAt.getTime()-asOf.getTime())/3600000)):null,expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
   joining:offer.status==="ACCEPTED"?(joining?.status??"PENDING"):null,
