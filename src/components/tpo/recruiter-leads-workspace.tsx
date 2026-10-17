@@ -332,6 +332,11 @@ export function RecruiterLeadsWorkspace({
       (communication[company.key]??"NOT_CONTACTED")!==companyCommunicationFilter)return false;
     return true;
   }),[companies,companySearch,companyContacts,companyHistory,companyAliases,companyCommunicationFilter,communication]);
+  const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
+    company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
+  const rosterRows=useMemo(()=>rows.map(row=>({
+    ...row,drivesRan:companiesPhase==="ready"?leadDriveCounts.get(row.id)??null:null,
+  })),[rows,leadDriveCounts,companiesPhase]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
