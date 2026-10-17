@@ -47,3 +47,6 @@ TPO-students-36: the authorized filtered CSV is now downloaded through a guarded
 | TPO-students-35 | DONE (friendly-error adoption; prior scope unchanged) | saved views GET/POST use apiFetch and keep edits on failure; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-35` |
 | TPO-students-42 | DONE (friendly-error adoption; prior scope unchanged) | student Requests quick panel protects failed lookups; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-42` |
 | TPO-students-54 | DONE (friendly-error adoption; prior scope unchanged) | single and bulk outcome editors keep drafts on failure; `tests/unit/chat12-round3-api-fetch.test.ts` named test `TPO-students-54` |
+
+| TPO-students-14 | OPEN (remaining ineligible include override / whole-view cap) | Dialog confirmation, no native confirm, per-row eligibility; `tests/unit/chat12-students-bulk-drive-round3.test.ts` `TPO-students-14` |
+| TPO-students-15 | OPEN (remaining 48-hour opt-out, TPO summary bell) | New additions notify each affected learner transactionally, with activity-linked idempotent notification; `tests/unit/chat12-students-bulk-drive-round3.test.ts` `TPO-students-15` |
