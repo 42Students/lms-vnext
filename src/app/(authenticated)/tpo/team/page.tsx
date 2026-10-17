@@ -1,5 +1,6 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
+import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
 import Link from "next/link";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {redirect} from "next/navigation";
@@ -65,24 +66,9 @@ export default async function TpoTeamPage({searchParams}:{
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
     <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
-    {conversations?.status==="READY" ? <form method="post" action="/api/placements/tpo/team/threads"
-      className="mt-4 grid gap-3 rounded-lg border border-border p-4">
-      <h3 className="font-semibold text-foreground">Start a private TPO conversation</h3>
-      <label className="grid gap-1 text-sm text-body">Team member
-        <select name="recipientMembershipId" required defaultValue=""
-          className="min-h-11 rounded-md border border-border bg-surface px-3">
-          <option value="" disabled>Choose an active TPO colleague</option>
-          {team.members.filter(member=>member.membershipId!==context.membership?.id && member.roles.includes("TPO")).map(member=>
-            <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
-        </select>
-      </label>
-      <label className="grid gap-1 text-sm text-body">Topic
-        <input name="topic" required maxLength={160} className="min-h-11 rounded-md border border-border bg-surface px-3"
-          placeholder="Drive coordination" />
-      </label>
-      <p className="text-xs text-muted-foreground">Only two named active TPO members can participate; the recipient is revalidated before saving.</p>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Start conversation</button>
-    </form> : null}
+    {conversations?.status==="READY"?<TpoTeamThreadCreate members={team.members.filter(
+      member=>member.membershipId!==context.membership?.id&&member.roles.includes("TPO"))
+      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
