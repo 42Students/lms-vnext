@@ -3,7 +3,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {outsideDriveResultLabel} from "@/modules/placements/recorded-outside-participation-service";
+import {outsideDriveResultLabel} from "@/modules/placements/recorded-outside-participation-model";
 const outcomes=["PARTICIPATED","PASSED","FAILED","SELECTED","HIRED"] as const;
 type Result=typeof outcomes[number];
 export function TpoOutsideParticipantsEditor({recordId,available,choices,participants}:{
