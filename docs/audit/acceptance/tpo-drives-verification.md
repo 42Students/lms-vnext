@@ -218,3 +218,10 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | TPO-drives-52 | PARTIAL | Quick draft now shares strict IST parsing, bounded title and friendly API errors with full create; it stops retrying a create whose response was lost. Two forms are still retained intentionally until the owner settles a unified workflow. `chat3-tpo-supplemental-round14.test.ts`. |
 
 No page styling was changed. Added fields and readback represent functional gap closure only. Every test is authored, not executed by this connector.
+
+## Chat-3 round 14 — existing role presets and unified error copy
+
+| Gap | Disposition | Source/test evidence |
+| --- | --- | --- |
+| TPO-drives-39 | OPEN (functional sub-contract confirmed) | Create exposes three predefined genuine round sequences and saves pending rounds against the newly created scoped job. Retry reads back saved rounds and adds only the missing suffix; custom per-row interview mode/date setup remains in the drive workspace. Named `TPO-drives-39 persists actual pending preset rounds with readback dedupe` in `tests/unit/chat3-tpo-supplemental-round14.test.ts`. |
+| TPO-drives-44 | OPEN (safer errors, partial legacy mapping) | Quick and full create share `tpoDriveFormErrorMessage` so malformed/machine/backend messages are not exposed; recognized company, deadline and role failures have readable text. Exact legacy sentence inventory is not fully audited; named `TPO-drives-44 quick and full create both format safe API messages` in `chat3-tpo-supplemental-round14.test.ts`. |
