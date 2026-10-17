@@ -477,10 +477,12 @@ export function RecruiterLeadsWorkspace({
           encodeURIComponent(collegeId) + "&contact=" + encodeURIComponent(contact),
         { credentials: "same-origin", cache: "no-store" },
       );
+      if(sequence!==contactCheckSeq.current)return;
       if (response.status === 204) {
         setDuplicate(null);
       } else {
         const data = await response.json() as { lead?: Lead; error?: string };
+        if(sequence!==contactCheckSeq.current)return;
         if (!response.ok) throw new Error(friendlyError(response.status, data));
         setDuplicate(data.lead ?? null);
       }
