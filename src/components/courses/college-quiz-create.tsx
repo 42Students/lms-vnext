@@ -156,6 +156,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       className="text-xs font-semibold text-error">Remove</button>:null}
     </label>)}
     <div className="flex flex-wrap gap-3">
+     <button type="button" disabled={busy||i===0} onClick={()=>moveQuestion(i,-1)}
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question up</button>
+     <button type="button" disabled={busy||i===questions.length-1} onClick={()=>moveQuestion(i,1)}
+      className="text-sm font-semibold text-primary-text disabled:opacity-40">Move question down</button>
      <button type="button" disabled={busy||question.options.length>=20}
       onClick={()=>replaceQuestion(i,{...question,options:[...question.options,{text:"",correct:false}]})}
       className="text-sm font-semibold text-primary-text">+ Add option</button>
