@@ -48,12 +48,16 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   expect(adminAttendanceCellState(a,{status:"MEDICAL"},now).label).toBe("Medical");
   expect(adminAttendanceCellState(a,{status:"LATE"},now).label).toBe("Late");
  });
- it("COL-attendance-09 course options remain based on actual deliveries not a guessed past-term label",()=>{
-  expect(workspace()).toContain("offeredCourses");
-  expect(workspace()).toContain("selectedCourseId");
-  expect(workspace()).toContain("termDeliveries.length>1");
-  expect(workspace()).toContain("academicPeriodName");
-  expect(workspace()).toContain('params.set("deliveryId"');
+ it("COL-attendance-09 past-term options use persisted ended-at facts, active first and delivery-specific selection",()=>{
+  const service=source("src/modules/attendance/admin-service.ts");
+  const form=workspace();
+  expect(service).toContain('isPast:sql<boolean>');
+  expect(service).toContain("case when ${courseSectionDeliveries.endedAt} is null then 0 else 1 end");
+  expect(service).not.toContain('isNull(\n              courseSectionDeliveries.endedAt,');
+  expect(form).toContain('isPast:boolean');
+  expect(form).toContain('item.isPast?" · past":""');
+  expect(form).toContain("termDeliveries.length>1");
+  expect(form).toContain('params.set("deliveryId"');
   expect(page()).toContain("entry.deliveryId===query.deliveryId");
  });
  it("COL-attendance-10 elective labels come from persisted offering type, never guessed by course name",()=>{
