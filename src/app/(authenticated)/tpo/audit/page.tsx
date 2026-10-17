@@ -220,15 +220,15 @@ export default async function TpoAuditPage({
        </Link>)}
       </nav>
       <nav aria-label="Filter audit by category" className="flex flex-wrap gap-2">
-        {[{kind:"ALL" as const,label:"All",count:summary.total},
-          ...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:summary.byKind[kind]}))]
+        {[{kind:"ALL" as const,label:"All",count:query.kind==="ALL"?summary.total:null},
+          ...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:query.kind==="ALL"?summary.byKind[kind]:null}))]
          .map(item=><Link key={item.kind}
           href={tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}
           aria-current={query.kind===item.kind?"page":undefined}
           className={query.kind===item.kind
            ?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary"
            :"inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
-          {item.label} ({item.count})
+          {item.label}{item.count===null?"":` (${item.count})`}
          </Link>)}
       </nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
