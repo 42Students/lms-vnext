@@ -536,9 +536,10 @@ export function RecruiterLeadsWorkspace({
         }
       }
     }catch(cause){
-      setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
+      if(sequence===contactCheckSeq.current)setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
       return;
-    }finally{setChecking(false);}
+    }finally{if(sequence===contactCheckSeq.current)setChecking(false);}
+    if(sequence!==contactCheckSeq.current)return;
     if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
       setSaveError("Choose a future follow-up date (IST).");return;
     }
