@@ -59,7 +59,13 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     </nav>
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>
+      <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" name="urgentOnly" value="true" defaultChecked={data.query.urgentOnly===true}/> Urgent only</label>
       <label className="text-sm">Request kind<select name="requestType" defaultValue={data.query.requestType} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">{GLOBAL_TPO_REQUEST_TYPES.map(type=><option key={type} value={type}>{type==="ALL"?"All request kinds":type.replaceAll("_"," ").toLowerCase()}</option>)}</select></label>
+      <label className="text-sm">Drive<select name="jobId" defaultValue={data.query.jobId??""} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+       <option value="">All drives</option>
+       {data.query.jobId&&!jobChoices.some(row=>row.job.id===data.query.jobId)?<option value={data.query.jobId}>Previously selected drive</option>:null}
+       {jobChoices.map(row=><option value={row.job.id} key={row.job.id}>{row.company.name} · {row.job.title}</option>)}
+      </select></label>
       <label className="min-w-0 flex-1 text-sm">Search student, job or company
         <input name="search" defaultValue={data.query.search} type="search" maxLength={150} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3" />
       </label>
@@ -77,7 +83,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      <h2 className="font-semibold">Needs doing first</h2>
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
-      <span className="rounded border border-border px-3 py-2">Urgent · {attention.urgent}</span>
+      <Link href={href({...data.query,status:"PENDING",urgentOnly:true,page:1})} aria-current={data.query.urgentOnly?"page":undefined} className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Urgent · {attention.urgent}</Link>
       <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
        aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
        className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
