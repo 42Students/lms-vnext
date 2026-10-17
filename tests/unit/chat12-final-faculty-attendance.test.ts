@@ -14,8 +14,9 @@ describe("chat-12 final sprint faculty audit",()=>{
   const source=read("src/modules/attendance/faculty-service.ts");
   expect(source).toContain("presentMembershipIds");
   expect(source).toContain("absentMembershipIds");
-  expect(source).toContain("sectionEnrollments");
-  expect(source).toContain("attendanceRecords");
+  expect(source).toContain("currentDeliveryRoster(");
+  expect(source).toContain("rosterIds.size !== submitted.size");
+  expect(source).toContain("event.sectionId !== delivery.sectionId");
  });
  it("FAC-attendance-grades-19 honors persisted college policy rather than hardcoded UI risk rules",()=>{
   const source=read("src/modules/attendance/faculty-service.ts");
