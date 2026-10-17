@@ -1,0 +1,25 @@
+import {describe,expect,it} from "vitest";
+import {parseTpoRoundImport,roundImportActionSchema} from "@/modules/placements/tpo-round-import-model";
+import {parseSelectionCsv,prepareSelectionImport} from "@/modules/placements/tpo-selection-import-model";
+import {roundApplyPreviewToken,roundApplyInputSchema,summarizeRoundApply} from "@/modules/placements/tpo-round-apply-model";
+import {planInterviewDay,tpoInterviewSlotActionSchema} from "@/modules/placements/tpo-interview-slot-model";
+import {recordSelectionsSchema,releaseSelectionsSchema,summarizeSelectionRelease} from "@/modules/placements/tpo-drive-selection-model";
+import {tpoWaitlistPromotionSchema,waitlistPreviewToken} from "@/modules/placements/tpo-waitlist-promotion-model";
+import {driveChangeCommandSchema} from "@/modules/placements/tpo-drive-change-request-model";
+import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema} from "@/modules/placements/tpo-remind-not-applied-model";
+import {evaluateTpoDriveCancellation,isIssuedOfferCancelable} from "@/modules/placements/tpo-drive-cancel-model";
+
+describe("TPO drive workspace verified S1 gaps",()=>{
+ it("TPO-drive-workspace-40 accepts 1000 reviewed CSV results and refuses unreviewable 1001st, conflicting headers and blank rows",()=>{
+  const lines=["Application ID,Result",...Array.from({length:1000},(_,i)=>"candidate-"+i+",PASS")];
+  expect(parseTpoRoundImport(Buffer.from(lines.join("\n")),"company.csv")).toHaveLength(1000);
+  expect(()=>parseTpoRoundImport(Buffer.from([...lines,"candidate-next,FAIL"].join("\n")),"company.csv")).toThrow();
+  expect(()=>parseTpoRoundImport(Buffer.from("Application ID,Result,Outcome\na,PASS,PASS"),"company.csv")).toThrow(/same field/);
+  expect(()=>parseTpoRoundImport(Buffer.from("Application ID,Result\na,PASS\n\nb,FAIL"),"company.csv")).toThrow(/blank/);
+  expect(roundImportActionSchema.safeParse({action:"STAGE_IMPORT",confirmed:true,previewToken:"a".repeat(64),
+    missingPolicy:"MARK_NOT_CLEARED",overrides:[],skippedLines:[]}).success).toBe(true);
+  expect(roundImportActionSchema.safeParse({action:"STAGE_IMPORT",confirmed:true,previewToken:"a".repeat(64),
+    missingPolicy:"MARK_NOT_CLEARED",overrides:[],skippedLines:[4,4]}).success).toBe(false);
+ });
+});
