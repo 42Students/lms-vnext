@@ -131,6 +131,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <p className="mt-1 text-xs text-muted-foreground">
       By {row.senderName?.trim()||"Placement team"} ·
       {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
+      {" · For "+({COLLEGE:"whole college",PLACEMENTS:"students in placements",BATCHES:"selected batches",BRANCHES:"selected branches",DRIVE:"selected drive"} as Record<string,string>)[row.audienceKind]}
       {row.updatedAt.getTime()>row.createdAt.getTime()+1000?" · Updated":""}
       {row.expiresAt?" · Shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
     </p>
