@@ -174,6 +174,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     onClick={()=>setQuestions(rows=>[...rows,empty()])}
     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
     + Add question</button>
+   <label className="flex items-center gap-2 text-sm">
+    <input type="checkbox" disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
+    Create another quiz after saving
+   </label>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
