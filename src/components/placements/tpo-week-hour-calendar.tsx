@@ -81,7 +81,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   if(!slot||saving||!leadId)return;
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(slot);}catch{setMessage("Invalid IST time.");return;}
-  if(new Date(dueAt).getTime()<=Date.now()){setMessage("Follow-up must be in the future.");return;}
+  if(new Date(dueAt).getTime()<=new Date().getTime()){setMessage("Follow-up must be in the future.");return;}
   if(blocked.has(slot.slice(0,10))&&!window.confirm("This date is blocked in placement settings. Add the follow-up anyway?"))return;
   if(!blockedDatesAvailable&&!window.confirm("Blocked dates are unavailable. Add the follow-up without checking?"))return;
   setSaving(true);setMessage("");
