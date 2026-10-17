@@ -452,7 +452,7 @@ export function ScheduleProjectMeetingControl({
             ? "Schedule Project meeting"
             : "New Project meeting"
         }
-        description="Meeting URLs must use HTTPS. Sprint/task links are validated server-side against this Project."
+        description="Meeting links must use HTTPS. Sprint/task links are validated server-side against this Project."
       >
         <form
           onSubmit={submit}
@@ -502,7 +502,7 @@ export function ScheduleProjectMeetingControl({
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              HTTPS meeting URL
+              Meeting link
             </span>
             <Input
               type="url"
