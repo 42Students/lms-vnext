@@ -200,3 +200,22 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - BLOCKED TPO-drive-workspace-54 / LEARNER-placements-20: authorized private resume/offer-letter storage and sharing consent not implemented.
 - SKIP TPO-drive-workspace-65: OD-09 disclosure security decision pending; do not widen recruiter visibility.
 - Ownership: WPs 02,09,10,14,15 chat-3; 04,05,11,16 chat-6. No work in reassigned WPs or shared shell. Owned WPs 01,03,06,07,08,12,13 remain IN-PROGRESS due outstanding nonblocked parity/runtime acceptance; no test, typecheck, lint, build or CI executed (FAST v2).
+
+## chat-5-b FAST v2 source continuation (2026-10-17, after 0132 lane sync)
+
+- Synced branch to main at `2e69a866` by fast-forward (no conflicts, never pushed to main).
+- WP-01 / TPO-drive-workspace-40/41: importer reserves explicit ranks before automatic waitlist numbering; blank CSV data rows no longer disappear silently; missing candidates are listed and require an explicit reviewed confirmation before any mass Not cleared stage.
+- WP-01 / TPO-drive-workspace-02/47: Next step uses college-scoped count of recorded selections still awaiting verify-and-release. Releasing selected offers now has explicit final consequence confirmation and ready-versus-needs-review counts.
+- WP-01 / TPO-drive-workspace-15: unavailable email delivery cannot be selected during publication; app notifications remain the supported path. Email delivery remains blocked on production provider configuration.
+- WP-06 / TPO-drive-workspace-35: round cards distinguish staged, applied and not-recorded results, with a guarded HTTPS test link.
+- WP-06 / TPO-drive-workspace-16: first application deadline has accurate help copy, rather than incorrectly requiring an existing deadline.
+- WP-06 / TPO-drive-workspace-41/R03: bulk staging explains rank bounds and validation, and previews count/outcome/rank range before confirmation.
+- WP-07 / TPO-drives-05: undated published drives with completed rounds no longer misleadingly present as only taking applications.
+- WP-08 / TPO-drives-23/24/40: create flow has an explicit setup rail, searchable existing college company names/domains, prevention of exact same-college duplicate company, and one-click reuse of matches.
+- WP-06/07 / TPO-drive-workspace-49: register and CSV both support validated min/max annual package LPA filters; status tabs and exports preserve range; now uses real registered DB09 tables instead of stale `DB09_TPO_API_READY` 503 export gate.
+- BLOCKED TPO-drive-workspace-40 company portal IDs: no canonical college-scoped company-ID-to-application mapping is registered; never auto-match unknown portal IDs.
+- BLOCKED TPO-drive-workspace-28: per-learner apply-on-behalf 48-hour consent/opt-out persistence and policy are not registered.
+- BLOCKED TPO-drive-workspace-54 and LEARNER-placements-20: private attachment storage keys, consent and retention remain unavailable.
+- SKIP TPO-drive-workspace-65: OD-09 recruiter disclosure owner decision still pending.
+- MOVED WPs 02/09/10/14/15 to chat-3 and 04/05/11/16 to chat-6; no reassigned edits.
+- Owned WPs 01,03,06,07,08,12,13 remain IN-PROGRESS (no acceptance evidence); no tests, lint, typecheck, build or CI run.
