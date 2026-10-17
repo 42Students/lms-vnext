@@ -28,7 +28,7 @@ describe("chat-15 final sprint: faculty audit decisions grounded in current code
   expect(assignment).toContain('No one has submitted this assignment yet.');
  });
  it("FAC-assessments-28 WRONG: distinct quiz and assignment report sections have the requested copy",()=>{
-  const quiz=src("src/app/(authenticated)/teacher/report/quiz/[contentId]/page.tsx");
+  const quiz=src("src/app/(authenticated)/teacher/report/quiz/[quizId]/page.tsx");
   const assignment=src("src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx");
   const download=src("src/components/courses/faculty-report-download.tsx");
   for(const phrase of ["Question accuracy","Worst-answered first.","Student scores","Score distribution"])
