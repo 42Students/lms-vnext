@@ -41,14 +41,14 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
    if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
-   setFeedback(published+" placement-cell notices published.");setTitle("");setMessage("");setSelected([]);
+   setFeedback("Sent to "+published+" placement cell(s). "+(scheduledAt?"Scheduled announcements will be visible at their planned time.":"Active placement-cell users receive a bell notice."));setTitle("");setMessage("");setSelected([]);
    router.refresh();
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{setPending(false);setReview(false);}
  }
  return <section className="space-y-4 rounded-xl border border-border bg-surface p-5">
-  <h2 className="m-0 text-lg font-semibold text-foreground">Publish to every placement cell or selected placement cells</h2>
-  <p className="text-sm text-body">One in-app notice is persisted for each authorized college with an active TPO. This action does not send SMS or email.</p>
+  <h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>
+  <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
   <label className="grid gap-1 text-sm font-semibold text-body">Audience
    <select value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11 rounded-md border border-border bg-surface px-3">
     <option value="SELECTED_COLLEGES">Selected placement cells</option>
@@ -72,10 +72,10 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   </label>
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}
   <p className="text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
-  <Button disabled={!valid} onClick={()=>setReview(true)}>Review college publication</Button>
+  <Button disabled={!valid} onClick={()=>setReview(true)}>Review placement-cell announcement</Button>
   {feedback?<p role="status" className="text-sm text-body">{feedback}</p>:null}
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
-   title="Approve publication to colleges" description={broadcastConsentSummary(mode,count,Boolean(scheduledAt))}
+   title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,Boolean(scheduledAt))}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
    <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, recipient rows are persisted atomically and become visible according to their schedule.</p>
   </ConfirmDialog>
