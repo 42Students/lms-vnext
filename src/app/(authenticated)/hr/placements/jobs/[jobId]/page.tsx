@@ -746,6 +746,10 @@ export default async function HrPlacementJobPage({
                 "Date to be decided"} · {round.mode==="VIRTUAL"?"Online":
                   round.mode==="ON_CAMPUS"?"On campus":"Mode to be decided"}</p>
               <p className="text-muted-foreground">{round.venue??"Venue not set"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">
+               {round.participants.filter(person=>person.result?.status==="STAGED").length} waiting for the cell ·
+               {" "}{round.participants.filter(person=>person.result?.status==="APPLIED").length} applied
+              </p>
               {!driveOverview.readOnly && round.createdByUserId===context.user.id ?
                 <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
                  className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">Change or remove</Link>:null}
