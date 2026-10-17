@@ -1,7 +1,7 @@
 import "server-only";
 
 import {randomUUID} from "node:crypto";
-import {and,desc,eq} from "drizzle-orm";
+import {and,desc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
