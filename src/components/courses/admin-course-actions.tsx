@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import {apiFetch} from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 async function mutate(
@@ -21,7 +21,7 @@ async function mutate(
   method: "PATCH" | "DELETE",
   body?: unknown,
 ) {
-  const response = await fetch(path, {
+  return apiFetch(path, {
     method,
     headers: body
       ? { "Content-Type": "application/json" }
@@ -30,14 +30,6 @@ async function mutate(
       ? JSON.stringify(body)
       : undefined,
   });
-
-  if (!response.ok) {
-    throw new Error(
-      await courseApiError(response),
-    );
-  }
-
-  return response.json();
 }
 
 function useCourseMutation() {

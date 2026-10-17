@@ -2,6 +2,8 @@
 
 import {useState,useTransition,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import {LEGACY_FACULTY_TYPES} from "@/modules/people/college-faculty-type-model";
 
 type Kind="FACULTY"|"LEARNER";
@@ -27,11 +29,10 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   async function load(){
     setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
     try{
-      const response=await fetch(base+"?kind="+kind,{cache:"no-store"});
-      const result=await response.json().catch(()=>null);
-      if(!response.ok||!result?.person)throw Error("Profile details unavailable");
+      const result=await apiFetch<{person:Person}>(base+"?kind="+kind,{cache:"no-store"});
+      if(!result.person)throw Error("Profile details unavailable");
       setPerson(result.person as Person);
-    }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load profile");}
+    }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     finally{setLoading(false);}
   }
   function patch(key:keyof Person,value:string){
@@ -43,7 +44,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
     start(async()=>{
       setError("");setSuccess("");
       try{
-        const response=await fetch(base,{method:"PATCH",headers:{"content-type":"application/json"},
+        await apiFetch(base,{method:"PATCH",headers:{"content-type":"application/json"},
           body:JSON.stringify({
             kind,gender:person.gender,dateOfBirth:person.dateOfBirth,
             address:person.address,bio:person.bio,
@@ -57,11 +58,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               registrationNumber:person.registrationNumber??"",
             }),
           })});
-        const result=await response.json().catch(()=>null);
-        if(!response.ok)throw Error(result?.error??"Profile update failed");
         setSuccess(kind==="FACULTY"?"Faculty details saved.":"Student details saved.");
         router.refresh();setOpen(false);
-      }catch(reason){setError(reason instanceof Error?reason.message:"Profile update failed");}
+      }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     });
   }
   return <div className="inline-block">
