@@ -34,6 +34,22 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ? seasons.find((s) => s.id === filters.seasonId)
     : null;
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
+  const attentionBoundary=new Date(now.getTime()+7*86400000);
+  const [attention]=await db.select({
+    noApplicants:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
+      and not exists(select 1 from placement_applications a
+        where a.job_id=${placementJobs.id} and a.status='SUBMITTED'))::int`,
+    noDeadline:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
+      and ${placementJobs.applicationDeadline} is null)::int`,
+    dueSoon:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
+      and ${placementJobs.applicationDeadline} >= ${now}
+      and ${placementJobs.applicationDeadline} <= ${attentionBoundary})::int`,
+    overdue:sql<number>`count(*) filter(where ${placementJobs.status}='PUBLISHED'
+      and ${placementJobs.applicationDeadline} < ${now})::int`,
+  }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
+    isNull(placementJobs.archivedAt),season?eq(placementJobs.seasonId,season.id):undefined));
+  const attentionCounts=attention??{noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
+
   if (filters.view === "REQUESTS") {
     const available = await placementTableExists("placement_recruiter_drive_requests");
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
@@ -41,7 +57,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,
       minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
-      asOf:now.toISOString()};
+      attentionCounts,asOf:now.toISOString()};
     if (!available) return {...tpoDriveLifecyclePage(0,filters.page),counts,
       rows:[],requestRows:[],requestsAvailable:false as const,...common};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
@@ -174,7 +190,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   return {
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
-    asOf: now.toISOString(),
+    attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
   };
