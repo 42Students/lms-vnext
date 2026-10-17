@@ -256,6 +256,8 @@ export default async function LearnerOffersPage({
             joiningDate: row.offer.joiningDate,
             expiresAt: row.offer.expiresAt?.toISOString() ?? null,
             issuedAt: row.offer.issuedAt.toISOString(),
+            acceptanceChannel: row.offer.acceptanceChannel,
+            acceptedDisputableUntil: row.offer.acceptedDisputableUntil?.toISOString()??null,
             joining: row.joining
               ? {
                   status: row.joining.status as
