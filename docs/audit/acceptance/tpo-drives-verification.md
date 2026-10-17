@@ -80,3 +80,9 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-52 | OPEN | Quick draft and full create routes remain separate. Test TPO-drives-52 locks their current exposure until workflows can be safely consolidated. |
 
 | TPO-drives-26 | DONE (safe create-picker action) | Clone action now uses guarded `apiFetch` and keyboard-accessible `ConfirmDialog` instead of browser confirmation/raw response errors. Named tests TPO-drives-26 and GR-35; server remains responsible for ownership, source copying and auditing. |
+
+| TPO-drives-01 | DONE | Verified sidebar route `/tpo/placements` redirects to actual lifecycle list. Test TPO-drives-01; sidebar component remains owned by chat-9. |
+| TPO-drives-09 | DONE (available statuses) | Lifecycle list uses labelled and color-toned status badges for jobs and recruiter requests, including Cancelled / Declined; test TPO-drives-09. Persisted CANCELLED-vs-CLOSED distinction remains TPO-drives-R04. |
+| TPO-drives-38 | OPEN | UI explicitly states employer skill requirements cannot be configured here. No persisted skill tags or applicant match setup; needs server/domain support, no fake UI. Test TPO-drives-38. |
+| TPO-drives-47 | OPEN | UI directs lead invitations to Engage instead of claiming this form emails recruiters; drive-specific invitation, public review link, email/clipboard UX remain. Test TPO-drives-47. |
+| TPO-drives-50 | OPEN | Edit checks TPO actor and college scope, but recruiter-originated approved drive fields are not yet protected by a company-owned-field policy and last-saved attribution. Test TPO-drives-50. |

@@ -809,7 +809,7 @@ export function PlacementJobCreateForm({
                 Contract
               </option>
             </select>
-            <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list.</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list. Skills the employer requires are not configured on this form yet.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -1145,7 +1145,7 @@ export function PlacementJobCreateForm({
       <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace after creating the draft.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview rounds are configured in the saved drive workspace; recruiter lead invitations are managed separately under Engage.</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
