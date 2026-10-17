@@ -168,6 +168,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
             <li key={notice.id} id={learnerNoticeAnchor(notice.id)??undefined} className="min-w-0 scroll-mt-24 rounded-xl border border-border bg-surface p-5">
               <div className="flex flex-wrap items-center gap-2">
                 {notice.isPinned ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">Pinned</span> : null}
+                {notice.updatedAt ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">Updated</span> : null}
                 {noticeNow-Date.parse(notice.createdAt)<7*24*60*60*1000 && noticeNow>=Date.parse(notice.createdAt)
                   ? <span className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">New</span>:null}
               </div>
@@ -187,6 +188,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
               <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
                 {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
               </time>
+              {notice.updatedAt ? <time dateTime={notice.updatedAt} className="mt-1 block text-xs text-muted-foreground">
+                Updated {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.updatedAt))}
+              </time> : null}
             </li>
           ))}
         </ul>
