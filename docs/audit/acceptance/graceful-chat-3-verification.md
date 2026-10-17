@@ -1,10 +1,10 @@
 # Chat-3 graceful operation — touched-page evidence
 
-Protocol: `docs/orchestrator/briefs/gap-closure-lane.md`, checklist `docs/audit/graceful/CHECKLIST.md`. Tests are **written but not run**, `tests/unit/chat-3-graceful-pages.test.ts`. This evidence applies to chat-3 touched pages: TPO Drives, Public Recruiter Invite, College Courses & Content, College Attendance, Super Admin Tenant Create, and Learner Profile & Learning. It does not declare all LMS routes covered.
+Protocol: `docs/orchestrator/briefs/gap-closure-lane.md`, checklist `docs/audit/graceful/CHECKLIST.md`. Tests are **written but not run**, `tests/unit/chat-3-graceful-pages.test.ts`. This evidence applies to chat-3 touched pages: TPO Drives, Public Recruiter Invite, College Courses & Content, College Attendance, College People, Super Admin Tenant Create and Sign-in Settings, and Learner Profile & Learning. It does not declare all LMS routes covered.
 
 | GR ID | Page-scope status | Evidence (file and named test) |
 | --- | --- | --- |
-| GR-04 | PARTIAL | Shared `apiFetch` on course create/edit/display, teaching assignments, attendance correction, organization/college create, learner profile/contact/sections, recruiter invite and drive creation; other pathways remain. Test `GR-04 course, college, attendance, profile and recruiter actions use guarded network and JSON parsing` |
+| GR-04 | PARTIAL | Shared `apiFetch` on course create/edit/display, teaching assignments, attendance correction, organization/college create and sign-in policies, college people student/faculty import and student registration, learner profile/contact/sections, recruiter invite and drive creation; other pathways remain. Test `GR-04 course, college, attendance, profile and recruiter actions use guarded network and JSON parsing` |
 | GR-19 | DONE | Offering `loading.tsx`, college attendance `loading.tsx`, learner profile `loading.tsx`, test `GR-19 course detail, college attendance and learner profile show loading skeletons` |
 | GR-20 | DONE | Each route's `error.tsx` renders human-readable failure with Retry, test `GR-20 page-level errors offer Retry rather than a raw framework failure` |
 | GR-30 | PARTIAL | Ref-lock guarded writes on high-risk TPO drive creation, course flows, attendance, college/organization creation, learner profile changes. Test `GR-30 attendance correction uses the shared ref-locked guarded action`. Wider page mutation coverage pending. |
