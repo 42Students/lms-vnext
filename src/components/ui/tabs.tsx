@@ -8,7 +8,7 @@ export type TabItem = { value: string; label: string; content?: ReactNode; disab
 export type TabsProps = {
   items: readonly TabItem[];
   value: string;
-  onValueChange: (next: string) => void;
+  onValueChange?: (next: string) => void;
   ariaLabel: string;
   className?: string;
   renderPanel?: boolean;
@@ -37,7 +37,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
     event.preventDefault();
     const item = items[target];
     if (!item) return;
-    onValueChange(item.value);
+    onValueChange?.(item.value);
     buttons.current[target]?.focus();
   }
   return (
