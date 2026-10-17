@@ -124,7 +124,7 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const initial: StudentCsvResult[] = checked.map(entry => ({
     row: entry.row,
     status: entry.errors.length ? "INVALID" : "VALID",
-    detail: entry.errors.join("; ") || "Validated fields and college-owned cohort; existing identity conflicts are checked during import",
+    detail: entry.errors.join("; ") || "Validated fields, college-owned cohort and existing identity conflicts",
   }));
   const valid = checked.filter(entry => entry.data && entry.errors.length === 0);
   const invalid = checked.length - valid.length;
