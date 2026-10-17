@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
@@ -48,7 +49,7 @@ export default async function TpoPlacementSummaryPage({
   const { metrics, byDrive, byCompany } = workspace.report;
 
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Placement summary"
@@ -58,6 +59,7 @@ export default async function TpoPlacementSummaryPage({
         }
       />
 
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}
