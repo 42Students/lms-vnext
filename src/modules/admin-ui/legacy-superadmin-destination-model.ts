@@ -22,7 +22,7 @@ export const legacySuperAdminPaths:Readonly<Record<string,string>>={
 };
 export function legacySuperAdminDestination(pathSegments:readonly string[],type?:string){
  if(pathSegments.length!==1)return null; // Never forge nested IDs or paths.
- const slug=pathSegments[0]?.toLowerCase();
+ const slug=pathSegments[0]?.toLowerCase()??"";
  if(slug==="lesson-content"){
   const contentType=(type??"video").toLowerCase();
   if(contentType==="video"||contentType==="videos")return "/admin/videos";
