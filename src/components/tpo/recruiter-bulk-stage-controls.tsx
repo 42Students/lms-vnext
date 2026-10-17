@@ -37,6 +37,7 @@ export function RecruiterBulkStageControls({
   const [results, setResults] = useState<BulkResult[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
+  const [reviewOpen,setReviewOpen]=useState(false);
 
   const available = rows.filter((row) =>
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
@@ -48,6 +49,7 @@ export function RecruiterBulkStageControls({
   function choose(id: string, value: boolean) {
     setError("");
     setResults([]);
+    setReviewOpen(false);
     setChosenIds((before) =>
       value
         ? before.includes(id) || before.length >= 100
@@ -72,11 +74,7 @@ export function RecruiterBulkStageControls({
       id: row.id,
       expectedStage: row.manualStage as "NEW" | "CONTACTED" | "NOT_NOW",
     }));
-    if (!window.confirm(
-      "Apply " + (action === "CONTACTED" ? "Mark Contacted" : "Not Now") +
-      " to " + selections.length + " recruiter lead(s)? Changes are audited " +
-      "for the selected contacts.",
-    )) return;
+    if(!reviewOpen){setReviewOpen(true);return;}
 
     setBusy(true);
     setError("");
@@ -107,6 +105,7 @@ export function RecruiterBulkStageControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosenIds([]);
+      setReviewOpen(false);
       setReason("");
       setRevisitDate("");
       onUpdated();
@@ -163,7 +162,7 @@ export function RecruiterBulkStageControls({
                 value={action}
                 onChange={(event) => {
                   setAction(event.target.value as "CONTACTED" | "NOT_NOW");
-                  setError("");
+                  setError("");setReviewOpen(false);
                 }}
                 disabled={busy}
                 className={fieldClass + " mt-1 block"}
@@ -178,7 +177,7 @@ export function RecruiterBulkStageControls({
                   Reason (required)
                   <input
                     value={reason}
-                    onChange={(event) => setReason(event.target.value)}
+                    onChange={(event) => {setReason(event.target.value);setReviewOpen(false);}}
                     maxLength={255}
                     disabled={busy}
                     className={fieldClass + " mt-1 w-full"}
@@ -188,8 +187,9 @@ export function RecruiterBulkStageControls({
                   Revisit date (optional)
                   <input
                     type="date"
+                    min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())}
                     value={revisitDate}
-                    onChange={(event) => setRevisitDate(event.target.value)}
+                    onChange={(event) => {setRevisitDate(event.target.value);setReviewOpen(false);}}
                     disabled={busy}
                     className={fieldClass + " mt-1 block"}
                   />
@@ -202,9 +202,14 @@ export function RecruiterBulkStageControls({
               onClick={() => void apply()}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
             >
-              {busy ? "Applying…" : "Review and confirm"}
+              {busy ? "Applying…" : reviewOpen ? "Confirm stage changes" : "Review and confirm"}
             </button>
           </div>
+          {reviewOpen?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+            Confirm {selected.length} recruiter lead stage changes to {action==="CONTACTED"?"Contacted":"Not now"}.
+            {action==="NOT_NOW"?<p>Reason: {reason.trim()}{revisitDate?" · Revisit "+revisitDate:""}</p>:null}
+            <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit selection</button>
+          </div>:null}
           <p aria-live="polite" className="text-xs text-body">
             {selected.length} / 100 leads selected.
           </p>
