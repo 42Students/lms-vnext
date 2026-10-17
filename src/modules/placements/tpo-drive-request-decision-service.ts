@@ -13,7 +13,7 @@ import { tpoDriveRequestDecisionSchema }
 export class TpoDriveRequestDecisionError extends Error {
   constructor(public readonly code:
     "REQUEST_NOT_FOUND" | "REQUEST_STALE" | "NO_ACTIVE_SEASON" |
-    "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" |
+    "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" | "UNSUPPORTED_EMPLOYMENT_TYPE" |
     "WORK_MODE_REVIEW_REQUIRED" | "EXTERNAL_APPLICATION_URL_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
     super(code);this.name="TpoDriveRequestDecisionError";
   }

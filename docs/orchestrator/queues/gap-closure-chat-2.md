@@ -134,7 +134,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-11 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-16 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-recruiters-17 | S2 | SIDE-EFFECT | OPEN |
+| TPO-recruiters-17 | S2 | SIDE-EFFECT | BLOCKED |
 | TPO-recruiters-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-recruiters-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-recruiters-21 | S2 | VALIDATION | FIXED-ON-MAIN |
@@ -325,3 +325,13 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - TPO-campaigns-public-04/23: real campaign delivery batch/receipts and public join bell/counter covered by gap-named tests; universal invite/provider-history and welcome email remain OPEN pending provider implementation.
 - Needs shell (chat-9): TPO-inbox-team-54 complete From 42 unread sidebar badge if not already exposed by central shell; no unauthorized `src/components/shell` edits here.
 - No new numbered migration was added, and tests were written but not run locally.
+
+## Chat-2 backend continuation — 2026-10-18 (no page restyling)
+- Reconciled latest origin/main before modifications (fast-forward, previous branch changes already merged). The dated typecheck report identifies no new chat-2-owned compile errors; 14 listed chat2/tpo tests were compared with current sources. Corrected the stale `tpo-team-activity-notices-chat2` first-message preview expectation; full CI remains orchestrator-owned and unrun by this lane.
+- TPO-inbox-team-17/29: topic creation optionally inserts a first message transactionally, dedupes using both topic and body hash and notifies direct message link; test `chat2-topic-first-message.test.ts`. The older one-to-one data model prevents claiming full multiperson parity.
+- TPO-inbox-team-31: five persisted People workload counts link to relevant scoped lists without guessing owner-filtered results; test `chat2-team-people-workload-links.test.ts`.
+- TPO-inbox-team-36: scoped explicit work handover assigns owned active drives, active company relationships, recruiter leads and follow-ups; same-origin route, pure schema, current active placement-role checks, audit, in-app notice, safe zero-count retry, no implicit removal. Test `chat2-team-handover-36.test.ts`. Role removal and open asks stay OPEN; Do not call this a member removal.
+- TPO-recruiters-R05: creates immutable college audit events for lead create, contact edit, explicit/implicit stage change, and an unsent invite link; `chat2-engage-immutable-audit.test.ts`. Import/owner/invite mail side effects remain OPEN.
+- TPO-recruiters-17: BLOCKED actual Day-4 email provider/scheduled sender (allowlist and credentials); existing policy is not a verified automatic reminder. Unsigned invite link creation is audited as NOT_SENT, not a delivered message.
+- TPO-inbox-team-07/08/11/16/18/20/22/24/26/30/33/34/35/42/44/51/54/59/60/R02/R06, TPO-recruiters-07/30/34/36, TPO-companies-04/05/20/21/25/R03 and TPO-campaigns-public-04/17/23/25/37/R08 source reviewed and concrete unresolved behavior recorded in corresponding four page acceptance docs (40+ gap IDs reviewed; do not promote partial source tests to full DONE).
+- No migrations renumbered; no UI restyling. Latest CI/typecheck/unit test status must be established by orchestrator. Recruiter/calendar-messages-profile gaps are now owned by chat-14 and skipped.

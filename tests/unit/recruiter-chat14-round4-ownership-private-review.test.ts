@@ -118,7 +118,12 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(sourceCode).toContain("ugPercentage:shareUg?percentage(");
   expect(sourceCode).toContain("tenthPercentage:shareTenth?percentage(");
   expect(sourceCode).toContain("twelfthOrDiplomaPercentage:shareTwelfth?");
-  expect(sourceCode).not.toContain("profileDocument");
+  expect(sourceCode).toContain("projectRecruiterProfileLinks(profileDocument");
+  expect(sourceCode).toContain("applications.map(({membershipId,profileDocument,...row})");
+  expect(sourceCode).toContain("placementCompanyVisibilitySettings.showCgpaExact");
+  expect(sourceCode).toContain("placementCompanyVisibilitySettings.showTenthTwelfth");
+  expect(sourceCode).toContain('visibility?.cgpa');
+  expect(sourceCode).toContain('visibility?.academic');
   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
   expect(page).toContain("selectedApplicant.ugPercentage");
   expect(page).toContain("selectedApplicant.tenthPercentage");
@@ -146,6 +151,12 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const page=source("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx");
   expect(page).toContain('href="/hr/drives"');
  });
+ it("REC-home-drives-41 never reads or writes a withdrawn applicant's private rating",()=>{
+  const service=source("src/modules/placements/recruiter-private-rating-service.ts");
+  expect(service.split('eq(placementApplications.status,"SUBMITTED")').length-1).toBe(2);
+  expect(service).toContain('eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")');
+  expect(service).toContain('gt(placementRecruiterCollegeGrants.validUntil,new Date())');
+ });
  it("REC-home-drives-41 stores 1–5 reviews individually by recruiter and applicant",()=>{
   const schema=source("src/db/schema/placement-recruiter-candidate-ratings.ts");
   expect(schema).toContain("prpr_recruiter_application_uq");
@@ -156,6 +167,15 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const migration=source("docs/proposed-migrations/recruiter-private-candidate-ratings.sql");
   expect(migration).toContain("CREATE TABLE IF NOT EXISTS placement_recruiter_private_reviews");
   expect(migration).toContain("UNIQUE (recruiter_user_id, application_id)");
+ });
+ it("REC-home-drives-41 degrades safely when the proposed private-review table is not installed",()=>{
+  const route=source("src/app/api/placements/recruiter/jobs/[jobId]/applicants/[applicationId]/private-rating/route.ts");
+  expect(route).toContain('placementTableExists("placement_recruiter_private_reviews")');
+  expect(route).toContain('error:"SERVICE_UNAVAILABLE"');
+  expect(route).toContain('status:503,headers');
+  expect(route).toContain('if(!hasActiveRecruiter(context))');
+  expect(route).toContain('status:404,headers');
+  expect(route).toContain('"Cache-Control":"private, no-store"');
  });
  it("REC-home-drives-41 validates and authorizes private reviews without company-wide notes",()=>{
   const service=source("src/modules/placements/recruiter-private-rating-service.ts");
@@ -194,7 +214,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const component=source("src/components/hr/recruiter-profile-details-editor.tsx");
   expect(component).toContain('document.addEventListener("click",intercept,true)');
   expect(component).toContain('title="Discard your unsaved profile changes?"');
-  expect(component).toContain('consequence="Your unsaved changes will be lost."');
+  expect(component).toContain('consequence="Your changes have not been saved."');
   expect(component).toContain('runGuarded(()=>fetch(');
   expect(component).toContain("Unsaved changes");
  });

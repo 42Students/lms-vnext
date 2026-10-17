@@ -9,6 +9,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
@@ -1044,23 +1045,12 @@ export async function actOnPlacementRequest(
     );
 
     if (nextStatus !== "CANCELLED") {
-      const [learner] = await tx.select({ userId: collegeMemberships.userId })
-        .from(collegeMemberships)
-        .where(and(
-          eq(collegeMemberships.id, current.application.membershipId),
-          eq(collegeMemberships.collegeId, current.job.collegeId),
-        )).limit(1);
-      if (learner) {
-        const decisionText = nextStatus === "APPROVED" ? "approved" : "rejected";
-        await tx.insert(inAppNotifications).values({
-          userId: learner.userId,
-          eventId: decisionEvent.id,
-          title: "Your request was answered",
-          body: "Your request was " + decisionText + "." +
-            (updated.decisionNote ? " " + updated.decisionNote : ""),
-          actionHref: "/learn/my-placements/support",
-        }).onConflictDoNothing();
-      }
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:decisionEvent.id,collegeId:current.job.collegeId,
+        membershipId:current.application.membershipId,
+        kind:request.requestType==="ROUND_RESCHEDULE"?"RESCHEDULE_DECIDED":"REQUEST_DECIDED",
+        subject:(nextStatus==="APPROVED"?"Approved: ":"Rejected: ")+current.job.title,
+      });
     }
 
     return updated;

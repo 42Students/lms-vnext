@@ -4,6 +4,19 @@ import {z} from "zod";
  */
 export const placementLegacyPostingDetailsSchema=z.strictObject({
  responsibilities:z.string().trim().max(15000).default(""),
+ // TPO-drives-29/30/38: bounded supplemental details; these are not eligibility rules.
+ campusPool:z.strictObject({
+  hostCollege:z.string().trim().max(160).default(""),
+  reportingTime:z.iso.datetime({offset:true}).nullable().default(null),
+  travelNote:z.string().trim().max(1000).default(""),
+ }).prefault({}),
+ portal:z.strictObject({
+  studentsRegisterSeparately:z.boolean().default(false),
+  name:z.string().trim().max(160).default(""),
+  url:z.union([z.url().refine(v=>v.startsWith("https://"),"Use HTTPS"),z.literal("")]).default(""),
+ }).prefault({}),
+ skillsWanted:z.array(z.string().trim().min(1).max(50)).max(30).default([]),
+
  assessmentUrl:z.union([z.url().refine(v=>/^https?:\/\//i.test(v),"Use HTTP or HTTPS"),z.literal("")])
   .nullable().optional().default(null).transform(v=>v||null),
  assessmentDeadline:z.iso.datetime({offset:true}).nullable().optional().default(null),
@@ -22,6 +35,10 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
   value:z.string().trim().min(1).max(500),
  })).max(20).default([]),
 }).superRefine((data,ctx)=>{
+ if(data.portal.studentsRegisterSeparately&&(!data.portal.name||!data.portal.url))
+  ctx.addIssue({code:"custom",path:["portal"],message:"Enter the separate portal name and HTTPS link."});
+ if(new Set(data.skillsWanted.map(s=>s.toLocaleLowerCase("en"))).size!==data.skillsWanted.length)
+  ctx.addIssue({code:"custom",path:["skillsWanted"],message:"Skills must be unique."});
  const reserved=new Set(["application deadline"]);
  const keys=new Set<string>();
  for(const [i,date] of data.importantDates.entries()){

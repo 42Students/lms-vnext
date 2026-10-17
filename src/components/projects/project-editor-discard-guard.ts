@@ -26,6 +26,12 @@ export function useProjectEditorDiscardGuard(
       (anchor.target&&anchor.target!=="_self"))return;
    const href=anchor.href;
    if(href===window.location.href)return;
+   // Fragment-only jumps keep the editor mounted; do not ask users to discard
+   // a draft merely to reach another section on the same route.
+   const target=new URL(href,window.location.href);
+   if(target.origin===window.location.origin &&
+      target.pathname===window.location.pathname &&
+      target.search===window.location.search)return;
    // Block Next's client-side navigation before its delegated event handler runs.
    event.preventDefault();event.stopPropagation();
    if(pending)return;
