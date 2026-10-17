@@ -14,8 +14,8 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
  });
  it("TPO-campaigns-public-17 preserves a scoped opt-out path instead of treating email delivery as proof of unsubscribe",()=>{
   const docs=source("docs/audit/acceptance/tpo-campaigns-public-verification.md");
-  expect(docs).toContain("TPO-campaigns-public-17 | OPEN");
-  expect(docs).toContain("durable signed per-recipient opt-out");
+  expect(docs).toContain("TPO-campaigns-public-17 | DONE");
+  expect(docs).toContain("expiry no longer prevents a consent withdrawal");
  });
  it("TPO-campaigns-public-25 keeps public join links explicitly revocable instead of perpetual access",()=>{
   expect(tpoPublicJoinLinkToggleSchema.safeParse({scope:"COLLEGE",enabled:false}).success).toBe(true);
@@ -28,12 +28,14 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
   const service=source("src/modules/placements/public-join/join-service.ts");
   expect(service).toContain("placementRecruiterCollegeGrants");
   expect(service).toContain("grantedByUserId");
-  expect(source("docs/audit/acceptance/tpo-campaigns-public-verification.md")).toContain("TPO-campaigns-public-R08 | OPEN");
+  expect(source("docs/audit/acceptance/tpo-campaigns-public-verification.md")).toContain("TPO-campaigns-public-R08 | DONE");
+  expect(service).toContain("bypassesDriveReview:false");
  });
  it("TPO-companies-04 keeps trust display separate from company drive-request approval",()=>{
   const company=source("src/modules/placements/tpo-company-lifecycle-service.ts");
   expect(company).toContain("isTrusted");
-  expect(source("docs/audit/acceptance/tpo-companies-verification.md")).toContain("independent TPO approval");
+  expect(source("docs/audit/acceptance/tpo-companies-verification.md")).toContain("TPO-companies-04 | NOT-A-GAP");
+  expect(source("src/modules/placements/recruiter-drive-request-service.ts")).toContain("recruiterDriveApprovalPolicy");
  });
  it("TPO-companies-25 removes obsolete environment gates, while keeping same-origin protection",()=>{
   for(const path of ["src/app/api/placements/tpo/companies/route.ts",
@@ -78,12 +80,14 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
  it("TPO-inbox-team-08 never fabricates email relay or inbound-email delivery when provider is absent",()=>{
   const docs=source("docs/audit/acceptance/tpo-inbox-team-verification.md");
   expect(docs).toContain("TPO-inbox-team-08 | BLOCKED");
-  expect(docs).toContain("never claim unconfigured email");
+  expect(docs).toContain("No production access or emails attempted.");
+  expect(source("src/modules/placements/tpo-messages-service.ts")).toContain("not recruiter messages or external email/SMS outbox records");
  });
  it("TPO-inbox-team-35 keeps the college's role-administration controls as the source of placement-team authority",()=>{
   const team=source("src/app/(authenticated)/tpo/settings/team/page.tsx");
   expect(team).toContain("team");
-  expect(source("docs/audit/acceptance/tpo-inbox-team-verification.md")).toContain("avoid a TPO Team page that can self-grant");
+  expect(source("docs/audit/acceptance/tpo-inbox-team-verification.md")).toContain("only an audited College Admin role-management path");
+  expect(source("src/modules/placements/placement-team-access-model.ts")).toContain("requirePlacementManageScope");
  });
  it("TPO-settings-audit-05 avoids inventing an unregistered TPO_ADMIN security role",()=>{
   const model=source("src/modules/placements/tpo-workspace-access-model.ts");
