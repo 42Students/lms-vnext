@@ -40,6 +40,7 @@ export function RecruiterBulkOwnerControls({
   const [reviewOpen,setReviewOpen]=useState(false);
 
   const assignable = rows;
+  const retryable=results.filter(item=>item.status==="ineligible"&&assignable.some(row=>row.id===item.leadId));
   const selections = assignable
     .filter((lead) => chosen.includes(lead.id))
     .map((lead) => ({
