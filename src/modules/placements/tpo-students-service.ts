@@ -871,6 +871,7 @@ export type TpoStudentRequestView = {
   membershipId: string;
   studentName: string;
   rollNumber: string | null;
+  branchName: string | null;
   applicationId: string;
   jobId: string;
   jobTitle: string;
@@ -1061,9 +1062,20 @@ export async function listTpoStudentRequests(
   const start = (input.page - 1) * input.pageSize;
   const ordered = sortTpoRequestRows(filtered,input.sort ?? "URGENCY_FIRST",asOf);
 
+  const pageRows=ordered.slice(start,start+input.pageSize);
+  const membershipIds=[...new Set(pageRows.map(row=>row.membershipId))];
+  const scopedEnrollments=membershipIds.length?await getDb().select({
+    membershipId:learnerProgramEnrollments.membershipId,
+    branchName:departments.name,
+  }).from(learnerProgramEnrollments)
+    .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,college.id)))
+    .where(and(inArray(learnerProgramEnrollments.membershipId,membershipIds),
+      eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
+  const byMembership=new Map(scopedEnrollments.map(row=>[row.membershipId,row.branchName]));
   const requests: TpoStudentRequestView[] =
-    ordered
-      .slice(start, start + input.pageSize)
+    pageRows
       .map((row) => ({
         id: row.id,
         requestType: row.requestType,
@@ -1078,6 +1090,7 @@ export async function listTpoStudentRequests(
         studentName:
           row.studentName ?? "Unnamed learner",
         rollNumber: row.rollNumber,
+        branchName:byMembership.get(row.membershipId)??null,
         applicationId: row.applicationId,
         jobId: row.jobId,
         jobTitle: row.jobTitle,
