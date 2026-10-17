@@ -71,7 +71,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
       filters.companyId?eq(placementCompanies.id,filters.companyId):undefined,
-      filters.ownerUserId?eq(placementRecruiterDriveRequests.recruiterUserId,filters.ownerUserId):undefined,
       inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED"]),
       filters.search?or(
         ilike(placementCompanies.name,pattern),
