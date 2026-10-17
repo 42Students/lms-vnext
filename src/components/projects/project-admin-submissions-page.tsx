@@ -9,6 +9,7 @@ import {
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { PageHeader } from "@/components/ui/page-header";
 import {ProjectAdminSubmissionReview} from "@/components/projects/project-admin-submission-review";
+import {listProjectAdminUnsubmitted} from "@/modules/projects/admin-unsubmitted-service";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminSubmissionQueue,
@@ -62,6 +63,7 @@ export async function ProjectAdminSubmissionsPage({
   >;
 }) {
   const context = await getCurrentRequestContext();
+  const view=one(searchParams.view)==="NOT_SUBMITTED"?"NOT_SUBMITTED":"ALL";
   const query: ProjectAdminCollectionQuery = {
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
@@ -80,6 +82,9 @@ export async function ProjectAdminSubmissionsPage({
   const queuePath =
     basePath + "/submissions";
   const renderedAt = new Date();
+  const unsubmitted=view==="NOT_SUBMITTED"?await listProjectAdminUnsubmitted(context,collegeId,{
+    q:query.q,page:query.page,pageSize:query.pageSize,
+  }):null;
 
   return (
     <div className="space-y-6">
@@ -93,6 +98,34 @@ export async function ProjectAdminSubmissionsPage({
         description="Final-delivery versions across project workspaces, newest activity first."
       />
 
+      <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">
+        <Link href={queuePath} aria-current={view==="ALL"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">All submissions</Link>
+        <Link href={queuePath+"?view=NOT_SUBMITTED"} aria-current={view==="NOT_SUBMITTED"?"page":undefined}
+          className="min-h-10 rounded border border-border px-3 py-2 text-primary-text">Not submitted</Link>
+      </nav>
+      {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
+        {unsubmitted.items.length?<div className="overflow-x-auto"><table className="min-w-full text-left text-sm">
+          <thead><tr><th className="p-2">Workspace</th><th className="p-2">Status</th>
+            <th className="p-2">Progress</th><th className="p-2">Inactive</th><th className="p-2">Action</th></tr></thead>
+          <tbody>{unsubmitted.items.map(row=><tr key={row.id} className="border-t border-border">
+            <td className="p-2 font-semibold">{row.title}</td><td className="p-2">{row.status}</td>
+            <td className="p-2">{row.progressPercent}%</td>
+            <td className="p-2">{Math.max(0,Math.floor((renderedAt.getTime()-row.updatedAt.getTime())/86400000))} days</td>
+            <td className="p-2"><Link href={basePath+"/"+row.id+"/delivery"}
+              className="text-primary-text underline">Open</Link></td>
+          </tr>)}</tbody>
+        </table></div>:<p className="text-sm text-muted-foreground">All matching workspaces have a submission.</p>}
+        <div className="flex flex-wrap gap-3 text-sm">
+          {unsubmitted.page>1?<Link href={queuePath+"?view=NOT_SUBMITTED&page="+(unsubmitted.page-1)}
+           className="text-primary-text underline">Previous</Link>:null}
+          <span>Page {unsubmitted.page} of {unsubmitted.totalPages}</span>
+          {unsubmitted.page<unsubmitted.totalPages?<Link href={queuePath+"?view=NOT_SUBMITTED&page="+(unsubmitted.page+1)}
+           className="text-primary-text underline">Next</Link>:null}
+        </div>
+      </section>:null}
+      {view==="ALL"?<>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         {([
           ["Active workspaces", summary.activeWorkspaces, "status", "ACTIVE"],
@@ -208,6 +241,7 @@ export async function ProjectAdminSubmissionsPage({
         totalPages={result.totalPages}
         total={result.total}
       />
+      </>:null}
     </div>
   );
 }
