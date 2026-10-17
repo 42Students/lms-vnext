@@ -8,6 +8,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
+  cohorts,
   collegeMemberships,
   membershipRoles,
   users,
@@ -79,6 +80,8 @@ export async function listFacultyCourseDeliveries(
       sectionId: sections.id,
       sectionName: sections.name,
       sectionCode: sections.code,
+      cohortName: cohorts.name,
+      cohortCode: cohorts.code,
       academicPeriodId:
         academicPeriods.id,
       academicPeriodName:
@@ -153,6 +156,7 @@ export async function listFacultyCourseDeliveries(
         courseSectionDeliveries.sectionId,
       ),
     )
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
     .innerJoin(
       academicPeriods,
       eq(
