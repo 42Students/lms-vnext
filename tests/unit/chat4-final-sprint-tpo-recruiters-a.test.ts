@@ -10,6 +10,9 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(roster).toContain("draggable={lead.manualStage");
   expect(roster).toContain("onDragStart={event");
   expect(roster).toContain("onDrop={event");
+  expect(roster).toContain('column==="CONTACTED"&&draggedBoardId');
+  expect(roster).toContain('draggable={lead.manualStage==="NEW"&&!boardMoving}');
+  expect(roster).toContain('column==="RECRUITED"||column==="NOT_NOW"?5:50');
   expect(roster).toContain("Move to… / Actions");
   expect(roster).toContain("<RecruiterInlineStage");
  });
@@ -32,6 +35,9 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(detail).toContain('"Resend invite":"Invite"');
   expect(detail).toContain("Create drive");
   expect(detail).toContain("Team talk");
+  expect(detail).toContain('href="#recruiter-invite"');
+  expect(detail).toContain('lead.manualStage === "NEW"');
+  expect(detail).toContain('setNotNowOpen(true)');
   expect(detail).toContain('lead.unsubscribedAt');
   expect(detail).toContain('"#recruiter-invite"');
  });
@@ -42,6 +48,7 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(owner).toContain("result.reason");
   expect(stage).toContain("tpoBulkFailedSummary");
   expect(roster).toContain("Send an email to selected");
+  expect(owner).toContain('item.reason ? " — " + item.reason');
   expect(roster).toContain("<RecruiterBulkOwnerControls");
  });
  it("TPO-recruiters-16 performs inline stage and owner edits through protected APIs",()=>{
@@ -76,6 +83,9 @@ describe("chat-4 final sprint TPO recruiter gaps A",()=>{
   expect(roster).toContain('list="known-engage-companies"');
   expect(roster).toContain("Choose a future follow-up date (IST).");
   expect(roster).toContain("Discard this recruiter draft?");
+  expect(roster).toContain('const contacts=[...new Set([form.email.trim(),form.phone.trim()].filter(Boolean))]');
+  expect(roster).toContain("This contact is already a recruiter. Open the existing recruiter instead.");
+  expect(roster).toContain('href={"/tpo/recruiters/" + duplicate.id}');
   expect(roster).toContain('role="dialog" aria-modal="true"');
  });
 });
