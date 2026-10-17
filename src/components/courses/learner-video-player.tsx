@@ -25,6 +25,7 @@ export function LearnerVideoPlayer({
 }) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const playbackRateRef=useRef(1);
   const activeRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const selectedId = useRef<string | null>(null);
@@ -152,6 +153,7 @@ export function LearnerVideoPlayer({
     const video = videoRef.current;
     if (!video) return;
     const onLoaded = () => {
+      video.playbackRate=playbackRateRef.current;
       if(Number.isFinite(video.duration) && video.duration>0)
         setObservedDuration(video.duration);
       const maxSeek = Number.isFinite(video.duration) && video.duration > 1
@@ -201,6 +203,19 @@ export function LearnerVideoPlayer({
       className="aspect-video w-full rounded-xl border border-border bg-foreground">
       Your browser does not support HTML video.
     </video>
+    <label className="flex flex-wrap items-center gap-2 text-xs font-medium text-body">
+      Playback speed
+      <select aria-label="Playback speed" defaultValue="1"
+        className="min-h-10 rounded-md border border-border bg-surface px-2"
+        onChange={event=>{
+          const rate=Number(event.target.value);
+          playbackRateRef.current=rate;
+          if(videoRef.current)videoRef.current.playbackRate=rate;
+        }}>
+        {[0.5,0.75,1,1.25,1.5,2].map(rate=>
+          <option key={rate} value={rate}>{rate}x</option>)}
+      </select>
+    </label>
     <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
       <span role="status">{loading ? "Loading video…" : mediaError ? "Video could not be loaded" :
         readOnly ? "Past semester · progress is read only" : isCompleted ? "Completed" : "Progress saves automatically"}</span>

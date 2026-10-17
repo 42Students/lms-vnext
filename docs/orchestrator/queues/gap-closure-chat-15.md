@@ -51,3 +51,7 @@ LEARNER-course-detail-08, LEARNER-course-detail-09, LEARNER-course-detail-13, LE
 ## Chat-15 reassigned closure B1
 
 - DONE (source): LEARNER-learning-misc-13, LEARNER-learning-misc-29. Legacy assignment date labels and quiz submitted popover. Test: tests/unit/chat15-assessment-legacy-copy.test.ts (not run).
+
+## Chat-15 closure group B2
+
+- DONE source: LEARNER-placements-09, LEARNER-placements-33. PARTIAL LEARNER-course-detail-12 (six playback rates; platform-tunable save cadence still outstanding). `tests/unit/chat15-player-and-placement-copy.test.ts` (authored, not run).

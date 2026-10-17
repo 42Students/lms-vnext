@@ -134,3 +134,6 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 
 | LEARNER-placements-03 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-03` test; existing implementation reviewed. |
 | LEARNER-placements-05 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-05` test; existing implementation reviewed. |
+
+| LEARNER-placements-09 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, latest audience-filtered notice body and relative day. |
+| LEARNER-placements-33 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, removed misleading count tiles/disclaimer. |
