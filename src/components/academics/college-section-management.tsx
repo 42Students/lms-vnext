@@ -43,15 +43,16 @@ export function CollegeClassCreate({ cohorts, periods }: {
   const [academicPeriodId, setAcademicPeriodId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [capacity, setCapacity] = useState("");
+  const [capacity, setCapacity] = useState("60");
   const [description, setDescription] = useState("");
+  const derivedCode=code.trim()||name.trim().toUpperCase().replace(/[^A-Z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,64);
   const [notice, setNotice] = useState("");
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
     const result = createCollegeSectionSchema.safeParse({
-      cohortId, academicPeriodId, name, code, capacity: capacityInput(capacity), description: description.trim() || null,
+      cohortId, academicPeriodId, name, code:derivedCode, capacity: Number(capacity), description: description.trim() || null,
     });
     if (!result.success) {
       setNotice(result.error.issues[0]?.message ?? "Enter valid class details.");
@@ -60,7 +61,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
     startTransition(async () => {
       try {
         await requestWrite("POST", "/api/college/classes", result.data);
-        setName(""); setCode(""); setCapacity(""); setDescription("");
+        setName(""); setCode(""); setCapacity("60"); setDescription("");
         setNotice("Class created.");
         router.refresh();
       } catch (error) {
@@ -108,12 +109,12 @@ export function CollegeClassCreate({ cohorts, periods }: {
           <input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Class code
-          <input required maxLength={64} value={code} onChange={event => setCode(event.target.value)}
+        <label className="grid gap-1 text-sm font-medium text-body">Class code (optional; generated from name)
+          <input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
-        <label className="grid gap-1 text-sm font-medium text-body">Capacity (optional)
-          <input type="number" min={1} max={10000} step={1} value={capacity}
+        <label className="grid gap-1 text-sm font-medium text-body">Capacity (required, 1–200)
+          <input required type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
@@ -121,6 +122,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
           <textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
             className="rounded-md border border-border bg-surface p-3 text-foreground" />
         </label>
+        <p className="text-xs text-muted-foreground sm:col-span-2 lg:col-span-5">Moving a student into a full section is refused.</p>
         <div className="sm:col-span-2 lg:col-span-5">
           <button disabled={pending} type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
