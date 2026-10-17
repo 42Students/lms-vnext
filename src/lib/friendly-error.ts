@@ -39,6 +39,7 @@ const domainMessages: Readonly<Record<string, string>> = {
   TPO_MESSAGE_JOB_NOT_FOUND: "We could not find that job. Refresh and try again.",
   TPO_RECRUITER_INVITE_NOT_FOUND: "This invitation is no longer available. Ask for a new invitation.",
   INVITE_INVALID: "This invitation is no longer available. Ask for a new invitation.",
+  FACULTY_HAS_ACTIVE_PROJECTS: "This faculty member mentors active project workspaces. Reassign those projects to another mentor before suspending or ending the membership.",
   STALE_VERSION: FRIENDLY_MESSAGES.conflict,
   STALE_AUDIENCE: FRIENDLY_MESSAGES.conflict,
 };

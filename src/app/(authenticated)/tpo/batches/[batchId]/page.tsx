@@ -29,6 +29,14 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const tabs=[{label:"Students",href:"students"},{label:"Registrations",href:"registrations"},{label:"Rules",href:"rules"},{label:"History",href:"history"}] as const;
  return <main className="min-w-0 space-y-5"><PageHeader eyebrow="TPO · Batches" title={batch.name} description={batch.program+" · "+batch.department+(batch.startYear?" · "+batch.startYear+(batch.endYear?"–"+batch.endYear:""):"")}/>
  <Link href={backHref} className="text-sm text-primary-text underline">← Placement eligibility</Link>
+ {undoable?<details className="rounded-lg border border-border bg-surface p-3">
+  <summary className="min-h-11 cursor-pointer font-semibold text-primary-text"
+   title={"Undo the latest "+String(undoable.after??"eligibility")+" decision. The server checks for intervening changes."}>
+   Undo last decision
+  </summary>
+  <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed batch or learner action can be undone. A newer decision will block this request.</p>
+  <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
+ </details>:null}
  <TpoBatchWorkspaceTabs batchId={batchId} active="" students={summary.assessed} />
  <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-lg border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -83,11 +91,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     eligibility.nextAction==="INVITE"?"Review batch invitation readiness":"Review finished batch"}</p>
   <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">Open Students</Link>
  </section>
- {undoable?<section className="rounded-lg border border-border bg-surface p-4">
-  <h2 className="font-semibold">Undo last decision</h2>
-  <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed cohort action is offered. If any later change occurred, the server will reject the undo.</p>
-  <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
- </section>:null}
+
  <section aria-label="Next step" className="space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Next step</h2>
   {lifecycle?.finishedAt ? <p className="text-sm text-body">This batch is finished. Review its history; eligibility editing is closed.</p> :

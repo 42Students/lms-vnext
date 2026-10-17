@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,gt,lt,ne,sql} from "drizzle-orm";
+import {and,eq,gt,lt,ne,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMeetings} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -48,8 +48,15 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
     if(meeting.startsAt.getTime()===start.getTime()&&
       meeting.endsAt.getTime()===end.getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    // MEN-projects-meetings-R02: retain the existing organiser when moving
+    // the meeting; prevent double booking across all their workspaces.
+    const organiserUserId = meeting.scheduledByUserId ?? context.user.id;
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${organiserUserId}, 17))`);
     const [conflict]=await tx.select({id:projectMeetings.id}).from(projectMeetings)
-      .where(and(eq(projectMeetings.projectId,scope.project.id),
+      .where(and(or(
+          eq(projectMeetings.projectId,scope.project.id),
+          eq(projectMeetings.scheduledByUserId,organiserUserId),
+        ),
         ne(projectMeetings.id,meeting.id),eq(projectMeetings.status,"SCHEDULED"),
         lt(projectMeetings.startsAt,end),gt(projectMeetings.endsAt,start)))
       .limit(1);

@@ -102,6 +102,8 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
    <p className="text-xs text-muted-foreground">
     Published, visible videos and published assignments/quizzes are measured.
     Completion uses recorded video progress, assignment submissions and quiz attempts.
+    {" "}Measured work only: videos watched to the end, assignments submitted, and quizzes attempted.
+    Resources marked done by a student&apos;s own click are not included. A retaken quiz counts once per learner.
     {report.itemsMeasured===0?" No published items are available to measure.":""}
     {report.truncated?" Showing the first 2,000 enrolled learners; counts on this view are limited.":""}
    </p>

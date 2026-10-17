@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {TpoGeneralRequestsPanel} from "@/components/placements/tpo-general-requests-panel";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -97,6 +99,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search, age and drive filters</Link>
     </form>
+    {(await placementTableExists("placement_learner_general_requests"))?<TpoGeneralRequestsPanel/>:null}
     <section aria-label="Needs doing first" className="space-y-3 rounded-xl border border-border bg-surface p-4">
      <h2 className="font-semibold">Needs doing first</h2>
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
