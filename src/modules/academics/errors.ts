@@ -1,4 +1,5 @@
 export type AcademicsServiceErrorCode =
+  | "INVALID_LEARNER_SCHEDULE_WINDOW"
   | "COLLEGE_NOT_FOUND"
   | "DEPARTMENT_NOT_FOUND"
   | "PROGRAM_NOT_FOUND"

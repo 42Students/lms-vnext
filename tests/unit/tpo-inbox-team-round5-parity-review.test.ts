@@ -51,7 +51,7 @@ describe("TPO inbox/team outstanding legacy contracts",()=>{
  it("TPO-inbox-team-60 keeps the readable bell actions distinct from missing event-producer coverage",()=>{
   const bell=src("src/components/tpo/tpo-bell-panel.tsx");
   expect(bell).toContain("await apiFetch(");
-  expect(bell).toContain("items.slice(0,20)");
+  expect(bell).toContain("displayedItems.slice(0,20)");
   expect(bell).toContain("Mark all read");
  });
 });

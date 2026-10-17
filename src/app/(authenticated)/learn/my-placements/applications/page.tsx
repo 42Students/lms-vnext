@@ -45,6 +45,7 @@ export default async function LearnerPlacementApplicationsPage() {
     screening: row.screening,
     results: row.results.map((result) => ({
       resultId: result.resultId,
+       roundId: result.roundId,
       roundSequence: result.roundSequence,
       roundName: result.roundName,
       outcome: result.outcome,

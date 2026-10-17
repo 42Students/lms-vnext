@@ -14,8 +14,8 @@ export function facultyAssignmentDraftIssue(input:{title:string;description:stri
  const title=input.title.trim();
  if(!title||title.length>255)return "Enter an assignment title (1–255 characters).";
  if(input.description.trim().length>10000)return "Assignment instructions must be at most 10000 characters.";
- if(!Number.isInteger(input.maxPoints)||input.maxPoints<1||input.maxPoints>1000)
-  return "Enter a whole number from 1 to 1000";
+ if(!Number.isInteger(input.maxPoints)||input.maxPoints<0||input.maxPoints>1000)
+  return "Enter a whole number from 0 to 1000";
  return null;
 }
 

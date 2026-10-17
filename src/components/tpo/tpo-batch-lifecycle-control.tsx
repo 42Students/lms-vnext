@@ -7,7 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 type State={invitedAt:string|null;finishedAt:string|null;expectedVersion:string};
 export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:State|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
- const [reviewed,setReviewed]=useState(false);
+ const [reviewed,setReviewed]=useState(false),[success,setSuccess]=useState("");
  const {run}=useGuardedAction({timeoutMs:35000});
  const current=state??{invitedAt:null,finishedAt:null,expectedVersion:"none"};
  const expectedVersion=current.expectedVersion;
@@ -16,21 +16,22 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
  async function submit(){
   if(disabled)return;
   await run(async()=>{
-  setBusy(true);setError("");
+  setBusy(true);setError("");setSuccess("");
   try{
-   await apiFetch("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/lifecycle",{
+   const outcome=await apiFetch<{changed:boolean}>("/api/placements/tpo/batches/"+encodeURIComponent(batchId)+"/lifecycle",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,expectedVersion:expectedVersion}),
    });
    setReviewed(false);
+   setSuccess(outcome.changed?(action==="FINISH"?"Batch finished":"Batch reopened"):"Nothing changed.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}finally{setBusy(false);}
   });
  }
  return <div className="min-w-0 space-y-2">
   <p className="text-sm text-body">{action==="FINISH"?
-   "Finishing retires the batch from new placement registrations. Learner history is kept even when nobody was invited.":
-   "Reopening restores the batch to the active placement working set."}</p>
+   "It leaves the working set: hidden from Placement eligibility by default and left out of counts. Its students can&apos;t apply on their own; you can still add them to a drive.":
+   "It comes back into the working set and its eligible students can use placements again."}</p>
   <label className="flex items-start gap-2 text-sm text-body">
    <input type="checkbox" checked={reviewed} disabled={busy}
     onChange={event=>setReviewed(event.target.checked)}
@@ -42,5 +43,6 @@ export function TpoBatchLifecycleControl({batchId,state}:{batchId:string;state:S
    {busy?"Updating…":action==="FINISH"?"Mark finished":"Reopen batch"}
   </button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {success?<p role="status" className="text-sm text-success">{success}</p>:null}
  </div>;
 }

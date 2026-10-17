@@ -79,8 +79,8 @@ export async function CollegeRoleDirectoryWorkspace({
         title={title}
         description={
           kind === "FACULTY"
-            ? "College-scoped Faculty role memberships with persisted teaching assignment counts."
-            : "College-scoped Learner role memberships with active academic enrollment context."
+            ? "Manage faculty accounts, teaching information and membership status."
+            : "Find students by program, batch, class and account status."
         }
         actions={
           <>
@@ -149,24 +149,6 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="ENDED">Ended</option>
             </select>
           </label>
-          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
-            Platform account
-            <select name="accountStatus" defaultValue={result.filter.accountStatus}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              <option value="ALL">All accounts</option>
-              <option value="ACTIVE">Active accounts</option>
-              <option value="DISABLED">Disabled accounts</option>
-            </select>
-          </label>
-          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
-            Active enrollment
-            <select name="enrollment" defaultValue={result.filter.enrollment}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              <option value="ALL">All learners</option>
-              <option value="ACTIVE">Has active program enrollment</option>
-              <option value="NONE">No active program enrollment</option>
-            </select>
-          </label> : null}
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Active class / section
             <select name="sectionId" defaultValue={result.filter.sectionId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -202,6 +184,57 @@ export async function CollegeRoleDirectoryWorkspace({
               First 200 batches shown; search by name for others.
             </span> : null}
           </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Department
+            <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All departments</option>
+              {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
+                <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
+              {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
+            </select>
+            {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              Only first 200 departments shown; use name search for others.
+            </span> : null}
+          </label> : null}
+          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Employment type
+            <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All employment types</option>
+              {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
+                <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
+              {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
+            </select>
+            {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
+              First 100 distinct types shown.
+            </span> : null}
+          </label> : null}
+          <details className="min-w-0 basis-full rounded-md border border-border bg-surface-subtle p-3"
+            open={collegeRoleDirectoryHasActiveFilters(kind,result.filter)}>
+            <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-foreground">Advanced filters</summary>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Platform account
+            <select name="accountStatus" defaultValue={result.filter.accountStatus}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All accounts</option>
+              <option value="ACTIVE">Active accounts</option>
+              <option value="DISABLED">Disabled accounts</option>
+            </select>
+          </label>
+          {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
+            Active enrollment
+            <select name="enrollment" defaultValue={result.filter.enrollment}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="ALL">All learners</option>
+              <option value="ACTIVE">Has active program enrollment</option>
+              <option value="NONE">No active program enrollment</option>
+            </select>
+          </label> : null}
+
+
+
           {kind === "LEARNER" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Roll number coverage
             <select name="rollPresence" defaultValue={result.filter.rollPresence}
@@ -229,32 +262,8 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="NONE">No active class</option>
             </select>
           </label> : null}
-          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
-            Department
-            <select name="facultyDepartmentId" defaultValue={result.filter.facultyDepartmentId ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              <option value="">All departments</option>
-              {selectedDirectoryValueNotListed(result.filter.facultyDepartmentId,result.departmentOptions.map(d=>d.id)) ?
-                <option value={result.filter.facultyDepartmentId}>Selected department (outside first 200)</option> : null}
-              {result.departmentOptions.map(dept=><option key={dept.id} value={dept.id}>{dept.name}</option>)}
-            </select>
-            {result.departmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
-              Only first 200 departments shown; use name search for others.
-            </span> : null}
-          </label> : null}
-          {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
-            Employment type
-            <select name="employmentType" defaultValue={result.filter.employmentType ?? ""}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-              <option value="">All employment types</option>
-              {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
-                <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
-              {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
-            </select>
-            {result.employmentOptionsTruncated ? <span className="text-xs text-muted-foreground">
-              First 100 distinct types shown.
-            </span> : null}
-          </label> : null}
+
+
           {kind === "FACULTY" ? <label className="grid min-w-36 gap-2 text-sm font-semibold text-body">
             Academic title coverage
             <select name="titlePresence" defaultValue={result.filter.titlePresence}
@@ -316,6 +325,8 @@ export async function CollegeRoleDirectoryWorkspace({
               <option value="10">10</option><option value="25">25</option><option value="50">50</option>
             </select>
           </label>
+            </div>
+          </details>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
             Apply
           </button>
@@ -467,7 +478,7 @@ export async function CollegeRoleDirectoryWorkspace({
         Export includes only current-college role memberships, rechecks College Admin access and is capped at 1,000 rows.
       </p>
       <p className="text-xs leading-5 text-muted-foreground">
-        Read-only source: registered memberships, roles and related college-owned records.
+        Directory records are scoped to this college.
         {kind === "FACULTY"
           ? " Counts are active teaching assignments, not a complete workload or schedule."
           : " Only active academic enrollments and classes are shown; absent associations are not inferred."}

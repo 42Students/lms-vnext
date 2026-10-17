@@ -38,6 +38,7 @@ export async function ProjectAdminReassignMentorPage({
   const context = await getCurrentRequestContext();
   const fromMentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]).safeParse(one(searchParams.fromMentorId)).data;
   const initialProjectId = z.string().uuid().safeParse(one(searchParams.projectId)).data;
+  const mentorSearch=z.string().trim().max(100).safeParse(one(searchParams.mentorSearch)??"").data??"";
   const query: ProjectAdminCollectionQuery = {
     fromMentorId,
     q: one(searchParams.q),
@@ -58,7 +59,7 @@ export async function ProjectAdminReassignMentorPage({
       listProjectMentorCandidates(
         context,
         collegeId,
-        { q: "", limit: 100 },
+        { q: mentorSearch, limit: 100 },
       ),
       listCollegeProjectMentorWorkload(context, collegeId),
     ]);
@@ -85,7 +86,7 @@ export async function ProjectAdminReassignMentorPage({
             return <Link key={filter}
               href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
               className="rounded-lg border border-border p-3 hover:border-primary">
-              <p className="font-semibold">{mentor?.displayName ?? mentor?.email ?? "Unassigned"}</p>
+              <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
               {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
@@ -94,6 +95,21 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </section>
+      <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4"
+        aria-label="Search all eligible mentors">
+        {query.q?<input type="hidden" name="q" value={query.q}/>:null}
+        {query.status?<input type="hidden" name="status" value={query.status}/>:null}
+        {query.fromMentorId?<input type="hidden" name="fromMentorId" value={query.fromMentorId}/>:null}
+        <input type="hidden" name="pageSize" value={query.pageSize}/>
+        <label className="grid flex-1 gap-1 text-sm font-semibold">
+          Search eligible mentors by name or email (across the college)
+          <input type="search" name="mentorSearch" maxLength={100} defaultValue={mentorSearch}
+            placeholder="Enter mentor name or email" className="min-h-11 rounded-md border border-border p-3"/>
+        </label>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Find mentor</button>
+        {mentorSearch?<Link href={basePath+"/reassign-mentor"} className="min-h-11 rounded-md border px-4 py-3 text-sm">Clear mentor search</Link>:null}
+        <p className="w-full text-xs text-muted-foreground">Showing up to 100 matching eligible mentors. Narrow the search to reach any mentor beyond the first page.</p>
+      </form>
       <ProjectAdminFilters query={query} />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
         {query.q ? <input type="hidden" name="q" value={query.q} /> : null}

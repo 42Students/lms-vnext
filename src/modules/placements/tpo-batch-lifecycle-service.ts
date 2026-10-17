@@ -9,7 +9,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 import {planTpoBatchLifecycle,TpoBatchLifecycleError} from "./tpo-batch-lifecycle-model";
 const inputSchema=z.object({batchId:z.string().uuid(),action:z.enum(["FINISH","REOPEN"]),
- expectedVersion:z.iso.datetime({offset:true})}).strict();
+ expectedVersion:z.union([z.literal("none"),z.iso.datetime({offset:true})])}).strict();
 export async function changeTpoBatchLifecycle(ctx:RequestContext,raw:unknown){
  const input=inputSchema.parse(raw);
  const {collegeId,ready}=await getTpoBatch(ctx,input.batchId);
