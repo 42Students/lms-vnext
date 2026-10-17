@@ -91,3 +91,9 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-77 | OPEN | Full template, mentor, submission, release and review mutation audit coverage not yet proven end-to-end; full integration coverage still necessary. |
 | SA-placements-projects-87 | DONE | Template-college assignment/removal selection and retry; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-87` (source, unrun). |
 | SA-placements-projects-93 | DONE | Student roster replacement with scoped selection and confirm; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-93` (source, unrun). |
+
+## Chat-15 final sprint — FIXED-ON-MAIN acceptance
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-placements-projects-91 | FIXED-ON-MAIN; source verified, automated test authored | Existing `src/components/projects/project-workspace.tsx` allows `mode!=="LEARNER"&&!readOnly` on sprint create/edit, release edit, task details, assignment changes, TaskLifecycleActions and TaskReviewActions, with `ProjectAdminSubmissionReview` on final delivery. `tests/unit/chat15-final-sprint-superadmin-projects.test.ts` tests `SA-placements-projects-91 preserves admin sprint/release editing, task lifecycle, reassignment and submission review` and `SA-placements-projects-91 routes admin task writes through authorized API handlers, not client-side status guesses`. Database authorization must be verified by orchestrator integration acceptance; no tests executed in lane. |
