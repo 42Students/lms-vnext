@@ -105,7 +105,11 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      <button type="button" className={button} disabled={busy} onClick={()=>void apply("PIN",active)}>
       {active.pinned?"Unpin":"Pin"}
      </button>
-     <button type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Delete</button>
+     {deleteReview===active.id?<>
+       <span role="status" className="text-sm">Delete {active.name}? This view cannot be restored.</span>
+       <button type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Confirm delete</button>
+       <button type="button" className={button} onClick={()=>setDeleteReview(null)}>Cancel</button>
+     </>:<button type="button" className={button} disabled={busy} onClick={()=>setDeleteReview(active.id)}>Delete</button>}
      <button type="button" className={button} onClick={()=>download(active)}>Download view</button>
      <p className="w-full text-xs text-muted-foreground">{active.note||"No note"}</p>
     </div>:null}
