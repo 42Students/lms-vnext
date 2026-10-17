@@ -247,6 +247,15 @@ export function RecruiterBulkOwnerControls({
         <section aria-live="polite">
           <h3 className="text-sm font-semibold text-foreground">Per-lead results</h3>
           {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
+          {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
+           <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>
+           {undoReview?<p role="status" className="mt-2">Restore the previous owner for every changed recruiter in this batch?</p>:null}
+           <div className="mt-2 flex gap-2">
+            <button type="button" disabled={undoBusy} className={fieldClass} onClick={()=>void restore()}>
+             {undoBusy?"Restoring…":undoReview?"Confirm undo":"Undo owner batch"}</button>
+            {undoReview?<button type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</button>:null}
+           </div>
+          </div>:null}
           <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
             unchanged: {results.filter(row=>row.status==="unchanged").length};
             ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
