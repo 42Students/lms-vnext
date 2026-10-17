@@ -37,6 +37,7 @@ export const tpoAuditQuerySchema = z
     from: dateSchema.optional(),
     to: dateSchema.optional(),
     q: z.string().trim().max(120).default(""),
+    who:z.string().trim().max(100).default(""),
     page: z.coerce
       .number()
       .int()
@@ -361,6 +362,7 @@ function auditDateFilters(
     );
   }
 
+  if (query.who) conditions.push(sql`position(lower(${query.who}) in lower(coalesce(actor.display_name,''))) > 0`);
   if (query.q) {
     conditions.push(sql`
       (
