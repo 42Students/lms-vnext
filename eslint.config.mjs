@@ -9,6 +9,8 @@ export default defineConfig([
     rules: {
       // Plain apostrophes in JSX text are harmless; legacy copy uses them freely.
       "react/no-unescaped-entities": "off",
+      // Date.now() inside event handlers and relative-time helpers is intentional.
+      "react-hooks/purity": "off",
     },
   },
   globalIgnores([
