@@ -24,3 +24,10 @@ You are a builder lane (chat-N). Your queue is `docs/orchestrator/queues/gap-clo
 
 ## Per reply
 Finish with a short summary: pages touched, gap IDs DONE / NOT-A-GAP / BLOCKED, gap IDs remaining, tests added, proposals written, and the latest commit sha. State plainly that tests were written but not run (you cannot run them); the orchestrator runs them.
+
+## Throughput (added after round 1: do more gaps per reply)
+- Target: at least 25 gaps resolved per reply (round 1 managed about 12 per lane). One gap should not take more than a few commits.
+- Gaps marked FIXED-ON-MAIN, and wording (COPY) gaps, need verification, not new features: read the code once, and cover several gap IDs in ONE test file (one `it` per gap ID, ID in the test name) in ONE commit that cites all of those IDs. Do not make a separate commit per ID.
+- Do the big features (new screens, new routes) only when a gap truly needs them, and keep each to a few commits.
+- Update the page verification file in the same commit as the tests, so the evidence always matches.
+- Work through the whole page list top to bottom before returning to any gap you skipped.
