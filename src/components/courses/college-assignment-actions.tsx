@@ -40,7 +40,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    const due=dueAt?new Date(dueAt+":00+05:30"):null;
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
    path=path;method="PATCH";
-   if(!methodsLoaded){setError("Load the saved submission methods before editing.");return;}
+   if(!methodsLoaded||!expectedUpdatedAt){setError("Reload the saved assignment before editing.");return;}
    body={expectedUpdatedAt,confirmed:true,title:title.trim(),description:description.trim()||null,
     maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
   }else{
