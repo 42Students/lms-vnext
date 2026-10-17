@@ -5,6 +5,7 @@
  */
 import { readFileSync, readdirSync } from "node:fs";
 import { join, relative } from "node:path";
+import ts from "typescript";
 
 const cwd = process.cwd();
 const audited = [
@@ -19,12 +20,11 @@ const audited = [
   "src/app/(authenticated)/admin/colleges/page.tsx",
   "src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx",
   "src/app/(authenticated)/tpo/calendar/page.tsx",
-];
-const rules = [
-  ["native confirm/alert/prompt", /\bwindow\.(?:confirm|alert|prompt)\s*\(/g],
-  ["unmanaged window popup", /\bwindow\.open\s*\(/g],
-  ["new-window link", /\btarget\s*=\s*["']_blank["']/g],
-  ["40px actionable class", /\bmin-h-10\b/g],
+  "src/app/quiz/page.tsx",
+  "src/components/people/faculty-profile-text-section.tsx",
+  "src/components/people/faculty-profile-repeatable.tsx",
+  "src/components/people/faculty-profile-skills.tsx",
+  "src/components/people/faculty-profile-metadata.tsx",
 ];
 const sources = [];
 function walk(target) {
@@ -42,13 +42,31 @@ const failures=[];
 for (const path of [...new Set(sources)]) {
   let text;
   try { text=readFileSync(join(cwd,path),"utf8"); } catch { failures.push(path+": missing"); continue; }
-  for (const [label,regex] of rules) {
-    const matches=Array.from(text.matchAll(regex));
-    for (const match of matches) {
-      const line=text.slice(0,match.index).split("\n").length;
-      failures.push(`${relative(cwd,join(cwd,path))}:${line}: ${label}`);
-    }
+  const file=ts.createSourceFile(path,text,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+  function fail(node,label) {
+    const line=file.getLineAndCharacterOfPosition(node.getStart(file)).line+1;
+    failures.push(relative(cwd,join(cwd,path))+":"+line+": "+label);
   }
+  function inspect(node) {
+    if (ts.isCallExpression(node) && ts.isPropertyAccessExpression(node.expression) &&
+      node.expression.expression.getText(file)==="window" &&
+      ["confirm","alert","prompt","open"].includes(node.expression.name.text)) {
+      fail(node,"native prompt / unmanaged popup");
+    }
+    if (ts.isJsxAttribute(node)) {
+      if(node.name.text==="target" && node.initializer &&
+        ts.isStringLiteral(node.initializer) && node.initializer.text==="_blank") {
+        fail(node,"new-window link");
+      }
+      if (node.name.text==="className" && node.initializer) {
+        const classes=node.initializer.getText(file);
+        if (/\bmin-h-10\b/.test(classes)) fail(node,"40px actionable class");
+        if (/\bbg-primary\b/.test(classes) && /\btext-white\b/.test(classes)) fail(node,"white text on canonical teal");
+      }
+    }
+    ts.forEachChild(node,inspect);
+  }
+  inspect(file);
 }
 const css=readFileSync(join(cwd,"src/app/globals.css"),"utf8");
 for(const required of [
