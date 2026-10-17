@@ -12,7 +12,7 @@ import {
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
-import { placementJobs } from "./placements";
+import { placementApplications, placementJobRounds, placementJobs } from "./placements";
 import { users } from "./users";
 
 /**
@@ -106,5 +106,29 @@ export const placementSavedJobs = pgTable(
   (t) => [
     uniqueIndex("placement_saved_jobs_member_job_uq").on(t.membershipId, t.jobId),
     index("placement_saved_jobs_college_idx").on(t.collegeId, t.membershipId),
+  ],
+);
+
+/** LEARNER-placements-35: a learner's own intention to attend a scheduled round (not staff attendance). */
+export const placementLearnerRoundConfirmations = pgTable(
+  "placement_learner_round_confirmations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    collegeId: uuid("college_id").notNull()
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    membershipId: uuid("membership_id").notNull()
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    applicationId: uuid("application_id").notNull()
+      .references(() => placementApplications.id, { onDelete: "restrict" }),
+    roundId: uuid("round_id").notNull()
+      .references(() => placementJobRounds.id, { onDelete: "restrict" }),
+    status: varchar("status", { length: 16 }).notNull().default("CONFIRMED"),
+    confirmedAt: timestamp("confirmed_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("placement_learner_round_confirmations_uq").on(t.applicationId, t.roundId),
+    index("placement_learner_round_confirmations_owner_idx").on(t.collegeId, t.membershipId, sql`${t.updatedAt} desc`),
+    check("placement_learner_round_confirmations_status_ck", sql`${t.status} in ('CONFIRMED','CANCELLED')`),
   ],
 );

@@ -390,14 +390,15 @@ export function HrDriveDraftForm({
             </ul>
           </div>
         ) : null}
-        {showPreview && result.success ? (
+        { /* Live, locally held student-facing draft preview; never imply publication. */ }
+        {(
           <div className="mt-4 space-y-2 rounded-md bg-surface-secondary p-4 text-sm text-body">
-            <h3 className="text-base font-semibold text-foreground">{result.data.title}</h3>
-            <p className="whitespace-pre-wrap">{result.data.description}</p>
-            <p>{result.data.location} · {result.data.employmentType.replaceAll("_", " ")} · {result.data.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {result.data.workMode}</p>
+            <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
+            <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
+            <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
-              {hrDraftPreviewRounds(result.data).map(step=>(
+              {hrDraftPreviewRounds(draft).map(step=>(
                 <li key={step.order}>
                   <span className="font-medium text-foreground">{step.name}</span>
                   {" · "+step.kind.replaceAll("_"," ")}
@@ -409,20 +410,20 @@ export function HrDriveDraftForm({
               {HR_DRAFT_PREVIEW_FIELDS.map(([field,label])=>(
                 <div key={field}>
                   <dt className="text-xs text-muted-foreground">{label}</dt>
-                  <dd className="font-medium text-foreground">{result.data[field]||"Not specified"}</dd>
+                  <dd className="font-medium text-foreground">{draft[field]||"Not specified"}</dd>
                 </div>
               ))}
             </dl>
-            {hrDraftCompensationWarnings(result.data).length>0?
+            {hrDraftCompensationWarnings(draft).length>0?
               <div role="status" className="rounded-md border border-border bg-surface p-3 text-sm">
                 <h5 className="font-semibold text-foreground">Compensation details to review</h5>
                 <ul className="mt-2 list-disc space-y-1 pl-5">
-                  {hrDraftCompensationWarnings(result.data).map(note=><li key={note}>{note}</li>)}
+                  {hrDraftCompensationWarnings(draft).map(note=><li key={note}>{note}</li>)}
                 </ul>
                 <p className="mt-2 text-xs text-muted-foreground">Review notices do not save or submit this draft.</p>
               </div>:null}
             <p className="text-xs text-muted-foreground">
-              Preview only. Actual student presentation is controlled by the placement cell after approval.
+              Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
         ) : null}
