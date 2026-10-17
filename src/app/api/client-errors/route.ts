@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { logError } from "@/observability/logger";
-import { acceptClientErrorRate, browserErrorSchema } from "@/modules/log-alerts/client-report";
-import { redactAlertText, safeAlertLabel, safeAlertPath } from "@/modules/log-alerts/redaction";
+import { acceptClientErrorRate, browserErrorSchema, safeBrowserComponent } from "@/modules/log-alerts/client-report";
+import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
@@ -78,9 +78,9 @@ export async function POST(request: Request) {
     (report.kind === "stale_chunk" ? "Browser failed to load updated application code" :
       "Browser rendering failed");
   logError("client.error", new Error(redactAlertText(safeMessage)), {
-    ...identity, component: safeAlertLabel(report.component ?? report.name),
+    ...identity, component: safeBrowserComponent(report),
     path: safeAlertPath(report.path), requestId: report.requestId,
-    errorName: safeAlertLabel(report.name), status: 500,
+    errorName: safeBrowserComponent({ name: report.name }), status: 500,
   });
   return NextResponse.json({ received: true }, { status: 202 });
 }

@@ -20,14 +20,34 @@ export function redactAlertText(value: unknown): string {
     .slice(0, 420);
 }
 
+/** Static LMS path vocabulary; unknown segments are potentially personal slugs. */
+const SAFE_ROUTE_SEGMENTS = new Set(
+  ("api tracker logs known-errors viewed client-errors internal alerts tick webhooks telegram " +
+   "login logout dashboard ready health auth session users students learner learners " +
+   "faculty mentor mentors college colleges admin superadmin super-admin tpo recruiter " +
+   "courses course lessons content offerings assignments quizzes assessments projects " +
+   "placements drives jobs applications offers screening rounds interviews " +
+   "notices announcements settings messages notifications activity audit export " +
+   "reports calendar attendance batches departments sections programs terms " +
+   "profile profiles organization organizations teams team members memberships " +
+   "requests verification public companies candidates pages search filters " +
+   "detail overview status history errors error metrics metadata").split(" "),
+);
+
+/** Log route templates, never arbitrary user slugs, even if percent-encoded. */
 export function safeAlertPath(path: unknown): string {
   if (typeof path !== "string" || !path.startsWith("/")) return "/";
   const pathname = path.split(/[?#]/, 1)[0] ?? "/";
-  return pathname.slice(0, 255)
-    .replace(/\/[0-9a-f]{8}-[0-9a-f-]{27,}/gi, "/[id]")
-    .replace(/\/\d+(?=\/|$)/g, "/[id]")
-    .replace(/\/[A-Za-z0-9_-]{32,}(?=\/|$)/g, "/[id]")
-    .replace(/[^/a-zA-Z0-9_.[\]-]/g, "");
+  const segments = pathname.slice(0, 255).split("/").filter(Boolean).slice(0, 16);
+  if (segments.length === 0) return "/";
+  return "/" + segments.map((raw) => {
+    let segment: string;
+    try { segment = decodeURIComponent(raw).toLowerCase(); }
+    catch { return "[id]"; }
+    if (SAFE_ROUTE_SEGMENTS.has(segment)) return segment;
+    if (/^\[(?:id|slug|signatureid)\]$/.test(segment)) return "[id]";
+    return "[id]";
+  }).join("/");
 }
 
 export function safeAlertLabel(value: unknown, limit = 80): string {

@@ -6,7 +6,7 @@ Branch: `chatgpt/chat-16-b`. All tests below are **authored but NOT RUN**. DONE 
 | --- | --- | --- |
 | GR-111 | DONE | `src/modules/log-alerts/telegram-notifier.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-111 |
 | GR-112 | DONE | `src/modules/log-alerts/signature.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-112 |
-| GR-113 | DONE | `src/modules/log-alerts/redaction.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-113 |
+| GR-113 | DONE | `src/modules/log-alerts/redaction.ts`; `tests/unit/graceful-telegram-foundations.test.ts` GR-113; `tests/unit/graceful-client-error.test.ts` GR-113 (browser PII) |
 | GR-114 | DONE | `src/observability/logger.ts`, `src/lib/api-error.ts`; reporter `src/modules/log-alerts/reporter.ts`; additional callback verification pending |
 | GR-115 | BLOCKED (migration) | `src/db/schema/db10-log-alerts.draft.ts`; `docs/proposed-migrations/graceful-telegram-alerting.sql`; `tests/unit/graceful-alert-policy.test.ts` GR-115 and `tests/integration/graceful-telegram-persistence.test.ts` GR-115 |
 | GR-116 | DONE | `src/modules/log-alerts/policy.ts` and `reporter.ts`; `tests/unit/graceful-alert-policy.test.ts` GR-116 and `tests/unit/graceful-alert-scheduler.test.ts` GR-116; `tests/integration/graceful-telegram-persistence.test.ts` GR-115 GR-116 GR-125 (delivery-gated retry) |
