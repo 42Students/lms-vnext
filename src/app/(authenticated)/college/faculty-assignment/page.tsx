@@ -45,6 +45,9 @@ export default async function CollegeFacultyAssignmentPage({
     listCollegeTeachingOptions(context),
   ]);
   const { query, items, total, totalPages } = directory;
+  const classChoices=Array.from(
+    new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
+  ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
     <div className="space-y-6">
       <PageHeader
@@ -72,9 +75,17 @@ export default async function CollegeFacultyAssignmentPage({
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
           <label className="grid min-w-40 flex-1 gap-1 text-sm font-semibold text-body">
-            Exact class code
-            <input name="sectionCode" defaultValue={query.sectionCode ?? ""} maxLength={64}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
+            Class
+            <select name="sectionCode" defaultValue={query.sectionCode ?? ""}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              <option value="">All classes</option>
+              {query.sectionCode&&!classChoices.some(item=>item.code===query.sectionCode)?
+                <option value={query.sectionCode}>Selected class ({query.sectionCode})</option>:null}
+              {classChoices.map(item=><option key={item.code} value={item.code}>{item.name} ({item.code})</option>)}
+            </select>
+            {options.deliveriesTruncated?<span className="text-xs font-normal text-muted-foreground">
+              First 200 active deliveries shown; a selected class outside this list is retained.
+            </span>:null}
           </label>
           <label className="grid min-w-40 gap-1 text-sm font-semibold text-body">
             Assignment lifecycle
