@@ -108,7 +108,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
             setOpen(nextOpen);
         }}
         title={"Edit " + item.contentType.replaceAll("_", " ")}
-        description="Changes to this item stay scoped to your assigned teaching Section."
+        description={item.contentType==="VIDEO"?"Edit the title and notes. The stored video file is not changed.":"Changes to this item stay scoped to your assigned teaching Section."}
         footer={<Button type="submit" form={"faculty-content-edit-" + item.id} disabled={saving || !dirty}>
           {saving ? "Saving…" : dirty ? "Save content" : "No changes"}
         </Button>}
@@ -122,11 +122,11 @@ export function FacultyContentEditor({ item }: { item: Item }) {
             Notes
             <Textarea className="mt-1.5 min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
           </label>
-          <label className="block text-sm font-semibold text-body">
+          {item.contentType !== "VIDEO" ? <label className="block text-sm font-semibold text-body">
             {item.contentType === "YOUTUBE" ? "YouTube URL" : item.contentType === "LIVE_CLASS" ? "Meeting URL" : "Resource URL"}
             <Input className="mt-1.5" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
               required={item.contentType !== "RESOURCE"} placeholder="https://…" />
-          </label>
+          </label>:null}
           {item.contentType === "YOUTUBE" ? (
             <label className="block text-sm font-semibold text-body">
               Duration (seconds)
