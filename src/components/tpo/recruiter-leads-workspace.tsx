@@ -173,6 +173,7 @@ export function RecruiterLeadsWorkspace({
   const [error, setError] = useState("");
   const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
+  const [needsExpanded,setNeedsExpanded]=useState(true);
   const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
   const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
@@ -635,8 +636,12 @@ export function RecruiterLeadsWorkspace({
       ) : (
         <>
           <section aria-label="Needs doing" className="space-y-2 rounded-lg border border-border bg-surface p-4">
-            <h2 className="text-sm font-semibold text-foreground">Needs doing</h2>
-            <div className="flex flex-wrap gap-2">
+            <button type="button" aria-expanded={needsExpanded}
+              className="flex min-h-10 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
+              onClick={()=>setNeedsExpanded(open=>!open)}>
+              Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
+            </button>
+            {needsExpanded?<div className="flex flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
@@ -654,13 +659,14 @@ export function RecruiterLeadsWorkspace({
                   :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
                 onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
                 Unassigned ({needCounts.unassigned})</button>:null}
-            </div>
-            {!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
+            </div>:null}
+            {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
             <Link className="inline-flex min-h-10 items-center text-sm text-primary-text underline"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
+            {!needsExpanded?<p className="text-xs text-muted-foreground">Show needs doing to review outreach priorities.</p>:null}
           </section>
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
