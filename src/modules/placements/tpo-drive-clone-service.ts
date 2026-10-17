@@ -2,7 +2,7 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementJobRoleOptions,placementJobs} from "@/db/schema";
+import {placementJobEligibilityPolicies,placementJobRoleOptions,placementJobs} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {createPlacementJob} from "./job-service";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
@@ -34,6 +34,8 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   applicationMode:"INTERNAL",externalApplicationUrl:null,applicationDeadline:null,
  });
  // Copy active non-primary packages while the newly created draft remains unpublished.
+ const [oldPolicy]=await getDb().select().from(placementJobEligibilityPolicies)
+  .where(eq(placementJobEligibilityPolicies.jobId,source.id)).limit(1);
  const options=await getDb().select().from(placementJobRoleOptions)
   .where(and(eq(placementJobRoleOptions.jobId,source.id),
    eq(placementJobRoleOptions.status,"ACTIVE")));
@@ -43,6 +45,20 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
     ctcLpa:source.ctcLpa,fixedCtcLpa:source.fixedCtcLpa,
     variableCtcLpa:source.variableCtcLpa,updatedAt:new Date(),
   }).where(and(eq(placementJobs.id,draft.id),eq(placementJobs.status,"DRAFT")));
+  if(oldPolicy)await tx.insert(placementJobEligibilityPolicies).values({
+    jobId:draft.id,allowedProgramIds:oldPolicy.allowedProgramIds,
+    allowedCohortIds:oldPolicy.allowedCohortIds,allowedSectionIds:oldPolicy.allowedSectionIds,
+    minCgpaHundredths:oldPolicy.minCgpaHundredths,
+    maxActiveBacklogs:oldPolicy.maxActiveBacklogs,maxPastBacklogs:oldPolicy.maxPastBacklogs,
+    minTenthPctBasisPoints:oldPolicy.minTenthPctBasisPoints,
+    minTwelfthPctBasisPoints:oldPolicy.minTwelfthPctBasisPoints,
+    minDiplomaPctBasisPoints:oldPolicy.minDiplomaPctBasisPoints,
+    minUndergraduatePctBasisPoints:oldPolicy.minUndergraduatePctBasisPoints,
+    minPctThroughoutBasisPoints:oldPolicy.minPctThroughoutBasisPoints,
+    maxGapYears:oldPolicy.maxGapYears,allowedPassingYears:oldPolicy.allowedPassingYears,
+    requireVerifiedEvidence:oldPolicy.requireVerifiedEvidence,
+    missingEvidencePolicy:oldPolicy.missingEvidencePolicy,updatedByUserId:context.user.id,
+  });
   const [primary]=await tx.select({id:placementJobRoleOptions.id}).from(placementJobRoleOptions)
     .where(and(eq(placementJobRoleOptions.jobId,draft.id),
       eq(placementJobRoleOptions.isPrimary,true))).limit(1);
