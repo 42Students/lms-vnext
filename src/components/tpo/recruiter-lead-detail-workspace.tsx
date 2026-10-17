@@ -516,8 +516,13 @@ export function RecruiterLeadDetailWorkspace({
                     onClick={()=>setLogOutcome(outcome)}>{outcome}</button>)}
                 </div>:null}
                 <label className="block text-sm">Outcome
-                  <input className={input + " mt-1"} maxLength={30} value={logOutcome}
-                    onChange={e => setLogOutcome(e.target.value)} />
+                  {logType==="CALL"?<select className={input + " mt-1"} required
+                    value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}>
+                    <option value="">Choose a call outcome</option>
+                    {["Connected","No answer","Busy","Wrong number","Not interested"].map(value=>
+                      <option key={value} value={value}>{value}</option>)}
+                  </select>:<input className={input+" mt-1"} maxLength={30}
+                    value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}/>}
                 </label>
                 <label className="block text-sm">Notes
                   <textarea className={input + " mt-1"} maxLength={2000} rows={3} value={logNote}
