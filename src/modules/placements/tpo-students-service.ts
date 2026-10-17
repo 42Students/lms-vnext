@@ -81,6 +81,7 @@ export const tpoStudentsQuerySchema = z
       .optional(),
     branchId: uuid.optional(),
     programId:uuid.optional(),
+    classId:uuid.optional(),
     afterCollege:afterCollegeOutcomeSchema.optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
@@ -364,6 +365,7 @@ export async function getTpoStudentsIntelligence(
       season: activeSeason ?? null,
       summary: emptySummary,
       branches: [],
+      classChoices:[],
       roster: filterTpoStudentRoster(
         [],
         input,
@@ -400,6 +402,7 @@ export async function getTpoStudentsIntelligence(
         enrollmentId:
           sectionEnrollments.learnerEnrollmentId,
         sectionId: sections.id,
+        sectionName:sections.name,
         cohortId: sections.cohortId,
       })
       .from(sectionEnrollments)
@@ -801,6 +804,7 @@ export async function getTpoStudentsIntelligence(
       programName: learner.programName,
       cohortId: learner.cohortId,
       cohortName: learner.cohortName,
+      classIds:sectionIds,
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationChoice:
         registrationChoiceByLearner.get(
@@ -848,6 +852,10 @@ export async function getTpoStudentsIntelligence(
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(workingRows),
     branches: summarizeTpoStudentBranches(workingRows),
+    classChoices:[...new Map(activeSections.filter(section=>
+      cohortByEnrollment.get(section.enrollmentId)===section.cohortId)
+      .map(section=>[section.sectionId,section.sectionName] as const))]
+      .map(([id,name])=>({id,name})),
     roster: filterTpoStudentRoster(filteredRows,input),
     // Filtering here uses the same pure derivation as the visible roster.
     // Page size is deliberately unrestricted only inside this trusted,
