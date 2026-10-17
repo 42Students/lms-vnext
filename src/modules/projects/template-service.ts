@@ -709,40 +709,32 @@ export async function assignProjectTemplateToCollege(
 }
 
 export async function revokeProjectTemplateFromCollege(
-  context: RequestContext,
-  templateIdInput: string,
-  collegeIdInput: string,
-) {
-  const templateId =
-    projectTemplateIdSchema.parse(templateIdInput);
-  const collegeId =
-    collegeIdSchema.parse(collegeIdInput);
-  const college =
-    await loadProjectCollegeScope(collegeId);
-
-  requirePermission(
-    context,
-    "project-template.assign",
-    {
-      organizationId: college.organizationId,
-      collegeId: college.id,
-    },
-  );
-
+  context:RequestContext,templateIdInput:string,collegeIdInput:string,
+){
+  const templateId=projectTemplateIdSchema.parse(templateIdInput);
+  const collegeId=collegeIdSchema.parse(collegeIdInput);
+  const college=await loadProjectCollegeScope(collegeId);
+  requirePermission(context,"project-template.assign",{
+    organizationId:college.organizationId,collegeId:college.id,
+  });
   return getDb().transaction(async tx=>{
+    const [template]=await tx.select({id:projectTemplates.id,title:projectTemplates.title})
+      .from(projectTemplates).where(eq(projectTemplates.id,templateId))
+      .for("update").limit(1);
+    if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
     const [revoked]=await tx.update(projectTemplateCollegeAssignments)
       .set({revokedAt:new Date()})
       .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
         eq(projectTemplateCollegeAssignments.collegeId,collegeId),
-        isNull(projectTemplateCollegeAssignments.revokedAt)))
-      .returning();
+        isNull(projectTemplateCollegeAssignments.revokedAt))).returning();
     if(!revoked)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND");
     await recordActivityEventInTransaction(tx,context,{
-      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNASSIGNED,
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
       organizationId:college.organizationId,collegeId:college.id,
-      subjectType:"project_template",subjectId:templateId,
-      summary:"Super Admin revoked college project template assignment",
-      importance:"HIGH",metadata:{assignmentId:revoked.id},
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template removed from college",
+      metadata:{assignmentId:revoked.id,templateVersionId:revoked.templateVersionId},
+      groupKey:"template:"+templateId,
     });
     return revoked;
   });
