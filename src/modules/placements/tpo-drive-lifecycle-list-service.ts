@@ -152,10 +152,16 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
     filters.minApplied!==undefined?sql`(select count(*) from placement_applications ap
       where ap.job_id=${placementJobs.id} and ap.status <> 'WITHDRAWN') >= ${filters.minApplied}`:undefined,
+    filters.maxApplied!==undefined?sql`(select count(*) from placement_applications ap
+      where ap.job_id=${placementJobs.id} and ap.status <> 'WITHDRAWN') <= ${filters.maxApplied}`:undefined,
     filters.minOffers!==undefined?sql`(select count(*) from placement_offers ofr
       join placement_applications ap on ap.id=ofr.application_id
       where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
       >= ${filters.minOffers}`:undefined,
+    filters.maxOffers!==undefined?sql`(select count(*) from placement_offers ofr
+      join placement_applications ap on ap.id=ofr.application_id
+      where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
+      <= ${filters.maxOffers}`:undefined,
     filters.journey==="TAKING_APPLICATIONS"?and(eq(placementJobs.status,"PUBLISHED"),
       or(isNull(placementJobs.applicationDeadline),gte(placementJobs.applicationDeadline,now))):
     filters.journey==="RUNNING_ROUNDS"?and(eq(placementJobs.status,"PUBLISHED"),
