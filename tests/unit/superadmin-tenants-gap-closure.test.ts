@@ -72,7 +72,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   const people=source("src/modules/people/service.ts");
   expect(client).toContain("encodeURIComponent(membershipId)");
   expect(client).toContain('action==="SUSPEND"');
-  expect(client).toContain('action==="REACTIVATE"');
+  expect(client).toContain('status==="ACTIVE"?"SUSPEND":"REACTIVATE"');
   expect(client).toContain("apiFetch");
   expect(client).not.toContain("result.error");
   expect(route).toContain("isSameOriginRequest(request)");
