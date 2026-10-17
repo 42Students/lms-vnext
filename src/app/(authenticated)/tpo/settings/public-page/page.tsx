@@ -5,6 +5,8 @@ import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
 import {TpoPublicPlacementToggle} from "@/components/placements/tpo-public-placement-toggle";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoPublicPlacementPublication} from "@/modules/placements/public-page/publication-service";
+import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
+import {readOptionalPublicPlacementData} from "@/modules/placements/public-page/optional-read-model";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
 export const dynamic="force-dynamic";
 
@@ -15,6 +17,8 @@ export default async function PublicPlacementSettingsPage({
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const value=await getTpoPublicPlacementPublication(context);
  const view=publicPlacementSettingState(value);
+ const preview=view.enabled?await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(context.membership!.collegeId)):null;
+ const published=preview?.available?preview.value:null;
  const raw=await searchParams;
  const updated=Array.isArray(raw.updated)?raw.updated[0]:raw.updated;
  return <div className="space-y-6">
