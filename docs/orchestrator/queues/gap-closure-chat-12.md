@@ -27,7 +27,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-22 | S2 | MISSING-FILTER | OPEN |
 | TPO-students-23 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-26 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-students-28 | S2 | MISSING-COLUMN | OPEN |
+| TPO-students-28 | S2 | MISSING-COLUMN | DONE |
 | TPO-students-29 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-31 | S2 | MISSING-FIELD | OPEN |
@@ -38,15 +38,15 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-13 | S3 | MISSING-ACTION | OPEN |
 | TPO-students-24 | S3 | MISSING-FILTER | OPEN |
-| TPO-students-25 | S3 | MISSING-FILTER | OPEN |
+| TPO-students-25 | S3 | MISSING-FILTER | DONE |
 | TPO-students-27 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-students-37 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-38 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-students-39 | S3 | MISSING-ACTION | OPEN |
+| TPO-students-39 | S3 | MISSING-ACTION | DONE |
 | TPO-students-40 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-41 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-students-42 | S3 | MISSING-TAB | FIXED-ON-MAIN |
-| TPO-students-43 | S3 | MISSING-TAB | OPEN |
+| TPO-students-43 | S3 | MISSING-TAB | DONE |
 | TPO-students-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-46 | S3 | COPY | DONE |
@@ -79,7 +79,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-07 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-13 | S2 | MISSING-ACTION | OPEN |
 | TPO-requests-verification-22 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-requests-verification-23 | S2 | STATE | OPEN |
+| TPO-requests-verification-23 | S2 | STATE | DONE |
 | TPO-requests-verification-24 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-requests-verification-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-36 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -102,7 +102,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-requests-verification-R01 | S3 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
-| TPO-requests-verification-16 | S4 | PERFORMANCE | OPEN |
+| TPO-requests-verification-16 | S4 | PERFORMANCE | DONE |
 | TPO-requests-verification-18 | S4 | STATE | OPEN |
 | TPO-requests-verification-21 | S4 | PERMISSION | OPEN |
 
@@ -158,3 +158,11 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 19–20: TPO-students-48/51/R04 DONE (code authored, acceptance pending); filtered and selected counts now live, phone cards show essential facts/details disclosure and two-column journey, Program/Class selector duplication removed. Tests authored, not run.
 
 - Round-21: `TPO-requests-verification-29` DONE (source-authored; runtime acceptance pending): private reviewer detail now limits to latest 50 audit events with education and masked proof, student roll and named reviewer context. Tests authored, not run.
+
+## Round 22–28 checkpoint (chat-12)
+
+- Fast-forwarded `main` at `95c54aa5bf140670ac27b34c64e2320feb05bfd1` before modifications; only pushed to chatgpt/chat-12-b.
+- Prior refreshed CI chat-12 failure fixes remain on main; no new chat-12 entries appeared in `unit-failures-r1.md`.
+- Six OPEN gaps now DONE on source evidence: TPO-students-25, TPO-students-28, TPO-students-39, TPO-students-43, TPO-requests-verification-23, TPO-requests-verification-16. New ID tests authored but not executed.
+- TPO-students-06/07 still OPEN: bulk timed Debar/Lift and learner notifications exist, but learner dispute and drive-count transition integration do not.
+- TPO-students-10/12/14/17/34/36 and TPO-requests-verification-01/13/37/38/R02 still require full persisted workflows and real database acceptance; do not report them completed.
