@@ -42,6 +42,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   function begin() {
     setTitle(props.title);
     setDescription(props.description??"");
+    setApproach(props.approach??"");
     setCriteria(props.acceptanceCriteria??"");
     setPriority(props.priority);
     setTaskType(props.taskType??"");setEstimate(props.estimatePoints?.toString()??"");
