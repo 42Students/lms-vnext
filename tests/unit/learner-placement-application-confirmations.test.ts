@@ -31,8 +31,8 @@ describe("Learner job application confirmations", () => {
     expect(source).toContain("validWithdrawalReason");
   });
   it("matches the backend reason length and guards repeated writes while pending", () => {
-    expect(source).toContain("reason.length >= 3 && reason.length <= 2000");
-    expect(source).toContain("maxLength={2000}");
+    expect(source).toContain("reason.length >= 3 && reason.length <= 900");
+    expect(source).toContain("maxLength={900}");
     expect(source).toContain('pendingAction !== null');
     expect(source).toContain('await placementMutation(');
   });

@@ -13,7 +13,7 @@ describe("dev legacy combined learner placement Schedule",()=>{
       round("later",new Date(now.getTime()+10000)),
       round("earlier",new Date(now.getTime()+1000)),
       round("today",now),
-      round("past",new Date(now.getTime()-1)),
+      round("past",new Date(now.getTime()-61*60*1000)),
     ],now);
     expect(result.ahead.map(x=>x.roundId)).toEqual(["today","earlier","later"]);
     expect(result.past.map(x=>x.roundId)).toEqual(["past"]);

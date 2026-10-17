@@ -9,7 +9,7 @@ expect(learnerApplicationMobileSummary(DEFAULT_LEARNER_APPLICATION_FILTERS))
 });
 it("reports restored search/stage/view controls and does not count defaults",()=>{
 const filters={...DEFAULT_LEARNER_APPLICATION_FILTERS,search:"developer",
-view:"progress" as const,stage:"SHORTLISTED"};
+view:"completed" as const,stage:"SHORTLISTED"};
 expect(learnerApplicationActiveFilterCount(filters)).toBe(3);
 expect(learnerApplicationMobileSummary(filters)).toContain("3 active");
 });
