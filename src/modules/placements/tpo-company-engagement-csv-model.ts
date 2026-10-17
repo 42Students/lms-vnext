@@ -1,6 +1,7 @@
 import {z} from "zod";
 export const companyEngagementCsvQuerySchema=z.object({
  seasonId:z.uuid().optional(),jobId:z.uuid().optional(),
+ companyId:z.uuid().optional(),
 }).strict();
 export type CompanyEngagementCsvRow={
  companyName:string;contacts:number;invited:number;joined:number;drives:number;placed:number;
