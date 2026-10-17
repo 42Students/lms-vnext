@@ -11,7 +11,7 @@ import {listCourseAssignments} from "./assignment-service";
 import {listCourseQuizzes} from "./quiz-service";
 
 const MAX_SECTION_OPTIONS=200;
-type LessonRef={id:string;name:string;sequence:number};
+type LessonRef={id:string;name:string;sequence:number;visibleToStudents:boolean;status:string};
 
 export async function listOfferingSectionPreview(
  context:RequestContext,offeringId:string,requestedDeliveryId:string|null,
@@ -54,9 +54,11 @@ export async function listOfferingSectionPreview(
   ]);
   return {
    id:lesson.id,name:lesson.name,sequence:lesson.sequence,
+   visibleToStudents:lesson.visibleToStudents,lessonStatus:lesson.status,
    contents:contents.map(item=>({
     id:item.id,title:item.title,kind:item.contentType,status:item.status,
     sequence:item.sequence,scope:item.deliveryId?"SECTION":"SHARED",
+    visibleToStudents:item.visibleToStudents,
    })),
    assignments:assignments.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
