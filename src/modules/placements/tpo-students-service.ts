@@ -372,6 +372,7 @@ export async function getTpoStudentsIntelligence(
       // for each CSV page. Never serialize this field into client props.
       exportRows: options.includeExportRows ? [] : null,
       definitions: {
+        afterCollegeAvailable:input.afterCollege?await placementTableExists("placement_tpo_after_college"):true,
         registrationsAvailable,
         externalOffersAvailable,
         registrationScope: "ACTIVE_COHORT",
