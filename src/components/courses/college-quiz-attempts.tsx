@@ -79,6 +79,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      </details>
     </li>)}</ul>
    </>:null}
+    {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
     {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex items-center justify-between gap-3 border-t border-border pt-3 text-xs">
       <span>Page {page} · up to 25 attempts per page</span>
       <div className="flex items-center gap-3">
