@@ -4,10 +4,11 @@ import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
-type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;job:string}[];
+type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;updatedAt:string;job:string}[];
  notes:{id:string;body:string;createdAt:string;job:string}[];
  studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];
  teamHistory:{id:string;eventType:string;summary:string;occurredAt:string;subjectType:string;actorUserId:string|null}[];
@@ -67,7 +68,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
    <nav aria-label="Student panel pages" className="mt-4 flex flex-wrap gap-2">
     {tabs.map(t=><button key={t} type="button" onClick={()=>void chooseTab(t)}
       aria-current={tab===t?"page":undefined}
-      className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}</button>)}
+      className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}
+       {t==="Requests"&&detail?.requests.some(row=>row.status==="PENDING")?
+       " ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)":""}
+      </button>)}
    </nav>
    <div className="mt-5 space-y-4 text-sm">
     {tab==="Profile"?<>
@@ -111,6 +115,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
         <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
+        {row.status==="PENDING"?<TpoRequestDecisionControl
+          requestId={row.id} requestType={row.type} expectedUpdatedAt={row.updatedAt}
+          onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
        className="inline-flex min-h-10 items-center text-primary-text underline">Review student's requests</Link>
