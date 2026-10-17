@@ -45,6 +45,30 @@ describe("chat-16 mentor editor draft recovery",()=>{
     expect(delivery).toContain('confirmLabel="Discard changes"');
   });
 
+  it("MEN-projects-meetings-75 preserves meeting outcome notes and release drafts",()=>{
+    const meeting=read("src/components/projects/project-meeting-controls.tsx");
+    const actions=meeting.slice(meeting.indexOf("export function ProjectMeetingTransitionActions("));
+    expect(actions).toContain(draftWarning);
+    expect(actions).toContain("if(dirty)setConfirmDiscard(true)");
+    expect(actions).toContain('confirmLabel="Discard changes"');
+    const release=read("src/components/projects/mentor-release-editor.tsx");
+    expect(release).toContain(draftWarning);
+    expect(release).toContain('confirmLabel="Discard changes"');
+    expect(release).toContain("window.addEventListener(\"beforeunload\"");
+  });
+
+  it("MEN-projects-meetings-76 confirms release deletion without native confirm and safely reports errors",()=>{
+    const release=read("src/components/projects/mentor-release-editor.tsx");
+    expect(release).not.toContain("window.confirm");
+    expect(release).toContain("title=\"Delete this release?\"");
+    expect(release).toContain("Could not save the release. Review its latest details and try again.");
+    expect(release).toContain("Could not delete the release. Reload its current status and retry.");
+    const meeting=read("src/components/projects/project-meeting-controls.tsx");
+    const actions=meeting.slice(meeting.indexOf("export function ProjectMeetingTransitionActions("));
+    expect(actions).toContain("Review the meeting status and try again.");
+    expect(actions).not.toContain("caught instanceof Error");
+  });
+
   it("MEN-projects-meetings-76 keeps task, sprint, meeting and delivery errors friendly",()=>{
     const files=[
       "src/components/projects/mentor-task-create.tsx",
