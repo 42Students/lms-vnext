@@ -134,6 +134,9 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
           className="group flex min-h-64 flex-col rounded-xl border border-border bg-surface p-5 transition hover:border-primary hover:shadow-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
         >
           <div className="flex items-start justify-between gap-3">
+            <span aria-hidden="true" className="grid size-16 shrink-0 place-items-center rounded-lg border border-border bg-primary-subtle text-xl font-bold text-primary-text">
+              {course.courseName.trim().slice(0,2).toUpperCase()||"CS"}
+            </span>
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
                 {course.courseCode}
