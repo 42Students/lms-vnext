@@ -4,6 +4,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { displayDriveMetric, describeDriveMetric } from "@/modules/placements/college-drive-overview-model";
 import { getCollegeDriveOverview } from "@/modules/placements/college-drive-overview-service";
+import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
+import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
+import {CollegeDrivePipelineOverview} from "@/components/placements/college-drive-pipeline-overview";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -11,7 +14,11 @@ export default async function CollegeDriveOverviewPage({ params }: {
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
   const { jobId } = await params;
-  const { drive, counts } = await getCollegeDriveOverview(context, jobId);
+  const [{drive,counts},funnel,attention]=await Promise.all([
+    getCollegeDriveOverview(context,jobId),
+    getCollegeHiringFunnel(context,{jobId}),
+    getCollegeDriveAttention(context),
+  ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
@@ -29,6 +36,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
           <p className="mt-2 text-xs text-muted-foreground">{describeDriveMetric(name)}</p>
         </article>)}
     </section>
+    <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
     <Link href={`/college/placements/jobs/${drive.id}/shortlisted`} className="text-sm font-semibold text-primary-text underline">Shortlisted</Link>
     <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;
