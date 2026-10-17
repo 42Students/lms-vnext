@@ -24,7 +24,7 @@ A user quotes "Reference: ab12cd34". Search the structured log:
 The entry carries the component, the event (`api.unhandled_error` for unexpected faults), the redacted error and the route. Never paste database values or personal data into tickets.
 
 ## 5. Alerts and status (GR-104, GR-106)
-- Log-based metric `vnext_dev_unhandled_api_errors` counts `api.unhandled_error` events from the dev web pods. An alert policy on it (any 3 in 5 minutes) and an uptime check on `/ready` and the login page need a notification channel; the owner picks the address (see the open question in the orchestration notes). Production gets the same metric and policy for its namespace.
+- Log-based metric `vnext_dev_unhandled_api_errors` counts `api.unhandled_error` events from the dev web pods. Alerts go to Telegram only (owner decision: no email): the app reports new error signatures, spikes, a daily digest and a one-minute health watch to the same bot and chat as the old LMS, tagged `[vnext dev]` outside production (checklist GR-111 to GR-125). The metric is a backup counter. Production gets the same pipeline with the production tag and the acknowledge webhook.
 - Status line: a one-sentence note in the support channel and on the maintenance page ("We are making a quick update, back in about N minutes").
 
 ## 6. Backups and restore drill (GR-109)

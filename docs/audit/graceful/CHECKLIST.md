@@ -78,7 +78,7 @@ Rule: a customer never sees a raw code, a stack trace, a framework screen, a dat
 - GR-101 Zero-gap deploys: 2+ replicas for college hosts, `maxUnavailable: 0`, readiness probe on `/ready`, startup probe, preStop sleep, graceful termination, PodDisruptionBudget.
 - GR-102 Deploys are gated: the image must pass `/ready` and a smoke check before traffic; automatic rollback on failure; written rollback runbook in `docs/operations/`.
 - GR-103 Migrations backward compatible for one release; destructive changes in two steps.
-- GR-104 Alerts: log-based metric and alert policy on `api.unhandled_error` and ERROR bursts emailing the owner; uptime checks on `/ready` and the login page from outside the cluster.
+- GR-104 Alerts go to Telegram only (owner decision: no email alerts, email costs money and the owner does not read it): see section 10 (GR-111 to GR-125). The log-based metric `vnext_dev_unhandled_api_errors` stays as a backup counter; uptime is covered by the health-watch CronJob (GR-120).
 - GR-105 Request-id search recipe documented for support.
 - GR-106 Status page or status line documented.
 - GR-107 No source maps or framework details served in production; `poweredByHeader` off (done); security headers kept.
