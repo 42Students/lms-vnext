@@ -62,3 +62,6 @@ Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integ
 
 ## Chat-11 academic prerequisite and mutation guards (2026-10-18)
 - COL-academic-setup-06/07/08/10: `tests/unit/chat11-college-setup-integrity-round11.test.ts` provides named tests for bounded credits, no foreign tenant IDs, legal row ordering, completeness of the 15-step setup and a single additional prerequisite. Tests are authored but not executed.
+
+
+- COL-academic-setup-29/33: `src/components/academics/college-cohort-management.tsx` now uses the guarded `apiFetch` for archive (including expectedUpdatedAt) and graduation, instead of parsing and rethrowing untrusted backend error codes. `tests/unit/chat11-academic-register-regressions-round11.test.ts` has named lifecycle regression cases; tests have not been run.
