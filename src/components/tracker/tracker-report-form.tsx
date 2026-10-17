@@ -26,6 +26,11 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) ?? "");
+    if(contextPrefill&&
+      value("description").replace("\n\nCaptured context:\n"+contextPrefill,"").trim().length===0){
+      setError("Describe what went wrong before submitting the captured context.");
+      return;
+    }
     const parsed = trackerReportSchema.safeParse({
       reporterName: value("reporterName"), accountRole: value("accountRole"),
       environment: value("environment"), page, screen: screen || null,
