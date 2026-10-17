@@ -175,6 +175,8 @@ export const ACTIVITY_EVENT_TYPES = {
   PLACEMENTS_SEASON_CLOSED:
     "placements.season.closed",
   PLACEMENTS_COMPANY_DOMAIN_UPDATED: "placements.company.domain_updated",
+  PLACEMENTS_COMPANY_RELATIONSHIP_ARCHIVED: "placements.company.relationship_archived",
+  PLACEMENTS_COMPANY_RELATIONSHIP_RESTORED: "placements.company.relationship_restored",
   PLACEMENTS_COMPANY_ALIAS_UPDATED: "placements.company.alias_updated",
   PLACEMENTS_COMPANY_UPDATED: "placements.company.updated",
   PLACEMENTS_COMPANY_VERIFIED: "placements.company.verified",

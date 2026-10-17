@@ -4,6 +4,8 @@ import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-r
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
 import {SuperAdminCompanyEdit} from "@/components/admin/super-admin-company-edit";
 import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-company-identities";
+import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
+  from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -126,6 +128,8 @@ export default async function SuperAdminCompaniesPage({
       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
       Export matching companies as CSV →
     </Link>
+    {context.adminScope?.collegeId?
+      <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>:null}
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
@@ -168,6 +172,10 @@ export default async function SuperAdminCompaniesPage({
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
          <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
         <p className="mt-1 text-sm text-body">{row.collegeName}</p>
+        {context.adminScope?.collegeId===row.collegeId?
+          <SuperAdminCollegeCompanyRelationshipActions relationshipId={row.relationshipId}
+            name={row.name} trusted={row.trusted} status={row.relationshipStatus}
+            driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
         <div className="mt-3 flex flex-wrap gap-2">
           <StatusBadge>{row.companyStatus}</StatusBadge>
           <StatusBadge>{row.relationshipStatus} relationship</StatusBadge>
