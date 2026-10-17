@@ -6,3 +6,5 @@
 | REC-calendar-messages-profile-42 | DONE (source, tests not run) | Existing invite declined state already has exact legacy confirmation copy; named test in `tests/unit/chat2-recruiter-profile-and-lead-parity.test.ts`. |
 | REC-calendar-messages-profile-37 | NOT-A-GAP | Existing `/hr/company?tab=reports` deep-link redirects to scoped Reports, preserving collegeId and navigation, verified named test. |
 | REC-calendar-messages-profile-47 | PARTIAL — OPEN | Retired `/recruiter` and `/recruiter/colleges` entrypoints now use explicit redirects to canonical Today (`/hr/home`) rather than rendering duplicated surfaces. Named unit tests in `tests/unit/chat2-recruiter-legacy-entrypoints.test.ts`. Global navigation aliases are shell-owned and still require chat-9. |
+
+| REC-calendar-messages-profile-12 | DONE (source, not run) | `src/components/hr/recruiter-conversation-reply-form.tsx` now offers Close, confirming nonempty draft with exact Discard / Keep writing dialog; beforeunload remains guarded. `tests/unit/chat2-recruiter-draft-discard.test.ts` named tests. |
