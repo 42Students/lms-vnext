@@ -99,11 +99,11 @@ export default async function TpoTeamPage({searchParams}:{
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
     {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
     {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
-     {(["ALL","FOLLOWING","UNREAD","TOPICS"] as const).map(key=><Link key={key}
+     {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS"] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
       aria-current={filter===key?"page":undefined}
       className={filter===key?"rounded-md bg-primary px-3 py-2 text-sm text-on-primary":"rounded-md border border-border px-3 py-2 text-sm text-body"}>
-      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":"Topics"} ({conversationCounts[key]})
+      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":"Decisions"} ({conversationCounts[key]})
      </Link>)}
     </nav>:null}
     <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>

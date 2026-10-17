@@ -37,6 +37,23 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
        then ${tpoInternalThreads.invitedMembershipId} else ${tpoInternalThreads.startedByMembershipId} end)
     limit 1)`,
    kind:sql<"PRIVATE">`'PRIVATE'`,
+   hasDecisions:sql<boolean>`exists(
+    select 1 from activity_events decision_event
+    where decision_event.college_id=${college.id}::uuid
+      and decision_event.subject_type='team_thread'
+      and decision_event.subject_id=${tpoInternalThreads.id}::text
+      and decision_event.event_type='placements.tpo_team.decision_marked'
+      and not exists (
+        select 1 from activity_events later
+        where later.college_id=${college.id}::uuid
+          and later.subject_type='team_thread'
+          and later.subject_id=decision_event.subject_id
+          and later.metadata->>'messageId'=decision_event.metadata->>'messageId'
+          and later.event_type in ('placements.tpo_team.decision_marked',
+            'placements.tpo_team.decision_unmarked','placements.tpo_team.message_deleted')
+          and (later.occurred_at,later.id)>(decision_event.occurred_at,decision_event.id)
+      )
+   )`,
    lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
      where m.thread_id=placement_tpo_internal_threads.id
      order by m.created_at desc,m.id desc limit 1)`,
