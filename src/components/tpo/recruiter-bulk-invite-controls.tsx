@@ -48,7 +48,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    <p className="text-sm text-body">Review recipients before issuing new invites. Email sending requires the approved delivery configuration and is restricted to allowlisted addresses outside production.</p>
    <p className="text-xs text-muted-foreground">
     The configured email provider does not currently confirm delivery of recruiter invitations.
-    Create one-time links only, then share them directly. This will not send any email.
+    Create one-time links only, then share them directly. This will not send any email. Retrying failed rows leaves previously created links unchanged.
    </p>
    <p className="text-sm">{eligible.length} eligible · {rows.length-eligible.length} left out</p>
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
