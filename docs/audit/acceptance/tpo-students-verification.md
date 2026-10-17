@@ -65,3 +65,6 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 
 | TPO-students-24 | OPEN (drawer/chips parity) | Typed academic filters now selectable and URL persisted; `tests/unit/chat12-academic-filter-ui-round5.test.ts` named `TPO-students-24` |
 | TPO-students-26 | OPEN (demographic/profile columns pending) | Academic percentage, verified, year and gap columns use persisted values; `tests/unit/chat12-academic-filter-ui-round5.test.ts` named `TPO-students-26` |
+
+| TPO-students-13 | OPEN (bulk undo parity pending) | Legacy ineligibility presets and Other are available on single and bulk decisions; `tests/unit/chat12-ineligibility-presets-round5.test.ts` named `TPO-students-13` |
+| TPO-students-16 | OPEN (bulk undo/audit parity pending) | Preview and confirmation failures show friendly retry copy and skipped-row clipboard uses newlines; `tests/unit/chat12-ineligibility-presets-round5.test.ts` named `TPO-students-16` |
