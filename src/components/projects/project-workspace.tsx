@@ -1002,6 +1002,7 @@ export function ProjectWorkspace({
                                     taskId={task.id}
                                     status={task.status}
                                     sprintStatus={sprint.status}
+                                    blockerReason={task.blockerReason}
                                     updatedAt={task.updatedAt.toISOString()}
                                   />
                                 ) : (
