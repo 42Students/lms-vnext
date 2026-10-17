@@ -315,3 +315,8 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 ## Round 6 — decisions on send
 
 | TPO-inbox-team-23 | DONE (source; tests not run) | `TpoTeamReplyComposer` allows **Mark as decision** before sending. The same scoped message transaction stores the decision event and checks that idempotency retries use the same decision flag, with pinned strip and per-message toggle already available. New **TPO-inbox-team-23** test in `tests/unit/tpo-team-decision-chat2.test.ts`. PostgreSQL acceptance pending orchestrator. |
+
+## Chat-2 next round — announcement delivery lifecycle
+
+| TPO-inbox-team-51 | DONE (source, tests unrun) | Versioned notice edits can optionally Tell them it changed; an atomic edit event only notifies recorded original recipients, never invents delivery or an audience. `tests/unit/chat2-notices-retraction-update.test.ts` has named gap test. |
+| TPO-inbox-team-52 | DONE (source, tests unrun) | Delete/Undo removes existing original delivery alerts in same transaction as deletion, preserves audit record and exact confirmation/toast text, named test in same file. |
