@@ -165,7 +165,7 @@ function ContentItem({
                 endsAt: item.endsAt,
               }}
             />
-          ) : null}
+          )}
           <FacultyItemActions
             transitionUrl={`/api/courses/lesson-contents/${item.id}/transition`}
             actions={available}

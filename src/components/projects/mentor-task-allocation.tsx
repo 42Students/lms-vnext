@@ -88,7 +88,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
-     }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null>
+     }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null}
   <button type="button" aria-expanded={filtersOpen}
     aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}

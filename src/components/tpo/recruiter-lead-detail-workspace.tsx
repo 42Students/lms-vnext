@@ -568,7 +568,7 @@ export function RecruiterLeadDetailWorkspace({
             <form className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end"
               onSubmit={e => void addFollowup(e)}>
               <div className="flex flex-wrap gap-2 md:col-span-3">
-                {[["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
+                {([["Tomorrow",1],["In 3 days",3],["In a week",7]] as const).map(([label,days])=>
                   <button type="button" key={label} className={button} onClick={()=>{
                     const dt=new Date();dt.setDate(dt.getDate()+days);
                     dt.setHours(10,0,0,0);

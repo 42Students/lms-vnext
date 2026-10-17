@@ -91,7 +91,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
       className="text-primary-text">+ Option</button>
      {questions.length>1?<button type="button" disabled={busy} className="text-error"
-      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}}>Remove question</button>:null}
+      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}>Remove question</button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
