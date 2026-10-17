@@ -60,6 +60,12 @@ export async function restoreProjectInstance(context:RequestContext,projectIdInp
       body:restored.title+" has been restored.",
       actionHref:"/learn/projects/"+restored.id,
     });
+    await notifyActiveProjectMembers(tx,restoredEvent.id,{
+      projectId:restored.id,collegeId:scope.collegeId,roles:["MENTOR"],
+      exceptUserId:context.user.id,title:"Project restored",
+      body:restored.title+" has been restored.",
+      actionHref:"/mentor/projects/"+restored.id,
+    });
     return restored;
   });
 }
