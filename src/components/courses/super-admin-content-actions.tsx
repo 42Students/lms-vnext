@@ -11,7 +11,12 @@ function localDate(value:Date|null){
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");
 }
-function toInstant(value:string){return new Date(value+":00+05:30").toISOString();}
+function toInstant(value:string){
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error("Enter a valid date and time.");
+ const time=new Date(value+":00+05:30");
+ if(!Number.isFinite(time.getTime()))throw Error("Enter a valid date and time.");
+ return time.toISOString();
+}
 export function SuperAdminContentActions({item}:{item:Content}){
  const router=useRouter();
  const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
@@ -35,8 +40,16 @@ export function SuperAdminContentActions({item}:{item:Content}){
   }
   if(item.contentType==="LIVE_CLASS"){
    if(!startsAt||!endsAt){setError("Enter Start Date and End Date.");return;}
+   if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(startsAt)||
+      !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(endsAt)){
+    setError("Enter a valid date and time.");return;
+   }
+   const startTime=new Date(startsAt+":00+05:30"),endTime=new Date(endsAt+":00+05:30");
+   if(!Number.isFinite(startTime.getTime())||!Number.isFinite(endTime.getTime())){
+    setError("Enter a valid date and time.");return;
+   }
+   if(endTime.getTime()<=startTime.getTime()){setError("End time must be after start time");return;}
    const start=toInstant(startsAt),end=toInstant(endsAt);
-   if(Date.parse(end)<=Date.parse(start)){setError("End time must be after start time");return;}
    changes={...changes,startsAt:start,endsAt:end};
   }
   if(!window.confirm("Save changes?"))return;
