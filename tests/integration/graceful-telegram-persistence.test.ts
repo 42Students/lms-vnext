@@ -12,6 +12,8 @@ const pool = enabled ? new Pool({ connectionString: process.env.TEST_DATABASE_UR
 const path = "/api/gr-125-integration";
 const message = "GR125 durable alert unique fixture";
 const hash = errorSignatureHash({ environment: "DEVELOPMENT", message, path });
+const failureMessage = "GR125 rejected provider unique fixture";
+const failureHash = errorSignatureHash({ environment: "DEVELOPMENT", message: failureMessage, path });
 const env = { app: process.env.APP_ENV, ready: process.env.DB10_LOG_ALERTS_READY,
   bot: process.env.TELEGRAM_ALERT_BOT_TOKEN, chat: process.env.TELEGRAM_ALERT_CHAT_ID };
 
@@ -28,12 +30,14 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
     );
     if (!columns.rows.length) throw new Error("GR-125 registered DB10 daily-count migration required");
     await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [hash]);
+    await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [failureHash]);
     await pool.query("delete from log_alert_states where state_key='TELEGRAM_BURST_DEVELOPMENT'");
   });
   afterAll(async () => {
     vi.unstubAllGlobals();
     if (pool) {
       await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [hash]);
+      await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [failureHash]);
       await pool.query("delete from log_alert_states where state_key='TELEGRAM_BURST_DEVELOPMENT'");
       await pool.end();
     }
@@ -63,5 +67,25 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
       "SELECT occurrence_count::text AS count FROM log_alert_daily_counts WHERE signature_id=(SELECT id FROM log_alert_signatures WHERE signature_hash=$1)", [hash],
     );
     expect(days.rows[0]?.count).toBe("2");
+  });
+  it("GR-115 GR-116 GR-125 does not persist an undelivered signature and retries after Telegram recovers", async () => {
+    const failed = vi.fn(async () => new Response(JSON.stringify({ ok: false }), { status: 200 }));
+    vi.stubGlobal("fetch", failed);
+    const input = { event: "test.error", error: new Error(failureMessage), path };
+    await reportErrorForAlert(input);
+    expect(failed).toHaveBeenCalledTimes(1);
+    const before = await pool!.query(
+      "select id from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [failureHash],
+    );
+    expect(before.rows).toHaveLength(0);
+    const accepted = vi.fn(async () => new Response(JSON.stringify({ ok: true }), { status: 200 }));
+    vi.stubGlobal("fetch", accepted);
+    await reportErrorForAlert(input);
+    expect(accepted).toHaveBeenCalledTimes(1);
+    const after = await pool!.query(
+      "select occurrence_count::text as count from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1",
+      [failureHash],
+    );
+    expect(after.rows[0]?.count).toBe("1");
   });
 });
