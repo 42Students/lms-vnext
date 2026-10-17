@@ -86,3 +86,12 @@ export function activitySearchParams(
   // Keep unknown/duplicate parameters so strict Zod can reject them.
   return Object.fromEntries(Object.entries(raw).filter(([, value]) => value !== undefined && value !== ""));
 }
+
+/** COL-verification-misc-12: today follows the user's IST calendar, not UTC midnight. */
+export function collegeActivityTodayHref(filter:CollegeActivityQuery,asOf:Date){
+ const day=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(asOf);
+ return collegeActivityHref({...filter,from:day,to:day});
+}
+export function collegeActivityAllTimeHref(filter:CollegeActivityQuery){
+ return collegeActivityHref({...filter,from:undefined,to:undefined});
+}

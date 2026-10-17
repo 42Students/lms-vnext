@@ -65,7 +65,6 @@ export function CollegeCohortCreateForm({ programs, periods }: {
       setNotice(parsed.error.issues[0]?.message ?? "Enter valid batch details.");
       return;
     }
-    if (!window.confirm("Create this batch in the selected program and academic period?")) return;
     startTransition(async () => {
       try {
         await send("POST", "/api/college/batches", parsed.data);
