@@ -8,7 +8,7 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 type Row={
- id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;applicationStatus:string;screeningStatus:string|null;
+ id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;batchName:string|null;branchName:string|null;cgpaHundredths:number|null;activeBacklogs:number|null;pastBacklogs:number|null;tenthPctBasisPoints:number|null;twelfthPctBasisPoints:number|null;lastRound:string|null;lastResult:string|null;applicationStatus:string;screeningStatus:string|null;
  screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;flags:string[];
 };
 const columns:readonly TpoGridColumn<Row>[]=[
@@ -17,6 +17,15 @@ const columns:readonly TpoGridColumn<Row>[]=[
  {key:"roll",label:"Roll number",read:r=>r.rollNumber??"Not recorded"},
  {key:"email",label:"Email",read:r=>r.email??"Not recorded"},
  {key:"phone",label:"Phone",read:r=>r.phone??"Not recorded"},
+ {key:"batch",label:"Batch",read:r=>r.batchName??"Not recorded"},
+ {key:"branch",label:"Branch",read:r=>r.branchName??"Not recorded"},
+ {key:"cgpa",label:"CGPA",read:r=>r.cgpaHundredths===null?"Not recorded":(r.cgpaHundredths/100).toFixed(2)},
+ {key:"activeBacklogs",label:"Active backlogs",read:r=>r.activeBacklogs===null?"Not recorded":String(r.activeBacklogs)},
+ {key:"pastBacklogs",label:"Past backlogs",read:r=>r.pastBacklogs===null?"Not recorded":String(r.pastBacklogs)},
+ {key:"tenth",label:"10th %",read:r=>r.tenthPctBasisPoints===null?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"twelfth",label:"12th %",read:r=>r.twelfthPctBasisPoints===null?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%"},
+ {key:"lastRound",label:"Last assessed round",read:r=>r.lastRound??"Not recorded"},
+ {key:"lastResult",label:"Last applied result",read:r=>r.lastResult??"Not recorded"},
  {key:"stage",label:"Stage",read:r=>applicantStage(r)},
  {key:"application",label:"Application",read:r=>r.applicationStatus},
  {key:"channel",label:"Channel",read:r=>r.channel},
