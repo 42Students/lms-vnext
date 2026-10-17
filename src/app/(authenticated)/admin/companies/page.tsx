@@ -118,8 +118,9 @@ export default async function SuperAdminCompaniesPage({
     </Link>
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
-      {([["Companies in this page", data.distinctCompanies], ["Relationships", data.relationships],
-        ["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
+      {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
+        ["Visible now", data.visibleCompaniesOnPage],["With drives",data.relationshipsWithDrivesOnPage],
+        ["Relationships", data.relationships],["Trusted relationships", data.trustedRelationships]] as const).map(([label, count]) =>
         <div key={label} className="rounded-xl border border-border bg-surface p-4">
           <p className="m-0 text-xs text-muted-foreground">{label}</p>
           <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{count}</p>
