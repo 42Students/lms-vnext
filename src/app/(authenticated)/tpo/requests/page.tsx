@@ -62,7 +62,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
         </select>
       </label>
-      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
+      <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option></select></label>
       <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search and age filters</Link>
@@ -72,7 +72,9 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      <p className="text-sm">{data.summary.pending?data.summary.pending+" waiting for you.":"Nothing is waiting for you."}</p>
      <div className="flex flex-wrap gap-3 text-sm">
       <span className="rounded border border-border px-3 py-2">Urgent · {attention.urgent}</span>
-      <span className="rounded border border-border px-3 py-2">Waiting more than 2 days · {attention.waitingOverTwoDays}</span>
+      <Link href={href({...data.query,status:"PENDING",age:"OLDER_THAN_2_DAYS",page:1})}
+       aria-current={data.query.age==="OLDER_THAN_2_DAYS"?"page":undefined}
+       className="rounded border border-border px-3 py-2 font-semibold text-primary-text">Waiting more than 2 days · {attention.waitingOverTwoDays}</Link>
       <span className="rounded border border-border px-3 py-2">May need proof review · {attention.proofUnconfirmed}</span>
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
