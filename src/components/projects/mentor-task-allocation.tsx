@@ -81,7 +81,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         setNotice(result.assigned+" task(s) auto-assigned.");router.refresh();
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
-     }}>Auto-assign {unassigned} unassigned task(s)</button>:null}
+     }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-4">
    <label className="text-sm font-semibold">Release
     <select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");}}
