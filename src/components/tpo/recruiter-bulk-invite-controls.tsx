@@ -10,6 +10,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [notice,setNotice]=useState("");
  const [reviewSnapshot,setReviewSnapshot]=useState<string|null>(null);
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
+ const eligibleSnapshot=eligible.map(row=>row.id).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
   setBusy(true);if(!retryOnly)setResults([]);setNotice("");
