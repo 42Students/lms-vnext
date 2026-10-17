@@ -27,7 +27,7 @@ function MeetingRow({
   meeting, now,
 }: {meeting: MentorMeetingCalendarItem; now: Date;}) {
   const status = mentorMeetingDisplayStatus(meeting, now);
-  const href = safeMentorMeetingJoinUrl(meeting);
+  const href = safeMentorMeetingJoinUrl(meeting, now);
   return (
     <article className="rounded-xl border border-border bg-surface p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">

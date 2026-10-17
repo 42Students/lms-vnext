@@ -26,6 +26,7 @@ export function trackerLogMarkdown(rows:readonly Entry[]):string{
 }
 export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
+  const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("ERROR");
   const [query,setQuery]=useState(initialQuery);
   const [items,setItems]=useState<Entry[]>([]);
   const [nextPage,setNextPage]=useState<string|null>(null);
@@ -39,7 +40,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [mutating,setMutating]=useState(false);
   const locked=useRef(false);
   async function fetchPage(pageToken?:string):Promise<Page>{
-    const params=new URLSearchParams({windowMinutes,query:query.trim()});
+    const params=new URLSearchParams({windowMinutes,minimumSeverity,query:query.trim()});
     if(pageToken)params.set("pageToken",pageToken);
     return apiFetch<Page>("/api/tracker/live-logs?"+params.toString(),{cache:"no-store"});
   }
@@ -61,7 +62,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     const abort=new AbortController();
     const initial=async()=>{
       try{
-        const initialParams=new URLSearchParams({windowMinutes:"60",query:initialQuery});
+        const initialParams=new URLSearchParams({windowMinutes:"60",minimumSeverity:"ERROR",query:initialQuery});
         const r=await apiFetch<Page>("/api/tracker/live-logs?"+initialParams.toString(),{signal:abort.signal});
         if(abort.signal.aborted)return;
         setItems(r.items);setNextPage(r.nextPageToken);setConfigured(r.configured);
@@ -143,6 +144,13 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           className="min-h-10 rounded-md border border-border bg-background px-3">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold">Minimum severity
+        <select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")}
+          className="min-h-10 rounded-md border border-border bg-background px-3">
+          <option value="ERROR">Error and above</option>
+          <option value="WARNING">Warning and above</option>
         </select>
       </label>
       <label className="grid min-w-44 flex-1 gap-1 text-sm font-semibold">Search this page

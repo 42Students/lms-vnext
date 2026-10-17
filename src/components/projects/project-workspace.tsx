@@ -1464,6 +1464,8 @@ export function ProjectWorkspace({
             tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
+            resources={workspace.resources.filter(item=>item.status==="ACTIVE")
+              .map(item=>({id:item.id,title:item.title,visibility:item.visibility}))}
             mode={mode}
             status={workspace.project.status}
             currentMembershipId={currentMembershipId}

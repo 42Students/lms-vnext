@@ -362,3 +362,11 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Round 6: TPO-settings-audit-94/-96 and COL-projects-21 improved but OPEN. TPO-settings-audit-07 sticky left desktop layout refined. Source tests unrun.
 
 - Unit CI `api-origin-guard` resolved source-level: Telegram provider webhook uses mandatory x-telegram-bot-api-secret-token and is a documented ALLOWED exception (not a cookie endpoint). `tests/unit/api-origin-guard.test.ts` — `api-origin-guard telegram webhook accepts only the provider secret without a browser session`. Tests authored, NOT run.
+
+
+## Chat-9 continuation, 2026-10-17 (branch only, CI pending)
+- Pulled and merged the latest main without replacing other lanes' code. Restored source contracts for six reported chat-9 unit failures: COL-projects-15/18, TPO-settings-audit-03/74, exact college group tabs and Super Admin grouped tab reachability. Existing gap-ID tests were retained, not weakened; their CI rerun is pending.
+- TPO-calendar-reports-22 remains OPEN: auxiliary calendar reads now fail independently with an accurate partial-data banner, Retry and unavailable counts instead of fabricated zero; primary-read last-good snapshot recovery is still missing. Test: tests/unit/chat9-calendar-partial-recovery.test.ts; acceptance row updated.
+- TPO-calendar-reports-53 remains OPEN: placement summary keeps successfully loaded totals during a drive-dimension query failure, withholds drive rows and shows Batch filter unavailable + Retry preserving filters; other report stale-recovery parity remains missing. Test: tests/unit/chat9-report-dimension-recovery.test.ts; acceptance row updated.
+- Unit-failures-r1 api-origin-guard scan still requires a full-route rerun to identify a presently unguarded mutating route, if any; no unsupported allowlist exception was added. The remaining TPO-settings-audit-41/50/51/98 and COL-projects-04 require real service semantics and are not claimed DONE.
+- No numbered migrations, auth/security/storage edits, or pushes to main. Tests, typecheck, lint and browser acceptance not executed by this builder.

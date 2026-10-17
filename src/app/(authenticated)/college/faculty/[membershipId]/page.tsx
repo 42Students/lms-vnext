@@ -20,7 +20,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
     if (error instanceof CollegePersonNotFoundError) notFound();
     throw error;
   }
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Faculty" title={data.person.name}
       description="College-scoped teaching record. These are assignment counts, not teaching hours or a complete workload measure."
       actions={<div className="flex flex-wrap gap-3">
@@ -45,7 +45,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Assignment history
           <select name="status" defaultValue={data.filter.status}
-            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All assignments</option>
             <option value="ACTIVE">Active only</option>
             <option value="ENDED">Ended only</option>
@@ -54,14 +54,14 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
         <label className="grid gap-2 text-sm font-semibold text-body">
           Teaching role
           <select name="role" defaultValue={data.filter.role}
-            className="min-h-10 rounded-md border border-border bg-surface px-3 text-foreground">
+            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="ALL">All teaching roles</option>
             <option value="PRIMARY">Primary</option>
             <option value="CO_TEACHER">Co-teacher</option>
             <option value="TA">Teaching assistant</option>
           </select>
         </label>
-        <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       </form>
       <p className="mt-2 text-sm text-body">{data.counts.totalAssignments} total assignments ·
         {" "}{data.counts.activeAssignments} active ·

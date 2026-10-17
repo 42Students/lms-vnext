@@ -25,7 +25,8 @@ describe("chat-11 college and mentor interaction contracts",()=>{
   expect(open).toContain('linkText="Open resource ↗"');
   expect(open).toContain("Your browser blocked the new tab. Allow pop-ups for this site to open resources.");
   expect(open).toContain("This resource\'s link is not a valid web address, so it can\'t be opened.");
-  expect(src("src/components/projects/project-workspace.tsx")).toContain('linkText="Open link"');
+  expect(src("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList projectId=");
+  expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}');
   expect(src("src/components/projects/project-resource-controls.tsx")).toContain('"Resource added."');
  });
  it("MEN-projects-meetings-65 uses submission decision wording and exact feedback",()=>{
