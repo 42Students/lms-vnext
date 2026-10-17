@@ -17,3 +17,5 @@
 | TPO-companies-19 | DONE (source, unrun) | Engage Companies branch is independent from empty/filtered recruiter rows, keeps last successful company list during failures with a separate Retry warning; `tests/unit/chat2-tpo-engage-companies-independent.test.ts` named gap. |
 
 | TPO-companies-03 | DONE (source, tests unrun) | Canonical company detail has same-college optimistic Trusted switch with exact legacy help/status and existing audited management endpoint, no unsafeguarded global change. Named `tests/unit/chat2-company-trust-toggle.test.ts`. |
+
+| TPO-companies-06 | DONE (source; tests unrun) | College count-as-placed policy now counts distinct memberships from real offer ledger in grouped Company Memory + Engage Companies, with actual JOINED hiring-years; SELECTED requires separate selection ledger and displays unavailable rather than fabricated count. `tests/unit/chat2-company-placed-policy.test.ts`. |
