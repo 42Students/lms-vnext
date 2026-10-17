@@ -338,8 +338,34 @@ export function LearnerAssessmentOverview({
           {...learnerAssessmentEmptyMessage({kind,courseSelected:Boolean(activeCourseId),search,stateFilter})}
         />
       ) : (
+        <>
+        {kind==="QUIZ" ? (
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface lg:block">
+            <table className="w-full min-w-[790px] text-left text-sm">
+              <thead className="bg-surface-subtle text-foreground"><tr>
+                {["Overview","Course","Lesson","Due Date","Status","Grade","Actions"].map(heading=>
+                  <th key={heading} scope="col" className="border-b border-border px-4 py-3 font-semibold">{heading}</th>)}
+              </tr></thead>
+              <tbody>{paged.filter((item): item is LearnerQuizOverviewItem => item.kind==="QUIZ").map(item=>{
+                const state=quizOverviewActionState(item,currentNowMs);
+                const target=`/quiz?quizId=${encodeURIComponent(item.id)}&deliveryId=${encodeURIComponent(item.deliveryId)}${state.review?"&review=true":""}`;
+                return <tr key={item.deliveryId+":"+item.id} className="border-b border-border">
+                  <th scope="row" className="px-4 py-3 font-semibold">{item.title}</th>
+                  <td className="px-4 py-3">{item.courseName}</td>
+                  <td className="px-4 py-3">{item.lessonName}</td>
+                  <td className="px-4 py-3">{item.dueAt?formatDate(item.dueAt):"–"}</td>
+                  <td className="px-4 py-3">{state.label}</td>
+                  <td className="px-4 py-3">{item.attemptsUsed===0?"–":item.resultsPublished?"View result":"Not released"}</td>
+                  <td className="px-4 py-3">
+                    <Link href={target} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">{state.action}</Link>
+                  </td>
+                </tr>;
+              })}</tbody>
+            </table>
+          </div>
+        ) : null}
         <div
-          className="space-y-3"
+          className={kind==="QUIZ"?"space-y-3 lg:hidden":"space-y-3"}
           aria-label={
             kind === "ASSIGNMENT"
               ? "Assignment list"
@@ -459,6 +485,7 @@ export function LearnerAssessmentOverview({
             );
           })}
         </div>
+        </>
       )}
 
       <Drawer
