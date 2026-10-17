@@ -1,5 +1,6 @@
 import "server-only";
 import {and,asc,desc,eq} from "drizzle-orm";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
@@ -66,7 +67,8 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     .from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
       eq(placementJobRounds.kind,"ASSESSMENT"))).limit(20),
   db.select({id:placementOffers.id,status:placementOffers.status,
-    issuedAt:placementOffers.issuedAt})
+    issuedAt:placementOffers.issuedAt,offerLetterUrl:placementOffers.offerLetterUrl,
+    offerLetterAttachedAt:placementOffers.offerLetterAttachedAt})
     .from(placementOffers).where(eq(placementOffers.applicationId,application.id))
     .orderBy(asc(placementOffers.issuedAt)).limit(50),
  ]);
@@ -114,5 +116,42 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
    metadata:{jobId:application.jobId,noteId:note.id},
   });
   return {id:note.id,createdAt:note.createdAt};
+ });
+}
+
+export async function attachCollegeApplicationOfferLetter(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
+ const input=z.strictObject({
+  offerId:z.uuid(),url:z.url().refine(v=>v.startsWith("https://"),"Use an HTTPS offer-letter link."),
+  confirmed:z.literal(true),
+ }).parse(raw);
+ const {collegeId,application}=await scoped(ctx,job,id);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
+  const [parent]=await tx.select({id:placementApplications.id}).from(placementApplications)
+   .where(and(eq(placementApplications.id,application.id),
+    eq(placementApplications.jobId,application.jobId)))
+   .for("share").limit(1);
+  if(!parent)throw Error("Application no longer belongs to the selected drive.");
+  const [offer]=await tx.select({id:placementOffers.id,status:placementOffers.status})
+   .from(placementOffers).where(and(eq(placementOffers.id,input.offerId),
+    eq(placementOffers.applicationId,parent.id))).for("update").limit(1);
+  if(!offer||!["ISSUED","ACCEPTED"].includes(offer.status))
+   throw Error("Only an issued or accepted offer can receive an offer letter.");
+  const now=new Date();
+  await tx.update(placementOffers).set({
+   offerLetterUrl:input.url,offerLetterAttachedAt:now,offerLetterAttachedByUserId:ctx.user.id,
+   updatedAt:now,
+  }).where(eq(placementOffers.id,offer.id));
+  await tx.insert(activityEvents).values({
+   organizationId:acting.organizationId,collegeId,
+   actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.id??null,
+   module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_OFFER_LETTER_ATTACHED",
+   subjectType:"placement_offer",subjectId:offer.id,
+   summary:"Offer letter attached to application",metadata:{jobId:application.jobId,applicationId:parent.id},
+  });
+  return {offerId:offer.id,attachedAt:now.toISOString()};
  });
 }

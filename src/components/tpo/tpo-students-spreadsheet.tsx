@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useState} from "react";
+import {useTpoStudentsSelection} from "./tpo-students-selection";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
@@ -59,7 +60,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  afterCollege:Record<string,{outcome:AfterCollegeOutcome;expectedVersion:string}>;afterCollegeAvailable:boolean}){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
- const [noteSelection,setNoteSelection]=useState<string[]>([]);
+ const [localSelection,setLocalSelection]=useState<string[]>([]);
+ const shared=useTpoStudentsSelection();
+ const noteSelection=shared?.selected??localSelection;
+ const setNoteSelection=shared?.setSelected??setLocalSelection;
  const [downloadError,setDownloadError]=useState("");
  const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
  const sortedRows=[...rows].sort((a,b)=>{
@@ -164,7 +168,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    </select>
   </label>
   <TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">

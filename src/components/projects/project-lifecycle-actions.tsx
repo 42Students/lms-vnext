@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
@@ -181,43 +182,26 @@ export function TaskLifecycleActions({
 }
 
 export function ReleaseLifecycleActions({
-  projectId,
-  releaseId,
-  status,
-}: {
-  projectId: string;
-  releaseId: string;
-  status: string;
-}) {
-  const { pending, run } = useProjectAction();
-  const shipped = status === "SHIPPED";
-  const action = shipped ? "unship" : "ship";
-
-  return (
-    <Button
-      size="sm"
-      variant="secondary"
-      disabled={pending}
-      onClick={() =>
-        run(
-          () =>
-            projectMutation(
-              `/api/projects/${projectId}/releases/${releaseId}/${action}`,
-              "POST",
-            ),
-          shipped
-            ? "Release un-shipped"
-            : "Release shipped",
-        )
-      }
-    >
-      {pending
-        ? "Checking…"
-        : shipped
-          ? "Un-ship release"
-          : "Ship release"}
-    </Button>
-  );
+  projectId,releaseId,status,
+}:{projectId:string;releaseId:string;status:string;}){
+ const {pending,run}=useProjectAction();
+ const [confirmOpen,setConfirmOpen]=useState(false);
+ const shipped=status==="SHIPPED";
+ const action=shipped?"unship":"ship";
+ const label=shipped?"Un-ship release":"Ship release";
+ return <>
+  <Button size="sm" variant="secondary" disabled={pending}
+   onClick={()=>setConfirmOpen(true)}>{pending?"Checking…":label}</Button>
+  <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+   title={shipped?"Un-ship this release?":"Ship this release?"}
+   description={shipped?"This removes the shipped marker; linked sprints and tasks remain unchanged.":"This marks the release as delivered. Complete every linked sprint before shipping."}
+   confirmLabel={label} pending={pending}
+   onConfirm={()=>void run(
+    ()=>projectMutation("/api/projects/"+projectId+"/releases/"+releaseId+"/"+action,"POST"),
+    shipped?"Release un-shipped.":"Release shipped.",
+    ()=>setConfirmOpen(false),
+   )}/>
+ </>;
 }
 
 export function TaskReviewActions({
