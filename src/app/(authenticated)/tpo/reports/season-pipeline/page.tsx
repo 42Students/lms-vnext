@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
@@ -36,7 +37,8 @@ export default async function TpoSeasonPipelinePage({
     ["Joined versions", report.totals.joined],
   ] as const;
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
+      <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/season-pipeline" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Reports" title="Season pipeline"
         description="Recorded application, screening, offer and joining evidence for one placement season."
