@@ -55,7 +55,10 @@ export default async function LearnerProjectsPage({
 
   // LEARNER-projects-24/25: deny bookmark/direct-route access if disabled.
   if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
-    redirect("/learn/courses");
+    return <section className="space-y-3" role="status">
+      <PageHeader title="Projects" description="This module is currently disabled for your college." />
+      <p className="text-sm text-body">This module is currently disabled for your college.</p>
+    </section>;
   }
 
   const params = await searchParams;

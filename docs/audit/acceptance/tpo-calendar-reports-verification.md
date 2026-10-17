@@ -94,3 +94,10 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | ID | Result | Decision and evidence |
 |---|---|---|
 | TPO-calendar-reports-23 | OPEN | Decision: Schedule and reschedule notifications should be persisted in-app per affected candidate with audited events; send external email only on real provider receipt. Do not invent delivery from a calendar entry. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-calendar-reports-23` (source/policy regression; executable CI pending). |
+
+## Chat-9 round 8 — calendar service and keyboard-source verification
+| TPO-calendar-reports-11 | DONE source | TALKS vs rounds multi-select and URL parser, separate counted chips; tpo-calendar-kind-chips.ts; `tests/unit/chat9-calendar-contracts-round8.test.ts` test TPO-calendar-reports-11. Browser, DB and orchestrator tests not executed. |
+| TPO-calendar-reports-14 | DONE source | Phone Agenda vs desktop Week, explicit URL validated; tpo-calendar-url-model.ts; `tests/unit/chat9-calendar-contracts-round8.test.ts` test TPO-calendar-reports-14. Browser, DB and orchestrator tests not executed. |
+| TPO-calendar-reports-15 | DONE source | TPO rounds include DRAFT/PUBLISHED; deadlines published only and open follow-ups; placement-calendar-service.ts; `tests/unit/chat9-calendar-contracts-round8.test.ts` test TPO-calendar-reports-15. Browser, DB and orchestrator tests not executed. |
+| TPO-calendar-reports-24 | DONE source | Transactional follow-up create/move activity writers; tpo-crm-service.ts; `tests/unit/chat9-calendar-contracts-round8.test.ts` test TPO-calendar-reports-24. Browser, DB and orchestrator tests not executed. |
+| TPO-calendar-reports-25 | DONE source | Native keyboard button for Move with Escape cancellation; tpo-week-hour-calendar.tsx; `tests/unit/chat9-calendar-contracts-round8.test.ts` test TPO-calendar-reports-25. Browser, DB and orchestrator tests not executed. |
