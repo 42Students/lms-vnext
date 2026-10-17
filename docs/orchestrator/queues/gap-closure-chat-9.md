@@ -73,8 +73,8 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 |---|---|---|---|
 | TPO-settings-audit-53 | S1 | STATE | FIXED-ON-MAIN |
 | TPO-settings-audit-03 | S2 | COPY | DONE-BRANCH |
-| TPO-settings-audit-05 | S2 | PERMISSION | UNCONFIRMED |
-| TPO-settings-audit-12 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-settings-audit-05 | S2 | PERMISSION | NOT-A-GAP |
+| TPO-settings-audit-12 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-settings-audit-20 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-22 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -88,7 +88,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-43 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-44 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-50 | S2 | MISSING-FIELD | OPEN |
-| TPO-settings-audit-51 | S2 | MISSING-FIELD | OPEN |
+| TPO-settings-audit-51 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-settings-audit-52 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-54 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-56 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -120,7 +120,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-94 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-98 | S3 | STATE | OPEN |
+| TPO-settings-audit-98 | S3 | STATE | DONE-BRANCH |
 | TPO-settings-audit-99 | S3 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-settings-audit-R02 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
@@ -248,7 +248,7 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-projects-12 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-projects-13 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| COL-projects-04 | S3 | MISSING-ACTION | OPEN |
+| COL-projects-04 | S3 | MISSING-ACTION | NOT-A-GAP |
 | COL-projects-05 | S3 | MISSING-PAGE | NOT-A-GAP |
 | COL-projects-08 | S3 | MISSING-EXPORT | DONE-BRANCH |
 | COL-projects-15 | S3 | MISSING-MODAL | DONE-BRANCH |
