@@ -17,7 +17,7 @@ export type RecruiterRequestStatus=(typeof RECRUITER_REQUEST_STATUSES)[number];
 export function initialRecruiterRequestStatus(policy:{
  trusted:boolean; approvalRequired:boolean; verificationPending:boolean;
 }):"REQUEST"|"DRAFT"{
- return policy.trusted || (!policy.approvalRequired && !policy.verificationPending)
+ return !policy.verificationPending&&(policy.trusted||!policy.approvalRequired)
    ? "DRAFT":"REQUEST";
 }
 export function canRecruiterResubmit(status:RecruiterRequestStatus){

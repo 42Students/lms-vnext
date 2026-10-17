@@ -201,3 +201,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 52: TPO-requests-verification-01 0134 conflict decision: first effective strict tables remain canonical; sixth learner kind requires proposed-only new CHECK; runtime pg_catalog guard avoids DB 500 until registered. No numbered migrations edited.
 
 - Round 53 TPO-requests-verification-37: shared transaction-bound recruiter request -> DRAFT builder extracted, preserving TPO manual review semantics; verified policy auto-approval wiring follows; no design restyling.
+
+- Round 54 TPO-requests-verification-37/38: persisted same-college trusted-company/domain and college approval-setting policy with verified grant, real draft conversion and autoapproval event/TPO + recruiter bells added; public-link-only bypass and email delivery still require separate proof, integration unrun.
