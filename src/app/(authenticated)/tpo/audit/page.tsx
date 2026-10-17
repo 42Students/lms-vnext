@@ -172,7 +172,7 @@ export default async function TpoAuditPage({
            ...(query.from?{from:query.from}:{}),...(query.to?{to:query.to}:{}),
           }).toString()}
            className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-           Export audit-log CSV (canonical events)
+           Export audit log CSV
           </a>
           <Link href="/tpo/audit/actors" className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
             Actor / entity filters and CSV →
@@ -340,11 +340,7 @@ export default async function TpoAuditPage({
           role="status"
           className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body"
         >
-          Share-event history is unavailable in
-          the current database. Share counts
-          exclude this source and must not be
-          interpreted as evidence that no
-          shares occurred.
+          Some sharing activity could not be loaded. The totals shown may be incomplete. Try again later.
         </section>
       ) : null}
 
@@ -433,14 +429,7 @@ export default async function TpoAuditPage({
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        Audit coverage includes existing placement activity,
-        application and screening history, round changes,
-        recorded result versions, offer and joining transitions,
-        and available share-access events. This view omits
-        personal identifiers other than display names, raw audit metadata, messages,
-        rejection reasons and recipient details. Historical
-        settings changes without persisted event records
-        cannot be reconstructed.
+        This history shows recorded placement decisions, changes, sharing and access. Sensitive personal details are hidden. Earlier changes may not appear if they were not recorded at the time.
       </p>
     </div>
   );
