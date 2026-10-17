@@ -103,6 +103,8 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newest messages</Link>:null}
+   {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}
