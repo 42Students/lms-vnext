@@ -95,7 +95,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-07 | S2 | STATE | DONE |
 | TPO-batches-08 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-20 | S2 | MISSING-ACTION | OPEN |
-| TPO-batches-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-21 | S2 | MISSING-FIELD | DONE |
 | TPO-batches-22 | S2 | MISSING-ACTION | DONE |
 | TPO-batches-26 | S2 | VALIDATION | DONE |
 | TPO-batches-33 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
