@@ -447,7 +447,8 @@ export async function getTpoStudentsIntelligence(
         registrationScope: "ACTIVE_COHORT",
         applicationScope: "ACTIVE_SEASON",
         readinessVerified: false,
-      prepCourseEvidenceAvailable:prep.available,
+        // No learner rows exist, so the scoped prep derivation below has not run.
+        prepCourseEvidenceAvailable: false,
         placedVerified: false,
       },
     };
