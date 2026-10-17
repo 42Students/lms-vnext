@@ -10,6 +10,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectMeetingIdSchema} from "./validation";
 import {mentorMeetingDecisionSchema,mentorMeetingDecisionStatus} from "./mentor-meeting-decision-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 
 /** Mentor-only, locked and audited alternative to legacy non-versioned transitions. */
 export async function decideMentorProjectMeeting(context:RequestContext,rawProjectId:string,
@@ -45,7 +46,7 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
     sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
    )).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-  await recordActivityEventInTransaction(tx,context,{
+  const event=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_meeting",subjectId:updated.id,
@@ -53,6 +54,18 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
    metadata:{projectId:scope.project.id,previousStatus:current.status,status:updated.status,
     hadOutcome:Boolean(input.outcome),hadNote:Boolean(input.note)},
    groupKey:"project:"+scope.project.id+":meetings",
+  });
+  await notifyActiveProjectMembers(tx,event.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
+    exceptUserId:context.user.id,title:"Project meeting",
+    body:input.action==="COMPLETE"?"Meeting completed.":"Meeting cancelled.",
+    actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+  });
+  await notifyActiveProjectMembers(tx,event.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+    exceptUserId:context.user.id,title:"Project meeting",
+    body:input.action==="COMPLETE"?"Meeting completed.":"Meeting cancelled.",
+    actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
   });
   return updated;
  });

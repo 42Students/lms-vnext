@@ -293,6 +293,12 @@ export async function scheduleProjectMeeting(
         title:"Project meeting",body:"A project meeting has been scheduled.",
         actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
       });
+      await notifyActiveProjectMembers(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+        exceptUserId:context.user.id,
+        title:"Project meeting",body:"A project meeting has been scheduled.",
+        actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+      });
       return created;
     }
     const [updated] = await tx.update(projectMeetings).set(values)
@@ -314,6 +320,12 @@ export async function scheduleProjectMeeting(
       exceptUserId:context.user.id,
       title:"Project meeting",body:"A project meeting has been scheduled.",
       actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+      exceptUserId:context.user.id,
+      title:"Project meeting",body:"A project meeting has been scheduled.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
     });
     return updated;
   });
@@ -358,7 +370,8 @@ export async function transitionProjectMeeting(
       );
     }
 
-    const [completed] = await getDb()
+    return getDb().transaction(async tx => {
+    const [completed] = await tx
       .update(projectMeetings)
       .set({
         status: "COMPLETED",
@@ -369,10 +382,8 @@ export async function transitionProjectMeeting(
       .where(
         and(
           eq(projectMeetings.id, meeting.id),
-          eq(
-            projectMeetings.status,
-            "SCHEDULED",
-          ),
+          eq(projectMeetings.projectId,scope.project.id),
+          eq(projectMeetings.status, "SCHEDULED"),
         ),
       )
       .returning();
@@ -383,7 +394,28 @@ export async function transitionProjectMeeting(
       );
     }
 
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
+      collegeId:scope.collegeId,organizationId:scope.organizationId,
+      subjectType:"project_meeting",subjectId:completed.id,subjectLabel:completed.title,
+      summary:"Project meeting completed",
+      metadata:{projectId:scope.project.id,meetingId:completed.id,status:"COMPLETED"},
+      groupKey:"project:"+scope.project.id+":meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["LEARNER"],exceptUserId:context.user.id,
+      title:"Project meeting completed",body:"The meeting "+completed.title+" has been completed.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+    });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR"],exceptUserId:context.user.id,
+      title:"Project meeting completed",body:"The meeting "+completed.title+" has been completed.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+    });
     return completed;
+    });
   }
 
   const learnerMayCancel =
