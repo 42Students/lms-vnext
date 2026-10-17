@@ -38,6 +38,9 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
     setError("Complete every question, unique option and correct answer.");return;
    }
   }
+  if(questions.reduce((total,q)=>total+q.points,0)>10000){
+   setError("Quiz total points may not exceed 10000.");return;
+  }
   if(!window.confirm("Save changed quiz questions? Draft question edits replace the saved question bank."))return;
   setBusy(true);setError("");setNotice("");
   try{
