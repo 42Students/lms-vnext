@@ -32,6 +32,7 @@ type YouTubeNamespace = {
     element: HTMLElement,
     options: {
       videoId: string;
+      host?: string;
       width?: string;
       height?: string;
       playerVars?: Record<
