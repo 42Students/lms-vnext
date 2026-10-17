@@ -156,3 +156,37 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **WP-05 partial:** `REC-home-drives-R08` capped Today job-fetch size and visibly disclosed truncated history; Drives still reads the college-wide list and needs SQL server-side filters/paging. `LEARNER-profile-misc-18` read-only, own-member academic record with Profile link implemented; **BLOCKED personal data-access audit:** no authoritative per-viewer disclosure feed to display; moved on.
 - **WP-04 BLOCKED REC-home-drives-23 and WP-03 BLOCKED LEARNER-profile-misc-04:** no verified private file/video storage contract; moved on.
 - **WP status:** 01–05 remain **IN-PROGRESS**; do not mark DONE while nonblocked gaps remain. No tests, typecheck, lint, build or CI performed per FAST v2. A source commit is not independent acceptance evidence.
+
+## FAST v2 subsequent lane continuation — 2026-10-17 (latest orchestrator merge)
+
+- Branch `chatgpt/chat-7-b` fast-forwarded to `origin/main` at `2dba274bab42382a7dd5e172b7bc40be096a74e7` (prior chat-7 commits already integrated). All subsequent changes were tagged `[chat-7]` and pushed only to this branch.
+- WP-01 Learner: `LEARNER-profile-misc-06/-R03` level-aware qualifying-exam suggestions, constrained pass-year validation and mobile numeric hint. College-defined dynamic exam catalog is still pending.
+- WP-01 Recruiter: `REC-calendar-messages-profile-31` employer report per-job and aggregate funnels now use previously shortlisted shared applicants, not the entire private application population; UI clarifies visibility. Existing selection-list proposal is still not an approved/persisted employer selection workflow.
+- WP-02 Learner: `LEARNER-home-courses-08/-R01` ordered four-at-a-time detailed card IO, bulk optional display reads, corrupt ID/failing thumbnail fallback. Full N+1 elimination of course lesson/workspace metrics remains open.
+- WP-03 Learner: `LEARNER-profile-misc-22` authorized DEPARTMENT audience announcements alongside class and program, published HTTPS CTA in feed/inbox with no unintended personal read mutations. `LEARNER-profile-misc-11` suppresses focus refresh during unsaved job preference and award edits.
+- WP-03 Recruiter: `REC-calendar-messages-profile-10` searches own-college authorized message bodies without exposing text from other recruiter threads; `REC-home-drives-R08` college-scoped job title lookups for inbox and thread.
+- WP-04 Recruiter: `REC-home-drives-37` counts VENDOR_TEST and GD stages and adds Applied percent to scoped funnel; `REC-home-drives-01/-02` sorts urgent tasks before normal tasks, restores true deadline captions and primary next-step affordances; `REC-home-drives-08` exact Today load-failure recovery text.
+- WP-05 Learner and Recruiter remaining performance/a11y tasks are not certified complete; `REC-home-drives-R08` still needs scalable DB-backed drive pagination.
+- BLOCKED `LEARNER-profile-misc-01/-02/-03/-04` and `REC-home-drives-23/-43`: scanner-attested private file/image/video/resume storage and secure retrieval are unavailable; skip.
+- BLOCKED `REC-home-drives-38`: applicant contact/academic/resume visibility needs explicit TPO consent/authorization disposition; skip.
+- BLOCKED `REC-home-drives-51`: employer selection-list write/verify lifecycle not registered (latest 0128 and 0129 migrations are unrelated); skip.
+- BLOCKED `REC-home-drives-21/-33` trusted auto-approval and `REC-home-drives-R03` recruiter-only ownership: security/college policy decisions; skip.
+- BLOCKED `REC-calendar-messages-profile-25/-46` and `REC-home-drives-09`: verified-phone identity and accept/decline pending-invitation authorization not resolved; skip.
+- BLOCKED `LEARNER-profile-misc-18` data-access audit half: no authoritative recipient/viewer disclosure record (existing academic record is separate); skip.
+- WPs 01–05 remain IN-PROGRESS because nonblocked gaps remain, not DONE. Source-only FAST work has no independent QA evidence by owner instruction.
+
+## chat-7 FAST v2 next build checkpoint — 2026-10-17
+
+- **Branch sync:** merged `origin/main` `e324194c5805e124cbbfcc3b650569e03ea713c9` with a two-parent merge into `chatgpt/chat-7-b` at `56f57ce84b22e49f91acaadd04a3d1f54229b75c`, retaining only the three divergent chat-7 files. Never pushed main or opened PR.
+- **WP-01 / S2 learner:** `LEARNER-profile-misc-R03` validated academic start/end year range 1900–2100; all earlier marked storage/consent blockers still unresolved.
+- **WP-02 / S2 recruiter:** `REC-home-drives-42` explicit local Pass/Waitlist/Not-selected/Absent controls, selected-count live announcements, documented keyboard shortcuts and visible Undo; `REC-home-drives-49` candidate-specific pre-send result summary and bounded percent validation. Staged result writes still require TPO application.
+- **WP-03 / S3 recruiter:** `REC-calendar-messages-profile-26` legacy name form now has accurate copy, discard edits, unload guard and no-op save disabled; `REC-calendar-messages-profile-11` suppress duplicate General thread creation/preview; `REC-calendar-messages-profile-18` shows scoped change-request decision note and discussion-reply count; `REC-calendar-messages-profile-13` avoids polling while the composer is focused; `REC-calendar-messages-profile-15` exact empty/too-long validations; `REC-calendar-messages-profile-20` direct oldest-history link.
+- **WP-04 / S3 recruiter:** `REC-home-drives-07` highlights most shared-applicant live drive among the visible preview and labels scope; `REC-home-drives-37` distinguishes employer-visible applicant counts and offer history; `REC-home-drives-36` clearer deadline state; `REC-home-drives-29` incomplete saved drafts can be manually saved, and restoring over unsent edits requires confirmation; `REC-home-drives-20/-56` canonical recruiter conversation/report drive navigation.
+- **WP-05 / S4 learner:** `LEARNER-profile-misc-R05` marks primary career sections as required and aligns full checklist with weighted completion.
+- **BLOCKED LEARNER-profile-misc-01/-02/-03/-04, REC-home-drives-23/-43:** scanner-attested private evidence/photo/video/ZIP document storage and retrieval unavailable; moved on.
+- **BLOCKED REC-home-drives-38:** college-approved applicant PII/academic/resume share consent contract unresolved; moved on.
+- **BLOCKED REC-home-drives-51:** employer selection-list persistence and TPO verification contract unregistered, and latest 0128/0129 are unrelated; moved on.
+- **BLOCKED REC-home-drives-21/-33/-R03:** trusted autoapproval / recruiter-only ownership require explicit security policy; moved on.
+- **BLOCKED REC-calendar-messages-profile-25/-46 and REC-home-drives-09:** identity/mobile and pending invitation acceptance policy incomplete; moved on.
+- **BLOCKED LEARNER-profile-misc-18:** learner-facing authoritative data-access disclosure audit source not available; academic record alone is not equivalent; moved on.
+- **WP status:** WP-chat-7-01..05 remain **IN-PROGRESS**. Nonblocked gaps and holistic parity acceptance remain incomplete. No tests, typecheck, lint, CI, build or runtime checks were performed under FAST v2.

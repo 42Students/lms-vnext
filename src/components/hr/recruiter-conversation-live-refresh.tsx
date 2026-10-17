@@ -6,7 +6,12 @@ import {useRouter} from "next/navigation";
 export function RecruiterConversationLiveRefresh(){
  const router=useRouter();
  useEffect(()=>{
-  const update=()=>{if(document.visibilityState==="visible")router.refresh();};
+  const update=()=>{
+   if(document.visibilityState!=="visible")return;
+   const current=document.activeElement;
+   if(current instanceof HTMLElement&&current.closest("textarea,[contenteditable=true]"))return;
+   router.refresh();
+  };
   const id=window.setInterval(update,4000);
   window.addEventListener("focus",update);
   return ()=>{window.clearInterval(id);window.removeEventListener("focus",update);};

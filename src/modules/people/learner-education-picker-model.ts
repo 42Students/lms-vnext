@@ -44,6 +44,11 @@ export function learnerEducationValidationProblem(input:{
  if(input.isCurrentlyPursuing && input.endYear?.trim())
   return {field:"endYear",message:"End year must be empty when currently pursuing"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();
+ for(const [field,year] of [["startYear",start],["endYear",end]] as const){
+  if(year && (!/^\d{4}$/.test(year)||Number(year)<1900||Number(year)>2100))
+   return {field,message:"Enter a valid four-digit academic year (1900–2100)"};
+ }
+
  if(start&&end&&/^\d{4}$/.test(start)&&/^\d{4}$/.test(end)&&Number(end)<Number(start))
   return {field:"endYear",message:"End year cannot be before start year"};
  const grade=input.gradeObtained?.trim()??"";

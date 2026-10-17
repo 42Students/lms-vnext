@@ -37,7 +37,7 @@ export default async function HrProfilePage() {
           </div>
         </dl>
         <p className="mt-4 text-xs text-muted-foreground">
-          You can update your own display name and designation with optimistic versioning. Email, mobile, company and college access remain centrally managed and read-only. Separate legacy first-name/last-name fields are not available in the registered identity schema.
+          Edit your first and last name above. They are saved together as your display name. Your designation can be edited separately. Email, mobile, company and college access remain centrally managed.
         </p>
       </section>
 

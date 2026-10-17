@@ -78,7 +78,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
-      {generalThread.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+      {generalThread.preview&&!generalHistory?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
       </p>:null}
       {generalHistory?<ol aria-label="General placement-cell messages" className="mt-3 max-h-72 space-y-2 overflow-y-auto">
@@ -94,12 +94,12 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
     </details>:null}
-    <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
+    {!generalThread?<form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Open general conversation
       </button>
-    </form>
+    </form>:null}
    </section>
    <p className="text-sm text-body">{result.total} conversation(s) · {result.items.filter(row=>row.unread>0).length} with new messages on this page</p>
    <form method="get" action="/hr/conversations" className="flex flex-wrap gap-2">

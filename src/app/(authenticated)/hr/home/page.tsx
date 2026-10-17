@@ -88,6 +88,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const liveDriveCounts=await recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id));
+  const mostSharedLiveId=[...liveDrives].sort((left,right)=>
+    (liveDriveCounts[right.job.id]?.sharedApplicants??0)-(liveDriveCounts[left.job.id]?.sharedApplicants??0))[0]?.job.id??null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -154,8 +156,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
             <span className="mt-1 block text-xs text-body">{task.description}</span>
             {task.at?<span className="mt-1 block text-xs text-muted-foreground">
-              {task.key.startsWith("due:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
+              {task.key.startsWith("due:")||task.key.startsWith("deadline:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
             </span>:null}
+            <span className="mt-3 block text-sm font-semibold text-primary-text">
+              {task.tone==="URGENT"?"Review now →":task.key.startsWith("due:")?"Open results →":"Open →"}
+            </span>
           </Link>
         </li>)}
       </ul> : collegeJobs.length===0 && requestCount===0 ? (
@@ -202,11 +207,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=LIVE"}
           className="text-sm text-primary-text">See all live drives</Link>
       </div>
+      <p className="mt-2 text-xs text-muted-foreground">Applied counts here mean applicants the placement cell has explicitly shared with you; private/unshared submissions are not visible.</p>
       {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {liveDrives.map(row=><Link key={row.job.id}
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
+          {row.job.id===mostSharedLiveId&&liveDrives.length>1?<span className="mt-1 inline-block rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-body">Most shared applicants in this preview</span>:null}
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
