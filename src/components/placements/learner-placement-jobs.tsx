@@ -323,7 +323,7 @@ function JobActions({
             value={withdrawReason}
             onChange={(event) => setWithdrawReason(event.target.value)}
             rows={4}
-            maxLength={2000}
+            maxLength={900}
             disabled={pendingAction !== null}
             placeholder="Explain why you want to withdraw this application…"
             className="mt-2 min-h-28 w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
