@@ -32,6 +32,8 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [blockerReason,setBlockerReason]=useState(props.blockerReason??"");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
+  const estimateValid=estimate===""||
+    (Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000);
   const changed=title.trim()!==props.title ||
     (description.trim()||null)!==(props.description??null) ||
     (approach.trim()||null)!==(props.approach??null) ||
