@@ -90,3 +90,6 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - SKIP TPO-drive-workspace-65: OD-09 company-data sharing security decision not made.
 - TPO-drives-01/sidebar: src/components/shell is owned by chat-9; do not edit the shared shell in this lane.
 - Full acceptance not claimed; FAST v2 explicitly deferred checks and runtime validation. No WP is marked DONE solely from source commits.
+
+- TPO-drive-workspace-44: generated slots are limited to one IST calendar day; pending withdrawal prevents new candidate booking.
+- TPO-drives-26 and TPO-drive-workspace-05: clone currently copies job details into a fresh DRAFT plus primary role; additional historical role-package templates and eligibility policies are intentionally NOT copied until reconciled. Do not mark full clone parity DONE.
