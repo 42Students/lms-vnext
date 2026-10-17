@@ -160,6 +160,21 @@ export function RecruiterLeadDetailWorkspace({
     };
   }, [load]);
 
+  useEffect(()=>{
+    if(!lead?.companyName){setCompanySummary(null);setCompanyError("");return;}
+    const controller=new AbortController();
+    setCompanySummary(null);setCompanyError("");
+    void fetch("/api/placements/tpo/companies/detail?collegeId="+encodeURIComponent(collegeId)+
+      "&name="+encodeURIComponent(lead.companyName),{
+        credentials:"same-origin",cache:"no-store",signal:controller.signal,
+      }).then(async response=>{
+        if(!response.ok)throw new Error("Company drive details are unavailable.");
+        const payload=await response.json() as {company?:CompanySummary};
+        if(!controller.signal.aborted)setCompanySummary(payload.company??null);
+      }).catch(()=>{if(!controller.signal.aborted)setCompanyError("Company drive details could not be loaded.");});
+    return ()=>controller.abort();
+  },[collegeId,lead?.companyName]);
+
   async function mutate(url: string, method: "PATCH" | "POST", body: unknown) {
     setSaving(true);
     setActionError("");
