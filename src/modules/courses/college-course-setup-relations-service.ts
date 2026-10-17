@@ -82,7 +82,8 @@ export async function listCollegeCourseSetupRelations(
   eq(sections.id,courseSectionDeliveries.sectionId),
   eq(sections.cohortId,courseOfferings.cohortId),
   eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
- .where(isNull(courseSectionDeliveries.endedAt))
+ .where(and(isNull(courseSectionDeliveries.endedAt),
+  ne(cohorts.status,"ARCHIVED"),eq(sections.status,"ACTIVE")))
  .orderBy(asc(sections.name),asc(courseSectionDeliveries.id));
 
  const teachingAssignments=await db.select({
