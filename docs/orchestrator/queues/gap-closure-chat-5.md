@@ -256,6 +256,11 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-21 | S4 | PERMISSION | OPEN |
 
 ## Notes (blockers, one line each)
+- TPO-drive-workspace-65 BLOCKED: resume ZIP needs private bucket/malware scanner; emailed six-digit passcode needs real provider credentials (OD-09 resolved, privacy projection tested, token-only delivery not marked secure closure).
+- TPO-drive-workspace-18 PENDING REGISTRATION: `docs/proposed-migrations/tpo-drive-workspace-18-cancel-selections.sql` permits terminal CANCELLED; Drizzle/service and named PostgreSQL test pushed, acceptance must follow numbered migration replay.
+- TPO-drive-workspace-28 OPEN: registration/reminder and once-per-IST-day notification exist; persist 48-hour learner opt-out before claiming proxy-application closure.
+- TPO-drive-workspace-40 OPEN: strict 1,000-row CSV/XLSX import and named tests exist; company-portal identity mapping remains unimplemented, do not claim source ID matches.
+
 
 ## Needs shell (chat-9 only)
 
