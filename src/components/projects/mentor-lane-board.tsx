@@ -176,7 +176,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
-    onClick={()=>{const prior=undo;setUndo(null);void move(prior.id,prior.status);}}>Undo last move</button>:null}
+    onClick={()=>{const prior=undo;void move(prior.id,prior.status,true);}}>Undo last move</button>:null}
   <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
    {lanes.map(lane=><section key={lane.id} aria-label={lane.label}
     className="w-72 shrink-0 rounded-xl border border-border bg-surface-subtle p-3"
