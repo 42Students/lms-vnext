@@ -4,7 +4,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {cohorts,collegeMemberships,departments,learnerProfiles,learnerProgramEnrollments,
  placementApplications,placementCompanies,placementCompanyRelationships,placementJobs,
- placementJoiningOutcomes,placementOffers,programs,users} from "@/db/schema";
+ placementJoiningOutcomes,placementOffers,placementCollegeRules,programs,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {getPlacementAccreditationReport} from "./report-accreditation-service";
@@ -26,10 +26,13 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
   const rows=buildAccreditationStudentRows([]);
   return {rows,csv:accreditationStudentCsv(rows),batch,warning:ACCREDITATION_STUDENT_WARNING};
  }
+ const [rules]=await getDb().select({countsAsPlacedAt:placementCollegeRules.countsAsPlacedAt})
+  .from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,collegeId)).limit(1);
+ const countsAsPlacedAt=(rules?.countsAsPlacedAt??"OFFER_RELEASED") as "SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED";
  const offers=await getDb().select({
   membershipId:collegeMemberships.id,offerId:placementOffers.id,name:users.displayName,
   rollNumber:learnerProfiles.rollNumber,programme:programs.name,branch:departments.name,
-  batch:cohorts.name,company:placementCompanies.name,status:placementOffers.status,
+  batch:cohorts.name,company:placementCompanies.name,status:placementOffers.status,kind:placementOffers.kind,
   annualCtcInr:placementOffers.annualCtcInr,joining:placementJoiningOutcomes.status,
  }).from(placementOffers)
   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
@@ -55,6 +58,6 @@ export async function getTpoAccreditationStudentExport(context:RequestContext,ra
    eq(placementJobs.seasonId,report.selectedSeasonId),
    eq(placementJobs.employmentType,"FULL_TIME"),isNull(placementJobs.archivedAt),
    query.jobId?eq(placementJobs.id,query.jobId):undefined));
- const rows=buildAccreditationStudentRows(offers);
+ const rows=buildAccreditationStudentRows(offers,countsAsPlacedAt);
  return {rows,csv:accreditationStudentCsv(rows),batch,warning:ACCREDITATION_STUDENT_WARNING};
 }
