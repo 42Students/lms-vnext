@@ -53,7 +53,8 @@ describe("learner/projects round-two gap verification",()=>{
   const s=source("src/components/projects/project-resource-open-link.tsx");
   expect(s).toContain("This resource has no link or file attached yet.");
   expect(s).toContain("This resource has an invalid address.");
-  expect(s).toContain("Your browser blocked the resource window.");
+  expect(s).toContain("Your browser blocked the new tab. Allow pop-ups for this site to open resources, or use the safe link below.");
+  expect(s).toContain('rel="noopener noreferrer"');
   expect(s).toContain("safeProjectExternalHref");
   expect(workspace()).toContain('aria-label="Resource counts"');
  });
