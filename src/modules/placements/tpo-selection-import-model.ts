@@ -1,6 +1,6 @@
 /** TPO-drive-workspace-48: parse small company selection CSVs before explicit review. */
 export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] {
- const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;
+ const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;let startedQuoted=false;let closedQuote=false;
  for(let i=0;i<text.length;i++){
   const char=text[i];
   if(char==='"'){
