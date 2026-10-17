@@ -1010,6 +1010,8 @@ export function LearnerProfileWorkspace(props: {
                   return <label key={field.key} className="text-xs font-semibold text-body">
                     {field.label}
                     <Input type="text" className="mt-1" maxLength={field.maxLength}
+                      inputMode={field.key==="passingYear"?"numeric":undefined}
+                      placeholder={field.key==="passingYear"?"YYYY":undefined}
                       value={value}
                       onChange={event=>setItemDraft(current=>({
                         ...current,examDetails:{
