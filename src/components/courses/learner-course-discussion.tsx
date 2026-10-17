@@ -376,6 +376,17 @@ export function LearnerCourseDiscussion({
         </p>
       </div>
 
+      {loadError && loadedOnce.current && messages.length > 0 ? (
+        <div role="alert" className="flex flex-wrap items-center gap-3 rounded-md border border-warning p-3">
+          <p className="m-0 flex-1 text-sm text-warning-text">
+            Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
+          </p>
+          <Button type="button" size="sm" variant="secondary" onClick={() => void load(true)}>
+            Retry discussion refresh
+          </Button>
+        </div>
+      ) : null}
+
       {pinned ? (
         <section className="rounded-xl border border-primary bg-primary-subtle p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -589,11 +600,6 @@ export function LearnerCourseDiscussion({
 
         {canPost ? (
         <form onSubmit={submit} className="border-t border-border p-4 sm:p-5">
-          {loadError && messages.length > 0 ? (
-            <p className="mb-3 text-xs font-semibold text-warning">
-              Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
-            </p>
-          ) : null}
           <p className="mb-3 text-xs leading-5 text-muted-foreground">
             {moderate
               ? "Post an announcement, answer a learner, or add class context."
