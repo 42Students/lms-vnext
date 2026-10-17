@@ -27,3 +27,5 @@ This file records source-level verification; orchestrator tests, DB integration 
 Not verified: resource uploads (requires private bucket and scanning), enrollment/roster privacy, remaining open rows, and live failure recovery on all faculty pages.
 
 | FAC-courses-14 | BLOCKED | Uploaded resource materials require a private scanned storage bucket. \`tests/unit/chat-7-storage-blockers.test.ts\` — \`FAC-courses-14 secure file provider pending\`. |
+## Round 5 — shared safe errors
+`src/components/courses/learner-course-api.ts` no longer forwards arbitrary server-authored issue messages. Known course domain codes retain their legacy user copy, and unknown errors use `friendlyApiError`. `src/components/courses/faculty-lesson-authoring.tsx` uses `apiFetch` on saves and keeps the accessible discard confirmation. `tests/unit/faculty-courses-chat7-round5-friendly.test.ts` contains tests `FAC-courses-23 GR-04`, `FAC-courses-15 GR-01`, `FAC-courses-24 GR-35`. Tests were authored, not run; remaining unrelated Faculty Courses gaps stay open.
