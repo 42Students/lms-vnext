@@ -3,6 +3,7 @@
 import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { useMemo, useState } from "react";
+import {usePathname,useRouter} from "next/navigation";
 import { learnerCourseAttendanceTone } from "@/modules/attendance/learner-course-attendance-tone-model";
 import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
 import { Button } from "@/components/ui/button";
@@ -141,12 +142,19 @@ export function LearnerCourseAttendance({
   workspace: AttendanceWorkspace;
   defaultMonth: string;
 }) {
-  const [month, setMonth] = useState(
+  const [month] = useState(
     () => {
       const [year,month]=defaultMonth.split("-").map(Number);
       return new Date(year,month-1,1);
     },
   );
+
+  const router=useRouter(),pathname=usePathname();
+  function navigateMonth(next:Date){
+    const params=new URLSearchParams(window.location.search);
+    params.set("month",monthKey(next));
+    router.replace(pathname+"?"+params.toString());
+  }
 
   const course = workspace.courses.find(
     (item) =>
@@ -250,11 +258,7 @@ export function LearnerCourseAttendance({
               size="sm"
               variant="secondary"
               aria-label="Previous month"
-              onClick={() =>
-                setMonth((current) =>
-                  shiftMonth(current, -1),
-                )
-              }
+              onClick={() => navigateMonth(shiftMonth(month,-1))}
             >
               ←
             </Button>
@@ -284,13 +288,7 @@ export function LearnerCourseAttendance({
                     monthIndex >= 0 &&
                     monthIndex <= 11
                   ) {
-                    setMonth(
-                      new Date(
-                        year,
-                        monthIndex,
-                        1,
-                      ),
-                    );
+                    navigateMonth(new Date(year,monthIndex,1));
                   }
                 }}
                 className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
@@ -300,7 +298,7 @@ export function LearnerCourseAttendance({
               <Button size="sm" variant="secondary"
                 onClick={() => {
                   const [year,nextMonth]=defaultMonth.split("-").map(Number);
-                  setMonth(new Date(year,nextMonth-1,1));
+                  navigateMonth(new Date(year,nextMonth-1,1));
                 }}>
                 This month
               </Button>
@@ -309,11 +307,7 @@ export function LearnerCourseAttendance({
               size="sm"
               variant="secondary"
               aria-label="Next month"
-              onClick={() =>
-                setMonth((current) =>
-                  shiftMonth(current, 1),
-                )
-              }
+              onClick={() => navigateMonth(shiftMonth(month,1))}
             >
               →
             </Button>
