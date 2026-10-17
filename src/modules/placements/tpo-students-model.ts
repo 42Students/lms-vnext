@@ -3,6 +3,7 @@ import {
   type ResolvedPlacementParticipation,
 } from "./batch-eligibility-policy";
 import { learnerPlacementDashboard } from "./learner-dashboard-model";
+import type {TpoStudentVerificationFact} from "./tpo-student-verification-facts";
 
 export const TPO_STUDENT_JOURNEY_STATES = [
   "NOT_REGISTERED",
@@ -55,6 +56,7 @@ export type TpoStudentSource = {
     pastBacklogs: number | null;
   };
   preferencesPresent: boolean;
+  verification:TpoStudentVerificationFact;
   applications: readonly TpoStudentApplicationSignal[];
   offers: readonly TpoStudentOfferSignal[];
   appliedResults: readonly TpoStudentRoundSignal[];
@@ -86,6 +88,7 @@ export type TpoStudentRow = {
   participationStatus: ResolvedPlacementParticipation["status"];
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
+  verification:TpoStudentVerificationFact;
   cgpa: number | null;
   activeBacklogs: number | null;
   pastBacklogs: number | null;
@@ -283,6 +286,7 @@ export function deriveTpoStudent(
     participationStatus: source.participation.status,
     readinessSignal,
     preferencesPresent: source.preferencesPresent,
+    verification:source.verification,
     cgpa:
       source.academicEvidence.cgpaHundredths === null
         ? null
