@@ -5,6 +5,7 @@ export const bulkDriveAddSchema = z.object({
   membershipIds: z.array(z.string().uuid()).min(1).max(200)
     .refine((ids) => new Set(ids).size === ids.length, "Duplicate learners are not allowed"),
   confirmed: z.literal(true),
+  includeIneligible:z.object({reason:z.string().trim().min(3).max(500)}).strict().optional(),
 }).strict();
 
 export const bulkDriveCandidatesQuerySchema = z.object({

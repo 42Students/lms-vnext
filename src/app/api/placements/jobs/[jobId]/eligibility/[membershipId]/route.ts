@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {z} from "zod";
 import {
   evaluatePlacementEligibility,
   revokeEligibilityOverride,
@@ -74,11 +75,18 @@ export async function DELETE(
   try {
     const context = await getCurrentRequestContext();
     const { jobId, membershipId } = await params;
+    const raw=request.headers.get("content-type")?.startsWith("application/json")
+      ?await request.json():{};
+    const options=z.object({
+      expectedOverrideId:z.string().uuid().optional(),
+      reason:z.string().trim().min(3).max(500).optional(),
+    }).strict().parse(raw);
     const override =
       await revokeEligibilityOverride(
         context,
         jobId,
         membershipId,
+        options,
       );
     return NextResponse.json({ override });
   } catch (error) {

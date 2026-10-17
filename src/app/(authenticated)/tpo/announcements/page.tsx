@@ -214,6 +214,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <label className="flex items-center gap-2 text-sm text-body">
         <input name="pinned" type="checkbox" defaultChecked={row.isPinned}/> Pinned
        </label>
+       <label className="flex items-start gap-2 text-sm text-body">
+        <input name="notifyChanged" type="checkbox" className="mt-1"/>
+        <span>Tell them it changed
+         <span className="block text-xs text-muted-foreground">Notify only people who received the original announcement. Leave unchecked to edit without another notification.</span>
+        </span>
+       </label>
        <p className="text-xs text-muted-foreground">Save fails if the notice changed since this page was loaded.</p>
        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
       </form>

@@ -3,6 +3,71 @@ import {describe,expect,it} from "vitest";
 const source=(path:string)=>readFileSync(path,"utf8");
 
 describe("chat-14 recruiter ownership and private review gap closure",()=>{
+ it("REC-home-drives-38 shares enrolled branch/phone only when college columns allow each",()=>{
+   const service=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   expect(service).toContain('share?.columns?.includes("branch")');
+   expect(service).toContain('share?.columns?.includes("phone")');
+   expect(service).toContain('eq(learnerProgramEnrollments.status,"ACTIVE")');
+   expect(service).toContain("eq(departments.collegeId,workspace.college.id)");
+   expect(service).toContain("branchSet.get(membershipId)?.size===1");
+   expect(service).toContain("phone:sharePhone?row.phone:null");
+   expect(page).toContain("selectedApplicant.branch");
+   expect(page).toContain("selectedApplicant.phone");
+ });
+ it("REC-home-drives-45 filters historical milestones only within TPO-shared applicants",()=>{
+   const model=source("src/modules/placements/hr-job-applicants-model.ts");
+   const service=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   for(const label of ["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW",
+      "OFFERED","HIRED","REJECTED","WITHDRAWN"]){
+     expect(model).toContain('value:"'+label+'"');
+   }
+   expect(service).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
+   expect(service).toContain('eq(placementRoundResults.status,"APPLIED")');
+   expect(service).toContain('eq(placementRoundResults.applicationId,placementApplications.id)');
+   expect(service).toContain('eq(placementJoiningOutcomes.status,"JOINED")');
+   expect(service).toContain('const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage])');
+   expect(service).toContain('const selectedTotal = stageCounts[filters.stage]');
+   expect(page).toContain("HR_RECRUITER_STAGES.map");
+   expect(page).toContain("stageCounts[stage]");
+   expect(page).toContain("unshared or privately rejected applicants remain hidden");
+ });
+
+ it("REC-home-drives-41 typecheck restores authorized companyRelationshipId for private rating reads and writes",()=>{
+   const workspace=source("src/modules/placements/recruiter-workspace-service.ts");
+   const service=source("src/modules/placements/recruiter-private-rating-service.ts");
+   expect(workspace).toContain("companyRelationshipId: scope.relationshipId");
+   expect(service).toContain("workspace.job.companyRelationshipId");
+   expect(service).toContain("scope.job.companyRelationshipId");
+   expect(service).toContain("eq(placementJobs.id,placementApplications.jobId)");
+   expect(service).toContain("recruiterOwnJobPredicate(ctx.user.id)");
+ });
+ it("REC-home-drives-52 separates pre-issue selections and cancellations from real issued offers",()=>{
+   const code=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   expect(code).toContain("placementDriveSelections");
+   expect(code).toContain('eq(placementApplicationScreenings.status, "SHORTLISTED")');
+   expect(code).toContain('filters.offerState==="PENDING_VERIFICATION"?"VERIFIED"');
+   expect(code).toContain('filters.offerState==="REVOKED"?"CANCELLED"');
+   expect(code).toContain('inArray(placementDriveSelections.status,["SELECTED","VERIFIED","CANCELLED"])');
+   expect(code).toContain("limit(HR_OFFER_PAGE_SIZE)");
+   expect(code).toContain("selectionTotal");
+   expect(page).toContain('aria-label="Placement-cell selection history"');
+   expect(page).toContain("Selections are not issued offers.");
+   expect(page).toContain("Selection cancelled");
+   expect(page).toContain("Next selections");
+ });
+ it("REC-home-drives-46 shows only placement-cell confirmed slot counts, not recruiter internal bookings",()=>{
+   const code=source("src/modules/placements/hr-job-read-service.ts");
+   const page=source("src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx");
+   expect(code).toContain("placementRoundCandidateSlots.confirmedAt");
+   expect(code).toContain("roundSlotCounts");
+   expect(code).toContain("eq(placementRoundCandidateSlots.jobId,workspace.job.id)");
+   expect(page).toContain("slots confirmed by the placement cell");
+   expect(page).toContain("roundSlotCounts[round.id]?.confirmed");
+ });
+
  it("REC-home-drives-R03 counts and lists only jobs authored by this recruiter or approved from their own request",()=>{
   const owner=source("src/modules/placements/recruiter-job-ownership.ts");
   expect(owner).toContain("eq(placementJobs.createdByUserId,recruiterUserId)");
