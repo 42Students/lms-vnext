@@ -26,3 +26,7 @@ Tests are authored but **not executed** by this builder. Orchestrator must run u
 | COL-projects-23 | OPEN | Responsive overflow wrappers exist; 375px browser acceptance not done; `tests/unit/chat9-college-projects-round4-evidence.test.ts` — `COL-projects-23 uses responsive wrappers but retains browser width acceptance as open` |
 
 Round 4: College workspace list now offers formula-safe visible-page CSV, table/cards, configurable row sizes, archived shortcut and no-membership recovery. All unit tests authored but not run. Mentor-only task authoring, exact resource audit, deletion semantics, and 375px browser pass remain open.
+
+## Round 5 (2026-10-17)
+| COL-projects-16 | DONE | Section-count table, GET search and filtered, formula-safe BOM CSV: `src/app/(authenticated)/college/projects/templates/page.tsx`, `src/modules/projects/project-template-catalogue-model.ts`, `tests/unit/chat9-college-projects-template-catalogue.test.ts` — `COL-projects-16 counts all template sections, filters on the server and exports only visible rows`. |
+| COL-projects-08 | OPEN | Added template labels to cards/table from college-assigned template identity, `tests/unit/chat9-college-projects-template-catalogue.test.ts` — `COL-projects-08 renders template tags in both list and cards without introducing a new status`; legacy READY/BLOCKED status mapping still unresolved. |

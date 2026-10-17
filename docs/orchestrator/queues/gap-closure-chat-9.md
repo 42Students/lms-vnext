@@ -308,3 +308,8 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO settings: TPO-settings-audit-03/06/13/42/73/75/94/96 PARTIAL / OPEN in `chat9-tpo-settings-legacy-graceful.test.ts`: legacy labels, readiness search and beforeunload safeguard, friendly apiFetch, sharing explanation, public status and audit names. Further S2 producer gaps TPO-settings-audit-05/12/22/33/41/44/50/51/52/56/70/74 remain open.
 - College Projects: COL-projects-01/02/09/14/17 DONE source-level; COL-projects-10/11/19/20 PARTIAL / OPEN via existing functional implementations and `chat9-college-projects-round4-evidence.test.ts`; COL-projects-22 NOT-A-GAP (mentor/class/template filters were not legacy features). COL-projects-03/08/18/21/23 OPEN with partial source work. Visible-page safe CSV, card/table view, 10/20/50/100 sizing, archived shortcut and no-college recovery have been added. COL-projects-04/05/15/16 remain open and are next.
 - The two reassigned Super Admin pages remain with chat-13; shell work from round 3 is already on main. Existing provider/bucket blockers TPO-calendar-reports-23 and -43 remain unchanged.
+
+## Round 5 scoped implementation (2026-10-17)
+- COL-projects-16 DONE source-level: template catalogue now has searchable table, all five section counts and scoped visible-row CSV.
+- COL-projects-08 OPEN: template label displayed; legacy In progress/Ready/Blocked semantics remain unmapped.
+- Tests authored but NOT run; orchestrator executes. Other gaps are not marked DONE by this source patch.
