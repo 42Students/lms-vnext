@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
-import { RecruiterDesignationEditor } from "@/components/hr/recruiter-designation-editor";
-import { RecruiterDisplayNameEditor } from "@/components/hr/recruiter-display-name-editor";
+import { RecruiterProfileDetailsEditor } from "@/components/hr/recruiter-profile-details-editor";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
@@ -25,23 +24,10 @@ export default async function HrProfilePage() {
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
-        <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-          <RecruiterDisplayNameEditor initialName={profile.displayName} updatedAt={profile.userUpdatedAt.toISOString()} />
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
-            <dd className="mt-1 text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
-            <p className="mt-1 text-xs text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
-          </div>
-          <RecruiterDesignationEditor initialTitle={profile.title} updatedAt={profile.profileUpdatedAt.toISOString()} />
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Mobile</dt>
-            <dd className="mt-1 text-sm text-foreground">{profile.phoneE164 ?? "Not provided"}</dd>
-            <p className="mt-1 text-xs text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
-          </div>
-        </dl>
-        <p className="mt-4 text-xs text-muted-foreground">
-          Edit your first and last name above. They are saved together as your display name. Your designation can be edited separately. Mobile editing is not available here yet; ask the placement cell to update it.
-        </p>
+        <RecruiterProfileDetailsEditor
+          initialName={profile.displayName} initialTitle={profile.title} initialMobile={profile.phoneE164}
+          email={profile.email} userUpdatedAt={profile.userUpdatedAt.toISOString()}
+          profileUpdatedAt={profile.profileUpdatedAt.toISOString()}/>
       </section>
 
       <section className="rounded-xl border border-border bg-surface p-5">
