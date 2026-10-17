@@ -203,6 +203,7 @@ export function RecruiterLeadsWorkspace({
   const [saving, setSaving] = useState(false);
   const [duplicate, setDuplicate] = useState<Lead | null>(null);
   const [checking, setChecking] = useState(false);
+  const contactCheckSeq=useRef(0);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setPhase("loading");
