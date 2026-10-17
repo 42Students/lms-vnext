@@ -535,7 +535,7 @@ export async function updateCourseQuiz(
         // Serialize deadline checks with quiz attempt inserts and lifecycle writes.
         const [lockedQuiz]=await tx.select().from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
           .for("update").limit(1);
-        if(!lockedQuiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
+        if(!lockedQuiz||lockedQuiz.status==="ARCHIVED")throw new CoursesServiceError("QUIZ_NOT_FOUND");
         if(input.dueAt!==undefined && (
           (lockedQuiz.dueAt?.getTime()??null)!==
            (input.dueAt?new Date(input.dueAt).getTime():null))) {
