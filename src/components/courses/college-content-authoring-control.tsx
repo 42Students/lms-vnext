@@ -24,6 +24,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
+ const [removeLink,setRemoveLink]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
@@ -31,15 +32,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
   setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setError("");setMessage("");
+  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);setError("");setMessage("");
  }
  function fresh(){
   setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");setDeliveryId("");
-  setError("");setMessage("");
+  setError("");setMessage("");setRemoveLink(false);
  }
  async function save(){
   if(busy||!title.trim()||!lessonId||(kind!=="RESOURCE"&&!editing&&!url.trim()))return;
-  if(kind==="RESOURCE"&&!url.trim()&&!notes.trim()){setError("Add resource notes or an HTTPS link.");return;}
+  if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()){setError("Add resource notes or an HTTPS link.");return;}
   setBusy(true);setError("");setMessage("");
   try{
    if(url.trim()){
@@ -74,7 +75,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
-      {title:title.trim(),...(kind==="RESOURCE"?{externalUrl:url.trim()||null}:(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
+      {title:title.trim(),...(kind==="RESOURCE"?(removeLink?{externalUrl:null}:(url.trim()?{externalUrl:url.trim()}:{})):(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
       {lessonId,deliveryId:deliveryId||null,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
        sequence:nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
