@@ -120,4 +120,24 @@ describe("chat-3 Drives round 4",()=>{
   expect(form).toContain("<ConfirmDialog");
   expect(form).not.toContain("window.confirm");
  });
+ it("TPO-drives-46 legacy direct publish notifies eligible users before counting new debarments",()=>{
+  const body=source("src/modules/placements/job-service.ts");
+  const start=body.indexOf("export async function publishPlacementJob");
+  const published=body.slice(start,body.indexOf("export async function closePlacementJob",start));
+  expect(published).toContain("notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id)");
+  expect(published.indexOf("notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id)"))
+   .toBeLessThan(published.indexOf("const localDateParts"));
+  expect(source("src/modules/placements/tpo-drive-publish-effects.ts")).toContain("tx.insert(inAppNotifications)");
+ });
+ it("TPO-drives-R01 direct job publish validates deadline and pay in server path",()=>{
+  const service=source("src/modules/placements/job-service.ts");
+  expect(service).toContain("!current.applicationDeadline||current.applicationDeadline<=new Date()");
+  expect(service).toContain("current.stipendPerMonthInr===null");
+ });
+ it("TPO-drives-51 college administrator has a real separate create flow",()=>{
+  const college=source("src/app/(authenticated)/college/placements/new/page.tsx");
+  expect(college).toContain('hasMembershipRole(\n      context,\n      "COLLEGE_ADMIN"');
+  expect(college).toContain("<PlacementJobCreateWorkspace");
+  expect(college).toContain('basePath="/college/placements"');
+ });
 });
