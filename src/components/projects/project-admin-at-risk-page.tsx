@@ -127,18 +127,14 @@ export async function ProjectAdminAtRiskPage({
                     )}
                   </p>
                 </div>
-                <StatusBadge
-                  tone={
-                    project.riskReasons.length > 1
-                      ? "warning"
-                      : "neutral"
-                  }
-                >
-                  {project.riskReasons.length} signal
-                  {project.riskReasons.length === 1
-                    ? ""
-                    : "s"}
-                </StatusBadge>
+                <div className="flex flex-wrap gap-2">
+                  <StatusBadge tone={project.riskReasons.length>1||project.blockerReason?"warning":"neutral"}>
+                    {project.riskReasons.length>1||project.blockerReason?"Risk":"Watch"}
+                  </StatusBadge>
+                  <StatusBadge tone="neutral">
+                    {project.riskReasons.length} {project.riskReasons.length===1?"reason":"reasons"}
+                  </StatusBadge>
+                </div>
               </div>
               {project.blockerReason ? <div className="mt-3 rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
                 <p className="font-semibold">Active blocker</p>
