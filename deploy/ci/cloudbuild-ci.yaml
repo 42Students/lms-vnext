@@ -20,11 +20,11 @@ steps:
   - id: lint
     name: node:22
     entrypoint: bash
-    args: ["-c", "npx eslint . -f compact 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-LINT-PASS || (echo CI-LINT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+    args: ["-c", "npx eslint . 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-LINT-PASS || (echo CI-LINT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
   - id: unit
     name: node:22
     entrypoint: bash
     env: ["VITE_CONFIG_NATIVE_IGNORE_WARNING=true", "NODE_OPTIONS=--max-old-space-size=5120"]
-    args: ["-c", "node node_modules/vitest/vitest.mjs run --reporter=dot 2>&1 | tail -200; test $${PIPESTATUS[0]} -eq 0 && echo CI-UNIT-PASS || (echo CI-UNIT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+    args: ["-c", "node node_modules/vitest/vitest.mjs run --reporter=dot > /tmp/unit.log 2>&1; code=$$?; sed -e 's/\\x1b\\[[0-9;]*m//g' /tmp/unit.log > /tmp/unit.clean; grep -aE '^ FAIL |Test Files|Tests  ' /tmp/unit.clean | sort -u | head -400; test $$code -eq 0 && echo CI-UNIT-PASS || (echo CI-UNIT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
 substitutions:
   _KEEP_GOING: "1"
