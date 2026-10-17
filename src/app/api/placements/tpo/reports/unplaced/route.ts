@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import {hasMembershipRole} from "@/modules/identity/context";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getPlacementReportDetails} from "@/modules/placements/report-service";
@@ -11,7 +12,7 @@ export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
-  if(!context.membership)return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
+  if(!context.membership||!hasMembershipRole(context,"TPO"))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
   const input=unplacedFilteredExportQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
   const collegeId=context.membership.collegeId;
   const [workspace,students]=await Promise.all([
