@@ -24,6 +24,7 @@ import { LearnerTopbarTools } from "./learner-topbar-tools";
 import {TpoTopbarMessages} from "./tpo-topbar-messages";
 import {HrRecruiterBell} from "@/components/hr/hr-recruiter-bell";
 import { ToastProvider } from "@/components/ui/toast";
+import { TrackerQuickReportLauncher } from "@/components/tracker/tracker-quick-report-launcher";
 import { getLearnerShellAccess } from "@/modules/module-access/learner-shell-access";
 import {getTpoShellVerificationAccess} from "@/modules/verification/tpo-shell-access-service";
 import {
@@ -167,6 +168,7 @@ export async function AppShell({
         </main>
       </div>
     </div>
+      <TrackerQuickReportLauncher />
     </ToastProvider>
   );
 }
