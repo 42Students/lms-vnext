@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api-fetch";
 import {
   createCollegeSemesterSchema,
   updateCollegeSemesterSchema,
@@ -22,18 +23,11 @@ type SemesterRow = {
 };
 
 async function mutate(method: "POST" | "PATCH" | "DELETE", url: string, body: unknown) {
-  const response = await fetch(url, {
+  return apiFetch(url, {
     method,
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
-  const result: unknown = await response.json().catch(() => null);
-  if (!response.ok) {
-    const code = result && typeof result === "object" && "error" in result
-      ? String(result.error) : "REQUEST_FAILED";
-    throw new Error(code);
-  }
-  return result;
 }
 
 export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOption[] }) {
