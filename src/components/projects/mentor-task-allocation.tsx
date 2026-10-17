@@ -120,6 +120,17 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
     </select>
    </label>
+   <label className="text-sm font-semibold">Assignment
+    <select value={assignmentScope}
+      onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">Everyone</option>
+     <option value="UNASSIGNED">Unassigned</option>
+     <option value="ASSIGNED">Assigned</option>
+     {learners.map(member=><option value={member.membershipId} key={member.membershipId}>
+      {member.displayName??"Learner"}</option>)}
+    </select>
+   </label>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
