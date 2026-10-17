@@ -326,3 +326,9 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-calendar-reports-24 DONE source: transactional activity event on follow-up create and move; test written and not executed.
 
 - TPO-calendar-reports-55 DONE source: no empty snapshot on failure, explicit alert and Retry; source test authored.
+
+## Main CI unit-failure inventory (2026-10-17)
+- Fixed test fixture `chat9-tpo-calendar-needs` hours with `padStart` (2099-02-04 09,10,11; not invalid 010/011).
+- Updated `chat9-super-admin-college-create-copy` source expectation from raw fetch to shared safe `apiFetch`; `colleges-domain` slug normalization expectation to lowercase `eec`.
+- Updated tenant-domain service and DB01 positive authorization fixtures to the current superadmin-only policy without weakening negative college/TPO permission tests.
+- `notification-providers` tests now read Headers correctly after outbound transport added `new Headers`; `src/lib/outbound.ts` redacts exception detail before structured provider logging (leaked PII/OTP prevented). Tests not run.
