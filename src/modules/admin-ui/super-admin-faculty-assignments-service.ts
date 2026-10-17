@@ -3,7 +3,7 @@ import {and,asc,count,eq,ilike,or,isNull,isNotNull} from "drizzle-orm";
 import {alias} from "drizzle-orm/pg-core";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
-import {cohorts,colleges,collegeMemberships,courseOfferings,courseSectionDeliveries,courseTeachingAssignments,
+import {academicPeriods,cohorts,colleges,collegeMemberships,courseOfferings,courseSectionDeliveries,courseTeachingAssignments,
  courses,departments,programs,sections,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
@@ -21,6 +21,9 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
   courseName:aliasedColumn(courses.name,"admin_teacher_course_name"),
   courseCode:courses.code,
   sectionName:aliasedColumn(sections.name,"admin_teacher_section_name"),
+  sectionId:sections.id,
+  periodName:academicPeriods.name,
+  periodYear:academicPeriods.startDate,
   deliveryId:aliasedColumn(courseSectionDeliveries.id,"admin_teacher_delivery_id"),
  }).from(courseTeachingAssignments)
  .innerJoin(courseSectionDeliveries,eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
@@ -28,6 +31,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,selected.collegeId)))
  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+ .innerJoin(academicPeriods,and(eq(academicPeriods.id,sections.academicPeriodId),eq(academicPeriods.collegeId,selected.collegeId)))
  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
  .innerJoin(programs,eq(programs.id,cohorts.programId))
  .innerJoin(sectionDepartment,and(eq(sectionDepartment.id,programs.departmentId),eq(sectionDepartment.collegeId,selected.collegeId)))
@@ -39,6 +43,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  .where(and(
   query.status==="ACTIVE"?active:query.status==="ENDED"?
    or(isNotNull(courseTeachingAssignments.endedAt),isNotNull(courseSectionDeliveries.endedAt)):undefined,
+  query.sectionId?eq(sections.id,query.sectionId):undefined,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),ilike(courses.name,scopedSearchLike(query.q)),ilike(sections.name,scopedSearchLike(query.q))):undefined,
  )).as("admin_faculty_assignment_directory");
  const [counts,rows]=await Promise.all([
@@ -51,6 +56,7 @@ export async function listAdminFacultyAssignments(context:RequestContext,raw:unk
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.teacherName||"Unnamed faculty",subtitle:row.courseName+" ("+row.courseCode+")",
   status:row.teachingEnded||row.deliveryEnded?"ENDED":"ACTIVE",
-  details:["Class: "+row.sectionName,"Teaching role: "+row.role,"Started: "+format(row.startedAt)],
+  details:["Class: "+row.sectionName,"Semester: "+row.periodName,"Year: "+row.periodYear.slice(0,4),
+   "Teaching role: "+row.role,"Active: "+(row.teachingEnded||row.deliveryEnded?"No":"Yes"),"Started: "+format(row.startedAt)],
  }))};
 }
