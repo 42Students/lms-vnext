@@ -26,7 +26,7 @@ describe("SA-placements-projects-117 export and Claude report",()=>{
   expect(output).toContain("'@SUM(1,1)");
   expect(output).toContain("'+cmd second line");
   expect(output).toContain("'-1+1");
-  expect(output).toContain('"Reference"') .toBe(false);
+  expect(output).not.toContain('"Reference"');
   expect(output.split("\n")).toHaveLength(3);
   expect(output).toContain('""https://host""');
  });
