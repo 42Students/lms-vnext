@@ -5,7 +5,7 @@ const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("learner vendor assessment deadline source of truth",()=>{
  it("LEARNER-placements-41 never presents a results deadline as a submission cutoff",()=>{
-  const migration=source("docs/proposed-migrations/chat15-round-assessment-submission-deadline.sql");
+  const migration=source("drizzle/0135_lanes_round_3.sql");
   expect(migration).toContain("ADD COLUMN IF NOT EXISTS assessment_due_at timestamptz");
   expect(migration).toContain("CHECK (assessment_due_at IS NULL OR kind IN ('TEST','VENDOR_TEST'))");
   const schema=source("src/db/schema/placements.ts");
@@ -22,7 +22,7 @@ describe("learner vendor assessment deadline source of truth",()=>{
  it("LEARNER-placements-37 and LEARNER-placements-41 expose safe test links with no inferred attempt or attendance",()=>{
   const page=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
   expect(page).toContain(String.raw`row.testUrl&&/^https:\/\//i.test(row.testUrl)`);
-  expect(page).toContain("Open test");
+  expect(page).toContain("Take online assessment");
   expect(page).toContain('rel="noopener noreferrer"');
   expect(page).toContain("not an attendance confirmation or final outcome");
  });
