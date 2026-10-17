@@ -14,12 +14,39 @@ const SHARE_COLUMNS=[
  ["RESUME","Resume link"],["GITHUB","GitHub"],["PORTFOLIO","Portfolio"],["STAGE","Stage"],
 ] as const;
 
-export function CompanyShareControls({jobId,ready,initialLinks,status,linkPage}:{
- jobId:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
+export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,status,linkPage}:{
+ jobId:string;preferenceKey:string;ready:boolean;initialLinks:LinkFact[];status:CompanyShareStatus;linkPage:number;
 }){
  const [links,setLinks]=useState(initialLinks);
  const [asOf] = useState(() => new Date());
- const [days,setDays]=useState(2);
+ // Restore remembered non-sensitive company preference without losing
+ // the newer 14/30/60/90-day share link options.
+ const subscribe=useCallback((notify:()=>void)=>{
+  const changed=(event:StorageEvent)=>{
+   if(event.key===preferenceKey||event.key===null)notify();
+  };
+  window.addEventListener("storage",changed);
+  window.addEventListener("company-share-preference",notify);
+  return ()=>{
+   window.removeEventListener("storage",changed);
+   window.removeEventListener("company-share-preference",notify);
+  };
+ },[preferenceKey]);
+ const snapshot=useCallback(()=>{
+  try{
+   const raw=window.localStorage.getItem(preferenceKey);
+   if(raw!==null&&["14","30","60","90"].includes(raw))return Number(raw);
+   return parseCompanyShareExpiry(raw);
+  }catch{return 2;}
+ },[preferenceKey]);
+ const days=useSyncExternalStore(subscribe,snapshot,()=>2);
+ function changeExpiry(value:string){
+  const safe=["14","30","60","90"].includes(value)
+   ?Number(value):parseCompanyShareExpiry(value);
+  try{window.localStorage.setItem(preferenceKey,String(safe));}
+  catch{/* Storage may be disabled; the action can still proceed. */}
+  window.dispatchEvent(new Event("company-share-preference"));
+ }
  const [selectedColumns,setSelectedColumns]=useState<string[]>(["APPLICATION_ID","NAME","EMAIL"]);
  const [shortlistBy,setShortlistBy]=useState("");
  const [newCode,setNewCode]=useState<string|null>(null);
