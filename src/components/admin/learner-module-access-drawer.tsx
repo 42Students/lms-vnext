@@ -21,8 +21,10 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  const [loading,setLoading]=useState(false);
  const [message,setMessage]=useState("");
  const seq=useRef(0),timeout=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const closeButton=useRef<HTMLButtonElement>(null);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/trace";
  useEffect(()=>()=>{seq.current++;if(timeout.current)clearTimeout(timeout.current);},[]);
+ useEffect(()=>{if(detail)closeButton.current?.focus();},[detail]);
  async function lookup(query:string,memberId?:string){
   const requestId=++seq.current;
   setLoading(true);setMessage("");
@@ -66,16 +68,16 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    </li>)}
   </ul>:null}
   {message?<p role="alert" className="mt-2 text-sm text-error">{message}</p>:null}
-  {detail?<div className="fixed inset-0 z-50 flex justify-end bg-black/50" role="presentation"
-     onMouseDown={event=>{if(event.target===event.currentTarget)close();}}>
+  {detail?<div className="fixed inset-0 z-50 flex justify-end bg-black/50">
+   <button type="button" className="absolute inset-0 cursor-default" aria-label="Close student explanation overlay" onClick={close}/>
    <aside role="dialog" aria-modal="true" aria-label="Student module access explanation"
     onKeyDown={event=>{if(event.key==="Escape")close();}}
-    className="h-full w-full max-w-xl space-y-4 overflow-auto border-l border-border bg-surface p-5 shadow-xl">
+    className="relative h-full w-full max-w-xl space-y-4 overflow-auto border-l border-border bg-surface p-5 shadow-xl">
     <div className="flex items-start justify-between gap-3">
      <div><h3 className="text-lg font-semibold">{detail.displayName||"Unnamed learner"}</h3>
       <p className="text-sm text-body">{detail.rollNumber||"No roll number"}</p>
      </div>
-     <button type="button" autoFocus onClick={close} aria-label="Close student explanation"
+     <button type="button" ref={closeButton} onClick={close} aria-label="Close student explanation"
       className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Close</button>
     </div>
     <section aria-label="Placement participation" className="rounded-md border border-border p-3 text-sm">
