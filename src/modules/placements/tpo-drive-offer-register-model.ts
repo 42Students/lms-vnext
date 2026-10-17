@@ -51,6 +51,7 @@ export function tpoDriveOfferRegisterCsv(
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
   f.offer.kind,f.offer.annualCtcInr,f.candidate.email??null,
+  f.candidate.rollNumber??null,f.candidate.batch??null,f.candidate.branch??null,
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
  ]);
