@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import { apiFetch } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 
 type Option = { id: string; name: string; code?: string };
@@ -55,13 +55,11 @@ type FacultyOption = {
 };
 
 async function postJson(path: string, body: unknown) {
-  const response = await fetch(path, {
+  return apiFetch<unknown>(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!response.ok) throw new Error(await courseApiError(response));
-  return response.json();
 }
 
 function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
