@@ -116,4 +116,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-15 |");
  });
 
+ it("REC-calendar-messages-profile-18 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("getDriveChangeRequests(context,matchingDrive.job.id)");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("Discussion replies: {request.messages.length}");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("message.senderType===\"RECRUITER\"?\"You\"");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-18 |");
+ });
+
 });
