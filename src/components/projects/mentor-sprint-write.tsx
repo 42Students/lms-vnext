@@ -27,7 +27,8 @@ export function MentorSprintCreate({
 
   async function create() {
     if(!title.trim() || title.trim().length>200 || description.length>4000||
-      goal.length>4000||done.length>4000||(startDate&&endDate&&endDate<startDate)) return;
+      goal.length>4000||done.length>4000||!datesValid||!chosenReleaseId||
+      chosenRelease?.status==="SHIPPED") return;
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
