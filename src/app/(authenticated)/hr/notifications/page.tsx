@@ -28,7 +28,7 @@ export default async function HrMessagesPage({searchParams}:{
  }).format(d);
  return <div className="space-y-6">
   <PageHeader eyebrow="Recruiter" title="Notifications"
-   description="In-app drive notifications for your authorized employer and college. Conversations with the placement cell are separate."/>
+   description="In-app drive notifications for your authorized employer and college. Conversations and replies are available under Messages."/>
   <Link href="/hr/conversations" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
    Open recruiter conversations
   </Link>

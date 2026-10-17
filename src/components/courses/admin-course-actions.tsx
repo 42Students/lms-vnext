@@ -494,8 +494,9 @@ export function DeliveryActions({
 }
 
 export function TeachingAssignmentActions({
-  assignment,
+  assignment,legacyCopy=false,
 }: {
+  legacyCopy?:boolean;
   assignment: {
     id: string;
     facultyDisplayName: string;
@@ -520,17 +521,12 @@ export function TeachingAssignmentActions({
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title={
-          "End " +
-          assignment.facultyDisplayName +
-          " teaching assignment?"
-        }
-        description={
-          assignment.courseName +
-          " · " +
-          assignment.sectionName
-        }
-        confirmLabel="End Assignment"
+        title={legacyCopy?"Delete teaching assignment?":
+          "End " + assignment.facultyDisplayName + " teaching assignment?"}
+        description={legacyCopy
+          ?"This removes the faculty from teaching the listed course. History is retained (no hard deletion)."
+          :assignment.courseName + " · " + assignment.sectionName}
+        confirmLabel={legacyCopy?"Remove teaching assignment":"End Assignment"}
         pending={pending}
         onConfirm={() =>
           run(
@@ -540,7 +536,7 @@ export function TeachingAssignmentActions({
                   assignment.id,
                 "DELETE",
               ),
-            "Teaching assignment ended",
+            legacyCopy?"Teaching assignment removed; history retained.":"Teaching assignment ended",
             () => setOpen(false),
           )
         }

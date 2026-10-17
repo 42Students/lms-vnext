@@ -61,7 +61,7 @@ describe("Team asks permission and lifecycle",()=>{
   expect(panel).not.toContain("window.confirm(");
  });
  it("TPO-inbox-team-22 records proposed scoped table/foreign keys, not an unnumbered production migration",()=>{
-  const proposal=src("docs/proposed-migrations/tpo-team-asks.sql");
+  const proposal=src("drizzle/0133_lanes_round_1.sql");
   const schema=src("src/db/schema/tpo-internal.ts");
   expect(proposal).toContain("tpo_team_asks_assignee_college_fk");
   expect(proposal).toContain("tpo_team_asks_dedupe_uq");

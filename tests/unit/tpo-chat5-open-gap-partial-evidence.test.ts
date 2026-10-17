@@ -42,7 +42,20 @@ describe("chat-5 OPEN gap regression baselines",()=>{
   expect(file("src/components/tpo/tpo-bulk-action-panel.tsx")).toContain("acknowledged");
  });
  it("TPO-batches-20 partial baseline — further implementation required",()=>{
-  expect(file("src/app/(authenticated)/tpo/batches/[batchId]/reminder-prep/page.tsx")).toContain("remind");
+  const entry=file("src/app/(authenticated)/tpo/batches/[batchId]/reminder-prep/page.tsx");
+  const ui=file("src/components/tpo/tpo-batch-invitation-control.tsx");
+  const service=file("src/modules/placements/tpo-batch-reminder-service.ts");
+  const route=file("src/app/api/placements/tpo/batches/[batchId]/remind/route.ts");
+  expect(entry).toContain("#batch-reminder");
+  expect(ui).toContain('id="batch-reminder"');
+  expect(ui).toContain('"/remind"');
+  expect(ui).toContain("remindReview");
+  expect(service).toContain("findUnchosenEligibleBatchStudents");
+  expect(service).toContain("tpoBatchReminderDayKey(now)");
+  expect(service).toContain("dedupeKey");
+  expect(service).toContain("inAppNotifications");
+  expect(service).toContain("activityEvents");
+  expect(route).toContain("isSameOriginRequest(request)");
  });
  it("TPO-batches-33 partial baseline — further implementation required",()=>{
   expect(file("src/modules/placements/tpo-batch-workspace-read-service.ts")).toContain("ilike");
