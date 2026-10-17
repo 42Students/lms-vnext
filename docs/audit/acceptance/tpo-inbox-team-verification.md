@@ -298,3 +298,7 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 
 | TPO-inbox-team-31 | PARTIAL — OPEN | People now displays member-scoped OPEN/overdue ask counts from `readTpoTeamAskWorkload`, guarded by persisted placement permission and college scoping; `tests/unit/tpo-team-workload-chat2.test.ts` names this gap. Drive/company/recruiter-lead workload still outstanding. |
 | TPO-inbox-team-32 | PARTIAL — OPEN | Most assigned duties, **Overdue first**, and Name sorts are backed by known student duties and open/overdue asks, with stable member-ID tie breaks. The full legacy five-workload sorting remains open. Named **TPO-inbox-team-32** unit test. |
+
+### TPO-inbox-team-22 / 29 disposable PostgreSQL acceptance
+
+`tests/integration/tpo-team-asks-chat2.test.ts` adds actual PostgreSQL tests named **TPO-inbox-team-22** and **TPO-inbox-team-29**, exercising duplicate-request idempotency, assignee-only completion, stale-transition rejection and recipient-specific in-app events, with dependency-ordered cleanup. It requires the orchestrator to register the proposed asks table before executing the DB10 isolated target. **Not run by builder.**
