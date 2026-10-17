@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
@@ -16,7 +17,8 @@ export default async function TpoOffersExpiryPage({ searchParams }: { searchPara
   const data = await getTpoOfferExpiryWatchlist(context,
     first(query.days) === undefined ? {} : { days: first(query.days) });
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
+      <TpoReportPresentation />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/offers-expiry" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Offers" title="Offer expiry watchlist"
         description="Currently issued offers expiring in an IST calendar-day window. No speculative expiry dates."
