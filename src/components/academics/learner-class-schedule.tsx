@@ -16,6 +16,7 @@ import { learnerScheduleWeekdayExportAvailable } from "@/modules/academics/learn
 import { learnerScheduleDayIcs } from "@/modules/academics/learner-schedule-day-ics-model";
 import { learnerClassSessionNotes } from "@/modules/academics/learner-session-detail-model";
 import {
+  Fragment,
   useEffect,
   useMemo,
   useState,
@@ -150,6 +151,62 @@ function scheduleEventTooltip(event:LearnerScheduleEvent){
     "Location: "+(event.location??"Not specified"),
     "Time: "+timeRange(event),
   ].join("\n");
+}
+
+function learnerEventStartHour(event:LearnerScheduleEvent){
+  const value=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",hour:"2-digit",hourCycle:"h23",
+  }).format(new Date(event.startsAt));
+  return Number(value);
+}
+function learnerHourlySlots(events:readonly LearnerScheduleEvent[]){
+  const starts=events.map(learnerEventStartHour).filter(Number.isFinite);
+  const first=Math.max(0,Math.min(7,...starts));
+  const last=Math.min(23,Math.max(20,...starts));
+  return Array.from({length:last-first+1},(_,index)=>first+index);
+}
+function learnerHourLabel(hour:number){
+  return new Intl.DateTimeFormat("en-IN",{hour:"numeric",hour12:true,
+    timeZone:"Asia/Kolkata"}).format(new Date(Date.UTC(2020,0,1,hour-5,30)));
+}
+function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
+  days:readonly Date[];
+  eventsForDay:(day:Date)=>LearnerScheduleEvent[];
+  courseBasePath:string;
+  onSelectDay:(day:Date)=>void;
+}){
+  const columns=days.map(day=>({day,rows:eventsForDay(day)}));
+  const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
+  return <div className="overflow-x-auto rounded-lg border border-border" aria-label="Hourly class schedule">
+    <div className="grid min-w-max gap-px bg-border"
+      style={{gridTemplateColumns:`5rem repeat(${days.length}, minmax(${days.length===1?280:150}px,1fr))`}}>
+      <div className="bg-surface-subtle px-2 py-3 text-xs font-semibold text-body">ALL DAY</div>
+      {columns.map(col=><div key={localDayKey(col.day)}
+        className="bg-surface-subtle px-2 py-3 text-center text-xs font-semibold text-foreground">
+        {dayHeading(col.day)}
+      </div>)}
+      {hours.map(hour=><Fragment key={hour}>
+        <div className="bg-surface-subtle px-2 py-3 text-right text-xs font-semibold text-muted-foreground">
+          {learnerHourLabel(hour)}
+        </div>
+        {columns.map(col=>{
+          const starts=col.rows.filter(event=>learnerEventStartHour(event)===hour);
+          return <div key={localDayKey(col.day)+":"+hour}
+            className="min-h-16 min-w-0 bg-surface p-1">
+            {starts.length?<div className="space-y-1">
+              {starts.map(event=><EventCard key={event.id} event={event}
+                courseBasePath={courseBasePath} compact/>)}
+            </div>:<button type="button"
+              onClick={()=>onSelectDay(col.day)}
+              aria-label={"See "+dayHeading(col.day)+" at "+learnerHourLabel(hour)}
+              className="min-h-12 w-full rounded-md text-left text-xs text-muted-foreground hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-primary">
+              <span className="sr-only">No class scheduled. Open this day.</span>
+            </button>}
+          </div>;
+        })}
+      </Fragment>)}
+    </div>
+  </div>;
 }
 
 function EventCard({
@@ -704,49 +761,13 @@ export function LearnerClassSchedule({
                   </div>
                 </>
               ) : (
-                <div
-                  className={
-                    view === "week"
-                      ? "grid grid-cols-7 gap-3"
-                      : "grid gap-3"
-                  }
-                >
-                  {days.map((day) => {
-                    const dayEvents =
-                      scheduleEventsForDay(
-                        filteredEvents,
-                        day,
-                      );
+                <LearnerHourlyGrid days={days}
+                  eventsForDay={day=>scheduleEventsForDay(filteredEvents,day)}
+                  courseBasePath={courseBasePath}
+                  onSelectDay={day=>{
+                    setView("day");setAnchor(day);setChosenDay(localDayKey(day));
+                  }}/>
 
-                    return (
-                      <section
-                        key={localDayKey(day)}
-                        className="min-w-0 rounded-lg border border-border bg-surface-subtle p-3"
-                      >
-                        <h3 className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                          {dayHeading(day)}
-                        </h3>
-                        <div className="mt-3 space-y-2">
-                          {dayEvents.length > 0 ? (
-                            dayEvents.map(
-                              (event) => (
-                                <EventCard courseBasePath={courseBasePath}
-                                  key={event.id}
-                                  event={event}
-                                  compact
-                                />
-                              ),
-                            )
-                          ) : (
-                            <p className="m-0 text-xs text-muted-foreground">
-                              No classes
-                            </p>
-                          )}
-                        </div>
-                      </section>
-                    );
-                  })}
-                </div>
               )}
             </div>
 
