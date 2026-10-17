@@ -29,3 +29,8 @@ Real PostgreSQL acceptance names, authored but NOT RUN: `COL-placements-01 persi
 
 | COL-placements-24 | DONE (source authored; browser pending) | `src/app/(authenticated)/college/placements/page.tsx`; `tests/unit/chat6-college-placements-round3-ui.test.ts` → `COL-placements-24 restores placement drives and new drive copy with missing college state` |
 | COL-placements-25 | DONE (source authored; 375px browser pending) | `src/components/placements/college-application-pipeline-controls.tsx`, `src/app/(authenticated)/college/placements/drives/page.tsx`; `tests/unit/chat6-college-placements-round3-ui.test.ts` → `COL-placements-25 renders selectable action-capable mobile application and drive cards` |
+
+## Round 4 — authored, not executed
+
+| COL-placements-20 | DONE (source verified; PostgreSQL/browser pending) | `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`, `src/components/placements/college-interview-appointments.tsx`; `tests/unit/chat6-cross-page-verification-round4.test.ts` → `COL-placements-20 provides drive-scoped interview scheduling, statuses and calendar download` |
+| COL-placements-26 | DONE (source authored; PostgreSQL/browser pending) | `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`, `src/components/placements/college-application-pipeline-controls.tsx`; `tests/unit/chat6-cross-page-verification-round4.test.ts` → `COL-placements-26 exposes a persisted Hired count and Mark Hired action without inferring joining` |
