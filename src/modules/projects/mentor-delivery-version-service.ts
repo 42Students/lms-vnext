@@ -51,6 +51,9 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
     .where(and(inArray(collegeMemberships.id,membershipIds),
       eq(collegeMemberships.collegeId,scope.collegeId))):[];
   const personName=(id:string|null)=>people.find(person=>person.membershipId===id)?.displayName??null;
+  const [reviewer]=row.reviewedByUserId?await getDb().select({
+    name:users.displayName,
+  }).from(users).where(eq(users.id,row.reviewedByUserId)).limit(1):[null];
   const immutableEvents=await getDb().select({
     id:projectDeliveryEvents.id,eventType:projectDeliveryEvents.eventType,
     reason:projectDeliveryEvents.reason,occurredAt:projectDeliveryEvents.occurredAt,
