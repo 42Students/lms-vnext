@@ -24,6 +24,13 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   const items=await tx.select({
    id:tpoInternalThreads.id,topic:tpoInternalThreads.topic,
    createdAt:tpoInternalThreads.createdAt,
+   lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
+     where m.thread_id=placement_tpo_internal_threads.id
+     order by m.created_at desc,m.id desc limit 1)`,
+   searchSnippet:q?sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
+     where m.thread_id=placement_tpo_internal_threads.id
+       and position(lower(${q}) in lower(m.body))>0
+     order by m.created_at desc,m.id desc limit 1)`:sql<string|null>`null`,
   }).from(tpoInternalThreads)
    .where(and(eq(tpoInternalThreads.collegeId,college.id),
     or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
