@@ -5,7 +5,9 @@ import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  approach:string|null;
- priority:string;estimatePoints:number|null;};
+ priority:string;estimatePoints:number|null;
+ description:string|null;approach:string|null;acceptanceCriteria:string|null;
+ dueDate:string|null;blockerReason:string|null;taskType:string|null;};
 type Sprint={id:string;title:string;status:string};
 export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
