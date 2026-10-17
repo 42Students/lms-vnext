@@ -654,94 +654,52 @@ export async function archiveProjectTemplate(
 }
 
 export async function assignProjectTemplateToCollege(
-  context: RequestContext,
-  templateIdInput: string,
-  collegeIdInput: string,
-) {
-  const templateId =
-    projectTemplateIdSchema.parse(templateIdInput);
-  const collegeId =
-    collegeIdSchema.parse(collegeIdInput);
-  const college =
-    await loadProjectCollegeScope(collegeId);
-
-  requirePermission(
-    context,
-    "project-template.assign",
-    {
-      organizationId: college.organizationId,
-      collegeId: college.id,
-    },
-  );
-
-  const template = await loadTemplate(templateId);
-  if (
-    template.status !== "PUBLISHED" ||
-    template.publishedVersion === null
-  ) {
-    throw new ProjectsServiceError(
-      "PROJECT_TEMPLATE_NOT_PUBLISHED",
-    );
-  }
-
-  const version = await loadTemplateVersion(
-    templateId,
-    template.publishedVersion,
-  );
-  const db = getDb();
-  const [existing] = await db
-    .select()
-    .from(projectTemplateCollegeAssignments)
-    .where(
-      and(
-        eq(
-          projectTemplateCollegeAssignments.templateId,
-          templateId,
-        ),
-        eq(
-          projectTemplateCollegeAssignments.collegeId,
-          collegeId,
-        ),
-        isNull(
-          projectTemplateCollegeAssignments.revokedAt,
-        ),
-      ),
-    )
-    .limit(1);
-
-  const now = new Date();
-  if (existing) {
-    const [updated] = await db
-      .update(projectTemplateCollegeAssignments)
-      .set({
-        templateVersionId: version.id,
-        assignedByUserId: context.user.id,
-        assignedAt: now,
-      })
-      .where(
-        eq(
-          projectTemplateCollegeAssignments.id,
-          existing.id,
-        ),
-      )
-      .returning();
-
-    return updated;
-  }
-
-  try {
-    const [created] = await db
-      .insert(projectTemplateCollegeAssignments)
-      .values({
-        templateId,
-        templateVersionId: version.id,
-        collegeId,
-        assignedByUserId: context.user.id,
-      })
-      .returning();
-
-    return created;
-  } catch (error) {
+  context:RequestContext,templateIdInput:string,collegeIdInput:string,
+){
+  const templateId=projectTemplateIdSchema.parse(templateIdInput);
+  const collegeId=collegeIdSchema.parse(collegeIdInput);
+  const college=await loadProjectCollegeScope(collegeId);
+  requirePermission(context,"project-template.assign",{
+    organizationId:college.organizationId,collegeId:college.id,
+  });
+  try{
+    return await getDb().transaction(async tx=>{
+      // Serialize assignment with template publication and archival.
+      const [template]=await tx.select().from(projectTemplates)
+        .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
+      if(!template||template.status!=="PUBLISHED"||template.publishedVersion===null)
+        throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+      const [version]=await tx.select({id:projectTemplateVersions.id})
+        .from(projectTemplateVersions)
+        .where(and(eq(projectTemplateVersions.templateId,templateId),
+          eq(projectTemplateVersions.version,template.publishedVersion))).limit(1);
+      if(!version)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
+      const [existing]=await tx.select().from(projectTemplateCollegeAssignments)
+        .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+          eq(projectTemplateCollegeAssignments.collegeId,collegeId),
+          isNull(projectTemplateCollegeAssignments.revokedAt))).for("update").limit(1);
+      const now=new Date();
+      const [saved]=existing?
+        await tx.update(projectTemplateCollegeAssignments).set({
+          templateVersionId:version.id,assignedByUserId:context.user.id,assignedAt:now,
+        }).where(eq(projectTemplateCollegeAssignments.id,existing.id)).returning():
+        await tx.insert(projectTemplateCollegeAssignments).values({
+          templateId,templateVersionId:version.id,collegeId,assignedByUserId:context.user.id,
+        }).returning();
+      if(!saved)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_CONFLICT");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_ASSIGNED,
+        organizationId:college.organizationId,collegeId:college.id,
+        subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+        summary:existing?"Project template assignment refreshed":"Project template assigned to college",
+        metadata:{assignmentId:saved.id,publishedVersion:template.publishedVersion,
+          previousVersionId:existing?.templateVersionId??null,newVersionId:version.id},
+        groupKey:"template:"+templateId,
+      });
+      return saved;
+    });
+  }catch(error){
+    if(error instanceof ProjectsServiceError)throw error;
     throw mapTemplateConstraint(error);
   }
 }
