@@ -95,4 +95,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-11 |");
  });
 
+ it("REC-calendar-messages-profile-13 independent final-sprint acceptance regression",()=>{
+  expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("document.visibilityState!==\"visible\"");
+  expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("current.closest(\"input,textarea,select,[contenteditable=true]\")");
+  expect(src("src/components/hr/recruiter-conversation-live-refresh.tsx")).toContain("window.setInterval(update,4000)");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-13 |");
+ });
+
 });
