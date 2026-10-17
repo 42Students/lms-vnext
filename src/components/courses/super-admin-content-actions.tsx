@@ -96,7 +96,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
    <button type="button" disabled={busy} onClick={()=>void transition("ARCHIVE")}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">Delete</button>
   </div>
-  {editing?<div className="grid gap-2 rounded border border-border p-3">
+  {editing?<fieldset disabled={busy} className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Title
     <input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>
@@ -121,7 +121,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
    <button type="button" disabled={busy} onClick={()=>void save()}
     className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
     {busy?"Saving…":"Save"}</button>
-  </div>:null}
+  </fieldset>:null}
   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
   {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
  </div>;
