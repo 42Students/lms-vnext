@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -277,6 +278,15 @@ export function PlacementJobCreateForm({
           }
         }
       }
+      const importantDates=parseLegacyPairs(String(data.get("importantDates")??""),"date")
+       .map(entry=>({label:entry.label,at:driveDeadlineIstToIso(entry.value)}));
+      const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
+      const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
+      const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
+      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<Date.parse(deadlineIso)))
+       throw new Error("Assessment deadline must be after application deadline.");
+      const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
+      const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
       const years = splitList(String(data.get("passingYears") ?? ""));
       if (years.some((year) => !/^\d{4}$/.test(year))) {
         throw new Error("Passing years must contain four-digit years separated by commas.");
@@ -376,6 +386,18 @@ export function PlacementJobCreateForm({
           description: String(
             data.get("description") ?? "",
           ).trim(),
+          legacyPostingDetails:{
+            responsibilities:String(data.get("responsibilities")??"").trim(),
+            assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null,
+            assessmentDeadline,importantDates,customEligibilityRules,
+            candidatePreferences:{
+              preferredDegree:String(data.get("preferredDegree")??"").trim(),
+              specialization:String(data.get("preferredSpecialization")??"").trim(),
+              graduationYear:graduationYearRaw?Number(graduationYearRaw):null,
+              minGpa:gpaRaw?Number(gpaRaw):null,
+              city:String(data.get("preferredCity")??"").trim(),
+            },
+          },
           employmentType: String(
             data.get("employmentType") ??
               "FULL_TIME",
@@ -948,6 +970,47 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
+      <section className="rounded-xl border border-border bg-surface">
+        <div className="border-b border-border px-5 py-4">
+          <h2 className="text-base font-semibold">Additional job details</h2>
+          <p className="mt-1 text-sm text-body">Responsibilities, dates and preferences are informational. Only the eligibility policy below governs learner eligibility.</p>
+        </div>
+        <div className="grid gap-4 p-5 sm:grid-cols-2">
+          <label className="grid gap-1 text-sm font-semibold sm:col-span-2">Responsibilities
+            <textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Assessment URL
+            <input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Assessment deadline (IST)
+            <input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
+            Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
+            <textarea name="importantDates" rows={3} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Preferred degree
+            <input name="preferredDegree" maxLength={160} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Specialization
+            <input name="preferredSpecialization" maxLength={160} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Graduation year
+            <input name="preferredGraduationYear" type="number" min={1990} max={2050} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Minimum GPA (informational)
+            <input name="preferredMinimumGpa" type="number" min={0} max={10} step="0.01" className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold">Preferred city
+            <input name="preferredCity" maxLength={160} className={inputClass}/>
+          </label>
+          <label className="grid gap-1 text-sm font-semibold sm:col-span-2">
+            Custom eligibility rules (up to 20; one Label | Value per line; informational)
+            <textarea name="customEligibilityRules" rows={3} className={inputClass}/>
+          </label>
+          <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
+        </div>
+      </section>
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="m-0 text-base font-semibold text-foreground">
