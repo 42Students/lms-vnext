@@ -141,7 +141,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-01 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-placements-04 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-placements-02 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
-| COL-placements-03 | S2 | MISSING-ACTION | UNCONFIRMED |
+| COL-placements-03 | S2 | MISSING-ACTION | OPEN |
 | COL-placements-05 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-placements-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-placements-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -155,7 +155,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-20 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-placements-07 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-placements-11 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-placements-15 | S3 | MISSING-ACTION | UNCONFIRMED |
+| COL-placements-15 | S3 | MISSING-ACTION | OPEN |
 | COL-placements-16 | S3 | COPY | DONE |
 | COL-placements-18 | S3 | PERMISSION | FIXED-ON-MAIN |
 | COL-placements-21 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
