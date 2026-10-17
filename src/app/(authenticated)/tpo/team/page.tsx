@@ -26,7 +26,8 @@ export default async function TpoTeamPage({searchParams}:{
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
  const people=sortTpoPeople(team.members,peopleSort);
- const conversations=tab==="conversations"?await listMyTpoInternalThreads(context):null;
+ const search=parsed.success?(parsed.data.q??""):"";
+ const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search):null;
  return <div className="space-y-6">
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
    description="People are taken from active college memberships and recorded coordinator assignments, not employer conversations." />
