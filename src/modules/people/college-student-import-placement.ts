@@ -6,10 +6,10 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 
 export async function placeImportedLearnerInSection(context: RequestContext, enrollmentId: string, sectionId: string) {
-  const member = context.membership;
-  if (!member || member.status !== "ACTIVE") throw Error("COLLEGE_MEMBERSHIP_REQUIRED");
+  const member = await resolveActingCollege(context,"academics.manage");
   requirePermission(context, "academics.manage", {collegeId: member.collegeId, organizationId: member.organizationId});
   return getDb().transaction(async tx => {
     const [target] = await tx.select({
