@@ -69,11 +69,11 @@ describe("chat-11 delegated College Admin decisions",()=>{
   expect(workspace).toContain('<PlacementOfferControls');
  });
  it("COL-placements-15 lists archived companies and restores only a selected college relationship",()=>{
-  const parsed=parseCollegeCompaniesQuery({status:"ARCHIVED",page:"2"});
+  const parsed=parseCollegeCompaniesQuery({showDeleted:"1",page:"2"});
   expect(parsed.success).toBe(true);
   if(!parsed.success)return;
-  expect(collegeCompaniesHref(parsed.data)).toContain("status=ARCHIVED");
-  expect(parseCollegeCompaniesQuery({status:"DELETED"}).success).toBe(false);
+  expect(collegeCompaniesHref(parsed.data)).toContain("showDeleted=1");
+  expect(parseCollegeCompaniesQuery({showDeleted:"DELETED"}).success).toBe(false);
   const service=src("src/modules/placements/company-service.ts");
   const directory=src("src/modules/placements/college-company-directory-service.ts");
   const restore=src("src/app/api/placements/companies/[relationshipId]/restore/route.ts");
