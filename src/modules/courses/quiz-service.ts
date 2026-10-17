@@ -557,6 +557,10 @@ export async function updateCourseQuiz(
           (input.shuffleQuestions!==undefined&&input.shuffleQuestions!==lockedQuiz.shuffleQuestions)||
           (input.shuffleOptions!==undefined&&input.shuffleOptions!==lockedQuiz.shuffleOptions)
         ))throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        if(input.maxAttempts!==undefined&&liveAttempts>0&&input.maxAttempts!==lockedQuiz.maxAttempts)
+          throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
+        if(input.maxAttempts!==undefined&&input.maxAttempts<(liveAttemptStats?.maxAttempt??0))
+          throw new CoursesServiceError("QUIZ_MAX_ATTEMPTS_REACHED");
         if (input.questions) {
           const questionRows = await tx
             .select({ id: quizQuestions.id })
