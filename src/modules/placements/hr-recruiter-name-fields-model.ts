@@ -19,3 +19,10 @@ export function joinHrRecruiterName(firstName:string,lastName:string){
  const data=hrRecruiterNameFieldsSchema.parse({firstName,lastName});
  return [data.firstName,data.lastName].filter(Boolean).join(" ");
 }
+
+/** Compare the identity name row's optimistic timestamp at persisted millisecond precision. */
+export function sameHrNameVersion(actual:Date,expected:string):boolean{
+ const value=Date.parse(expected);
+ return Number.isFinite(value)&&Number.isFinite(actual.getTime())&&
+  Math.trunc(actual.getTime())===Math.trunc(value);
+}
