@@ -17,7 +17,7 @@ import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placeme
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];noticeSuccess?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -52,6 +52,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
     "What you tell your students, to whom, and who has read it. They read it under Placements."}/>
+  {first(raw.noticeSuccess)==="DELETED"?<p role="status" className="rounded-md border border-border bg-surface p-4 text-sm">Deleted. Its notices were taken back.</p>:null}
   {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
   {result.status==="READY" && tab.data==="yours"?<TpoNoticeComposerDialog><section className="space-y-4">
