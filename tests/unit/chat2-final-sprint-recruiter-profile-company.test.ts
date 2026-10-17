@@ -69,4 +69,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(ui).toContain('<input type="email" readOnly value={invite.contactEmail??""}');
   expect(ui).toContain('{"From your invitation. You\'ll sign in with it."}');
  });
+ it("REC-calendar-messages-profile-26 independent final-sprint acceptance regression",()=>{
+  expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("[\"firstName\",\"First name\"]");
+  expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("[\"lastName\",\"Last name\"]");
+  expect(src("src/components/hr/recruiter-profile-details-editor.tsx")).toContain("maxLength={key===\"phone\"?14:key===\"title\"?160:100}");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-26 |");
+ });
+
 });
