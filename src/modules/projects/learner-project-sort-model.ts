@@ -4,8 +4,8 @@ type Row={project:{id:string;title:string;status:string;updatedAt:Date}};
 
 /** Legacy lists numbered teams naturally, so Team 2 sorts before Team 10. */
 export function compareNumberedTeamProjects(left:string,right:string):number {
- const l=/\\bteam\\s+(\\d+)\\b/i.exec(left);
- const r=/\\bteam\\s+(\\d+)\\b/i.exec(right);
+ const l=/\bteam\s+(\d+)\b/i.exec(left);
+ const r=/\bteam\s+(\d+)\b/i.exec(right);
  if(!l||!r)return 0;
  const n=Number(l[1])-Number(r[1]);
  return n||left.localeCompare(right,undefined,{numeric:true,sensitivity:"base"});
