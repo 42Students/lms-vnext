@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
@@ -41,6 +42,7 @@ export default async function CollegeDepartmentsPage() {
         title="Departments"
         description="Create, find, export and manage the departments in your college."
       />
+      <Link href="/college/academics" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Academic periods and sections →</Link>
       <DepartmentCreateForm collegeId={membership.collegeId} />
       <DepartmentDirectory rows={rows} />
     </div>
