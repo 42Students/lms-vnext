@@ -152,7 +152,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-14 | S2 | MISSING-ACTION | OPEN |
 | COL-placements-17 | S2 | MISSING-TAB | DONE |
 | COL-placements-19 | S2 | MISSING-FILTER | DONE |
-| COL-placements-20 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| COL-placements-20 | S2 | MISSING-COLUMN | DONE |
 | COL-placements-07 | S3 | MISSING-COLUMN | DONE |
 | COL-placements-11 | S3 | MISSING-FIELD | DONE |
 | COL-placements-15 | S3 | MISSING-ACTION | OPEN |
