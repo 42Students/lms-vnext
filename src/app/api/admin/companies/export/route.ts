@@ -11,13 +11,20 @@ export async function GET(request:Request){
   for(const [key,value] of params){if(Object.hasOwn(input,key))return Response.json({error:"INVALID_REQUEST"},{status:400});input[key]=value;}
   if(input.collegeId==="")delete input.collegeId;
   const query=adminCompaniesQuerySchema.parse(input);
-  const data=await listSuperAdminCompanyDirectory(await getCurrentRequestContext(),query);
-  return new Response(superAdminCompanyCsv(data.rows),{headers:{
+  const context=await getCurrentRequestContext();
+  const page=await listSuperAdminCompanyDirectory(context,{...query,page:1});
+  const cap=2000;
+  const pages=Math.min(40,Math.ceil(page.total/50));
+  const extra=await Promise.all(Array.from({length:Math.max(0,pages-1)},(_,index)=>listSuperAdminCompanyDirectory(context,{...query,page:index+2})));
+  const rows=[...page.rows,...extra.flatMap(part=>part.rows)].slice(0,cap);
+  return new Response(superAdminCompanyCsv(rows),{headers:{
    "content-type":"text/csv; charset=utf-8",
-   "content-disposition":'attachment; filename="super-admin-company-page.csv"',
+   "content-disposition":'attachment; filename="companies.csv"',
    "cache-control":"no-store",
-   "x-export-row-count":String(data.rows.length),
-   "x-export-total-matches":String(data.total),
+   "x-export-row-count":String(rows.length),
+   "x-export-total-matches":String(page.total),
+   "x-export-truncated":String(page.total>cap),
+   "x-content-type-options":"nosniff",
   }});
  }catch(error){return apiErrorResponse(error);}
 }
