@@ -39,6 +39,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { PlacementsServiceError } from "./errors";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import {learnerPlacementRoundDeadlineAvailable} from "./learner-assessment-deadline-readiness";
+import {learnerRoundConfirmationReady} from "./learner-round-confirmation-readiness";
 import { requirePlacementManageScope } from "./scope";
 import {
   createPlacementRequestInputSchema,
@@ -1229,7 +1230,9 @@ export async function getLearnerPlacementRequestWorkspace(
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
   const db = getDb();
-  const deadlineAvailable=await learnerPlacementRoundDeadlineAvailable();
+  const [deadlineAvailable,confirmationReady]=await Promise.all([
+    learnerPlacementRoundDeadlineAvailable(),learnerRoundConfirmationReady(),
+  ]);
 
   const [requests, rounds, offers] =
     await Promise.all([
@@ -1245,6 +1248,11 @@ export async function getLearnerPlacementRequestWorkspace(
             where cs.application_id = ${placementApplications.id}
               and cs.round_id = ${placementJobRounds.id}
               and cs.status = 'BOOKED')`,
+          learnerConfirmedAt:confirmationReady?
+            sql<Date|null>`(SELECT cs.learner_confirmed_at FROM placement_round_candidate_slots cs
+              WHERE cs.application_id=${placementApplications.id}
+                AND cs.round_id=${placementJobRounds.id} AND cs.status='BOOKED' LIMIT 1)`:
+            sql<Date|null>`null`,
           roundId: placementJobRounds.id,
           roundName: placementJobRounds.name,
           roundKind: placementJobRounds.kind,

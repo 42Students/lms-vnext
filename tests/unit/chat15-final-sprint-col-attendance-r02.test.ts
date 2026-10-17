@@ -63,6 +63,19 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
   expect(editor).toContain("Retry queued guardian SMS (up to 25)");
   expect(editor).toContain("Accepted is not proof of handset delivery.");
  });
+ it("COL-attendance-R02 accepts guardian opt-out immediately, audits it, and drops pending unsent messages",()=>{
+  const service=source("src/modules/attendance/parent-sms-service.ts");
+  const route=source("src/app/api/attendance/admin/parent-contacts/route.ts");
+  const ui=source("src/components/attendance/admin-attendance-parent-contact-editor.tsx");
+  expect(service).toContain("revokeAttendanceParentContact(ctx:RequestContext");
+  expect(service).toContain("eq(attendanceParentContacts.smsOptIn,true)");
+  expect(service).toContain('eq(attendanceParentSmsOutbox.status,"QUEUED")');
+  expect(service).toContain('eventType:"ATTENDANCE_PARENT_SMS_CONSENT_REVOKED"');
+  expect(service).toContain('eventType:"ATTENDANCE_PARENT_SMS_CONSENT_UPDATED"');
+  expect(route).toContain("export async function DELETE(request:Request)");
+  expect(route).toContain("isSameOriginRequest(request)");
+  expect(ui).toContain("Disable guardian SMS for selected learner");
+ });
  it("COL-attendance-R02 exposes only College Admin same-origin verified-contact registration, never learner alternate phone",()=>{
   const api=source("src/app/api/attendance/admin/parent-contacts/route.ts");
   const ui=source("src/components/attendance/admin-attendance-parent-contact-editor.tsx");

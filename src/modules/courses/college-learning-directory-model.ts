@@ -162,6 +162,9 @@ export function collegeLearningPageCount(total: number,pageSize=COLLEGE_LEARNING
 export type CollegeLessonRecord = {
   id: string;
   name: string;
+  // Preserve the fields selected by listCollegeLessons for lesson authoring.
+  description: string | null;
+  learningPathId: string;
   sequence: number;
   status: "ACTIVE" | "ARCHIVED";
   visibleToStudents: boolean;
