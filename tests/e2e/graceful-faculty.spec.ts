@@ -9,7 +9,7 @@ test.describe("GR-80 Faculty authoring gracefully survives failed saves", () => 
 
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 Faculty assignment authoring ${kind} retains draft`, async ({ page, context }) => {
       test.setTimeout(45_000);

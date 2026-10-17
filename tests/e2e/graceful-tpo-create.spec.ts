@@ -4,7 +4,7 @@ import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } f
 
 const kinds: FailureKind[] = [
   "backend-down", "html-502", "json-500", "forbidden",
-  "missing-record", "conflict", "rate-limit", "slow", "session-expired",
+  "missing-record", "conflict", "rate-limit", "maintenance", "slow", "session-expired",
 ];
 
 test.describe("GR-80 TPO recruiter creation drafts", () => {

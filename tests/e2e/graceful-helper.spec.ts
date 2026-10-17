@@ -40,7 +40,7 @@ test("GR-81 rejects SQL detail, network codes, framework and numerical status te
 test("GR-02 GR-81 copy table covers every browser failure injection", () => {
   expect(Object.keys(GR02_TEXT).sort()).toEqual([
     "backend-down", "html-502", "json-500", "forbidden", "missing-record",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ].sort());
   for (const copy of Object.values(GR02_TEXT)) {
     expect(copy).toMatch(/[.!]$/);

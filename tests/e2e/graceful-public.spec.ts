@@ -4,7 +4,7 @@ import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failAp
 test.describe("GR-80 public sign-in failure matrix", () => {
   const cases: FailureKind[] = [
     "backend-down", "html-502", "json-500", "forbidden",
-    "missing-record", "conflict", "rate-limit", "slow", "session-expired",
+    "missing-record", "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ];
 
   for (const kind of cases) {

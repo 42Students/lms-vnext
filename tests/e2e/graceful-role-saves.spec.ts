@@ -34,7 +34,7 @@ for (const action of actions) {
     test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
       "Requires the existing seeded E2E identities and development harness");
 
-    for (const kind of ["backend-down", "html-502", "json-500", "forbidden", "conflict", "rate-limit", "slow", "session-expired"] as FailureKind[]) {
+    for (const kind of ["backend-down", "html-502", "json-500", "forbidden", "conflict", "rate-limit", "maintenance", "slow", "session-expired"] as FailureKind[]) {
       test(`GR-80 ${action.role} ${kind} protects unsaved input`, async ({ page, context }) => {
         test.setTimeout(35_000);
         await authenticateGracefulRole(context, action.role);

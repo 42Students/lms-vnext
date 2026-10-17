@@ -8,7 +8,7 @@ test.describe("GR-80 College Admin person onboarding failure recovery", () => {
 
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "missing-record", "conflict", "rate-limit", "slow", "session-expired",
+    "missing-record", "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 College Admin person onboarding ${kind} keeps all edits`, async ({ page, context }) => {
       test.setTimeout(35_000);
