@@ -2,6 +2,7 @@
 
 import {useRef,useState,type FormEvent} from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {acceptAttributeFor,formatFileSize,isSafeSignedUrl,limitsSummary} from "@/modules/storage/ui-models";
 import {
   fileStatusDescriptor,projectFileUsable,projectResourceFileDeclaration,
@@ -65,6 +66,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   const [editTitle,setEditTitle]=useState("");
   const [editDescription,setEditDescription]=useState("");
   const xhrRef=useRef<XMLHttpRequest|null>(null);
+  const editingFile=files.find(file=>file.id===editing);
+  const dirty=Boolean(selected||uploadTitle.trim()||uploadDescription.trim()||linkedResourceId)||
+    Boolean(editingFile&&(editTitle!==editingFile.title||editDescription!==(editingFile.description??"")));
+  function discardDraft(){
+    setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
+    setEditing(null);setEditTitle("");setEditDescription("");
+  }
+  const discardGuard=useProjectEditorDiscardGuard(true,dirty,busy,discardDraft);
   const endpoint="/api/projects/"+encodeURIComponent(projectId)+"/resource-files";
   const fileEndpoint=(fileId:string)=>endpoint+"/"+encodeURIComponent(fileId);
   async function refresh(){
@@ -249,7 +258,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
             <div className="flex gap-2 sm:col-span-2">
               <button type="submit" disabled={busy||!editTitle.trim()}
                 className="rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Update resource</button>
-              <button type="button" disabled={busy} onClick={()=>setEditing(null)}
+              <button type="button" disabled={busy} onClick={discardGuard.requestClose}
                 className="rounded border border-border px-3 py-2 text-sm">Cancel</button>
             </div>
           </form>}
@@ -257,6 +266,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       })}
     </ul>}
     {feedback&&<p role="status" className="text-sm text-body">{feedback}</p>}
+    <ConfirmDialog open={discardGuard.discardOpen} onOpenChange={discardGuard.setDiscardOpen}
+      title="Discard resource changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy} onConfirm={discardGuard.confirmDiscard}/>
     <ConfirmDialog open={deleteTarget!==null} onOpenChange={open=>{if(!open&&!busy)setDeleteTarget(null);}}
       title={deleteTarget?`Delete "${deleteTarget.title}"?`:"Delete resource?"}
       description="This permanently removes the resource for everyone on the project."
