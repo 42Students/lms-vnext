@@ -97,4 +97,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-32 |");
  });
 
+ it("REC-calendar-messages-profile-33 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Linked by the placement cell");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("One company for everyone at it.");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).not.toContain(">Trusted relationship<");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-33 |");
+ });
+
 });
