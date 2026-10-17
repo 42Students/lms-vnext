@@ -1,4 +1,5 @@
 import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {tpoHiddenProfileMatchesSearch} from "./tpo-hidden-profile-search";
 import {readTpoAfterCollegeMatches} from "./tpo-after-college-filter-service";
 import {readTpoStudentVerificationFacts,studentVerificationFact} from "./tpo-student-verification-facts";
 import {
@@ -879,6 +880,7 @@ export async function getTpoStudentsIntelligence(
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationOpen:learner.batchInvitedAt!==null,
       profileDocument:learner.profileDocument,
+      hiddenSearchMatched:tpoHiddenProfileMatchesSearch(learner.profileDocument,input.search??""),
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,

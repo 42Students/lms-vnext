@@ -53,6 +53,7 @@ export type TpoStudentSource = {
   registrationOpen?:boolean|null;
   registrationChoice: string | null;
   profileDocument?:unknown;
+  hiddenSearchMatched?:boolean;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
     cgpaHundredths: number | null;
@@ -96,6 +97,7 @@ export type TpoStudentRow = {
   registeredForPlacements: boolean;
   debarred?:boolean|null;
   profileFacts?:TpoStudentProfileFacts;
+  hiddenSearchMatched?:boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
@@ -348,6 +350,7 @@ export function deriveTpoStudent(
     journeyState,
     bestSoFar,
     profileFacts:tpoStudentProfileFacts(source.profileDocument),
+    hiddenSearchMatched:source.hiddenSearchMatched??false,
     bestDriveResults:[...source.appliedResults]
       .sort((a,b)=>b.sequence-a.sequence||a.applicationId.localeCompare(b.applicationId))
       .slice(0,20).map(result=>{
@@ -518,6 +521,7 @@ export function filterTpoStudentRoster(
     .filter((row) => {
       if (!search) return true;
 
+      if(row.hiddenSearchMatched)return true;
       return [
         row.displayName,
         row.email,
@@ -525,6 +529,17 @@ export function filterTpoStudentRoster(
         row.registrationNumber,
         row.branchName,
         row.cohortName,
+        row.programName,
+        row.bestCompany,
+        row.bestSoFar,
+        row.journeyState,
+        row.participationStatus,
+        row.profileFacts?.gender,
+        row.cgpa?.toString(),
+        row.activeBacklogs?.toString(),
+        row.pastBacklogs?.toString(),
+        row.offersAwaitingAnswer.toString(),
+        row.applicationCount.toString(),
       ].some((value) =>
         value
           ?.toLocaleLowerCase("en-IN")
