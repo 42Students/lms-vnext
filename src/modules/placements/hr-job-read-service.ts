@@ -1,12 +1,12 @@
 import "server-only";
-import { and, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, exists, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
+  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, placementJobRounds,placementRoundResults,users,
   learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
-import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
+import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
 export async function getHrJobRead(context: RequestContext, rawJobId: string, rawFilters: unknown) {
   const filters = hrApplicantFilterSchema.parse(rawFilters);
@@ -35,9 +35,33 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const shareUg=Boolean(share?.columns?.includes("cgpa"));
   const shareTenth=Boolean(share?.columns?.includes("tenth"));
   const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
-  const stageCondition=filters.stage === "ALL"
-    ? where
-    : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
+  // REC-home-drives-45: milestone predicates evaluate only inside the same
+  // college-scoped, TPO-shortlisted audience. Stage counts may overlap.
+  const roundMilestone=(kinds:readonly string[],outcome:"PASS"|"FAIL")=>exists(
+   db.select({id:placementRoundResults.id}).from(placementRoundResults)
+    .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
+    .where(and(eq(placementRoundResults.applicationId,placementApplications.id),
+     eq(placementJobRounds.jobId,workspace.job.id),
+     eq(placementRoundResults.status,"APPLIED"),
+     eq(placementRoundResults.outcome,outcome),
+     inArray(placementJobRounds.kind,[...kinds]))));
+  const hasIssuedOffer=exists(db.select({id:placementOffers.id}).from(placementOffers)
+    .where(eq(placementOffers.applicationId,placementApplications.id)));
+  const hasJoinedOffer=exists(db.select({id:placementJoiningOutcomes.offerId})
+    .from(placementJoiningOutcomes)
+    .innerJoin(placementOffers,eq(placementOffers.id,placementJoiningOutcomes.offerId))
+    .where(and(eq(placementOffers.applicationId,placementApplications.id),
+     eq(placementJoiningOutcomes.status,"JOINED"))));
+  const stageConditions:Record<Exclude<HrApplicantStage,"ALL">,ReturnType<typeof eq>|ReturnType<typeof exists>>={
+   APPLIED:eq(placementApplications.status,"SUBMITTED"),
+   SHORTLISTED:eq(placementApplications.status,"SUBMITTED"),
+   ASSESSMENT:roundMilestone(["TEST","VENDOR_TEST","GD"],"PASS"),
+   INTERVIEW:roundMilestone(["INTERVIEW"],"PASS"),
+   OFFERED:hasIssuedOffer,HIRED:hasJoinedOffer,
+   REJECTED:roundMilestone(["TEST","VENDOR_TEST","GD","INTERVIEW"],"FAIL"),
+   WITHDRAWN:eq(placementApplications.status,"WITHDRAWN"),
+  };
+  const stageCondition=and(where,filters.stage==="ALL"?undefined:stageConditions[filters.stage]);
   const selectionOnly=["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState);
   const offerCondition=filters.offerState === "ALL"
     ? where
@@ -48,6 +72,11 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       total: sql<number>`count(*)::integer`,
       active: sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED')::integer`,
       withdrawn: sql<number>`count(*) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`,
+      assessment:sql<number>`count(*) filter (where ${stageConditions.ASSESSMENT})::integer`,
+      interview:sql<number>`count(*) filter (where ${stageConditions.INTERVIEW})::integer`,
+      offered:sql<number>`count(*) filter (where ${stageConditions.OFFERED})::integer`,
+      hired:sql<number>`count(*) filter (where ${stageConditions.HIRED})::integer`,
+      rejected:sql<number>`count(*) filter (where ${stageConditions.REJECTED})::integer`,
     }).from(placementApplications)
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
@@ -166,6 +195,13 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     shortlisted: Number(totals?.active ?? 0),
     withdrawn: Number(totals?.withdrawn ?? 0),
   };
+  const stageCounts:Record<HrApplicantStage,number>={
+   ALL:applicantCounts.all,APPLIED:applicantCounts.shortlisted,
+   SHORTLISTED:applicantCounts.shortlisted,
+   ASSESSMENT:Number(totals?.assessment??0),INTERVIEW:Number(totals?.interview??0),
+   OFFERED:Number(totals?.offered??0),HIRED:Number(totals?.hired??0),
+   REJECTED:Number(totals?.rejected??0),WITHDRAWN:applicantCounts.withdrawn,
+  };
   // REC-home-drives-38: read only already-verified academic marks for
   // this authorized 25-row page. Raw learner JSON is never sent to employers.
   type AcademicLevel="UG"|"10TH"|"12TH"|"DIPLOMA";
@@ -224,10 +260,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
         percentage(marks?.["12TH"]??marks?.DIPLOMA):null,
     };
   }), filters.stage);
-  const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
-    : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
+  const selectedTotal = stageCounts[filters.stage];
   return {
-    workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal,
+    workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal, stageCounts,
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
     applicantsTruncated: false,
