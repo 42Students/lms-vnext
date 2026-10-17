@@ -782,7 +782,7 @@ export function RecruiterLeadsWorkspace({
                 {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
               </div>
               <RecruiterSavedViewControls columns={visibleColumns}/>
-              {selectedIds.length?<button type="button" className={buttonStyle}
+              {visible.some(row=>selectedIds.includes(row.id))?<button type="button" className={buttonStyle}
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).slice(0,100).map(row=>row.id).join(",")))}>
                 Send an email to selected ({Math.min(visible.filter(row=>selectedIds.includes(row.id)).length,100)})
               </button>:null}
