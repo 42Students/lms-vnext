@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Tabs } from "@/components/ui/tabs";
 
 const tabs = [
   { key: "overview", label: "Overview" },
@@ -13,45 +13,13 @@ const tabs = [
   { key: "activity", label: "Activity" },
 ] as const;
 
-export function MentorProjectTabs({
-  projectId,
-}: {
-  projectId: string;
-}) {
+export function MentorProjectTabs({ projectId }: { projectId: string }) {
   const searchParams = useSearchParams();
-  const active =
-    searchParams.get("tab") === "tasks" ? "board" : searchParams.get("tab") === "meetings" ? "team" : searchParams.get("tab") ?? "overview";
-
-  return (
-    <nav
-      aria-label="Project sections"
-      className="overflow-x-auto border-b border-border"
-    >
-      <div className="flex min-w-max gap-1">
-        {tabs.map((tab) => (
-          <Link
-            key={tab.key}
-            href={
-              "/mentor/projects/" +
-              encodeURIComponent(projectId) +
-              "?tab=" +
-              tab.key
-            }
-            aria-current={
-              active === tab.key
-                ? "page"
-                : undefined
-            }
-            className={
-              active === tab.key
-                ? "border-b-2 border-primary px-4 py-3 text-sm font-semibold text-primary-text"
-                : "border-b-2 border-transparent px-4 py-3 text-sm font-semibold text-body hover:text-primary-text"
-            }
-          >
-            {tab.label}
-          </Link>
-        ))}
-      </div>
-    </nav>
-  );
+  const requested = searchParams.get("tab");
+  const active = requested === "tasks" ? "board" : requested === "meetings" ? "team" :
+    tabs.some(item => item.key === requested) ? requested ?? "overview" : "overview";
+  const base = "/mentor/projects/" + encodeURIComponent(projectId);
+  return <Tabs ariaLabel="Project sections" value={active} onValueChange={() => {}}
+    items={tabs.map(tab => ({ value: tab.key, label: tab.label, href: base + "?tab=" + tab.key }))}
+    renderPanel={false}/>;
 }
