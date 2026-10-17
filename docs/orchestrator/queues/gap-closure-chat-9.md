@@ -317,3 +317,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-calendar-reports-11 DONE source-level: multi-select calendar chips, independent Talks and Rounds, backward-compatible single-kind URLs. Test authored, not run.
 
 - COL-projects-15 OPEN: Team tab has validated preselected bulk-reassignment deep link; full per-member legacy roster actions remain unverified.
+
+- COL-projects-18 OPEN: project Audit now filters resource events by Added/Edited/Saved/Removed and searches text, with persisted event-type model; exact Saved event origin unverified.
