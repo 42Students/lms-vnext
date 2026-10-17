@@ -881,6 +881,10 @@ export function ProjectWorkspace({
                                     {task.description}
                                   </p>
                                 ) : null}
+                                {task.approach ? <section className="mt-2 text-xs text-body">
+                                  <h4 className="font-semibold">Approach</h4>
+                                  <p className="whitespace-pre-wrap break-words">{task.approach}</p>
+                                </section>:null}
                                 {showMentorTaskCriteria(mode,task.acceptanceCriteria) ? (
                                   <details className="mt-2 rounded-lg border border-border bg-surface-subtle px-3 py-2">
                                     <summary className="min-h-9 cursor-pointer py-1 text-xs font-semibold text-primary-text">
