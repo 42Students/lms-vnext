@@ -2,7 +2,8 @@
 import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 type Draft={id:string;title:string;description:string;updatedAt:string;
- locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null};
+ locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
+ fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean};
 function optionalNumber(v:FormDataEntryValue|null){const s=String(v??"").trim();return s===""?null:Number(s);}
 export function TpoDriveEditForm({job}:{job:Draft}){
  const router=useRouter();const [pending,setPending]=useState(false);const [error,setError]=useState<string|null>(null);
@@ -21,6 +22,10 @@ export function TpoDriveEditForm({job}:{job:Draft}){
      openings:optionalNumber(fields.get("openings")),
      minimumAnnualCtcInr:optionalNumber(fields.get("minimumAnnualCtcInr")),
      maximumAnnualCtcInr:optionalNumber(fields.get("maximumAnnualCtcInr")),
+     fixedCtcLpa:optionalNumber(fields.get("fixedCtcLpa")),
+     variableCtcLpa:optionalNumber(fields.get("variableCtcLpa")),
+     stipendPerMonthInr:optionalNumber(fields.get("stipendPerMonthInr")),
+     isDream:fields.get("isDream")==="on",
     }),
    });
    if(!response.ok){const result=await response.json().catch(()=>null) as {error?:string}|null;
