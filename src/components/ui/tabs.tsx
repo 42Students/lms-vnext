@@ -2,8 +2,9 @@
 
 import { useId, useRef, type KeyboardEvent, type ReactNode } from "react";
 import { cx } from "@/lib/class-names";
+import Link from "next/link";
 
-export type TabItem = { value: string; label: string; content?: ReactNode; disabled?: boolean };
+export type TabItem = { value: string; label: string; content?: ReactNode; disabled?: boolean; href?: string };
 export type TabsProps = {
   items: readonly TabItem[];
   value: string;
@@ -41,7 +42,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
   }
   return (
     <div className={cx("min-w-0", className)} data-slot="tabs">
-      <div role="tablist" aria-label={ariaLabel} className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
+      {renderPanel ? <div role="tablist" aria-label={ariaLabel} className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
         {items.map((item, index) => (
           <button key={item.value} ref={node => { buttons.current[index] = node; }}
             id={`${id}-tab-${index}`} type="button" role="tab"
@@ -56,7 +57,12 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             {item.label}
           </button>
         ))}
-      </div>
+      </div> : <nav aria-label={ariaLabel} className="flex min-w-0 gap-2 overflow-x-auto border-b border-border pb-1">
+        {items.map(item => item.href ? <Link key={item.value} href={item.href} aria-current={item.value === value ? "page" : undefined}
+            className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]",
+              item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
+              {item.label}</Link> : <span key={item.value} className="inline-flex min-h-11 items-center px-4 text-sm">{item.label}</span>)}
+      </nav>}
       {renderPanel ? <section id={`${id}-panel`} role="tabpanel" tabIndex={0} aria-labelledby={`${id}-tab-${items.findIndex(item => item.value === value)}`} className="min-w-0 pt-4">{selected?.content}</section> : null}
     </div>
   );
