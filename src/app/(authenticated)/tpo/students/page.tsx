@@ -36,6 +36,7 @@ import {
 type SearchParams = {
   journeyState?: string | string[];
   branchId?: string | string[];
+  programId?: string | string[];
   batchId?: string | string[];
   search?: string | string[];
   page?: string | string[];
@@ -60,6 +61,7 @@ function studentsHref(
   filters: {
     journeyState?: string;
     branchId?: string;
+    programId?:string;
     batchId?: string;
     search?: string;
     page?: number;
@@ -77,6 +79,7 @@ function studentsHref(
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
   }
+  if(filters.programId)params.set("programId",filters.programId);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
   if (filters.search) {
@@ -140,6 +143,7 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState: first(raw.journeyState) || undefined,
     branchId: first(raw.branchId) || undefined,
+    programId:first(raw.programId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
@@ -222,6 +226,7 @@ export default async function TpoStudentsPage({
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
+      programId:query.programId,
       search: query.search,
     },
     true,
@@ -231,6 +236,7 @@ export default async function TpoStudentsPage({
     columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     branchId: query.branchId,
+    programId:query.programId,
     batchId: query.batchId,
     search: query.search,
     pageSize: query.pageSize,
