@@ -6,6 +6,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
 import { RecruiterDriveFocusRefresh } from "@/components/hr/recruiter-drive-focus-refresh";
+import {RecruiterRoundInlineEditor} from "@/components/hr/recruiter-round-inline-editor";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
@@ -739,6 +740,13 @@ export default async function HrPlacementJobPage({
         {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <h3 className="font-semibold text-foreground">Scheduled rounds and potential time conflicts</h3>
           <p className="text-sm text-body">IST times from this employer-owned drive. Overlap is calculated only for rounds with recorded durations; room and interviewer availability is unknown.</p>
+          <RecruiterRoundInlineEditor jobId={workspace.job.id}
+            readOnly={driveOverview.readOnly}
+            rows={workspace.rounds.map(round=>({
+              id:round.id,name:round.name,kind:round.kind,mode:round.mode,status:round.status,
+              createdByYou:round.createdByUserId===context.user.id,
+              updatedAt:round.updatedAt.toISOString(),
+            }))}/>
           <ul aria-label="Hiring rounds and statuses" className="mt-3 grid gap-2 sm:grid-cols-2">
             {workspace.rounds.map(round=><li key={round.id}
              className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
