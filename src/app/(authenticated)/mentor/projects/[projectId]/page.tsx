@@ -122,7 +122,7 @@ export default async function MentorProjectPage({
       {selectedTab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
-          readOnly={access.access==="OBSERVER"}/>
+          readOnly={access.access==="OBSERVER"||workspace.project.status==="ARCHIVED"||workspace.project.status==="COMPLETED"}/>
         <MentorLaneBoard projectId={projectId}
           initialTasks={workspace.tasks} sprints={workspace.sprints} releases={workspace.releases}
           members={workspace.members} taskSubmissions={workspace.taskSubmissions}
@@ -132,7 +132,7 @@ export default async function MentorProjectPage({
       selectedTab==="performance"?<MentorTaskAllocation
         projectId={projectId} initialTasks={workspace.tasks}
         members={workspace.members} sprints={workspace.sprints} releases={workspace.releases}
-        readOnly={access.access==="OBSERVER"}/>:
+        readOnly={access.access==="OBSERVER"||workspace.project.status==="ARCHIVED"||workspace.project.status==="COMPLETED"}/>:
       <ProjectWorkspace
         workspace={workspace}
         backHref="/mentor/projects"
