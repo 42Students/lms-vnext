@@ -17,7 +17,8 @@ export function safeRecruiterExternalLink(raw:unknown,github=false):string|null{
      host.endsWith(".localhost")||host.endsWith(".local")||
      /^127\./.test(host)||/^10\./.test(host)||/^192\.168\./.test(host)||
      /^169\.254\./.test(host)||/^172\.(1[6-9]|2[0-9]|3[01])\./.test(host)||
-     /^fc[0-9a-f]{0,2}:/i.test(host)||/^fd[0-9a-f]{0,2}:/i.test(host))return null;
+     /^fc[0-9a-f]{0,2}:/i.test(host)||/^fd[0-9a-f]{0,2}:/i.test(host)||
+     /^fe[89ab][0-9a-f]:/i.test(host)||host.startsWith("::ffff:"))return null;
   if(github&&!["github.com","www.github.com"].includes(url.hostname.toLowerCase()))return null;
   url.hash="";
   return url.toString();
