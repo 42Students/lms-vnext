@@ -21,6 +21,9 @@ export function TpoReportSavedFilters({path,collegeId}:{path:string;collegeId:st
  }
  function save(){
   const label=name.trim();
+  if(views.some(item=>item.name.toLowerCase()===label.toLowerCase()&&item.name!==label)){
+   setMessage("A view already uses that name.");return;
+  }
   if(!label||label.length>50){setMessage("Choose a name up to 50 characters.");return;}
   if(views.length>=12&&!views.some(item=>item.name===label)){setMessage("Up to 12 saved filters per report.");return;}
   const next=views.filter(item=>item.name!==label);
