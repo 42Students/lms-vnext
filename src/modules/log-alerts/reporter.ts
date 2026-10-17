@@ -72,6 +72,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
   if (!telegramAlertsConfigured()) return;
   const now = new Date();
   const environment = alertEnvironment();
+  const dayKey = new Date(now.getTime() + 330 * 60_000).toISOString().slice(0, 10);
   const message = redactAlertText(input.error instanceof Error ? input.error.message : input.error);
   const path = safeAlertPath(input.path);
   const hash = errorSignatureHash({ environment, message, path });
@@ -112,6 +113,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
           lastSeenAt: now, occurrenceCount: sql.raw("log_alert_signatures.occurrence_count + 1"),
           recentWindowAt: inWindow ? current.recentWindowAt : now,
           recentWindowCount: recentCount,
+          dayKey, dayOccurrences: current.dayKey === dayKey ? current.dayOccurrences + 1 : 1,
         }).where(eq(signatures.id, current.id));
         if (accountHash) await tx.insert(accounts).values({
           signatureId: current.id, accountKeyHash: accountHash, firstSeenAt: now,
@@ -151,7 +153,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
           id, environment, signatureHash: hash, sampleMessage: message,
           samplePath: path, firstSeenAt: now, lastSeenAt: now,
           occurrenceCount: 1n, recentWindowAt: now, recentWindowCount: 1,
-          alertedAt: now,
+          alertedAt: now, dayKey, dayOccurrences: 1,
         });
         if (accountHash) await tx.insert(accounts).values({
           signatureId: id, accountKeyHash: accountHash, firstSeenAt: now,

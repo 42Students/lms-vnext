@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS log_alert_signatures (
   alerted_at timestamptz, acknowledged_at timestamptz,
   last_spike_alert_at timestamptz, recent_window_at timestamptz,
   recent_window_count bigint NOT NULL DEFAULT 1,
+  day_key varchar(10), day_occurrences bigint NOT NULL DEFAULT 1,
   CONSTRAINT db10_log_alert_signature_env_hash_uq UNIQUE (environment, signature_hash),
   CONSTRAINT db10_log_alert_signature_seen_order_ck CHECK (last_seen_at >= first_seen_at),
   CONSTRAINT db10_log_alert_signature_fixed_shape_ck CHECK (fix_status <> 'FIXED' OR fixed_at IS NOT NULL)
