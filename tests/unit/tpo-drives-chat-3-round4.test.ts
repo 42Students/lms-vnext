@@ -26,4 +26,13 @@ describe("chat-3 Drives round 4",()=>{
   for(const input of ["2099-02-29T10:00","2099-13-01T10:00","2099-01-32T10:00","2099-01-01T24:00","garbage"])
    expect(()=>driveDeadlineIstToIso(input)).toThrow("Enter a valid application deadline in IST.");
  });
+ it("TPO-drives-37 fields retired in legacy are not reintroduced in new drive create",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  for(const field of ["maxActiveBacklogs","maxPastBacklogs","maxGapYears"])expect(body).not.toContain(field);
+ });
+ it("TPO-drives-49 non-editable drive points to safe clone recovery",()=>{
+  const body=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
+  expect(body).toContain("This drive is not editable");
+  expect(body).toContain("open Create drive");
+ });
 });
