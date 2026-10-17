@@ -92,7 +92,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-36 | S4 | COPY | DONE |
 | PUB-auth-public-37 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
-| PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
+| PUB-auth-public-39 | S4 | MISSING-PAGE | DONE |
 
 ## college/academic-setup (34: DONE 31, NOT-A-GAP 2, UNCONFIRMED 1)
 
