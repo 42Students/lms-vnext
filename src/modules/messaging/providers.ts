@@ -1,3 +1,4 @@
+import { outboundFetch } from "@/lib/outbound";
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import { readZeptoMailConfig, type ZeptoMailConfig } from "@/modules/notifications/zeptomail-email";
 import type { OutboundProvider } from "./service";
@@ -39,7 +40,7 @@ export function createOutboundProvider(
           if (!config.email.token || !template.zeptoTemplateKey ||
               !isCampaignTemplateKey(template.zeptoTemplateKey) ||
               template.zeptoTemplateKey === config.email.otpTemplateKey) return false;
-          const response = await fetchImpl(config.email.apiUrl, {
+          const response = await outboundFetch(config.email.apiUrl, {
             method: "POST",
             headers: { Authorization: config.email.token, "Content-Type": "application/json", Accept: "application/json" },
             body: JSON.stringify({
@@ -48,7 +49,9 @@ export function createOutboundProvider(
               to: [{ email_address: { address: request.recipient, name: request.recipient } }],
               merge_info: request.variables,
             }),
-            signal: AbortSignal.timeout(10000),
+            timeoutMs: 10000,
+            maxAttempts: 1, // No unconfirmed POST retry to avoid duplicate messages.
+            fetchImpl,
           });
           return response.ok;
         }
@@ -62,7 +65,7 @@ export function createOutboundProvider(
           DltEntityId: config.sms.dltEntityId, DltTemplateId: template.exotelDltTemplateId,
           SmsType: config.sms.smsType, Priority: "normal",
         });
-        const response = await fetchImpl(`https://api.exotel.com/v1/Accounts/${config.sms.accountSid}/Sms/send.json`, {
+        const response = await outboundFetch(`https://api.exotel.com/v1/Accounts/${config.sms.accountSid}/Sms/send.json`, {
           method: "POST",
           headers: {
             Authorization: `Basic ${Buffer.from(`${config.sms.apiKey}:${config.sms.apiToken}`).toString("base64")}`,
@@ -70,7 +73,9 @@ export function createOutboundProvider(
             Accept: "application/json",
           },
           body: form,
-          signal: AbortSignal.timeout(10000),
+          timeoutMs: 10000,
+          maxAttempts: 1, // No unconfirmed POST retry to avoid duplicate messages.
+          fetchImpl,
         });
         if (!response.ok) return false;
         const result = (await response.json()) as { SMSMessage?: { Sid?: string; Status?: string } };

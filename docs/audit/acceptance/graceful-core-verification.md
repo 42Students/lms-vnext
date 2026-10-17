@@ -45,3 +45,4 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-62 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-62 (shared primitive; per-page adoption pending) |
 | GR-64 | DONE | `src/lib/safe-download.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-64 (shared primitive; per-page adoption pending) |
 | GR-53 | DONE | `src/components/auth/login-form.tsx`; `tests/unit/graceful-login-guards.test.ts` — GR-53 (shared OTP UI) |
+| GR-50 | DONE | Provider adoption: `src/modules/notifications/{exotel-sms,zeptomail-email}.ts`, `src/modules/messaging/providers.ts`; `tests/unit/graceful-provider-adoption.test.ts` — GR-50 |

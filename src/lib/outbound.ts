@@ -13,6 +13,8 @@ export type OutboundOptions = RequestInit & {
   maxAttempts?: number;
   baseDelayMs?: number;
   idempotencyKey?: string;
+  /** Injectable transport keeps provider tests isolated from real networks. */
+  fetchImpl?: typeof fetch;
 };
 
 const RETRYABLE_STATUSES = new Set([408, 429, 500, 502, 503, 504]);
@@ -30,7 +32,7 @@ const delay = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 export async function outboundFetch(url: string, options: OutboundOptions = {}): Promise<Response> {
   const {
     timeoutMs = 10_000, maxAttempts = 3, baseDelayMs = 250,
-    idempotencyKey, ...init
+    idempotencyKey, fetchImpl = fetch, ...init
   } = options;
   const method = (init.method ?? "GET").toUpperCase();
   const repeatable = SAFE_METHODS.has(method) || Boolean(idempotencyKey);
@@ -46,7 +48,7 @@ export async function outboundFetch(url: string, options: OutboundOptions = {}):
     else init.signal?.addEventListener("abort", abort, { once: true });
     const timer = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
     try {
-      const response = await fetch(url, { ...init, headers, signal: controller.signal });
+      const response = await fetchImpl(url, { ...init, headers, signal: controller.signal });
       if (!RETRYABLE_STATUSES.has(response.status) || attempt === attempts) return response;
       // Discard the body before trying again so pooled connections are reusable.
       await response.body?.cancel();
