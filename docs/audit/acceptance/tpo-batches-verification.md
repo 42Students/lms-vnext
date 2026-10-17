@@ -118,3 +118,9 @@ The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests
 `TPO-batches-19`, `TPO-batches-02`, `TPO-batches-04`, `TPO-batches-05`, `TPO-batches-08`, `TPO-batches-22`, `TPO-batches-38`, `TPO-batches-41`, `TPO-batches-42`, `TPO-batches-58`, `TPO-batches-59`, `TPO-batches-06`, `TPO-batches-10`, `TPO-batches-23`, `TPO-batches-47`, `TPO-batches-30`, `TPO-batches-62`.
 
 | TPO-batches-R04 | OPEN (improved invalid-value preview) | `src/modules/placements/tpo-eligibility-sheet-model.ts` preserves unrecognized CSV decisions as noncommittable `INVALID` preview rows, with a precise, per-row reason instead of discarding the whole file. `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` independently refuses invalid rows; `tests/unit/tpo-batches-import-r04-chat5.test.ts` — `TPO-batches-R04 preserves missing-roll and ambiguous-roll review reasons`. Legacy suggestion/replacement editor is still outstanding. |
+
+## Chat-5 immediate decision undo feedback (2026-10-17)
+
+| TPO-batches-25 | DONE | `src/components/tpo/tpo-batch-inline-decision.tsx` and `src/components/tpo/tpo-batch-decision-control.tsx` now show saved decision counts and a version-checked Undo control using the actual server-issued `actionId`, with readable no-change states. Learner controls retain client feedback across `router.refresh`; `tests/unit/tpo-batches-25-chat5.test.ts` — `TPO-batches-25 displays server-issued Undo for saved learner and whole batch decisions`. |
+
+| TPO-batches-61 | DONE | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` now puts the actual most recent undo action directly beneath the batch title/back link, with its previous decision in the tooltip and a checked, versioned audited reversal. `tests/unit/tpo-batches-61-chat5.test.ts` — `TPO-batches-61 shows a discoverable header undo with current decision tooltip`. |

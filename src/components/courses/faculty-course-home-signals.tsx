@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
 import type { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 
 type Signals = Awaited<
@@ -44,26 +45,46 @@ export function FacultyCourseHomeSignals({
 }) {
   const firstPending =
     signals.pendingSubmissions[0] ?? null;
+  const attendanceReady = signals.completeness.attendance;
+  const assignmentsReady = signals.completeness.assignments;
+  const riskReady = attendanceReady && assignmentsReady;
+  const missing = [
+    !attendanceReady ? "attendance" : null,
+    !assignmentsReady ? "assignment submissions" : null,
+  ].filter((name): name is string => name !== null);
   const reviewHref = firstPending
     ? `/teacher/report/assignment/${firstPending.assignmentId}?deliveryId=${encodeURIComponent(deliveryId)}`
     : `/teacher/courses/${deliveryId}/blueprint#learning-path`;
 
   return (
     <div className="space-y-5">
+      {missing.length ? (
+        <section role="status" aria-label="Incomplete faculty course signals"
+          className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm text-body">
+          <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
+          <p className="mt-1">Unknown metrics are shown as unavailable, not zero.</p>
+          <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
+            className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            Retry signals
+          </Link>
+        </section>
+      ) : null}
       <section className="rounded-xl border border-border bg-surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge
                 tone={
-                  signals.pendingSubmissions.length
+                  !assignmentsReady || signals.pendingSubmissions.length
                     ? "warning"
                     : "success"
                 }
               >
-                {signals.pendingSubmissions.length
-                  ? "Needs review"
-                  : "All clear"}
+                {!assignmentsReady
+                  ? "Incomplete"
+                  : signals.pendingSubmissions.length
+                    ? "Needs review"
+                    : "All clear"}
               </StatusBadge>
               <span className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 Teaching overview
@@ -72,12 +93,14 @@ export function FacultyCourseHomeSignals({
             <h2 className="mt-2 text-xl font-semibold text-foreground">
               {firstPending
                 ? firstPending.assignmentTitle
-                : "Nothing waiting on you"}
+                : assignmentsReady ? "Nothing waiting on you" : "Some signals unavailable"}
             </h2>
             <p className="mt-1 text-sm text-body">
               {firstPending
                 ? `${signals.pendingSubmissions.length} submission(s) waiting.`
-                : "No submitted assignments currently need grading. Continue with course content or review class health."}
+                : assignmentsReady
+                  ? "No submitted assignments currently need grading. Continue with course content or review class health."
+                  : "Assignment submission status could not be confirmed. Retry signals before assuming work is clear."}
             </p>
           </div>
           <Link
@@ -103,30 +126,34 @@ export function FacultyCourseHomeSignals({
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <SignalCard
             label="Reviews"
-            value={signals.pendingSubmissions.length}
+            value={assignmentsReady ? signals.pendingSubmissions.length : "—"}
             detail="Submitted assignments waiting for grading."
             href={firstPending ? reviewHref : `/teacher/allAssignments`}
           />
           <SignalCard
             label="Attendance"
             value={
-              signals.attendance.averagePercent === null
+              !attendanceReady || signals.attendance.averagePercent === null
                 ? "—"
                 : `${signals.attendance.averagePercent}%`
             }
-            detail={`${signals.attendance.markedSessions} marked class session${signals.attendance.markedSessions === 1 ? "" : "s"}.`}
+            detail={attendanceReady
+              ? `${signals.attendance.markedSessions} marked class session${signals.attendance.markedSessions === 1 ? "" : "s"}.`
+              : "Attendance data unavailable."}
             href={`/teacher/courses/${deliveryId}/attendanceDetail`}
           />
           <SignalCard
             label="At-risk Students"
-            value={signals.atRiskTotal}
-            detail="Low attendance or repeated overdue missing submissions."
+            value={riskReady ? signals.atRiskTotal : "—"}
+            detail={riskReady
+              ? "Low attendance or repeated overdue missing submissions."
+              : "Risk could not be calculated from incomplete signals."}
             href={`/teacher/courses/${deliveryId}/students`}
           />
           <SignalCard
             label="Performance"
             value={
-              signals.performance.averagePercent === null
+              !assignmentsReady || signals.performance.averagePercent === null
                 ? "—"
                 : `${signals.performance.averagePercent}%`
             }
@@ -136,7 +163,7 @@ export function FacultyCourseHomeSignals({
         </div>
       </section>
 
-      {signals.atRiskTotal > 0 ? (
+      {riskReady && signals.atRiskTotal > 0 ? (
         <section
           className="rounded-xl border border-border bg-surface p-5"
           aria-label="Needs attention"
@@ -188,10 +215,10 @@ export function FacultyCourseHomeSignals({
           </ul>
         </section>
       ) : <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
-        No major learner risk signals
+        {riskReady ? "No major learner risk signals" : "Learner risk signals are unavailable until attendance and submission data can be refreshed."}
       </p>}
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      {assignmentsReady ? <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Performance
         </h2>
@@ -257,7 +284,10 @@ export function FacultyCourseHomeSignals({
             );
           })}
         </div>
-      </section>
+      </section> : <section aria-label="Performance" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Performance</h2>
+        <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
+      </section>}
     </div>
   );
 }

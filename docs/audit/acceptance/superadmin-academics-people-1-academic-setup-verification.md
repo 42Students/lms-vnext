@@ -63,7 +63,6 @@ These source and API-wiring contracts record earlier implementation claims; **te
 | SA-academics-people-12 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-12`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-13 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-13`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-18 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-18`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
-
 | SA-academics-people-28 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-28`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-33 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-33`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |
 | SA-academics-people-36 | DONE | `tests/unit/chat9-super-admin-academic-existing-gap-closure.test.ts` — named test `SA-academics-people-36`; confirmed existing academic form/mutation flows. Source-level only; CI to execute. |

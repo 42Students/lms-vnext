@@ -86,6 +86,10 @@ export async function addMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
+  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
+  if (input.role === "COLLEGE_ADMIN") {
+    requirePermission(context, "admin-scope.select");
+  }
   const person = await loadAuthorizedMembership(
     context,
     membershipIdInput,
@@ -109,6 +113,10 @@ export async function removeMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
+  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
+  if (input.role === "COLLEGE_ADMIN") {
+    requirePermission(context, "admin-scope.select");
+  }
   const person = await loadAuthorizedMembership(
     context,
     membershipIdInput,

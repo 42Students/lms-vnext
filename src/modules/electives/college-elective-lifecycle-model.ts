@@ -5,6 +5,6 @@ export const electiveLifecycleSchema=z.discriminatedUnion("action",[
 ]);
 export function electiveLifecyclePrompt(name:string, action:"ARCHIVE"|"RESTORE") {
   return action==="ARCHIVE"
-    ? `Archive elective slot ${name}? Linked active offerings or learner selections block archival.`
+    ? `Archive this slot? All its offerings are archived; enrolled students lose access, history is kept. (${name})`
     : `Restore elective slot ${name}? Its program and academic period must still be active.`;
 }

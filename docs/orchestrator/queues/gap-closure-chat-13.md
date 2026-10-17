@@ -2,7 +2,7 @@
 
 Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round, including the Throughput section). Branch: `chatgpt/chat-13-b`. 95 gaps on 2 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
 
-## superadmin/placements-projects-a-placements (50: FIXED-ON-MAIN 27, OPEN 20, UNCONFIRMED 3)
+## superadmin/placements-projects-a-placements (50 records; status column reflects source verification)
 
 Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `placements-projects-a-placements-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-placements-projects-a-placements-verification.md`.
 
@@ -39,11 +39,11 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-05 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-08 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-11 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-placements-projects-14 | S3 | MISSING-FIELD | UNCONFIRMED |
+| SA-placements-projects-14 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-15 | S3 | STATE | FIXED-ON-MAIN |
 | SA-placements-projects-16 | S3 | STATE | FIXED-ON-MAIN |
 | SA-placements-projects-18 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-21 | S3 | MISSING-ACTION | UNCONFIRMED |
+| SA-placements-projects-21 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-23 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-29 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -59,7 +59,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-50 | S3 | COPY | FIXED-ON-MAIN |
 | SA-placements-projects-33 | S4 | MISSING-TAB | FIXED-ON-MAIN |
 
-## superadmin/academics-people-1-academic-setup (45: FIXED-ON-MAIN 21, OPEN 21, UNCONFIRMED 3)
+## superadmin/academics-people-1-academic-setup (45 records; status column reflects source verification)
 
 Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `academics-people-1-academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-academics-people-1-academic-setup-verification.md`.
 
@@ -112,11 +112,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-R05 | S4 | A11Y | FIXED-ON-MAIN |
 
 ## Notes (blockers, one line each)
-- SA-placements-projects-37: free-text company creation and optional multi-college selection now use the canonical company service and bounded grants; company linking is a separate transaction and persists for retry if recruiter creation fails; runtime verification outstanding.
-- SA-placements-projects-14: supplementary Responsibilities, Assessment URL/deadline, Important dates and informational candidate/rule fields are implemented via a proposed JSONB migration; true cross-college visibility, full Department→Program→Batch→Class targeting and first-class custom eligibility enforcement remain unsupported.
-- SA-placements-projects-21: scoped note corrections, offer-letter link, assessment copy, status history and real academic-policy re-screen are implemented; secure resume preview and legacy match-score breakdown remain unavailable without a persisted resume/score source.
-- SA-placements-projects-21: scoped offer-letter link attachment, history and internal notes exist; resume preview, editing older notes and score-backed re-screen remain unverified, so do not mark complete.
-- SA-placements-projects-37: existing-mobile recruiter reuse now works for a matching company, but the full gap remains OPEN: free-text company creation and optional multiple colleges are not yet supported.
+- SA-placements-projects-14: supplemental fields, strict deadlines and scoped academic cascade are in place; cross-college grants are never inferred; register proposed SQL before runtime use; tests unrun.
+- SA-placements-projects-21: scoped CLEAN resume access, notes, offer link, status history and audited policy re-screen are in place; no invented match score; tests unrun.
+- SA-placements-projects-37: canonical free-text company creation and scoped optional multi-college grants are implemented; unit tests unrun.
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
 - SA-academics-people-R04: nine period/cohort/section mutations now write audit events in their transactions; people repository and attendance-policy already audit; integration verification pending orchestrator.
 - SA-placements-projects-35: recruiter Suspend now preserves grants, blocks profile access and revokes signed-in sessions; unit test written, runtime sign-in denial to be verified by orchestrator.

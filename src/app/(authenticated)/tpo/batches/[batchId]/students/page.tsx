@@ -100,7 +100,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
   <p className="text-xs text-muted-foreground">Branch: {s.branch} · Program: {s.program}</p>
   <p className="text-xs text-muted-foreground">Registration: {s.registration?batchRegistrationLabel(s.registration.choice):"Unavailable"}{s.registration?.source?" · via "+batchSourceLabel(s.registration.source):""}</p>
   <p className="text-xs text-muted-foreground">Source: {batchSourceLabel(s.source)}{s.reason?" · "+s.reason:""}</p>
-  {!finished&&!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
+  {!finished&&!s.ambiguous?<TpoBatchInlineDecision membershipId={s.membershipId} batchId={batchId} expected={s.direct}/>:null}
   <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={"/tpo/students/"+s.membershipId+"/participation"}>Open learner participation</Link>
  </li>)}</ul>}
  <nav className="flex flex-wrap gap-2" aria-label="Student pages">{result.page>1?<Link href={href(result.page-1)} className="rounded border px-3 py-2">Previous</Link>:null}
