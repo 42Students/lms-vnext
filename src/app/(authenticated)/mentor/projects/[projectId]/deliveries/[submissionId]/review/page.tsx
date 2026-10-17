@@ -36,6 +36,10 @@ export default async function MentorDeliveryVersionPage({params}:{
           <dd className="mt-1 text-sm">{v.submittedAt?format(v.submittedAt):"Not submitted"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Draft created</dt>
           <dd className="mt-1 text-sm">{v.createdAt?format(v.createdAt):"Not recorded"}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Locked</dt>
+          <dd className="mt-1 text-sm">{v.lockedAt?format(v.lockedAt):"Not locked"}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Reopened for revision</dt>
+          <dd className="mt-1 text-sm">{v.reopenedAt?format(v.reopenedAt):"Not reopened"}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Reviewed</dt>
           <dd className="mt-1 text-sm">{v.reviewedAt?format(v.reviewedAt):"No review date recorded"}</dd></div>
       </dl>
