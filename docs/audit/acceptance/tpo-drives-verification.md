@@ -164,3 +164,10 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | TPO-drives-25 | DONE — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-25` |
 | TPO-drives-43 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-43` |
 | TPO-drives-44 | OPEN — sub-contract only | `tests/unit/chat3-tpo-round12-parity-contracts.test.ts` / `TPO-drives-44` |
+
+## Chat-3 round 12 — safe field validation responses
+
+| ID | Disposition | Implementation and test |
+| --- | --- | --- |
+| TPO-drives-R05 | OPEN — safer partial implementation | `src/modules/placements/tpo-drive-form-error-copy.ts` maps recognized `FriendlyFetchError.fieldErrors` keys to predefined, readable field labels without echoing untrusted server text; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-R05 surfaces recognized offending fields, never raw Zod messages`. Inline per-field errors and the remaining exact legacy field rules are not yet complete. |
+| TPO-drives-44 | OPEN — safer partial implementation | Unknown machine-code messages are replaced by bounded friendly fallback, and known season/role/deadline failures are mapped to sentences; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-44 unknown short machine codes are never displayed from typed API errors`. Full legacy message inventory is not yet exhaustively mapped. |
