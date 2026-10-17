@@ -9,6 +9,7 @@ export type TpoHomeSummary={
  pendingRequests:number;messages:number|null;
  teamAsks:number|null;teamMentions:number|null;teamUnread:number|null;
  upcoming:readonly {startsAt:Date;title:string}[];
+ calendarAvailable?:boolean;
 };
 export type TpoHomeLegacyRow={
  key:"batches"|"drives"|"students"|"engage"|"inbox"|"team"|"week";
@@ -68,7 +69,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
    href:(d.teamAsks??0)+(d.teamMentions??0)>0?"/tpo/team?filter=me":"/tpo/team",
    needsAttention:(d.teamAsks??0)+(d.teamMentions??0)>0},
   {key:"week",title:"This week",status:next?showWhen(next.startsAt)+" · "+next.title+
-   (d.upcoming.length>1?` · +${d.upcoming.length-1} more`:""):"Nothing on the calendar",
+   (d.upcoming.length>1?` · +${d.upcoming.length-1} more`:""):d.calendarAvailable===false?"Calendar unavailable — open Calendar to retry":"Nothing on the calendar",
    href:"/tpo/calendar",needsAttention:false},
  ];
 }
