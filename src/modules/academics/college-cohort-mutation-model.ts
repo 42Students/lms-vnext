@@ -37,3 +37,11 @@ export function validCohortPeriodRange(
 ): boolean {
   return endDate === null || endDate >= startDate;
 }
+
+/** Legacy academic-year badge (e.g. 2023-27) from the persisted date span.
+ * Uses fallback start-year + one year if no end period is supplied. */
+export function batchAcademicYearFromDates(startDate:string,endDate:string|null):string {
+ const start=Number(startDate.slice(0,4));
+ const end=endDate?Number(endDate.slice(0,4)):start+1;
+ return `${start}-${String(end).slice(-2)}`;
+}
