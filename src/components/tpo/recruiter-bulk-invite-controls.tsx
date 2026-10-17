@@ -13,6 +13,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const eligibleSnapshot=eligible.map(row=>[row.id,row.emailNorm??"",row.manualStage,row.inviteSentAt??""].join(":")).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
+  if(retryOnly&&target.some(row=>bulkInviteDisposition(row))){
+   setNotice("A failed recruiter is no longer eligible. Refresh the roster and review before issuing another link.");return;
+  }
   if(!retryOnly&&reviewSnapshot!==eligibleSnapshot){
     setReviewSnapshot(eligibleSnapshot);
     setNotice("Review the recipients and confirm. Existing invitation links for these recruiters will be replaced.");
