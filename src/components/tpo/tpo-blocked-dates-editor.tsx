@@ -4,31 +4,46 @@ import {useState} from "react";
 import {filterTpoBlockedDates,tpoBlockedDatesEmptyMessage} from "@/modules/placements/tpo-blocked-date-filter-model";
 type BlockedDay={id:string;day:string;reason:string;updatedAt:string};
 export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
- const router=useRouter(),[day,setDay]=useState(""),[reason,setReason]=useState("");
+ const router=useRouter(),[startDay,setStartDay]=useState(""),[endDay,setEndDay]=useState(""),[reason,setReason]=useState("");
+ const [showPast,setShowPast]=useState(false);
+ const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+ const rangeLength=startDay&&endDay?Math.round((Date.parse(endDay+"T00:00:00Z")-Date.parse(startDay+"T00:00:00Z"))/86400000)+1:0;
+ const validRange=startDay>=today&&rangeLength>=1&&rangeLength<=90;
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [search,setSearch]=useState(""),[month,setMonth]=useState("");
- const visible=filterTpoBlockedDates(items,search,month);
+ const filtered=filterTpoBlockedDates(items,search,month);
+ const pastCount=filtered.filter(item=>item.day<today).length;
+ const visible=showPast?filtered:filtered.filter(item=>item.day>=today);
  async function request(url:string,method:"POST"|"DELETE",body:Record<string,unknown>){
   setBusy(true);setError("");setNotice("");
   try{
    const response=await fetch(url,{method,credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json() as {error?:string};
-   if(!response.ok)throw Error(response.status===409?"This date changed. Refresh and try again.":data.error??"Unable to save date.");
-   setNotice("Blocked dates updated.");if(method==="POST"){setDay("");setReason("");}
+   if(!response.ok)throw Error(data.error==="DATE_IN_PAST"?"Past dates cannot be blocked.":
+     data.error==="DATE_RANGE_INVALID"?"Pick a range of up to 90 days.":
+     data.error==="DATE_EXISTS"?"A day in this range is already blocked.":
+     response.status===409?"This date changed. Refresh and try again.":data.error??"Unable to save date.");
+   setNotice("Blocked dates saved");if(method==="POST"){setStartDay("");setEndDay("");setReason("");}
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Blocked dates could not be updated.");}finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4">
-  <form className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto]"
-   onSubmit={e=>{e.preventDefault();if(!day||reason.trim().length<3||busy)return;
-    void request("/api/placements/tpo/settings/blocked-dates","POST",{day,reason:reason.trim()});}}>
-   <label className="text-sm">Calendar date<input type="date" required value={day} disabled={busy} onChange={e=>setDay(e.target.value)}
-    className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"/></label>
-   <label className="text-sm">Why is this date unavailable?
-    <input value={reason} disabled={busy} maxLength={500} required onChange={e=>setReason(e.target.value)}
-     className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
+  <form className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-[1fr_1fr_2fr_auto]"
+   onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
+    void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
+   <label className="text-sm">From
+    <input type="date" required min={today} value={startDay} disabled={busy}
+     onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
+     className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"/></label>
+   <label className="text-sm">Until
+    <input type="date" required min={startDay||today} value={endDay} disabled={busy}
+     onChange={e=>setEndDay(e.target.value)}
+     className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-2"/></label>
+   <label className="text-sm">Label (optional)
+    <input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
+     placeholder="Blocked" className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
    <button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50"
-    disabled={busy||!day||reason.trim().length<3}>Block date</button>
+    disabled={busy||!validRange}>Block dates</button>
   </form>
   <div className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2">
     <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
@@ -41,8 +56,10 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
         className="min-h-11 w-full rounded border border-border bg-surface px-3"/>
     </label>
   </div>
-  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked dates</p>
-  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{tpoBlockedDatesEmptyMessage(items.length)}</p>:
+  <p role="status" className="text-xs text-muted-foreground">Showing {visible.length} of {items.length} blocked dates · Maximum 90 days per range</p>
+  {pastCount>0?<button type="button" onClick={()=>setShowPast(value=>!value)}
+   className="min-h-10 rounded border border-border px-3 text-sm">{showPast?"Hide past blocked dates":`Show past blocked dates (${pastCount})`}</button>:null}
+  {visible.length===0?<p role="status" className="text-sm text-muted-foreground">{!showPast&&pastCount>0?"No upcoming blocked dates.":tpoBlockedDatesEmptyMessage(items.length)}</p>:
    <ul className="grid min-w-0 gap-2 sm:grid-cols-2">{visible.map(item=><li key={item.id}
     className="flex min-w-0 flex-wrap justify-between gap-3 rounded-lg border border-border bg-surface p-3">
     <div className="min-w-0"><strong>{item.day}</strong><p className="break-words text-sm">{item.reason}</p></div>
