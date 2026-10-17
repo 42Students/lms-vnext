@@ -21,6 +21,25 @@ export function validTelegramWebhookSecret(header: string | null): boolean {
   return a.length === b.length && timingSafeEqual(a, b);
 }
 
+async function answerTelegramCallback(callbackId: string) {
+  const token = process.env.TELEGRAM_ALERT_BOT_TOKEN;
+  if (!token) return;
+  const abort = new AbortController();
+  const timeout = setTimeout(() => abort.abort(), 2_000);
+  try {
+    await fetch("https://api.telegram.org/bot" + token + "/answerCallbackQuery", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ callback_query_id: callbackId, text: "Acknowledged" }),
+      signal: abort.signal,
+    });
+  } catch {
+    // No provider diagnostics: thrown messages can include the bot token.
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function handleTelegramCallback(payload: unknown): Promise<boolean> {
   if (process.env.APP_ENV !== "production" || !logAlertsRuntimeEnabled()) return false;
   const parsed = callbackSchema.safeParse(payload);
@@ -29,5 +48,6 @@ export async function handleTelegramCallback(payload: unknown): Promise<boolean>
   const updated = await getDb().update(signatures).set({ acknowledgedAt: new Date() })
     .where(and(eq(signatures.id, id), eq(signatures.environment, "PRODUCTION")))
     .returning({ id: signatures.id });
+  if (updated.length) await answerTelegramCallback(parsed.data.callback_query.id);
   return updated.length > 0;
 }
