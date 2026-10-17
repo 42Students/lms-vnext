@@ -22,5 +22,8 @@ export function mentorDeliveryVersionDisplay(record:MentorDeliveryVersion){
     reopenedAt:record.reopenedAt??null,
     submittedAt:record.submittedAt,reviewedAt:record.reviewedAt,
     decisionLabel:decision,feedback:record.feedback?.trim()||null,
-    hasReview:record.decision==="APPROVED"||record.decision==="CHANGES_REQUESTED"};
+    hasReview:record.decision==="APPROVED"||record.decision==="CHANGES_REQUESTED",
+    submissionType:(record.attachments??[]).some(a=>Boolean(a)&&typeof a==="object"&&
+      (a as {kind?:unknown}).kind==="FILE")?"File upload":
+      record.sourceUrl||record.demoUrl?"Link":"Text"};
 }
