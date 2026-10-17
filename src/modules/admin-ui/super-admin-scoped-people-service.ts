@@ -35,6 +35,10 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   departmentName:departments.name,
   employmentType:facultyProfiles.employmentType,
   academicTitle:facultyProfiles.academicTitle,
+  gender:sql<string|null>`coalesce(
+    ${facultyProfiles.profileDocument}->'personalDetails'->>'gender',
+    ${learnerProfiles.profileDocument}->'personalDetails'->>'gender'
+  )`.as("admin_person_gender"),
   rollNumber:learnerProfiles.rollNumber,
   className:sql<string|null>`(select s.name from section_enrollments se join learner_program_enrollments e on e.id=se.learner_enrollment_id join sections s on s.id=se.section_id where e.membership_id=${collegeMemberships.id} and se.status='ACTIVE' and e.status='ACTIVE' order by se.created_at desc limit 1)`.as("admin_learner_class"),
  }).from(collegeMemberships)
@@ -72,8 +76,10 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
     "Department: "+(row.departmentName??"Not assigned"),
     "Type: "+(row.employmentType??"Not set"),
     "Academic title: "+(row.academicTitle??"Not set"),
+    "Gender: "+(row.gender||"Not recorded"),
     "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
    ]:["Roll number: "+(row.rollNumber??"Not recorded"),"Class: "+(row.className??"Not assigned"),
+     "Gender: "+(row.gender||"Not recorded"),
      "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded")]),
    "Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
    "Contact shown only within selected college administrative scope.",
