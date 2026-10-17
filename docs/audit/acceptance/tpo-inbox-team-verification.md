@@ -193,3 +193,8 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 | TPO-inbox-team-18 | PARTIAL — OPEN | Sorted limited Team inbox by latest actual message activity (college-scoped) and displayed IST timestamp, with existing search/preview; `tests/unit/tpo-team-activity-notices-chat2.test.ts` named `TPO-inbox-team-18`. Object/ask/decision filters remain. |
 | TPO-inbox-team-29 | PARTIAL — OPEN | Private thread invitations and replies now include actor name and 120-character recipient-only preview; reply uses deep link to message; same named `TPO-inbox-team-29` test. Full TEAM_MENTION, TEAM_ASK, TEAM_ASK_DONE, TEAM_ASSIGNED require those first-class workflows. |
 | TPO-inbox-team-R05 | DONE (source; tests unrun) | Old and `?m=` deep-linked Team alerts count and acknowledge with independently persisted read pointer. Named `TPO-inbox-team-R05` regression test in same suite. |
+
+## Chat-2 round 5 — From 42 badge
+
+| TPO-inbox-team-54 | PARTIAL — OPEN | `countUnreadTpo42Announcements` counts college-scoped visible unread notices beyond the first 100 and tabs show true global count only when read-receipt storage is registered; named `TPO-inbox-team-54` in `tests/unit/tpo-from42-unread-chat2.test.ts`. Shell sidebar and informational bell producer remain open (chat-9 shell owner). |
+| TPO-inbox-team-R04 | PARTIAL — OPEN | Announcements continue paginated, and first-page unread badge now uses a separate authorized full count, not a per-page guess; same named test. Remaining author filtering and full-list acceptance pending. |
