@@ -76,6 +76,7 @@ function studentsHref(
   filters: {
     journeyState?: string;
     legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;
+    gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
     branchId?: string;
     programId?:string;
     afterCollege?:string;
@@ -102,6 +103,10 @@ function studentsHref(
     params.set("journeyState",filters.journeyState);
   }
   if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
+  if(filters.gender)params.set("gender",filters.gender);
+  if(filters.hasProfileLinks!==undefined)params.set("hasProfileLinks",filters.hasProfileLinks?"YES":"NO");
+  for(const key of ["birthYear","minSkills","minProjects","minCertifications","minExperiences"] as const)
+   if(filters[key]!==undefined)params.set(key,String(filters[key]));
   if(filters.minRoundReached!==undefined)params.set("minRoundReached",String(filters.minRoundReached));
   if(filters.needsAttention!==undefined)params.set("needsAttention",filters.needsAttention?"YES":"NO");
 
@@ -185,6 +190,10 @@ export default async function TpoStudentsPage({
     collegeId: context.membership.collegeId,
     journeyState:first(raw.journeyState)||undefined,
     legacyStage:first(raw.legacyStage)||undefined,
+    gender:first(raw.gender)||undefined,birthYear:first(raw.birthYear)||undefined,
+    minSkills:first(raw.minSkills)||undefined,minProjects:first(raw.minProjects)||undefined,
+    minCertifications:first(raw.minCertifications)||undefined,minExperiences:first(raw.minExperiences)||undefined,
+    hasProfileLinks:first(raw.hasProfileLinks)||undefined,
     minRoundReached:first(raw.minRoundReached)||undefined,
     needsAttention:first(raw.needsAttention)||undefined,
     branchId: first(raw.branchId) || undefined,
@@ -297,6 +306,8 @@ export default async function TpoStudentsPage({
       afterCollege:query.afterCollege,
       profileStatus:query.profileStatus,
       legacyStage:query.legacyStage,
+      gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+      minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
       minRoundReached:query.minRoundReached,
       needsAttention:query.needsAttention,
       minApplications:query.minApplications,maxApplications:query.maxApplications,
@@ -326,6 +337,8 @@ export default async function TpoStudentsPage({
     afterCollege:query.afterCollege,
     profileStatus:query.profileStatus,
     legacyStage:query.legacyStage,
+      gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+      minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
     minRoundReached:query.minRoundReached,
     needsAttention:query.needsAttention,
     minApplications:query.minApplications,maxApplications:query.maxApplications,
@@ -408,6 +421,28 @@ export default async function TpoStudentsPage({
           <input type="number" name="minRoundReached" min={0} max={10000} step={1}
            defaultValue={query.minRoundReached??""} className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
         </label>
+        <details className="w-full rounded border border-border p-3">
+         <summary className="cursor-pointer font-semibold">Profile strength filters</summary>
+         <div className="mt-3 flex flex-wrap gap-3">
+          <label className="grid gap-1 text-sm">Gender
+           <select name="gender" defaultValue={query.gender??""} className="min-h-11 rounded border border-border p-2">
+            <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
+           </select>
+          </label>
+          <label className="grid gap-1 text-sm">Birth year
+           <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-11 w-28 rounded border border-border p-2"/>
+          </label>
+          {([["minSkills","Skills"],["minProjects","Projects"],["minCertifications","Certifications"],["minExperiences","Experience entries"]] as const).map(([key,label])=>
+           <label key={key} className="grid gap-1 text-sm">Minimum {label}
+            <input type="number" name={key} min={0} max={100} defaultValue={query[key]??""} className="min-h-11 w-28 rounded border border-border p-2"/>
+           </label>)}
+          <label className="grid gap-1 text-sm">Profile links
+           <select name="hasProfileLinks" defaultValue={query.hasProfileLinks===undefined?"":query.hasProfileLinks?"YES":"NO"} className="min-h-11 rounded border border-border p-2">
+            <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
+           </select>
+          </label>
+         </div>
+        </details>
         <label className="text-sm font-semibold">Profile verified
           <select name="profileStatus" defaultValue={query.profileStatus??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">

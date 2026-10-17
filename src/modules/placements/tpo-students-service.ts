@@ -90,6 +90,13 @@ export const tpoStudentsQuerySchema = z
     legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
     minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
     needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    gender:z.enum(["Male","Female","Other"]).optional(),
+    birthYear:z.coerce.number().int().min(1900).max(2100).optional(),
+    minSkills:z.coerce.number().int().min(0).max(100).optional(),
+    minProjects:z.coerce.number().int().min(0).max(50).optional(),
+    minCertifications:z.coerce.number().int().min(0).max(50).optional(),
+    minExperiences:z.coerce.number().int().min(0).max(30).optional(),
+    hasProfileLinks:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     minApplications:z.coerce.number().int().min(0).max(10000).optional(),
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
@@ -246,6 +253,7 @@ export async function getTpoStudentsIntelligence(
       displayName: users.displayName,
       email: users.email,
       rollNumber: learnerProfiles.rollNumber,
+      profileDocument:learnerProfiles.profileDocument,
       registrationNumber:
         learnerProfiles.registrationNumber,
       enrollmentId: learnerProgramEnrollments.id,
@@ -859,6 +867,7 @@ export async function getTpoStudentsIntelligence(
       classIds:sectionIds,
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationOpen:learner.batchInvitedAt!==null,
+      profileDocument:learner.profileDocument,
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,
