@@ -89,7 +89,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
     <label className="block text-sm">Open saved view
      <select className="mt-1 min-h-10 w-full max-w-sm rounded border border-border px-3"
       value={selected} onChange={e=>{
-       setSelected(e.target.value);
+       setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
        setEditingName(view?.name??"");setEditingNote(view?.note??"");
       }}>
