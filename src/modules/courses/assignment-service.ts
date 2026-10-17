@@ -115,6 +115,11 @@ export async function listCourseAssignments(
       deliveryId,
     );
 
+  // COL-course-tabs-13: hidden lessons are unavailable even by a saved deep link.
+  if (access === "LEARNER" && !lesson.visibleToStudents) {
+    throw new CoursesServiceError("LESSON_NOT_FOUND");
+  }
+
   if (
     access === "LEARNER" &&
     lesson.learningPathStatus !== "PUBLISHED"
