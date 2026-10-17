@@ -22,3 +22,12 @@ export function learnerProjectDeliveryReviewNotice(projectId:string,decision:str
   actionHref:"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery",
  };
 }
+
+/** Reopen notices link to the authorized delivery view, not directly to stored feedback. */
+export function learnerProjectDeliveryReopenedNotice(projectId:string){
+ return {
+  title:"Delivery reopened for revision",
+  body:"The final delivery was reopened. Review the reason and prepare an updated version.",
+  actionHref:"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery",
+ };
+}
