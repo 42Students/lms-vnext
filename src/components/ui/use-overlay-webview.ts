@@ -28,7 +28,10 @@ export function useOverlayWebview({
       event.preventDefault();
       if (dismissible) callback.current();
     }
-    function popstate() { if (dismissible) callback.current(); }
+    function popstate() {
+      if (dismissible) callback.current();
+      else window.history.pushState({ ...(window.history.state ?? {}), lmsOverlay: marker }, "", window.location.href);
+    }
     function resize() {
       const viewport = window.visualViewport;
       const height = viewport ? Math.max(240, viewport.height) : window.innerHeight;
