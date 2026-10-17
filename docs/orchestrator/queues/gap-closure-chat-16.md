@@ -76,3 +76,13 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - SA 116: read-only digest preview and real manual endpoint are authored, unconfigured Telegram sends correctly disabled.
 - SA 120: BLOCKED on missing GitHub findings feed/credentials (current repository lookup returned 404); genuine persisted sync status can be read without pretending synchronization happened.
 - All extra OPEN mentor/Super Admin gap IDs absent from queues were inventoried. They remain assigned to chat-7 or chat-9 in `docs/audit/gap-register.md`; no cross-lane ownership was taken. Test/typecheck execution remains orchestrator responsibility.
+
+## 2026-10-18 next round — central registry and fail-report reconciliation
+
+- Synced `origin/main` into `chatgpt/chat-16-b` before edits. No other lane's work was overwritten.
+- Reviewed `docs/orchestrator/typecheck-errors.md` and `unit-failures-r1.md`. Earlier `project-meeting-controls.tsx` undefined mentor form state and `mentor-sprint-details-edit.tsx` estimation-unit type mismatch are already repaired in merged source. The `graceful-telegram-foundations` and `graceful-logs-ui-contract` tests' expectations are present in current source, but **no tests or typecheck were executed**; the R1 failure report is a historical snapshot, not a current green run.
+- Reconciled **32** reassigned entries in `docs/audit/gap-register.md`: 27 source-complete entries -> `FIXED-ON-MAIN`; 4 explicitly documented intentional deviations -> `VERIFIED`; `SA-placements-projects-120` stays `OPEN` under chat-16 with a provider blocker. Added `tests/unit/chat16-gap-register-reconciliation-r7.test.ts` (`it.each` names all 32 gap IDs), checking queue/registry statuses and ownership.
+- Rechecked all mentor and Super Admin OPEN rows against lane queues and `docs/orchestrator/queues/reassignments.md`. **Zero** remain unowned; all others are listed in active lanes. No other lane's gap was silently claimed.
+- `SA-placements-projects-120` now surfaces persisted failed/partial/unconfigured sync results. Current GitHub connector returns 404 for `42Students/lms-findings`; no successful import was claimed or persisted. More work needs a readable findings source and authorized server-side importer.
+- `MEN-projects-meetings-75` dirty-form interception allows same-route fragment jumps without triggering a destructive discard prompt. Regression assertion added.
+- Page UI/UX restyling remains frozen pending the signed-off playbook. New work changes only gap behavior, audit metadata, and tests.
