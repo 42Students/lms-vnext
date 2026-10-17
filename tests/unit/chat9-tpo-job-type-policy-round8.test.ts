@@ -28,10 +28,13 @@ describe("chat9 TPO job-type and drive-approval verification",()=>{
   expect(tpoJobTypeNameSchema.safeParse("<script>").success).toBe(false);
   expect(tpoJobTypeNameSchema.safeParse("!".repeat(41)).success).toBe(false);
  });
- it("TPO-settings-audit-50 retains human approval for recruiter drive requests regardless of an unused policy column",()=>{
+ it("TPO-settings-audit-50 retains manual review by default and limits verified policy auto-approval to drafts",()=>{
   const service=s("src/modules/placements/recruiter-drive-request-service.ts");
   expect(service).toContain('status:"REQUEST"');
-  expect(service).toContain("No auto-approval until the shared TPO-side policy is registered.");
+  expect(service).toContain("settings?.approvalRequired??true");
+  expect(service).toContain("if(policy.autoApprove)");
+  expect(service).toContain('status:"DRAFT",approvedJobId');
+  expect(service).toContain("Never drop a valid request or publish on an unreviewed assumption.");
   expect(service).toContain("informPlacementCell");
  });
 });

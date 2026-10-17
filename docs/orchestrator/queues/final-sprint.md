@@ -135,17 +135,19 @@ No page UI/UX restyling was introduced.
 
 ## chat-9 (11)
 
-- TPO-campaigns-public-03 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-05 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-06 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-08 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-11 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-14 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-27 [FIXED-ON-MAIN] tpo/campaigns-public
-- TPO-campaigns-public-28 [FIXED-ON-MAIN] tpo/campaigns-public
-- LEARNER-course-detail-07 [FIXED-ON-MAIN] learner/course-detail
-- LEARNER-course-detail-18 [UNCONFIRMED] learner/course-detail
-- SA-placements-projects-102 [FIXED-ON-MAIN] superadmin/placements-projects-c-tracker
+- TPO-campaigns-public-03 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-05 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-06 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-08 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-11 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-14 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-27 [DONE] tpo/campaigns-public
+- TPO-campaigns-public-28 [DONE] tpo/campaigns-public
+- LEARNER-course-detail-07 [DONE] learner/course-detail
+- LEARNER-course-detail-18 [NOT-A-GAP] learner/course-detail
+- SA-placements-projects-102 [DONE] superadmin/placements-projects-c-tracker
+
+Chat-9 source closure: all 11 gap IDs have dedicated `tests/unit/chat9-final-<GAP-ID>.test.ts` evidence (already committed on main). Campaign acceptance: `docs/audit/acceptance/tpo-campaigns-public-verification.md`; learner: `docs/audit/acceptance/learner-course-detail-verification.md`; tracker: `docs/audit/acceptance/superadmin-placements-projects-c-tracker-verification.md`. LEARNER-course-detail-18 is NOT-A-GAP for nonexistent authored prerequisite locks; the real stale/invalid deep-link handling is DONE. LEARNER-course-detail-07 safely retains authorized multi-link materials and explicitly blocks private file downloads until signed scanned storage is ready. No test execution claimed in this lane.
 
 ## chat-11 (11)
 

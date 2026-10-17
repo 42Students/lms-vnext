@@ -6,8 +6,8 @@ describe("chat9 college projects scope and persistence contracts",()=>{
   const v=s("src/components/projects/class-team-workspace-creator.tsx");
   expect(v).toContain('mode==="INDIVIDUAL"');
   expect(v).toContain("/api/projects/cohort-preflight?collegeId=");
-  expect(v).toContain('window.confirm("Create "+preflight.toCreate+');
-  expect(v).toContain("preflight.alreadyCovered");
+  expect(v).toContain('window.confirm("Create "+currentPreflight.toCreate+');
+  expect(v).toContain("currentPreflight.alreadyCovered");
  });
  it("COL-projects-07 enforces a mentor for ACTIVE creation and permits scoped class roster choices",()=>{
   const v=s("src/components/projects/project-create-control.tsx");

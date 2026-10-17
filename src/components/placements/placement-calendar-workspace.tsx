@@ -880,7 +880,7 @@ export async function PlacementCalendarWorkspace({
   All events ({eventTypeCountsSource&&blockedDays?.ready?countSourceEvents.length+toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length:"unavailable"})
  </Link>
  {TPO_CALENDAR_CHIP_CHOICES.map(filter=>{
-  const count=filter.value==="BLOCKED"?(blockedDays?.ready?eventTypeCounts.get("BLOCKED")??0:"unavailable"):(eventTypeCountsSource?tpoCalendarChipCount(countSourceEvents,filter.value):"unavailable");
+  const count=filter.value==="BLOCKED"?(blockedDays?.ready?eventTypeCounts.get("BLOCKED")??0:"unavailable"):(eventTypeCountsSource?tpoCalendarChipCount(eventTypeCountsSource.events,filter.value):"unavailable");
   const active=state.kinds.includes(filter.value)||(!state.kinds.length&&state.kind===filter.value);
   const currently=state.kinds.length?state.kinds:parseTpoCalendarChips(state.kind);
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);

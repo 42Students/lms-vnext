@@ -17,6 +17,8 @@ import { describe, expect, it } from "vitest";
  */
 const ALLOWED: Record<string, string> = {
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
+  "src/app/api/internal/alerts/tick/route.ts POST":
+    "secret-authenticated scheduler with timing-safe x-internal-alerts-key verification and no browser session cookie; Origin is not available for scheduled callers",
   "src/app/api/webhooks/telegram/route.ts POST":
     "Telegram provider webhook authenticates x-telegram-bot-api-secret-token through validTelegramWebhookSecret; no session cookie or browser Origin",
   "src/app/api/internal/placements/tpo/notices/deliver/route.ts POST":
@@ -74,6 +76,17 @@ describe("state-changing API routes", () => {
     expect(source).toContain('validTelegramWebhookSecret(request.headers.get("x-telegram-bot-api-secret-token"))');
     expect(source).toContain("if (process.env.APP_ENV !== \"production\")");
     expect(source).not.toContain("getCurrentRequestContext");
+  });
+
+  it("api-origin-guard scheduler exception requires a timing-safe secret and fails closed",()=>{
+    const file=path.join(ROOT,"api/internal/alerts/tick/route.ts");
+    const source=fs.readFileSync(file,"utf8");
+    expect(ALLOWED["src/app/api/internal/alerts/tick/route.ts POST"]).toContain("timing-safe");
+    expect(source).toContain('timingSafeEqual');
+    expect(source).toContain('x-internal-alerts-key');
+    expect(source).toContain('process.env.INTERNAL_ALERT_TICK_SECRET');
+    expect(source).toContain('if (!provided || !expected) return false;');
+    expect(source).not.toContain('getCurrentRequestContext');
   });
 
   it("every POST/PUT/PATCH/DELETE handler checks the request origin", () => {

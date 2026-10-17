@@ -37,9 +37,12 @@ describe("W03 project admin audit parity contract", () => {
   });
 
   it("requires an explicit college scope for the super-admin audit surface", () => {
+    // The page route now enforces college selection before the shared audit
+    // component is even rendered. That is stronger than an inner UI guard.
+    expect(superRoute).toContain("getProjectAdminCollegeId(context)");
+    expect(superRoute).toContain("if (!collegeId)");
+    expect(superRoute).toContain("Select a college scope");
     expect(audit).toContain("isSuperAdmin(context)");
-    expect(audit).toContain("!context.adminScope?.collegeId");
-    expect(audit).toContain("Select a college to continue");
   });
 
   it("preserves cursor filters when loading older activity", () => {

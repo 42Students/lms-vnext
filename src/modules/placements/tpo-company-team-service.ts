@@ -16,7 +16,8 @@ const uuid=z.string().uuid();
 const messageText=z.string().trim().min(1).max(4000);
 const mutation=z.discriminatedUnion("action",[
  z.strictObject({action:z.literal("SEND"),body:messageText,decision:z.boolean().default(false),
-  assigneeId:uuid.nullable().default(null),dueAt:z.iso.datetime({offset:true}).nullable().default(null)}),
+  assigneeId:uuid.nullable().default(null),dueAt:z.iso.datetime({offset:true}).nullable().default(null),
+  idempotencyKey:uuid.optional()}),
  z.strictObject({action:z.literal("FOLLOW"),following:z.boolean()}),
  z.strictObject({action:z.literal("EDIT"),messageId:uuid,body:messageText}),
  z.strictObject({action:z.literal("DELETE"),messageId:uuid}),
@@ -126,12 +127,32 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
       eq(collegeMemberships.status,"ACTIVE"))).limit(1);
     if(!assignee)throw new TpoCompanyTeamError("NOT_AUTHORIZED");
    }
+   // The client reuses its UUID when a network response is lost. A unique
+   // college/company/author/key constraint serializes concurrent retries, and
+   // replays do not emit a second activity event or recipient notification.
    const [message]=await tx.insert(messages).values({
     collegeId:college.id,companyId,authorMembershipId:membership.id,body:input.body,
+    idempotencyKey:input.idempotencyKey??null,
     decision:input.decision,askAssigneeMembershipId:input.assigneeId,
     askDueAt:input.dueAt?new Date(input.dueAt):null,
     askStatus:input.assigneeId?"OPEN":null,
-   }).returning({id:messages.id});
+   }).onConflictDoNothing().returning({id:messages.id});
+   if(!message){
+    if(!input.idempotencyKey)throw new TpoCompanyTeamError("STALE");
+    const [original]=await tx.select({
+      id:messages.id,body:messages.body,decision:messages.decision,
+      assignee:messages.askAssigneeMembershipId,dueAt:messages.askDueAt,
+    }).from(messages).where(and(
+      eq(messages.collegeId,college.id),eq(messages.companyId,companyId),
+      eq(messages.authorMembershipId,membership.id),
+      eq(messages.idempotencyKey,input.idempotencyKey),
+    )).limit(1);
+    if(!original||original.body!==input.body||original.decision!==input.decision||
+      original.assignee!==input.assigneeId||
+      (original.dueAt?.getTime()??null)!==(input.dueAt?Date.parse(input.dueAt):null))
+      throw new TpoCompanyTeamError("STALE");
+    return {changed:false,id:original.id};
+   }
    // Bell notifications stay inside the same transaction, to verified active
    // college placement team members only. Followers, @team and assignee are
    // deduplicated; arbitrary @name text never grants notification access.
