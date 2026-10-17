@@ -32,7 +32,7 @@ export function prepareSelectionImport(text:string,candidates:readonly Selection
  const accepted:SelectionImportEntry[]=[];const unmatched:Array<{line:number;value:string;reason:string}>=[];
  const seen=new Set<string>();
  rows.forEach((row,i)=>{
-  const identifier=row[idColumn>=0?idColumn:emailColumn>=0?emailColumn:nameColumn]??"";
+  const identifier=[idColumn,emailColumn,nameColumn].filter(i=>i>=0).map(i=>(row[i]??"").trim()).find(Boolean)??"";
   const identities=[
    idColumn>=0&&row[idColumn]?.trim()?{kind:"id",value:row[idColumn]!.trim().toLocaleLowerCase("en-IN")}:null,
    emailColumn>=0&&row[emailColumn]?.trim()?{kind:"email",value:row[emailColumn]!.trim().toLocaleLowerCase("en-IN")}:null,
