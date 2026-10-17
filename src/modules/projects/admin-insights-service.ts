@@ -791,6 +791,7 @@ export async function listProjectAdminSubmissionQueue(
           reviewedAt: projectSubmissionReviews.reviewedAt,
           reviewedBy: users.displayName,
           lockedAt: projectSubmissions.lockedAt,
+          reopenedAt:projectSubmissions.reopenedAt,
           submittedAt: projectSubmissions.submittedAt,
           updatedAt: projectSubmissions.updatedAt,
         })
