@@ -59,6 +59,19 @@ export default async function RecruiterConversationDetail({params,searchParams}:
     <section aria-label="Drive change request updates" className="rounded-xl border border-border bg-surface p-4">
       <h2 className="text-sm font-semibold text-foreground">Change requests · {changeRequests.requests.length}</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded change requests for this hiring drive. Decisions are controlled by the placement cell.</p>
+      <ol className="mt-3 max-h-56 space-y-2 overflow-y-auto">
+        {changeRequests.requests.slice(0,8).map(request=><li key={request.id}
+          className="rounded-md border border-border bg-surface-subtle p-3 text-sm">
+          <span className="font-semibold text-foreground">
+            {request.proposerParty==="COMPANY"?"You asked":"Placement cell asked"} · {request.field.replaceAll("_"," ")}
+          </span>
+          <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">{request.status}</span>
+          <p className="mt-1 break-words text-body">{request.reason}</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
+          </p>
+        </li>)}
+      </ol>
       <Link href={"/recruiter/drives/"+encodeURIComponent(result.thread.jobId!)+"?tab=requests"}
         className="mt-2 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
         Review requests, answers and decisions
