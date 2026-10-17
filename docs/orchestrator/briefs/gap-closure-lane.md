@@ -52,3 +52,6 @@ docs/orchestrator/typecheck-errors.md lists tsc errors on main that block the de
 
 ## UNCONFIRMED gaps are yours to decide (added 2026-10-17)
 docs/orchestrator/queues/unconfirmed-decisions.md lists gaps that could not be confirmed from code. The owner said: decide the best behaviour yourself, do not follow the old LMS where it is wrong. Take the section for your lane, decide, implement if needed, document the decision in the acceptance file with the gap ID, add a test named with the ID. Do this after your typecheck and test fixes.
+
+## UI/UX excellence pass starts NOW, in parallel (owner order 2026-10-17 23:55)
+Never sit idle. When your gap, typecheck and test work for the round is done (or your queue is exhausted), continue straight into the UI/UX excellence pass for your slice: read docs/orchestrator/briefs/ui-ux-excellence-lane.md (checklist and lane slices) and your page list docs/orchestrator/ui-ux/pages-<area>.md. Work page by page, push every ~5 pages, write docs/audit/ux/<route-with-dashes>.md notes, keep legacy wording exact and every test passing. Gap closure and typecheck fixes still come first when something is red; otherwise UI/UX.
