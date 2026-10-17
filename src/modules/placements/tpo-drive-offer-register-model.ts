@@ -41,7 +41,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
  return {counts,totalMatching:match.length,page,pageSize:OFFER_REGISTER_PAGE_SIZE,totalPages,rows:match.slice(start,start+OFFER_REGISTER_PAGE_SIZE).map(({offer,candidate,joining})=>({
-  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,status:offer.status,
+  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
   issued:offer.issuedAt.toISOString(),responded:offer.respondedAt?.toISOString()??null,
   expires:offer.expiresAt?.toISOString()??null,respondByHours:offer.status==="ISSUED"&&offer.expiresAt?Math.max(0,Math.ceil((offer.expiresAt.getTime()-asOf.getTime())/3600000)):null,expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
   joining:offer.status==="ACCEPTED"?(joining?.status??"PENDING"):null,
