@@ -134,10 +134,21 @@ export function SuperAdminContentActions({item}:{item:Content}){
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>:null}
    {item.contentType==="LIVE_CLASS"?<>
-    <label className="grid gap-1 text-xs font-semibold">Start Date and Time (IST)
+    <label className="grid gap-1 text-xs font-semibold">Time Zone
+     <select className="min-h-10 rounded border border-border bg-background p-2" value={timeZone}
+      onChange={e=>{
+       const zone=e.target.value as MeetingZone;
+       if((startsAt!==localDate(item.startsAt,timeZone)||endsAt!==localDate(item.endsAt,timeZone))&&
+         !window.confirm("Changing Time Zone will reset unsaved date and time edits. Continue?"))return;
+       setTimeZone(zone);setStartsAt(localDate(item.startsAt,zone));setEndsAt(localDate(item.endsAt,zone));
+      }}>
+      <option value="Asia/Kolkata">India Standard Time (IST)</option><option value="UTC">UTC</option>
+     </select>
+    </label>
+    <label className="grid gap-1 text-xs font-semibold">Start Date and Time
      <input type="datetime-local" value={startsAt} onChange={e=>setStartsAt(e.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2"/></label>
-    <label className="grid gap-1 text-xs font-semibold">End Date and Time (IST)
+    <label className="grid gap-1 text-xs font-semibold">End Date and Time
      <input type="datetime-local" value={endsAt} onChange={e=>setEndsAt(e.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2"/></label>
    </>:null}
