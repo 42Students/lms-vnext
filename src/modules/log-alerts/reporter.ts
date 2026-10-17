@@ -43,7 +43,7 @@ export function formatAlert(input: {
     "Route: " + safeAlertPath(input.path),
     "Component: " + safeAlertLabel(input.component),
     "Status: " + (input.status ?? "-"),
-    "Request ID: " + (input.requestId && /^[0-9a-z-]{1,80}$/i.test(input.requestId) ? input.requestId : "-"),
+    "Request ID: " + (input.requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(input.requestId) ? input.requestId : "-"),
     "Count: " + (input.count ?? 1),
     "Affected accounts: " + (input.affectedAccounts ?? 0),
     "Message: " + redactAlertText(input.message),
