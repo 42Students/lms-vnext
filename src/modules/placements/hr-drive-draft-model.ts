@@ -56,6 +56,11 @@ export const hrDriveDraftSchema = z.strictObject({
   if (data.ctcLpa && Number(data.fixedLpa||0)+Number(data.variableLpa||0)>Number(data.ctcLpa)){
     ctx.addIssue({code:"custom",path:["fixedLpa"],message:"Fixed and variable add up to more than the CTC"});
   }
+  if (data.ctcLpa && (data.fixedLpa || data.variableLpa) &&
+      Number(data.fixedLpa||0)+Number(data.variableLpa||0)<Number(data.ctcLpa)-0.01) {
+    ctx.addIssue({code:"custom",path:["variableLpa"],
+      message:"Fixed and variable must add up to the total CTC"});
+  }
   const min = data.minimumAnnualCtcInr ? Number(data.minimumAnnualCtcInr) : null;
   const max = data.maximumAnnualCtcInr ? Number(data.maximumAnnualCtcInr) : null;
   if (data.bondMonths && Number(data.bondMonths) > 120) {

@@ -7,6 +7,7 @@ type UnreadThread={id:string;href:string;label:string;unread:number};
 export function buildRecruiterActionQueue(input:{
  jobs:readonly Job[];collegeId:string;companyId:string;unread:number;now?:Date;
  resultsDue?:readonly Due[];unreadConversations?:readonly UnreadThread[];
+ returnedRequests?:readonly {id:string;status:string;draft:unknown}[];
 }) {
  const authorized=new Set(input.jobs.filter(row=>row.collegeId===input.collegeId&&
   row.companyId===input.companyId&&row.job.archivedAt===null&&
@@ -17,6 +18,13 @@ export function buildRecruiterActionQueue(input:{
     label:"Open messages · "+item.label,
     description:item.unread+" unread placement-cell messages in this authorized conversation.",
     href:item.href}));
+ const returned=(input.returnedRequests??[])
+  .filter(row=>row.status==="SENT_BACK").slice(0,5)
+  .map(row=>({key:"fix:"+row.id,tone:"URGENT" as const,at:null as Date|null,
+    label:"Fix and resend · "+(row.draft&&typeof row.draft==="object"&&"title" in row.draft&&typeof row.draft.title==="string"?row.draft.title:"Drive request"),
+    description:"The placement cell sent this request back for changes.",
+    href:"/recruiter/drives/new?collegeId="+encodeURIComponent(input.collegeId)+
+      "&fix="+encodeURIComponent(row.id)}));
  const due=(input.resultsDue??[]).filter(item=>authorized.has(item.jobId)&&
    Number.isFinite(item.dueAt.getTime()))
   .sort((a,b)=>a.dueAt.getTime()-b.dueAt.getTime()||a.id.localeCompare(b.id))
@@ -25,11 +33,11 @@ export function buildRecruiterActionQueue(input:{
     description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
     href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
-   row.job.status==="PUBLISHED"&&row.job.archivedAt===null).slice(0,3);
+   row.job.status==="PUBLISHED"&&row.job.archivedAt===null);
  const deadlines = input.now ? live
   .filter(row=>row.job.applicationDeadline instanceof Date &&
     Number.isFinite(row.job.applicationDeadline.getTime()))
-  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-86400000)
+  .filter(row=>row.job.applicationDeadline!.getTime()>=input.now!.getTime()-7*86400000)
   .sort((a,b)=>a.job.applicationDeadline!.getTime()-b.job.applicationDeadline!.getTime())
   .slice(0,3)
   .map(row=>({
@@ -40,7 +48,7 @@ export function buildRecruiterActionQueue(input:{
     description:"Review the published deadline and available shared applications.",
     href:"/recruiter/drives/"+encodeURIComponent(row.job.id)+"?tab=overview",
   })) : [];
- const reviews=live.map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
+ const reviews=live.slice(0,3).map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
    label:"Review shared applicants · "+row.job.title,
    description:"Open the employer-visible shortlist and notes. No unshared applications are included.",
    href:recruiterTodayHref({kind:"REVIEW_APPLICANTS",jobId:row.job.id})}));
@@ -48,7 +56,7 @@ export function buildRecruiterActionQueue(input:{
    label:"Read "+input.unread+" unread notifications",
    description:"Open your college-scoped drive notification inbox.",
    href:recruiterTodayHref({kind:"MESSAGES"})+"?collegeId="+encodeURIComponent(input.collegeId)+"&unreadOnly=true"}]:[];
- const actions=[...conversations,...due,...deadlines,...reviews,...notices];
+ const actions=[...returned,...conversations,...due,...deadlines,...reviews,...notices];
  const priority={URGENT:0,SOON:1,FINE:2};
  return actions.sort((a,b)=>{
   const rank=priority[a.tone]-priority[b.tone];

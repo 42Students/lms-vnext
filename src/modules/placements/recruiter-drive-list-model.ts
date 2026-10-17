@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const recruiterDriveListQuerySchema = z.object({
-  view: z.enum(["ALL", "LIVE", "CLOSED", "WAITING"]).default("ALL"),
+  view: z.preprocess(value=>typeof value==="string"?value.toUpperCase():value,z.enum(["ALL","LIVE","CLOSED","WAITING"]).default("ALL")),
   collegeId: z.string().uuid().optional(),
   q: z.string().trim().max(100).default(""),
   employment: z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
@@ -46,7 +46,7 @@ export function filterRecruiterDrives<T extends RecruiterDriveListItem>(
     (!query.collegeId || row.collegeId === query.collegeId) &&
     (query.view === "ALL" || (query.view === "LIVE" && row.job.status === "PUBLISHED") ||
       (query.view === "CLOSED" && row.job.status === "CLOSED")) &&
-    row.job.title.toLocaleLowerCase("en").includes(query.q.toLocaleLowerCase("en")) &&
+    row.job.title.toLocaleLowerCase("en").includes(query.q.trim().toLocaleLowerCase("en")) &&
     (query.employment === "ALL" || row.job.employmentType === query.employment) &&
     (query.mode === "ALL" || row.job.workMode === query.mode) &&
     (query.deadline === "ALL" || (query.deadline === "UNKNOWN" && !row.job.applicationDeadline) ||
