@@ -46,9 +46,14 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(service).toContain("selectedOptionIds");
   expect(service).toContain("pointsAwarded");
  });
- it("LEARNER-learning-misc-20 leaving an attempt asks for confirmation",()=>{
-  expect(quiz()).toContain("Are you sure you want to cancel this quiz?");
-  expect(quiz()).toContain("window.confirm");
+ it("LEARNER-learning-misc-20 leaving an attempt asks for a guarded confirmation dialog",()=>{
+  const attempt=quiz();
+  expect(attempt).toContain("Are you sure you want to cancel this quiz?");
+  expect(attempt).toContain("<ConfirmDialog open={leaveOpen}");
+  expect(attempt).toContain('confirmVariant="danger" confirmLabel="Leave quiz"');
+  expect(attempt).toContain("if (attemptable && !review) { setLeaveOpen(true); return; }");
+  expect(attempt).toContain('router.replace("/learn/allQuizzes")');
+  expect(attempt).toContain('window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step }))');
  });
  it("LEARNER-learning-misc-21 learner quiz success copy uses actual result release rule",()=>{
   expect(quiz()).toContain("Quiz submitted! Score: ");
