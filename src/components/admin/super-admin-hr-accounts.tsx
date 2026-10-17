@@ -24,6 +24,7 @@ import { SuperAdminHrDetailDrawer } from "./super-admin-hr-detail-drawer";
 import type {
   HrAccount,
   HrAccountFormValues,
+  HrCollegeOption,
   HrAccountsPageData,
   HrGrant,
   HrListFilters,
@@ -168,6 +169,7 @@ export function SuperAdminHrAccounts({
 
   const [relationships, setRelationships] =
     useState<HrRelationshipOption[]>([]);
+  const [colleges,setColleges]=useState<HrCollegeOption[]>([]);
   const [optionsLoading, setOptionsLoading] =
     useState(false);
   const [optionsError, setOptionsError] =
@@ -183,10 +185,12 @@ export function SuperAdminHrAccounts({
     setOptionsLoading(true);
     setOptionsError(null);
     setRelationships([]);
+    setColleges([]);
 
     try {
       const payload = await requestJson<{
         relationships: HrRelationshipOption[];
+        colleges: HrCollegeOption[];
       }>("/api/admin/hr/options");
 
       if (
@@ -202,6 +206,7 @@ export function SuperAdminHrAccounts({
       }
 
       setRelationships(payload.relationships);
+      setColleges(Array.isArray(payload.colleges)?payload.colleges:[]);
     } catch (error) {
       if (
         version !== optionsRequestVersion.current
@@ -318,9 +323,9 @@ export function SuperAdminHrAccounts({
           "/api/admin/hr",
           "POST",
           {
-            companyRelationshipId:
-              values.companyRelationshipId,
-            companyRelationshipIds:values.companyRelationshipIds,
+            ...(values.newCompany?{newCompany:values.newCompany}:
+              {companyRelationshipId:values.companyRelationshipId,
+               companyRelationshipIds:values.companyRelationshipIds}),
             displayName: values.displayName.trim(),
             phoneE164: values.phoneE164.trim(),
             ...(values.email.trim()
@@ -870,6 +875,7 @@ export function SuperAdminHrAccounts({
               : null
           }
           relationships={relationships}
+          colleges={colleges}
           optionsLoading={optionsLoading}
           optionsError={optionsError}
           pending={saving}

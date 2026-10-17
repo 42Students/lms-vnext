@@ -9,7 +9,7 @@ describe("Chat 13 recruiter audit events", () => {
     const create = service.split("export async function createSuperAdminHrAccount")[1]?.split("export async function updateSuperAdminHrAccount")[0] ?? "";
     expect(create).toContain("recordActivityEventInTransaction(tx, context");
     expect(create).toContain("PLACEMENTS_RECRUITER_CREATED");
-    expect(create).toContain("companyRelationshipId: relationship.relationshipId");
+    expect(create).toContain("companyRelationshipId: candidate.relationshipId");
   });
 
   it("SA-placements-projects-39 records status changes and updates in the same transaction", () => {

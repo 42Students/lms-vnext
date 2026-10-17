@@ -1,3 +1,4 @@
+import { createPlacementCompany } from "./company-service";
 import {superAdminHrLiteralSearchPattern} from "./super-admin-hr-search-model";
 import { recordActivityEvent, recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -479,6 +480,16 @@ export async function getSuperAdminHrAccount(
   };
 }
 
+export async function listSuperAdminHrColleges(context:RequestContext){
+  requireHrAdmin(context);
+  return getDb().select({
+    collegeId:colleges.id,collegeName:colleges.name,organizationId:colleges.organizationId,
+  }).from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+    .where(and(eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE"),
+      context.adminScope?.collegeId?eq(colleges.id,context.adminScope.collegeId):undefined,
+      context.adminScope?.organizationId?eq(colleges.organizationId,context.adminScope.organizationId):undefined,
+    )).orderBy(asc(colleges.name)).limit(200);
+}
 export async function listSuperAdminHrRelationshipOptions(
   context: RequestContext,
   rawCollegeId?: string,
@@ -640,10 +651,16 @@ export async function createSuperAdminHrAccount(
   const input =
     createSuperAdminHrInputSchema.parse(rawInput);
 
-  const relationship =
-    await loadActiveRelationship(
-      input.companyRelationshipId,
-    );
+  // Canonical company creation is idempotent by name/domain. If recruiter
+  // creation fails, the linked employer remains available for a later retry.
+  const firstRelationshipId=input.newCompany
+    ?(await createPlacementCompany(context,{
+      collegeId:input.newCompany.collegeId,name:input.newCompany.name,
+      ...(input.newCompany.primaryDomain?{primaryDomain:input.newCompany.primaryDomain}:{}),
+      isTrusted:false,
+    })).relationship.id
+    :input.companyRelationshipId!;
+  const relationship=await loadActiveRelationship(firstRelationshipId);
 
   requireHrCollege(
     context,
@@ -651,9 +668,11 @@ export async function createSuperAdminHrAccount(
     relationship.collegeId,
   );
   const selectedIds=[...new Set([
-    input.companyRelationshipId,...(input.companyRelationshipIds??[]),
+    relationship.relationshipId,...(input.companyRelationshipIds??[]),
   ])];
   if(selectedIds.length>20)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
+  if(input.newCompany&&input.companyRelationshipIds?.length)
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
   const additionalRelationships=await Promise.all(selectedIds.slice(1).map(loadActiveRelationship));
   for(const candidate of additionalRelationships){
     if(candidate.companyId!==relationship.companyId)
