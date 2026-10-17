@@ -39,4 +39,11 @@ describe("Final sprint recruiter calendar verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-03 |");
  });
 
+ it("REC-calendar-messages-profile-05 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("view===\"week\"?\"Nothing scheduled this week\"");
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("Rounds, slots and deadlines appear here as soon as they are dated.");
+  expect(src("src/app/(authenticated)/hr/calendar/page.tsx")).toContain("\"Next week\"");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-05 |");
+ });
+
 });
