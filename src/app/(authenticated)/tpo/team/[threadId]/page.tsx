@@ -45,7 +45,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
-   counterpart={result.thread.counterpartName} createdAt={result.thread.createdAt.toISOString()}
+   counterpart={result.thread.counterpartName}
+   createdDate={new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(result.thread.createdAt)}
    decisions={result.messages.filter(message=>message.decision&&!message.removed).length}/>
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
