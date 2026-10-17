@@ -356,6 +356,7 @@ export function RecruiterLeadsWorkspace({
     {key:"status",label:"Status",value:statusFilter},
     {key:"source",label:"Source",value:sourceFilter},
     {key:"company",label:"Company",value:companyFilter},
+    {key:"drives",label:"Drives that ran",value:driveFilter},
     {key:"designation",label:"Designation",value:designationFilter},
     {key:"reach",label:"Reach",value:reachFilter},
     {key:"nextFollowup",label:"Next follow-up",value:nextFilter},
@@ -386,7 +387,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention"|"drives",value:string){
    const params=new URLSearchParams(window.location.search);
    if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
@@ -398,6 +399,7 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="status")setStatusFilter(value);
    else if(kind==="source")setSourceFilter(value);
    else if(kind==="company")setCompanyFilter(value);
+   else if(kind==="drives")setDriveFilter(value);
    else if(kind==="designation")setDesignationFilter(value==="ALL"?"":value);
    else if(kind==="reach")setReachFilter(value);
    else if(kind==="nextFollowup")setNextFilter(value);
