@@ -29,6 +29,10 @@ describe("chat-13 final sprint public company share",()=>{
   expect(service).toContain("3600000");
   expect(service).toContain('eventKind:"LOCKED"');
   expect(service).toContain('title:"SHARE_LOCKED"');
+  const audit=read("src/modules/placements/company-share/audit-history-model.ts");
+  const filter=read("src/modules/placements/company-share/audit-kind-model.ts");
+  expect(audit).toContain("Locked after wrong codes");
+  expect(filter).toContain('"LOCKED"');
   expect(service).not.toContain('metadata:{code:');
   const page=read("src/app/company-share/[token]/page.tsx");
   expect(page).toContain("That code did not work, or this share is no longer available.");
@@ -53,7 +57,7 @@ describe("chat-13 final sprint public company share",()=>{
   const page=read("src/app/company-share/[token]/page.tsx");
   expect(page).toContain("Please shortlist by ");
   expect(page).toContain("result.shortlistBy");
-  expect(companyShareIssueSchema.safeParse({jobId:"00000000-0000-0000-0000-000000000001",
+  expect(companyShareIssueSchema.safeParse({jobId:"550e8400-e29b-41d4-a716-446655440000",
    expiresInDays:90,selectedColumns:["NAME"],shortlistBy:null}).success).toBe(true);
  });
 });

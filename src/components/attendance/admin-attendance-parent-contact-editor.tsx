@@ -14,6 +14,21 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
  const input={collegeId,membershipId,phoneE164,consentEvidenceReference:evidence,
   guardianConsentConfirmed:consent,verifiedParentPhone:verified};
  const valid=attendanceParentContactInputSchema.safeParse(input).success;
+ async function revoke(){
+  if(pending||retrying||!membershipId)return;
+  if(!window.confirm("Disable guardian attendance SMS for this learner and cancel any queued texts?"))return;
+  setPending(true);setError("");setSuccess("");
+  try{
+   const result=await apiFetch<{revoked:boolean;ready:boolean}>(
+    "/api/attendance/admin/parent-contacts",{
+     method:"DELETE",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({collegeId,membershipId}),
+    });
+   if(!result.ready)setError("Guardian SMS database setup is unavailable.");
+   else setSuccess(result.revoked?"Guardian SMS disabled; pending texts cancelled.":"Guardian SMS was already disabled for this learner.");
+  }catch{setError("Could not disable guardian SMS. Reload and retry.");}
+  finally{setPending(false);}
+ }
  async function retry(){
   if(retrying||pending)return;
   setRetrying(true);setError("");setSuccess("");
@@ -78,6 +93,8 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
     className="min-h-10 rounded bg-primary px-3 text-on-primary">Save verified contact</button>
    <button type="button" disabled={pending||retrying} onClick={()=>void retry()}
     className="min-h-10 rounded border border-border px-3">Retry queued guardian SMS (up to 25)</button>
+   <button type="button" disabled={pending||retrying||!membershipId} onClick={()=>void revoke()}
+    className="min-h-10 rounded border border-border px-3">Disable guardian SMS for selected learner</button>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}

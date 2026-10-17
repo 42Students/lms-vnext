@@ -38,7 +38,7 @@ describe("College academic setup prerequisites and mutation validation",()=>{
  });
  it("COL-academic-setup-10 has a local direct destination for every step",()=>{
   expect(steps.every(step=>COLLEGE_SETUP_DEEP_LINKS[step.key]===step.href)).toBe(true);
-  expect(steps.every(step=>step.href.startsWith("/college/"))).toBe(true);
+  expect(steps.every(step=>typeof step.href==="string"&&step.href.startsWith("/college/"))).toBe(true);
  });
  it("COL-academic-setup-10 rejects a foreign-college identifier in a checklist read",()=>{
   expect(collegeSetupChecklistQuerySchema.safeParse({collegeId:"foreign"}).success).toBe(false);
