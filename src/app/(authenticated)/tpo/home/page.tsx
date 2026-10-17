@@ -116,7 +116,7 @@ export default async function TpoHome(){
    ?"/tpo/placements?tab=requests":"/tpo/placements",
   registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats.summary.placed,recruiterLeads:crmCounts?.leads??null,
-  followUps:crmCounts?.dueFollowups??null,recruiterAccess:null,
+  followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
   pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
   teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
