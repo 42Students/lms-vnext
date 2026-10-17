@@ -48,7 +48,8 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
  return getDb().transaction(async tx=>{
   const [event]=await tx.select().from(activityEvents).where(and(
    eq(activityEvents.id,input.runAuditId),eq(activityEvents.collegeId,college.id),
-   eq(activityEvents.actorUserId,context.user.id),eq(activityEvents.module,"PLACEMENTS"),
+   eq(activityEvents.actorUserId,context.user.id),
+   eq(activityEvents.actorMembershipId,membership.id),eq(activityEvents.module,"PLACEMENTS"),
   )).for("update").limit(1);
   if(!event||!["PLACEMENTS_RECRUITER_BULK_STAGE","PLACEMENTS_RECRUITER_BULK_OWNER"].includes(event.eventType))
    throw new TpoBulkUndoError("NOT_FOUND");
@@ -72,6 +73,10 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
    beforeOwnerId?:string|null;afterOwnerId?:string;afterUpdatedAt:string;
   }>;
   if(new Set(changed.map(row=>row.leadId)).size!==changed.length)
+   throw new TpoBulkUndoError("INVALID_SNAPSHOT");
+  const auditLeadIds=event.metadata.leadIds;
+  if(!Array.isArray(auditLeadIds)||
+     changed.some(row=>!auditLeadIds.includes(row.leadId)))
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
   const sorted=[...changed].sort((a,b)=>a.leadId.localeCompare(b.leadId));
   // The audit event row is locked before lead rows, serializing same-run undo attempts.
