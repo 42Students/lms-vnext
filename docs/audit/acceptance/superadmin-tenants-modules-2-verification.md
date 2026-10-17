@@ -15,3 +15,5 @@ Source evidence only; unit, database and browser execution remain with the orche
 | SA-tenants-modules-30 | NOT-A-GAP | src/components/admin/descendant-feature-rule-editor.tsx; src/modules/module-access/admin-descendant-rule-model.ts; src/db/schema/module-access.ts; tests/unit/chat13-module-access-lock-gap30.test.ts — descendant lock toggle exists and schema requires an explicit enabled value, so value-less legacy lock rows cannot be created (source test not run) |
 
 | SA-tenants-modules-31 | DONE | src/modules/module-access/admin-trace-service.ts; src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx; tests/unit/chat13-placement-access-trace-gap31.test.ts — SA-tenants-modules-31 exact college/scope and real actor/date/status (tests authored, not run) |
+
+SA-tenants-modules-31 in-page drawer supplement: src/components/admin/learner-module-access-drawer.tsx and src/app/api/admin/features/[collegeId]/trace/route.ts, with source tests SA-tenants-modules-31 (written, not run).
