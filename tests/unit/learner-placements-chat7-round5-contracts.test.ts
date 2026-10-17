@@ -18,7 +18,7 @@ it("LEARNER-placements-13 retains the reviewed learner journey behavior",()=>{
 const value=source("src/components/placements/learner-save-drive-button.tsx");
 expect(value).toContain("apiFetch");
 expect(value).toContain("lock.current");
-expect(value).toContain("Saved for later");
+expect(value).toContain("learnerSavedDriveCopy(false).toast");
 });
 it("LEARNER-placements-37 retains the reviewed learner journey behavior",()=>{
 const value=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
