@@ -204,6 +204,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
         const success = await reportErrorForAlert({
           event: record.event, error: record.message, path: record.path,
           requestId: record.requestId, component: record.component,
+          sourceEventId: record.id,
         });
         if (!success) return; // Must be eligible for the next poll.
         await db.update(states).set({ pollCursorAt: record.timestamp })

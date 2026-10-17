@@ -27,6 +27,7 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     expect(e?.message).not.toContain("jane@example.com");
     expect(e?.message).not.toContain("node_modules");
     expect(e?.path).toBe("/api/users/[id]");
+    expect(e?.id).toBe("projects/safe/logs/stdout:abc");
     expect(e?.requestId).toBeUndefined();
   });
   it("GR-112 GR-114 aligns structured stack headers with in-process error signatures", () => {
