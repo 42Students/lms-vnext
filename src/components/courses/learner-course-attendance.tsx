@@ -137,10 +137,12 @@ export function LearnerCourseAttendance({
   deliveryId,
   workspace,
   defaultMonth,
+  currentMonth = defaultMonth,
 }: {
   deliveryId: string;
   workspace: AttendanceWorkspace;
   defaultMonth: string;
+  currentMonth?: string;
 }) {
   const [month] = useState(
     () => {
@@ -294,10 +296,10 @@ export function LearnerCourseAttendance({
                 className="mt-1.5 min-h-9 rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]"
               />
             </label>
-            {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),defaultMonth) ? (
+            {learnerCourseAttendanceMonthShortcutVisible(monthKey(month),currentMonth) ? (
               <Button size="sm" variant="secondary"
                 onClick={() => {
-                  const [year,nextMonth]=defaultMonth.split("-").map(Number);
+                  const [year,nextMonth]=currentMonth.split("-").map(Number);
                   navigateMonth(new Date(year,nextMonth-1,1));
                 }}>
                 This month
