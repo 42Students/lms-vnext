@@ -1,5 +1,8 @@
 # Super Admin Academic Setup verified-closure evidence (chat-13)
 
+The source-verification completion gate is `tests/unit/chat13-complete-source-coverage.test.ts` (95 independently named cases plus 0133 migration registration checks). These tests are authored but require orchestrator execution; source evidence is not a claim of browser or database certification.
+
+
 These source and API-wiring contracts record earlier implementation claims; **tests are authored but unrun**. The orchestrator must execute integration, role/tenant, mobile and browser verification before release certification.
 
 | ID | Status | Evidence (implementation and named test) |
