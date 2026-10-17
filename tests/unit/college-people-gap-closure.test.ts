@@ -172,4 +172,28 @@ describe("College People legacy audited page contracts",()=>{
   expect(directory()).toContain("md:hidden");
   expect(directory()).toContain("md:table");
  });
+ it("COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy",()=>{
+  const reassignment=src("src/components/projects/project-mentor-reassignment.tsx");
+  const page=src("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  expect(reassignment).toContain('title={"Reassign "+actionableSelection.length+" of "+selected.length+" selected workspace(s) to "+selectedMentorName+"?"}');
+  expect(reassignment).toContain("Reassigned "+'"+response.reassignedCount+"');
+  expect(reassignment).toContain("No workspaces needed changes — they already have this mentor.");
+  expect(reassignment).toContain("Select at least one workspace to reassign.");
+  expect(reassignment).toContain("<ConfirmDialog");
+  expect(reassignment).not.toContain("window.confirm");
+  expect(reassignment).not.toContain("{failure.code}");
+  expect(page).toContain("Move selected non-archived project workspaces to a new primary mentor.");
+  expect(page).toContain("Back to workspaces");
+ });
+ it("COL-people-09 is an approved non-destructive membership lifecycle instead of permanent delete",()=>{
+  const faculty=src("src/components/college/college-faculty-lifecycle-action.tsx");
+  const learner=src("src/components/college/college-student-lifecycle-action.tsx");
+  expect(faculty).toContain("Suspend Faculty");
+  expect(faculty).toContain("Reactivate Faculty");
+  expect(learner).toContain('"Suspend"');
+  expect(learner).toContain('"Reactivate"');
+  expect(faculty).not.toContain("Delete Faculty");
+  expect(learner).not.toContain("Delete Student");
+ });
+
 });
