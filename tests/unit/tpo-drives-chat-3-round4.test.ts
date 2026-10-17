@@ -81,6 +81,11 @@ describe("chat-3 Drives round 4",()=>{
   expect(workspace).toContain("eq(placementJobs.collegeId,collegeId)");
   expect(workspace).toContain("joined.status='JOINED'");
   expect(workspace).toContain("memoryByRelationship.get(company.relationshipId)");
+  expect(workspace).toContain("existingRoles:sql<Array<{jobId:string;title:string;status:string}>>");
+  expect(workspace).toContain("json_agg(json_build_object(");
+  expect(form).toContain("selectedEmployer?.memory?.existingRoles.find");
+  expect(form).toContain("tpoDriveStatusLabel(existingDrive.status)");
+  expect(form).toContain("Open it");
   expect(form).toContain('aria-label="Company Memory"');
   expect(form).toContain("A drive for {selectedEmployer.name}");
  });
