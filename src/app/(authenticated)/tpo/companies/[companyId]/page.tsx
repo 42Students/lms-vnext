@@ -430,7 +430,7 @@ export default async function TpoCompanyDetailPage({
                       </StatusBadge>
                     </td>
                     <td className="px-4 py-3">
-                      {offer.joiningStatus ?? "Not recorded"}
+                      {offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"}
                     </td>
                     <td className="px-4 py-3 text-body">
                       {dateLabel(offer.issuedAt)}
