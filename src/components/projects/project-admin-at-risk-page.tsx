@@ -72,7 +72,7 @@ export async function ProjectAdminAtRiskPage({
       <PageHeader
         eyebrow={eyebrow}
         title="At-risk projects"
-        description="Workspaces with no recent activity, an active blocker, or a pending review."
+        description="Projects that need attention (stalled, blocked, or waiting for review)."
       />
       {!result.blockerSignalSupported ? (
         <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
