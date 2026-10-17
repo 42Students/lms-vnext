@@ -190,3 +190,19 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **BLOCKED REC-calendar-messages-profile-25/-46 and REC-home-drives-09:** identity/mobile and pending invitation acceptance policy incomplete; moved on.
 - **BLOCKED LEARNER-profile-misc-18:** learner-facing authoritative data-access disclosure audit source not available; academic record alone is not equivalent; moved on.
 - **WP status:** WP-chat-7-01..05 remain **IN-PROGRESS**. Nonblocked gaps and holistic parity acceptance remain incomplete. No tests, typecheck, lint, CI, build or runtime checks were performed under FAST v2.
+
+## chat-7 FAST v2 branch checkpoint — 2026-10-17 (post migration 0130)
+
+- **Sync:** fast-forwarded branch `chatgpt/chat-7-b` to `origin/main` `672796fd85abe83fa109233c30759b35b3990898` before work (main already contains earlier chat-7 commits and migration 0130); all subsequent commits pushed only to the branch with `[chat-7]` prefixes, no PR.
+- **WP-01:** Migration 0130 is project-task comment kinds, not recruiter selection-list persistence. No unsupported private applicant disclosure, upload or auto-approval code added; work continued to WP-02.
+- **WP-02:** `REC-home-drives-48` full client IST time-range checks, dated start/end dependency, inline 400/409/overlap/full feedback, confirmation for cancellation, duplicate-submit locks, clear pending state, browser-exit edit guard, and replacement of raw POST error navigation on create/offer/book/cancel. Existing server-side authorization, version CAS and slot persistence remain authoritative.
+- **WP-03:** `LEARNER-profile-misc-13` keyboard-selectable and screen-reader-connected skills catalog suggestions with loading/empty fallback and stale-result clearing. `REC-calendar-messages-profile-18` sender names resolved only for already-authorized conversation messages, rendered in full thread, General history and in-drive Discussion. `REC-calendar-messages-profile-29` truthful access-expiry / extension language. `REC-calendar-messages-profile-13` live refresh pauses while any message composer or inbox filter is being edited.
+- **WP-04:** `REC-home-drives-R04` closed-drive Rounds explanation, `REC-home-drives-40` event link from Discussion to scoped change requests (editor only in Requests), `REC-home-drives-14` shared-applicant-based next-step captions, `REC-home-drives-07` no false 'busiest' tag when no shared applicants.
+- **WP-05:** `REC-calendar-messages-profile-07` and `REC-home-drives-56` results-due and calendar-event links use `/recruiter/drives` and carry the exact authorized `roundId`.
+- **BLOCKED LEARNER-profile-misc-01/-02/-03/-04 and REC-home-drives-23/-43:** scanner-attested private photo/evidence/video/resume storage and safe delivery not registered; moved on.
+- **BLOCKED REC-home-drives-38:** disclosure of applicant contact, grades, and resume still requires consent/college sharing decision; moved on.
+- **BLOCKED REC-home-drives-51:** employer selection-list persistence plus TPO review/verification contract still absent; migration 0130 does not unlock it; moved on.
+- **BLOCKED REC-home-drives-21/-33, REC-home-drives-R03:** trusted autoapproval and recruiter ownership scope require owner/security policy; moved on.
+- **BLOCKED REC-calendar-messages-profile-25/-46, REC-home-drives-09:** login phone verification and pending-invite lifecycle remain identity gated; moved on.
+- **BLOCKED LEARNER-profile-misc-18:** no verified per-viewer personal data-access audit. Current academic record is not an access audit; moved on.
+- **Status:** WP-chat-7-01 through WP-chat-7-05 stay IN-PROGRESS, not DONE, because nonblocked gaps and full parity acceptance remain. FAST v2 source changes were committed without tests, lint, typecheck, build or CI as requested.
