@@ -10,7 +10,7 @@ export const globalTpoRequestsQuerySchema = z.object({
   urgentOnly: z.union([z.literal("true"),z.literal(true)]).transform(()=>true).optional(),
   jobId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
-  pageSize: z.coerce.number().int().refine(value=>[25,50,100].includes(value)).default(25),
+  pageSize: z.coerce.number().int().refine(value=>[25,50,100,500].includes(value)).default(25),
 }).strict();
 export function requestKindMatches(actual:string,selected:(typeof GLOBAL_TPO_REQUEST_TYPES)[number]){
  return selected==="ALL"||actual===selected;

@@ -1,5 +1,6 @@
 import { campaignUnsubscribeTokenKind } from "@/modules/placements/public-unsubscribe-preview-service";
 import { PageHeader } from "@/components/ui/page-header";
+import {CampaignUnsubscribeConfirm} from "@/components/placements/campaign-unsubscribe-confirm";
 
 export default async function CampaignUnsubscribe({
   params,
@@ -24,12 +25,7 @@ export default async function CampaignUnsubscribe({
               ? "The placement cell that wrote to you will not email you again."
               : "Opening this link does not unsubscribe you. Confirm to add this address to the global email suppression list."}
           </p>
-          <form method="post" action="/api/public/campaign-unsubscribe" className="mt-4">
-            <input type="hidden" name="token" value={token} />
-            <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
-              {cell ? "Unsubscribe" : "Confirm unsubscribe"}
-            </button>
-          </form>
+          <CampaignUnsubscribeConfirm token={token} cell={cell}/>
         </section>
       )}
     </main>

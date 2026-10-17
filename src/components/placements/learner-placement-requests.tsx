@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -179,6 +179,39 @@ export function LearnerPlacementRequests({
   );
   const [offerReason, setOfferReason] =
     useState("");
+
+  // Warn before discarding an unsent learner request. Saved requests have
+  // their own history and are not affected by leaving this screen.
+  useEffect(()=>{
+    if(!roundReason.trim()&&!offerReason.trim())return;
+    const guard=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    const links=(event:MouseEvent)=>{
+      const link=event.target instanceof Element?event.target.closest("a[href]"):null;
+      if(!link||event.defaultPrevented||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+      const href=link.getAttribute("href");
+      if(!href||href.startsWith("#"))return;
+      try{
+        const url=new URL(href,window.location.href);
+        if(url.origin===window.location.origin&&
+           (url.pathname!==window.location.pathname||url.search!==window.location.search)&&
+           !window.confirm("Discard this unsent placement request?"))event.preventDefault();
+      }catch{/* The browser handles malformed links. */}
+    };
+    window.addEventListener("beforeunload",guard);
+    document.addEventListener("click",links,true);
+    return ()=>{window.removeEventListener("beforeunload",guard);document.removeEventListener("click",links,true);};
+  },[roundReason,offerReason]);
+
+  function requestRelativeTime(value:string){
+    const time=new Date(value).getTime();
+    if(!Number.isFinite(time))return "at an unavailable time";
+    const elapsed=Math.max(0,Date.now()-time);
+    const hours=Math.floor(elapsed/3_600_000);
+    if(hours<1)return "just now";
+    if(hours<24)return hours+" hour"+(hours===1?"":"s")+" ago";
+    const days=Math.floor(hours/24);
+    return days+" day"+(days===1?"":"s")+" ago";
+  }
 
   function success(
     title: string,
@@ -647,7 +680,7 @@ export function LearnerPlacementRequests({
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
                   Sent{" "}
-                  {when(item.requestedAt)}
+                  {requestRelativeTime(item.requestedAt)}
                   {item.decidedAt
                     ? " · decided " +
                       when(

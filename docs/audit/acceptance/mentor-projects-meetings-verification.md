@@ -63,3 +63,9 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-38 | DONE (source; tests not run) | `src/components/projects/project-workspace.tsx`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-38 retains the reviewed mentor legacy and resilience contract`. |
 
 | MEN-projects-meetings-R03 | DONE (source; tests not run) | `src/modules/projects/validation.ts`; `tests/unit/mentor-projects-chat7-round7.test.ts` — `MEN-projects-meetings-R03 retains the reviewed mentor legacy and resilience contract`. |
+
+| MEN-projects-meetings-14 | DONE (source, not executed) | `src/components/projects/project-workspace.tsx`; `tests/unit/mentor-projects-chat7-final-r7.test.ts` — `MEN-projects-meetings-14 preserves persisted truth and legacy controls`. |
+
+| MEN-projects-meetings-R05 | DONE (source, not executed) | `src/modules/projects/resource-service.ts`; `tests/unit/mentor-projects-chat7-final-r7.test.ts` — `MEN-projects-meetings-R05 preserves persisted truth and legacy controls`. |
+
+| MEN-projects-meetings-R08 | DONE (source, not executed) | `src/components/projects/project-participant-list-controls.tsx`; `tests/unit/mentor-projects-chat7-final-r7.test.ts` — `MEN-projects-meetings-R08 preserves persisted truth and legacy controls`. |

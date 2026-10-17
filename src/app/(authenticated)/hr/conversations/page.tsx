@@ -49,7 +49,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     : "Conversations with the placement cell, one per drive, plus a general one."}/>
   <Link href="/hr/messages" className="inline-flex min-h-11 items-center text-primary-text">Notification inbox</Link>
   {result.status!=="READY"?<section className="space-y-3 rounded-xl border border-border p-4">
-   <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active employer college access.":"Choose a college to view conversations."}</p>
+   <p className="text-sm text-body">{result.status==="NO_ACCESS"?"Your access to this college has ended or was removed. Ask the placement cell to give it again.":"Choose a college to view conversations."}</p>
    {result.choices.map(g=><Link key={g.id} href={"/hr/conversations?collegeId="+g.collegeId}
     className="block rounded-md border border-border p-3 text-primary-text">{g.collegeName}</Link>)}
   </section>:<>

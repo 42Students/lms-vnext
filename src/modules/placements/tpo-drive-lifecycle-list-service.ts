@@ -1,7 +1,8 @@
 import "server-only";
 import { and, count, desc, eq, gte, ilike, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, programs, departments, placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests, users } from "@/db/schema";
+import { cohorts, programs, departments, placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests, placementRecruiterCollegeGrants, activityEvents, users } from "@/db/schema";
+import {tpoDriveRequestDifferences,type TpoDriveRequestDifference} from "./tpo-drive-request-diff-model";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -118,7 +119,11 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       company:placementCompanies.name,
       createdAt:placementRecruiterDriveRequests.createdAt,
       approvedJobId:placementRecruiterDriveRequests.approvedJobId,
+      recruiterUserId:placementRecruiterDriveRequests.recruiterUserId,
+      relationshipId:placementRecruiterDriveRequests.companyRelationshipId,
+      recruiterEmail:users.email,recruiterPhone:users.phoneE164,
     }).from(placementRecruiterDriveRequests)
+      .innerJoin(users,eq(users.id,placementRecruiterDriveRequests.recruiterUserId))
       .innerJoin(placementCompanyRelationships,and(
         eq(placementCompanyRelationships.id,placementRecruiterDriveRequests.companyRelationshipId),
         eq(placementCompanyRelationships.collegeId,placementRecruiterDriveRequests.collegeId)))
@@ -126,12 +131,47 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       .where(requestScope)
       .orderBy(desc(placementRecruiterDriveRequests.createdAt),desc(placementRecruiterDriveRequests.id))
       .limit(pagination.pageSize).offset(pagination.offset);
-    const requestRows=requestRecords.map(row=>({
+    const requestIds=requestRecords.map(row=>row.id);
+    const revisions=requestIds.length?await db.select({
+      id:activityEvents.subjectId,metadata:activityEvents.metadata,
+    }).from(activityEvents).where(and(
+      eq(activityEvents.collegeId,collegeId),
+      eq(activityEvents.subjectType,"placement_recruiter_drive_request"),
+      eq(activityEvents.eventType,"placements.recruiter.drive.updated"),
+      inArray(activityEvents.subjectId,requestIds),
+    )).orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(2500):[];
+    const revisionByRequest=new Map<string,{previousDraft:unknown;currentDraft:unknown}>();
+    for(const item of revisions){
+     if(revisionByRequest.has(item.id)||!item.metadata.previousDraft||!item.metadata.currentDraft)continue;
+     revisionByRequest.set(item.id,{previousDraft:item.metadata.previousDraft,currentDraft:item.metadata.currentDraft});
+    }
+    const grants=requestRecords.length?await db.select({
+      userId:placementRecruiterCollegeGrants.recruiterUserId,
+      relationshipId:placementRecruiterCollegeGrants.companyRelationshipId,
+      verificationStatus:placementRecruiterCollegeGrants.verificationStatus,
+      validUntil:placementRecruiterCollegeGrants.validUntil,
+      status:placementRecruiterCollegeGrants.status,
+    }).from(placementRecruiterCollegeGrants).where(and(
+      inArray(placementRecruiterCollegeGrants.companyRelationshipId,db.select({id:placementCompanyRelationships.id}).from(placementCompanyRelationships).where(eq(placementCompanyRelationships.collegeId,collegeId))),
+      inArray(placementRecruiterCollegeGrants.recruiterUserId,[...new Set(requestRecords.map(row=>row.recruiterUserId))]),
+    )):[];
+    const grantByRequest=new Map(requestRecords.map(row=>[row.id,
+      grants.find(grant=>grant.userId===row.recruiterUserId&&grant.relationshipId===row.relationshipId&&grant.status==="ACTIVE")??null]));
+    const requestRows=requestRecords.map(row=>{
+      const grant=grantByRequest.get(row.id);
+      return {
       id:row.id,status:row.status,
       title:typeof row.draft.title==="string"?row.draft.title:"Untitled drive request",
       company:row.company,createdAt:row.createdAt.toISOString(),
       approvedJobId:row.approvedJobId,
-    }));
+      recruiterEmail:row.recruiterEmail,recruiterPhone:row.recruiterPhone,
+      recruiterUserId:row.recruiterUserId,
+      verificationStatus:grant?.verificationStatus??"PENDING",
+      accessEnded:Boolean(grant?.validUntil&&grant.validUntil<now),
+      changes:revisionByRequest.has(row.id)?tpoDriveRequestDifferences(
+       revisionByRequest.get(row.id)!.previousDraft,revisionByRequest.get(row.id)!.currentDraft):null,
+      };
+    });
     return {...pagination,counts:{...counts,total:tally?.total??0},rows:[],requestRows,requestsAvailable:true as const,...common};
   }
   const target=selectedView==="DRAFT"?"DRAFT":selectedView==="LIVE"?"PUBLISHED":selectedView==="CLOSED"?"CLOSED":null;
@@ -266,6 +306,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,needsReviewCount,statusCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
-    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
+    requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null;
+      recruiterEmail:string|null;recruiterPhone:string|null;recruiterUserId:string;
+      verificationStatus:string;accessEnded:boolean;changes:TpoDriveRequestDifference[]|null}[],
   };
 }

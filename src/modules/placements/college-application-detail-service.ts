@@ -95,7 +95,8 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
   resume:{available:false,reason:"A private resume receipt was not supplied by the application record."}};
 }
 export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
- const input=z.strictObject({body:z.string().trim().min(1).max(2000)}).parse(raw);
+ const input=z.strictObject({body:z.string().trim().min(1).max(2000),
+  amendsNoteId:z.uuid().optional()}).parse(raw);
  const {collegeId,application}=await scoped(ctx,job,id);
  const acting=await resolveActingCollege(ctx,"placements.manage");
  return getDb().transaction(async tx=>{
@@ -103,6 +104,13 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
    .where(and(eq(placementApplications.id,application.id),
     eq(placementApplications.jobId,application.jobId))).for("update").limit(1);
   if(!parent)throw Error("Application no longer belongs to the drive.");
+  if(input.amendsNoteId){
+   const [previous]=await tx.select({id:placementApplicationNotes.id}).from(placementApplicationNotes)
+    .where(and(eq(placementApplicationNotes.id,input.amendsNoteId),
+      eq(placementApplicationNotes.applicationId,parent.id),
+      eq(placementApplicationNotes.side,"TPO"))).limit(1);
+   if(!previous)throw Error("The original note is no longer available in this application.");
+  }
   const [note]=await tx.insert(placementApplicationNotes).values({
    applicationId:application.id,side:"TPO",companyId:null,
    authorUserId:ctx.user.id,body:input.body,
@@ -112,8 +120,8 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership?.id??null,
    module:"PLACEMENTS",eventType:"PLACEMENTS_COLLEGE_APPLICATION_NOTE_ADDED",
    subjectType:"placement_application",subjectId:application.id,
-   summary:"Internal placement application note added",
-   metadata:{jobId:application.jobId,noteId:note.id},
+   summary:input.amendsNoteId?"Internal placement application note corrected":"Internal placement application note added",
+   metadata:{jobId:application.jobId,noteId:note.id,amendsNoteId:input.amendsNoteId??null},
   });
   return {id:note.id,createdAt:note.createdAt};
  });

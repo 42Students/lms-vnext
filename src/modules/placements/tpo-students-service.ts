@@ -1,4 +1,5 @@
 import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {tpoHiddenProfileMatchesSearch,tpoProfileSkillNameMatches} from "./tpo-hidden-profile-search";
 import {readTpoAfterCollegeMatches} from "./tpo-after-college-filter-service";
 import {readTpoStudentVerificationFacts,studentVerificationFact} from "./tpo-student-verification-facts";
 import {
@@ -105,6 +106,7 @@ export const tpoStudentsQuerySchema = z
     minProjects:z.coerce.number().int().min(0).max(50).optional(),
     minCertifications:z.coerce.number().int().min(0).max(50).optional(),
     minExperiences:z.coerce.number().int().min(0).max(30).optional(),
+    skillName:z.string().trim().min(1).max(100).optional(),
     hasProfileLinks:yesNo.optional(),
     hasResume:yesNo.optional(),
     hasCodingProfiles:yesNo.optional(),
@@ -879,6 +881,10 @@ export async function getTpoStudentsIntelligence(
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
       registrationOpen:learner.batchInvitedAt!==null,
       profileDocument:learner.profileDocument,
+      skillNameMatched:tpoProfileSkillNameMatches(learner.profileDocument,input.skillName??""),
+      hiddenSearchMatched:tpoHiddenProfileMatchesSearch(learner.profileDocument,input.search??"")||
+       Boolean(input.search&&sectionIds.some(id=>activeSections.find(section=>section.sectionId===id)?.sectionName
+        .toLocaleLowerCase("en-IN").includes(input.search!.toLocaleLowerCase("en-IN")))),
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,
