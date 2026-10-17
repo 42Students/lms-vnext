@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import {
   useState,
   useTransition,
@@ -75,8 +76,9 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,
+  course,duplicateHref,
 }: {
+  duplicateHref?:string;
   course: {
     id: string;
     name: string;
@@ -109,6 +111,7 @@ export function CourseActions({
   return (
     <>
       <div className="flex justify-end gap-2">
+        {duplicateHref?<Link href={duplicateHref} className="inline-flex min-h-9 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Duplicate</Link>:null}
         <Button
           size="sm"
           variant="secondary"
