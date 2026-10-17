@@ -383,6 +383,8 @@ export async function revokePlacementRecruiterGrant(
   return revoked ?? current.grant;
 }
 
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
+
 export async function listOwnRecruiterPlacementJobs(
   context: RequestContext,
   collegeId?: string,
@@ -446,6 +448,7 @@ export async function listOwnRecruiterPlacementJobs(
           relationshipIds,
         ),
         ...(collegeId ? [eq(placementJobs.collegeId, collegeId)] : []),
+        recruiterOwnJobPredicate(context.user.id),
         ...(options.jobIds ? [inArray(placementJobs.id,[...new Set(options.jobIds)])] : []),
         eq(
           placementCompanyRelationships.collegeId,
