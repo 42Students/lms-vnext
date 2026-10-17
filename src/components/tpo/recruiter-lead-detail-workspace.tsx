@@ -90,6 +90,8 @@ export function RecruiterLeadDetailWorkspace({
 }: { collegeId: string; leadId: string }) {
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [companySummary,setCompanySummary]=useState<CompanySummary|null>(null);
+  const [companyError,setCompanyError]=useState("");
   const [followups, setFollowups] = useState<Followup[]>([]);
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [openedAt] = useState(() => new Date());
