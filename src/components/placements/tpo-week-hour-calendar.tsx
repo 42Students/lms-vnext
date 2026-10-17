@@ -13,12 +13,14 @@ const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:
 const kinds:Record<string,string>={ROUND:"Round",FOLLOW_UP:"Follow-up",APPLICATION_DEADLINE:"Deadline",INTERVIEW_SLOT:"Interview"};
 const tone=(kind:string)=>kind==="APPLICATION_DEADLINE"?"bg-warning-subtle text-warning-text":kind==="FOLLOW_UP"?
  "bg-success-subtle text-success-text":"bg-primary-subtle text-primary-text";
-export function TpoWeekHourCalendar({days,events,leads,canCreate,nowIso}:{
- days:readonly string[];events:readonly WeekGridEvent[];leads:readonly TpoCalendarLeadOption[];
+export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
+ days:readonly string[];events:readonly WeekGridEvent[];collegeId:string;
  canCreate:boolean;nowIso:string;
 }){
  const router=useRouter();
  const [slot,setSlot]=useState<string|null>(null);
+ const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
+ const [loadingLeads,setLoadingLeads]=useState(false);
  const [leadQuery,setLeadQuery]=useState("");
  const [leadId,setLeadId]=useState("");
  const [note,setNote]=useState("");
@@ -33,7 +35,21 @@ export function TpoWeekHourCalendar({days,events,leads,canCreate,nowIso}:{
  const current=new Date(nowIso),hourParts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
  const nowMinutes=Number(hourParts.find(p=>p.type==="hour")?.value??0)*60+Number(hourParts.find(p=>p.type==="minute")?.value??0);
  const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(current);
- function open(day:string,hour:number){if(!canCreate)return;setMessage("");setLeadId("");setLeadQuery("");setNote("");setSlot(day+"T"+String(hour).padStart(2,"0")+":00");}
+ async function open(day:string,hour:number){
+  if(!canCreate)return;
+  setMessage("");setLeadId("");setLeadQuery("");setNote("");
+  setSlot(day+"T"+String(hour).padStart(2,"0")+":00");
+  setLoadingLeads(true);
+  try{
+   const response=await fetch("/api/placements/tpo/leads?collegeId="+encodeURIComponent(collegeId),{
+    cache:"no-store",credentials:"same-origin",
+   });
+   if(!response.ok)throw Error("Could not load recruiter leads.");
+   const raw=await response.json() as {leads?:TpoCalendarLeadOption[]};
+   setLeads(Array.isArray(raw.leads)?raw.leads:[]);
+  }catch(error){setMessage(error instanceof Error?error.message:"Could not load leads.");}
+  finally{setLoadingLeads(false);}
+ }
  async function save(){
   if(!slot||saving||!leadId)return;
   let dueAt:string;
@@ -77,7 +93,7 @@ export function TpoWeekHourCalendar({days,events,leads,canCreate,nowIso}:{
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
       {Array.from({length:LAST-FIRST},(_,offset)=><button key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
-       disabled={!canCreate} onClick={()=>open(day,FIRST+offset)}
+       disabled={!canCreate} onClick={()=>void open(day,FIRST+offset)}
        className="absolute inset-x-0 border-t border-border text-left text-xs hover:bg-primary-subtle focus-visible:z-20 focus-visible:outline-2 disabled:cursor-default"
        style={{top:offset*HEIGHT,height:HEIGHT}}/>)}
       {day===today&&nowMinutes>=FIRST*60&&nowMinutes<=LAST*60?
@@ -111,9 +127,9 @@ export function TpoWeekHourCalendar({days,events,leads,canCreate,nowIso}:{
     <label className="grid gap-1 text-sm">Search recruiter lead
      <input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
       className="min-h-11 rounded border border-border px-3" maxLength={120}/>
-     <select value={leadId} required onChange={e=>setLeadId(e.target.value)}
+     <select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
       className="min-h-11 rounded border border-border px-3">
-      <option value="">Choose recruiter</option>
+      <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </select></label>
     <label className="grid gap-1 text-sm">Note (optional)
@@ -123,7 +139,7 @@ export function TpoWeekHourCalendar({days,events,leads,canCreate,nowIso}:{
     <div className="flex justify-end gap-2">
      <button type="button" disabled={saving} onClick={()=>setSlot(null)}
       className="min-h-11 rounded border border-border px-4 text-sm">Cancel</button>
-     <button type="button" disabled={saving||!leadId||!slot} onClick={()=>void save()}
+     <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Saving…":"Add follow-up"}</button>
     </div>
    </div>
