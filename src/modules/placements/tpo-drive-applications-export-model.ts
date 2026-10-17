@@ -26,6 +26,8 @@ export type TpoDriveApplicationExportFact={
  status:string;screeningStatus:string|null;screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;rollNumber?:string|null;email?:string|null;phone?:string|null;
  batchName?:string|null;branchName?:string|null;academicYear?:string|null;
  pendingWithdrawal?:boolean;noShow?:boolean;placedElsewhere?:boolean;addedByCollege?:boolean;
+ cgpaHundredths?:number|null;activeBacklogs?:number|null;pastBacklogs?:number|null;
+ tenthPctBasisPoints?:number|null;twelfthPctBasisPoints?:number|null;evidenceSource?:string|null;
 };
 export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicationExportFact[],jobTitle:string,options:{exportAll?:boolean}={}){
  const truncated=!options.exportAll&&rows.length>TPO_DRIVE_APPLICATION_EXPORT_LIMIT;
@@ -40,12 +42,19 @@ export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicat
   r.batchName??"Not recorded",r.branchName??"Not recorded",r.academicYear??"Not recorded",
   r.pendingWithdrawal?"Yes":"No",r.noShow?"Yes":"No",
   r.placedElsewhere?"Yes":"No",r.addedByCollege?"Yes":"No",
+  r.cgpaHundredths===null||r.cgpaHundredths===undefined?"Not recorded":(r.cgpaHundredths/100).toFixed(2),
+  r.activeBacklogs===null||r.activeBacklogs===undefined?"Not recorded":String(r.activeBacklogs),
+  r.pastBacklogs===null||r.pastBacklogs===undefined?"Not recorded":String(r.pastBacklogs),
+  r.tenthPctBasisPoints===null||r.tenthPctBasisPoints===undefined?"Not recorded":(r.tenthPctBasisPoints/100).toFixed(2)+"%",
+  r.twelfthPctBasisPoints===null||r.twelfthPctBasisPoints===undefined?"Not recorded":(r.twelfthPctBasisPoints/100).toFixed(2)+"%",
+  r.evidenceSource??"Not recorded",
  ]);
  if(truncated)data.push(["TRUNCATED",
   "First "+TPO_DRIVE_APPLICATION_EXPORT_LIMIT+" application rows are shown; further matching applications exist.",
-  ...Array.from({length:18},()=>null)]);
+  ...Array.from({length:24},()=>null)]);
  return {rows:displayed,truncated,jobTitle,csv:placementReportCsv([
   "Application ID","Student","Role","Stage","Application status","Screening status","Eligibility evidence","Channel","Submitted (IST)","Screening updated (IST)","Roll number","Email","Phone","Batch","Branch","Academic year",
   "Withdrawal requested","No-show","Accepted offer elsewhere","Added by college",
+  "CGPA","Active backlogs","Past backlogs","10th percentage","12th percentage","Academic evidence source",
  ],data)};
 }
