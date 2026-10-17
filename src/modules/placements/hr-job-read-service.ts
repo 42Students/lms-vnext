@@ -2,7 +2,8 @@ import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users } from "@/db/schema";
+  placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
+  learnerProfiles,placementCompanyRelationships } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
@@ -20,6 +21,14 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementApplicationScreenings.status, "SHORTLISTED"),
   );
   const db = getDb();
+  const grant=context.recruiter?.grants.find(item=>item.collegeId===workspace.college.id);
+  const [share]=grant?await db.select({columns:placementCompanyRelationships.shareColumnDefaults})
+   .from(placementCompanyRelationships)
+   .where(and(eq(placementCompanyRelationships.id,grant.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,workspace.college.id),
+    eq(placementCompanyRelationships.companyId,context.recruiter?.companyId??""),
+    eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1):[];
+  const shareRoll=Boolean(share?.columns?.includes("roll"));
   const stageCondition=filters.stage === "ALL"
     ? where
     : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
@@ -38,6 +47,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .where(where),
     db.select({
       id: placementApplications.id, name: users.displayName, email: users.email,
+      rollNumber: learnerProfiles.rollNumber,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
       submittedAt: placementApplications.submittedAt,
@@ -45,6 +55,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
+      .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,placementApplications.membershipId))
       .innerJoin(placementJobRoleOptions, and(eq(placementJobRoleOptions.id, placementApplications.roleOptionId),
         eq(placementJobRoleOptions.jobId, workspace.job.id)))
       .where(stageCondition)
@@ -97,7 +108,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     shortlisted: Number(totals?.active ?? 0),
     withdrawn: Number(totals?.withdrawn ?? 0),
   };
-  const projected = projectSharedApplicants(applications, filters.stage);
+  const projected = projectSharedApplicants(applications.map(row=>({...row,
+    rollNumber:shareRoll?row.rollNumber:null,
+  })), filters.stage);
   const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
     : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
   return {
