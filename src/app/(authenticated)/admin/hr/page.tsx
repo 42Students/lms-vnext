@@ -85,6 +85,7 @@ export default async function SuperAdminHrPage({
         companyName: account.companyName,
         title: account.title,
         status: account.status,
+        accountManageable:account.accountManageable,
         grants: account.grants.map(
           (grant) => ({
             id: grant.id,
