@@ -60,3 +60,15 @@ export async function listCollegeCourseCatalogue(
  return {query,items,total,pages:Math.max(1,Math.ceil(total/COLLEGE_COURSE_CATALOGUE_PAGE_SIZE)),
   page:query.page,pageSize:COLLEGE_COURSE_CATALOGUE_PAGE_SIZE};
 }
+/** Export reads a bounded SQL slice; private college records never leak across tenants. */
+export async function listCollegeCourseCatalogueExport(context:RequestContext,raw:unknown){
+ const query=collegeCourseCatalogueExportQuerySchema.parse(raw);
+ const college=await authorizedCollege(context);
+ const rows=await getDb().select({
+  id:courses.id,name:courses.name,code:courses.code,description:courses.description,
+  status:courses.status,departmentName:departments.name,
+ }).from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
+  .where(whereCatalogue(college.id,query.q))
+  .orderBy(...orderCatalogue(query.sort)).limit(COLLEGE_COURSE_EXPORT_CAP+1);
+ return {rows:rows.slice(0,COLLEGE_COURSE_EXPORT_CAP),truncated:rows.length>COLLEGE_COURSE_EXPORT_CAP};
+}
