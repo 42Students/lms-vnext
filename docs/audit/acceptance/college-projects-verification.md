@@ -51,3 +51,5 @@ Round 4: College workspace list now offers formula-safe visible-page CSV, table/
 | COL-projects-17 | VERIFIED-ON-MAIN | College audit range/importance and scoped export; `tests/unit/chat9-round6-reviewed-not-a-gaps.test.ts` — `COL-projects-17 verifies college audit filtered view and CSV route`. |
 
 | COL-projects-21 | OPEN | Restored Create workspace and Bulk reassign mentor CTA wording; distinct Deleted workspace semantics still not implemented, so Archived intentionally not renamed to Deleted. `tests/unit/chat9-round6-copy-polish.test.ts` — `COL-projects-21 restores Create workspace and Bulk reassign mentor CTA wording`. |
+
+| COL-projects-18 | DONE-BRANCH | Restored search and Added/Edited/Saved/Removed controls in `src/components/projects/project-activity-filtered-list.tsx` on top of the Mentor activity feed; `tests/unit/chat9-college-project-resource-audit.test.ts` — `COL-projects-18 recognizes resource added edited saved removed without treating task events as resource edits`. Saved is shown only for recorded Saved events. Tests not executed by builder. |
