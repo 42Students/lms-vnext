@@ -300,4 +300,19 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(route).toContain("Every workspace starts from a template — pick one below.");
  });
 
+
+ it("SA-placements-projects-87 checks assignment permission per college and retries only failures",()=>{
+  const page=source("src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx");
+  const control=source("src/components/projects/super-admin-template-college-bulk.tsx");
+  expect(page).toContain("<SuperAdminTemplateCollegeBulk");
+  expect(page).toContain('can(context,"project-template.assign"');
+  expect(control).toContain("Select all on page");
+  expect(control).toContain("Assign selected");
+  expect(control).toContain("Remove selected");
+  expect(control).toContain("<ConfirmDialog");
+  expect(control).toContain("setSelected(failed)");
+  expect(control).toContain('currentOperation==="assign"?"POST":"DELETE"');
+  expect(control).toContain("Existing workspaces remain unchanged.");
+ });
+
 });
