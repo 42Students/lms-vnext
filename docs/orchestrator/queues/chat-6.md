@@ -1,4 +1,4 @@
-> **FAST MODE ACTIVE: read docs/orchestrator/FAST-MODE.md first. Push directly to main, no tests or checks. It overrides any instruction below about branches, tests or CI.**
+> **FAST MODE v2 ACTIVE:** read docs/orchestrator/FAST-MODE.md. Push ONLY to `chatgpt/chat-6-b`, never main; no tests or CI waiting.
 
 # Queue for lane chat-6
 
@@ -124,3 +124,9 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 
 - SA-placements-projects-20/22 authorization follow-up: stage and candidate-slot activity events now use resolveActingCollege().organizationId, and actorMembershipId is null for a Super Admin without a matching real membership; no phantom college membership is used. Commits ddb795c8 and 75fa44f1. Preserves in-app learner notifications. Runtime not verified (FAST MODE).
 - SA-placements-projects-34: validUntil expiry, status projection, date controls and grant renewal committed. Since the authorization policy also requires verificationStatus=VERIFIED, an expiring unverified grant intentionally remains non-authorizing.
+
+## FAST v2 chat-6 continuation (2026-10-17)
+
+- Branch ownership: `chatgpt/chat-6-b` created from `main`; this round's changes remain isolated for orchestrator merge, no PR.
+- WP-chat-6-01: SA-academics-people-20 batch roster-by-class navigation and scoped occupancy in progress; SA-academics-people-25 promotion table with term/year/active learners. Remaining nonblocked roster/schedule workflow remains open; WP not DONE.
+- Blocked in WP-01: `COL-people-20` owner security decision; `PUB-auth-public-01` login policy enforcement in auth layer; `PUB-auth-public-12` server session refresh issuance; `PUB-auth-public-26` discontinued host Roll/PIN decision; `SA-placements-projects-25` cross-college canonical company merge requires global identity policy; `COL-people-01` identity/profile schema + auth validation design. Move on rather than blocking other gaps.
