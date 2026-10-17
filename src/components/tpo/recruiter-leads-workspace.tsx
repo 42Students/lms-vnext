@@ -357,7 +357,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention",value:string){
    const params=new URLSearchParams(window.location.search);
    if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
@@ -374,6 +374,8 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="nextFollowup")setNextFilter(value);
    else if(kind==="lastActivity")setActivityFilter(value);
    else if(kind==="added")setAddedFilter(value);
+   else if(kind==="need")setNeed(["ALL","UNASSIGNED","NOT_CONTACTED"].includes(value)?value as EngageNeed:"ALL");
+   else if(kind==="attention")setAttention(value in RECRUITER_ATTENTION_LABELS?value as RecruiterAttentionChip:"ALL");
    else setQuery(value==="ALL"?"":value);
   }
 
@@ -572,7 +574,7 @@ export function RecruiterLeadsWorkspace({
                 ["UNASSIGNED","Unassigned",needCounts.unassigned],
                 ["NOT_CONTACTED","Not contacted",needCounts.notContacted],
               ] as const).map(([key,label,count])=><button key={key} type="button"
-                aria-pressed={need===key} onClick={()=>setNeed(key)}
+                aria-pressed={need===key} onClick={()=>updateFilter("need",key)}
                 className={need===key?"min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}>
                   {label} ({count})
                 </button>)}
@@ -581,7 +583,7 @@ export function RecruiterLeadsWorkspace({
                   className={attention === key
                     ? "min-h-10 rounded-md bg-primary px-3 text-sm text-on-primary"
                     : "min-h-10 rounded-md border border-border px-3 text-sm text-body"}
-                  onClick={() => setAttention(current => current === key ? "ALL" : key)}>
+                  onClick={() => updateFilter("attention",attention===key?"ALL":key)}>
                   {RECRUITER_ATTENTION_LABELS[key]} ({rows.filter(row => row.chips?.includes(key)).length})
                 </button>
               ))}
