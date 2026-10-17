@@ -45,6 +45,8 @@ export type PlacementCompanyChoice = {
   relationshipId: string;
   name: string;
   primaryDomain: string | null;
+  otherNames?: readonly string[];
+  domains?: readonly string[];
   isTrusted: boolean;
   memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[]} | null;
 };
@@ -119,7 +121,7 @@ export function PlacementJobCreateForm({
     companyRelationshipId,
     setCompanyRelationshipId,
   ] = useState(
-    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase())?.relationshipId ?? companies[0]?.relationshipId ?? "",
+    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase()||company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
@@ -128,8 +130,12 @@ export function PlacementJobCreateForm({
   const [hasEnteredEligibilityRule,setHasEnteredEligibilityRule]=useState(false);
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
-  const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
-    Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
+  const matchingEmployer=companies.find(company=>Boolean(newEmployerName.trim())&&
+    (company.name.toLowerCase()===newEmployerName.trim().toLowerCase()||
+      company.otherNames?.some(alias=>alias.toLowerCase()===newEmployerName.trim().toLowerCase()))||
+    Boolean(newEmployerDomain.trim())&&
+    (company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,"")||
+      company.domains?.some(domain=>domain.toLowerCase()===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""))));
   const {pending,run}=useGuardedAction({timeoutMs:45000});
   // TPO-drives-43: never POST a second draft on retry after a partial create.
   const createdJobRef=useRef<{jobId:string;relationshipId:string;fingerprint:string}|null>(null);
@@ -664,7 +670,7 @@ export function PlacementJobCreateForm({
                 }
               >
                 {companies.filter(company=>company.relationshipId===companyRelationshipId||
-                  (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))
+                  (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))
                   .map((company) => (
                   <option
                     key={
@@ -683,7 +689,7 @@ export function PlacementJobCreateForm({
               </select>
             </label>
             {companySearch.trim()&&!companies.some(company=>
-              (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
+              (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
               {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-lg border border-border bg-muted p-4 text-sm">
                 <h3 className="font-semibold text-foreground">Company Memory</h3>
