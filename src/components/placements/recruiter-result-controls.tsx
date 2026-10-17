@@ -194,6 +194,16 @@ export function RecruiterResultControls({
       return;
     }
 
+    const score = draft.scorePercent.trim();
+    if (score && (!Number.isFinite(Number(score)) || Number(score) < 0 || Number(score) > 100)) {
+      showToast({
+        tone: "error",
+        title: "Invalid score",
+        description: "Every selected score must be between 0 and 100.",
+      });
+      return;
+    }
+
     setPendingKey(key);
     try {
       const response = await fetch(
