@@ -78,6 +78,10 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     verifiedAt: placementCompanies.verifiedAt,
     website: placementCompanies.websiteUrl,
     industry: placementCompanies.industry,
+    addedByType:sql<string>`(case when exists(
+      select 1 from system_roles sr
+      where sr.user_id=${placementCompanies.createdByUserId} and sr.role='SUPER_ADMIN')
+      then '42 platform' else 'College user' end)`,
     about: placementCompanies.about,
     logoPublicUrl: placementCompanies.logoPublicUrl,
     updatedAt: placementCompanies.updatedAt,

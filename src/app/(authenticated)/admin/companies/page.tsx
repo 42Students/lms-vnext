@@ -178,6 +178,7 @@ export default async function SuperAdminCompaniesPage({
           ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
               verified={Boolean(row.verifiedAt)} />:null}
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        <p className="mt-1 text-xs text-body">Added by: {row.addedByType??"Not recorded"}</p>
         <p className="mt-1 break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"Not registered"}</p>
         <p className="mt-1 text-xs text-body">Other names: {row.aliases?.length?row.aliases.join(", "):"Not registered"}</p>
         {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
