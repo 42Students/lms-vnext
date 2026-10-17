@@ -9,6 +9,8 @@ import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { FriendlyFetchError } from "@/lib/api-fetch";
+import { friendlyApiError } from "@/lib/friendly-error";
 
 function useProjectAction() {
   const router = useRouter();
@@ -34,9 +36,9 @@ function useProjectAction() {
         tone: "error",
         title: "Project update failed",
         description:
-          error instanceof Error
+          error instanceof FriendlyFetchError
             ? error.message
-            : "The request could not be completed.",
+            : friendlyApiError({}),
       });
     } finally {
       setPending(false);

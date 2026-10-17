@@ -6,7 +6,7 @@ import { PlacementsServiceError } from "@/modules/placements/errors";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
 import {tpoDriveTabHref} from "@/modules/placements/tpo-drive-tab-model";
 
 export default async function TpoPlacementDrivePage({
@@ -19,7 +19,7 @@ export default async function TpoPlacementDrivePage({
   const context = await getCurrentRequestContext();
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !can(context, "placements.manage", { collegeId: context.membership.collegeId })
   ) {
     redirect("/dashboard");
   }

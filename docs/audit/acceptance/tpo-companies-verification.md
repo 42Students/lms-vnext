@@ -35,3 +35,11 @@ Builder did not run tests, lint, typecheck, or PostgreSQL integration.
 
 | TPO-companies-29 | DONE (source; tests not run) | `src/app/(authenticated)/tpo/companies/page.tsx` and `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` display phone-friendly list and hiring/drive cards while preserving detailed tables at md breakpoint; `tests/unit/chat2-company-trust-and-navigation.test.ts` **TPO-companies-29 offers a non-scrolling mobile directory…**. Name-based memory page uses an unfixed width table. |
 | TPO-companies-21 | PARTIAL — OPEN | Name-based Company Memory now has a Retry button on migration/unavailable failures and a truthful counts-as-placed unavailable explanation instead of internal W04 wording; `src/components/tpo/tpo-company-memory-workspace.tsx`; `tests/unit/chat2-company-memory-gap-parity.test.ts` **TPO-companies-21 never exposes DB migration identifiers…**. Independent counts-only retry still open. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-companies-04 | NOT-A-GAP | Decision: Trusted company is a directory confidence indicator only; keep independent TPO approval for a new drive request. Auto-publishing a trusted company's new request risks learner harm. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-companies-04` (source/policy regression; executable CI pending). |
+| TPO-companies-25 | DONE | Decision: Remove obsolete DB09_TPO_API_READY gates after migrations were registered; real readiness, persisted scope and normal error responses own failures. GET list/detail and same-origin people POST are no longer dependent on an env flag. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-companies-25` (source/policy regression; executable CI pending). |
+| TPO-companies-R03 | OPEN | Decision: Allow College Admin company operations under placements.manage with persisted active actor checks, not only an explicit TPO role; directory/detail/lifecycle/link scopes updated, remaining company mutation endpoints require audit. Test: `tests/unit/chat5-unconfirmed-permission-decisions.test.ts` — named test `TPO-companies-R03` (source/policy regression; executable CI pending). |

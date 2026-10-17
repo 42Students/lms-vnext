@@ -24,7 +24,7 @@ export default async function FacultyLearnerGradebookPage({
   }
   const root="/teacher/courses/"+encodeURIComponent(query.deliveryId)+"/gradebook";
   return <div className="space-y-6">
-    <Link href={root} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+    <Link href={root} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
       ← Published gradebook
     </Link>
     <PageHeader eyebrow="Faculty · Published learner scores"

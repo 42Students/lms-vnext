@@ -113,7 +113,7 @@ export function TpoCompanyMemoryWorkspace({
       };
       if (signal?.aborted) return null;
       if (!response.ok) {
-        if (response.status === 503 && payload.error === "DB09_MIGRATIONS_PENDING")
+        if (response.status === 503 && (payload.error === "DATABASE_NOT_READY" || payload.error === "DB09_MIGRATIONS_PENDING"))
           return { company: null, phase: "migration-pending", error: "Company details are unavailable right now. Try again." };
         if (response.status === 404)
           return { company: null, phase: "not-found", error: "Company not found" };
