@@ -16,6 +16,8 @@ describe("REC-calendar-messages-profile-21 recruiter notification bell",()=>{
   expect(bell).toContain("Loading notifications…");
   expect(bell).toContain('Mark all read');
   expect(svc).toContain("eq(inAppNotifications.userId,ctx.user.id)");
-  expect(svc).toContain("listOwnRecruiterPlacementJobs(ctx)");
+  // The explicit college selector is mandatory for a scoped recruiter bell.
+  expect(svc).toContain("listOwnRecruiterPlacementJobs(ctx,feed.collegeId)");
+  expect(svc).toContain("x.companyId===ctx.recruiter!.companyId && x.collegeId===feed.collegeId");
  });
 });
