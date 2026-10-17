@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -20,6 +20,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
     ...(first(params.companyId)?{companyId:first(params.companyId)}:{}),
+    ...(first(params.cohortId)?{cohortId:first(params.cohortId)}:{}),
     ...(first(params.ownerUserId)?{ownerUserId:first(params.ownerUserId)}:{}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
@@ -28,7 +29,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.employmentType)?{employmentType:first(params.employmentType)}:{}),
     ...(first(params.sort)?{sort:first(params.sort)}:{}),
     ...(first(params.minApplied)?{minApplied:first(params.minApplied)}:{}),
+    ...(first(params.maxApplied)?{maxApplied:first(params.maxApplied)}:{}),
     ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
+    ...(first(params.maxOffers)?{maxOffers:first(params.maxOffers)}:{}),
     ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
     ...(first(params.attention)?{attention:first(params.attention)}:{}),
     ...(first(params.journey)?{journey:first(params.journey)}:{}),
@@ -39,13 +42,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
     ...(data.companyId?{companyId:data.companyId}:{}),
+    ...(data.cohortId?{cohortId:data.cohortId}:{}),
     ...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
     journey:data.journey,
     display:data.display,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
+    ...(data.maxApplied!==undefined?{maxApplied:String(data.maxApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
+    ...(data.maxOffers!==undefined?{maxOffers:String(data.maxOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
     sort:data.sort,page:String(data.page),
     ...(data.season?{seasonId:data.season.id}:{}),
@@ -62,7 +68,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    journey:data.journey,
    display:data.display,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
-   ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
+   ...(data.maxApplied!==undefined?{maxApplied:data.maxApplied}:{}),
+   ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),
+   ...(data.maxOffers!==undefined?{maxOffers:data.maxOffers}:{}),page,
   }};}
   return <div className="space-y-6">
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
@@ -79,6 +87,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
+      </label>
+      <label className="min-w-40 flex-1 text-sm font-semibold text-body">Batch
+        <select name="cohortId" defaultValue={data.cohortId??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">All batches</option>
+          {data.batches.map(batch=><option key={batch.id} value={batch.id}>{batch.programName} · {batch.name}</option>)}
         </select>
       </label>
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
@@ -152,8 +167,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
       </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
+        <input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
         <input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
+        <input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Pay category

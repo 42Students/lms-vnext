@@ -1,7 +1,7 @@
 import "server-only";
 import { and, count, desc, eq, gte, ilike, inArray, isNull, lt, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests, users } from "@/db/schema";
+import { cohorts, programs, departments, placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons, placementRecruiterDriveRequests, users } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -36,6 +36,13 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .from(placementJobs).innerJoin(users,eq(users.id,placementJobs.createdByUserId))
     .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
     .orderBy(users.displayName);
+  const batches=await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
+    .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .where(eq(departments.collegeId,collegeId))
+    .orderBy(cohorts.name,cohorts.id);
+  if(filters.cohortId&&!batches.some(batch=>batch.id===filters.cohortId))
+   throw new PlacementsServiceError("PLACEMENT_ELIGIBILITY_SCOPE_MISMATCH");
   const companies=await db.select({id:placementCompanies.id,name:placementCompanies.name})
     .from(placementCompanyRelationships)
     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
@@ -61,11 +68,11 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
 
   if (filters.view === "REQUESTS") {
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
-    const common = {seasons,season,companies,owners,ownerUserId:filters.ownerUserId,
+    const common = {seasons,season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
       companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-      minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
+      minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,asOf:now.toISOString()};
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
@@ -128,15 +135,33 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     season?eq(placementJobs.seasonId,season.id):undefined,
     filters.companyId?eq(placementCompanies.id,filters.companyId):undefined,
     filters.ownerUserId?eq(placementJobs.createdByUserId,filters.ownerUserId):undefined,
+    // Empty cohort targets mean all cohorts, not "target nobody".
+    filters.cohortId?sql`(
+      not exists(select 1 from placement_job_eligibility_policies policy
+        where policy.job_id=${placementJobs.id})
+      or exists(select 1 from placement_job_eligibility_policies policy
+        where policy.job_id=${placementJobs.id} and
+        (cardinality(policy.allowed_cohort_ids)=0 or
+         ${filters.cohortId}::uuid=any(policy.allowed_cohort_ids))
+       and (cardinality(policy.allowed_program_ids)=0 or
+        exists(select 1 from cohorts c where c.id=${filters.cohortId}::uuid
+         and c.program_id=any(policy.allowed_program_ids))))
+    )`:undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
     filters.minApplied!==undefined?sql`(select count(*) from placement_applications ap
       where ap.job_id=${placementJobs.id} and ap.status <> 'WITHDRAWN') >= ${filters.minApplied}`:undefined,
+    filters.maxApplied!==undefined?sql`(select count(*) from placement_applications ap
+      where ap.job_id=${placementJobs.id} and ap.status <> 'WITHDRAWN') <= ${filters.maxApplied}`:undefined,
     filters.minOffers!==undefined?sql`(select count(*) from placement_offers ofr
       join placement_applications ap on ap.id=ofr.application_id
       where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
       >= ${filters.minOffers}`:undefined,
+    filters.maxOffers!==undefined?sql`(select count(*) from placement_offers ofr
+      join placement_applications ap on ap.id=ofr.application_id
+      where ap.job_id=${placementJobs.id} and ofr.status in ('ISSUED','ACCEPTED'))
+      <= ${filters.maxOffers}`:undefined,
     filters.journey==="TAKING_APPLICATIONS"?and(eq(placementJobs.status,"PUBLISHED"),
       or(isNull(placementJobs.applicationDeadline),gte(placementJobs.applicationDeadline,now))):
     filters.journey==="RUNNING_ROUNDS"?and(eq(placementJobs.status,"PUBLISHED"),
@@ -217,9 +242,9 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
-    ...projection, seasons, season,companies,owners,ownerUserId:filters.ownerUserId,
+    ...projection, seasons, season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
     companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,display:filters.display,
-    minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
+    minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
     requestRows: [] as {id:string;status:string;title:string;company:string;createdAt:string;approvedJobId:string|null}[],
