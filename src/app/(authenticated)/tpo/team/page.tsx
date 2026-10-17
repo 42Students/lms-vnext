@@ -20,7 +20,8 @@ export default async function TpoTeamPage({searchParams}:{
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
  const parsed=tabSchema.safeParse({tab:Array.isArray(raw.tab)?raw.tab[0]:raw.tab,
-  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort});
+  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
+  q:Array.isArray(raw.q)?raw.q[0]:raw.q});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
