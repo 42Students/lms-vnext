@@ -135,7 +135,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
-## mentor/projects-meetings-part2 (25: DONE 15, OPEN 8, FIXED-ON-MAIN 2)
+## mentor/projects-meetings-part2 (25: DONE 20, OPEN 5)
 
 Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meetings-part2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`.
 
@@ -144,28 +144,28 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-64 | S2 | MISSING-MODAL | DONE |
 | MEN-projects-meetings-66 | S2 | SIDE-EFFECT | DONE |
 | MEN-projects-meetings-72 | S2 | SIDE-EFFECT | OPEN |
-| MEN-projects-meetings-53 | S3 | MISSING-FIELD | OPEN |
+| MEN-projects-meetings-53 | S3 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-54 | S3 | MISSING-FIELD | DONE |
-| MEN-projects-meetings-55 | S3 | MISSING-FILTER | OPEN |
+| MEN-projects-meetings-55 | S3 | MISSING-FILTER | DONE |
 | MEN-projects-meetings-57 | S3 | COPY | OPEN |
 | MEN-projects-meetings-59 | S3 | MISSING-FILTER | DONE |
 | MEN-projects-meetings-60 | S3 | STATE | DONE |
 | MEN-projects-meetings-61 | S3 | COPY | DONE |
-| MEN-projects-meetings-63 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| MEN-projects-meetings-63 | S3 | MISSING-ACTION | DONE |
 | MEN-projects-meetings-65 | S3 | COPY | DONE |
 | MEN-projects-meetings-67 | S3 | COPY | DONE |
 | MEN-projects-meetings-68 | S3 | STATE | DONE |
 | MEN-projects-meetings-70 | S3 | COPY | DONE |
 | MEN-projects-meetings-71 | S3 | STATE | DONE |
 | MEN-projects-meetings-76 | S3 | COPY | OPEN |
-| MEN-projects-meetings-56 | S4 | MISSING-ACTION | OPEN |
+| MEN-projects-meetings-56 | S4 | MISSING-ACTION | DONE |
 | MEN-projects-meetings-58 | S4 | COPY | OPEN |
 | MEN-projects-meetings-62 | S4 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-69 | S4 | STATE | DONE |
 | MEN-projects-meetings-73 | S4 | STATE | DONE |
 | MEN-projects-meetings-74 | S4 | MISSING-PAGE | DONE |
 | MEN-projects-meetings-75 | S4 | STATE | OPEN |
-| MEN-projects-meetings-77 | S4 | A11Y | FIXED-ON-MAIN |
+| MEN-projects-meetings-77 | S4 | A11Y | DONE |
 
 ## faculty/attendance-grades (22: OPEN 1, DONE 18, NOT-A-GAP 3)
 
