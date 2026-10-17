@@ -21,6 +21,11 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
   const [created, setCreated] = useState("");
+  const [similarQuery,setSimilarQuery]=useState("");
+  const [similarResults,setSimilarResults]=useState<{publicId:string;description:string;status:string}[]>([]);
+  const [similarLoading,setSimilarLoading]=useState(false);
+  const [similarError,setSimilarError]=useState("");
+  const [similarSearched,setSimilarSearched]=useState(false);
   const selectedPage = LOCATION_OPTIONS.find(item => item.value === page);
   const selectedScreen = selectedPage?.children?.find(item => item.value === screen);
 
@@ -59,6 +64,19 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
     } finally {
       setPending(false);
     }
+  }
+
+  async function checkSimilar(){
+    if(similarLoading || similarQuery.trim().length<3)return;
+    setSimilarLoading(true);setSimilarError("");setSimilarResults([]);setSimilarSearched(false);
+    try{
+      const query=new URLSearchParams({q:similarQuery.trim(),limit:"5",sort:"newest"});
+      const result=await apiFetch<{items:{publicId:string;description:string;status:string}[]}>(
+        "/api/tracker/issues?"+query.toString(),{cache:"no-store"});
+      setSimilarResults(result.items??[]);setSimilarSearched(true);
+    }catch(cause){
+      setSimilarError(cause instanceof Error?cause.message:"Related issues are temporarily unavailable.");
+    }finally{setSimilarLoading(false);}
   }
 
   function onFormKeyDown(event: KeyboardEvent<HTMLFormElement>) {
@@ -163,6 +181,31 @@ export function TrackerReportForm({contextPrefill=""}:{contextPrefill?:string}={
           Optional — use this for a screen recording, Drive file, or other useful http/https link.
         </span>
       </label>
+      <section aria-label="Similar issues" className="rounded-lg border border-border p-4">
+        <h2 className="text-sm font-semibold text-foreground">Similar issues</h2>
+        <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
+            onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
+            maxLength={100} placeholder="e.g. Quiz submission"
+            className={field+" min-w-48 flex-1"}/>
+          <button type="button" onClick={()=>void checkSimilar()}
+            disabled={similarLoading||similarQuery.trim().length<3}
+            className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+            {similarLoading?"Searching…":"Find similar issues"}
+          </button>
+        </div>
+        {similarError?<p role="alert" className="mt-2 text-sm text-error">{similarError}</p>:null}
+        {similarSearched?<div role="status" className="mt-2 text-sm">
+          {similarResults.length?<ul className="space-y-2">
+            {similarResults.map(issue=><li key={issue.publicId} className="rounded border border-border p-2">
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="font-semibold text-primary-text underline">{issue.publicId}</Link>
+              <span className="ml-2 text-xs text-muted-foreground">{issue.status}</span>
+              <p className="mt-1 break-words text-xs text-body">{issue.description.slice(0,160)}</p>
+            </li>)}
+          </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
+        </div>:null}
+      </section>
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
