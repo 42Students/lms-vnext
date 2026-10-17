@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
+type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -16,6 +16,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const params = await searchParams;
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
+    ...(first(params.companyId)?{companyId:first(params.companyId)}:{}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
@@ -30,6 +31,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   });
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
+    ...(data.companyId?{companyId:data.companyId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
@@ -45,7 +47,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
@@ -64,6 +66,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
+      </label>
+      <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
+        <select name="companyId" defaultValue={data.companyId??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">All companies</option>
+          {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
