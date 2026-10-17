@@ -131,6 +131,8 @@ export const placementTpoInternalReads=pgTable(
   threadId:uuid("thread_id").notNull(),
   membershipId:uuid("membership_id").notNull(),
   readThrough:timestamp("read_through",{withTimezone:true}).notNull(),
+  following:boolean("following").notNull().default(true),
+  mutedAt:timestamp("muted_at",{withTimezone:true}),
  },
  t=>[
   primaryKey({name:"tpo_internal_reads_pk",columns:[t.threadId,t.membershipId]}),
