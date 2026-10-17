@@ -26,12 +26,13 @@ describe("Chat-5 remaining queue ambiguity decisions",()=>{
   const start=new Date("2099-01-01T10:00:00.000Z");
   expect(learnerStaffApplicationOptOut({submittedAt:start,submittedByUserId:"staff",learnerUserId:"learner",now:new Date("2099-01-03T09:59:59.000Z")}).canOptOut).toBe(true);
   expect(learnerStaffApplicationOptOut({submittedAt:start,submittedByUserId:"staff",learnerUserId:"learner",now:new Date("2099-01-03T10:00:00.000Z")}).canOptOut).toBe(false);
-  expect(file("docs/audit/acceptance/tpo-students-verification.md")).toContain("College-assisted applications must disclose");
+  expect(file("docs/audit/acceptance/tpo-students-verification.md")).toContain("48h opt-out");
  });
  it("TPO-students-49 requires full scope verification before admitting College Admin on private roster and exports",()=>{
   const page=file("src/app/(authenticated)/tpo/students/page.tsx");
   expect(page).toContain("getCurrentRequestContext");
-  expect(file("docs/audit/acceptance/tpo-students-verification.md")).toContain("TPO-students-49 | OPEN (additional delegated decision)");
+  expect(file("docs/audit/acceptance/tpo-students-verification.md")).toContain("TPO-students-49 | OPEN (partial; runtime acceptance pending)");
+  expect(page).toContain('can(context, "placements.manage"');
  });
  it("TPO-students-50 refuses to confuse recorded registration with implicit consent inferred from an application",()=>{
   expect(tpoRegistrationChoiceSchema.safeParse("PLACEMENTS").success).toBe(true);
@@ -41,7 +42,8 @@ describe("Chat-5 remaining queue ambiguity decisions",()=>{
   expect(file("src/modules/placements/tpo-batch-registration-summary-model.ts")).toContain("registered");
  });
  it("TPO-requests-verification-29 keeps private identity and review evidence behind authorized detail rather than raw document URLs",()=>{
-  expect(file("docs/audit/acceptance/tpo-requests-verification-verification.md")).toContain("TPO-requests-verification-29 | OPEN (additional delegated decision)");
-  expect(file("docs/audit/acceptance/tpo-requests-verification-verification.md")).toContain("identity values masked");
+  expect(file("docs/audit/acceptance/tpo-requests-verification-verification.md")).toContain("TPO-requests-verification-29 | DONE");
+  expect(file("src/components/verification/VerificationReviewDrawer.tsx")).toContain("private signed link");
+  expect(file("docs/audit/acceptance/tpo-requests-verification-verification.md")).toContain("masked-number explanation");
  });
 });

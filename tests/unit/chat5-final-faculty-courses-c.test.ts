@@ -23,7 +23,7 @@ describe("chat-5 final sprint: faculty teaching permissions, wording and live va
   if(!invalid.success)expect(invalid.error.issues.some(issue=>issue.message.includes("HTTPS meeting link required"))).toBe(true);
   const backwards=facultyLiveMutationSchema.safeParse({...meeting,endsAt:"2099-04-02T09:00:00+05:30"});
   expect(backwards.success).toBe(false);
-  if(!backwards.success)expect(backwards.error.issues.some(issue=>issue.message.includes("End must follow start"))).toBe(true);
+  if(!backwards.success)expect(backwards.error.issues.some(issue=>issue.message.includes("End time must be after start time"))).toBe(true);
   const long=facultyLiveMutationSchema.safeParse({...meeting,endsAt:"2099-04-03T10:00:00+05:30"});
   expect(long.success).toBe(false);
   if(!long.success)expect(long.error.issues.some(issue=>issue.message.includes("12 hours"))).toBe(true);
