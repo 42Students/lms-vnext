@@ -165,7 +165,7 @@ export function RecruiterBulkOwnerControls({
                 disabled={busy}
               >
                 <option value="">Choose an active placement staff member</option>
-                {owners.map((item) => (
+                {[...owners].sort((a,b)=>(a.displayName??"").localeCompare(b.displayName??"")||a.membershipId.localeCompare(b.membershipId)).map((item) => (
                   <option key={item.membershipId} value={item.membershipId}>
                     {item.displayName ?? "Unnamed staff member"}
                   </option>
