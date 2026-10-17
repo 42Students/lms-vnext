@@ -71,3 +71,7 @@ SOURCE DONE: LEARNER-placements-R03 (policy-aware acceptance cascade already bui
 ## Chat-15 learner alerts group F
 
 - SOURCE DONE LEARNER-placements-01: personal placement alert open now uses recipient-scoped POST /api/notifications/[notificationId]/read before navigating, with an explicit mark-read button when no action link and a retryable friendly failure message. `tests/unit/chat15-personal-placement-alert-read.test.ts`, not executed. The separate global badge refreshes after mutation; college broadcast notices are NOT silently acknowledged by a GET.
+
+## Chat-15 class scope group G
+
+- SOURCE DONE LEARNER-learning-misc-19: read authoritative ACTIVE section enrollment independently of published course delivery, display legacy no-class copy only when truly absent, failed read with Retry, and generic no-quizzes when section exists; named test tests/unit/chat15-class-scope-quiz-empty.test.ts (not run).
