@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { and, desc, eq, lt } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
-import { db10LogAlertSignatures as signatures, db10LogAlertStates as states } from "@/db/schema/db10-log-alerts.draft";
+import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
@@ -67,13 +67,13 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     const previousDay = previous.toISOString().slice(0, 10);
     const rows = await db.select({
       hash: signatures.signatureHash, firstSeenAt: signatures.firstSeenAt,
-      muted: signatures.muted, dayOccurrences: signatures.dayOccurrences,
-      lastSpikeAlertAt: signatures.lastSpikeAlertAt,
-    }).from(signatures)
-      .where(and(eq(signatures.dayKey, previousDay), eq(signatures.environment,
+      muted: signatures.muted, dayOccurrences: daily.occurrenceCount,
+      spikeCount: daily.spikeCount,
+    }).from(daily).innerJoin(signatures, eq(daily.signatureId, signatures.id))
+      .where(and(eq(daily.dayKey, previousDay), eq(signatures.environment,
         process.env.APP_ENV === "production" ? "PRODUCTION" :
         process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT")))
-      .orderBy(desc(signatures.dayOccurrences)).limit(1000);
+      .orderBy(desc(daily.occurrenceCount)).limit(1000);
     const start = new Date(Date.parse(previousDay + "T00:00:00Z") - 330 * 60_000);
     const end = new Date(start.getTime() + 86_400_000);
     const message = formatDailyDigest({
@@ -81,7 +81,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
       total: rows.reduce((sum, row) => sum + row.dayOccurrences, 0),
       firstSeen: rows.filter(row => row.firstSeenAt >= start && row.firstSeenAt < end).length,
       muted: rows.filter(row => row.muted).length,
-      spikes: rows.filter(row => row.lastSpikeAlertAt && row.lastSpikeAlertAt >= start && row.lastSpikeAlertAt < end).length,
+      spikes: rows.filter(row => row.spikeCount > 0).length,
       top: rows.slice(0, 5).map(row => ({ hash: row.hash, count: row.dayOccurrences })),
     });
     if (!await sendTelegramAlert(message)) return;

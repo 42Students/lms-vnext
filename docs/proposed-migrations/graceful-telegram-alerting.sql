@@ -43,3 +43,13 @@ CREATE TABLE IF NOT EXISTS scheduled_job_leases (
   fence bigint NOT NULL DEFAULT 1 CHECK (fence > 0)
 );
 -- REQUIRED before deployment: registered SQL replay and DB10_LOG_ALERTS_READY=DB10_VERIFIED.
+
+-- 09:00 IST digest must not lose yesterday's counts when a signature recurs today.
+CREATE TABLE IF NOT EXISTS log_alert_daily_counts (
+  signature_id uuid NOT NULL REFERENCES log_alert_signatures(id) ON DELETE CASCADE,
+  day_key varchar(10) NOT NULL,
+  occurrence_count bigint NOT NULL DEFAULT 1 CHECK (occurrence_count >= 1),
+  spike_count bigint NOT NULL DEFAULT 0,
+  PRIMARY KEY (signature_id, day_key)
+);
+CREATE INDEX IF NOT EXISTS db10_log_alert_daily_day_idx ON log_alert_daily_counts (day_key);
