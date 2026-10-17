@@ -6,6 +6,7 @@ export const tpoVerificationQuerySchema=z.object({
  tab:z.enum(["WAITING","SENT_BACK","VERIFIED"]).default("WAITING"),
  kind:z.enum(["ALL","EDUCATION","IDENTITY"]).default("ALL"),
  waitingState:z.enum(["ALL","SUBMITTED","UPDATE_PENDING"]).default("ALL"),
+ waitingSince:z.enum(["ALL","TODAY","WEEK","OVER_WEEK"]).default("ALL"),
  search:z.string().trim().max(100).default(""),
  batchId:z.string().uuid().optional(),
  branchId:z.string().uuid().optional(),
@@ -18,7 +19,7 @@ export function tpoVerificationStatuses(query:Pick<TpoVerificationQuery,"tab"|"w
 }
 export function tpoVerificationHref(query:TpoVerificationQuery){
  const params=new URLSearchParams({
-  tab:query.tab,kind:query.kind,waitingState:query.waitingState,search:query.search,
+  tab:query.tab,kind:query.kind,waitingState:query.waitingState,waitingSince:query.waitingSince,search:query.search,
   page:String(query.page),pageSize:String(query.pageSize),
  });
  if(query.batchId)params.set("batchId",query.batchId);
