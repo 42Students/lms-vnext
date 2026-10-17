@@ -229,6 +229,21 @@ export function TpoBulkRoundResultRecorder({
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {results.length > 0 ? (
         <div role="status" className="space-y-2 text-sm text-body">
+          <button type="button" onClick={()=>{
+            const cell=(input:string)=>{
+              const safe=/^[=+@\-\t\r]/.test(input)?"'"+input:input;
+              return '"'+safe.replaceAll('"','""')+'"';
+            };
+            const lines=[["Application ID","Learner","Outcome","Status","Reason"].join(","),
+             ...results.map(row=>[row.applicationId,
+              rows.find(item=>item.applicationId===row.applicationId)?.displayName??"Learner",
+              outcome,row.status,row.reason??""].map(cell).join(","))];
+            const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
+            const link=document.createElement("a");link.href=url;
+            link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
+          }} className="min-h-9 rounded border border-border px-3 font-semibold text-primary-text">
+            Export per-learner staging report (CSV)
+          </button>
           <p className="font-semibold">Per-learner outcomes</p>
           <ul className="divide-y divide-border rounded-md border border-border">
             {results.map((item) => (
