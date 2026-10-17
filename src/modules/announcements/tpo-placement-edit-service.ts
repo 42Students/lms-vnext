@@ -16,8 +16,10 @@ export const editTpoNoticeSchema=z.object({
  title:z.string().trim().min(1).max(200),
  message:z.string().trim().min(1).max(8000),
  pinned:z.boolean(),
+ buttonLabel:z.string().trim().min(1).max(60).optional(),
+ buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\\s]+$/,"The link has to start with https://").optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
-}).strict();
+}).strict().refine(data=>Boolean(data.buttonLabel)===Boolean(data.buttonUrl),{path:["buttonUrl"],message:"The link has to start with https://"});
 
 /** Author-only, version-locked notice edits; no external email/SMS side effects. */
 export async function editTpoNotice(context:RequestContext,raw:unknown){
@@ -50,6 +52,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    {scheduledAt:current.scheduledAt,expiresAt:current.expiresAt};
   const [updated]=await tx.update(db10Announcements).set({
    title:input.title,message:input.message,isPinned:input.pinned,
+   buttonLabel:input.buttonLabel??null,buttonUrl:input.buttonUrl??null,
    scheduledAt:schedule.scheduledAt,expiresAt:schedule.expiresAt,
    version:current.version+1,updatedAt:new Date(),
   }).where(and(
