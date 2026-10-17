@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
+import {tpoVerificationQuerySchema} from "@/modules/verification/tpo-queue-server-model";
 import {verificationCsv} from "@/modules/verification/queue-export";
 
 export const runtime="nodejs";
@@ -17,14 +18,23 @@ export async function GET(request:Request){
   const allowedTabs=["WAITING","SENT_BACK","VERIFIED"] as const;
   const tab=params.get("tab");
   const kind=params.get("kind");
-  if([...params.keys()].some(key=>!["tab","kind"].includes(key))||
-    params.getAll("tab").length>1||params.getAll("kind").length>1||
+  const search=params.get("search")??"";
+  const batchId=params.get("batchId")??undefined;
+  const branchId=params.get("branchId")??undefined;
+  if([...params.keys()].some(key=>!["tab","kind","search","batchId","branchId"].includes(key))||
+    params.getAll("tab").length>1||params.getAll("kind").length>1||params.getAll("search").length>1||
+    params.getAll("batchId").length>1||params.getAll("branchId").length>1||
     (tab&&!allowedTabs.some(value=>value===tab))||
     (kind&&!["EDUCATION","IDENTITY"].includes(kind)))
     return new Response("Invalid queue export filters",{status:400,headers:{"Cache-Control":"private, no-store"}});
-  const queue=await getTpoVerificationQueue(context,{
-    tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",page:1,pageSize:100,
+  const parsed=tpoVerificationQuerySchema.safeParse({
+    tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",
+    search,batchId,branchId,page:1,pageSize:100,
   });
+  if(!parsed.success)return new Response("Invalid queue export filters",{
+    status:400,headers:{"Cache-Control":"private, no-store"},
+  });
+  const queue=await getTpoVerificationQueue(context,parsed.data);
   if(!queue.available||!queue.enabled||!queue.permitted)
    throw new AuthorizationError("profile-verification.review");
   const selected=queue.rows;
