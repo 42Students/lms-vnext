@@ -267,3 +267,51 @@ Status is deliberately **PARTIAL** or **OPEN**, not DONE, until the complete leg
 The existing queue blocker TPO-inbox-team-08 remains provider-credential dependent; no other technical gap is treated as a provider blocker. The named tests in `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` protect seven specific partial workflows without claiming end-to-end parity. Tests were authored, not executed by this lane.
 
 - Round 5 review tally: **19 PARTIAL / 8 OPEN** across the 27 reviewed queue rows. TPO-inbox-team-34 also treats expired away status as absent for optimistic replace, guarded by the new `tpoEffectiveAwayUntil` unit case.
+
+## Chat-2 2026-10-17 unit-failures-r1 refresh
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-62 / TPO-home-33 | DONE (source, not yet run) | `tests/unit/tpo-home-33-live-header.test.ts` checks displayed server-snapshot unread matching, and `src/components/tpo/tpo-bell-panel.tsx` clears the optimistic mark-all revision when a newer server snapshot arrives. |
+| TPO-inbox-team-61 / TPO-home-35 | DONE (source, not yet run) | `tests/unit/tpo-home-35-bell-open.test.ts` verifies guarded 12-second `apiFetch`, read POST, and no navigation after failure rather than obsolete `response.ok` branching. |
+| TPO-inbox-team-54 | DONE (college-wide count source; other legacy aspects remain OPEN) | `tests/unit/tpo-notice-round4-verification.test.ts` checks persisted college-scoped total unread From 42 rather than obsolete page-only count. |
+
+## Round 6 — decision inbox
+
+| TPO-inbox-team-23 | PARTIAL — OPEN | Real per-conversation decision event projection (ignores later unmark/delete) and Decisions-count chip added in `src/modules/placements/tpo-team-internal-read-service.ts`, `src/modules/placements/tpo-team-conversation-filter-model.ts`, and Team page. `tests/unit/tpo-team-filter-round4.test.ts` has a named **TPO-inbox-team-23** regression. Mark-on-send still outstanding. |
+| TPO-inbox-team-18 | PARTIAL — OPEN | Decisions chip added alongside previous Following/Unread/Topics, preserving scoped SQL and pagination; object/asks filters still absent. |
+
+## Round 6 — author-list correctness
+
+| TPO-inbox-team-R04 | DONE (source, tests not run) | `listTpoPlacementAnnouncements` defaults to authored notices, while an explicit **All team notices** switch preserves college colleague access and pagination scope. Named `TPO-inbox-team-R04` test in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. |
+| TPO-inbox-team-57 | DONE (source, tests not run) | Colleague-managed notices remain accessible by the separate scoped view, with server-side persisted permission and version checks retained. Named `TPO-inbox-team-57` tests. |
+
+## Chat-2 round 6 — first-class Team asks (proposed storage)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-22 | PARTIAL — OPEN | New `placement_tpo_team_asks` schema/SQL proposal, authorized/idempotent create, optional bounded due date, overdue classification, assignee Done (+ reply note), asker Cancel, guarded UI and row-locked lifecycle. `tests/unit/tpo-team-asks-chat2.test.ts` tests named **TPO-inbox-team-22**. The orchestrator must register `docs/proposed-migrations/tpo-team-asks.sql` and execute DB integration acceptance; Home and cross-thread filters remain. |
+| TPO-inbox-team-29 | PARTIAL — OPEN | Ask-created/done/cancelled persisted activity and single-recipient in-app notifications with `?ask=<id>` links. Named **TPO-inbox-team-29** test in same suite. Mentions and ownership assignment notices remain. |
+| TPO-inbox-team-30 | PARTIAL — OPEN | `?ask=<uuid>` deep-links within authorized thread and scrolls to the requested ask. Named **TPO-inbox-team-30** test. Object `?about=` context remains. |
+
+## Round 6 — persisted ask workload in People
+
+| TPO-inbox-team-31 | PARTIAL — OPEN | People now displays member-scoped OPEN/overdue ask counts from `readTpoTeamAskWorkload`, guarded by persisted placement permission and college scoping; `tests/unit/tpo-team-workload-chat2.test.ts` names this gap. Drive/company/recruiter-lead workload still outstanding. |
+| TPO-inbox-team-32 | PARTIAL — OPEN | Most assigned duties, **Overdue first**, and Name sorts are backed by known student duties and open/overdue asks, with stable member-ID tie breaks. The full legacy five-workload sorting remains open. Named **TPO-inbox-team-32** unit test. |
+
+### TPO-inbox-team-22 / 29 disposable PostgreSQL acceptance
+
+`tests/integration/tpo-team-asks-chat2.test.ts` adds actual PostgreSQL tests named **TPO-inbox-team-22** and **TPO-inbox-team-29**, exercising duplicate-request idempotency, assignee-only completion, stale-transition rejection and recipient-specific in-app events, with dependency-ordered cleanup. It requires the orchestrator to register the proposed asks table before executing the DB10 isolated target. **Not run by builder.**
+
+## Round 6 — persisted ask filtering
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Team inbox has persisted Asks and **@ Me** (assigned asks only, not mentions) chips, visible only when ask storage is registered; `tests/unit/tpo-team-filter-round4.test.ts` names **TPO-inbox-team-22**. |
+| TPO-inbox-team-22 | PARTIAL — OPEN | Asks and ask-only @ Me counts are explicitly scoped to member/thread/college, no fabricated references. Home Needs-you integration still open. |
+
+## Round 6 — ask away warning
+
+| TPO-inbox-team-34 | PARTIAL — OPEN | Scoped away-until is now checked when composing an ask to the other private-conversation participant. A legacy-format first-name warning appears without silently preventing an ask; the named **TPO-inbox-team-34** test in `tests/unit/tpo-team-away-chat2.test.ts` verifies the UI and source. Ask-to-self and multi-member asks remain. |
+
+## Round 6 — decisions on send
+
+| TPO-inbox-team-23 | DONE (source; tests not run) | `TpoTeamReplyComposer` allows **Mark as decision** before sending. The same scoped message transaction stores the decision event and checks that idempotency retries use the same decision flag, with pinned strip and per-message toggle already available. New **TPO-inbox-team-23** test in `tests/unit/tpo-team-decision-chat2.test.ts`. PostgreSQL acceptance pending orchestrator. |
