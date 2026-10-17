@@ -809,7 +809,7 @@ export function ProjectMeetingTransitionActions({
           <span className="mb-1.5 block text-xs font-semibold text-body">
             {open === "COMPLETE"
               ? "Outcome"
-              : "Cancellation note"
+              : "Cancellation note"}
           </span>
           <Textarea
             value={note}
