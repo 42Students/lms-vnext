@@ -292,7 +292,7 @@ function JobActions({
           onOpenChange={(open) => {
             if (!open && pendingAction === null) setConfirmation(null);
           }}
-          title="Request application withdrawal"
+          title="Withdraw Application"
           description={`Request to withdraw ${roleOption.title} at this employer. The placement team must review your request.`}
           footer={
             <>
@@ -324,7 +324,7 @@ function JobActions({
             className="mt-2 min-h-28 w-full rounded-lg border border-border bg-surface p-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           />
           <p className="mt-2 text-xs text-muted-foreground">
-            3–2000 characters. Requesting withdrawal does not immediately
+            3–900 characters. Requesting withdrawal does not immediately
             remove your application or its results.
           </p>
           {reason.length > 0 && !validWithdrawalReason ? (
