@@ -17,10 +17,11 @@ import {verificationAttentionFlags} from "@/modules/verification/attention-flags
 import {tpoVerificationStatuses,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
-export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery):Promise<{
+export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery,memberIds?:readonly string[]):Promise<{
  available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];hasMore?:boolean;
 }>{
  const collegeId=await requireTpoBatchActor(ctx);
+ if(memberIds&&memberIds.length>100)throw Error("VERIFICATION_SELECTION_TOO_LARGE");
  const names=["profile_verifications","profile_verification_settings","profile_verification_tpo_grants"];
  const available=(await Promise.all(names.map(placementTableExists))).every(Boolean);
  if(!available)return {available:false,enabled:false,permitted:false,rows:[]};
@@ -68,6 +69,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
     ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
     ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
     ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
+    ...(memberIds?[inArray(profileVerifications.learnerMembershipId,[...memberIds])]:[]),
    ]:[])))
   .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
