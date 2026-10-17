@@ -26,7 +26,7 @@ describe("Engage remaining safe and reachable controls",()=>{
   expect(s).toContain('role="region" aria-label="Recruiter stage board"');
   expect(s).toContain("overflow-x-auto");
   expect(s).toContain("Move to… / Actions");
-  expect(edit).toContain("function trap");
+  expect(edit).toContain("function keepRecruiterDialogFocus");
   expect(edit).toContain('role="dialog" aria-modal="true"');
  });
 });
