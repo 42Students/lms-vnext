@@ -59,10 +59,13 @@ export async function listOfferingSectionPreview(
     id:item.id,title:item.title,kind:item.contentType,status:item.status,
     sequence:item.sequence,scope:item.deliveryId?"SECTION":"SHARED",
     visibleToStudents:item.visibleToStudents,
+    studentVisible:lesson.visibleToStudents&&lesson.status==="ACTIVE"&&
+      item.status==="PUBLISHED"&&item.visibleToStudents,
    })),
    assignments:assignments.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
     scope:item.deliveryId?"SECTION":"SHARED",
+    studentVisible:lesson.visibleToStudents&&lesson.status==="ACTIVE"&&item.status==="PUBLISHED",
    })),
    quizzes:quizzes.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
