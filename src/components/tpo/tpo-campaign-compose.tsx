@@ -72,6 +72,21 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      onChange={e=>setTitle(e.target.value)}/>
    </label>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
+   {selectedLeadIds.length?<section aria-label="Selected recruiter audience review" className="rounded-md border border-border p-3 text-sm">
+    <h3 className="font-semibold">Selected recruiter audience</h3>
+    {audienceStatus==="loading"?<p role="status">Checking selected contacts and suppression rules…</p>:null}
+    {audienceStatus==="error"?<div role="alert"><p>Could not check selected contacts. No emails have been sent.</p>
+      <button type="button" className="mt-2 underline" onClick={()=>setAudienceRetry(value=>value+1)}>Retry audience check</button>
+    </div>:null}
+    {audienceStatus==="ready"&&audience?<div role="status" className="mt-2 space-y-1">
+      <p><strong>{audience.eligible} potential recipients</strong> out of {audience.selected} selected · {audience.leftOut} left out.</p>
+      <p>No email: {audience.suppressed.NO_EMAIL} · Opted out: {audience.suppressed.UNSUBSCRIBED} · Bounced: {audience.suppressed.BOUNCED}</p>
+      <p>Not now: {audience.suppressed.NOT_NOW} · Duplicate email: {audience.suppressed.DUPLICATE} · No longer available: {audience.unavailable}</p>
+      {audience.unavailable>0?<p role="alert" className="text-warning">Some selected recruiters changed or are no longer in this college. Return to Engage to select again.</p>:null}
+      {audience.eligible===0?<p role="alert" className="text-warning">None of the selected recruiters are eligible for this draft.</p>:null}
+    </div>:null}
+    <p className="mt-2 text-xs text-muted-foreground">This is a preview, not a send. Recipient eligibility is checked again when saving the draft.</p>
+   </section>:null}
    <label className="block text-sm font-semibold">To
     <select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
