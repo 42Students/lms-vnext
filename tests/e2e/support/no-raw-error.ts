@@ -29,18 +29,41 @@ export async function expectNoRawErrors(page: Page): Promise<void> {
     pattern.lastIndex = 0;
     expect(body, `GR-81: leaked implementation detail matching ${pattern}`).not.toMatch(pattern);
   }
-  // Product role/status labels can be uppercase. Standalone API codes in
-  // announced failures cannot.
-  for (const alert of await page.getByRole("alert").all()) {
-    const value = (await alert.innerText()).trim();
-    expect(value, "GR-81: raw API error identifier in an announcement")
+  // Scan live regions with textContent, not only accessibility-filtered
+  // getByRole(): stale invisible error regions and polite status updates must
+  // never retain a raw provider response in the DOM.
+  const announced = await page
+    .locator('[role="alert"], [role="status"], [aria-live="assertive"], [aria-live="polite"]')
+    .all();
+  for (const region of announced) {
+    const value = (await region.textContent() ?? "").trim();
+    for (const pattern of forbidden) {
+      pattern.lastIndex = 0;
+      expect(value, "GR-81: raw runtime detail in a live region").not.toMatch(pattern);
+    }
+    expect(value, "GR-81: raw API error identifier in a live region")
+      .not.toMatch(/\b[A-Z][A-Z0-9]{2,}_[A-Z][A-Z0-9_]{2,}\b/);
+    expect(value, "GR-81: exposed standalone implementation code")
       .not.toMatch(/^(?:[A-Z][A-Z0-9_]{5,}|HTTP\s*[45]\d{2})$/);
-    // An error buried inside a full customer-facing sentence is still a leak.
-    // Ordinary uppercase role/status badges elsewhere on the page are allowed.
-    expect(value, "GR-81: embedded API identifier in an announcement")
+  }
+  // Text such as a raw SQL error can also leak from an icon's accessible
+  // name, a tooltip, or a server-populated placeholder while the visible
+  // page body remains completely friendly.
+  const labels = await page.locator("body [aria-label], body [title], body [placeholder]")
+    .evaluateAll((elements) => elements.flatMap((element) =>
+      ["aria-label", "title", "placeholder"]
+        .map((attribute) => element.getAttribute(attribute))
+        .filter((value): value is string => value !== null)));
+  for (const value of labels) {
+    for (const pattern of forbidden) {
+      pattern.lastIndex = 0;
+      expect(value, "GR-81: raw runtime detail in an accessibility attribute")
+        .not.toMatch(pattern);
+    }
+    expect(value, "GR-81: raw API identifier in accessibility attribute")
       .not.toMatch(/\b[A-Z][A-Z0-9]{2,}_[A-Z][A-Z0-9_]{2,}\b/);
   }
-  await expect(page.locator("nextjs-portal")).toHaveCount(0);
+  await expect(page.locator("nextjs-portal, vite-error-overlay")).toHaveCount(0);
 }
 
 export type FailureKind =
