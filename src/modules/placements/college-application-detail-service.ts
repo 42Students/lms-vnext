@@ -1,6 +1,9 @@
 import "server-only";
 import {and,asc,desc,eq} from "drizzle-orm";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
+import {evaluatePlacementEligibility} from "./eligibility-service";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
@@ -161,5 +164,36 @@ export async function attachCollegeApplicationOfferLetter(ctx:RequestContext,job
    summary:"Offer letter attached to application",metadata:{jobId:application.jobId,applicationId:parent.id},
   });
   return {offerId:offer.id,attachedAt:now.toISOString()};
+ });
+}
+
+/** Re-evaluate real persisted policy/evidence. This is not a fabricated
+ * resume or skills score; historical decisions are never overwritten. */
+export async function rescreenCollegeApplication(ctx:RequestContext,job:unknown,id:unknown,raw:unknown){
+ z.strictObject({confirmed:z.literal(true)}).parse(raw);
+ const {collegeId,jobId,application}=await scoped(ctx,job,id);
+ const acting=await resolveActingCollege(ctx,"placements.manage");
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
+  const [parent]=await tx.select({id:placementApplications.id,status:placementApplications.status})
+   .from(placementApplications).where(and(eq(placementApplications.id,application.id),
+    eq(placementApplications.jobId,jobId))).for("share").limit(1);
+  if(!parent||parent.status!=="SUBMITTED")
+   throw Error("Only submitted applications can be re-screened.");
+  const result=await evaluatePlacementEligibility(ctx,jobId,application.membershipId,tx);
+  await recordActivityEventInTransaction(tx,ctx,{
+   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_RESCREENED,
+   organizationId:acting.organizationId,collegeId,
+   subjectType:"placement_application",subjectId:application.id,
+   summary:"Application re-screened using current eligibility evidence",
+   metadata:{jobId,eligibilityStatus:result.status,
+    checks:result.checks.map(check=>({criterion:check.criterion,status:check.status,
+      actual:check.actual,required:check.required,detail:check.detail})),
+    priorSubmissionUnchanged:true,screeningDecisionUnchanged:true},
+  });
+  return {status:result.status,checks:result.checks,
+   override:result.override,reviewedAt:new Date().toISOString()};
  });
 }
