@@ -7,5 +7,5 @@ export default function AuthenticatedError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return <GracefulErrorBoundary error={error} reset={reset} />;
+  return <GracefulErrorBoundary error={error} reset={reset} legacyWorkspaceCopy />;
 }

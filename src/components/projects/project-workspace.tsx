@@ -16,7 +16,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
-import {ProjectResourceOpenLink} from "./project-resource-open-link";
+import {ProjectResourceList} from "./project-resource-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -43,10 +43,7 @@ import {
 import {
   ProjectTaskSubmissionControl,
 } from "./project-task-submission-control";
-import {
-  CreateProjectResourceControl,
-  ProjectResourceActions,
-} from "./project-resource-controls";
+import {CreateProjectResourceControl} from "./project-resource-controls";
 import {
   ProjectMeetingTransitionActions,
   RequestProjectMeetingControl,
@@ -279,7 +276,7 @@ export function ProjectWorkspace({
       {sectionBaseHref ? (
         <nav
           aria-label="Project workspace sections"
-          className="flex gap-2 overflow-x-auto border-b border-border pb-3"
+          className="flex max-w-full gap-2 overflow-x-auto border-b border-border pb-3 focus-visible:outline-2" tabIndex={0}
         >
           {PROJECT_WORKSPACE_SECTIONS.map((section) => (
             <Link
@@ -749,9 +746,7 @@ export function ProjectWorkspace({
           </Link> : null}
           {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
-          {mode==="MENTOR"&&workspace.releases.length===0?<p role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">
-            No sprints yet. Add a release to organise the first sprint, then choose the tasks this project should be measured against.
-          </p>:null}
+          {mode==="MENTOR"&&workspace.releases.length===0?<p role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">No sprints yet. Add a release to organise the first sprint, then choose the tasks this project should be measured against.</p>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
           {(()=>{
@@ -1374,85 +1369,8 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
-          {mode==="LEARNER"?<div aria-label="Resource counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            <div className="rounded-lg border border-border p-3 text-sm"><strong>Total</strong>
-              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
-            <div className="rounded-lg border border-border p-3 text-sm"><strong>Showing</strong>
-              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
-            <div className="rounded-lg border border-border p-3 text-sm"><strong>Links</strong>
-              <p className="mt-1 tabular-nums">{workspace.resources.filter(resource=>Boolean(safeHttpHref(resource.url))).length}</p></div>
-          </div>:null}
-          <div className="space-y-3">
-            {workspace.resources.length === 0 ? (
-              <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                {mode === "LEARNER"
-                  ? "No resources yet. Share the first link or file with your team."
-                  : "No resources yet. Add the briefs, templates and reference links your team will need."}
-              </div>
-            ) : (
-              workspace.resources.map((resource) => {
-                const href = safeHttpHref(
-                  resource.url,
-                );
-                return (
-                  <article
-                    key={resource.id}
-                    className="rounded-xl border border-border bg-surface p-4"
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="m-0 font-semibold text-foreground">
-                          {resource.title}
-                        </p>
-                        {resource.description ? (
-                          <p className="mt-1 text-sm leading-6 text-body">
-                            {resource.description}
-                          </p>
-                        ) : null}
-                      </div>
-                      {resource.visibility === "MENTOR_ONLY" && mode !== "LEARNER" ? (
-                        <StatusBadge tone="neutral">Mentors only</StatusBadge>
-                      ) : null}
-                      {resource.required ? (
-                        <StatusBadge tone="warning">
-                          Required
-                        </StatusBadge>
-                      ) : null}
-                    </div>
-                    {mode==="MENTOR" &&
-                      mentorRequiredResourceLinkState(resource)==="TEXT_ONLY" ? (
-                      <p className="mt-2 text-xs text-body">
-                        Required text resource: no safe external link; use the recorded description.
-                      </p>
-                    ) : null}
-                    {mode==="MENTOR" &&
-                      mentorRequiredResourceLinkState(resource)==="LINK_UNAVAILABLE" ? (
-                      <p role="status" className="mt-2 text-xs text-body">
-                        Required resource has no usable external link or description.
-                      </p>
-                    ) : null}
-                    {mode==="LEARNER"?<ProjectResourceOpenLink url={resource.url}/>:
-                      resource.url?<ProjectResourceOpenLink url={resource.url} linkText="Open link"/>:null}
-                    {mode !== "LEARNER" && !readOnly ? (
-                      <ProjectResourceActions
-                        projectId={workspace.project.id}
-                        resource={{
-                          id: resource.id,
-                          title: resource.title,
-                          description:
-                            resource.description,
-                          url: resource.url,
-                          required:
-                            resource.required,
-                          visibility: resource.visibility as "TEAM" | "MENTOR_ONLY",
-                        }}
-                      />
-                    ) : null}
-                  </article>
-                );
-              })
-            )}
-          </div>
+          <ProjectResourceList projectId={workspace.project.id} rows={workspace.resources}
+            mode={mode} readOnly={readOnly}/>
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
             mode={mode}
@@ -1648,7 +1566,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()}/>
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={renderTime.toISOString()}/>
 
 
         </section>

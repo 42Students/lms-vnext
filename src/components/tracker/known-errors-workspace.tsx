@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
-import { friendlyApiError } from "@/lib/friendly-error";
+import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -47,7 +47,9 @@ function KnownErrorCard({ item }: { item: KnownError }) {
       showToast({
         tone: "error", title: "Known error update failed",
         description: error instanceof FriendlyFetchError
-          ? error.message : friendlyApiError({}),
+          ? error.message
+          : error instanceof Error && error.message === FRIENDLY_MESSAGES.timeout
+            ? FRIENDLY_MESSAGES.timeout : friendlyApiError({}),
       });
     }
   }
@@ -209,7 +211,9 @@ export function KnownErrorsWorkspace({
       showToast({
         tone: "error", title: "Update failed",
         description: error instanceof FriendlyFetchError
-          ? error.message : friendlyApiError({}),
+          ? error.message
+          : error instanceof Error && error.message === FRIENDLY_MESSAGES.timeout
+            ? FRIENDLY_MESSAGES.timeout : friendlyApiError({}),
       });
     }
   }

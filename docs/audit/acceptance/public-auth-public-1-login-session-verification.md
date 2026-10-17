@@ -31,7 +31,12 @@ DONE below means implemented plus a named acceptance test written, **not that th
 | PUB-auth-public-18 | DONE | src/modules/auth/request-tenant.ts; src/app/page.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-18 never caches domain lookup outages as unknown tenants")` |
 | PUB-auth-public-27 | DONE | src/app/not-found.tsx; src/components/public/graceful-screen.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-27 maintains legacy 404 text on graceful recovery")` |
 
+| PUB-auth-public-28 | DONE | src/app/(authenticated)/error.tsx, src/components/public/graceful-error-boundary.tsx; tests/unit/public-auth-error-retry-round5.test.ts — `it("PUB-auth-public-28 retains legacy workspace failure text without exposing errors")` |
+| PUB-auth-public-32 | DONE | src/lib/api-fetch.ts, src/components/auth/login-form.tsx; tests/unit/public-auth-error-retry-round5.test.ts — `it("PUB-auth-public-32 respects bounded Retry-After seconds for login backoff")` |
+
+| PUB-auth-public-36 | DONE | src/modules/notifications/exotel-sms.ts, zeptomail-email.ts, src/modules/auth/login-service.ts; tests/unit/chat11-provider-copy-round5.test.ts — `it("PUB-auth-public-36 preserves registered DLT SMS and the legacy ZeptoMail OTP merge fields")` |
+
 ## Outstanding gaps (not claimed closed)
-`PUB-auth-public-20/21/22/23/24/26/28/29/30/31/32/35/36/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
+`PUB-auth-public-20/21/22/23/24/26/29/30/31/35/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.

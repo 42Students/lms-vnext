@@ -67,3 +67,14 @@ These are **34 additional authored cases** against real pages, not 34 distinct G
 
 - **GR-81 — BLOCKED:** `tests/e2e/support/no-raw-error.ts` now scans live regions including hidden text and `aria-label`, `title`, `placeholder` attributes for known raw faults or unknown underscored API identifiers. `tests/e2e/graceful-dom-surfaces.spec.ts` adds **26 `GR-81 blocks ...` negative cases** and two safe controls. Browser execution still required.
 - **GR-80 / GR-82 / GR-83 — BLOCKED:** the DOM checker is shared with all role and production journeys; source presence is not independently executed certification.
+
+## Round-6 production authenticated mutation matrix (authored, NOT EXECUTED)
+
+| ID | Status | Evidence / outstanding acceptance |
+| --- | --- | --- |
+| GR-80 | BLOCKED | `tests/e2e/graceful-production-saves.spec.ts`: 36 named `GR-80 GR-82 production <role> save <fault> ...` cases (Learner, College Admin, Recruiter and Super Admin × nine failure modes) assert real intercepted mutations, preserved input, human recovery text, pending release, no raw DOM or uncaught browser errors. All mutations are intercepted, never written. |
+| GR-81 | BLOCKED | Every new production mutation invokes `expectNoRawErrors`; no run results are available. |
+| GR-82 | BLOCKED | `tests/e2e/playwright.graceful-production.config.ts` includes this spec. Requires an independently built release origin and signed-in `storageState` for each of the four roles. Missing state files mean SKIP, never PASS. |
+| GR-83 | BLOCKED | Existing helper unit / PostgreSQL / GR-51 fake-provider certification still needs orchestrator execution. |
+
+These are **36 additional authored browser cases**, not new GR identifiers. No Playwright, lint, typecheck, unit, integration or production verification was run by chat-15.

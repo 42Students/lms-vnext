@@ -27,12 +27,13 @@ export default async function TpoDriveDiscussion({params}:{
    <p role="status" className="text-sm text-body">{data.threads.length} recruiter conversation(s) attached to this drive.</p>
    <ul className="space-y-3">{data.threads.map(thread=><li key={thread.id} className="min-w-0 rounded-lg border border-border bg-surface p-4">
     <h2 className="break-words font-semibold">{thread.recruiterName?.trim()||"Recruiter"}</h2>
+    {thread.lastPreview?<p className="mt-1 break-words text-sm text-body">{thread.lastPreview}</p>:null}
     <p className="text-sm text-body">{thread.count} recorded message(s) · {thread.unread} unread recruiter message(s)</p>
     <p className="text-xs text-muted-foreground">{thread.latestAt?
      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
      "No messages yet"}</p>
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
-      className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open conversation</Link>
+      className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Discuss</Link>
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>

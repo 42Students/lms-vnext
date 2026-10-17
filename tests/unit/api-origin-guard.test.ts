@@ -17,6 +17,8 @@ import { describe, expect, it } from "vitest";
  */
 const ALLOWED: Record<string, string> = {
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
+  "src/app/api/webhooks/telegram/route.ts POST":
+    "Telegram provider webhook authenticates x-telegram-bot-api-secret-token through validTelegramWebhookSecret; no session cookie or browser Origin",
   "src/app/api/internal/placements/tpo/notices/deliver/route.ts POST":
     "scheduler endpoint; authenticated by the x-tpo-scheduler-key secret (timing-safe), no cookie",
   "src/app/api/internal/placements/tpo/withdrawal-escalations/run/route.ts POST":
@@ -63,6 +65,15 @@ describe("state-changing API routes", () => {
 
   it("finds the route files (guards against a broken scan)", () => {
     expect(files.length).toBeGreaterThan(50);
+  });
+
+  it("api-origin-guard telegram webhook accepts only the provider secret without a browser session",()=>{
+    const file=path.join(ROOT,"api/webhooks/telegram/route.ts");
+    const source=fs.readFileSync(file,"utf8");
+    expect(ALLOWED["src/app/api/webhooks/telegram/route.ts POST"]).toContain("provider webhook");
+    expect(source).toContain('validTelegramWebhookSecret(request.headers.get("x-telegram-bot-api-secret-token"))');
+    expect(source).toContain("if (process.env.APP_ENV !== \"production\")");
+    expect(source).not.toContain("getCurrentRequestContext");
   });
 
   it("every POST/PUT/PATCH/DELETE handler checks the request origin", () => {

@@ -63,6 +63,21 @@ export async function readTpoInternalConversation(context: RequestContext, rawId
       authorName:users.displayName,
       body: placementTpoInternalMessages.body,
       createdAt: placementTpoInternalMessages.createdAt,
+      edited: sql<boolean>`exists(select 1 from activity_events ae
+       where ae.college_id=${college.id}::uuid and ae.subject_id=${thread.id}
+        and ae.event_type='placements.tpo_team.message_edited'
+        and ae.metadata->>'messageId'=${placementTpoInternalMessages.id}::text)`,
+      decision: sql<boolean>`coalesce((select ae.event_type='placements.tpo_team.decision_marked'
+       from activity_events ae where ae.college_id=${college.id}::uuid
+        and ae.subject_type='team_thread' and ae.subject_id=${thread.id}
+        and ae.event_type in ('placements.tpo_team.decision_marked',
+         'placements.tpo_team.decision_unmarked')
+        and ae.metadata->>'messageId'=${placementTpoInternalMessages.id}::text
+       order by ae.occurred_at desc,ae.id desc limit 1),false)`,
+      removed: sql<boolean>`exists(select 1 from activity_events ae
+       where ae.college_id=${college.id}::uuid and ae.subject_id=${thread.id}
+        and ae.event_type='placements.tpo_team.message_deleted'
+        and ae.metadata->>'messageId'=${placementTpoInternalMessages.id}::text)`,
     }).from(placementTpoInternalMessages)
       .innerJoin(collegeMemberships,and(
        eq(collegeMemberships.id,placementTpoInternalMessages.authorMembershipId),

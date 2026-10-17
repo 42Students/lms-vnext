@@ -45,3 +45,9 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-82/83: Production-build auth states and fake-provider outbox certification remain orchestrator dependencies; no case is counted as executed.
 
 - GR-81: `graceful-dom-surfaces.spec.ts` checks 26 accessibility/live-region leakage vectors and two safe controls. Shared DOM helper now detects hidden live-region text, tooltip/accessibility/placeholder details, and Vite overlays.
+
+### Round-6 production role save handoff
+
+- GR-80/82: `graceful-production-saves.spec.ts` tests 36 signed-in staging save failures (4 roles × 9 faults). All mutations fail under interception; no real writes occur. Production config includes the spec.
+- GR-80/81/82: Missing externally authenticated staging role states cause explicit skips, not passes; `expectNoRawErrors` and uncaught-browser-error assertions remain mandatory.
+- GR-83: No fake-provider outbox completion asserted; orchestrator still needs independent helper and database test execution.

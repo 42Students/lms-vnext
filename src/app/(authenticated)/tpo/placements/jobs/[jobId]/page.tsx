@@ -37,11 +37,13 @@ export default async function TpoPlacementDrivePage({
     throw error;
   }
   const tab=Array.isArray(query.tab)?query.tab[0]:query.tab;
-  if(tab&&["applicants","rounds","offers","drive-day","about"].includes(tab)){
+  if(tab&&["applicants","rounds","offers","drive-day","discussion","about"].includes(tab)){
     redirect(tpoDriveTabHref(jobId,tab));
   }
   return (
     <div className="min-w-0 space-y-4">
+      <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
+        className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Discuss →</Link>
       <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/interview-slots"}
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-primary-text">
         Employer interview slot proposals →

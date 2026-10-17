@@ -2,6 +2,8 @@
 
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -37,6 +39,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [companyShareUrl,setCompanyShareUrl]=useState<string|null>(null);
  const [shareDays,setShareDays]=useState(2);
+ const [shareConfirmOpen,setShareConfirmOpen]=useState(false);
  const [acknowledged,setAcknowledged]=useState(false);
  const [error,setError]=useState("");
  const availableRows=allRows??rows;
@@ -96,7 +99,6 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  }
  async function shareSelected(){
   if(busy||target!=="APPLICATIONS"||!jobId||safeSelected.length===0)return;
-  if(!window.confirm("Share exactly "+safeSelected.length+" selected, currently shortlisted applications with the company? The link can be viewed by anyone holding it."))return;
   setBusy(true);setError("");setCompanyShareUrl(null);
   try{
    const data=await apiFetch<{token:string}>("/api/placements/tpo/jobs/"+encodeURIComponent(jobId)+"/company-shares",{
@@ -104,6 +106,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     body:JSON.stringify({expiresInDays:shareDays,selectedApplicationIds:safeSelected}),
    });
    setCompanyShareUrl(new URL("/company-share/"+encodeURIComponent(data.token),window.location.origin).href);
+   setShareConfirmOpen(false);
    router.refresh();
   }catch(error){setError(error instanceof Error?error.message:"Could not share selected candidates.");}
   finally{setBusy(false);}
@@ -239,13 +242,21 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      </label>
      {safeSelected.length>200?<p role="status" className="text-xs text-warning-text">Select at most 200 currently shortlisted applications for one company link. Other rows are not shared.</p>:null}
      <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>void shareSelected()}
+       <button type="button" disabled={busy||safeSelected.length===0||safeSelected.length>200} onClick={()=>setShareConfirmOpen(true)}
         className="min-h-11 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text disabled:opacity-50">
          Share {safeSelected.length} selected with the company
        </button>
        <TpoSelectedReviewQueue jobId={jobId} rows={safeSelected.map(id=>({id,label:labelsById.get(id)??"Selected applicant"}))}/>
      </div>
-     {companyShareUrl?<div className="space-y-2 rounded-md border border-border p-3">
+     <Dialog open={shareConfirmOpen} onOpenChange={open=>{if(!busy&&!guardedPending)setShareConfirmOpen(open);}}
+       title="Share selected applicants with the company"
+       description={"Share exactly "+safeSelected.length+" currently shortlisted applications with the company? Anyone holding the link can view them until it expires."}
+       footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setShareConfirmOpen(false)}>Cancel</Button>
+        <Button disabled={busy||guardedPending||!safeSelected.length||safeSelected.length>200}
+         onClick={()=>void runGuarded(shareSelected)}>Confirm share</Button></>}>
+        <p className="text-sm">Each application is checked again by the server. The private URL is shown only after sharing succeeds.</p>
+      </Dialog>
+      {companyShareUrl?<div className="space-y-2 rounded-md border border-border p-3">
       <p className="text-xs font-semibold">Copy this URL now. The secret cannot be recovered later.</p>
       <input aria-label="Selected applicant share URL" readOnly value={companyShareUrl}
        onFocus={e=>e.currentTarget.select()} className="w-full rounded border border-border bg-surface p-2 text-xs"/>

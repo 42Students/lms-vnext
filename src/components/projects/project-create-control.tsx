@@ -190,12 +190,12 @@ export function CreateProjectControl({
   return (
     <>
       <Button size="sm" onClick={openDialog}>
-        Create Project
+        Create workspace
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Create Project"
+        title="Create workspace"
         description="Create an independent Project workspace from the exact published template version assigned to this college."
       >
         <form onSubmit={submit} className="grid gap-4">

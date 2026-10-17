@@ -198,7 +198,7 @@ export default async function TpoAuditPage({
             count: summary.shares,
           },
           {
-            label: "Canonical activity",
+            label: "Other placement activity",
             count: summary.canonicalEvents,
           },
         ].map((metric) => (

@@ -1,7 +1,7 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, ilike, isNotNull, isNull, or, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, gte, ilike, isNotNull, isNull, or, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
+import { colleges, placementCompanies, placementCompanyRelationships, placementCompanyDomains, placementCompanyAliases } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -17,6 +17,12 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     collegeId: selected?.collegeId,
   });
   const filters: SQL[] = [];
+  const dbPlaceholderDomain=(pattern:string)=>getDb().select({id:placementCompanyDomains.id})
+    .from(placementCompanyDomains).where(and(eq(placementCompanyDomains.companyId,placementCompanies.id),
+      ilike(placementCompanyDomains.domain,pattern)));
+  const dbPlaceholderAlias=(pattern:string)=>getDb().select({id:placementCompanyAliases.id})
+    .from(placementCompanyAliases).where(and(eq(placementCompanyAliases.companyId,placementCompanies.id),
+      ilike(placementCompanyAliases.alias,pattern)));
   if(query.collegeId) filters.push(eq(colleges.id,query.collegeId));
   if(query.companyId) filters.push(eq(placementCompanies.id,query.companyId));
   if(query.owner==="ASSIGNED") filters.push(isNotNull(placementCompanyRelationships.ownerMembershipId));
@@ -46,9 +52,12 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     // SQL wildcard characters in user searches are literal, not scope selectors.
     const escaped = query.q.replace(/[\\%_]/g, "\\$&");
     const needle="%"+escaped+"%";
-    filters.push(query.searchField==="DOMAIN"?ilike(placementCompanies.primaryDomain,needle):
-      query.searchField==="NAME"?ilike(placementCompanies.name,needle):
-      or(ilike(placementCompanies.name,needle),ilike(placementCompanies.primaryDomain,needle))!);
+    const domainSearch=or(ilike(placementCompanies.primaryDomain,needle),
+      exists(dbPlaceholderDomain(needle)))!;
+    const nameSearch=or(ilike(placementCompanies.name,needle),
+      exists(dbPlaceholderAlias(needle)))!;
+    filters.push(query.searchField==="DOMAIN"?domainSearch:
+      query.searchField==="NAME"?nameSearch:or(nameSearch,domainSearch)!);
   }
   const db = getDb();
   const [totalRows, results] = await Promise.all([
@@ -68,7 +77,19 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     trusted: placementCompanyRelationships.isTrusted,
     verifiedAt: placementCompanies.verifiedAt,
     website: placementCompanies.websiteUrl,
+    industry: placementCompanies.industry,
+    addedByType:sql<string>`(case when exists(
+      select 1 from system_roles sr
+      where sr.user_id=${placementCompanies.createdByUserId} and sr.role='SUPER_ADMIN')
+      then '42 platform' else 'College user' end)`,
+    about: placementCompanies.about,
+    logoPublicUrl: placementCompanies.logoPublicUrl,
+    updatedAt: placementCompanies.updatedAt,
     primaryDomain:placementCompanies.primaryDomain,
+    domains:sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
+      from placement_company_domains d where d.company_id=${placementCompanies.id})`,
+    aliases:sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
+      from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
     companyCollegeCount:sql<number>`(select count(*)::integer from placement_company_relationships cr where cr.company_id = ${placementCompanies.id})`.mapWith(Number),
     driveCount:sql<number>`(select count(*)::integer from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.status != 'ARCHIVED')`.mapWith(Number),
     lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id})`,
