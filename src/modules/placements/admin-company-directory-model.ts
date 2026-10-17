@@ -19,6 +19,8 @@ export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
   collegeName: string; organizationId: string; relationshipStatus: string;
   companyStatus: string; trusted: boolean; verifiedAt?: Date | null; website: string | null;
+  industry?: string | null; about?: string | null; logoPublicUrl?: string | null;
+  updatedAt?: Date;
   primaryDomain?:string|null; companyCollegeCount?:number; driveCount?:number;
   lastActiveAt?:Date|null; createdAt?:Date;
 };

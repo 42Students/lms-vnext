@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
+import {SuperAdminCompanyEdit} from "@/components/admin/super-admin-company-edit";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -176,6 +177,12 @@ export default async function SuperAdminCompaniesPage({
           ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
               verified={Boolean(row.verifiedAt)} />:null}
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        {row.industry?<p className="mt-1 text-sm text-body">Industry: {row.industry}</p>:null}
+        {row.about?<p className="mt-1 text-sm text-body">{row.about}</p>:null}
+        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
+          ? <SuperAdminCompanyEdit company={{id:row.companyId,name:row.name,
+              website:row.website,industry:row.industry??null,about:row.about??null,
+              logoPublicUrl:row.logoPublicUrl??null,updatedAt:row.updatedAt!.toISOString()}} />:null}
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-body">
           <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>
           <div><dt className="text-muted-foreground">Linked colleges</dt><dd className="tabular-nums">{row.companyCollegeCount??0}</dd></div>
