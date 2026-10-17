@@ -44,4 +44,14 @@ describe("chat-16 mentor editor safeguards",()=>{
     expect(scheduled).toContain("mentorMeetingFacilitationSchema.parse");
     expect(scheduled).toContain("followUpAt:followUpAt?toIso(followUpAt):null");
   });
+  it("MEN-projects-meetings-75 intercepts in-app links until the mentor confirms draft discard",()=>{
+    const guard=source("src/components/projects/project-editor-discard-guard.ts");
+    expect(guard).toContain('document.addEventListener("click",onLinkClick,true)');
+    expect(guard).toContain("event.preventDefault();event.stopPropagation()");
+    expect(guard).toContain("destination.current=href");
+    expect(guard).toContain("if(pending)return");
+    expect(guard).toContain("leaveConfirmed.current=true");
+    expect(guard).toContain("window.location.assign(navigateTo)");
+    expect(guard).toContain('window.addEventListener("beforeunload",beforeUnload)');
+  });
 });
