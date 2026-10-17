@@ -342,3 +342,7 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 
 No tests were run here; orchestrator CI and database verification remain necessary.
 | TPO-inbox-team-37 | DONE (source; tests unrun) | `src/app/(authenticated)/tpo/team/page.tsx` now renders TPO, TPO-admin and college-admin labels while excluding date-scoped coordinators from the permanent roster; `tests/unit/chat2-team-member-and-alert-parity.test.ts` **TPO-inbox-team-37 shows permanent placement Team roles…** and `tests/unit/tpo-team-legacy-people-chat2.test.ts` **TPO-inbox-team-37…**. |
+
+## Chat-2 continuation — announcement deletion confirmation
+
+| TPO-inbox-team-52 | DONE (source; tests not run) | `src/components/tpo/tpo-notice-delete-confirm.tsx` has a named keyboard dismissal dialog and guarded confirmation; `src/app/api/placements/tpo/announcements/[noticeId]/lifecycle/route.ts` redirects with DELETED feedback after a college-scoped, versioned lifecycle write; `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` **TPO-inbox-team-52 protects notice deletion with named confirmation and successful feedback**. |
