@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -13,7 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { apiFetch } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 async function mutate(
@@ -21,37 +21,24 @@ async function mutate(
   method: "PATCH" | "DELETE",
   body?: unknown,
 ) {
-  const response = await fetch(path, {
+  return apiFetch<unknown>(path, {
     method,
-    headers: body
-      ? { "Content-Type": "application/json" }
-      : undefined,
-    body: body
-      ? JSON.stringify(body)
-      : undefined,
+    headers: body ? { "Content-Type": "application/json" } : undefined,
+    body: body ? JSON.stringify(body) : undefined,
   });
-
-  if (!response.ok) {
-    throw new Error(
-      await courseApiError(response),
-    );
-  }
-
-  return response.json();
 }
 
 function useCourseMutation() {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] =
-    useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
 
   function run(
     task: () => Promise<unknown>,
     successTitle: string,
     onSuccess?: () => void,
   ) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         await task();
         onSuccess?.();
@@ -75,9 +62,10 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,
+  course,duplicateHref,activeOfferingCount=0,
 }: {
   duplicateHref?:string;
+  activeOfferingCount?:number;
   course: {
     id: string;
     name: string;
@@ -231,7 +219,9 @@ export function CourseActions({
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
         title={"Archive " + course.name + "?"}
-        description="A Course with active Offerings cannot be archived. Historical records remain preserved."
+        description={activeOfferingCount>0
+          ?activeOfferingCount+" active Course Offering(s) must be archived before you can archive this Course. Historical records remain preserved."
+          :"A Course with active Offerings cannot be archived. Historical records remain preserved."}
         confirmLabel="Archive Course"
         pending={pending}
         onConfirm={() =>

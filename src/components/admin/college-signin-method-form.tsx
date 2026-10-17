@@ -1,5 +1,7 @@
 "use client";
 import {useState} from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {collegeSignInMethodSchema} from "@/modules/colleges/signin-methods-model";
 import type {z} from "zod";
@@ -12,24 +14,25 @@ const choices:{value:Method;label:string;hint:string}[]=[
 ];
 export function CollegeSigninMethodForm({collegeId,method,version,ready}:{collegeId:string;method:Method;version:number;ready:boolean}){
  const router=useRouter(),[selection,setSelection]=useState<Method>(method);
- const [saving,setSaving]=useState(false),[message,setMessage]=useState("");
+ const {pending:saving,run:guardedRun}=useGuardedAction({busyLabel:"Saving..."});
+ const [message,setMessage]=useState("");
  async function save(){
   if(!ready||saving||selection===method)return;
   if(!window.confirm("Change allowed sign-in methods for this college? Current sessions stay signed in."))return;
-  setSaving(true);setMessage("");
-  try{
-   const response=await fetch("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/signin",{
-    method:"PUT",headers:{"content-type":"application/json"},credentials:"same-origin",
-    body:JSON.stringify({collegeId,method:selection,expectedVersion:version}),
-   });
-   if(!response.ok){
-    const body=await response.json().catch(()=>({error:"NOT_SAVED"})) as {error?:string};
-    throw Error(body.error==="SIGNIN_POLICY_STALE"?"Settings changed elsewhere. Refresh before retrying.":
-     body.error==="SIGNIN_STORAGE_PENDING"?"Sign-in policy storage is not ready.":"Could not save sign-in settings.");
-   }
-   setMessage("Sign-in settings saved");router.refresh();
-  }catch(error){setMessage(error instanceof Error?error.message:"Could not save sign-in settings.");}
-  finally{setSaving(false);}
+  setMessage("");
+  await guardedRun(async()=>{
+    try {
+      await apiFetch<void>("/api/admin/colleges/"+encodeURIComponent(collegeId)+"/signin",{
+        method:"PUT",headers:{"content-type":"application/json"},credentials:"same-origin",
+        body:JSON.stringify({collegeId,method:selection,expectedVersion:version}),
+      });
+      setMessage("Sign-in settings saved");router.refresh();
+    }catch(error){
+      setMessage(error instanceof FriendlyFetchError && error.status===409
+        ?"Settings changed elsewhere. Refresh before retrying."
+        :error instanceof Error?error.message:"Could not save sign-in settings.");
+    }
+  });
  }
  return <section aria-label="College sign-in methods" className="space-y-4 rounded-xl border border-border bg-surface p-5">
   <h2 className="font-semibold">Sign-in method</h2>

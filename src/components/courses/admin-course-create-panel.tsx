@@ -6,7 +6,6 @@ import {
   type FormEvent,
   useMemo,
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import { apiFetch } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 
 type Option = { id: string; name: string; code?: string };
@@ -55,13 +55,11 @@ type FacultyOption = {
 };
 
 async function postJson(path: string, body: unknown) {
-  const response = await fetch(path, {
+  return apiFetch<unknown>(path, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
-  if (!response.ok) throw new Error(await courseApiError(response));
-  return response.json();
 }
 
 function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
@@ -99,7 +97,7 @@ export function AdminCourseCreatePanel({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
   const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
   const [nextSetupStep,setNextSetupStep]=useState<"COURSE"|"OFFERING"|"DELIVERY"|"FACULTY"|"DONE">("COURSE");
 
@@ -165,7 +163,7 @@ export function AdminCourseCreatePanel({
   }, [sections, selectedDeliveryOffering]);
 
   function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed") {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const result=await task();
         reset(result);
