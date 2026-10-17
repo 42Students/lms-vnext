@@ -304,7 +304,18 @@ export function RecruiterResultControls({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor"
+      onKeyDown={event=>{
+        if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey)return;
+        const target=event.target as HTMLElement;
+        if(target.closest("input,textarea,select,button,[contenteditable=true]"))return;
+        const key=event.key.toLowerCase();
+        if(key==="z"&&undoHistory.length){event.preventDefault();undoDraftOutcome();return;}
+        if(!activeRoundId)return;
+        const outcome=key==="s"?"PASS":key==="w"||key==="h"?"HOLD":
+          key==="r"?"FAIL":key==="a"?"ABSENT":null;
+        if(outcome){event.preventDefault();draftSelectedOutcome(activeRoundId,outcome);}
+      }}>
       {rounds.length === 0 ? (
         <p className="m-0 rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
           The placement team has not configured any rounds yet.
@@ -348,6 +359,11 @@ export function RecruiterResultControls({
                 </div>
                 {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
                   <span>{(selected[round.id]??[]).length} selected for results</span>
+                  <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
+                  <button type="button" onClick={()=>{setActiveRoundId(round.id);draftSelectedOutcome(round.id,"PASS");}}
+                    disabled={!(selected[round.id]??[]).length} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
+                    Set selected to Pass
+                  </button>
                   <button type="button" disabled={bulkPending!==null||(selected[round.id]??[]).length===0}
                     className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
