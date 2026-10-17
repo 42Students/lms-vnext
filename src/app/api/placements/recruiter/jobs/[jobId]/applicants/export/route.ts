@@ -19,8 +19,7 @@ export async function GET(request: Request, { params }: RouteContext) {
     });
     const context = await getCurrentRequestContext();
     const first = await getHrJobRead(context, jobId, filters);
-    const total = filters.stage === "SHORTLISTED" ? first.applicants.counts.shortlisted :
-      filters.stage === "WITHDRAWN" ? first.applicants.counts.withdrawn : first.applicants.counts.all;
+    const total = first.stageCounts[filters.stage];
     const rows = [...first.applicants.rows];
     const lastPage = Math.min(Math.ceil(HR_APPLICANT_EXPORT_CAP / first.applicantsPage.pageSize),
       first.applicantsPage.pages);
