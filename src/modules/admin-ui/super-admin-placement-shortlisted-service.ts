@@ -28,6 +28,7 @@ export async function listSuperAdminShortlisted(context:RequestContext,raw:unkno
  .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),scope.organizationId?eq(colleges.organizationId,scope.organizationId):undefined))
  .where(and(eq(placementApplicationScreenings.status,"SHORTLISTED"),
   query.status==="ALL"?undefined:eq(placementApplications.status,query.status),
+  query.jobId?eq(placementJobs.id,query.jobId):undefined,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),ilike(placementJobs.title,scopedSearchLike(query.q)),
   ilike(placementJobRoleOptions.title,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_shortlisted");
