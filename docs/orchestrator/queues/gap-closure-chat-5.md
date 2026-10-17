@@ -41,7 +41,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-45 | S2 | MISSING-FIELD | DONE |
 | TPO-drive-workspace-49 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drive-workspace-50 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-drive-workspace-51 | S2 | MISSING-ACTION | UNCONFIRMED |
+| TPO-drive-workspace-51 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-52 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-54 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-55 | S2 | MISSING-ACTION | OPEN |
@@ -332,3 +332,7 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] source revalidation (tests authored, not executed): TPO-batches-29, TPO-students-08, TPO-students-09, TPO-students-11, TPO-students-18, TPO-students-27, TPO-students-30, TPO-requests-verification-02, TPO-requests-verification-03, TPO-requests-verification-04 now DONE with ID-named assertions in `tests/unit/chat5-fixed-on-main-verified.test.ts`; TPO-batches-64 central permission test in `tests/unit/chat5-unconfirmed-permission-decisions.test.ts`.
 
 - [chat-5] second FIXED-ON-MAIN verification: TPO-students-35, TPO-students-37, TPO-students-38, TPO-students-40, TPO-students-41, TPO-students-42, TPO-students-44, TPO-students-R02, TPO-students-R08, TPO-requests-verification-09, TPO-requests-verification-10, TPO-requests-verification-12, TPO-requests-verification-14, TPO-requests-verification-15, TPO-requests-verification-32 now DONE based on source-backed ID-named regressions in `tests/unit/chat5-fixed-on-main-more-evidence.test.ts`. CI execution pending.
+
+- [chat-5] TPO-batches-17 OPEN: accessible loading skeleton/retry is now present; retained last-good roster cache still missing (`tests/unit/chat5-next-batch-states.test.ts`).
+- [chat-5] TPO-batches-49 OPEN: suggested Remind link now follows verified next-step state, but all legacy suggestion chips/resume filters are not implemented (`tests/unit/chat5-next-batch-states.test.ts`).
+- [chat-5] TPO-drive-workspace-51 DECIDED/OPEN: external reported acceptance requires evidence and 48-hour dispute, no implicit learner acceptance. See the page acceptance decision.
