@@ -14,7 +14,7 @@ describe("colleges domain", () => {
       }),
     ).toMatchObject({
       name: "Example Engineering College",
-      code: "EEC",
+      code: "eec",
     });
 
     expect(
