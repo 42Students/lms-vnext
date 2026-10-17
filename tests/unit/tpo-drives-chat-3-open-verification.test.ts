@@ -61,4 +61,28 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(page).toContain("/tpo/placements/new/draft");
   expect(page).toContain("<PlacementJobCreateWorkspace");
  });
+ it("TPO-drives-01 sidebar Drives opens the real lifecycle list",()=>{
+  const root=source("src/app/(authenticated)/tpo/placements/page.tsx");
+  expect(root).toContain('redirect("/tpo/placements/lifecycle")');
+ });
+ it("TPO-drives-09 persisted statuses use distinct accessible words and visual tones",()=>{
+  const view=source("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
+  const model=source("src/modules/placements/tpo-drive-lifecycle-list-model.ts");
+  expect(view).toContain('tone={tpoDriveStatusTone(job.status)}');
+  expect(view).toContain('tone={driveRequestStatusTone(item.status)}');
+  expect(model).toContain('status==="CANCELLED"?"Cancelled"');
+  expect(model).toContain('status==="REJECTED")return "Declined"');
+ });
+ it("TPO-drives-38 employer skill tags are not misrepresented as persisted eligibility",()=>{
+  expect(create()).toContain("Skills the employer requires are not configured on this form yet.");
+ });
+ it("TPO-drives-47 recruiter lead invite is not misrepresented as a drive-level email",()=>{
+  expect(create()).toContain("recruiter lead invitations are managed separately under Engage.");
+  expect(source("src/modules/placements/tpo-recruiter-invite-service.ts")).toContain("lead");
+ });
+ it("TPO-drives-50 TPO edit access still requires a scoped TPO actor",()=>{
+  const service=source("src/modules/placements/tpo-drive-edit-service.ts");
+  expect(service).toContain("requireTpoJobCollege(context)");
+  expect(service).toContain("requireTpoJobActor(tx,context)");
+ });
 });
