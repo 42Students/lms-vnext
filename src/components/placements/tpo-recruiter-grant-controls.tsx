@@ -80,8 +80,9 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   async function revoke() {
-    if (busy || !window.confirm("Revoke recruiter college access for " + displayName + "? This immediately removes the recorded grant.")) return;
+    if (busy || !window.confirm("Remove " + displayName + "\'s access?\nThey will no longer be able to use this college\'s recruiter workspace.")) return;
     setBusy(true); setError(null);
     try {
       const response = await fetch("/api/placements/tpo/settings/recruiter-grants", {
@@ -91,7 +92,7 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
           grantId, expectedUpdatedAt }),
       });
       if (!response.ok) throw new Error("Grant changed or revocation failed. Refresh to review the current state.");
-      router.refresh();
+      setNotice("Access removed");router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Revoke failed.");
     } finally { setBusy(false); }
@@ -102,5 +103,6 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
       {busy ? "Revoking..." : "Revoke access"}
     </button>
     {error ? <p role="alert" className="text-xs text-error">{error}</p> : null}
+    {notice ? <p role="status" className="text-xs text-success-text">{notice}</p> : null}
   </div>;
 }
