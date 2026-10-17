@@ -79,3 +79,9 @@ Source-verified against the audited legacy behavior on the branch. Tests named b
 | Gap ID | Behavior chosen | Evidence |
 | --- | --- | --- |
 | REC-calendar-messages-profile-R01 | Each thread gets a stable opaque Reply-To token derived from a dedicated 32+ byte secret, so replying to earlier digest emails remains valid during rotation of messages. Reply ingestion strips quoted historical mail to avoid duplicating private placement conversation bodies; empty/oversized replies fail closed. | `recruiter-message-email-model.ts`: `recruiterReplyTokenForThread`, `extractRecruiterEmailReply`; dispatch and inbound services; `tests/unit/recruiter-chat14-message-email-policy.test.ts` named REC-calendar-messages-profile-R01. Required secret: `RECRUITER_MESSAGE_REPLY_TOKEN_SECRET`. |
+
+### REC-calendar-messages-profile-24 data-only shell handoff — 2026-10-18
+
+| Gap ID | Status | Evidence and exact integration request |
+| --- | --- | --- |
+| REC-calendar-messages-profile-24 | OPEN — chat-9 integration after UX-playbook approval | `src/modules/placements/recruiter-shell-navigation-model.ts` and `tests/unit/recruiter-chat14-shell-handoff.test.ts` define the exact legacy five mobile rows Today → `/hr/home`, Drives → `/hr/drives`, Calendar → `/hr/calendar`, Messages → `/hr/conversations`, Company → `/hr/company` with college-scoped links, nested active highlighting, and an explicit no-inferred-brand result when grants are ambiguous. Shell owner chat-9 must use only the selected authorized college's name and the separately authorized college logo, allow a college chooser for multiple active grants, preserve hamburger navigation, respect safe-area bottom inset, and use the audited UX playbook. No shared-shell or page visual code changed in chat-14. |
