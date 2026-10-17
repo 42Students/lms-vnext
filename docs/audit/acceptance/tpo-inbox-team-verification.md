@@ -133,3 +133,11 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | TPO-inbox-team-65 | DONE (source; unrun) | TPO-only optional `allLabel` in shared `NotificationToolbar`: Latest n/All (n), exact subtitle and empty strings on `src/app/(authenticated)/tpo/notifications/page.tsx`; named **TPO-inbox-team-65** in `tests/unit/tpo-notifications-history-chat2.test.ts`. |
 | TPO-inbox-team-67 | DONE (source; unrun) | `tpo-notifications-service.ts` applies 30-day cutoff to unread count and view. First page now explains older unread items, with cursor history replacing legacy 200 ceiling as a documented enhancement. Named **TPO-inbox-team-67** same unit suite. |
 | TPO-inbox-team-68 | DONE (source; unrun) | `src/components/tpo/tpo-notification-refresh.tsx` probes bounded same-origin data before refreshing cards, keeps stale cards on transient failure and exposes exact legacy stale and refresh messages with Retry; existing loading skeleton and route Retry remain. Named **TPO-inbox-team-68** same unit suite. |
+
+## Builder chat-2 continuation — thread counterpart and mobile context
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-18 | PARTIAL — OPEN | `readTpoInternalConversation` projects counterpart name with a same-college user join and displays it in the detail header; existing Team list has preview, 100-row search and partial filters. Named **TPO-inbox-team-18** in `tests/unit/tpo-team-person-context-chat2.test.ts`. Object thread kinds, Asks/Decisions/@Me filters still absent. |
+| TPO-inbox-team-31 | PARTIAL — OPEN | People now marks the current membership **You** in `tpo/team/page.tsx`; named **TPO-inbox-team-31** in the same test file. Five workload counts and away status require actual persisted data. |
+| TPO-inbox-team-42 | PARTIAL — OPEN | Team detail provides native keyboard-operable **All conversations** back action for single-pane navigation; named **TPO-inbox-team-42** in same suite. Legacy split-master desktop layout and detail context not built. |

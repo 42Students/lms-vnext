@@ -32,8 +32,8 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  return <main className="space-y-5">
   <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
-   description="Private conversation between the named college team participants."/>
-  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">Back to team conversations</Link>
+   description={"With "+result.thread.counterpartName+" · Private placement-team conversation."}/>
+  <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">All conversations</Link>
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>

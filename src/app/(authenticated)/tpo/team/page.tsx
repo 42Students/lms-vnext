@@ -73,7 +73,9 @@ export default async function TpoTeamPage({searchParams}:{
     </nav>
     {people.length?<ul className="grid gap-3 sm:grid-cols-2">
       {people.map(member=><li key={member.membershipId} className="min-w-0 rounded-xl border border-border bg-surface p-4">
-       <h2 className="break-words font-semibold text-foreground">{member.displayName}</h2>
+       <h2 className="break-words font-semibold text-foreground">{member.displayName}
+         {member.membershipId===context.membership?.id?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">You</span>:null}
+        </h2>
        <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
