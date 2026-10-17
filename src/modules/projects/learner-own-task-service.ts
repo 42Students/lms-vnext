@@ -100,9 +100,11 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
   if(!task||!task.templateKey.startsWith("learner-"+membership.id.replaceAll("-","")+"-")||
     task.assigneeMembershipId!==membership.id||task.status!=="TODO")
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  const [sprint]=await tx.select().from(projectSprints)
-   .where(and(eq(projectSprints.id,task.sprintId),eq(projectSprints.projectId,projectId))).for("update").limit(1);
-  if(sprint?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  const [sprint]=task.sprintId?await tx.select().from(projectSprints)
+   .where(and(eq(projectSprints.id,task.sprintId),eq(projectSprints.projectId,projectId)))
+   .for("update").limit(1):[null];
+  if(task.sprintId&&sprint?.status!=="ACTIVE")
+   throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [comment]=await tx.select({id:projectTaskComments.id}).from(projectTaskComments)
    .where(and(eq(projectTaskComments.projectId,projectId),eq(projectTaskComments.taskId,taskId))).limit(1);
   const [attempt]=await tx.select({id:projectTaskSubmissions.id}).from(projectTaskSubmissions)
