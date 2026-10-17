@@ -1,4 +1,5 @@
 import {NextResponse} from "next/server";
+import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
@@ -15,6 +16,11 @@ export async function GET(request:Request){
   if(!context.membership||!hasMembershipRole(context,"TPO"))return NextResponse.json({error:"UNAUTHORIZED"},{status:403});
   const input=unplacedFilteredExportQuerySchema.parse(Object.fromEntries(new URL(request.url).searchParams.entries()));
   const collegeId=context.membership.collegeId;
+  if(input.batchId){
+   const batches=await listTpoBatches(context);
+   if(!batches.batches.some(batch=>batch.id===input.batchId))
+    return NextResponse.json({error:"INVALID_BATCH"},{status:400});
+  }
   const [workspace,students]=await Promise.all([
    getPlacementReportDetails(context,{collegeId,seasonId:input.seasonId,jobId:input.jobId}),
    getTpoStudentsIntelligence(context,{collegeId,batchId:input.batchId,branchId:input.branchId,
