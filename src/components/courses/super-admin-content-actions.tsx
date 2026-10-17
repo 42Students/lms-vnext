@@ -110,6 +110,11 @@ export function SuperAdminContentActions({item}:{item:Content}){
    <label className="grid gap-1 text-xs font-semibold">Order
     <input type="number" min={1} max={10001} value={order} onChange={e=>setOrder(e.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2"/></label>
+   {["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)?
+    <label className="grid gap-1 text-xs font-semibold">{item.contentType==="LIVE_CLASS"?"Meeting Link":item.contentType==="YOUTUBE"?"YouTube URL":"Resource HTTPS link"}
+     <input type="url" maxLength={2048} value={replacementUrl} onChange={e=>setReplacementUrl(e.target.value)}
+      placeholder="New HTTPS link (blank keeps saved link)" className="min-h-10 rounded border border-border bg-background p-2"/>
+    </label>:null}
    {item.contentType==="RESOURCE"?<label className="grid gap-1 text-xs font-semibold">Notes
     <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
      className="rounded border border-border bg-background p-2"/>
