@@ -8,9 +8,10 @@ describe("Learner published placement Job Detail", () => {
   it("does not disclose unpublished/other-college jobs on arbitrary job IDs", () => {
     const page = read("src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx");
     expect(page).toContain("listLearnerPlacementJobs(context)");
-    expect(page).toContain("row.job.id === jobId");
+    expect(page).toContain("row.job.id===jobId");
     expect(page).toContain("notFound()");
-    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back} />");
+    expect(page).toContain("initialSaved={savedJobs.some(row=>row.jobId===jobId)}");
+    expect(page).toContain("<LearnerPlacementJobDetail items={rows.map(toItem)} returnHref={back}");
   });
   it("uses a dedicated detail instead of generic uncontextualized cards", () => {
     const source = read("src/components/placements/learner-placement-job-detail.tsx");
@@ -18,7 +19,7 @@ describe("Learner published placement Job Detail", () => {
     expect(source).toContain("Eligibility breakdown");
     expect(source).toContain("check.actual");
     expect(source).toContain("check.required");
-    expect(source).toContain("LearnerPlacementJobs items={items}");
+    expect(source).toContain("LearnerPlacementJobs items={items} savedJobIds={initialSaved?[item.job.id]:[]}");
     expect(source).toContain("learnerJobAvailabilityBanner(items)");
     expect(source).toContain("Application availability");
     const cards = read("src/components/placements/learner-placement-jobs.tsx");
