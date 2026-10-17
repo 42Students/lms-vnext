@@ -1,6 +1,7 @@
 "use client";
 import {Button} from "@/components/ui/button";
 import type {ProjectAdminWorkspaceListItem} from "./project-admin-workspace-list";
+import {collegeWorkspaceStatusLabel} from "@/modules/projects/college-workspace-status-label";
 function cell(value:string|number|null){
  const raw=String(value??"");
  const safe=/^\s*[=+\-@\t\r]/.test(raw)?"'"+raw:raw;
@@ -11,7 +12,7 @@ export function ProjectAdminWorkspacePageExport({items}:{items:readonly ProjectA
  function download(){
   const headings=["Workspace","Mentor","Status","Progress %","Members","Last changed (IST)"];
   const rows=items.map(item=>[
-   item.title,item.mentorName??"Unassigned",item.status,item.progressPercent,
+   item.title,item.mentorName??"Unassigned",collegeWorkspaceStatusLabel(item.status,item.riskReasons),item.progressPercent,
    item.memberCount,new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"short"}).format(item.updatedAt),
   ]);
   const csv="\uFEFF"+[headings,...rows].map(row=>row.map(cell).join(",")).join("\r\n")+"\r\n";

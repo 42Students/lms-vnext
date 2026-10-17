@@ -11,7 +11,8 @@ export default async function SuperAdminQuizzesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const query = adminAssessmentQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
+  const query = adminAssessmentQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,
+    courseCode:raw.courseCode,scope:raw.scope,results:raw.results });
   if (!query.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Quizzes" />
     <ErrorState title="Invalid quiz filters" description="Check search, status and page."

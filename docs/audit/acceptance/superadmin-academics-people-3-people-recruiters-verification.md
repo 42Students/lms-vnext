@@ -44,3 +44,10 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 ## Round 4 source verification (tests authored, not run)
 
 | SA-academics-people-79 | DONE (source authored; PostgreSQL/runtime pending) | `src/components/admin/admin-scoped-read-page.tsx`, `src/app/(authenticated)/admin/faculty/page.tsx`, `src/app/(authenticated)/admin/students/page.tsx`; `tests/unit/chat6-cross-page-verification-round4.test.ts` → `SA-academics-people-79 renders selected-college faculty and student overview metrics from scoped directory counts` |
+
+| SA-academics-people-108 | DONE (source authored; integration pending) | `src/components/admin/super-admin-hr-account-dialog.tsx`, persisted `src/modules/placements/super-admin-hr-service.ts`; `tests/unit/chat6-recruiter-identity-and-expiry-round5.test.ts` → `SA-academics-people-108 provides structured recruiter name, designation, new company and multi-college creation`. |
+| SA-academics-people-110 | DONE (source authored; tenant PostgreSQL pending) | `src/modules/placements/super-admin-hr-service.ts`, `src/components/admin/super-admin-hr-detail-drawer.tsx`; `tests/unit/chat6-recruiter-identity-and-expiry-round5.test.ts` → `SA-academics-people-110 preserves grant expiry and scoped active revoked expired history`. |
+
+| SA-academics-people-111 | DONE (source authored; DB/session integration pending) | `src/modules/placements/super-admin-hr-service.ts`, `src/components/admin/super-admin-hr-accounts.tsx`; `tests/unit/chat6-people-phone-session-and-mobile-round6.test.ts` → `SA-academics-people-111 reuses an existing recruiter mobile and revokes all sessions when the login mobile changes`. |
+
+| SA-academics-people-106 | DONE (source authored; real PostgreSQL/session tests pending) | `src/modules/people/super-admin-platform-account-service.ts`, `src/app/api/admin/people/platform/[userId]/route.ts`, `src/components/admin/super-admin-platform-block-action.tsx`; `tests/unit/chat6-platform-block-scope-round7.test.ts` → `SA-academics-people-106 blocks or restores a nonprivileged platform account with reason, audit and session revocation`. |

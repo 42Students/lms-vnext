@@ -11,6 +11,7 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {assertMutableMembershipTarget} from "./membership-protection";
+import {activeMentorProjectCount} from "./active-mentor-project-guard";
 import {
   collegeFacultyIdSchema, collegeFacultyLifecycleSchema,
 } from "./college-faculty-lifecycle-model";
@@ -18,7 +19,7 @@ import {
 export class CollegeFacultyLifecycleError extends Error {
   constructor(public readonly code:
     "FACULTY_NOT_FOUND" | "FACULTY_STATUS_CHANGED" |
-    "FACULTY_HAS_ACTIVE_ASSIGNMENTS") {
+    "FACULTY_HAS_ACTIVE_ASSIGNMENTS" | "FACULTY_HAS_ACTIVE_PROJECTS") {
     super(code);
     this.name = "CollegeFacultyLifecycleError";
   }
@@ -62,19 +63,9 @@ export async function transitionCollegeFaculty(
       input.action==="DEACTIVATE"?"SUSPEND":"REACTIVATE");
     if (faculty.status !== input.expectedStatus)
       throw new CollegeFacultyLifecycleError("FACULTY_STATUS_CHANGED");
-    if (input.action === "DEACTIVATE") {
-      const [teaching] = await tx.select({ id: courseTeachingAssignments.id })
-        .from(courseTeachingAssignments).where(and(
-          eq(courseTeachingAssignments.membershipId, membershipId),
-          isNull(courseTeachingAssignments.endedAt),
-        )).limit(1);
-      const [advising] = await tx.select({ id: sectionFacultyAssignments.id })
-        .from(sectionFacultyAssignments).where(and(
-          eq(sectionFacultyAssignments.membershipId, membershipId),
-          isNull(sectionFacultyAssignments.endedAt),
-        )).limit(1);
-      if (teaching || advising)
-        throw new CollegeFacultyLifecycleError("FACULTY_HAS_ACTIVE_ASSIGNMENTS");
+    if(input.action==="DEACTIVATE"){
+      if(await activeMentorProjectCount(tx,membershipId)>0)
+        throw new CollegeFacultyLifecycleError("FACULTY_HAS_ACTIVE_PROJECTS");
     }
     const now = new Date();
     const action = input.action === "DEACTIVATE" ? "SUSPENDED" : "ACTIVE";

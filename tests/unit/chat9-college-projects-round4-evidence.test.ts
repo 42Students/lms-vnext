@@ -74,13 +74,13 @@ describe("College Projects gap closure round 4",()=>{
  it("COL-projects-21 gives archived-workspace recovery and the existing creation/reassignment actions",()=>{
   const page=source("src/app/(authenticated)/college/projects/page.tsx");
   expect(page).toContain("Archived workspaces");
-  expect(page).toContain("Bulk mentor reassignment");
-  expect(page).toContain("<CreateProjectControl");
+  expect(page).toContain("Bulk reassign mentor");
+  expect(page).toContain('href="/college/projects/create"');
  });
  it("COL-projects-22 is an improvement, not a missing legacy mentor/class/template filter",()=>{
   const page=source("src/components/projects/project-admin-collection-controls.tsx");
   expect(page).toContain('name="status"');
-  expect(page).toContain('name="q"');
+  expect(page).toContain('name={legacyWorkspaces ? "search" : "q"}');
  });
  it("COL-projects-23 uses responsive wrappers but retains browser width acceptance as open",()=>{
   const cards=source("src/components/projects/project-admin-workspace-list.tsx");
