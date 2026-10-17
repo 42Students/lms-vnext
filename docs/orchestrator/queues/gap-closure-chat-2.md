@@ -179,7 +179,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-companies-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-companies-17 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-companies-19 | S2 | STATE | OPEN |
+| TPO-companies-19 | S2 | STATE | IN-BRANCH |
 | TPO-companies-25 | S2 | STATE | UNCONFIRMED |
 | TPO-companies-03 | S3 | COPY | OPEN |
 | TPO-companies-07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
