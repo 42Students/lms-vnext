@@ -137,6 +137,8 @@ export default async function LearnerProjectPage({
       {selectedTask ? (
         <LearnerBoardTaskDetailDialog projectId={projectId} filters={boardFilters}
           task={selectedTask}
+          commentCount={workspace.taskCommentCounts.find(row=>row.taskId===selectedTask.id)?.total??0}
+          submissionUrl={workspace.taskSubmissions.filter(row=>row.taskId===selectedTask.id).at(-1)?.submissionUrl??null}
           assigneeName={workspace.members.find(member =>
             member.membershipId===selectedTask.assigneeMembershipId)?.displayName??null}
           currentMembershipId={context.membership?.id??null}
