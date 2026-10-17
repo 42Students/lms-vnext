@@ -53,16 +53,15 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    description="Most recent notifications from your own college.">
 
    {items.length===0?<div role="status" className="text-sm"><p>Nothing yet</p><p className="mt-1 text-xs text-muted-foreground">Things that happen on your drives and recruiters show up here.</p></div>:<ul className="max-h-80 space-y-2 overflow-y-auto">
-    {items.slice(0,20).map(item=><li key={item.id} className="rounded border border-border p-2 text-sm">
+    {items.slice(0,20).map(item=><li key={item.id} className="rounded border border-border text-sm">
+     <button type="button" disabled={pending} onClick={()=>void openItem(item)}
+      className="w-full min-h-11 rounded p-3 text-left hover:bg-muted focus-visible:outline-2 focus-visible:outline-primary">
      <p className="font-medium">{!item.readAt&&!readIds.includes(item.id)?<span aria-hidden="true" className="mr-2 inline-block h-2 w-2 rounded-full bg-primary"/>:null}{item.title}{!item.readAt&&!readIds.includes(item.id)?<span className="sr-only"> New notification.</span>:null}</p>
      {item.body?<p className="break-words text-muted-foreground">{item.body}</p>:null}
      <time dateTime={item.createdAt} className="mt-1 block text-xs text-muted-foreground">
       {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",minute:"2-digit",timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))}
      </time>
-     <button type="button" disabled={pending}
-      onClick={()=>void openItem(item)}
-      className="mt-1 inline-flex min-h-10 items-center text-primary-text underline disabled:opacity-50">
-      {tpoBellOpenHref(item.actionHref)?"Open record":"Mark read"}
+     <span className="mt-1 inline-block text-xs font-semibold text-primary-text">{!item.readAt&&!readIds.includes(item.id)?"New  →":"→"}</span>
      </button>
     </li>)}</ul>}
    <div className="flex flex-wrap gap-3"><Link className="min-h-10 inline-flex items-center text-sm underline" href="/tpo/notifications">See all notifications</Link>
