@@ -34,3 +34,21 @@ describe("SA-tenants-modules-31 placement-cell decision trace",()=>{
   expect(page).toContain("selected.placementParticipation");
  });
 });
+
+describe("SA-tenants-modules-31 in-page learner explanation",()=>{
+ it("SA-tenants-modules-31 offers college-scoped autocomplete with an accessible closeable drawer",()=>{
+  const page=read("src/app/(authenticated)/admin/features/[collegeId]/page.tsx");
+  const ui=read("src/components/admin/learner-module-access-drawer.tsx");
+  expect(page).toContain("<LearnerModuleAccessDrawer collegeId={college.id}/>");
+  for(const text of ["Why can&apos;t a student see a module?","Matching learners",
+   "aria-modal=\"true\"","Placement cell decision","Decided by","StudentRuleEditor","Recheck access after a change"])
+   expect(ui).toContain(text);
+ });
+ it("SA-tenants-modules-31 preserves authenticated read-only query and ID scope boundaries",()=>{
+  const route=read("src/app/api/admin/features/[collegeId]/trace/route.ts");
+  expect(route).toContain("getCurrentRequestContext()");
+  expect(route).toContain("getSuperAdminLearnerAccessTrace(");
+  expect(route).toContain("adminModuleTraceQuerySchema.parse(query)");
+  expect(route).not.toContain("export async function POST");
+ });
+});
