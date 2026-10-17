@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { RECRUITER_REQUEST_DRIVE_HREF } from "@/modules/placements/recruiter-page-copy";
 import {
@@ -163,7 +163,7 @@ export async function AppShell({
           </div>
         </header>
 
-        <RouteAnnouncer />
+        <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
         <main id="lms-main-content" tabIndex={-1} className={"mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8 lg:py-8 "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           {children}
