@@ -19,7 +19,7 @@ describe.skipIf(!enabled)("HR applicant drawer PG guard",()=>{
   const a=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drawer A "+nonce,primaryDomain:"drawera-"+nonce+".example"});
   const b=await createPlacementCompany(tpo,{collegeId:SEED_IDS.collegeA,name:"HR Drawer B "+nonce,primaryDomain:"drawerb-"+nonce+".example"});
   const job=await createPlacementJob(tpo,{collegeId:SEED_IDS.collegeA,companyRelationshipId:a.relationship.id,
-    title:"Recruiter Drawer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL"});
+    title:"Recruiter Drawer "+nonce,description:"Fixture",employmentType:"FULL_TIME",workMode:"HYBRID",applicationMode:"INTERNAL",minimumAnnualCtcInr:600000,maximumAnnualCtcInr:900000,applicationDeadline:new Date("2099-01-01T00:00:00Z")});
   await publishPlacementJob(tpo,job.id);
   const uid=randomUUID();
   const hr=(companyId:string,rel:string,collegeId:string):RequestContext=>({

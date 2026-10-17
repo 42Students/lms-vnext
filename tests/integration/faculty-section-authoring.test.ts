@@ -139,7 +139,7 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   const {delivery,lesson}=await fixture();
   const created=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
     action:"CREATE",lessonId:lesson.id,sequence:4,title:"Faculty Report "+tag,
-    description:"Assignment report acceptance",dueAt:null,maxPoints:10,confirmed:true,
+    description:"Assignment report acceptance",dueAt:"2099-01-01T00:00:00.000Z",maxPoints:10,confirmed:true,
   });
   const published=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
     action:"PUBLISH",assignmentId:created.id,
@@ -180,14 +180,14 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
  it("creates and audits Assignment draft, rejects stale/foreign, then publishes and archives",async()=>{
   const {delivery,lesson}=await fixture();
   const create={action:"CREATE" as const,lessonId:lesson.id,sequence:0,title:"Task "+tag,
-   description:"Explain FIFO",dueAt:null,maxPoints:10,confirmed:true as const};
+   description:"Explain FIFO",dueAt:"2099-01-01T00:00:00.000Z",maxPoints:10,confirmed:true as const};
   const created=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},create);
   expect(created.status).toBe("DRAFT");
   await expect(commandFacultyAssignment(learner,{deliveryId:delivery.id},create)).rejects.toBeDefined();
   await expect(commandFacultyAssignment(faculty,{deliveryId:SEED_IDS.collegeB},create)).rejects.toBeDefined();
   const edited=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
    action:"EDIT",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-   title:"Updated "+tag,description:"New instructions",dueAt:null,maxPoints:12,confirmed:true,
+   title:"Updated "+tag,description:"New instructions",dueAt:"2099-01-01T00:00:00.000Z",maxPoints:12,confirmed:true,
   });
   await expect(commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
    action:"ARCHIVE",assignmentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),confirmed:true,
@@ -210,14 +210,14 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   const {delivery,lesson}=await fixture();
   const created=await commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
    action:"CREATE",lessonId:lesson.id,sequence:8,title:"SQL Version "+tag,
-   description:"Initial notes",dueAt:null,maxPoints:10,confirmed:true,
+   description:"Initial notes",dueAt:"2099-01-01T00:00:00.000Z",maxPoints:10,confirmed:true,
   });
   const versions=await pool.query<{updated_at:Date}>(
    "update course_assignments set updated_at=now() where id=$1 returning updated_at",
    [created.id]);
   const current=versions.rows[0]!.updated_at.toISOString();
   const edit={action:"EDIT" as const,assignmentId:created.id,expectedUpdatedAt:current,
-   title:"Version-corrected "+tag,description:"Revised",dueAt:null,maxPoints:10,
+   title:"Version-corrected "+tag,description:"Revised",dueAt:"2099-01-01T00:00:00.000Z",maxPoints:10,
    confirmed:true as const};
   await expect(commandFacultyAssignment(faculty,{deliveryId:delivery.id},{
    ...edit,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
@@ -239,7 +239,7 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    const {delivery,lesson}=await fixture();
    const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
     action:"CREATE",lessonId:lesson.id,sequence:6,title:"Report Quiz "+tag,
-    description:"Report positive PostgreSQL witness",dueAt:null,maxAttempts:2,
+    description:"Report positive PostgreSQL witness",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,
     questions:[{type:"SINGLE_CHOICE",prompt:"Which structure is FIFO?",points:5,sequence:0,
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}]}],
     confirmed:true,
@@ -309,24 +309,24 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
    options:[{text:"Yes",correct:true,sequence:0},{text:"No",correct:false,sequence:1}]}];
   const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"CREATE",lessonId:lesson.id,sequence:7,title:"Metadata Quiz "+tag,
-   description:"Before publication",dueAt:null,maxAttempts:2,questions,confirmed:true,
+   description:"Before publication",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,questions,confirmed:true,
   });
   const published=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"PUBLISH",quizId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),confirmed:true,
   });
   await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
-   title:"Illegal bank rewrite",description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
+   title:"Illegal bank rewrite",description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,questions,confirmed:true,
   })).rejects.toMatchObject({code:"INVALID_QUIZ_TRANSITION"});
   const metadata=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
-   title:"Published metadata "+tag,description:"Safe summary",dueAt:null,maxAttempts:2,confirmed:true,
+   title:"Published metadata "+tag,description:"Safe summary",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,confirmed:true,
   });
   expect(metadata.status).toBe("PUBLISHED");
   expect(metadata.title).toBe("Published metadata "+tag);
   await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
-   title:"Stale metadata",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+   title:"Stale metadata",description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,confirmed:true,
   })).rejects.toMatchObject({code:"FACULTY_QUIZ_STALE_VERSION"});
   const count=await pool.query<{n:string}>(`select count(*)::text as n from quiz_questions where quiz_id=$1`,[created.id]);
   expect(count.rows[0]?.n).toBe("1");
@@ -338,13 +338,13 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   });
   const renamed=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:closed.updatedAt.toISOString(),
-   title:"Closed metadata "+tag,description:"Preserved learner history",dueAt:null,maxAttempts:2,confirmed:true,
+   title:"Closed metadata "+tag,description:"Preserved learner history",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,confirmed:true,
   });
   expect(renamed.status).toBe("CLOSED");
   expect(renamed.title).toBe("Closed metadata "+tag);
   await expect(commandFacultyQuiz(learner,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:renamed.updatedAt.toISOString(),
-   title:"Foreign edit",description:null,dueAt:null,maxAttempts:2,confirmed:true,
+   title:"Foreign edit",description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,confirmed:true,
   })).rejects.toBeDefined();
   const audit=await pool.query<{n:string}>(`select count(*)::text as n from activity_events
    where subject_id=$1::text and event_type='courses.quiz.updated'`,[created.id]);
@@ -356,13 +356,13 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
      options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}]}];
    const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
      action:"CREATE",lessonId:lesson.id,sequence:9,title:"Microsecond Quiz "+tag,
-     description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
+     description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,questions,confirmed:true,
    });
    const snapshot=await pool.query<{updated_at:Date}>(
      "update course_quizzes set updated_at=now() where id=$1 returning updated_at",[created.id]);
    const edit={action:"EDIT" as const,quizId:created.id,
      expectedUpdatedAt:snapshot.rows[0]!.updated_at.toISOString(),
-     title:"Edited Microsecond Quiz "+tag,description:"Revised",dueAt:null,maxAttempts:2,
+     title:"Edited Microsecond Quiz "+tag,description:"Revised",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,
      questions,confirmed:true as const};
    await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
      ...edit,expectedUpdatedAt:"2026-01-01T00:00:00.000Z",
@@ -387,12 +387,12 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   }];
   const created=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"CREATE",lessonId:lesson.id,sequence:0,title:"Quiz "+tag,
-   description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
+   description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,questions,confirmed:true,
   });
   expect(created.status).toBe("DRAFT");
   const updated=await commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-   title:"Quiz edited "+tag,description:"Instructions",dueAt:null,maxAttempts:2,
+   title:"Quiz edited "+tag,description:"Instructions",dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,
    questions:[{...questions[0],prompt:"Updated question"}],confirmed:true,
   });
   await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
@@ -410,7 +410,7 @@ describe("Faculty own-delivery assessment command successful DB writes and denia
   expect(published.status).toBe("PUBLISHED");
   await expect(commandFacultyQuiz(faculty,{deliveryId:delivery.id},{
    action:"EDIT",quizId:created.id,expectedUpdatedAt:published.updatedAt.toISOString(),
-   title:"Illegal",description:null,dueAt:null,maxAttempts:2,questions,confirmed:true,
+   title:"Illegal",description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,questions,confirmed:true,
   })).rejects.toBeDefined();
   const close={action:"CLOSE" as const,quizId:created.id,
    expectedUpdatedAt:published.updatedAt.toISOString(),confirmed:true as const};

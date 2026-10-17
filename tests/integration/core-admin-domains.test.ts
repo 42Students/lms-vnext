@@ -50,7 +50,7 @@ const integrationCollegeCode = "ITEST-CORE";
 
 const superAdmin: RequestContext = {
   user: {
-    id: "integration-superadmin",
+    id: SEED_IDS.superAdminUser,
     identityUid: "integration-superadmin-identity",
     platformStatus: "ACTIVE",
     systemRoles: ["SUPER_ADMIN"],
@@ -75,6 +75,13 @@ const seededCollegeAdmin: RequestContext = {
 };
 
 async function cleanupIntegrationRows() {
+  // Audit rows reference the fixture organization/college; remove them first.
+  await cleanupPool.query(
+    `delete from activity_events
+     where college_id in (select id from colleges where code = $1)
+        or organization_id in (select id from organizations where name = any($2))`,
+    [integrationCollegeCode, [integrationOrgName, `${integrationOrgName} Renamed`]],
+  );
   await cleanupPool.query(
     `delete from departments
      where college_id in (

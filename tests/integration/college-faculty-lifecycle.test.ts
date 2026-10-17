@@ -84,7 +84,7 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     expect(events.rows.map(row => row.event_type)).toContain("identity.membership.suspended");
     expect(events.rows.map(row => row.event_type)).toContain("identity.membership.reactivated");
     const history = await listCollegeActivity(admin, {
-      subjectType: "college_membership", subjectId: id.member,
+      view: "EVERYTHING", subjectType: "college_membership", subjectId: id.member,
     });
     expect(history.items.some(item => item.event.eventType === "identity.membership.suspended")).toBe(true);
     expect(history.items.some(item => item.event.eventType === "identity.membership.reactivated")).toBe(true);

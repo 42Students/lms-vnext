@@ -391,7 +391,7 @@ describe("DB03 group kernel on disposable PostgreSQL", () => {
 
     const groupId=await createActiveGroup("ELECTIVE",10);
     await expect(createElectiveOffering(admin,{
-      slotId,courseId,groupId,backedDeliveryId:deliveryId,
+      slotId,courseId,groupId,backedDeliveryId:deliveryId,capacity:30,
     })).rejects.toMatchObject({code:"ELECTIVE_DELIVERY_MISMATCH"});
 
     const rows=await pool.query(

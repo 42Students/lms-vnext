@@ -37,7 +37,7 @@ describe.skipIf(!enabled)("Company applicant share PG capability acceptance",()=
     [season,SEED_IDS.collegeA,"Capability test",season.slice(0,8),SEED_IDS.collegeAdminUser],
    );
    await client.query(
-    "insert into placement_jobs(id,college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,created_by_user_id,status) values($1,$2,$3,$4,'PG company share','Disposable capability','FULL_TIME','HYBRID',$5,'PUBLISHED')",
+    "insert into placement_jobs(id,college_id,season_id,company_relationship_id,title,description,employment_type,work_mode,created_by_user_id,status,published_at) values($1,$2,$3,$4,'PG company share','Disposable capability','FULL_TIME','HYBRID',$5,'PUBLISHED',now())",
     [job,SEED_IDS.collegeA,season,relationship,SEED_IDS.collegeAdminUser],
    );
    await client.query(

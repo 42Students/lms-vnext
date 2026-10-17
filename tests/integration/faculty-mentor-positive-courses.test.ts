@@ -167,6 +167,7 @@ async function cleanup() {
   await pool.query("delete from learner_profiles where membership_id = $1", [testLearnerMembershipId]);
   await pool.query("delete from membership_roles where membership_id = $1", [testLearnerMembershipId]);
   await pool.query("delete from college_memberships where id = $1 and not exists (select 1 from activity_events where actor_membership_id = $1)", [testLearnerMembershipId]);
+  await pool.query("delete from in_app_notifications where user_id = any($1::uuid[])", [[testLearnerUserId, facultyOnlyUserId]]);
   await pool.query("delete from users where id = $1 and not exists (select 1 from college_memberships where user_id = $1)", [testLearnerUserId]);
   await pool.query("delete from membership_roles where membership_id = $1", [facultyOnlyMembershipId]);
   await pool.query("delete from college_memberships where id = $1 and not exists (select 1 from activity_events where actor_membership_id = $1)", [facultyOnlyMembershipId]);
@@ -216,10 +217,10 @@ async function fixture() {
   });
   await transitionLearningPath(admin,path.id,{action:"PUBLISH"});
   const assignment=await createCourseAssignment(faculty,{
-    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Assignment " + runId,maxPoints:10,sequence:0,
+    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Assignment " + runId,maxPoints:10,sequence:0,dueAt:"2099-01-01T00:00:00.000Z",
   });
   const quiz=await createCourseQuiz(faculty,{
-    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz " + runId,maxAttempts:2,shuffleQuestions:false,shuffleOptions:false,sequence:1,
+    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz " + runId,maxAttempts:2,dueAt:"2099-01-01T00:00:00.000Z",shuffleQuestions:false,shuffleOptions:false,sequence:1,
     questions:[{
       type:"SINGLE_CHOICE",prompt:"Which is FIFO?",points:5,sequence:0,
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}],
@@ -281,12 +282,12 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
       options:[{text:"Correct",correct:true,sequence:0},{text:"Wrong",correct:false,sequence:1}]}];
     const draft=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
       action:"CREATE",lessonId:lessonRow.rows[0]!.id,sequence:15,
-      title:"Faculty quiz "+runId,description:null,dueAt:null,maxAttempts:2,
+      title:"Faculty quiz "+runId,description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,
       questions,confirmed:true,
     });
     const revised=await commandFacultyQuiz(facultyOnly,{deliveryId:delivery.id},{
       action:"EDIT",quizId:draft.id,expectedUpdatedAt:draft.updatedAt.toISOString(),
-      title:"Revised quiz "+runId,description:null,dueAt:null,maxAttempts:2,
+      title:"Revised quiz "+runId,description:null,dueAt:"2099-01-01T00:00:00.000Z",maxAttempts:2,
       questions:[{...questions[0],prompt:"Revised question"}],confirmed:true,
     });
     expect(revised.totalPoints).toBe(5);
@@ -599,7 +600,8 @@ describe("Chat4 Faculty SUCCESS paths against disposable PostgreSQL",()=>{
     const {delivery,assignment}=await fixture();
     await pool.query("insert into assignment_submissions (assignment_id,delivery_id,membership_id,submission_type,text_content) values($1,$2,$3,'TEXT','Review fixture')",[assignment.id,delivery.id,testLearnerMembershipId]);
     const search=facultySubmissionReportSearchSchema.parse({deliveryId:delivery.id,filter:"UNGRADED",page:"999"});
-    const query={assignmentId:assignment.id,...search};
+    // The review drawer API is strict: it takes only the list selectors, not the report-only order/q/publication.
+    const query={assignmentId:assignment.id,deliveryId:search.deliveryId,filter:search.filter,page:search.page};
     const pending=await getFacultySubmissionReviewPage(facultyOnly,query);
     expect(pending.total).toBe(1);expect(pending.page).toBe(1);
     expect(pending.items[0]?.submittedAt).toEqual(expect.any(String));

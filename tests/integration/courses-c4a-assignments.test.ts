@@ -601,7 +601,15 @@ describe("courses C4A assignments against PostgreSQL", () => {
     const undated=await createCourseAssignment(collegeAdmin,{
       lessonId:structure.lesson.id,title:"C4A No Deadline Task",maxPoints:5,sequence:3,
     });
+    // Publishing now requires a future deadline, so legacy undated rows are simulated in SQL.
+    await expect(transitionCourseAssignment(collegeAdmin,undated.id,{action:"PUBLISH"}))
+      .rejects.toMatchObject({code:"ASSIGNMENT_DEADLINE_PASSED"});
+    await pool.query(
+      "update course_assignments set due_at = $1 where id = $2",
+      ["2027-12-03T12:00:00.000Z", undated.id],
+    );
     await transitionCourseAssignment(collegeAdmin,undated.id,{action:"PUBLISH"});
+    await pool.query("update course_assignments set due_at = null where id = $1",[undated.id]);
     await expect(submitCourseAssignment(learner,undated.id,{
       deliveryId:structure.deliveryA.id,submissionType:"TEXT",textContent:"No deadline",
     })).rejects.toMatchObject({code:"ASSIGNMENT_DEADLINE_NOT_CONFIGURED"});

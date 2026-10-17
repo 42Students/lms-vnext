@@ -325,7 +325,8 @@ describe("DB03 elective group-backed course access (PostgreSQL)", () => {
     expect((await listLearnerCourseDeliveries(host.ctx)).some(row=>row.deliveryId===fixture.deliveryId)).toBe(false);
     await expect(requireLearningReadAccess(host.ctx,fixture.offeringId,fixture.deliveryId))
       .rejects.toMatchObject({code:"LEARNER_ENROLLMENT_SCOPE_REQUIRED"});
-    expect((await getLearnerClassSchedule(host.ctx)).events.some(row=>row.id===fixture.scheduleEventId)).toBe(false);
+    // The learner schedule now re-checks the persisted user status and refuses a disabled user outright.
+    await expect(getLearnerClassSchedule(host.ctx)).rejects.toMatchObject({name:"AuthorizationError"});
   });
 
   it("rejects elective joins without any active primary academic enrollment", async () => {

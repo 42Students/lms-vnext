@@ -27,6 +27,8 @@ const adminB: RequestContext = {
     status: "ACTIVE", roles: ["COLLEGE_ADMIN"] },
 };
 const nonce = randomUUID();
+// The export shows a human item label ending in the last 8 characters of the subject id.
+const shown = (id: string) => "#" + id.slice(-8);
 const subjectType = "w42_csv_" + nonce.slice(0, 8);
 
 describe.skipIf(!enabled)("College Activity export own-scope PostgreSQL", () => {
@@ -38,26 +40,26 @@ describe.skipIf(!enabled)("College Activity export own-scope PostgreSQL", () => 
     const ownEvent = await recordActivityEvent(adminA, {
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_UPDATED,
       collegeId: SEED_IDS.collegeA, organizationId: SEED_IDS.organization,
-      subjectType, subjectId: "A-" + nonce,
+      subjectType, subjectId: "A-" + nonce + "-aaaaaaa",
       summary: "=INJECT protected activity",
     });
     const foreignEvent = await recordActivityEvent(adminB, {
       eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_PROGRAM_UPDATED,
       collegeId: SEED_IDS.collegeB, organizationId: SEED_IDS.organization,
-      subjectType, subjectId: "B-" + nonce,
+      subjectType, subjectId: "B-" + nonce + "-bbbbbbb",
       summary: "Private activity B",
     });
-    const result = await exportCollegeActivity(adminA, { subjectType });
-    const selected = await exportCollegeActivity(adminA, { subjectType, subjectId: ownEvent.subjectId });
-    expect(selected.csv).toContain(ownEvent.subjectId);
-    expect(selected.csv).not.toContain(foreignEvent.subjectId);
-    expect(result.csv).toContain(ownEvent.subjectId);
-    expect(result.csv).not.toContain(foreignEvent.subjectId);
+    const result = await exportCollegeActivity(adminA, { view: "EVERYTHING", subjectType });
+    const selected = await exportCollegeActivity(adminA, { view: "EVERYTHING", subjectType, subjectId: ownEvent.subjectId });
+    expect(selected.csv).toContain(shown(ownEvent.subjectId));
+    expect(selected.csv).not.toContain(shown(foreignEvent.subjectId));
+    expect(result.csv).toContain(shown(ownEvent.subjectId));
+    expect(result.csv).not.toContain(shown(foreignEvent.subjectId));
     expect(result.csv).toContain("'=INJECT");
     expect(result.truncated).toBe(false);
-    const resultB = await exportCollegeActivity(adminB, { subjectType });
-    expect(resultB.csv).toContain(foreignEvent.subjectId);
-    expect(resultB.csv).not.toContain(ownEvent.subjectId);
+    const resultB = await exportCollegeActivity(adminB, { view: "EVERYTHING", subjectType });
+    expect(resultB.csv).toContain(shown(foreignEvent.subjectId));
+    expect(resultB.csv).not.toContain(shown(ownEvent.subjectId));
   });
   it("denies other roles and forged college selector", async () => {
     await expect(exportCollegeActivity({

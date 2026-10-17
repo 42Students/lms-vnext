@@ -215,7 +215,7 @@ describe("Faculty registered report/history positive and scope denials",()=>{
   const event=await createFacultyAttendanceSession(faculty,{
    deliveryId:f.deliveryId,title:"Faculty C4 Attendance acceptance",
    description:"Real Section roll call",location:"Lab C4",
-   startsAt:new Date(now-20*60_000).toISOString(),
+   startsAt:new Date(now-3*60_000).toISOString(),
    endsAt:new Date(now+20*60_000).toISOString(),
   });
   const initial=await getFacultyAttendanceWorkspace(faculty,f.deliveryId);

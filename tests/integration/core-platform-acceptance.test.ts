@@ -220,6 +220,14 @@ async function cleanupAcceptanceRows() {
     [`${identityPrefix}%`],
   );
 
+  // Audit rows written by the superadmin flow reference the fixture college/organization.
+  await pool.query(
+    `delete from activity_events
+     where college_id in (select id from colleges where code = $1)
+        or organization_id in (select id from organizations where name = $2)`,
+    [collegeCode, organizationName],
+  );
+
   await pool.query(
     `delete from departments
      where college_id in (

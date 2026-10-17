@@ -148,7 +148,7 @@ describe("DB03 actor persistence guards against stale request contexts",()=>{
       .rejects.toMatchObject({code:"GROUP_ACTOR_NOT_AUTHORIZED"});
     await expect(createElectiveOffering(actor.context,{
       slotId:slot.id,courseId:randomUUID(),groupId:randomUUID(),
-      backedDeliveryId:randomUUID(),
+      backedDeliveryId:randomUUID(),capacity:30,
     })).rejects.toMatchObject({code:"GROUP_ACTOR_NOT_AUTHORIZED"});
     const rows=await pool.query("SELECT count(*)::int AS n FROM elective_offerings WHERE slot_id=$1",[slot.id]);
     expect(rows.rows[0].n).toBe(0);

@@ -856,7 +856,8 @@ describe("courses C3 learner progress against PostgreSQL", () => {
         },
       ),
     ).rejects.toMatchObject({
-      code: "LEARNER_PROGRESS_ACCESS_DENIED",
+      // Learner-only courses.read permission is checked before the domain guard.
+      name: "AuthorizationError",
     });
 
     await pool.query(
