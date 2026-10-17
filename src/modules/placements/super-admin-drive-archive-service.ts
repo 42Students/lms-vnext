@@ -2,7 +2,7 @@ import "server-only";
 import {and,count,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobs,placementJobRounds,placementJobRoundEvents,
- placementOffers,placementOfferStatusHistory,placementApplicationStatusHistory,
+ placementOffers,placementOfferStatusHistory,
  collegeMemberships,inAppNotifications} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
@@ -39,14 +39,15 @@ async function scope(context:RequestContext){
 }
 export async function previewSuperAdminDriveArchive(context:RequestContext,rawJobId:unknown){
  const jobId=placementJobIdSchema.parse(rawJobId),acting=await scope(context);
- const db=getDb();
- const [job]=await db.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
-  updatedAt:placementJobs.updatedAt}).from(placementJobs).where(and(
-   eq(placementJobs.id,jobId),eq(placementJobs.collegeId,acting.collegeId))).limit(1);
- if(!job)throw new Error("Drive is unavailable in this college.");
- const impact=await getImpact(db,jobId);
- return {jobId,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
-  impact,archivable:canArchiveDriveWithImpact(job.status,impact)};
+ return getDb().transaction(async tx=>{
+  const [job]=await tx.select({id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
+   updatedAt:placementJobs.updatedAt}).from(placementJobs).where(and(
+    eq(placementJobs.id,jobId),eq(placementJobs.collegeId,acting.collegeId))).limit(1);
+  if(!job)throw new Error("Drive is unavailable in this college.");
+  const impact=await getImpact(tx,jobId);
+  return {jobId,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
+   impact,archivable:canArchiveDriveWithImpact(job.status,impact)};
+ });
 }
 export async function archiveSuperAdminDrive(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=placementJobIdSchema.parse(rawJobId),input=superAdminArchiveCommandSchema.parse(raw);
