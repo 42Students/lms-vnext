@@ -29,3 +29,26 @@ export function buildTpoCompanyEngagement(
  }
  return [...grouped.values()].sort((a,b)=>a.companyName.localeCompare(b.companyName,"en-IN"));
 }
+
+export type TpoCompanyPlacementRow={
+ companyId:string;companyName:string;drives:number;placed:number;
+};
+export function joinTpoCompanyEngagementWithPlacement(
+ engagement:readonly (TpoCompanyEngagementRow&{companyId:string|null})[],
+ placements:readonly TpoCompanyPlacementRow[],
+){
+ const placementsById=new Map(placements.map(row=>[row.companyId,row]));
+ const used=new Set<string>();
+ const rows=engagement.map(row=>{
+  const placement=row.companyId?placementsById.get(row.companyId):null;
+  if(row.companyId)used.add(row.companyId);
+  return {...row,drives:placement?.drives??0,placed:placement?.placed??0};
+ });
+ for(const placement of placements){
+  if(used.has(placement.companyId))continue;
+  rows.push({companyRelationshipId:"",companyId:placement.companyId,
+   companyName:placement.companyName,leads:0,contacts:0,invited:0,joined:0,
+   drives:placement.drives,placed:placement.placed});
+ }
+ return rows.sort((a,b)=>a.companyName.localeCompare(b.companyName,"en-IN"));
+}
