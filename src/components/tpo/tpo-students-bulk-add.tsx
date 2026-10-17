@@ -24,9 +24,11 @@ type Role = { id: string; title: string; status: string };
 
 export function TpoStudentsBulkAdd({
   learners,
+  allLearners,
   drives,
 }: {
   learners: readonly Learner[];
+  allLearners?: readonly Learner[];
   drives: readonly Drive[];
 }) {
   const router = useRouter();
@@ -35,6 +37,8 @@ export function TpoStudentsBulkAdd({
   const selected=shared?.selected??localSelection;
   const setSelected=shared?.setSelected??setLocalSelection;
   const [driveId, setDriveId] = useState("");
+  const [driveSearch,setDriveSearch]=useState("");
+  const [alreadyAppliedCount,setAlreadyAppliedCount]=useState<number|null>(null);
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleOptionId, setRoleOptionId] = useState("");
   const [busy, setBusy] = useState(false);
@@ -45,15 +49,19 @@ export function TpoStudentsBulkAdd({
   const [roleError, setRoleError] = useState("");
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkDriveResult[]>([]);
-  const names = new Map(learners.map((learner) => [learner.membershipId, learner.displayName]));
-  const pageSelected=selected.filter(id=>names.has(id));
+  const available=allLearners??learners;
+  const membersById=new Map(available.map(learner=>[learner.membershipId,learner]));
+  const names = new Map(available.map(learner=>[learner.membershipId,learner.displayName]));
+  const pageSelected=selected.filter(id=>membersById.has(id));
+  const visibleDrives=drives.filter(drive=>
+   (drive.companyName+" "+drive.title).toLocaleLowerCase("en-IN").includes(driveSearch.toLocaleLowerCase("en-IN").trim()));
 
   async function loadRoles(jobId: string) {
     setDriveId(jobId);
     setRoles([]);
     setRoleOptionId("");
     setRoleError("");
-    setResults([]);
+    setResults([]);setAlreadyAppliedCount(null);
     if (!jobId) return;
     setBusy(true);
     try {
@@ -74,16 +82,31 @@ export function TpoStudentsBulkAdd({
 
   function toggle(id: string, checked: boolean) {
     setSelected((current) => checked
-      ? current.includes(id) || current.length >= 100 ? current : [...current, id]
+      ? current.includes(id) || current.length >= 200 ? current : [...current, id]
       : current.filter((item) => item !== id));
     setError("");
   }
 
+  async function preview(){
+    if(busy||!driveId||!roleOptionId||!pageSelected.length||pageSelected.length>200)return;
+    setBusy(true);setError("");setAlreadyAppliedCount(null);
+    try{
+     const response=await apiFetch<{alreadyAppliedCount:number;totalChecked:number}>(
+      "/api/placements/jobs/"+encodeURIComponent(driveId)+"/bulk-add/preflight",{
+       method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
+       body:JSON.stringify({roleOptionId,membershipIds:pageSelected}),
+      });
+     if(response.totalChecked!==pageSelected.length)
+      throw new Error("Selection changed during review");
+     setAlreadyAppliedCount(response.alreadyAppliedCount);setConfirmOpen(true);
+    }catch{setError("Could not check existing applications. Your selection remains for retry.");}
+    finally{setBusy(false);}
+  }
   async function submit() {
-    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100 ||
+    if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
         includeIneligible && overrideReason.trim().length<3) return;
     const candidates = pageSelected.flatMap((id) => {
-      const learner = learners.find((item) => item.membershipId === id);
+      const learner = membersById.get(id);
       return learner ? [{
         membershipId: learner.membershipId,
         displayName: learner.displayName,
@@ -113,7 +136,8 @@ export function TpoStudentsBulkAdd({
         });
       if(!Array.isArray(body?.results))throw Error("Could not confirm the selected additions. Refresh applications and try again.");
       setResults(body.results);
-      setSelected([]);
+      setSelected(ids=>ids.filter(id=>!body.results.some(result=>result.membershipId===id&&
+       (result.status==="added"||result.status==="already-added"))));
       router.refresh();
     } catch (cause) {
       setError(
@@ -125,7 +149,7 @@ export function TpoStudentsBulkAdd({
     }
   }
 
-  if (learners.length === 0) return (
+  if (available.length === 0) return (
     <section role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
       No learners are listed on this filtered roster page. There is nobody to select.
     </section>
@@ -137,18 +161,23 @@ export function TpoStudentsBulkAdd({
           Add selected students to a drive
         </h2>
         <p className="mt-1 text-sm text-body">
-          Select up to 100 learners on this current roster page. This selection
-          resets when changing the roster page; no student is considered eligible
-          until the server checks the selected drive and role.
+          Select up to 200 learners from this filtered roster, including other pages.
+          The server rechecks each selected college membership, drive and role.
         </p>
       </div>
       {drives.length === 0 ? (
         <p role="status" className="text-sm text-body">
           No published internal application drives in an active season are available.
-          Create or publish a drive before adding learners.
+          No open drives. Create or publish a drive before adding learners.
         </p>
       ) : (
         <>
+          <label className="grid gap-1 text-sm">Search open drives
+            <input type="search" value={driveSearch} onChange={event=>setDriveSearch(event.target.value)}
+             className="min-h-11 rounded border border-border bg-surface p-2"
+             placeholder="Search company or drive"/>
+          </label>
+          {visibleDrives.length===0?<p role="status">No open drives match your search.</p>:null}
           <div className="grid gap-3 md:grid-cols-2">
             <label className="text-sm font-semibold text-foreground">
               Published drive
@@ -156,7 +185,7 @@ export function TpoStudentsBulkAdd({
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
-                {drives.map((drive) => (
+                {visibleDrives.map((drive) => (
                   <option key={drive.id} value={drive.id}>
                     {drive.companyName} · {drive.title}
                   </option>
@@ -203,16 +232,16 @@ export function TpoStudentsBulkAdd({
           </label>:null}
           <div className="flex flex-wrap items-center justify-between gap-3">
             <span className="text-sm text-body">{pageSelected.length} learner(s) selected</span>
-            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>100 ||
+            <button type="button" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
-              onClick={() => setConfirmOpen(true)}
+              onClick={() => void preview()}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
               {busy ? "Checking learners…" : "Review and add selected"}
             </button>
           </div>
         </>
       )}
-      {pageSelected.length>100?<p role="alert">Select at most 100 students for this drive. The same selection remains available for other actions.</p>:null}
+      {pageSelected.length>200?<p role="alert">Select at most 200 students for this drive. The same selection remains available for other actions.</p>:null}
       <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
         title="Add selected students to a drive"
         description={"Add "+pageSelected.length+" selected learner(s) to "+
@@ -221,10 +250,13 @@ export function TpoStudentsBulkAdd({
           (includeIneligible?"The inclusion reason will be audited; college, cohort, debarment and proof guards still apply.":
           "Ineligible learners will not be added.")+" Existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>100||!roleOptionId||
+          <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>200||!roleOptionId||
             includeIneligible&&overrideReason.trim().length<3} onClick={()=>void runGuarded(submit)}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
+        <p role="status" className="text-sm">{alreadyAppliedCount===null?
+         "Existing applications have not been checked yet.":
+         alreadyAppliedCount+" of them already applied."}</p>
         <p className="text-sm">Each eligible learner will be told about the new application. Existing applications remain unchanged.</p>
       </Dialog>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}

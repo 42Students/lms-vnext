@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ilike, isNull } from "drizzle-orm";
+import { and, asc, eq, ilike, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -16,7 +16,7 @@ import { evaluatePlacementEligibility } from "./eligibility-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
-  bulkDriveAddSchema, bulkDriveCandidatesQuerySchema,
+  bulkDriveAddSchema, bulkDriveCandidatesQuerySchema, bulkDrivePreflightSchema,
   bulkDriveOutcome, bulkDriveCounts, type BulkDriveResult,
 } from "./bulk-drive-model";
 import { placementJobIdSchema } from "./validation";
@@ -88,6 +88,29 @@ export async function listBulkDriveCandidates(
     page: query.page,
     hasMore: rows.length > 25,
   };
+}
+
+/** Read-only preview: a current active application is not a fresh addition. */
+export async function previewBulkDriveAdd(
+ context:RequestContext,rawJobId:string,rawInput:unknown,
+){
+ const input=bulkDrivePreflightSchema.parse(rawInput);
+ const job=await loadManagedDrive(context,placementJobIdSchema.parse(rawJobId));
+ const [role]=await getDb().select({id:placementJobRoleOptions.id})
+  .from(placementJobRoleOptions).where(and(
+   eq(placementJobRoleOptions.id,input.roleOptionId),
+   eq(placementJobRoleOptions.jobId,job.id),
+   eq(placementJobRoleOptions.status,"ACTIVE"))).limit(1);
+ if(!role)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const rows=await getDb().select({membershipId:placementApplications.membershipId})
+  .from(placementApplications).where(and(
+    eq(placementApplications.jobId,job.id),
+    eq(placementApplications.roleOptionId,input.roleOptionId),
+    eq(placementApplications.status,"SUBMITTED"),
+    inArray(placementApplications.membershipId,input.membershipIds),
+  ));
+ return {alreadyAppliedCount:new Set(rows.map(row=>row.membershipId)).size,
+  totalChecked:input.membershipIds.length};
 }
 
 async function loadLearner(tx: Tx, collegeId: string, membershipId: string) {
