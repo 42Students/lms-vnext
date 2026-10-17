@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {TpoRoundResultEntryForm} from "@/components/placements/tpo-round-result-entry-form";
 import {TpoRoundApplyControl} from "@/components/placements/tpo-round-apply-control";
 import {TpoRoundResultsImport} from "@/components/placements/tpo-round-results-import";
+import {TpoBulkRoundResultRecorder} from "@/components/placements/tpo-bulk-round-result-recorder";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoRoundResultTable} from "@/modules/placements/tpo-round-result-table-service";
@@ -31,6 +32,12 @@ export default async function TpoRoundResultTablePage({params,searchParams}:Prop
     <p className="text-xs capitalize text-body">{label}</p><p className="text-xl font-semibold tabular-nums">{n}</p>
    </div>)}
   </section>
+  {!data.truncated?<TpoBulkRoundResultRecorder roundId={roundId}
+    round={{kind:data.round.kind,status:data.round.status}}
+    rows={data.rows.map(row=>({applicationId:row.applicationId,
+      displayName:row.student??"Learner",rollNumber:row.rollNumber,
+      resultStatus:row.resultStatus}))}/>:
+   <p role="status">Bulk staging is unavailable when the eligible roster exceeds 500. Use the reviewed result-import workflow instead.</p>}
   <TpoRoundResultsImport jobId={jobId} roundId={roundId}/>
   <TpoRoundApplyControl jobId={jobId} roundId={roundId}/>
   <p className="text-sm text-body">Staging results records a version and immutable audit. Applying staged outcomes to candidate progression requires a separate confirmed action. Applied outcomes are read-only here.</p>
