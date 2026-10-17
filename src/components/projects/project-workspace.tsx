@@ -989,6 +989,7 @@ export function ProjectWorkspace({
                                       taskId={task.id}
                                       title={task.title}
                                       description={task.description}
+                                      approach={task.approach}
                                       acceptanceCriteria={task.acceptanceCriteria}
                                       priority={task.priority}
                                       taskType={task.taskType}
