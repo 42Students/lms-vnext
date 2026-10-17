@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  useEffect,
   useState,
   useTransition,
 } from "react";
@@ -34,9 +35,22 @@ export function MembershipChooser({
   );
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
-  const active = memberships.filter(
-    (membership) => membership.status === "ACTIVE",
-  );
+  const [lastUsed,setLastUsed]=useState<string|null>(null);
+  useEffect(()=>{
+    let live=true;
+    void Promise.resolve().then(()=>{
+      if(!live)return;
+      try{setLastUsed(window.sessionStorage.getItem("lms_last_membership_key"));}
+      catch{/* Storage may be disabled. */}
+    });
+    return ()=>{live=false;};
+  },[]);
+  const active = memberships.filter(membership=>membership.status==="ACTIVE");
+  const sorted=[...memberships].sort((left,right)=>{
+    const status=Number(right.status==="ACTIVE")-Number(left.status==="ACTIVE");
+    if(status)return status;
+    return Number(right.id===lastUsed)-Number(left.id===lastUsed);
+  });
 
   function choose(membershipId: string) {
     setError(null);
@@ -62,6 +76,8 @@ export function MembershipChooser({
           return;
         }
 
+        try{window.sessionStorage.setItem("lms_last_membership_key",membershipId);}
+        catch{/* The selection still succeeds in private browsing. */}
         router.push("/dashboard");
         router.refresh();
       } finally {
@@ -70,7 +86,7 @@ export function MembershipChooser({
     });
   }
 
-  if (active.length === 0) {
+  if (memberships.length===0) {
     return (
       <section className="rounded-xl border border-border bg-surface p-6">
         <p className="m-0 text-base font-semibold text-foreground">
@@ -94,8 +110,12 @@ export function MembershipChooser({
           {error}
         </p>
       ) : null}
+      <h2 className="text-lg font-semibold">Choose where to sign in</h2>
+      {active.length===0?<p role="status" className="text-sm text-body">
+        No active college memberships. Suspended memberships cannot be selected.
+      </p>:null}
       <div className="grid gap-3 lg:grid-cols-2">
-        {active.map((membership) => (
+        {sorted.map((membership) => (
           <section
             key={membership.id}
             className="flex flex-col justify-between gap-5 rounded-xl border border-border bg-surface p-5"
@@ -104,6 +124,12 @@ export function MembershipChooser({
               <p className="m-0 text-base font-semibold text-foreground">
                 {membership.collegeName}
               </p>
+              {membership.status!=="ACTIVE"?<p role="status"
+                className="mt-2 text-xs font-semibold text-warning-text">
+                Suspended · This account is suspended. Your college administrator can turn it back on.
+              </p>:membership.id===lastUsed?<p className="mt-2 text-xs font-semibold text-primary-text">
+                Last used
+              </p>:null}
               <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-primary-text">
                 {membership.collegeCode}
               </p>
@@ -115,7 +141,7 @@ export function MembershipChooser({
               </p>
             </div>
             <Button
-              disabled={pending}
+              disabled={pending||membership.status!=="ACTIVE"}
               onClick={() => choose(membership.id)}
             >
               {pendingId === membership.id
