@@ -21,6 +21,7 @@ import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
 import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
+import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
 
 export default async function MentorProjectsPage({
   searchParams,
@@ -67,9 +68,7 @@ export default async function MentorProjectsPage({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
-  const canPageInSql=!query.attention&&!query.work &&
-    !["BLOCKED","IN_PROGRESS","READY"].includes(query.status??"") &&
-    (query.sort==="RECENT"||query.sort==="TITLE");
+  const canPageInSql=canPageMentorProjectList(query);
   const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
   const allRows=paged?.items??await listMyProjectInstances(context);
   const [attentionRows,workCounts,teamSizes]=await Promise.all([
