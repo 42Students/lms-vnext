@@ -2,7 +2,7 @@
 export function safeCollegeCsvCell(value:string|number|Date|null|undefined):string {
  const raw=value instanceof Date?value.toISOString():String(value??"");
  const clean=raw.replaceAll("\u0000","");
- const neutral=/^[\\s]*[=+@-]/.test(clean)?"'"+clean:clean;
+ const neutral=/^\s*[=+@-]/.test(clean)?"'"+clean:clean;
  return '"'+neutral.replaceAll('"','""')+'"';
 }
 export function collegeDirectoryCsv(headers:readonly string[],rows:readonly (readonly (string|number|Date|null|undefined)[])[]):string {
