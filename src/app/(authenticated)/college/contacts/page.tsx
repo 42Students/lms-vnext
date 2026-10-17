@@ -4,6 +4,9 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {ErrorState} from "@/components/ui/error-state";
 import {PageHeader} from "@/components/ui/page-header";
+import {FilterBar} from "@/components/ui/filter-bar";
+import {Pagination} from "@/components/ui/pagination";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
@@ -43,6 +46,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
   </div>}
   <p role="status" className="text-xs text-muted-foreground">{activeCollegeContactFilterCount(filter)} applied directory filters. Pagination, sort and selected tab are not counted.</p>
   <p className="text-xs text-muted-foreground">Join-date range uses Asia/Kolkata calendar days. The start must not be after the end.</p>
+  <FilterBar title="Filters" activeCount={activeCollegeContactFilterCount(filter)}>
   <form action="/college/contacts" method="get" className="flex flex-wrap items-end gap-3 rounded-lg border bg-surface p-4">
    <input type="hidden" name="tab" value={filter.tab}/>
    {filter.membershipId&&<input type="hidden" name="membershipId" value={filter.membershipId}/>}
@@ -178,6 +182,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <Link href={clearedCollegeContactsHref(filter.tab)}
     className="inline-flex min-h-11 items-center rounded-md border px-3 text-sm">Clear filters</Link>
   </form>
+  </FilterBar>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <p className="text-xs text-muted-foreground">Student contact information is masked in the CSV as on screen. Exports are capped at 1,000.</p>
    <Link href={"/api/college/contacts/export?"+new URLSearchParams({
@@ -193,7 +198,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     <ul className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
      {results.items.map(contact=><li key={contact.membershipId} className="min-w-0 space-y-2 rounded-lg border bg-surface p-4">
       <h2 className="break-words font-semibold">{contact.name}</h2>
-      <p className="text-xs text-muted-foreground">{contact.roles.join(" / ")||"No contact role"} · {contact.status}</p>
+      <p className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-body">{contact.roles.join(" / ")||"No contact role"} <StatusBadge tone={contact.status==="ACTIVE"?"success":contact.status==="SUSPENDED"?"warning":"neutral"}>{contact.status}</StatusBadge></p>
       <p className="break-all text-sm">Email: {contact.email}</p>
       <p className="text-sm">Phone: {contact.phone}</p>
       <p className="text-xs text-muted-foreground">Joined {dateFormat.format(contact.joinedAt)} IST</p>
@@ -202,14 +207,13 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
      </li>)}
     </ul>}
   </section>
-  <nav aria-label="Contact directory pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">
+  <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <p>Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
    <div className="flex flex-wrap gap-2">
     {filter.page>2?<Link href={collegeContactsHref({...filter,page:1})} className="rounded-md border px-4 py-2">First</Link>:null}
-    {filter.page>1?<Link href={collegeContactsHref({...filter,page:filter.page-1})} className="rounded-md border px-4 py-2">Previous</Link>:null}
-    {filter.page<pageCount?<Link href={collegeContactsHref({...filter,page:filter.page+1})} className="rounded-md border px-4 py-2">Next</Link>:null}
+    <Pagination page={filter.page} pageCount={pageCount} hrefForPage={page=>collegeContactsHref({...filter,page})} label="Contact directory pages"/>
     {filter.page<pageCount-1?<Link href={collegeContactsHref({...filter,page:pageCount})} className="rounded-md border px-4 py-2">Last</Link>:null}
    </div>
-  </nav>
+  </div>
  </div>;
 }
