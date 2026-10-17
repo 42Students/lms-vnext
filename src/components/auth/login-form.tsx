@@ -7,7 +7,6 @@ import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { safeReturnTo } from "@/lib/return-to";
-import { LoginConsent } from "@/components/auth/login-consent";
 
 type Channel = "PHONE" | "EMAIL";
 
