@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, eq, ilike, inArray, isNull } from "drizzle-orm";
+import { and, or, asc, count, eq, ilike, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, projectTemplates, projectTemplateCollegeAssignments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -11,7 +11,9 @@ export async function listSuperAdminTemplateDirectory(context:RequestContext,raw
  const query=templateDirectoryQuerySchema.parse(raw);
  const conditions=and(
   query.status==="ALL"?undefined:eq(projectTemplates.status,query.status),
-  query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,
+  query.q?or(
+   ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%"),
+   ilike(projectTemplates.slug,"%"+query.q.replace(/[\\%_]/g,"\\query.q?ilike(projectTemplates.title,"%"+query.q.replace(/[\\%_]/g,"\\$&")+"%"):undefined,")+"%")):undefined,
  );
  const db=getDb();
  const [totals,items]=await Promise.all([
