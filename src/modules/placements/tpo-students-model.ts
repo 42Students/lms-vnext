@@ -41,6 +41,7 @@ export type TpoStudentSource = {
   registrationNumber: string | null;
   branchId: string;
   branchName: string;
+  programId: string;
   programName: string;
   cohortId: string;
   cohortName: string;
@@ -73,6 +74,7 @@ export type TpoStudentRow = {
   registrationNumber: string | null;
   branchId: string;
   branchName: string;
+  programId: string;
   programName: string;
   cohortId: string;
   cohortName: string;
@@ -119,6 +121,7 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   branchId?: string;
+  programId?: string;
   search?: string;
   page: number;
   pageSize: number;
@@ -266,6 +269,7 @@ export function deriveTpoStudent(
     registrationNumber: source.registrationNumber,
     branchId: source.branchId,
     branchName: source.branchName,
+    programId:source.programId,
     programName: source.programName,
     cohortId: source.cohortId,
     cohortName: source.cohortName,
@@ -406,6 +410,7 @@ export function filterTpoStudentRoster(
         !filter.branchId ||
         row.branchId === filter.branchId,
     )
+    .filter(row=>!filter.programId||row.programId===filter.programId)
     .filter((row) => {
       if (!search) return true;
 
