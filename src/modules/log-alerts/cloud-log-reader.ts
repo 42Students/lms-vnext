@@ -105,26 +105,48 @@ export async function readCloudProviderJsonLimited(response: Response): Promise<
   catch { throw new Error("LOG_PROVIDER_INVALID_RESPONSE"); }
 }
 
-async function boundedFetch(
+/** One deadline covers headers AND streamed response JSON. */
+export async function boundedCloudJsonRequest(
   url: string,
   init: RequestInit,
   transport: Transport,
   timeoutMs = 5_000,
-): Promise<Response> {
+): Promise<{ ok: boolean; status: number; payload: unknown }> {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  try { return await transport(url, { ...init, signal: controller.signal }); }
-  catch { throw new Error("LOG_PROVIDER_UNAVAILABLE"); }
-  finally { clearTimeout(timer); }
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => {
+      controller.abort();
+      reject(new Error("LOG_PROVIDER_UNAVAILABLE"));
+    }, timeoutMs);
+  });
+  try {
+    const request = async () => {
+      const response = await transport(url, { ...init, signal: controller.signal });
+      if (!response.ok) return { ok: false, status: response.status, payload: null };
+      const payload = await readCloudProviderJsonLimited(response);
+      return { ok: true, status: response.status, payload };
+    };
+    return await Promise.race([request(), deadline]);
+  } catch (error) {
+    // Only our safe constant error names can leave this boundary.
+    if (error instanceof Error && /^LOG_PROVIDER_(?:INVALID_RESPONSE|RESPONSE_TOO_LARGE|UNAVAILABLE)$/.test(error.message)) {
+      throw error;
+    }
+    throw new Error("LOG_PROVIDER_UNAVAILABLE");
+  } finally {
+    if (timer !== undefined) clearTimeout(timer);
+    controller.abort();
+  }
 }
 
 export async function cloudLoggingAccessToken(transport: Transport = fetch): Promise<string> {
-  const response = await boundedFetch(
+  const response = await boundedCloudJsonRequest(
     "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
     { headers: { "Metadata-Flavor": "Google" } }, transport, 2_500,
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
-  const result = asObject(await readCloudProviderJsonLimited(response));
+  const result = asObject(response.payload);
   if (typeof result.access_token !== "string" || !result.access_token ||
       result.access_token.length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
   return result.access_token;
@@ -148,7 +170,7 @@ export async function readCloudLogErrorPage(input: {
     pageSize: 12,
     ...(input.pageToken ? { pageToken: input.pageToken } : {}),
   };
-  const response = await boundedFetch(
+  const response = await boundedCloudJsonRequest(
     "https://logging.googleapis.com/v2/entries:list",
     { method: "POST", headers: {
       "content-type": "application/json",
@@ -160,7 +182,7 @@ export async function readCloudLogErrorPage(input: {
     throw new Error("LOG_PROVIDER_CURSOR_EXPIRED");
   }
   if (!response.ok) throw new Error("LOG_PROVIDER_UNAVAILABLE");
-  const raw = asObject(await readCloudProviderJsonLimited(response));
+  const raw = asObject(response.payload);
   const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 12) : [];
   const errors = entries.map(parseCloudErrorEntry).filter((item): item is CloudErrorRecord => item !== null);
   const nextPageToken = optionalText(raw.nextPageToken);

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  buildCloudErrorFilter, cloudLoggingAccessToken, parseCloudErrorEntry, readCloudLogErrorPage, readCloudProviderJsonLimited,
+  boundedCloudJsonRequest, buildCloudErrorFilter, cloudLoggingAccessToken, parseCloudErrorEntry, readCloudLogErrorPage, readCloudProviderJsonLimited,
 } from "@/modules/log-alerts/cloud-log-reader";
 
 describe("GR-114 GR-118 Cloud Logging fallback", () => {
@@ -58,6 +58,20 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     }));
     await expect(readCloudProviderJsonLimited(response))
       .rejects.toThrow("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+  });
+  it("GR-118 GR-125 enforces a timeout while provider response body is still streaming", async () => {
+    const stalled = new Response(new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(new TextEncoder().encode('{"entries":'));
+      },
+    }));
+    await expect(boundedCloudJsonRequest(
+      "https://logging.googleapis.com/v2/entries:list",
+      { method: "POST" },
+      (async () => stalled) as typeof fetch,
+      20,
+    )).rejects.toThrow("LOG_PROVIDER_UNAVAILABLE");
+    await stalled.body?.cancel().catch(() => undefined);
   });
   it("GR-118 rejects malformed provider JSON without echoing the provider response", async () => {
     await expect(readCloudProviderJsonLimited(new Response("not-json")))
