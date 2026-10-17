@@ -265,7 +265,8 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 - tpo/drives: 6 DONE + 1 NOT-A-GAP with gap-ID-named tests in `tests/unit/tpo-drives-gap-closure.test.ts` and page record in `docs/audit/acceptance/tpo-drives-verification.md`; the other gaps remain open/partial.
 - learner/learning-misc: 11 DONE with gap-ID-named tests in `tests/unit/learner-learning-misc-gap-closure.test.ts` and page record in `docs/audit/acceptance/learner-learning-misc-verification.md`.
 - college/people: 9 DONE with unit and disposable-PostgreSQL integration gap tests in `tests/unit/college-people-gap-closure.test.ts`, `tests/integration/college-people-gap-closure.test.ts`, and page record `docs/audit/acceptance/college-people-verification.md`.
-- Current round: 37 DONE and 1 NOT-A-GAP source-level dispositions through public page, subject to orchestrator acceptance; unexecuted tests are not proof of integration.
+- Current round: 41 DONE and 1 NOT-A-GAP source-level dispositions through Super Admin Tenants & Modules, subject to orchestrator acceptance; unexecuted tests are not proof of integration.
+- superadmin/tenants-modules: 4 DONE, 11 ID-named tests in `tests/unit/superadmin-tenants-gap-closure.test.ts`, acceptance `docs/audit/acceptance/superadmin-tenants-modules-verification.md`; remaining gaps explicitly OPEN.
 - public/auth-public-2-links-marketing: 11 DONE in `docs/audit/acceptance/public-auth-public-2-links-marketing-verification.md`, 18 ID-named tests in `tests/unit/public-auth-links-gap-closure.test.ts`; remaining open gaps have explicit reasons.
 
 ## Needs shell (chat-9 only)
