@@ -177,3 +177,18 @@ Fast-forward merged latest `origin/main@9c4cdf54d56cb725493d4cdabbbed97b1220af3b
 - BLOCKED `SA-tenants-modules-20/33/35`: live TLS/domain/cookie/network activation remains a security/deployment owner decision; do not replace with unchecked settings.
 - BLOCKED Browser/mobile acceptance, integration/runtime checks and deployment dependencies remain unrun under FAST v2.
 
+
+
+## FAST v2 continuation 9 — S1/S2 remaining source gaps (2026-10-17)
+
+Merged the then-latest `origin/main` first; merged again after concurrent orchestrator lane merges using a two-parent commit preserving unique chat-9 files. No tests, typecheck, lint, build, CI wait or production acceptance. Every change was pushed exclusively to `chatgpt/chat-9-b` with a `[chat-9]` prefix and cited gap ID.
+
+- WP-02 / `TPO-calendar-reports-31` — recruiter-engagement company filter with authorized company selection, unchanged season/drive, matching filtered CSV, explicit separation from college-wide summaries; placement-summary drive table now filters by persisted company ID, work mode, and recorded CTC/stipend evidence without falsely changing season-wide metrics or standard CSV. Saved report presets restore the additional dimensions. **Partial across remaining report APIs.**
+- WP-04 / `TPO-settings-audit-74` — public placement settings now show a read-only preview of five actually published, privacy-released figures, including off, stale/unavailable and last-published states; no private data is substituted. **Partial: About text, configured seven-metric selection, live link verification require registered/policy-reviewed storage.**
+- WP-05 / `SA-tenants-modules-25` — college matrix shows guarded inline rule editors for mobile and desktop using actual stored college rules, inherited ancestor locks, and existing transactional mutation endpoint.
+- WP-05 / `SA-tenants-modules-29` — college policy review fetches active learner population and requires explicit acknowledgement for 100+ learners; fails closed if the population cannot be confirmed; lock changes get distinct high-impact warning. **Partial: descendant academic scopes need equivalent population evidence.**
+- BLOCKED `TPO-calendar-reports-31` — globally consistent company/mode/pay totals require source-specific filters in all report services, not only secondary table projections.
+- BLOCKED `TPO-settings-audit-74` — published About copy and configurable seven-number slots require reviewed schema and a disclosure-policy owner, not browser-only settings.
+- BLOCKED `TPO-settings-audit-12/23/33/41/50/51` — CGPA conversion, canonical job-type consumers, custom label persistence to learners, derived readiness, and recruiter visibility approval require other authoritative producers or security decisions.
+- BLOCKED `SA-tenants-modules-17/29/33/35` — mentor-project suspension safety, lower-scope population counts and privileged runtime host/auth settings need security or cross-lane owner integration.
+- BLOCKED `SA-tenants-modules-20` — wildcard DNS and TLS require live deployment verification outside FAST mode.
