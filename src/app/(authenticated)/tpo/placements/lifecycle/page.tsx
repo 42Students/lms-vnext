@@ -80,6 +80,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <div className="flex flex-wrap items-center justify-between gap-3">
       <Link href="/tpo/placements/overview" className="text-sm font-semibold text-primary-text hover:underline">Operations overview</Link>
       <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Create drive</Link>
+      <Link href="/tpo/placements/recorded-outside" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Recorded outside (history)</Link>
     </div>
     <form action="/tpo/placements/lifecycle" method="get"
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
