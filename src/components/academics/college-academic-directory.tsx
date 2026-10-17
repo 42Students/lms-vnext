@@ -25,11 +25,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="College Admin · Academic Setup"
         title={title}
-        description={semesters
-          ? "Manage registered program terms with semester names, credit totals, status and dependency-guarded deletion."
-          : "Create or edit planned batches and review recorded academic progression and active class/enrollment counts."}
         actions={
           <Link href="/college/academics"
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -239,7 +235,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
            <p>
             {data.total === 0
               ? semesters
-                ? "No program terms match these filters. An academic period is not substituted for an unconfigured semester."
+                ? "No semesters match these filters."
                 : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
               : "No records exist on this page. Select an earlier page."}
            </p>
@@ -350,7 +346,7 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [] }: {
         {semesters
           ? "Mapped course counts include registered curriculum mappings within this college only. Deletion is denied when mappings or non-archived batches exist; editing never changes the assigned program or semester number."
           : "Learner counts include currently active program enrollments with active college membership; class counts include active sections. Manage each batch’s students and recorded progression using the available actions."}
-        Exact legacy workflows, browser checks and disposable-PostgreSQL execution remain open.
+ 
       </p>
     </div>
   );
