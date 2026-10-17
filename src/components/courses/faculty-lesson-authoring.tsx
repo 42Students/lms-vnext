@@ -260,6 +260,8 @@ export function FacultyLessonAuthoring({
         );
       }
 
+      if (["RESOURCE","YOUTUBE","LIVE_CLASS"].includes(mode??"") && !contentPoints.trim())
+        throw new Error("Points are required.");
       const contentPointValue=Number(contentPoints);
       if (["RESOURCE","YOUTUBE","LIVE_CLASS"].includes(mode??"") &&
         (!Number.isInteger(contentPointValue)||contentPointValue<0||contentPointValue>1000))
