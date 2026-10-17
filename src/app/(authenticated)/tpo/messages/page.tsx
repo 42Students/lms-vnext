@@ -169,7 +169,7 @@ export default async function TpoMessagesPage({
       >
         <div className="flex flex-wrap items-center gap-3">
           <h2 className="font-semibold text-foreground">
-            Current source: {sourceLabel}
+            {sourceLabel}
           </h2>
           <StatusBadge
             tone={
