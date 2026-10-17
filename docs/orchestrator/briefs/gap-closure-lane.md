@@ -31,3 +31,9 @@ Finish with a short summary: pages touched, gap IDs DONE / NOT-A-GAP / BLOCKED, 
 - Do the big features (new screens, new routes) only when a gap truly needs them, and keep each to a few commits.
 - Update the page verification file in the same commit as the tests, so the evidence always matches.
 - Work through the whole page list top to bottom before returning to any gap you skipped.
+
+## Friendly errors (owner rule, 2026-10-17)
+Customers must never see raw error codes, stack traces or server details. Read `docs/orchestrator/work-packages/friendly-errors.md`. chat-9 builds the shared helper (`src/lib/friendly-error.ts`, `src/lib/api-fetch.ts`) first; every lane adopts it on the pages it touches once it is on main. Until then, never render a raw code in the UI.
+
+## Graceful operation (owner rule, 2026-10-17)
+Beyond friendly messages, read `docs/orchestrator/work-packages/graceful-operation.md`: guarded double-submit, conflict handling that keeps the form, per-card error boundaries, drafts that survive failures, outbound timeouts and retries. chat-9 builds the shared helpers first; every lane adopts them on the pages it touches.

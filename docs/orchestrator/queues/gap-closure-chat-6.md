@@ -242,6 +242,10 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 ## Notes (blockers, one line each)
 
+- LEARNER-profile-misc-01: resume upload/replace/Drive-import remains BLOCKED until a private bucket, malware scanner and signed learner upload receipts are provisioned; links alone are not resume files.
+- LEARNER-profile-misc-03: Aadhaar/PAN and marksheet binary uploads remain BLOCKED until the same private storage/scanner and verified upload receipts exist; never store IDs or file URLs publicly.
+- LEARNER-profile-misc-04: record/upload video intro remains BLOCKED on the private video bucket, scanner and safe camera-upload receipt workflow.
+
 - FAC-assessments-01: PDF/file assignment resource uploads require the private object-storage bucket/scanner; existing text/method controls do not close full resource parity.
 - FAC-assessments-22: inline private PDF submission preview requires a scoped storage download grant and scanner-ready files; do not expose permanent URLs.
 - SA-academics-people-59: Super Admin binary video actor/grants require the private object-storage bucket; retain link-only content until provisioned.
