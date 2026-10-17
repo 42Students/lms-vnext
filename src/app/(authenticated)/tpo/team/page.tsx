@@ -17,11 +17,19 @@ import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-pe
 
 const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];c?:string|string[];m?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=tabSchema.safeParse({tab:Array.isArray(raw.tab)?raw.tab[0]:raw.tab,
+ const threadId=Array.isArray(raw.c)?raw.c[0]:raw.c;
+ const messageId=Array.isArray(raw.m)?raw.m[0]:raw.m;
+ if(threadId&&z.string().uuid().safeParse(threadId).success){
+  const target=messageId&&z.string().uuid().safeParse(messageId).success?
+   "?m="+encodeURIComponent(messageId):"";
+  redirect("/tpo/team/"+encodeURIComponent(threadId)+target);
+ }
+ const tabInput=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
+ const parsed=tabSchema.safeParse({tab:tabInput==="members"?"people":tabInput,
   sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
   q:Array.isArray(raw.q)?raw.q[0]:raw.q});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
