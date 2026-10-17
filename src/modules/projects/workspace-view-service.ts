@@ -1,7 +1,9 @@
 import type { RequestContext } from "@/modules/identity/context";
-import {eq,sql} from "drizzle-orm";
+import {and,eq,sql} from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {projectTaskComments,projectTemplateVersions} from "@/db/schema/projects";
+import {projectTaskComments,projectTemplateVersions,projectMembers} from "@/db/schema/projects";
+import {collegeMemberships,users,facultyProfiles} from "@/db/schema";
+import {requireProjectReadAccess} from "./access";
 import { buildMentorWorkspaceEvidence } from "./mentor-workspace-evidence-model";
 import {
   getProjectInstanceWorkspace,
@@ -35,6 +37,7 @@ export async function getProjectWorkspaceView(
   const [
     workspace,
     members,
+    mentorRoster,
     readiness,
     meetings,
     finalDelivery,
@@ -63,6 +66,35 @@ export async function getProjectWorkspaceView(
       projectId,
     ),
   ]);
+
+  // MEN-projects-meetings-25: historical roster is mentor-only. Learners
+  // retain the active roster and never receive former members' profile data.
+  const access = await requireProjectReadAccess(context, projectId);
+  const mentorRoster = access.access === "MENTOR"
+    ? await getDb().select({
+        id:projectMembers.id,
+        membershipId:projectMembers.membershipId,
+        role:projectMembers.role,
+        roleLabel:projectMembers.roleLabel,
+        isPrimary:projectMembers.isPrimary,
+        endedAt:projectMembers.endedAt,
+        memberStatus:collegeMemberships.status,
+        accountStatus:users.platformStatus,
+        displayName:users.displayName,
+        academicTitle:facultyProfiles.academicTitle,
+        bio:sql<string | null>`nullif(left(${facultyProfiles.profileDocument}->>'bio', 2000), '')`,
+        linkedIn:sql<string | null>`nullif(left(${facultyProfiles.profileDocument}->>'linkedinUrl', 2048), '')`,
+      }).from(projectMembers)
+        .innerJoin(collegeMemberships,and(
+          eq(collegeMemberships.id,projectMembers.membershipId),
+          eq(collegeMemberships.collegeId,workspace.project.collegeId),
+        ))
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,projectMembers.membershipId))
+        .where(eq(projectMembers.projectId,workspace.project.id))
+        .orderBy(sql`case when ${projectMembers.role} = 'MENTOR' then 0 else 1 end`,
+          sql`lower(coalesce(${users.displayName},''))`,projectMembers.startedAt)
+    : [];
 
   // MEN-projects-meetings-17: use the version actually materialized into
   // this workspace, not the template's potentially newer live version.
