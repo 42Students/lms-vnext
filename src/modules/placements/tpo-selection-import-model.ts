@@ -38,6 +38,7 @@ export function prepareSelectionImport(text:string,candidates:readonly Selection
  const roleColumn=locate("role","roletitle","jobtitle");
  const packageColumn=locate("package","packagelpa","ctclpa","annualctc","ctc");
  if(idColumn<0&&emailColumn<0&&nameColumn<0)throw Error("CSV needs an Application ID, Email or Student name column.");
+ if(rows.length>500)throw Error("Import up to 500 students at a time.");
  const accepted:SelectionImportEntry[]=[];const unmatched:Array<{line:number;value:string;reason:string}>=[];
  const seen=new Set<string>();
  rows.forEach((row,i)=>{
