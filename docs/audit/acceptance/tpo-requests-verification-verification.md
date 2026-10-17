@@ -52,3 +52,16 @@ Base source `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. These are auth
 - TPO-requests-verification-22: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
 - TPO-requests-verification-24: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
 - TPO-requests-verification-26: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+
+## Round 58 source verification (not runtime accepted)
+- TPO-requests-verification-07: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-07`; source assertions only.
+- TPO-requests-verification-36: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-36`; source assertions only.
+- TPO-requests-verification-09: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-09`; source assertions only.
+- TPO-requests-verification-10: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-10`; source assertions only.
+- TPO-requests-verification-11: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-11`; source assertions only.
+- TPO-requests-verification-12: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-12`; source assertions only.
+- TPO-requests-verification-14: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-14`; source assertions only.
+- TPO-requests-verification-15: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-15`; source assertions only.
+- TPO-requests-verification-25: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-25`; source assertions only.
+- TPO-requests-verification-30: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-30`; source assertions only.
+- TPO-requests-verification-32: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-32`; source assertions only.
