@@ -15,6 +15,7 @@ export const createCollegeProgramSchema = z.object({
 export const updateCollegeProgramSchema = z.object({
   name,
   code,
+  departmentId: z.string().uuid().optional(),
   durationTerms,
 }).strict();
 
