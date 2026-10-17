@@ -197,14 +197,10 @@ export function CollegeCohortRowActions({ row, periods }: {
     setPendingLifecycleAction(null);setNotice("");
     startTransition(async()=>{
       try {
-        const response=await fetch("/api/college/batches/"+encodeURIComponent(row.id),{
+        await apiFetch("/api/college/batches/"+encodeURIComponent(row.id),{
           method:"DELETE",headers:{"content-type":"application/json"},
           body:JSON.stringify({expectedUpdatedAt:new Date(row.updatedAt).toISOString(),confirm:true}),
         });
-        if(!response.ok) {
-          const payload=await response.json().catch(()=>({error:"BATCH_REMOVAL_FAILED"})) as {error?:string};
-          throw new Error(payload.error??"BATCH_REMOVAL_FAILED");
-        }
         setNotice("Batch archived; historical identity preserved.");
         router.refresh();
       }catch(error){setNotice(academicSetupErrorMessage(error, "Batch removal failed."));}
