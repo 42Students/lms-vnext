@@ -32,7 +32,7 @@ export function MentorSprintCreate({
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
-        releaseId,title:title.trim(),description:description.trim()||null,
+        releaseId:chosenReleaseId,title:title.trim(),description:description.trim()||null,
         goal:goal.trim()||null,definitionOfDone:done.trim()||null,
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
