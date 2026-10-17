@@ -29,6 +29,19 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
   expect(source("src/app/(authenticated)/tpo/home/page.tsx")).toContain("profileRows[0]?.displayName");
  });
+ it("TPO-home-04 uses distinct persisted eligible, registered and placed batch totals",()=>{
+  const first=rows({batch:{name:"Batch 2027",eligible:120,registered:85,placed:24,invited:true},
+    moreBatches:2})[0];
+  expect(first).toMatchObject({title:"Placement eligibility",
+   status:"Batch 2027 · 85 of 120 registered, 24 placed · +2 more"});
+  expect(rows({batch:null})[0].status).toBe("No batch in placements yet");
+  expect(rows({batch:{name:"Batch 2027",eligible:120,registered:85,placed:24,invited:false}})[0].needsAttention).toBe(true);
+  const page=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(page).toContain("getTpoBatchEligibilitySummary(ctx,firstBatch.id)");
+  expect(page).toContain("getTpoBatchRegistrationSummary(ctx,firstBatch.id)");
+  expect(page).toContain("batchId:firstBatch.id");
+  expect(page).toContain("placed:shownPlaced");
+ });
  it("TPO-home-05 shows live drives, requests and the request action",()=>{
   const row=rows({liveDrives:2,driveAttention:3,driveDetail:"3 requests",
    driveHref:"/tpo/placements?tab=requests"})[1];

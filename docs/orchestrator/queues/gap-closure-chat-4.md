@@ -57,7 +57,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-home-01 | S2 | COPY | DONE |
-| TPO-home-04 | S2 | MISSING-FIELD | OPEN |
+| TPO-home-04 | S2 | MISSING-FIELD | DONE |
 | TPO-home-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
