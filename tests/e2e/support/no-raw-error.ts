@@ -90,3 +90,29 @@ export function captureUncaughtErrors(page: Page): string[] {
   page.on("pageerror", (error) => errors.push(error.message));
   return errors;
 }
+
+/**
+ * GR-02 exact customer copy from chat-14's FRIENDLY_MESSAGES catalog.
+ * Keep literals here until chat-14 has merged to main; importing unfinished
+ * branch-only helpers would make this lane uncompilable.
+ */
+export const GR02_TEXT: Record<FailureKind, string> = {
+  "backend-down": "You appear to be offline. Check your connection and try again.",
+  "html-502": "Something went wrong on our side. Please try again in a moment.",
+  "json-500": "Something went wrong on our side. Please try again in a moment.",
+  forbidden: "You do not have permission to do this. Please contact your administrator if needed.",
+  "missing-record": "We could not find that. Please refresh and try again.",
+  conflict: "This changed while you were working. Refresh and try again.",
+  "rate-limit": "Too many attempts. Please wait a minute and try again.",
+  slow: "This is taking longer than expected. Please try again.",
+  "session-expired": "Your session has ended. Please sign in again.",
+};
+export async function expectFriendlyFailure(
+  page: Page, kind: FailureKind,
+): Promise<void> {
+  // Match exactly inside an announced failure, rather than coincidentally
+  // finding "try again" in a static help paragraph elsewhere on the page.
+  await expect(page.getByRole("alert").filter({ hasText: GR02_TEXT[kind] }).first())
+    .toBeVisible({ timeout: 15_000 });
+  await expectNoRawErrors(page);
+}

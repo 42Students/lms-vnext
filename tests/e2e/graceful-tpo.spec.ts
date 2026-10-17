@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 const journeys = [
   { title: "recruiter roster", route: "/tpo/recruiters", endpoint: /\/api\/placements\/tpo\/leads\?/ },
@@ -25,10 +25,7 @@ test.describe("GR-80 TPO client-side roster and company directory failures", () 
           await page.goto(journey.route);
           const errors = captureUncaughtErrors(page);
           await expect.poll(failure.hits).toBeGreaterThan(0);
-          await expect(page.getByRole("alert").first()).toContainText(
-            /try again|could not load|temporarily|unavailable|retry|sign in|access/i,
-            { timeout: 15_000 },
-          );
+          await expectFriendlyFailure(page, kind);
           await expectNoRawErrors(page);
           expect(errors).toEqual([]);
         } finally {

@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 const actions = [
   {
@@ -47,7 +47,7 @@ for (const action of actions) {
         try {
           await page.getByRole("button", { name: action.button, exact: true }).click();
           await expect.poll(failure.hits).toBeGreaterThan(0);
-          await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 15_000 });
+          await expectFriendlyFailure(page, kind);
           if (kind === "session-expired" && new URL(page.url()).pathname !== action.route) {
             // Simulates returning to the requested page after a fresh E2E sign-in.
             await page.goto(action.route);

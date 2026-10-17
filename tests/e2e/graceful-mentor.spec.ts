@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 test.describe("GR-80 Mentor notifications and calendar failure behaviour", () => {
   test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
@@ -27,6 +27,7 @@ test.describe("GR-80 Mentor notifications and calendar failure behaviour", () =>
         await expect.poll(failure.hits).toBeGreaterThan(0);
         await expect(page.getByText(/could not mark all as read|retry the action|try again/i).first())
           .toBeVisible({ timeout: 15_000 });
+        await expectFriendlyFailure(page, kind);
         await expect(markAll).toBeEnabled();
         await expectNoRawErrors(page);
         expect(errors).toEqual([]);

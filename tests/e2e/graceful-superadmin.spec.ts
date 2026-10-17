@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 test.describe("GR-80 Super Admin college setup failure recovery", () => {
   test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
@@ -26,7 +26,7 @@ test.describe("GR-80 Super Admin college setup failure recovery", () => {
       try {
         await page.getByRole("button", { name: "Create College" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);
-        await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 15_000 });
+        await expectFriendlyFailure(page, kind);
         await expect(name).toHaveValue("Graceful College Draft");
         await expect(code).toHaveValue("GRACEFUL-TEST-DRAFT");
         await expect(page.getByRole("button", { name: "Create College" })).toBeEnabled();

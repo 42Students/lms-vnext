@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 test.describe("GR-80 public sign-in failure matrix", () => {
   const cases: FailureKind[] = [
@@ -19,9 +19,7 @@ test.describe("GR-80 public sign-in failure matrix", () => {
       try {
         await page.getByRole("button", { name: "Send code" }).click();
         await expect.poll(failure.hits).toBeGreaterThan(0);
-        const notice = page.getByRole("alert");
-        await expect(notice).toBeVisible({ timeout: 15_000 });
-        await expect(notice).toContainText(/try again|wait|sign in|check|connection|offline/i);
+        await expectFriendlyFailure(page, kind);
         await expect(email).toHaveValue("learner.a@vnext.test");
         await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
         await expectNoRawErrors(page);
@@ -48,10 +46,7 @@ test.describe("GR-80 public sign-in failure matrix", () => {
         try {
           await page.getByRole("button", { name: "Send code" }).click();
           await expect.poll(failure.hits).toBeGreaterThan(0);
-          await expect(page.getByRole("alert")).toContainText(
-            /try again|wait|sign in|check|connection|offline/i,
-            { timeout: 15_000 },
-          );
+          await expectFriendlyFailure(page, kind);
           await expect(contact).toHaveValue("9876543210");
           await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
           await expectNoRawErrors(page);
