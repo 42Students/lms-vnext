@@ -22,8 +22,14 @@ export default async function LearnerCoursesPage() {
     { includeHistorical: true },
   );
 
-  const displays=await loadAuthorizedCourseDisplayContentsIfReady(courses
-    .map(course=>course.courseId).filter(id=>typeof id==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)));
+  let displays=new Map<string,{thumbnailUrl:string|null}>();
+  try{
+    displays=await loadAuthorizedCourseDisplayContentsIfReady(courses
+      .map(course=>course.courseId).filter(id=>typeof id==="string"&&/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)));
+  }catch{
+    // Optional display metadata must not hide authenticated course cards.
+    displays=new Map();
+  }
   // Each delivery fails independently; one corrupt or temporarily unavailable
   // course must never hide the learner's remaining course cards.
   const seenDeliveries = new Set<string>();
