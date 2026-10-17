@@ -78,7 +78,7 @@ export function MentorTaskDetailsEdit(props:Props) {
         },
       );
       setConfirmOpen(false);
-      showToast({tone:"success",title:"Task details updated"});
+      showToast({tone:"success",title:"Task updated."});
       router.refresh();
     } catch(caught) {
       const message=caught instanceof Error?caught.message:"Task update failed";
