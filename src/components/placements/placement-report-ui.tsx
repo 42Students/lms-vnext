@@ -1,3 +1,4 @@
+import {ReportInteractiveTable} from "./report-interactive-table";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -276,57 +277,11 @@ export function ReportCsvLink({
 }
 
 export function ReportTable({
-  title,
-  headings,
-  rows,
-  emptyDescription,
-}: {
-  title: string;
-  headings: readonly string[];
-  rows: readonly (readonly (string | number | null)[])[];
-  emptyDescription: string;
-}) {
-  return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-      {rows.length === 0 ? (
-        <EmptyState title="No report rows" description={emptyDescription} />
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-max border-collapse text-left text-sm">
-            <thead className="bg-surface-subtle">
-              <tr>
-                {headings.map((heading) => (
-                  <th
-                    key={heading}
-                    scope="col"
-                    className="border-b border-border px-4 py-3 font-semibold text-foreground"
-                  >
-                    {heading}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  className="border-b border-border last:border-b-0"
-                >
-                  {row.map((value, columnIndex) => (
-                    <td
-                      key={columnIndex}
-                      className="px-4 py-3 text-body"
-                    >
-                      {value === null || value === "" ? "—" : value}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </section>
-  );
+ title,headings,rows,emptyDescription,
+}:{
+ title:string;headings:readonly string[];
+ rows:readonly (readonly (string|number|null)[])[];
+ emptyDescription:string;
+}){
+ return <ReportInteractiveTable title={title} headings={headings} rows={rows} emptyDescription={emptyDescription}/>;
 }
