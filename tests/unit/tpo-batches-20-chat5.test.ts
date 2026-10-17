@@ -10,7 +10,7 @@ describe("batch daily reminder delivery",()=>{
   for(const term of ["getTpoBatch(ctx,batchId)","colleges.id,collegeId","for(\"update\")",
     "findUnchosenEligibleBatchStudents(tx,collegeId,batch.id)","tpoBatchReminderDayKey(now)",
     "dedupeKey","onConflictDoNothing()","BATCH_REMINDED","channels:[\"IN_APP\"]"])
-   expect(service).toContain(term.replaceAll("\\\"","\""));
+   expect(service).toContain(term);
   expect(service).toContain("tx.insert(inAppNotifications)");
   expect(service).not.toContain("emailSent:true");
   const route=read("src/app/api/placements/tpo/batches/[batchId]/remind/route.ts");
