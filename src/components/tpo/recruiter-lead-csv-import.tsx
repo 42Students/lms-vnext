@@ -279,6 +279,15 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             ) : null}
             {result ? (
               <div className="space-y-3" aria-live="polite">
+                <button type="button" className={buttonClass} onClick={()=>{
+                  const header="Row,Status,Reason";
+                  const cell=(value:string)=>'"'+(/^[\t\r\n]*[=+@-]/.test(value)?"'"+value:value).replaceAll('"','""')+'"';
+                  const lines=result.results.map(item=>[String(item.row),item.status,item.reason??""].map(cell).join(","));
+                  const blob=new Blob(["\uFEFF"+[header,...lines].join("\r\n")+"\r\n"],{type:"text/csv;charset=utf-8"});
+                  const url=URL.createObjectURL(blob);const link=document.createElement("a");
+                  link.href=url;link.download="recruiter-import-results.csv";
+                  document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+                }}>Download row results CSV</button>
                 <button type="button" className={buttonClass} onClick={()=>void navigator.clipboard.writeText(
                   result.results.filter(item=>item.status!=="created").map(item=>
                     "Row "+item.row+": "+item.status+(item.reason?" — "+item.reason:"")).join("\n")
