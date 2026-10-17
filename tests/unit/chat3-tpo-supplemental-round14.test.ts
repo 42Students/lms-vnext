@@ -28,6 +28,7 @@ describe("TPO supplemental job metadata",()=>{
    {studentsRegisterSeparately:true,name:"",url:"https://careers.example.com"},
    {studentsRegisterSeparately:true,name:"Careers",url:""},
    {studentsRegisterSeparately:true,name:"Careers",url:"http://careers.example.com"},
+   {studentsRegisterSeparately:true,name:"Careers",url:"https://user:password@careers.example.com/jobs"},
   ])expect(placementLegacyPostingDetailsSchema.safeParse({...details,portal}).success).toBe(false);
  });
  it("TPO-drives-38 skill tags reject duplicates, overlong tags and more than 30 skills",()=>{
