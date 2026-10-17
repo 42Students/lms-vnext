@@ -27,7 +27,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   setLoading(true);setError("");
   try{const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
    const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.student)throw Error(body?.error??"Could not load student records");
+   if(!response.ok||!body?.student)throw Error(response.status===403
+     ?"You do not have permission to open these student details.":
+      "Could not load student records. Please try again.");
    setDetail(body as PanelDetail);
   }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
   finally{setLoading(false);}
@@ -129,7 +131,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
-    {error?<p role="alert" className="text-error">{error}</p>:null}
+    {error?<div role="alert" className="space-y-2 text-error"><p>{error}</p>
+     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}

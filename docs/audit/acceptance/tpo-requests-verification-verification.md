@@ -25,3 +25,5 @@ TPO-requests-verification-28: result toast now includes the verified section (Ed
 | TPO-requests-verification-29 | DONE | Drawer history, education table, private document links, roll, and masked-number explanation; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-29` |
 | TPO-requests-verification-30 | DONE | Existing notification-copy used by profile-verification transaction writer; exact legacy learner text; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-30` |
 | TPO-requests-verification-32 | DONE | Registered TPO export route covers Waiting/Sent back/Verified with authorized page iteration; `tests/unit/chat12-verification-round2.test.ts` test `TPO-requests-verification-32` |
+
+| TPO-requests-verification-18 | DONE | Requests page now has loading, recoverable friendly error screen and Retry; `tests/unit/chat12-graceful-tpo.test.ts` test `TPO-requests-verification-18` |
