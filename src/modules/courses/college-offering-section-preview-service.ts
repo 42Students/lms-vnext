@@ -15,7 +15,7 @@ type LessonRef={id:string;name:string;sequence:number;visibleToStudents:boolean;
 
 export async function listOfferingSectionPreview(
  context:RequestContext,offeringId:string,requestedDeliveryId:string|null,
- lessons:readonly LessonRef[],
+ lessons:readonly LessonRef[],learningPathPublished:boolean,
 ){
  const offering=await loadCourseOfferingScope(offeringId);
  requirePermission(context,"courses.manage",{
@@ -59,7 +59,7 @@ export async function listOfferingSectionPreview(
     id:item.id,title:item.title,kind:item.contentType,status:item.status,
     sequence:item.sequence,scope:item.deliveryId?"SECTION":"SHARED",
     visibleToStudents:item.visibleToStudents,
-    studentVisible:lesson.visibleToStudents&&lesson.status==="ACTIVE"&&
+    studentVisible:learningPathPublished&&lesson.visibleToStudents&&lesson.status==="ACTIVE"&&
       item.status==="PUBLISHED"&&item.visibleToStudents,
    })),
    assignments:assignments.map(item=>({
