@@ -19,6 +19,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"profile",label:"Profile",read:row=>row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence missing":row.readinessSignal==="PARTICIPATION_NOT_ELIGIBLE"?"Participation not eligible":"Academic evidence present"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
@@ -44,6 +46,11 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  const [noteSelection,setNoteSelection]=useState<string[]>([]);
  const active=rows.find(row=>row.membershipId===selected)??null;
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
+ const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
+  ...columns.slice(0,5),
+  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?.replaceAll("_"," ")??"Not decided"},
+  ...columns.slice(5),
+ ];
  const filters:TpoFilterField[]=[
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
@@ -67,7 +74,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </details>
   <TpoGridFilterPanel fields={filters}/>
-  <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid rows={rows} columns={displayColumns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
