@@ -6,6 +6,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
@@ -134,6 +135,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
        </select></label>:null}
+      {!readOnly&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status)?
+        <MentorTaskDeleteControl projectId={projectId} taskId={task.id}
+          title={task.title} updatedAt={task.updatedAt}/>:null}
       {!readOnly?<ProjectTaskAssigneeControl projectId={projectId} taskId={task.id} taskTitle={task.title}
        assigneeMembershipId={task.assigneeMembershipId}
        updatedAt={new Date(task.updatedAt).toISOString()} learners={learnerChoices}/>:null}
