@@ -99,7 +99,8 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
  * exact college AND user or membership subject are surfaced; no raw metadata.
  * Actor activity elsewhere and other colleges' membership events are excluded.
  */
-export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown){
+export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1){
+ const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
  const target=await authorizedTarget(ctx,collegeId,userId);
  const rows=await getDb().select({
   id:activityEvents.id,eventType:activityEvents.eventType,
@@ -109,6 +110,6 @@ export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unkno
    inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
    or(eq(activityEvents.subjectId,target.userId),
     eq(activityEvents.subjectId,target.membershipId))))
-  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(100);
- return {target,events:rows,truncated:rows.length===100};
+  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
+ return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
 }
