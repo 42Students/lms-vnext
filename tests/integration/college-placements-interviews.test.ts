@@ -6,7 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCollegeRoundSlotAppointments, mutateCollegeRoundSlotInterview } from "@/modules/placements/college-round-slot-action-service";
 import { finishCollegeInterview } from "@/modules/placements/college-interview-lifecycle-service";
-import {mutateCollegeApplicationStages} from "@/modules/placements/college-application-stage-service";
+import {mutateCollegeApplicationStages,getCollegeApplicationPipeline} from "@/modules/placements/college-application-stage-service";
 import { listCollegeInterviewDirectory } from "@/modules/placements/college-interview-directory-service";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
@@ -71,6 +71,19 @@ describe.skipIf(!enabled)("College Admin interviews: isolated PostgreSQL", () =>
     expect(response.moved).toBe(1);
     const history=await pool!.query("select to_stage from placement_college_application_stage_history where stage_id in (select id from placement_college_application_stages where application_id=$1)",[d.app]);
     expect(history.rows).toEqual(expect.arrayContaining([expect.objectContaining({to_stage:"ASSESSMENT"})]));
+  });
+
+  it("COL-placements-05 filters applications against persisted stage and source",async()=>{
+    const d=await makeDrive();
+    const command=await mutateCollegeApplicationStages(adminA,d.job,{
+      action:"MOVE",applicationIds:[d.app],stage:"ASSESSMENT",
+      reason:"Proceeding to assessment",notifyByEmail:false,confirmed:true,
+    });
+    expect(command.moved).toBe(1);
+    const matches=await getCollegeApplicationPipeline(adminA,d.job,{status:"SUBMITTED",stage:"ASSESSMENT",source:"INTERNAL"});
+    expect(matches.items.map(row=>row.id)).toContain(d.app);
+    const excluded=await getCollegeApplicationPipeline(adminA,d.job,{status:"SUBMITTED",stage:"REJECTED",source:"INTERNAL"});
+    expect(excluded.items.map(row=>row.id)).not.toContain(d.app);
   });
 
   it("COL-placements-04: schedule, edit, complete persist, audit and notify the candidate", async () => {
