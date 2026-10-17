@@ -3,7 +3,6 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {verificationCsv} from "@/modules/verification/queue-export";
-import {verificationTab} from "@/modules/verification/queue-tabs";
 
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -11,9 +10,6 @@ export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
-  const queue=await getTpoVerificationQueue(context);
-  if(!queue.available||!queue.enabled||!queue.permitted)
-   throw new AuthorizationError("profile-verification.review");
   const stamp=(value:Date)=>new Intl.DateTimeFormat("en-IN",{
     dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
   }).format(value)+" IST";
@@ -26,8 +22,12 @@ export async function GET(request:Request){
     (tab&&!allowedTabs.some(value=>value===tab))||
     (kind&&!["EDUCATION","IDENTITY"].includes(kind)))
     return new Response("Invalid queue export filters",{status:400,headers:{"Cache-Control":"private, no-store"}});
-  const selected=queue.rows.filter(row=>(!tab||verificationTab(row)===tab)&&
-    (!kind||row.section===kind));
+  const queue=await getTpoVerificationQueue(context,{
+    tab:tab??"WAITING",kind:kind??"ALL",waitingState:"ALL",page:1,pageSize:100,
+  });
+  if(!queue.available||!queue.enabled||!queue.permitted)
+   throw new AuthorizationError("profile-verification.review");
+  const selected=queue.rows;
   const result=verificationCsv(selected.map(row=>({
    learnerName:row.learnerName,
    section:row.section,status:row.status,
@@ -40,7 +40,8 @@ export async function GET(request:Request){
    "Content-Disposition":'attachment; filename="tpo-verification.csv"',
    "Cache-Control":"private, no-store","Vary":"Cookie",
    "X-Content-Type-Options":"nosniff",
-   "X-Export-Range":"first-100-authorized",
+   "X-Export-Range":"first-100-matching-authorized",
+   "X-Export-Truncated":queue.hasMore?"true":"false",
   }});
  }catch(error){return apiErrorResponse(error);}
 }
