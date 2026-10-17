@@ -74,7 +74,7 @@ export function ProjectParticipantListControls({
                 key={value}
                 value={value}
               >
-                {label}
+                {learner?(value==="ACTIVE"?"In progress":value==="COMPLETED"?"Ready":label):label}
               </option>
             ),
           )}
@@ -168,7 +168,7 @@ export function ProjectParticipantListControls({
           )}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
-          {[25, 50, 100].map((size) => (
+          {(learner?[10,25,50]:[25,50,100]).map((size) => (
             <option
               key={size}
               value={size}
@@ -246,9 +246,10 @@ export function ProjectParticipantPagination({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
       <p className="m-0">
-        {total} result
-        {total === 1 ? "" : "s"} · Page{" "}
-        {page} of {totalPages}
+        {basePath==="/learn/projects"
+          ? ((total===0?0:(page-1)*(query.pageSize??25)+1)+"–"+
+             Math.min(total,page*(query.pageSize??25))+" of "+total+" projects")
+          : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
       </p>
       <div className="flex gap-2">
         <Link
