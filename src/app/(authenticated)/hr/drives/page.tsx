@@ -15,6 +15,7 @@ import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-driv
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
 import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
+import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
@@ -97,6 +98,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
        Proposals are private messages, not approved or published drives.
       </span>
     </nav>
+    <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
