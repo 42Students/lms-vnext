@@ -113,6 +113,10 @@ export async function ProjectAdminSubmissionsPage({
           className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
           Locked
         </Link>
+        <Link href={queuePath+"?submissionStatus=DRAFT_REVISING"}
+          className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
+          Draft (revising)
+        </Link>
       </nav>
       {unsubmitted?<section className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold">Not submitted · {unsubmitted.total} workspaces</h2>
