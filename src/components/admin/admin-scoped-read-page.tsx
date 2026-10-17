@@ -124,6 +124,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground">{value}</p>)}
     {renderRowActions?<div className="border-t border-border pt-3">{renderRowActions(row)}</div>:null}
     {row.href?<Link href={row.href} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open details →</Link>:null}
+    {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
    </article>)}
   </div>:<EmptyState title="No matching records" description="No persisted data matches the selected college and filters."/>}
   <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
