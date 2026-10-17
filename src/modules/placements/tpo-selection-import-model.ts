@@ -8,7 +8,7 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
    else if(quoted){quoted=false;closedQuote=true;}
    else if(field===""&&!startedQuoted){quoted=true;startedQuoted=true;}
    else throw Error("Unexpected quote inside a CSV field.");
-  }else if(char===","&&!quoted){row.push(field.trim());field="";}
+  }else if(char===","&&!quoted){row.push(field.trim());field="";startedQuoted=false;closedQuote=false;}
   else if((char==="\n"||char==="\r")&&!quoted){
    if(char==="\r"&&text[i+1]==="\n")i++;
    row.push(field.trim());field="";
