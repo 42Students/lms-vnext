@@ -20,7 +20,7 @@ describe("TPO-batches-44 batch learner actions",()=>{
   expect(nudge).toContain("setConfirmOpen(true)");
   expect(nudge).toContain("Confirm send");
   expect(service).toContain("assertPersistedPlatformPermission");
-  expect(service).toContain("role,\"LEARNER\"");
+  expect(service).toMatch(/role,\s*["']LEARNER["']/);
   expect(service).toContain("inAppNotifications");
   expect(tpoStudentNudgeInputSchema.safeParse({learnerMembershipIds:[],template:"REGISTRATION",message:"Please register."}).success).toBe(false);
  });
