@@ -20,6 +20,10 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const morning=tpoHomeGreeting(fixed,"Ananya Rao");
   expect(morning.title).toBe("Good morning, Ananya");
   expect(morning.date).toContain("1 July");
+  // 20:30 UTC is already the next calendar day in India.
+  const istMidnight=tpoHomeGreeting(new Date("2099-06-30T20:30:00.000Z"),"  Ananya Rao  ");
+  expect(istMidnight.date).toContain("1 July");
+  expect(istMidnight.title).toBe("Good morning, Ananya");
   expect(tpoHomeGreeting(new Date("2099-07-01T09:00:00.000Z"),"Ananya").title).toBe("Good afternoon, Ananya");
   expect(tpoHomeGreeting(new Date("2099-07-01T15:00:00.000Z"),"Ananya").title).toBe("Good evening, Ananya");
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
