@@ -76,7 +76,7 @@ describe("College Academic Setup source acceptance",()=>{
  it("COL-academic-setup-24 verified academic workflow",()=>{
   const code=source("src/components/admin/admin-program-directory.tsx");
   expect(code).toContain("Go to Departments");
-  expect(code).toContain("Next, add semesters");
+  expect(code).toContain("Next, create its semesters and batches.");
   expect(code).toContain("setName");
  });
  it("COL-academic-setup-25 verified academic workflow",()=>{
