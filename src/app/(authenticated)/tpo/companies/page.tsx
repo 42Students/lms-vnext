@@ -270,7 +270,26 @@ export default async function TpoCompanyMemoryPage({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[58rem] text-left text-sm">
+            <ul aria-label="Companies on this page" className="divide-y divide-border md:hidden">
+              {page.items.map(company=><li key={company.companyId??"unlinked:"+company.name}
+               className="space-y-3 p-4 text-sm">
+                <Link className="block break-words font-semibold text-primary-text underline"
+                 href={companyHref(company)}>{company.name}</Link>
+                <dl className="grid grid-cols-2 gap-3 text-body">
+                  {([["Contacts",company.contacts??"Unavailable"],["Drives",company.drives],
+                    ["Offers",company.offers],["Accepted",company.acceptedOffers],
+                    ["Confirmed joins",company.confirmedJoinedLearners]] as const).map(([label,value])=>
+                    <div key={label} className="min-w-0">
+                      <dt className="text-xs text-muted-foreground">{label}</dt>
+                      <dd className="font-medium tabular-nums">{value}</dd>
+                    </div>)}
+                </dl>
+                {company.companyId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline"
+                 href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link>:
+                 <span className="text-xs text-muted-foreground">Link company first</span>}
+              </li>)}
+            </ul>
+            <table className="hidden w-full min-w-[58rem] text-left text-sm md:table">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
                   <th scope="col" className="px-4 py-3">Company</th>
