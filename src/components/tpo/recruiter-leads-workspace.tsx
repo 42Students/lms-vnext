@@ -22,7 +22,7 @@ import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import {RecruiterInlineStage} from "./recruiter-inline-stage";
 import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Lead = {
   id: string;
@@ -168,6 +168,10 @@ export function RecruiterLeadsWorkspace({
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
   const [companiesError, setCompaniesError] = useState("");
   const [adding, setAdding] = useState(initialAdd);
+  const createDialogRef=useRef<HTMLFormElement>(null);
+  const createNameRef=useRef<HTMLInputElement>(null);
+  const createLaunchRef=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{if(adding)createNameRef.current?.focus();},[adding]);
   const [form, setForm] = useState<NewLead>({
     ...EMPTY,
     companyName: initialCompany,
@@ -454,6 +458,7 @@ export function RecruiterLeadsWorkspace({
     const dirty=Object.values(form).some(value=>value.trim());
     if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
     setAdding(false);setDuplicate(null);setSaveError("");
+    createLaunchRef.current?.focus();
   }
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
@@ -544,7 +549,7 @@ export function RecruiterLeadsWorkspace({
             Follow-ups Due
           </Link>
           <RecruiterLeadCsvImport onImported={() => void load()} />
-          <button type="button" className={primaryStyle} disabled={phase !== "ready"}
+          <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
             onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
             Add recruiter lead
           </button>
@@ -1007,15 +1012,24 @@ export function RecruiterLeadsWorkspace({
 
       {adding && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-          <form role="dialog" aria-modal="true" aria-label="Add recruiter lead"
+          <form ref={createDialogRef} role="dialog" aria-modal="true" aria-label="Add recruiter lead"
             onSubmit={e => void create(e)}
-            onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();closeAddDialog();}}}
+            onKeyDown={e=>{
+             if(e.key==="Escape"){e.preventDefault();closeAddDialog();return;}
+             if(e.key!=="Tab"||!createDialogRef.current)return;
+             const available=Array.from(createDialogRef.current.querySelectorAll<HTMLElement>(
+              'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]'));
+             const first=available[0],last=available[available.length-1];
+             if(!first||!last)return;
+             if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+             else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+            }}
             className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
               <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
             </div>
-            <label className="block text-sm">Name *<input className={inputStyle + " mt-1"} required maxLength={150}
+            <label className="block text-sm">Name *<input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
             <label className="block text-sm">Email<input className={inputStyle + " mt-1"} type="email" maxLength={150}
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
