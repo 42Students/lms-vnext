@@ -142,7 +142,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-R04 | S3 | VALIDATION | OPEN |
 | TPO-batches-12 | S4 | STATE | DONE |
 | TPO-batches-17 | S4 | STATE | OPEN |
-| TPO-batches-24 | S4 | MISSING-FIELD | OPEN |
+| TPO-batches-24 | S4 | MISSING-FIELD | DONE |
 | TPO-batches-30 | S4 | A11Y | DONE |
 | TPO-batches-49 | S4 | MISSING-ACTION | OPEN |
 | TPO-batches-51 | S4 | COPY | DONE |

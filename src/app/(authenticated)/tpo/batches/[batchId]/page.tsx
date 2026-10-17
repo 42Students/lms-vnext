@@ -15,6 +15,7 @@ import {indianCalendarDate} from "@/modules/placements/tpo-batch-notification-mo
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import { PageHeader } from "@/components/ui/page-header";
 import {projectTpoBatchNextStep} from "@/modules/placements/tpo-batch-next-step-state-model";
+import {getTpoBatchOwnDecisionSummary} from "@/modules/placements/tpo-batch-own-decision-service";
 export const dynamic="force-dynamic";
 export default async function BatchPage({params,searchParams}:{params:Promise<{batchId:string}>;searchParams:Promise<{tab?:string|string[];returnTo?:string|string[]}>}){
  const {batchId}=await params;
@@ -27,6 +28,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const [{batch,lifecycle,ready,decision},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
  const summary=eligibility.summary;
+ const own=await getTpoBatchOwnDecisionSummary(context,batchId).catch(()=>null);
  const next=projectTpoBatchNextStep({finished:Boolean(lifecycle?.finishedAt),activeLearners:registrations.activeLearners,
    eligible:summary.complete?summary.eligible:null,undecided:summary.complete?summary.undecided:null,
    invited:Boolean(lifecycle?.invitedAt),deadline:lifecycle?.registrationDeadline??null,
@@ -51,6 +53,11 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    Suggested: invite the batch (Next step, above) <Link href="#batch-next-step"
     className="ml-2 font-semibold text-primary-text underline" data-testid="batch.suggest-do">Show me</Link>
   </p>:null}
+ {own?<Link href={"/tpo/batches/"+batchId+"/students?source=LEARNER"}
+    className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+   {own.total} {own.total===1?"student is":"students are"} decided individually
+   {own.uncertain>0?", "+own.uncertain+" need class review":own.different===0?", all the same as their class or batch":", "+own.different+" differ from their class or batch"} →
+  </Link>:<p role="status" className="text-sm text-body">Individual decision counts are unavailable. Review learner decisions on Students.</p>}
  <section aria-label="Whole batch eligibility decision" className="space-y-2 rounded-lg border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
     <div><h2 className="font-semibold">Whole batch</h2>
