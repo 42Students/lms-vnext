@@ -271,3 +271,16 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 ## Needs shell (chat-9 only)
 
+
+
+## Chat-5 round 3 — 2026-10-17 handoff
+
+- Ownership: TPO drive-workspace then TPO batches only; `tpo/students` and `tpo/requests-verification` were reassigned to chat-12 and left unchanged.
+- TPO-drive-workspace-07/19/32/36/58/R04/R05 and -74: inspected implementation or corrected UI text, named tests in `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`, recorded in `docs/audit/acceptance/tpo-drive-workspace-verification.md`; -74 NOT-A-GAP.
+- TPO-drive-workspace-57 OPEN: release visibility wording added; holiday-aware offer reply rule still incomplete.
+- TPO-batches-19/31/32/01/02/03/04/05/06/08/10/21/22/29/30/33/34/36/37/38/39/40/41/42/48/58/59/13/14: 29 named tests in `tests/unit/tpo-batches-chat5-round3.test.ts` and page verification; only substantively covered gaps marked DONE, 11 partial cases left OPEN.
+- TPO-batches-13/14: legacy batch deadline and subtitle copy restored; -03 state cards now use eligible-derived legacy words.
+- TPO-batches-39/40: import preview and commit retain form on 409/non-JSON error, no action UUID/server codes shown.
+- BLOCKED TPO-drive-workspace-54 and TPO-drive-workspace-65: offer letters/resume ZIP upload needs private object storage and malware scanner; share one-time email code needs provider credentials.
+- GR helper integration pending: `src/lib/friendly-error.ts`, `src/lib/api-fetch.ts`, and guarded-action hook not on origin/main at adoption check; no fake helper imports added. Import UI uses local safe fallback messages.
+- Tests and builds written but NOT executed by chat-5; orchestrator handles full CI, database integration and runtime certification.
