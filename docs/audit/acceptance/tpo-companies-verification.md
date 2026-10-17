@@ -10,3 +10,6 @@
 | TPO-companies-23 | PARTIAL — OPEN | Timeline actor/type/note displayed together; exact abbreviated timestamp and system actor enrichment pending. Same named test. |
 
 | TPO-companies-19 | PARTIAL — OPEN | Shared Engage Companies view preserves last successful company snapshot and offers independent warning/Retry on refresh failure. Initial empty view and lead-filter ordering require full acceptance. Named `TPO-recruiters-42` test. |
+
+| TPO-companies-22 | DONE (source, unrun) | Company numbers has correct labels and latest type / D MMM, same named unit test. |
+| TPO-companies-23 | DONE (source, unrun) | Timeline actor/type/note and IST D MMM, h:mm AM/PM formatter, named unit test. |
