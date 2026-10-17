@@ -6,9 +6,10 @@ const input={sprintId:id,title:"Review prototype",description:null,
 describe("Mentor task creation inputs",()=>{
   it("allows only registered task fields and a sprint optimistic token",()=>{
     expect(mentorTaskCreateSchema.safeParse(input).success).toBe(true);
-    for(const injected of [{assigneeMembershipId:id},{workloadHours:10},{collegeId:id},{status:"DONE"}]){
+    for(const injected of [{workloadHours:10},{collegeId:id},{status:"DONE"},{assigneeMembershipId:"not-a-uuid"}]){
       expect(mentorTaskCreateSchema.safeParse({...input,...injected}).success).toBe(false);
     }
+    expect(mentorTaskCreateSchema.safeParse({...input,assigneeMembershipId:id}).success).toBe(true);
     expect(mentorTaskCreateParamsSchema.safeParse({projectId:id,collegeId:id}).success).toBe(false);
   });
   it("rejects stale shape, malformed timestamp and empty title",()=>{

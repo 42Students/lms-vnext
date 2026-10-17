@@ -6,16 +6,14 @@ import {
 
 const releaseId="00000000-0000-4000-8000-000000000001";
 describe("Mentor sprint create and transition model",()=>{
-  it("accepts only migrated title/description/release fields",()=>{
-    expect(mentorSprintCreateSchema.safeParse({
-      releaseId,title:" Sprint A ",description:null,
-    }).success).toBe(true);
-    expect(mentorSprintCreateSchema.safeParse({
-      releaseId,title:"Sprint A",description:null,startDate:"2026-10-14",
-    }).success).toBe(false);
-    expect(mentorSprintCreateSchema.safeParse({
-      releaseId,title:"Sprint A",description:null,collegeId:releaseId,
-    }).success).toBe(false);
+  it("accepts only migrated title/description/goal/date/release fields",()=>{
+    const base={releaseId,title:" Sprint A ",description:null,goal:null,
+      definitionOfDone:null,startDate:null,endDate:null,dueDate:null};
+    expect(mentorSprintCreateSchema.safeParse(base).success).toBe(true);
+    expect(mentorSprintCreateSchema.safeParse({...base,startDate:"2026-10-14"}).success).toBe(true);
+    expect(mentorSprintCreateSchema.safeParse({...base,startDate:"2026-10-14",endDate:"2026-10-01"}).success).toBe(false);
+    expect(mentorSprintCreateSchema.safeParse({...base,startDate:"2026-10-14T00:00:00Z"}).success).toBe(false);
+    expect(mentorSprintCreateSchema.safeParse({...base,collegeId:releaseId}).success).toBe(false);
   });
   it("checks date tokens as ISO instants but never misinterprets plain calendar dates",()=>{
     expect(mentorSprintTransitionSchema.safeParse({

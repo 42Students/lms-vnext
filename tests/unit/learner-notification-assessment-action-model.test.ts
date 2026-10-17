@@ -6,9 +6,9 @@ describe("notification assessment deep links are scoped at destination",()=>{
   expect(learnerNotificationAssessmentAction(
     "/learn/my-placements/assessments?applicationId="+a+"&roundId="+r+"&collegeId=forged",
   )).toEqual({href:"/learn/my-placements/assessments?applicationId="+a+"&roundId="+r,
-    label:"View assessment details"});
+    label:"Take Assessment"});
   expect(learnerNotificationAssessmentAction("/learn/my-placements/assessments"))
-    .toEqual({href:"/learn/my-placements/assessments",label:"View assessments"});
+    .toEqual({href:"/learn/my-placements/assessments",label:"Take Assessment"});
  });
  it("rejects partial, repeated, nonuuid, external and cross-role URLs",()=>{
   for(const raw of ["/learn/my-placements/assessments?applicationId="+a,

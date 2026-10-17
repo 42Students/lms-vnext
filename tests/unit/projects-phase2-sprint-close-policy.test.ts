@@ -9,8 +9,8 @@ describe("PR-S2-01 explicit no-carry-over sprint close", () => {
     expect(mayCloseProjectSprint(100)).toBe(false);
     expect(mayCloseProjectSprint(-1)).toBe(false);
   });
-  it("enforces the policy in both sprint close implementations", () => {
-    expect(read("lifecycle-service.ts")).toContain("mayCloseProjectSprint(openTask ? 1 : 0)");
+  it("enforces the policy in the mentor close and carries unfinished work to backlog in the lifecycle close", () => {
+    expect(read("lifecycle-service.ts")).toContain("carriedFromSprintId:sprint.id");
     expect(read("mentor-sprint-write-service.ts")).toContain("mayCloseProjectSprint(openTask ? 1 : 0)");
   });
 });

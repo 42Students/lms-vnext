@@ -3,7 +3,7 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 describe("learner self profile parity surface", () => {
-  it("keeps the learner Profile route while placement-only cards stay out of self profile", () => {
+  it("keeps the learner Profile route with legacy job preferences stored in the profile document", () => {
     const shell = fs.readFileSync(
       path.join(process.cwd(), "src/components/shell/shell-model.ts"),
       "utf8",
@@ -23,7 +23,7 @@ describe("learner self profile parity surface", () => {
     expect(page).toContain("No active program enrollment");
     expect(page).not.toContain("getCandidatePreferences");
     expect(page).not.toContain("getOwnAcademicEvidence");
-    expect(workspace).not.toContain('id="job-preferences"');
+    expect(workspace).toContain('id="job-preferences"');
     expect(workspace).not.toContain('id="academic-record"');
     expect(workspace).not.toContain("/api/placements/preferences");
     expect(workspace).toContain("/api/profile/me");

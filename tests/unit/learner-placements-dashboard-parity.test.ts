@@ -25,7 +25,7 @@ describe("Learner placement dashboard route wiring", () => {
     expect(dash).toContain("Your next seven days");
     expect(dash).toContain("Browse drives");
     expect(source("src/app/(authenticated)/learn/my-placements/error.tsx"))
-      .toContain("This is a loading error");
+      .toContain("This is a loading problem");
     expect(source("src/app/(authenticated)/learn/my-placements/loading.tsx"))
       .toContain("aria-busy");
   });

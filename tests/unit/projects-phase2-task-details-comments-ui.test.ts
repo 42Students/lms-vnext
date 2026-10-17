@@ -8,7 +8,7 @@ const comments=read("src/components/projects/project-task-comments.tsx");
 const legacy=read("docs/audit/legacy-copy-A.md");
 describe("PR-S2-04 0090 UI registered task fields and comments",()=>{
  it("uses legacy field labels and no obsolete storage warning",()=>{
-  for(const label of ["Estimate","Type","Due date","Blocker reason"]){
+  for(const label of ["Estimate","Type","Due date","blocking this task"]){
     expect(legacy).toContain(label);
     expect(create).toContain(label);
   }
@@ -20,6 +20,6 @@ describe("PR-S2-04 0090 UI registered task fields and comments",()=>{
  });
  it("uses real 0090 task comment endpoint for read/write",()=>{
   expect(comments).toContain('"/comments"');
-  expect(comments).toContain('expectedTaskUpdatedAt:updatedAt');
+  expect(comments).toContain('expectedTaskUpdatedAt:currentToken');
  });
 });

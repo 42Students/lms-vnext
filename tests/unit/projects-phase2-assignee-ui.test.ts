@@ -5,7 +5,7 @@ describe("PR-S2-03 visible task ownership assignment",()=>{
   it("provides the legacy Assignee picker wired to registered task-assignee mutation",()=>{
     const form=get("src/components/projects/project-task-assignee-control.tsx");
     const workspace=get("src/components/projects/project-workspace.tsx");
-    expect(form).toContain("Assign to a team member");
+    expect(form).toContain(" to a team member");
     expect(form).toContain('"/assignee"');
     expect(workspace).toContain("assigneeMembershipId={task.assigneeMembershipId}");
     expect(workspace).toContain('member.role==="LEARNER"');

@@ -9,7 +9,7 @@ describe("Learner profile checklist and offer confirmation source contracts", ()
   it("shows a validated contact deep link and real persisted document checklist", () => {
     const page = read("src/app/(authenticated)/learn/profile/page.tsx");
     const workspace = read("src/components/profile/learner-profile-workspace.tsx");
-    expect(page).toContain("learnerProfileSectionSchema.safeParse");
+    expect(page).toContain("learnerProfileResolveSection(query.section)");
     expect(page).toContain("initialSection={initialSection}");
     expect(workspace).toContain("learnerProfileChecklist(document)");
     expect(workspace).toContain('id="contacts"');

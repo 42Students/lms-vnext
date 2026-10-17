@@ -12,7 +12,7 @@ describe("REC-home-drives-21 recruiter formal request contract",()=>{
  });
  it("requires a server-college-scoped idempotency key and rejects injected fields",()=>{
   const input={collegeId:"11111111-1111-4111-8111-111111111111",submissionId:"22222222-2222-4222-8222-222222222222",
-   draft:{title:"Software Engineer",description:"Build robust product features",location:"Hyderabad",employmentType:"FULL_TIME",workMode:"ONSITE",
+   draft:{title:"Software Engineer",description:"Build robust product features",location:"Hyderabad",employmentType:"FULL_TIME",workMode:"ONSITE",ctcLpa:"10",
    minimumAnnualCtcInr:"",maximumAnnualCtcInr:"",fixedAnnualCtcInr:"",variableAnnualCtcInr:"",bondMonths:"",bondAmountInr:"",minimumCgpa:"",maximumActiveBacklogs:"",rounds:[{kind:"INTERVIEW",name:"Interview"}]}};
   expect(recruiterDriveRequestInputSchema.safeParse(input).success).toBe(true);
   expect(recruiterDriveRequestInputSchema.safeParse({...input,companyRelationshipId:"attacker"}).success).toBe(false);

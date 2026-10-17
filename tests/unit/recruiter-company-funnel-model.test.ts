@@ -4,7 +4,7 @@ describe("REC-calendar-messages-profile-31 whole-college pipeline",()=>{
  it("calculates funnel ratios with stable legacy headings",()=>{
   const rows=buildRecruiterReportFunnel({
    applied:100,shortlisted:60,assessment:50,interview:25,offered:10,hired:5});
-  expect(rows.map(row=>row.label)).toEqual(["Applied","Shortlisted","Assessment","Interview","Offered","Hired"]);
+  expect(rows.map(row=>row.label)).toEqual(["Shared applicants","Shortlisted","Assessment","Interview","Offered","Hired"]);
   expect(rows[1]?.previousPercentLabel).toBe("60%");
   expect(rows[5]?.appliedPercent).toBe(5);
  });

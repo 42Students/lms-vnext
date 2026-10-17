@@ -7,7 +7,7 @@ import { safeMentorProjectEventLabel } from "@/modules/projects/mentor-portfolio
 const projectId="00000000-0000-4000-8000-000000000001";
 const sprintId="00000000-0000-4000-8000-000000000002";
 const before={title:"Sprint 1",description:null,goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null};
-const valid={title:"Sprint 2",description:"Deliver tests",
+const valid={title:"Sprint 2",description:"Deliver tests",goal:null,definitionOfDone:null,startDate:null,endDate:null,dueDate:null,
   expectedUpdatedAt:"2026-10-14T04:30:00.000Z"};
 
 describe("Mentor sprint details mutation",()=>{
