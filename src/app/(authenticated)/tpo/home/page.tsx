@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {users} from "@/db/schema";
+import {tpoHomeGreeting} from "@/modules/placements/tpo-home-greeting-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementTpoOperations } from "@/modules/placements/tpo-operations-service";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -35,7 +39,7 @@ export default async function TpoHome(){
  // Independent reads run concurrently; Home no longer serially awaits the full
  // operations graph before requests, unread messages or the week calendar.
  const [batches,operations,pendingRequestCount,studentStats,unreadMessages,
-  crmReady,collegeRules,placementTeam,teamThreads,weekEvents]=await Promise.all([
+  crmReady,collegeRules,placementTeam,teamThreads,weekEvents,profileRows]=await Promise.all([
    listTpoBatches(ctx),getPlacementTpoOperations(ctx,collegeId),
    getPendingTpoRequestsCount(ctx),
    getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}),
@@ -45,7 +49,10 @@ export default async function TpoHome(){
    listMyTpoInternalThreads(ctx),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
     to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
+   getDb().select({displayName:users.displayName}).from(users)
+    .where(eq(users.id,ctx.user.id)).limit(1),
  ]);
+ const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
  const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
@@ -124,8 +131,9 @@ export default async function TpoHome(){
    {label:"Pick your team",done:placementTeam.summary.total>1,link:"/tpo/settings/team"},
   ],
  });
- return <main className="min-w-0 space-y-5">
- <PageHeader eyebrow="TPO" title="Home" description="One next action and a quiet overview of the placement cell."/>
+ return <main data-testid="tpo.home" className="min-w-0 space-y-5">
+ <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
+ <PageHeader eyebrow="TPO" title={greeting.title}/>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
  <section className="min-w-0 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-sm font-medium text-muted-foreground">Next up</h2>
