@@ -82,7 +82,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
     {missingPolicy==="MARK_NOT_CLEARED"?<p className="text-error">This also stages Not cleared for all currently eligible applicants missing from the file. All unmatched rows must be matched or unambiguously skipped before this can proceed.</p>:null}
    </fieldset>
    <button type="button" disabled={busy||!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&
-    !Object.values(overrides).some(Boolean)} onClick={()=>void send("STAGE_IMPORT")}
+    !Object.values(overrides).some(Boolean)} onClick={()=>{if(window.confirm("Stage this reviewed result import? "+(missingPolicy==="MARK_NOT_CLEARED"?"Applicants not in the file will be marked Not cleared. ":"")+"Results are not published until the separate Apply step."))void send("STAGE_IMPORT");}}
     className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Staging…":"Confirm and stage results"}</button>
   </div>:null}
