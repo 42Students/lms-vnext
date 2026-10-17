@@ -85,6 +85,8 @@ export function tpoDriveWhereItIs(job:{
  if(job.status!=="PUBLISHED")return job.status;
  if(job.applicationDeadline&&job.applicationDeadline>nowIso)
   return "Taking applications";
+ if(job.offersMade>0&&job.roundsCompleted>=job.roundCount)
+  return "Offers · "+job.offersMade+" issued/accepted";
  if(job.roundCount>0){
   const next=job.nextRoundAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
    timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.nextRoundAt))+" IST":"No upcoming date";
