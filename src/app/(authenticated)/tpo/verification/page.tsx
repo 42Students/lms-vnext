@@ -24,7 +24,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
  const context=await getCurrentRequestContext();
  const queue=await getTpoVerificationQueue(context,query);
  const directory=queue.available&&queue.enabled&&queue.permitted?await listTpoBatches(context):null;
- const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department])??[])];
+ const branches=[...new Map(directory?.batches.map(item=>[item.departmentId,item.department] as const)??[])];
  return <main className="min-w-0 space-y-4">
   <nav className="flex flex-wrap items-center gap-3">
     <Link href="/tpo/students" className="text-sm text-primary-text underline">Back to students</Link>
