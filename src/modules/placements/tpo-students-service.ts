@@ -94,6 +94,8 @@ export const tpoStudentsQuerySchema = z
     offerWaiting:z.enum(["YES","NO"]).transform(value=>value==="YES").optional(),
     minCgpa:z.coerce.number().min(0).max(10).optional(),
     maxCgpa:z.coerce.number().min(0).max(10).optional(),
+    maxActiveBacklogs:z.coerce.number().int().min(0).max(100).optional(),
+    maxPastBacklogs:z.coerce.number().int().min(0).max(100).optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
