@@ -4,6 +4,7 @@ import {
   courseAssignments, courseLearningPaths, courseLessons, courseQuizzes, lessonContents,
 } from "@/db/schema";
 import { listFacultyCourseDeliveries } from "./faculty-course-service";
+import { facultyAssessmentVisibleToDelivery } from "./faculty-assessment-batch-model";
 import type { RequestContext } from "@/modules/identity/context";
 
 /**
@@ -105,7 +106,7 @@ export async function getFacultyAssessmentOverview(context: RequestContext) {
     if (!pathId) continue;
     for (const lesson of lessonByPath.get(pathId) ?? []) {
       const visibleToDelivery = (item:{deliveryId:string|null}) =>
-        item.deliveryId === null || item.deliveryId === course.deliveryId;
+        facultyAssessmentVisibleToDelivery(item, course.deliveryId);
       const assignments = (assignmentByLesson.get(lesson.id) ?? []).filter(visibleToDelivery);
       const quizzes = (quizByLesson.get(lesson.id) ?? []).filter(visibleToDelivery);
       const sequences = [
