@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, desc, eq, gte, ilike, isNotNull, isNull, sql, type SQL } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, ilike, isNotNull, isNull, or, sql, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, placementCompanies, placementCompanyRelationships } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -43,7 +43,10 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
   if (query.q) {
     // SQL wildcard characters in user searches are literal, not scope selectors.
     const escaped = query.q.replace(/[\\%_]/g, "\\$&");
-    filters.push(ilike(query.searchField === "DOMAIN" ? placementCompanies.primaryDomain : placementCompanies.name, "%" + escaped + "%"));
+    const needle="%"+escaped+"%";
+    filters.push(query.searchField==="DOMAIN"?ilike(placementCompanies.primaryDomain,needle):
+      query.searchField==="NAME"?ilike(placementCompanies.name,needle):
+      or(ilike(placementCompanies.name,needle),ilike(placementCompanies.primaryDomain,needle))!);
   }
   const db = getDb();
   const [totalRows, results] = await Promise.all([
