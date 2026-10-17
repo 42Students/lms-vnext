@@ -299,6 +299,21 @@ export function LearnerProfileWorkspace(props: {
     setItemBaseline({});
   }
 
+  function closeContacts(){
+    if(contactPending)return;
+    if(JSON.stringify(contactDraft)!==JSON.stringify(document.contacts)&&
+       !window.confirm("Discard contact changes?"))return;
+    setContactOpen(false);
+    setContactError(null);
+  }
+
+  function closeJobPreferences(){
+    if(pending)return;
+    if(JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)&&
+       !window.confirm("Discard job preference changes?"))return;
+    setJobPrefsEditing(false);
+  }
+
   function openContacts() {
     setContactDraft({ ...document.contacts });
     setContactError(null);
@@ -723,17 +738,13 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={contactOpen}
-        onOpenChange={(open) => {
-          if (!open && contactPending) return;
-          setContactOpen(open);
-          if (!open) setContactError(null);
-        }}
+        onOpenChange={(open) => {if(!open)closeContacts();}}
         title="Confirm contact details"
         description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
         footer={
           <>
             <Button variant="secondary" disabled={contactPending}
-              onClick={() => { setContactOpen(false); setContactError(null); }}>
+              onClick={closeContacts}>
               Keep current details
             </Button>
             <Button disabled={contactPending || !learnerContactEditSchema.safeParse({
@@ -872,10 +883,10 @@ export function LearnerProfileWorkspace(props: {
       </Dialog>
 
       <Dialog open={jobPrefsEditing}
-        onOpenChange={open=>{if(!open&&!pending)setJobPrefsEditing(false);}}
+        onOpenChange={open=>{if(!open)closeJobPreferences();}}
         title="Edit Job Preferences"
         footer={<>
-          <Button variant="secondary" disabled={pending} onClick={()=>setJobPrefsEditing(false)}>Cancel</Button>
+          <Button variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
           <Button disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
