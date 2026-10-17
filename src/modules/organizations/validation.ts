@@ -7,7 +7,7 @@ export const organizationNameSchema = z
   .trim()
   .min(1, "Please enter organization name")
   .max(255, "Organization name must be 255 characters or less")
-  .transform(name=>name.replace(/\\s+/g," "));
+  .transform(name=>name.replace(/\s+/g," "));
 
 export const createOrganizationInputSchema = z.object({
   name: organizationNameSchema,
