@@ -9,7 +9,7 @@ type Task={
  sprintId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null;
 };
 type Submission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
-type Event={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
+type Event={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType?:string};
 type Member={membershipId:string;displayName:string|null;role:string};
 export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,submissions,activity,onClose,readOnly}:{
  projectId:string;task:Task;sprintTitle:string|null;members:Member[];
@@ -23,6 +23,9 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  },[task.id]);
  const author=members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned";
  const recent=activity.filter(event=>event.subjectId===task.id);
+ const creator=recent.find(event=>event.eventType==="projects.task.created")?.actorDisplayName;
+ const editor=recent.filter(event=>event.eventType==="projects.task.details_updated")
+   .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0]?.actorDisplayName;
  const attempts=submissions.filter(row=>row.taskId===task.id);
  return <dialog ref={ref} aria-labelledby="mentor-board-task-title" onClose={onClose}
   className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
@@ -42,8 +45,10 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
       <div key={f.label}><dt className="font-semibold text-body">{f.label}</dt><dd className="mt-1">{f.value}</dd></div>)}
   </dl>
   <dl className="mt-4 grid gap-3 text-xs text-body sm:grid-cols-2">
-    {task.createdAt ? <div><dt className="font-semibold">Created</dt><dd>{new Date(task.createdAt).toLocaleString("en-IN")}</dd></div> : null}
-    <div><dt className="font-semibold">Last edited</dt><dd>{new Date(task.updatedAt).toLocaleString("en-IN")}</dd></div>
+    {task.createdAt ? <div><dt className="font-semibold">Created</dt>
+      <dd>{creator ? "Created by "+creator+" · " : ""}{new Date(task.createdAt).toLocaleString("en-IN")}</dd></div> : null}
+    <div><dt className="font-semibold">Last edited</dt>
+      <dd>{editor ? "Last edited by "+editor+" · " : ""}{new Date(task.updatedAt).toLocaleString("en-IN")}</dd></div>
   </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
