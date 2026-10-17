@@ -91,7 +91,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-R06 | S3 | COPY | DONE |
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
-| TPO-home-22 | S4 | STATE | OPEN |
+| TPO-home-22 | S4 | STATE | DONE |
 | TPO-home-24 | S4 | COPY | DONE |
 | TPO-home-38 | S4 | COPY | DONE |
 | TPO-home-44 | S4 | RESPONSIVE | OPEN |
