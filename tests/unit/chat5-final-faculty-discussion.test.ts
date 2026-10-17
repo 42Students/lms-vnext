@@ -27,11 +27,11 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
  it("FAC-courses-R06 discards deleted recent messages while preserving older history on authoritative full-page refresh",()=>{
   const previous=[
    {id:"old",createdAtExact:"2099-01-01T00:00:00.000001+00:00"},
-   {id:"deleted",createdAtExact:"2099-01-02T00:00:00.000001+00:00"},
-   {id:"new",createdAtExact:"2099-01-03T00:00:00.000001+00:00"},
+   {id:"deleted",createdAtExact:"2099-01-03T00:00:30.000001+00:00"},
+   {id:"new",createdAtExact:"2099-01-03T00:00:35.000001+00:00"},
   ];
   const latest=[
-   {id:"new",createdAtExact:"2099-01-03T00:00:00.000001+00:00"},
+   {id:"new",createdAtExact:"2099-01-03T00:00:35.000001+00:00"},
    {id:"added",createdAtExact:"2099-01-04T00:00:00.000001+00:00"},
   ];
   expect(reconcileLatestDiscussionPage(previous,latest,2).map(x=>x.id)).toEqual(["new","added"]);
