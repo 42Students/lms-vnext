@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -225,7 +226,17 @@ export default async function SuperAdminFeaturesPage({
                   {college.modules.map(decision => (
                     <div key={decision.module} className="flex flex-wrap items-start justify-between gap-2 border-t border-border pt-3">
                       <dt className="text-sm font-semibold text-foreground">{decision.label}</dt>
-                      <dd className="m-0 text-right"><ModuleState decision={decision}/></dd>
+                      <dd className="m-0 min-w-44 text-right">
+                        <ModuleState decision={decision}/>
+                        <details className="mt-2 text-left">
+                         <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                          Change {decision.label} →
+                         </summary>
+                         <CollegeFeatureRuleEditor collegeId={college.id}
+                          module={decision.module} stored={decision.stored}
+                          ancestorLocked={decision.ancestorLocked}/>
+                        </details>
+                       </dd>
                     </div>
                   ))}
                 </dl>
