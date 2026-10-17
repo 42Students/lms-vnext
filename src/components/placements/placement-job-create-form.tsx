@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
+import {apiFetch} from "@/lib/api-fetch";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -53,49 +54,12 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
-async function requestJson(
-  url: string,
-  method: "POST" | "PUT",
-  body: unknown,
-) {
-  const response = await fetch(url, {
-    method,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
+async function requestJson(url:string,method:"POST"|"PUT",body:unknown){
+  // Errors from HTML proxies, provider replies, and unknown server codes
+  // are converted to customer-facing messages with a 30-second timeout.
+  return apiFetch<Record<string,unknown>>(url,{
+    method,headers:{"content-type":"application/json"},body:JSON.stringify(body),
   });
-  const payload = (await response
-    .json()
-    .catch(() => null)) as
-    | Record<string, unknown>
-    | null;
-  if (!response.ok) {
-    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
-    const issue = issues.find((item): item is { path: unknown[]; message: string } =>
-      typeof item === "object" && item !== null &&
-      "message" in item && typeof item.message === "string" &&
-      "path" in item && Array.isArray(item.path));
-    if (issue) {
-      const fields: Record<string, string> = {
-        title: "Job title",
-        description: "Description",
-        openings: "Openings",
-        maximumAnnualCtcInr: "Maximum CTC",
-        minimumAnnualCtcInr: "Minimum CTC",
-        externalApplicationUrl: "Employer application URL",
-        allowedPassingYears: "Passing years",
-        minCgpa: "Minimum CGPA",
-      };
-      const key = String(issue.path[0] ?? "");
-      throw new Error((fields[key] ?? "Please check the form") + ": " + issue.message);
-    }
-    const code = typeof payload?.error === "string" ? payload.error : "REQUEST_FAILED";
-    throw new Error(code === "INVALID_REQUEST"
-      ? "Please check the highlighted requirements and try again."
-      : code.toLowerCase().replaceAll("_", " "));
-  }
-  return payload ?? {};
 }
 
 function nullableDecimal(value: string) {
@@ -210,6 +174,29 @@ export function PlacementJobCreateForm({
       if (openingsValue && (!Number.isInteger(Number(openingsValue)) ||
         Number(openingsValue) < 1 || Number(openingsValue) > 100_000)) {
         throw new Error("Openings must be a whole number between 1 and 100,000.");
+      }
+      if(reviewPublish){
+        const dueText=String(data.get("applicationDeadline")??"").trim();
+        const dueTime=dueText?new Date(dueText).getTime():Number.NaN;
+        if(!Number.isFinite(dueTime)||dueTime<=Date.now())
+          throw new Error("Set a future application deadline before publishing.");
+        const roleTitle=String(data.get("title")??"").trim();
+        if(roleTitle.length<3)throw new Error("Add a job role of at least 3 characters before publishing.");
+        const stipend=nullableDecimal(String(data.get("stipendPerMonthInr")??""));
+        const fixed=nullableDecimal(String(data.get("fixedLpa")??""));
+        if(minimumLpa===null && maximumLpa===null && fixed===null && stipend===null)
+          throw new Error("Add a CTC figure or stipend for at least one role before publishing.");
+        const mode=String(data.get("applicationMode")??"INTERNAL");
+        if(mode!=="INTERNAL"){
+          const urlText=String(data.get("externalApplicationUrl")??"").trim();
+          try{
+            const external=new URL(urlText);
+            if(external.protocol!=="https:"||!external.hostname||external.username||external.password)
+              throw new Error("invalid URL");
+          }catch{
+            throw new Error("Add a valid HTTPS employer application link before publishing.");
+          }
+        }
       }
       const years = splitList(String(data.get("passingYears") ?? ""));
       if (years.some((year) => !/^\d{4}$/.test(year))) {
