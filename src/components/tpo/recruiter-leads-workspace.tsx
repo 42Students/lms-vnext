@@ -136,7 +136,7 @@ export function RecruiterLeadsWorkspace({
       const saved=window.localStorage.getItem("tpo-engage-sort-v1");
       if(!saved)return;
       const value=JSON.parse(saved) as {sort?:string;ascending?:boolean};
-      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME"].includes(value.sort??""))
+      if(["LAST_ACTIVITY","NEXT_FOLLOWUP","ADDED","NAME","DRIVES"].includes(value.sort??""))
         setRosterSort(value.sort as EngageSort);
       if(typeof value.ascending==="boolean")setSortAscending(value.ascending);
     }catch{ /* Browser storage is optional. */ }
@@ -938,7 +938,7 @@ export function RecruiterLeadsWorkspace({
                           [...new Set([...current,...visible.map(row=>row.id)])]:
                           current.filter(id=>!visible.some(row=>row.id===id)))}/>
                     </th>
-                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
+                    {["Contact", "Company", "Status", "Stage", "Owner", "Last activity", "Next follow-up", "Company drives", "Invite", "Added", "Flags", "Source", "Email", "Phone", "Actions"].filter(x=>visibleColumns.includes(x as EngageColumn)).map(x =>
                     <th key={x} scope="col" className="px-4 py-3 font-semibold">{x}</th>)}</tr>
                 </thead>
                 <tbody>
