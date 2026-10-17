@@ -4,6 +4,10 @@ import {useState} from "react";
 import {StatusBadge} from "@/components/ui/status-badge";
 import {TPO_AUDIT_KIND_LABELS,formatTpoAuditEventType} from "@/modules/placements/tpo-audit-model";
 import type {TpoAuditRow} from "@/modules/placements/tpo-audit-service";
+function safeClipboardCell(field:string){
+ const oneLine=field.replaceAll(/[\\r\\n\\t]/g," ");
+ return /^[\\s\\uFEFF]*[=+\\-@]/u.test(oneLine)?"'"+oneLine:oneLine;
+}
 function when(value:string){
  return new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
   .format(new Date(value));
@@ -21,7 +25,7 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
   const wanted=selected.length?visible.filter(row=>selected.includes(row.kind+":"+row.id)):visible;
   const text=wanted.map(row=>[formatTpoAuditEventType(row.eventType),
    TPO_AUDIT_KIND_LABELS[row.kind],row.title,row.detail,row.actorName,when(row.occurredAt)+" IST"]
-    .map(field=>field.replaceAll(/[\r\n\t]/g," ")).join("\t")).join("\n");
+    .map(safeClipboardCell).join("\t")).join("\n");
   try{await navigator.clipboard.writeText(text);setNotice("Rows copied");}
   catch{setNotice("Could not copy rows. Select the table text instead.");}
  }
