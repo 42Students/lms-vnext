@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
+import {TpoTeamReplyComposer} from "@/components/tpo/tpo-team-forms";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -53,17 +54,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Newer messages
    </Link> : null}
   </nav>
-  <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/messages"}
-   className="space-y-3 rounded-xl border border-border bg-surface p-4">
-   <h2 className="font-semibold text-foreground">Reply privately</h2>
-   <label className="grid gap-1 text-sm text-body">Message
-    <textarea name="body" required maxLength={4000} rows={4}
-     className="rounded-md border border-border bg-surface p-3"
-     placeholder="Share a private team update" />
-   </label>
-   <p className="text-xs text-muted-foreground">Only active TPO participants can reply. Message text is not included in audit records.</p>
-   <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Send to team member</button>
-  </form>
+  <TpoTeamReplyComposer threadId={result.thread.id}/>
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
 
  </main>;
