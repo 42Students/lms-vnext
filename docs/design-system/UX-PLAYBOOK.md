@@ -108,8 +108,8 @@ This table is normative. Native inputs and Next.js links remain valid; prefer th
 | Drawer / BottomSheet → `drawer.tsx`, `bottom-sheet.tsx` | `open/onOpenChange/title/description?/children/footer?`; panel | phone bottom/full-height, desktop right drawer; Escape/back, focus trap & restore, scroll inside, safe area, no hover |
 | ConfirmDialog → `confirm-dialog.tsx`; `confirm-action-dialog.tsx` | title, consequence, confirm/cancel, pending | default focus cancel, pending no dismissal, destructive consequence, avoid browser `confirm()` |
 | Toast → `toast.tsx` | `ToastProvider/useToast().showToast({title,description?,tone})` | role=status polite success/info, alert error, 44px dismiss, 4500ms or user-dismiss, safe-area, never only success feedback for a lost draft |
-| Tabs → `tabs.tsx` | `items:{value,label,content?}[]`, `value`, `onValueChange`, `ariaLabel` | selected underline + aria-selected, arrows/Home/End, focus 2px, disabled optional; horizontal swipe scroll phone, active no hover requirement |
-| DataTable → `data-table.tsx` | `columns:{key,header,cell,className?,mobileLabel?,mobilePriority?}`, `rows/getRowKey/empty?` | table desktop, card rows phone with primary=first priority; no truncated private columns; caption, th scope, no content hiding without meaningful label |
+| Tabs → `tabs.tsx` | `items:{value,label,content?,disabled?,href?}[]`, `value`, `onValueChange?`, `ariaLabel`, `renderPanel?` | controlled `renderPanel=true` exposes selected underline + aria-selected, arrows/Home/End, focus 2px and disabled options; `renderPanel=false` uses same-tab `href` links + aria-current, not tabs or a no-op callback; overflow scroll on phone |
+| DataTable → `data-table.tsx` | `columns:{key,header,cell,className?,mobileLabel?,mobilePriority?}`, `rows/getRowKey/empty?` | table desktop, card rows phone with primary=first priority + first 3 secondaries + `More details` for remaining fields; caption, th scope, no field silently lost |
 | Card → `card.tsx` | semantic `as=div/section/article`, `title?`, `description?`, `footer?`, children | static surface no hover-only controls; state feedback through contents; 16/24px padding phone/desktop |
 | Badge/StatusBadge → `status-badge.tsx` | tone neutral/info/success/warning/error; children/className | explicit text + tone; no color-only, foreground high contrast; no focus if static, embed real link for action |
 | EmptyState → `empty-state.tsx` | title/description/action; optional decoration | meaningful reason and authorized action, never fabricated copy, single column |
@@ -129,7 +129,7 @@ This table is normative. Native inputs and Next.js links remain valid; prefer th
 
 ## 6. Mobile + native-app WebView
 
-1. **Table-to-card algorithm:** at <640px render first `mobilePriority="primary"` as card heading, up to three `secondary` properties as labelled definition rows, keep status and up to two explicit actions, omit `hidden` *only when redundant*; make full record accessible via detail link. PII never appears in a mobile card if absent from desktop or unauthorized. Desktop `DataTable` remains a semantic table. Columns with no priority default to first as heading and remaining as labelled rows; audit dense 25+ column grids explicitly.
+1. **Table-to-card algorithm:** at <640px render first `mobilePriority="primary"` as card heading, up to three `secondary` properties as labelled definition rows, put any additional non-hidden properties in an explicit **More details** disclosure, and preserve actions inside cells; omit `hidden` *only when redundant*. When a detail URL exists, pass `rowHref`; never drop data silently. PII never appears in a mobile card if absent from desktop or unauthorized. Desktop `DataTable` remains a semantic table. Columns with no priority default to first as heading and remaining as labelled rows; audit dense 25+ column grids explicitly.
 2. **Filters:** `FilterBar` displays query and “Filters (N)” on phone, opens `BottomSheet` containing original form children; apply via normal GET/searchParams to keep URL filters/shareability; back/Escape dismisses without applying draft. Desktop inline filters.
 3. **Dialogs:** <640px use full-screen `100dvh` panel with internal scroll and sticky footer `pb-[max(1rem,env(safe-area-inset-bottom))]`; no nested fixed keyboard toolbar. Use `visualViewport` only where absolutely necessary, otherwise browser-resizing layout.
 4. **Primary action:** at phone `sticky bottom-0 z-20 border-t border-border bg-surface/95 p-4 pb-[max(1rem,env(safe-area-inset-bottom))]`; add `pb-24` to form content. Hide sticky positioning if browser keyboard overlap is observed; keep submit reachable by scrolling.
@@ -264,9 +264,9 @@ Award whole points only on witnessed evidence; no credit for untested claims. A 
 | **Total 100** | ≥90 candidate for sign-off only if no BLOCKER/MAJOR findings; 80–89 fixes required; <80 blocked |
 
 **“Copy these” references, once implemented and audited:**
-- Directory: `src/app/(authenticated)/college/contacts/page.tsx` (College Admin).
+- Directory: `src/app/(authenticated)/college/contacts/page.tsx` (College Admin): existing GET filters in phone `FilterBar` sheet, URL pagination, masked records.
 - Form: `src/app/(authenticated)/teacher/profile/details/page.tsx` (Faculty).
-- Detail with tabs: `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (Mentor).
-- Dashboard: `src/app/(authenticated)/tpo/home/page.tsx` (TPO).
+- Detail with tabs: `src/app/(authenticated)/mentor/projects/[projectId]/page.tsx` (Mentor): shared route-link `Tabs` through `MentorProjectTabs`, preserve original query tab names.
+- Dashboard: `src/app/(authenticated)/tpo/home/page.tsx` (TPO): StatTiles with existing legacy row titles, real metrics and next-up queue.
 
 Do not tick other lanes' UX checklists until a browser audit actually passes. These four pages are patterns, not fixtures; keep their original permission/data integrations and exact legacy wording.
