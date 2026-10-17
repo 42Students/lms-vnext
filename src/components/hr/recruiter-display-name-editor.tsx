@@ -8,6 +8,7 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
  const router=useRouter();
  const [firstName,setFirstName]=useState(()=>splitHrRecruiterName(initialName).firstName);
  const [lastName,setLastName]=useState(()=>splitHrRecruiterName(initialName).lastName);
+ const [savedName,setSavedName]=useState(()=>splitHrRecruiterName(initialName));
  const [version,setVersion]=useState(updatedAt);
  const [saving,setSaving]=useState(false);
  const [message,setMessage]=useState("");
@@ -31,7 +32,7 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
     return;
    }
    const parts=splitHrRecruiterName(body.profile.displayName);
-   setFirstName(parts.firstName);setLastName(parts.lastName);setVersion(body.profile.updatedAt);
+   setFirstName(parts.firstName);setLastName(parts.lastName);setVersion(body.profile.updatedAt);setSavedName(parts);
    setMessage("Display name saved.");router.refresh();
   }catch{setMessage("Network error while saving name.");}
   finally{setSaving(false);}
@@ -49,6 +50,11 @@ export function RecruiterDisplayNameEditor({initialName,updatedAt}:{
    <button type="submit" disabled={saving||!hrRecruiterNameFieldsSchema.safeParse({firstName,lastName}).success}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
     {saving?"Saving…":"Save name"}
+   </button>
+   <button type="button" disabled={saving||(firstName===savedName.firstName&&lastName===savedName.lastName)}
+     onClick={()=>{setFirstName(savedName.firstName);setLastName(savedName.lastName);setMessage("");}}
+     className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-body disabled:opacity-40">
+     Cancel unsaved changes
    </button>
    {message?<p role="status" className="text-xs text-body">{message}</p>:null}
   </form>
