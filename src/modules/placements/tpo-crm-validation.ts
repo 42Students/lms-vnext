@@ -68,10 +68,15 @@ export const confirmedCreateTpoLeadSchema = z.object({
 
 export const logTpoLeadActivitySchema = z.object({
   collegeId: id,
-  type: z.enum(["CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE"]),
+  type: z.enum(["CALL", "EMAIL", "MEETING", "NOTE"]),
   outcome: z.string().trim().max(30).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
-}).strict();
+}).strict().superRefine((value,ctx)=>{
+  if(value.type==="CALL"&&!["Connected","No answer","Busy","Wrong number","Not interested"].includes(value.outcome??""))
+    ctx.addIssue({code:"custom",message:"Choose a call outcome.",path:["outcome"]});
+  if(value.type==="NOTE"&&!value.note?.trim())
+    ctx.addIssue({code:"custom",message:"Write a note before logging this interaction.",path:["note"]});
+});
 
 export const createTpoFollowupSchema = z.object({
   collegeId: id,

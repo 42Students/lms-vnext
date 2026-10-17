@@ -50,8 +50,8 @@ export default async function CampaignHistory({searchParams}:PageProps){
     New email campaign
    </Link>
    <Link href="/tpo/recruiters" className="inline-flex min-h-11 items-center text-sm text-primary-text">Back to Engage</Link>
-   <Link href={"/api/placements/tpo/campaigns/history/export?page="+result.page+(first(params.purpose)?"&purpose="+encodeURIComponent(first(params.purpose)!):"")}
-     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export this page as CSV</Link>
+   <Link href={"/api/placements/tpo/campaigns/history/export"+(first(params.purpose)?"?purpose="+encodeURIComponent(first(params.purpose)!):"")}
+     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">Export filtered history as CSV</Link>
   </nav>
   <section aria-label="Email campaigns" className="space-y-3">
    <h2 className="text-lg font-semibold text-foreground">Email campaigns</h2>

@@ -19,6 +19,7 @@ type PageProps = {
     search?: string | string[];
     page?: string | string[];
     pageSize?: string | string[];
+    sort?: string | string[];
   }>;
 };
 
@@ -31,11 +32,13 @@ function companiesHref(
     search?: string;
     page?: number;
     pageSize?: number;
+    sort?: "NAME"|"CONTACTS"|"DRIVES"|"JOINS";
   },
 ) {
   const params = new URLSearchParams();
 
   if (filters.search) params.set("search", filters.search);
+  if (filters.sort && filters.sort !== "NAME") params.set("sort", filters.sort);
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
   }
@@ -83,6 +86,7 @@ export default async function TpoCompanyMemoryPage({
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
+    sort: first(raw.sort) || undefined,
   });
 
   if (!parsed.success) {
@@ -169,7 +173,7 @@ export default async function TpoCompanyMemoryPage({
         <form
           action="/tpo/companies"
           method="get"
-          className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]"
+          className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search companies
@@ -183,6 +187,16 @@ export default async function TpoCompanyMemoryPage({
             />
           </label>
 
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Sort by
+            <select name="sort" defaultValue={query.sort}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
+              <option value="NAME">Company name</option>
+              <option value="CONTACTS">Most contacts</option>
+              <option value="DRIVES">Most drives</option>
+              <option value="JOINS">Most confirmed joins</option>
+            </select>
+          </label>
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Page size
             <select
@@ -204,6 +218,17 @@ export default async function TpoCompanyMemoryPage({
           </button>
         </form>
 
+        <div className="flex flex-wrap items-center gap-3">
+          {page.total<=2000?<Link
+            href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
+              ...(query.search?{search:query.search}:{}),sort:query.sort,
+            }).toString()}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export companies CSV ({page.total})
+          </Link>:<p role="status" className="text-xs text-muted-foreground">
+            Narrow your search to 2,000 companies to export all matching rows.
+          </p>}
+        </div>
         <div className="flex flex-wrap justify-between gap-3">
           <p className="text-sm text-body">
             {page.total} matching company
@@ -228,6 +253,7 @@ export default async function TpoCompanyMemoryPage({
               href={companiesHref({
                 search: query.search,
                 pageSize: query.pageSize,
+                sort: query.sort,
               })}
               className="mt-3 inline-block font-semibold text-primary-text hover:underline"
             >
@@ -245,6 +271,7 @@ export default async function TpoCompanyMemoryPage({
                   <th scope="col" className="px-4 py-3">Offers</th>
                   <th scope="col" className="px-4 py-3">Accepted</th>
                   <th scope="col" className="px-4 py-3">Confirmed joins</th>
+                  <th scope="col" className="px-4 py-3">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -298,6 +325,12 @@ export default async function TpoCompanyMemoryPage({
                     <td className="px-4 py-4 tabular-nums">
                       {company.confirmedJoinedLearners}
                     </td>
+                    <td className="px-4 py-4">
+                      {company.companyId?<Link
+                        href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+                        className="whitespace-nowrap font-semibold text-primary-text underline">Create drive</Link>:
+                        <span className="text-xs text-muted-foreground">Link company first</span>}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -318,6 +351,7 @@ export default async function TpoCompanyMemoryPage({
                 href={companiesHref({
                   search: query.search,
                   pageSize: query.pageSize,
+                sort: query.sort,
                   page: page.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -331,6 +365,7 @@ export default async function TpoCompanyMemoryPage({
                 href={companiesHref({
                   search: query.search,
                   pageSize: query.pageSize,
+                sort: query.sort,
                   page: page.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
