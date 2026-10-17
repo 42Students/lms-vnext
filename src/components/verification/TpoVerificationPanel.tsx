@@ -46,7 +46,7 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind}
    disableLocalSearch preserveServerOrder
-   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL"})}
+   onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?(params.get("waitingState")??"ALL"):"ALL",waitingSince:tab==="WAITING"?(params.get("waitingSince")??"ALL"):"ALL"})}
    onKindChange={kind=>navigate({kind,page:"1"})}
    onReview={row=>setSelected(row)} />
   {selected&&<VerificationReviewDrawer
