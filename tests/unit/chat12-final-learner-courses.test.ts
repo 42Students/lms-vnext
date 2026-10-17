@@ -57,7 +57,8 @@ describe("chat-12 final sprint learner course navigation and safety",()=>{
  });
  it("LEARNER-course-detail-R03 exposes authorized future LIVE_CLASS external links but no private content storage",()=>{
   const service=read("src/modules/courses/learner-course-service.ts");
-  expect(service).toContain('(contentAvailability === "AVAILABLE" || row.contentType === "LIVE_CLASS")');
+  expect(service).toContain("learnerVisibleContentExternalUrl({");
+  expect(service).toContain('row.contentType === "LIVE_CLASS"');
   expect(service).toContain('contentAvailability === "AVAILABLE"');
   const control=read("src/components/courses/learner-live-class-link.tsx");
   expect(control).toContain("Copy");
