@@ -7,7 +7,7 @@ export const globalTpoRequestsQuerySchema = z.object({
   age: z.enum(["ALL","TODAY","ONE_TO_TWO_DAYS","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
-  urgentOnly: z.literal("true").transform(()=>true).optional(),
+  urgentOnly: z.union([z.literal("true"),z.literal(true)]).transform(()=>true).optional(),
   jobId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   pageSize: z.coerce.number().int().refine(value=>[25,50,100].includes(value)).default(25),
