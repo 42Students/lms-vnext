@@ -22,7 +22,8 @@ export async function GET(request: Request) {
       page,
     );
 
-    return NextResponse.json({ attempts });
+    return NextResponse.json({attempts:attempts.slice(0,25),page,hasMore:attempts.length>25},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
