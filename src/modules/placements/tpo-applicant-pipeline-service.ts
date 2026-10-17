@@ -125,10 +125,10 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
       eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
     .orderBy(placementApplications.id).limit(5000):null;
-   return {counts:totals,...pagination,allFiltered,rows:records.map(row=>({
-    ...Object.fromEntries(Object.entries(row).filter(([key])=>key!=="submittedByUserId"&&key!=="learnerUserId")),
+   return {counts:totals,...pagination,allFiltered,rows:records.map(({submittedByUserId,learnerUserId,...row})=>({
+    ...row,
     flags:[
-      ...(row.submittedByUserId!==row.learnerUserId?["Added by college"]:[]),
+      ...(submittedByUserId!==learnerUserId?["Added by college"]:[]),
       ...(row.eligibilityStatus!=="ELIGIBLE"?["Eligibility needs review"]:[]),
       ...(row.pendingWithdrawal?["Withdrawal requested"]:[]),
       ...(row.noShow?["No-show"]:[]),
