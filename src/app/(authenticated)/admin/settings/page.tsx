@@ -8,6 +8,7 @@ import {ErrorState} from "@/components/ui/error-state";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import {requirePermission} from "@/modules/permissions/policy";
+import {adminControlScopeTag} from "@/modules/module-access/admin-control-overview-model";
 import {
   formatPlatformSettingValue,
   platformSettingOriginLabel,
@@ -36,6 +37,9 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     ?await listAdminTenantSettings(context,"GLOBAL"):null;
   const attendancePolicy=context.adminScope?.collegeId
     ?await getCollegeAttendancePolicy(context,context.adminScope.collegeId):null;
+  const scopeLabel=adminControlScopeTag(context.adminScope);
+  const documentedControls=allSections.reduce((sum,section)=>sum+section.items.length,0);
+
 
   return (
     <div className="space-y-6">
@@ -45,6 +49,15 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         description="Inventory of effective source limits and college policy values. Attendance settings can be edited for the selected college."
       />
 
+      <section aria-label="Tenant Settings overview" className="rounded-xl border border-border bg-surface p-4">
+        <p className="text-sm font-semibold">Runtime configuration · {scopeLabel}</p>
+        <h2 className="mt-1 text-base font-semibold">Settings with explicit execution scope</h2>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3">
+          <div><dt>Documented controls</dt><dd className="font-semibold">{documentedControls} visible inventory settings</dd></div>
+          <div><dt>Stored keys</dt><dd className="font-semibold">{editorData?.ready?editorData.entries.length:"Unavailable"} in this scope</dd></div>
+          <div><dt>Editing</dt><dd className="font-semibold">{editorData?.ready?scopeLabel:"Select an authorized scope"}</dd></div>
+        </dl>
+      </section>
       <section
         role="status"
         aria-label="Settings scope"

@@ -202,3 +202,17 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 ### CI unit-failure reconciliation added this round
 - Six previously failing Super Admin/directory assertions updated to match currently implemented behavior, without removing safety checks: `super-admin-dashboard-navigation.test.ts` (global Recruiter accounts fourth link and unique hrefs); `super-admin-videos-directory.test.ts` (source label “YouTube Video”); `super-admin-tracker-active-route-guards.test.ts` (distinct independent-audit readiness and service authorization); `super-admin-tracker-detail-url-denial.test.ts` (independent vs reported issue ID validation); `audit-findings-detail-link.test.ts` (independent finding and event editor); `audit-finding-version-refresh.test.ts` (detail CAS version and acknowledged refresh). 
 - The old `unit-failures-r1.md` predates the independent findings split and the Super Admin global navigation addition; these are test repairs, not a claimed fresh CI pass. No chat-16-owned Tracker page was modified and no UX restyling was done.
+
+
+## 2026-10-18 follow-up: runtime settings, cohort creation and project audit
+- SA-tenants-modules-37 — PARTIAL: live learner watched and in-progress thresholds and YouTube/hosted progress interval now obey GLOBAL typed values; classroom chat polling remains unverified/unwired. Source and gap-named tests on this branch.
+- SA-tenants-modules-38 — PARTIAL: safe global numeric policy reader and range validation added; interview/window/rate-limit/alert consumers are still not wired, so storage does not imply activation.
+- SA-tenants-modules-39 — PARTIAL: announcement list page size is applied server-side with an independent 100-row cap. Bulk status, progress bulk, and identity JSON consumers remain OPEN.
+- SA-placements-projects-56 — PARTIAL: transactional per-learner outcomes, table and export, plus exact-cohort preflight binding; standalone team fields and per-learner partial retry workflow remain OPEN.
+- SA-placements-projects-77 — DONE in source: template lifecycle, assignment, rollback and release audit events are emitted from their mutation transactions; existing mentor, review, resource, task and readiness audit producers source-verified. Integration tests and browser verification still pending.
+- SA-placements-projects-13 — OPEN: future audience editing of published drives remains incomplete.
+- SA-tenants-modules-36 — OPEN: SMS provider/DLT registration and operational template consumer activation require verified credentials; editor storage is not proof.
+- SA-tenants-modules-46 — OPEN: manual verified GitHub findings Sync now is not configured.
+- SA-tenants-modules-54 — BLOCKED on verified inbound mail provider credentials/signature before live ingest.
+- The latest `docs/orchestrator/typecheck-errors.md` (2026-10-18 01:15) has **zero chat-13-owned errors**; no files in other lanes were modified to hide failures. The unit-failures-r1 report is dated 2026-10-17 and already has the six Super Admin test corrections on this branch. Only the orchestrator can report a new pass.
+- The source runtime edits and tests have not been executed by this lane. No CSS/page restyling performed.

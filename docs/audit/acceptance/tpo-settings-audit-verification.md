@@ -134,3 +134,10 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 | TPO-settings-audit-40 | PARTIAL (friendly error) | Threshold save now retains form and renders safe retry message, no raw error code; completion-derived readiness still OPEN as -41. `src/components/tpo/tpo-prep-percentage-editor.tsx`, same test named TPO-settings-audit-40. |
 | TPO-settings-audit-70 | DONE source (friendly error) | SMS cap keeps draft and displays safe retry on unknown server error; `src/components/tpo/tpo-communication-settings-editors.tsx`, same test named TPO-settings-audit-70. |
 | TPO-settings-audit-76 | PARTIAL (friendly error) | Signature keeps draft and displays safe retry on unknown server error; real email provider signature usage unverified. Same component and test named TPO-settings-audit-76. |
+
+
+## Chat-11 final sprint — verified source contracts (2026-10-18, tests authored not run)
+| ID | Status | Acceptance evidence |
+|---|---|---|
+| TPO-settings-audit-07 | DONE — source | `src/components/placements/tpo-settings-nav.tsx` uses three grouped sections, responsive vertical desktop navigation and `aria-current`; `tests/unit/chat11-final-TPO-settings-audit-07.test.ts` test `TPO-settings-audit-07 preserves distinct legacy sections without losing active-page navigation`. Browser/viewport test pending CI. |
+| TPO-settings-audit-11 | DONE — source | `src/modules/placements/tpo-season-write-model.ts` now rejects legacy-incompatible `SELECTED` at server input boundary; the UI exposes only RELEASED / ACCEPTED. `tests/unit/chat11-final-TPO-settings-audit-11.test.ts` test `TPO-settings-audit-11 permits only released or accepted offers at the validated server boundary`. |

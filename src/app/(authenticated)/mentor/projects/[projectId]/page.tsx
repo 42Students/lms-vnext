@@ -12,6 +12,7 @@ import { requireProjectReadAccess } from "@/modules/projects/access";
 import { getProjectWorkspaceView } from "@/modules/projects/workspace-view-service";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/ui/page-header";
 
 export default async function MentorProjectPage({
   params,
@@ -61,9 +62,9 @@ export default async function MentorProjectPage({
   return (
     <div className="min-w-0 space-y-6">
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
-      <MentorProjectTabs
-        projectId={projectId}
-      />
+      {(selectedTab==="board"||selectedTab==="performance") ?
+        <PageHeader title={workspace.project.title} /> : null}
+      <MentorProjectTabs projectId={projectId}/>
       {access.access === "MENTOR" ? <Card><details className="min-w-0"><summary className="cursor-pointer text-sm font-semibold text-[var(--lms-teal-deep)]">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-teal-deep)]">

@@ -58,8 +58,8 @@ function audienceLabel(
   deliveryId: string | null,
 ) {
   return deliveryId
-    ? "This Section"
-    : "Shared Offering";
+    ? "This class"
+    : "All classes";
 }
 
 function Metric({

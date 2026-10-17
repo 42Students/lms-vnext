@@ -1,7 +1,8 @@
 import "server-only";
-import {and,asc,eq,sql} from "drizzle-orm";
+import {and,asc,eq,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,users,
+import {collegeMemberships,membershipRoles,users,learnerProfiles,
+ learnerProgramEnrollments,programs,departments,
  placementCompanies,placementCompanyRelationships,placementTpoLeads} from "@/db/schema";
 import {requirePlacementManageScope} from "./scope";
 import type {RequestContext} from "@/modules/identity/context";
@@ -13,13 +14,21 @@ export async function findTpoPeopleAndCompanies(ctx:RequestContext,collegeId:str
  await requirePlacementManageScope(ctx,collegeId);
  const term=normalizeTpoFinderTerm(raw),db=getDb();
  const [students,recruiters,companies]=await Promise.all([
-  db.select({id:collegeMemberships.id,name:users.displayName}).from(collegeMemberships)
+  db.select({id:collegeMemberships.id,name:users.displayName,
+    rollNumber:learnerProfiles.rollNumber,branch:departments.name}).from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+   .leftJoin(learnerProgramEnrollments,and(
+    eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
+    eq(learnerProgramEnrollments.status,"ACTIVE")))
+   .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+   .leftJoin(departments,eq(departments.id,programs.departmentId))
    .where(and(eq(collegeMemberships.collegeId,collegeId),
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
     eq(membershipRoles.role,"LEARNER"),
-    sql`strpos(lower(coalesce(${users.displayName},'')),${term})>0`))
+    or(sql`strpos(lower(coalesce(${users.displayName},'')),${term})>0`,
+       sql`strpos(lower(coalesce(${learnerProfiles.rollNumber},'')),${term})>0`)))
    .orderBy(asc(users.displayName)).limit(30),
   db.select({id:placementTpoLeads.id,name:placementTpoLeads.name}).from(placementTpoLeads)
    .where(and(eq(placementTpoLeads.collegeId,collegeId),

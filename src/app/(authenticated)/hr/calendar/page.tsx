@@ -539,11 +539,11 @@ export default async function HrCalendarPage({
               className="rounded-xl border border-border bg-surface p-8 text-center"
             >
               <h2 className="text-lg font-semibold text-foreground">
-                Nothing scheduled in this period
+                {view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
               </h2>
 
               <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
-                No matching authorized events are recorded in this period for the selected category. Try another week, month, or event type.
+                Rounds, slots and deadlines appear here as soon as they are dated.
               </p>
             </section>
           ) : null}
