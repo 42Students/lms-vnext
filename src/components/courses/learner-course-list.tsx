@@ -39,6 +39,7 @@ export type LearnerCourseListRow = {
     credits: number | null;
     sectionName: string;
     sectionCode: string;
+    cohortName: string;
     academicPeriodId: string;
     academicPeriodName: string;
     programName: string;
