@@ -549,7 +549,7 @@ export default async function HrPlacementJobPage({
               {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
                 <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
                 <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
-                <RecruiterResultControls rounds={resultControlRounds
+                <RecruiterResultControls key={selectedApplicant.id} focusApplicantId={selectedApplicant.id} rounds={resultControlRounds
                   .filter(round=>round.participants.some(person=>person.applicationId===selectedApplicant.id))
                   .map(round=>({...round,participants:round.participants.filter(person=>person.applicationId===selectedApplicant.id)}))}/>
               </div>:<p className="mt-5 text-sm text-muted-foreground">
