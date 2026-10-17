@@ -37,6 +37,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const shareTenth=Boolean(share?.columns?.includes("tenth"));
   const shareTwelfth=Boolean(share?.columns?.includes("twelfth"));
   const shareSkills=Boolean(share?.columns?.includes("skillMatch"));
+  const shareResume=Boolean(share?.columns?.includes("resume"));
   const shareProjects=Boolean(share?.columns?.includes("projects"));
   const [linkPolicy]=shareProjects?await db.select({projects:placementCompanyVisibilitySettings.showProjectLinks})
    .from(placementCompanyVisibilitySettings).where(eq(placementCompanyVisibilitySettings.collegeId,workspace.college.id)).limit(1):[];
@@ -258,6 +259,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       projects:shareProjects&&linkPolicy?.projects===true,skills:shareSkills,
     });
     return {...row,
+      resumeShared:shareResume,
       githubUrl:links.githubUrl,portfolioUrl:links.portfolioUrl,
       sharedSkills:links.skills,sharedProjects:links.projects,
       rollNumber:shareRoll?row.rollNumber:null,
