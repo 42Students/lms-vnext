@@ -42,7 +42,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-18 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-19 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-drives-20 | S3 | PERMISSION | DONE |
-| TPO-drives-25 | S3 | MISSING-FIELD | OPEN |
+| TPO-drives-25 | S3 | MISSING-FIELD | DONE |
 | TPO-drives-27 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-29 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-30 | S3 | MISSING-FIELD | OPEN |
