@@ -1,12 +1,18 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {roundApplyPreviewCsv,roundApplyReportCsv} from "@/modules/placements/tpo-round-apply-csv-model";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
  rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string}>;
  skippedUnrecordedNote:string};
 type ApplyReport={applied:number;skipped:number;unchanged:number;
  results:Array<{resultId:string;student:string;outcome:string;status:string;reason?:string}>};
+function downloadRoundCsv(csv:string,name:string){
+ const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+ const link=document.createElement("a");link.href=url;link.download=name;link.click();
+ URL.revokeObjectURL(url);
+}
 export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:string}){
  const router=useRouter();const [preview,setPreview]=useState<Preview|null>(null);
  const [report,setReport]=useState<ApplyReport|null>(null);const [busy,setBusy]=useState(false);
@@ -51,6 +57,11 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     </div>)}
    </div>
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
+   <button type="button" onClick={()=>downloadRoundCsv(
+    roundApplyPreviewCsv(preview.rows),"round-"+roundId+"-apply-preview.csv")}
+    className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+    Export consequence preview (CSV)
+   </button>
    {!preview.ready?<p role="alert" className="text-sm text-error">Complete this evaluation round before applying results.</p>:null}
    <div className="flex flex-wrap gap-3">
     <button type="button" disabled={busy||!preview.ready||!preview.staged} onClick={()=>void apply()}
@@ -65,6 +76,10 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <div className="max-h-44 overflow-y-auto">{report.results.map(x=><p key={x.resultId}>
     {x.student}: {x.status} ({x.outcome}) {x.reason?"· "+x.reason:""}
    </p>)}</div>
+   <button type="button" className="mr-3 min-h-11 rounded border border-border px-4"
+    onClick={()=>downloadRoundCsv(roundApplyReportCsv(report.results),"round-"+roundId+"-apply-results.csv")}>
+    Export results (CSV)
+   </button>
    <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>navigator.clipboard?.writeText(
     report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].join(",")).join("\n")
    )}>Copy results</button>

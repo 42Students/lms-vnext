@@ -16,7 +16,7 @@ type Sprint={id:string;title:string;status:string;releaseId:string};
 type Release={id:string;title:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
-type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
+type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType?:string};
 const editable=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],readOnly=false}:{
  projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
@@ -24,33 +24,46 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
 }){
  const router=useRouter(),params=useSearchParams();
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
- [sprint,setSprint]=useState(params.get("sprint")??""),[priority,setPriority]=useState(params.get("priority")??""),
+ [sprint,setSprint]=useState(params.get("sprint")??""),[scope,setScope]=useState(params.get("scope")==="all"?"all":"current"),
+ [priority,setPriority]=useState(params.get("priority")??""),
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
- [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null);
+ [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
+ [visibleLimit,setVisibleLimit]=useState(150);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  function remember(name:string,value:string){
+  setVisibleLimit(150);
   const query=new URLSearchParams(window.location.search);
   if(value)query.set(name,value);else query.delete(name);
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
  }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
- const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
-   (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release));
+ const currentSprint=sprints.find(item=>item.status==="ACTIVE");
+ const matching=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
+   (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release)&&
+   (Boolean(sprint||release)||scope==="all"||task.sprintId===null||
+     (Boolean(currentSprint)&&task.sprintId===currentSprint?.id))&&
+   (!priority||task.priority===priority)&&
+   (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
+     task.assigneeMembershipId===assignee))&&
+   (!statusFilter||(statusFilter==="BACKLOG"?task.sprintId===null:task.status===statusFilter)));
+ const visible=matching.slice(0,visibleLimit);
  const lanes=groupLearnerBoardLanes(visible,sprints);
+ const activeFilterCount=[release,sprint,priority,assignee,statusFilter,scope==="all"?"all":""].filter(Boolean).length;
  async function move(id:string,status:string){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
     !editable.includes(status as typeof editable[number])||task.status===status)return;
-  if(status==="BLOCKED"&&!task.blockerReason?.trim()){
-   setError("Record a blocker reason in task details before moving to Blocked.");return;
-  }
+  const blockerReason=status==="BLOCKED"&&!task.blockerReason?.trim()
+    ? window.prompt("What's blocking this task?")?.trim() : undefined;
+  if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason)return;
   if(!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
     "/tasks/"+encodeURIComponent(id)+"/mentor-transition","PATCH",{
      status,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),confirmed:true,
+     ...(blockerReason?{blockerReason}:{}),
     }) as {task:Task};
    setUndo({id,status:task.status});
    setTasks(rows=>rows.map(row=>row.id===id?{...row,...result.task}:row));
@@ -85,6 +98,14 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      <option value="">All sprints</option>{sprints.filter(s=>!release||s.releaseId===release)
       .map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
+   <label className="text-sm font-semibold">Sprint scope
+    <select value={scope} aria-label="Board sprint scope"
+      onChange={e=>{setScope(e.target.value==="all"?"all":"current");remember("scope",e.target.value);}}
+      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
+      <option value="current">Current sprint + backlog</option>
+      <option value="all">All sprints (full history)</option>
+    </select>
+   </label>
    <label className="text-sm font-semibold">Priority
     <select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
      className="ml-2 min-h-10 rounded border border-border bg-background p-2">
@@ -104,13 +125,39 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     <select value={statusFilter} onChange={e=>{setStatusFilter(e.target.value);remember("lane",e.target.value);}}
       className="ml-2 min-h-10 rounded border border-border bg-background p-2">
       <option value="">All lanes</option>
+      <option value="BACKLOG">Backlog</option>
       {editable.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
       <option value="IN_REVIEW">In review</option><option value="DONE">Completed</option>
     </select>
    </label>
-   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");["priority","assignee","sprint","release","lane"].forEach(k=>remember(k,""));}}
+   <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
     className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
+  <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
+    {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
+      {value:"TODO",label:"To Do"},{value:"IN_PROGRESS",label:"In Progress"},
+      {value:"IN_REVIEW",label:"In Review"},{value:"BLOCKED",label:"Blocked"},
+      {value:"DONE",label:"Completed"}].map(option=>
+      <button key={option.value||"all"} type="button"
+        aria-pressed={statusFilter===option.value}
+        onClick={()=>{setStatusFilter(option.value);remember("lane",option.value);}}
+        className={"min-h-9 rounded-full border px-3 text-xs font-semibold "+
+          (statusFilter===option.value?"border-primary bg-primary text-primary-foreground":
+          "border-border bg-surface text-body")}>
+        {option.label}
+      </button>)}
+    {activeFilterCount>0?<span className="rounded-full bg-muted px-2 py-1 text-xs font-semibold text-body">
+      {activeFilterCount} active {activeFilterCount===1?"filter":"filters"}
+    </span>:null}
+  </div>
+  <p role="status" className="text-xs text-body">
+    {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project's full history.
+    {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
+  </p>
+  {matching.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+    {tasks.length===0?"No tasks on this board yet. Create the first one to give the team somewhere to start.":
+      "No tasks match these filters. Clear all to see the board."}
+  </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
     onClick={()=>{const prior=undo;setUndo(null);void move(prior.id,prior.status);}}>Undo last move</button>:null}
@@ -181,6 +228,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </ul>
    </section>)}
   </div></div>
+  {matching.length>visible.length?<button type="button"
+    className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text"
+    onClick={()=>setVisibleLimit(limit=>limit+150)}>Show 150 more</button>:null}
   {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
     projectId={projectId} task={tasks.find(task=>task.id===selected)!}
     sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}

@@ -9,7 +9,9 @@ type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
 type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;job:string}[];
  notes:{id:string;body:string;createdAt:string;job:string}[];
- studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];truncated:boolean};
+ studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];
+ teamHistory:{id:string;eventType:string;summary:string;occurredAt:string;subjectType:string;actorUserId:string|null}[];
+ truncated:boolean};
 export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  student:TpoStudentRow;rows:readonly TpoStudentRow[];
  onNavigate:(membershipId:string)=>void;onClose:()=>void;
@@ -29,7 +31,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  }
  async function chooseTab(next:Tab){
   setTab(next);setError("");
-  if(next!=="Requests"&&next!=="Notes"||detail)return;
+  if(next!=="Requests"&&next!=="Notes"&&next!=="History"||detail)return;
   await fetchDetail();
  }
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
@@ -100,7 +102,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
-    {loading&&(tab==="Requests"||tab==="Notes")?<p role="status">Loading student records…</p>:null}
+    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p role="status">Loading student records…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
@@ -126,10 +128,16 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
       </article>)}
       <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">Open placement history</Link>
     </>:null}
-    {detail?.truncated&&(tab==="Requests"||tab==="Notes")?<p className="text-xs text-warning-text">
+    {detail?.truncated&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p className="text-xs text-warning-text">
       Most recent records shown; open the full Requests or History page for older entries.
     </p>:null}
     {tab==="History"?<>
+      <h3 className="font-semibold">Team and student activity</h3>
+      {detail&&!detail.teamHistory?.length?<p>No recorded team actions for this student.</p>:null}
+      <ol className="max-h-72 space-y-2 overflow-y-auto">{detail?.teamHistory?.map(row=><li key={row.id} className="rounded border border-border p-3">
+       <p className="font-semibold">{row.summary}</p>
+       <p className="mt-1 text-xs text-muted-foreground">{when(row.occurredAt)} · {row.eventType}</p>
+      </li>)}</ol>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
       <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">View full placement history</Link>
     </>:null}

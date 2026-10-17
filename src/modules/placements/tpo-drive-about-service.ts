@@ -4,7 +4,7 @@ import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,departments,learnerProgramEnrollments,membershipRoles,
  placementApplications,placementBatchRegistrations,placementCandidatePreferences,
  placementCompanies,placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,
- placementJobRoleOptions,placementOffers,placementSeasons,programs,cohorts,users} from "@/db/schema";
+ placementJobRoleOptions,placementOffers,placementRecruiterDriveRequests,placementSeasons,programs,cohorts,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
@@ -12,7 +12,6 @@ import {PlacementsServiceError} from "./errors";
 import {getJobEligibilityPolicy} from "./eligibility-service";
 import {previewEligiblePublishedDrive} from "./tpo-drive-publish-effects";
 import {getTpoDriveClosePreview} from "./tpo-drive-close-preview-service";
-import {placementTableExists} from "./staged-tables";
 
 export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireTpoJobCollege(context),jobId=placementJobIdSchema.parse(rawJobId);
@@ -114,7 +113,17 @@ export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
  }
  const accepted=applications.length?await db.select({id:placementOffers.id})
   .from(placementOffers).where(inArray(placementOffers.applicationId,applications.map(a=>a.applicationId))):[];
- const previousRequestAvailable=await placementTableExists("placement_recruiter_drive_requests");
+ const historicalRequests=await db.select({
+   id:placementRecruiterDriveRequests.id,status:placementRecruiterDriveRequests.status,
+   createdAt:placementRecruiterDriveRequests.createdAt,
+   decisionNote:placementRecruiterDriveRequests.decisionNote,
+   draft:placementRecruiterDriveRequests.draft,
+  }).from(placementRecruiterDriveRequests)
+  .where(and(eq(placementRecruiterDriveRequests.collegeId,collegeId),
+   or(eq(placementRecruiterDriveRequests.approvedJobId,jobId),
+      eq(placementRecruiterDriveRequests.sourceJobId,jobId))))
+  .orderBy(desc(placementRecruiterDriveRequests.createdAt)).limit(5);
+ const previousRequestAvailable=historicalRequests.length>0;
  return {
   job:{...job,applicationDeadline:job.applicationDeadline?.toISOString()??null,
    createdAt:job.createdAt.toISOString()},
@@ -124,6 +133,11 @@ export async function getTpoDriveAbout(context:RequestContext,rawJobId:unknown){
   excluded:[...excluded.values()].slice(0,100),totalExcludedDetail:excluded.size,
   recruiterContacts:companyContacts.map(x=>x.email).filter((x):x is string=>Boolean(x)),
   previousRequestAvailable,
+  previousRequests:historicalRequests.map(request=>({
+   id:request.id,status:request.status,decisionNote:request.decisionNote,
+   createdAt:request.createdAt.toISOString(),
+   proposedTitle:typeof request.draft.title==="string"?request.draft.title:null,
+  })),
   closeSummary:{applications:applications.length,offers:accepted.length},
   feed:feed.map(r=>({...r,occurredAt:r.occurredAt.toISOString()})),
  };

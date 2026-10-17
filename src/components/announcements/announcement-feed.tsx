@@ -1,4 +1,13 @@
 import { StatusBadge } from "@/components/ui/status-badge";
+function trustedAnnouncementAction(url:string|undefined|null,label:string|undefined|null){
+ if(!url||!label)return null;
+ try{
+  const parsed=new URL(url);
+  return parsed.protocol==="https:"&&parsed.hostname?
+   {href:parsed.href,label}:null;
+ }catch{return null;}
+}
+
 
 export type AnnouncementFeedItem = {
   id: string;
@@ -7,6 +16,8 @@ export type AnnouncementFeedItem = {
   senderType: string;
   receiverType: string;
   isPinned: boolean;
+  buttonLabel?:string|null;
+  buttonUrl?:string|null;
   createdAt: Date;
 };
 
@@ -104,6 +115,12 @@ export function AnnouncementFeed({
               <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
                 {item.message}
               </p>
+              {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel) ?
+                <a href={trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.href}
+                  target="_blank" rel="noopener noreferrer"
+                  className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                  {trustedAnnouncementAction(item.buttonUrl,item.buttonLabel)!.label} ↗
+                </a>:null}
             </article>
           ))}
         </div>

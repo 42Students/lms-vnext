@@ -391,9 +391,11 @@ export async function listVisibleAnnouncementsForMembership(
     const enrollments = await getDb()
       .select({
         programId: learnerProgramEnrollments.programId,
+        departmentId: programs.departmentId,
         sectionId: sectionEnrollments.sectionId,
       })
       .from(learnerProgramEnrollments)
+      .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
       .leftJoin(
         sectionEnrollments,
         and(
@@ -406,6 +408,10 @@ export async function listVisibleAnnouncementsForMembership(
         eq(learnerProgramEnrollments.status, "ACTIVE"),
       ));
     for (const row of enrollments) {
+      receiverConditions.push(and(
+        eq(db10Announcements.receiverType, "DEPARTMENT"),
+        eq(db10Announcements.receiverId, row.departmentId),
+      )!);
       receiverConditions.push(and(
         eq(db10Announcements.receiverType, "PROGRAM"),
         eq(db10Announcements.receiverId, row.programId),

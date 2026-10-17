@@ -3,6 +3,8 @@ import Link from "next/link";
 import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
+import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
+import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -18,7 +20,9 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
    row.displayName+" · From "+row.cohortName:row.displayName},
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
- {key:"batch",label:"Batch",read:row=>row.cohortName},
+ {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
+ {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
+ {key:"profile",label:"Profile",read:row=>row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence missing":row.readinessSignal==="PARTICIPATION_NOT_ELIGIBLE"?"Participation not eligible":"Academic evidence present"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
@@ -42,14 +46,39 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const selected=params.get("student");
  const [noteSelection,setNoteSelection]=useState<string[]>([]);
- const active=rows.find(row=>row.membershipId===selected)??null;
+ const [pageSort,setPageSort]=useState<"NAME"|"APPLICATIONS_DESC"|"APPLICATIONS_ASC"|"OFFERS_DESC"|"OFFERS_ASC">("NAME");
+ const sortedRows=[...rows].sort((a,b)=>{
+  const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
+   pageSort.startsWith("OFFERS")?a.offerCount-b.offerCount:0;
+  return pageSort==="NAME"?a.displayName.localeCompare(b.displayName):
+   (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
+ });
+ const active=sortedRows.find(row=>row.membershipId===selected)??null;
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
+ const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
+  ...columns.slice(0,5),
+  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?.replaceAll("_"," ")??"Not decided"},
+  ...columns.slice(5),
+ ];
  const filters:TpoFilterField[]=[
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
  ];
- return <div className="space-y-3">
+ return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
+  onKeyDown={event=>{
+   const target=event.target;
+   if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
+    event.preventDefault();setNoteSelection(rows.slice(0,100).map(row=>row.membershipId));
+   }
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
+    event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
+    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen)).catch(()=>{});
+   }
+  }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
+  <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
+  <p className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected on this visible page.</p>
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
@@ -66,8 +95,16 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
    <p className="text-sm">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </details>
+  <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
+   <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
+    className="min-h-10 rounded border border-border bg-surface px-3">
+    <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
+    <option value="APPLICATIONS_ASC">Applications · fewest</option>
+    <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
+   </select>
+  </label>
   <TpoGridFilterPanel fields={filters}/>
-  <TpoSpreadsheetGrid rows={rows} columns={columns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
@@ -83,7 +120,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
       aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
-  {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={rows}
+  {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.

@@ -61,6 +61,11 @@ export function LearnerNotificationsInbox({
           importance: "NORMAL",
           createdAt: item.createdAt.toISOString(),
           actionHref: null,
+          externalCta:(item.buttonLabel && item.buttonUrl && (()=>{try{
+            const parsed=new URL(item.buttonUrl);
+            return parsed.protocol==="https:" && parsed.hostname
+             ?{label:item.buttonLabel,href:parsed.href}:null;
+          }catch{return null;}})()) || null,
           readAt: null,
           source: "ANNOUNCEMENT",
           pinned: item.isPinned,
@@ -250,6 +255,11 @@ export function LearnerNotificationsInbox({
                 {learnerNotificationPlacementAction(selected?.actionHref)?.label??"Open details"}
               </Link>
             ) : null}
+            {selected?.source==="ANNOUNCEMENT"&&selected.externalCta?
+              <a href={selected.externalCta.href} target="_blank" rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center rounded-md border border-primary px-4 text-sm font-semibold text-primary-text">
+                {selected.externalCta.label} ↗
+              </a>:null}
             <Button onClick={() => setSelected(null)}>Got it</Button>
           </>
         }

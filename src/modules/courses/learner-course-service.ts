@@ -620,6 +620,7 @@ export async function getLearnerCourseWorkspace(
           path.id,
         ),
         eq(courseLessons.status, "ACTIVE"),
+        eq(courseLessons.visibleToStudents, true),
       ),
     )
     .orderBy(

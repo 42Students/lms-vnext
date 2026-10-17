@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  afterCollegeOptions, type AfterCollegeOutcome,
+  afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
 
 export function TpoAfterCollegeEditor({
@@ -62,11 +62,13 @@ export function TpoAfterCollegeEditor({
       <select value={draft} disabled={!available || pending}
         onChange={event => setDraft(event.target.value as AfterCollegeOutcome)}
         className="min-h-10 rounded border border-border bg-surface px-2 text-xs">
+        {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(draft)?<option value={draft} disabled>{AFTER_COLLEGE_LABELS[draft]} · Automatic</option>:null}
         {afterCollegeOptions().map(option => <option value={option.value} key={option.value}>
           {option.label}
         </option>)}
       </select>
     </label>
+    {["ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].includes(draft)?<p className="text-xs text-muted-foreground">Additional destination details are not yet stored; verify these with the learner before saving.</p>:null}
     <div className="flex flex-wrap gap-2">
       <button type="button" disabled={!available || pending || draft === saved}
         className="min-h-9 rounded border border-border px-2 text-xs font-semibold disabled:opacity-50"

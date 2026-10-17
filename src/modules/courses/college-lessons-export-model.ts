@@ -1,4 +1,5 @@
 import {collegeLessonQuerySchema,type CollegeLessonQuery} from "./college-learning-directory-model";
+import {collegeLessonVisibilityLabel} from "./college-course-tabs-copy";
 import {buildCollegeDirectoryCsv,exportParams} from "@/modules/academics/college-directory-export-model";
 export const LESSONS_EXPORT_CAP=1000;
 export const lessonsCsvSchema=collegeLessonQuerySchema.omit({page:true});
@@ -43,14 +44,14 @@ export function lessonsCsvHref(q: Partial<Omit<CollegeLessonQuery,"page">>) {
  return "/api/academics/college-lessons-export"+(p.size?"?"+p.toString():"");
 }
 export function renderLessonsCsv(rows:readonly {
- name:string;sequence:number;status:string;pathStatus:string;
+ name:string;sequence:number;status:string;pathStatus:string;visibleToStudents:boolean;
  courseName:string;courseCode:string;cohortName:string;periodName:string;offeringStatus:string;
  contentCount:number;publishedContentCount:number;publishedAndVisibleFlagCount:number;
 }[],truncated:boolean){
  return buildCollegeDirectoryCsv(["Lesson","Order","Lesson status","Path status","Course",
-  "Course code","Batch","Period","Offering status","Authored content","Published content","Published and visibility-flagged content"],
+  "Course code","Batch","Period","Offering status","Students see it","Authored content","Published content","Published and visibility-flagged content"],
  rows.map(r=>[r.name,String(r.sequence+1),r.status,r.pathStatus,r.courseName,
-  r.courseCode,r.cohortName,r.periodName,r.offeringStatus,
+  r.courseCode,r.cohortName,r.periodName,r.offeringStatus,collegeLessonVisibilityLabel(r),
   String(r.contentCount),String(r.publishedContentCount),String(r.publishedAndVisibleFlagCount)]),
  truncated,LESSONS_EXPORT_CAP);
 }
