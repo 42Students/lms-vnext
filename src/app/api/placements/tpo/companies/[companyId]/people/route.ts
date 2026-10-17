@@ -12,9 +12,6 @@ export async function POST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
-    return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
-  }
   try {
     const { companyId } = await params;
     const context = await getCurrentRequestContext();
