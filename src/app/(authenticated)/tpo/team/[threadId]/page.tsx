@@ -17,11 +17,11 @@ import {TpoTeamMessageScroll} from "@/components/tpo/tpo-team-message-scroll";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
-import { hasMembershipRole } from "@/modules/identity/context";
+import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import { readTpoInternalConversation, tpoThreadIdSchema, tpoMessagePageSchema } from "@/modules/placements/tpo-team-conversation-service";
 export default async function InternalThread({params,searchParams}:{params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[];m?:string|string[];ask?:string|string[]}>}){
  const context=await getCurrentRequestContext();
- if(!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!hasPlacementTeamMembership(context))redirect("/dashboard");
  const {threadId}=await params;
  const parsed=tpoThreadIdSchema.safeParse(threadId);
  if(!parsed.success)notFound();

@@ -11,7 +11,7 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {EmptyState} from "@/components/ui/empty-state";
-import {hasMembershipRole} from "@/modules/identity/context";
+import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
@@ -23,7 +23,7 @@ const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort
 export default async function TpoTeamPage({searchParams}:{
  searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];filter?:string|string[];page?:string|string[];c?:string|string[];m?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
+ if(!context.membership||!hasPlacementTeamMembership(context))redirect("/dashboard");
  const raw=await searchParams;
  const threadId=Array.isArray(raw.c)?raw.c[0]:raw.c;
  const messageId=Array.isArray(raw.m)?raw.m[0]:raw.m;
@@ -43,7 +43,7 @@ export default async function TpoTeamPage({searchParams}:{
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
  // Deprecated faculty/student coordinator duties are not placement-team roles.
  const activeTeam=team.members.filter(member=>member.roles.includes("TPO")||
-  member.roles.includes("TPO_ADMIN"));
+  member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN"));
  const workload=tab==="people"?await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]})):null;
  const workloadByMember=new Map((workload?.items??[]).map(row=>[row.membershipId,row] as const));
  const people=sortTpoPeople(activeTeam.map(member=>({
