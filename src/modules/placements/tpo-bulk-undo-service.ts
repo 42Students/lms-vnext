@@ -74,8 +74,9 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
   }>;
   if(new Set(changed.map(row=>row.leadId)).size!==changed.length)
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
-  if(!Array.isArray(event.metadata.leadIds)||
-     changed.some(row=>!event.metadata.leadIds?.includes(row.leadId)))
+  const auditLeadIds=event.metadata.leadIds;
+  if(!Array.isArray(auditLeadIds)||
+     changed.some(row=>!auditLeadIds.includes(row.leadId)))
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
   const sorted=[...changed].sort((a,b)=>a.leadId.localeCompare(b.leadId));
   // The audit event row is locked before lead rows, serializing same-run undo attempts.
