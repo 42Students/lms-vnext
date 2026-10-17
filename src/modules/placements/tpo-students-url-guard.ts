@@ -2,7 +2,7 @@ import {TPO_STUDENT_VISIBLE_KEYS,validTpoColumnPreference} from "./tpo-grid-mode
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
-  const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","batchId","search","page","pageSize","columns","student"]);
+  const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","page","pageSize","columns","student"]);
   if(Object.keys(raw).some(key=>!supported.has(key))) return "Unsupported Students filter. No student data was loaded.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))
     return "The selected student is invalid. No student data was loaded.";
@@ -36,6 +36,8 @@ export function tpoStudentFilterMessage(raw:Record<string,string|string[]|undefi
   if(typeof value==="string"&&(!/^(?:[0-9]|10)(?:\\.[0-9]{1,2})?$/.test(value)||Number(value)>10))
    return "CGPA must be between 0 and 10 (up to two decimal places).";
  }
+ if(typeof raw.cgpaRecorded==="string"&&!["YES","NO"].includes(raw.cgpaRecorded))
+  return "CGPA recorded filter must be Yes or No.";
  if(typeof raw.offerWaiting==="string"&&!["YES","NO"].includes(raw.offerWaiting))
   return "Offer waiting filter must be Yes or No.";
  for(const key of ["minApplications","maxApplications","minOffers","maxOffers"]){
