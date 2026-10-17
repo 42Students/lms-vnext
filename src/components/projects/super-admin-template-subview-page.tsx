@@ -198,6 +198,11 @@ export async function SuperAdminTemplateSubviewPage({
         }
       />
 
+      {detail.template.status==="PUBLISHED"?
+        <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          Use this template · Create workspace →
+        </Link>:null}
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
