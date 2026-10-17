@@ -1,6 +1,2 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <GracefulPageLoading />;
-}
+import Link from "next/link";
+export default function MentorProjectsLoading(){return <section role="status" aria-busy="true" className="space-y-3 rounded-xl border border-border bg-surface p-6"><p className="font-semibold text-foreground">Checking Projects access…</p><p className="text-sm text-body">Loading your assigned Project workspaces. This does not mean Projects is disabled.</p><Link href="/mentor/notifications" className="inline-flex min-h-11 items-center text-primary-text underline">View notifications</Link></section>}
