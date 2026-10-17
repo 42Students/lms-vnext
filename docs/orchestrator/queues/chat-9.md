@@ -89,3 +89,24 @@ Started by fast-forwarding this builder branch to the latest merged main. Every 
 - BLOCKED TPO-calendar-reports-31: remaining report-specific Company/Mode/Pay category dimensions require scoped source integrations across other report producers.
 - BLOCKED Security-sensitive owner decisions, provider secrets, production DNS/TLS, browser/live acceptance and correctness tests remain excluded under FAST mode.
 
+
+
+## FAST v2 continuation 4 — post migration 0131 (2026-10-17)
+
+Synchronized chat-9-b with origin/main containing registered `drizzle/0131_placement_tpo_job_types_canonical.sql`. All the following are **source changes only**, pushed after file groups with [chat-9] gap tags; no tests/lint/typecheck/build/CI were run.
+
+- WP-04 TPO-settings-audit-20: persisted per-college hide/show override for the five fixed built-in job types, defaults virtual until explicitly changed; restricted the custom-status and rename endpoints from modifying fixed types.
+- WP-04 TPO-settings-audit-21: create custom types with required persisted counts-as-placed choice, read both canonical fields, and edit custom placement counting via optimistic, audited updates.
+- WP-04 TPO-settings-audit-22: 30-type cap excludes built-in overrides; last-visible safeguard counts all fixed and custom choices, even when fixed defaults have no row.
+- WP-04 TPO-settings-audit-40: college-scoped editable average prep-progress threshold (0..100) using the existing prep_threshold_pct column, audit and guarded update.
+- WP-04 TPO-settings-audit-71: four college email notice preferences using registered booleans, server validation, audit, legacy text and always-on categories; provider delivery not implied.
+- WP-07 TPO-settings-audit-56: expired active recruiter grants show Give access again (under the existing recorded-expiry policy).
+- WP-07/08 TPO-settings-audit-92: authorized Who actor-name filter separate from general query, propagated to CSV and page URLs; IST quick filters share stable date-key formatter.
+- BLOCKED TPO-settings-audit-20/21/22/23: existing drive form/report consumer integration and historical job-type FK/usage totals need the chat-5 source owner; persisted settings alone cannot reinterpret offers or delete in-use types.
+- BLOCKED TPO-settings-audit-40/41: per-student average course progress requires an authoritative course completion producer before Needs prep can be enforced.
+- BLOCKED TPO-settings-audit-50/51: skip-approval/early-recruiter-view toggles are security-sensitive without an end-to-end permission gate.
+- BLOCKED TPO-settings-audit-52/56: No end date unsupported by fail-closed recruiter grant expiry authorization.
+- BLOCKED TPO-settings-audit-70/71/80/81: outbound SMS/email provider statuses, per-template send suppression, user preferences and email templating remain unavailable or independently owned; no delivery claims.
+- BLOCKED TPO-settings-audit-92: richer cross-source Drives/Recruiters/Students/Offers entity facets require a canonical attribution read model, not invented grouping.
+- BLOCKED Live acceptance, production DNS/TLS, external service credentials, high-impact owner decisions and remaining WPs already marked source-pass DONE are not certified by this run.
+
