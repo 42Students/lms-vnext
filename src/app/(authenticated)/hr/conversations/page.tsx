@@ -78,7 +78,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
     {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
       <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
       <p className="mt-2 text-sm text-body">Placement cell · General</p>
-      {generalThread.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+      {generalThread.preview&&!generalHistory?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
       </p>:null}
       {generalHistory?<ol aria-label="General placement-cell messages" className="mt-3 max-h-72 space-y-2 overflow-y-auto">
