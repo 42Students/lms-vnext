@@ -27,8 +27,8 @@ export function TpoDeleteDraftAction({jobId,updatedAt}:{jobId:string;updatedAt:s
   });
  }
  return <section className="space-y-2 rounded-md border border-border p-3" aria-label="Delete unpublished draft">
-  <h3 className="font-semibold">Delete draft</h3>
-  <p className="text-sm text-body">It was never published. You can archive this unused draft without removing historical records. A draft with applications cannot be deleted.</p>
+  <h3 className="font-semibold">Delete this draft?</h3>
+  <p className="text-sm text-body">It was never published, so no student has seen it. It is removed from your drives.</p>
   <label className="flex items-start gap-2 text-sm text-body"><input type="checkbox"
    checked={reviewed} disabled={pending} onChange={event=>setReviewed(event.target.checked)}
    className="mt-1 h-4 w-4 accent-primary"/>
