@@ -60,6 +60,8 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   expect(err).toContain("We couldn&apos;t load this share");
   expect(err).toContain("onClick={reset}");
   expect(err).toContain("Retry");
+  expect(share()).toContain("This link is not valid any more.");
+  expect(share()).toContain("It may have expired or been withdrawn. Please ask the placement cell for a new one.");
  });
  it("PUB-auth-public-62 marketing home contains role audience and JSON-LD",()=>{
   const page=src("src/app/home/page.tsx");
