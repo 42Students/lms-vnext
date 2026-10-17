@@ -19,3 +19,11 @@ Protocol: `docs/orchestrator/briefs/gap-closure-lane.md`, checklist `docs/audit/
 | GR-91 | DONE | Retry buttons are native keyboard focusable, test `GR-91 Retry is keyboard-accessible in all three role error screens` |
 
 Open per-page items: complete apiFetch/guarded-action/draft adoption in other subflows; card-level partial failures, restored draft conflict re-application and per-field error accessibility. Shared chat-14 helpers are now on main and are reused where this evidence claims. **No browser acceptance has been executed; accessibility/contrast remains unverified.**
+
+| GR-04 | DONE (TPO deadline form) | `src/components/placements/tpo-drive-deadline-form.tsx` now uses `apiFetch`; named test `GR-04 TPO-drives-15 deadline mutation handles non-JSON and 5xx responses` in `tests/unit/tpo-drives-chat-3-round4.test.ts`. No suite executed. |
+| GR-30 | DONE (TPO deadline form) | Guarded action lock; named test `GR-30 TPO-drives-15 deadline mutation uses guarded pending lock`. |
+| GR-35 | DONE (TPO deadline form) | Replace browser confirm with accessible `ConfirmDialog`; named test `GR-35 TPO-drives-15 deadline consequences use accessible ConfirmDialog`. |
+
+| GR-04 / GR-30 / GR-35 | DONE (clone action only) | `tpo-drive-clone-action.tsx` now uses friendly `apiFetch`, `useGuardedAction` and accessible `ConfirmDialog`. Named tests `TPO-drives-26 cloning requires an accessible confirmation and safe JSON response` and `GR-35 TPO-drives-26 clone confirmation does not use window.confirm`. Tests not executed. |
+
+| GR-04 / GR-30 / GR-35 | DONE (TPO edit draft form) | `tpo-drive-edit-form.tsx` now handles JSON/network failures with `apiFetch`, duplicate action prevention with `useGuardedAction`, accessible `ConfirmDialog`. Named tests GR-04, GR-30, GR-35 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Tests not executed. |
