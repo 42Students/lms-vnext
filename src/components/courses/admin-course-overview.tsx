@@ -429,7 +429,7 @@ export function AdminCourseOverview({
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="min-w-0 space-y-8">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Courses"
@@ -479,9 +479,9 @@ export function AdminCourseOverview({
         </div>
         {catalogue&&catalogueQuery?<form method="get" action={courseBasePath}
          className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
-         <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Search courses
+         <label className="grid min-w-0 flex-[1_1_14rem] gap-1 text-sm font-semibold">Search courses
           <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
-           placeholder="Name, code or department" className="min-h-10 rounded border border-border bg-background p-2"/>
+           placeholder="Name, code or department" className="min-h-10 min-w-0 w-full rounded border border-border bg-background p-2"/>
          </label>
          <label className="grid gap-1 text-sm font-semibold">Sort
           <select name="sort" defaultValue={catalogueQuery.sort}

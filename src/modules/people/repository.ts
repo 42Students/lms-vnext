@@ -29,6 +29,7 @@ import {
 import type { MembershipManagementRepository } from "./membership-service";
 import { PeopleServiceError } from "./errors";
 import {assertMutableMembershipTarget} from "./membership-protection";
+import {activeMentorProjectCount} from "./active-mentor-project-guard";
 import type {
   CollegePeoplePage,
   OnboardedPerson,
@@ -807,6 +808,10 @@ export const drizzlePeopleRepository:
       assertMutableMembershipTarget(mutation.context,{
         userId:mutation.person.user.id,roles:lockedRoles.map(row=>row.role),
       },input.action);
+      if(input.action==="SUSPEND"||input.action==="END"){
+        if(await activeMentorProjectCount(tx,membershipId)>0)
+          throw new PeopleServiceError("FACULTY_HAS_ACTIVE_PROJECTS");
+      }
       const patch = getMembershipLifecyclePatch(
         current,
         input,

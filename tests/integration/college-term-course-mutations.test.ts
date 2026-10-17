@@ -89,7 +89,7 @@ describe.skipIf(!enabled)("College Admin term-course CRUD PG, scoped guards", ()
       .rejects.toMatchObject({ code: "TERM_COURSE_DUPLICATE" });
   });
   it("rejects cross-college, wrong role, and foreign semester target", async () => {
-    const body = { programTermId: ids.term, courseId: ids.course, type: "ELECTIVE", credits: null };
+    const body = { programTermId: ids.term, courseId: ids.course, type: "ELECTIVE", credits: 3 };
     await expect(addCollegeTermMapping(foreign, body)).rejects.toMatchObject({ code: "TERM_NOT_FOUND" });
     await expect(addCollegeTermMapping(learner, body)).rejects.toBeInstanceOf(AuthorizationError);
     await expect(removeCollegeTermMapping(foreign, createdMapping!, { confirm: true }))

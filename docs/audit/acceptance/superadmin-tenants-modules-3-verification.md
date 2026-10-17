@@ -25,3 +25,5 @@ side effects and authorization must be executed by the orchestrator.
  
 Remaining unclosed work includes SA-tenants-modules-43/45/46/47/48/49/50/53/54/57/60/64/67/68 and other unverified audit rows. These are not BLOCKED merely because they require significant implementation.
 | SA-tenants-modules-67 | DONE | `src/modules/verification/review-reasons.ts`, `src/components/verification/VerificationReviewDrawer.tsx`, `SuperAdminVerificationPanel.tsx`, `TpoVerificationPanel.tsx`; `tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts` test `SA-tenants-modules-67`: section-specific presets, correctly titled send-back confirmation, and persisted-decision success feedback. |
+| SA-tenants-modules-43 | DONE | `activity-center.tsx` shows actor/action/subject sentences, day grouping, tone and sanitized expandable metadata; `tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts` test `SA-tenants-modules-43`. |
+| SA-tenants-modules-45 | DONE | `activity/service.ts` counts older scoped events for 50-row pages and activity center renders remaining count; `tests/unit/chat4-super-admin-tenants-modules-gap-closure.test.ts` test `SA-tenants-modules-45`. |

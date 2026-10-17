@@ -5,7 +5,7 @@ const credits = z.number().int().min(0).max(1000).nullable();
 
 export const createCollegeSemesterSchema = z.object({
   programId: z.string().uuid(),
-  termNumber: z.number().int().min(1).max(24),
+  termNumber: z.number().int().min(1).max(12),
   name: semesterName,
   totalCredits: credits.optional(),
 }).strict();
@@ -26,7 +26,7 @@ export const semesterIdSchema = z.string().uuid();
 
 export function canCreateSemesterTerm(termNumber: number, durationTerms: number) {
   return Number.isInteger(termNumber) && termNumber >= 1 &&
-    termNumber <= durationTerms;
+    termNumber <= Math.min(durationTerms,12);
 }
 
 export type CreateCollegeSemesterInput = z.infer<typeof createCollegeSemesterSchema>;

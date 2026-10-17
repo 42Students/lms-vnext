@@ -15,6 +15,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  const [open,setOpen]=useState(false),[courseKey,setCourseKey]=useState("");
  const [lessonKey,setLessonKey]=useState(""),[continued,setContinued]=useState(false);
  const [error,setError]=useState<string|null>(null);
+ const [draftDirty,setDraftDirty]=useState(false);
  const name=kind==="QUIZ"?"Quiz":"Assignment";
  const courses=useMemo(()=>[...new Map(lessons.map(item=>[item.deliveryId,{
   deliveryId:item.deliveryId,name:item.courseCode+" · "+item.courseName+" · "+item.sectionName,
@@ -24,6 +25,11 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  const lesson=lessonChoices.find(item=>item.lessonId===lessonKey)??(lessonChoices.length===1?lessonChoices[0]:null);
  function selectCourse(value:string){setCourseKey(value);setLessonKey("");setContinued(false);setError(null);}
  function selectLesson(value:string){setLessonKey(value);setContinued(false);setError(null);}
+ function closeDrawer(next:boolean){
+   if(!next && draftDirty && !window.confirm(kind==="QUIZ"?"Discard this quiz draft?":"Discard this assignment draft?"))return;
+   setOpen(next);
+   if(!next){setContinued(false);setError(null);setDraftDirty(false);}
+ }
  function start(){if(!course||!lesson){setError("Select a course and lesson first.");return;}setContinued(true);setError(null);}
  return <>
   <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
@@ -35,7 +41,7 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
   {!courses.length?<p role="status" className="text-sm text-muted-foreground">
    No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.
   </p>:null}
-  <Drawer open={open} onOpenChange={value=>{setOpen(value);if(!value){setContinued(false);setError(null);}}}
+  <Drawer open={open} onOpenChange={closeDrawer}
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder.">
    <div className="space-y-4">
@@ -61,14 +67,15 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
     </div>
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     {!continued?<Button onClick={start} disabled={!course||!lesson}>Continue</Button>:null}
-    {continued&&lesson&&course?<FacultyLessonAuthoring
+    {continued&&lesson&&course?<div onInputCapture={()=>setDraftDirty(true)} onChangeCapture={()=>setDraftDirty(true)}><FacultyLessonAuthoring
       key={course.deliveryId+":"+lesson.lessonId+":"+kind}
       lessonId={lesson.lessonId} deliveryId={course.deliveryId}
       initialMode={kind} availableModes={[kind]}
       nextContentSequence={lesson.nextSequence}
       nextAssignmentSequence={lesson.nextSequence}
       nextQuizSequence={lesson.nextSequence}
-    />:null}
+      onSaved={()=>setDraftDirty(false)}
+    /></div>:null}
    </div>
   </Drawer>
  </>;

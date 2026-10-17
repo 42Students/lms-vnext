@@ -2,6 +2,7 @@ import { collegeDirectoryValidationMessage } from "@/modules/academics/college-d
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeSlotManager } from "@/components/electives/college-slot-manager";
 import { listCollegeElectiveSlotOptions } from "@/modules/electives/college-slot-mutation-service";
@@ -19,6 +20,14 @@ export default async function CollegeElectivesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership) redirect("/dashboard");
+  const moduleAccess=await resolveOptionalModuleAccess(context);
+  if(!moduleAccess.electives.enabled)return <main role="status" className="space-y-3 rounded-xl border border-border bg-surface p-6">
+    <h1 className="text-xl font-semibold">Electives is turned off for this college</h1>
+    <p className="text-sm text-body">Your college administrator can ask 42Students to switch Electives back on.
+      Existing elective records are kept; this page cannot create or change electives while the module is off.</p>
+    <Link href="/college" className="text-sm font-semibold text-primary-text underline">Return to college dashboard</Link>
+  </main>;
+
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeElectiveQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">

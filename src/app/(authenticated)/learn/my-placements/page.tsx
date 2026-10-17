@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {LearnerPlacementRegistration} from "@/components/placements/learner-placement-registration";
@@ -522,6 +524,8 @@ export default async function LearnerPlacementsPage({
             preferences.notifyApplicationUpdates,
         }}
       /> : null}
+
+      {(await placementTableExists("placement_learner_general_requests"))?<LearnerGeneralRequests/>:null}
 
       {rows ? <section className="space-y-3">
         <div>
