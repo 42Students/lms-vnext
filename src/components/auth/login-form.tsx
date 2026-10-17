@@ -310,7 +310,7 @@ export function LoginForm({
 
       {!attempt ? (
         <form onSubmit={start} className="mt-5 space-y-4" noValidate>
-          <div
+          {allowedChannels.length>1?<div
             role="tablist"
             aria-label="Sign in method"
             className="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1"
@@ -358,10 +358,11 @@ export function LoginForm({
                 {value === "PHONE" ? "Phone" : "Email"}
               </button>
             ))}
-          </div>
+          </div>:null}
 
-          <div id="login-method-panel" role="tabpanel"
-            aria-labelledby={`login-tab-${channel.toLowerCase()}`}>
+          <div id="login-method-panel"
+            role={allowedChannels.length>1?"tabpanel":undefined}
+            aria-labelledby={allowedChannels.length>1?`login-tab-${channel.toLowerCase()}`:undefined}>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {channel === "PHONE" ? "Mobile number" : "Email"}
