@@ -84,7 +84,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   <div className="flex flex-wrap items-center justify-between gap-2">
    <div><h2 className="font-semibold">Quizzes</h2>
     <p className="text-xs text-muted-foreground">Author questions for all eligible Sections or a specific Section.</p></div>
-   <button type="button" disabled={!lessons.length||busy} onClick={()=>setOpened(true)}
+   <button type="button" disabled={!lessons.length||busy} onClick={()=>{setError("");setNotice("");setOpened(true);}}
     className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text">
     Create New Quiz</button>
   </div>
