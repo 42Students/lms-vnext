@@ -18,6 +18,7 @@ import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartm
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
 import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-batch-sort-model";
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
+import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 export const dynamic="force-dynamic";
 
 export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[]}>}){
@@ -56,7 +57,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Make placement eligibility decisions cohort by cohort. This list does not guess inherited learner eligibility."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
-   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Planning</option><option value="INVITED">Invited</option><option value="FINISHED">Finished</option></select></label>
+   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Not started</option><option value="INVITED">Invited / registration open</option><option value="FINISHED">Finished</option></select></label>
    <label className="text-sm">Program<select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
    <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
    <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
@@ -89,7 +90,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
     <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id} className="text-primary-text underline">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
-    <p className="text-xs text-muted-foreground">{data.ready?batchDirectoryState(b):"Lifecycle pending"}</p>
+    <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     <p className="text-xs text-muted-foreground">{tpoBatchDeadlineLabel(b.deadline,data.ready)}</p>
     {(() => {
       const summary = eligibility.get(b.id);
