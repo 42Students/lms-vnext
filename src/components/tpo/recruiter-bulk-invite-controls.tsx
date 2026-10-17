@@ -8,7 +8,6 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [results,setResults]=useState<Entry[]>([]);
  const [notice,setNotice]=useState("");
- const [sendEmail,setSendEmail]=useState(false);
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
  async function createLinks(target:readonly TpoBulkInviteCandidate[]){
   if(busy||target.length===0||target.length>100)return;
@@ -18,15 +17,14 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    try{
     const response=await fetch("/api/placements/tpo/leads/"+encodeURIComponent(lead.id)+"/invite",{
      method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({collegeId,sendEmail}),
+     body:JSON.stringify({collegeId,sendEmail:false}),
     });
     if(!response.ok)throw new Error(response.status===503?"Invite storage unavailable":
      response.status===409?"Contact is no longer eligible":"Link creation failed");
     const payload=await response.json() as {invite?:{token?:string;emailed?:boolean}};
-    if(sendEmail&&!payload.invite?.emailed)throw new Error("Email not accepted");
-    if(!sendEmail&&!payload.invite?.token)throw new Error("No invite token returned");
+    if(!payload.invite?.token)throw new Error("No invite token returned");
     outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
-     url:sendEmail?null:window.location.origin+"/recruiter-invite/"+encodeURIComponent(payload.invite!.token!),reason:null,emailed:sendEmail});
+     url:window.location.origin+"/recruiter-invite/"+encodeURIComponent(payload.invite.token),reason:null,emailed:false});
    }catch(e){outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
     url:null,reason:e instanceof Error?e.message:"Could not create link",emailed:false});}
   }
@@ -45,20 +43,20 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
   </button>
   {open?<div className="mt-3 space-y-3">
    <p className="text-sm text-body">Review recipients before issuing new invites. Email sending requires the approved delivery configuration and is restricted to allowlisted addresses outside production.</p>
-   <label className="flex items-center gap-2 text-sm">
-    <input type="checkbox" checked={sendEmail} disabled={busy} onChange={e=>setSendEmail(e.target.checked)}/>
-    Send invitations by email through the configured provider (otherwise prepare copyable links)
-   </label>
+   <p className="text-xs text-muted-foreground">
+    The configured email provider does not currently confirm delivery of recruiter invitations.
+    Create one-time links only, then share them directly. This will not send any email.
+   </p>
    <p className="text-sm">{eligible.length} eligible · {rows.length-eligible.length} left out</p>
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
     {rows.map(row=><li key={row.id}>{row.name} · {bulkInviteDisposition(row)??"Ready"}</li>)}
    </ul>
    <button type="button" disabled={busy||eligible.length===0||eligible.length>100}
     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-    onClick={()=>void createLinks(eligible)}>{busy?"Working…":sendEmail?"Email "+eligible.length+" invitations":"Create "+eligible.length+" invite links"}</button>
+    onClick={()=>void createLinks(eligible)}>{busy?"Working…":"Create "+eligible.length+" invite links"}</button>
    {eligible.length>100?<p role="alert" className="text-sm">Select at most 100 eligible recruiters.</p>:null}
    {results.length>0?<div aria-live="polite" className="space-y-2">
-    <p className="text-sm">{results.filter(item=>item.url).length} links · {results.filter(item=>item.emailed).length} provider accepted · {failed.length} failed</p>
+    <p className="text-sm">{results.filter(item=>item.url).length} links · No invitation emails sent · {failed.length} failed</p>
     {linkLines?<><label className="block text-sm">Fresh links
       <textarea readOnly value={linkLines} rows={5} className="mt-1 w-full rounded border border-border p-2 text-xs"
        onFocus={event=>event.currentTarget.select()}/>
