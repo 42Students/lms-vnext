@@ -139,4 +139,12 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   expect(feedback).toContain("This changed while you were working.");
  });
 
+ it("GR-34 TPO-inbox-team-21 validates a stable UUID key and rejects unsupported payload fields",async()=>{
+  const {internalMessageSchema}=await import("@/modules/placements/tpo-team-internal-model");
+  const threadId="10000000-0000-4000-8000-000000000001";
+  expect(internalMessageSchema.safeParse({threadId,body:"Hello",idempotencyKey:"20000000-0000-4000-8000-000000000002"}).success).toBe(true);
+  expect(internalMessageSchema.safeParse({threadId,body:"Hello",idempotencyKey:"invalid"}).success).toBe(false);
+  expect(internalMessageSchema.safeParse({threadId,body:"Hello",collegeId:threadId}).success).toBe(false);
+ });
+
 });
