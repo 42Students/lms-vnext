@@ -19,6 +19,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  const [error,setError]=useState<string|null>(null);
  const today=nowInIst();
  async function submit(event:FormEvent<HTMLFormElement>){
+  const form=event.currentTarget;
   const current=nowInIst();
   if(!start||!end){event.preventDefault();setError("Select both interview start and end times.");return;}
   if(start<current){event.preventDefault();setError("Interview time must be in the future (IST).");return;}
@@ -28,7 +29,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   setError(null);setNotice(null);setSubmitting(true);
   try{
    const response=await fetch(action,{
-    method:"POST",body:new FormData(event.currentTarget),credentials:"same-origin",
+    method:"POST",body:new FormData(form),credentials:"same-origin",
    });
    const expectedPath=action.replace(/^\/api\/placements\/recruiter/,"/recruiter");
    const target=new URL(response.url);
@@ -42,7 +43,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
       "Could not propose this slot. Check the details and retry.");
     return;
    }
-   setStart("");setEnd("");event.currentTarget.reset();
+   setStart("");setEnd("");form.reset();
    setNotice("Interview time block proposed. Waiting for placement-cell coordination.");
    router.refresh();
   }catch{
