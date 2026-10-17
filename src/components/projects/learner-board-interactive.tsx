@@ -48,7 +48,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   finally{setBusy(false);}
  }
  async function pull(task:Task,sprintId:string){
-  if(busy||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
+  if(busy||readOnly||!membershipId||task.assigneeMembershipId!==membershipId||task.sprintId!==null||
     !window.confirm('Pull "'+task.title+'" into the active sprint?'))return;
   setBusy(true);setError("");
   try{
