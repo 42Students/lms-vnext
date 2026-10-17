@@ -6,7 +6,8 @@ import {Textarea} from "@/components/ui/textarea";
 import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
  type ProjectTaskCommentKind} from "@/modules/projects/task-comment-kind-staged";
-type Comment={id:string;body:string;createdAt:string;authorMembershipId:string;authorName:string|null};
+type Comment={id:string;body:string;commentKind:ProjectTaskCommentKind;createdAt:string;
+ authorMembershipId:string;authorName:string|null};
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
