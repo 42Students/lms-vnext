@@ -56,7 +56,7 @@ export default async function TpoReportsPage({
   const groups = [
     {
       heading: "Overview and performance",
-      description: "Season outcomes, applications, offers and placement performance.",
+      description: "Start with the college-wide picture, then compare branches, companies and compensation."
       cards: [
         {
           title: "Placement summary",
@@ -94,9 +94,9 @@ export default async function TpoReportsPage({
       ],
     },
     {
-      heading: "Student outcomes",
+      heading: "Offers, joining and readiness gaps",
       description:
-        "Unplaced placement-pool learners, offer decisions and recorded joining outcomes.",
+        "Understand who is still unplaced, what happened to offers, and where students are dropping out of the funnel.",
       cards: [
         {
           title: "Unplaced students",
@@ -135,9 +135,9 @@ export default async function TpoReportsPage({
       ],
     },
     {
-      heading: "Relationships and compliance",
+      heading: "Recruiter funnel and accreditation",
       description:
-        "Company-level placement outcomes and performance.",
+        "Measure employer engagement and export the formal data required for accreditation workflows.",
       cards: [
         {
           title: "By company",
@@ -259,6 +259,7 @@ export default async function TpoReportsPage({
                   <h3 className="font-semibold text-primary-text">
                     {card.title}
                   </h3>
+                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-primary-text">Start here</p>:null}
                   <p className="mt-2 text-sm leading-6 text-body">
                     {card.description}
                   </p>

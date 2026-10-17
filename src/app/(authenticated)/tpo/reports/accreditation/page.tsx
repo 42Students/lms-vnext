@@ -10,6 +10,7 @@ import {getPlacementAccreditationReport} from "@/modules/placements/report-accre
 import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {accreditationStudentCompleteness} from "@/modules/placements/tpo-accreditation-completeness";
+import {accreditationPackageLpa,accreditationOfferStatusLabel,accreditationJoiningLabel} from "@/modules/placements/tpo-accreditation-students-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -115,7 +116,8 @@ export default async function TpoAccreditationReportPage({
            <th key={h} scope="col" className="border-b px-3 py-2">{h}</th>)}</tr></thead>
           <tbody>{studentReport.rows.slice(0,50).map(student=><tr key={student.membershipId} className="border-b">
            {[student.name,student.rollNumber,student.programme,student.branch,student.batch,
-            student.employer,student.packageInr,student.offersHeld,student.offerStatus,student.joining].map((value,index)=>
+            student.employer,accreditationPackageLpa(student.packageInr),student.offersHeld,
+            accreditationOfferStatusLabel(student.offerStatus),accreditationJoiningLabel(student.joining)].map((value,index)=>
             <td key={index} className="px-3 py-2">{value??"—"}</td>)}
           </tr>)}</tbody>
          </table>
