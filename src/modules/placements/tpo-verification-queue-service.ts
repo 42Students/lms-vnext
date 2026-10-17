@@ -37,6 +37,18 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   collegeId,organizationId:college.organizationId,
   tpoVerificationAdministrator:true,tpoVerificationEnabled:true,
  });
+ const academicMembers=query&&(query.batchId||query.branchId)?getDb()
+  .select({membershipId:learnerProgramEnrollments.membershipId})
+  .from(learnerProgramEnrollments)
+  .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+  .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),eq(programs.id,cohorts.programId)))
+  .innerJoin(departments,eq(departments.id,programs.departmentId))
+  .where(and(
+   eq(departments.collegeId,collegeId),
+   eq(learnerProgramEnrollments.status,"ACTIVE"),
+   ...(query.batchId?[eq(cohorts.id,query.batchId)]:[]),
+   ...(query.branchId?[eq(departments.id,query.branchId)]:[]),
+  )):null;
  const records=await getDb().select({
   id:profileVerifications.learnerMembershipId,status:profileVerifications.status,
   section:profileVerifications.section,submittedAt:profileVerifications.submittedAt,
@@ -54,6 +66,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
     inArray(profileVerifications.status,tpoVerificationStatuses(query)),
     ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
     ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
+    ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
    ]:[])))
   .orderBy(desc(profileVerifications.submittedAt))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
