@@ -14,7 +14,7 @@ describe("Faculty zero-point participation assignments",()=>{
   expect(facultyAssignmentDraftIssue({title:"Participation",description:"Review",maxPoints:0})).toBeNull();
   for(const value of [-1,0.5,1001])expect(facultyAssignmentDraftIssue({title:"Participation",description:"Review",maxPoints:value})).not.toBeNull();
   expect(src("src/db/schema/assessments.ts")).toContain("between 0 and 10000");
-  expect(src("docs/proposed-migrations/faculty-assessments-participation-zero-points.sql")).toContain("max_points BETWEEN 0 AND 10000");
+  expect(src("docs/proposed-migrations/registered-0135/faculty-assessments-participation-zero-points.sql")).toContain("max_points BETWEEN 0 AND 10000");
   for(const path of ["src/components/courses/faculty-assignment-editor.tsx","src/components/courses/faculty-lesson-authoring.tsx"])expect(src(path)).toContain("min={0}");
  });
 });

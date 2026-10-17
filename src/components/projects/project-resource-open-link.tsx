@@ -19,7 +19,7 @@ export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
   const popup=window.open(safe??"","_blank");
   if(popup)popup.opener=null;
   if(!popup){
-   setNotice("Your browser blocked the resource window. Allow pop-ups for this site to open resources.");
+   setNotice("Your browser blocked the new tab. Allow pop-ups for this site to open resources, or use the safe link below.");
   }else setNotice("");
  }
  return <div className="mt-3 space-y-2 text-sm">

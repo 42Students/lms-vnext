@@ -14,6 +14,7 @@ const roleLayouts = [
   {
     path: "src/app/(authenticated)/tpo/layout.tsx",
     guard: "canOpenTpoWorkspace(context)",
+    redirect: 'redirect(deniedPortalHome(context))',
   },
   {
     path: "src/app/(authenticated)/hr/layout.tsx",
@@ -40,7 +41,7 @@ describe("role workspace route guards", () => {
         roleLayout.guard,
       );
       expect(content).toContain(
-        'redirect("/dashboard")',
+        "redirect" in roleLayout ? roleLayout.redirect : 'redirect("/dashboard")',
       );
     });
   }

@@ -61,6 +61,7 @@ describe("COL-placements-15 archived company query integrity",()=>{
   expect(parsed.success).toBe(true);
   if(!parsed.success)return;
   expect(collegeCompaniesHref(parsed.data)).toBe("/college/companies");
-  expect(literalCompanySearch("A_B%")).toBe("%A\\\\_B\\\\%%");
+  // SQL LIKE escaping uses exactly one backslash per literal wildcard.
+  expect(literalCompanySearch("A_B%")).toBe("%A\\_B\\%%");
  });
 });
