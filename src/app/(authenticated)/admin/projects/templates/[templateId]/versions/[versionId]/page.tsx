@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectTemplateView } from "@/components/projects/project-template-view";
+import {SuperAdminTemplateRollbackControl} from "@/components/projects/super-admin-template-rollback-control";
+import {can} from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { templateVersionComparisonParamsSchema } from "@/modules/projects/template-version-comparison-model";
 import { getSuperAdminTemplateVersionComparison } from "@/modules/projects/template-version-comparison-service";
@@ -36,6 +38,10 @@ export default async function TemplateVersionComparisonPage({ params }: {
         </div>
       </article>)}
     </section> : <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">No content differences from the current version.</p>}
+    {can(context,"project-template.manage")?<SuperAdminTemplateRollbackControl
+      templateId={detail.template.id} selectedVersion={{
+        id:detail.selected.id,version:detail.selected.version,title:detail.selected.title,
+      }} currentVersion={detail.template.currentVersion} status={detail.template.status}/>:null}
     <section aria-label="Selected version snapshot"><h2 className="text-lg font-semibold text-foreground">Version {detail.selected.version} snapshot</h2>
       <ProjectTemplateView blueprint={detail.selected.blueprint} />
     </section>
