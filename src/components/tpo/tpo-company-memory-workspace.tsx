@@ -212,6 +212,10 @@ export function TpoCompanyMemoryWorkspace({
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
             Company link and trusted settings
           </Link>:null}
+          {company.canonicalCompanyId?<Link className={buttonStyle}
+            href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)+"/team"}>
+            Open in Team
+          </Link>:null}
           <Link className={buttonStyle} href={"/tpo/recruiters?add=1&company=" + encodeURIComponent(company.name)}>
             Add contact
           </Link>
