@@ -1,3 +1,4 @@
+import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -25,6 +26,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     listCollegeDriveApplicationFilters(context),
   ]);
   return <div className="space-y-6">
+    <SuperAdminDriveTabs jobId={jobId} active="Applications"/>
     <PageHeader eyebrow="Super Admin · Placements" title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="text-primary-text underline">Drive overview</Link>} />
