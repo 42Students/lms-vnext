@@ -220,4 +220,15 @@ describe("chat-3 Drives round 4",()=>{
   expect(edit).toContain("tpoDriveFormErrorMessage(reason)");
  });
 
+ it("TPO-drives-49 closed drive has immutable explanation, clone path and retriable read boundary",()=>{
+  const page=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx");
+  const boundary=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/error.tsx");
+  const loading=source("src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/loading.tsx");
+  expect(page).toContain("This drive is closed: nothing here can be changed.");
+  expect(page).toContain('href="/tpo/placements/new"');
+  expect(boundary).toContain("Some drive setup data could not be loaded");
+  expect(boundary).toContain("<Button onClick={reset}>Retry</Button>");
+  expect(loading).toContain('aria-busy="true"');
+ });
+
 });
