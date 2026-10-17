@@ -79,7 +79,7 @@ export function CollegeClassCreate({ cohorts, periods }: {
             <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      : <form onSubmit={submit} className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program
           <select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">

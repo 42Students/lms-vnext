@@ -16,8 +16,8 @@ export default async function Page({params}:{params:Promise<{deliveryId:string}>
    description={workspace.course.courseName+" · "+workspace.course.sectionName}/>
   {workspace.lessons.length?<FacultyChoiceQuizBuilder deliveryId={deliveryId}
    lessons={workspace.lessons.map(l=>({id:l.id,name:l.name}))} quizzes={quizzes}/>:
-   <section className="rounded border border-border p-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
+   <section role="status" className="rounded border border-border p-4">No registered lessons are available for this Section. Publish a learning path first.</section>}
   <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)}
-   className="text-sm font-semibold text-primary-text">Back to course</Link>
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Back to course</Link>
  </div>;
 }

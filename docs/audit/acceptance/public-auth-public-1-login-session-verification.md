@@ -42,3 +42,5 @@ DONE below means implemented plus a named acceptance test written, **not that th
 `PUB-auth-public-20/21/22/23/24/26/29/30/31/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.
+
+| PUB-auth-public-39 | DONE | src/app/page.tsx, src/app/login/page.tsx, src/components/marketing/marketing-layout.tsx; tests/unit/public-auth-login-gap-verification.test.ts — `it("PUB-auth-public-39 routes visitors to marketing but preserves an explicit secure login")`. `/` on a platform host reaches the minimal `/home` landing when signed out, while `/login` and college sign-in preserve OTP. Tests authored, not executed. |

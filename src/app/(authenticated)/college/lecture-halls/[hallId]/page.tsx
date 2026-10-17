@@ -37,11 +37,11 @@ export default async function CollegeHallAvailabilityPage({ params, searchParams
   }
   const bookingOptions = result?.hall.status === "ACTIVE"
     ? await listRecurringPreviewOptions(await getCurrentRequestContext()) : null;
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Lecture halls" title={result?.hall.name ?? "Room availability"}
       description="Persisted scheduled bookings, not a guarantee of open slots or live room occupancy."
       actions={<Link href="/college/lecture-halls"
-        className="inline-flex min-h-10 items-center font-semibold text-primary-text">Back to lecture halls</Link>} />
+        className="inline-flex min-h-11 items-center font-semibold text-primary-text">Back to lecture halls</Link>} />
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-5">
       <label className="grid min-w-40 flex-1 gap-2 text-sm font-semibold text-body">From (IST)
         <input name="from" type="date" required defaultValue={typeof from === "string" ? from : ""}

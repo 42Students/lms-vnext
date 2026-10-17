@@ -1,5 +1,7 @@
 import "server-only";
 import {z} from "zod";
+import {getDb} from "@/db/client";
+import {activityEvents} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -35,5 +37,26 @@ export async function updateSuperAdminStudentRulesInBulk(context:RequestContext,
    applied.push(membershipId);
   }catch(e){failures.push({id:membershipId,error:e instanceof Error?e.message:"UPDATE_FAILED"});}
  }
- return {requested:input.membershipIds.length,applied:applied.length,failures};
+ // SA-tenants-modules-32: each learner edit already writes an immutable audit
+ // event. This additional bounded college summary makes bulk actions visible
+ // in the module history with the actual saved population, not the request size.
+ // A summary logging outage must not conceal successfully applied edits.
+ let auditRecorded=true;
+ if(applied.length>0){
+  try{
+   await getDb().insert(activityEvents).values({
+    collegeId:acting.collegeId,organizationId:acting.organizationId,
+    actorUserId:context.user.id,module:"PLATFORM",
+    eventType:"MODULE_ACCESS_BULK_SET",importance:"HIGH",
+    subjectType:"COLLEGE",subjectId:acting.collegeId,
+    summary:"Super Admin applied a bulk learner module rule",
+    metadata:{module:input.module,action:input.action,
+     studentCount:applied.length,requestedCount:input.membershipIds.length,
+     failedCount:failures.length},
+   });
+  }catch{auditRecorded=false;}
+ }
+ return {requested:input.membershipIds.length,applied:applied.length,failures,
+  auditRecorded,
+  ...(auditRecorded?{}:{auditWarning:"Individual learner changes were saved, but the bulk summary was not recorded. Review learner history."})};
 }

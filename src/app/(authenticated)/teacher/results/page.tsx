@@ -30,7 +30,7 @@ export default async function FacultyAssessmentResultsPage({
       description="Section-specific recorded response counts and scores from your current teaching assignments."
       actions={<div className="flex flex-wrap gap-2">
         <Link href="/teacher/response-followups"
-          className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Response follow-ups
         </Link>
         <Link href="/teacher/allAssignments"
@@ -42,12 +42,12 @@ export default async function FacultyAssessmentResultsPage({
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
         <input name="search" type="search" maxLength={120} defaultValue={data.query.search}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"
           placeholder="Assessment, course code or Section" />
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
@@ -55,7 +55,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Teaching Section
         <select name="deliveryId" aria-label="Teaching Section" defaultValue={data.query.deliveryId ?? ""}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="">All teaching sections</option>
           {data.sections.map(section => (
             <option key={section.deliveryId} value={section.deliveryId}>
@@ -66,14 +66,14 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Status
         <select name="status" defaultValue={data.query.status}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All</option>
           <option value="PUBLISHED">Published</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Due date
         <select name="due" defaultValue={data.query.due}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All due dates</option>
           <option value="OVERDUE">Past due, published</option>
           <option value="UPCOMING">Upcoming due</option>
@@ -82,7 +82,7 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Sort
         <select name="sort" defaultValue={data.query.sort}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="DUE_DESC">Latest due date</option>
           <option value="DUE_ASC">Earliest due date</option>
           <option value="TITLE">Assessment title</option>
@@ -90,26 +90,26 @@ export default async function FacultyAssessmentResultsPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Records per page
         <select name="pageSize" defaultValue={data.query.pageSize}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="5">5</option><option value="10">10</option>
         </select>
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Filter
       </button>
-      <Link href="/teacher/results" className="px-3 py-2 text-sm font-semibold text-primary-text">
+      <Link href="/teacher/results" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text">
         Clear
       </Link>
     </form>
     <div className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-sm text-body">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching Section-assessment record{data.total === 1 ? "" : "s"}</p>
       <Link href={facultyResultsCsvHref({...data.query,page:data.page})}
-       className="inline-flex min-h-10 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
        Export this page CSV (no learner names)
       </Link>
     </div>
     {data.items.length === 0 ? <div className="space-y-3"><EmptyState title={emptyState.title}
-      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Clear result filters</Link> : null}</div>
+      description={emptyState.description} />{emptyState.clearFilters ? <Link href="/teacher/results" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Clear result filters</Link> : null}</div>
       : <div className="grid gap-3">
         {data.items.map(item =>
           <article key={item.kind + ":" + item.deliveryId + ":" + item.id}
@@ -139,7 +139,7 @@ export default async function FacultyAssessmentResultsPage({
                 </div>)}
             </dl>
             <Link href={item.reportHref}
-              className="mt-4 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+              className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
               Open Section report →
             </Link>
           </article>)}
@@ -148,9 +148,9 @@ export default async function FacultyAssessmentResultsPage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyResultsHref({...data.query,page:data.page-1})}
-          className="text-sm font-semibold text-primary-text">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyResultsHref({...data.query,page:data.page+1})}
-          className="text-sm font-semibold text-primary-text">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">
