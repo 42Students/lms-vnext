@@ -173,7 +173,7 @@ export function LearnerPlacementOffers({
         tone: "success",
         title:
           action === "ACCEPT"
-            ? "Offer accepted"
+            ? "Congratulations! You accepted "+(offers.find(row=>row.offerId===offerId)?.companyName??"the company")+"'s offer."
             : "Offer declined",
         description:
           action === "ACCEPT"
