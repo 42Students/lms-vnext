@@ -754,7 +754,7 @@ export async function getLearnerCourseWorkspace(
       title: row.contentTitle!,
       notes: row.contentNotes,
       externalUrl:
-        contentAvailability === "AVAILABLE"
+        (contentAvailability === "AVAILABLE" || row.contentType === "LIVE_CLASS")
           ? row.contentExternalUrl
           : null,
       storageKey:

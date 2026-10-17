@@ -3,8 +3,8 @@ import {randomUUID} from "node:crypto";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema";
-import type {RequestContext} from "@/modules/identity/context";
-import {requirePermission} from "@/modules/permissions/policy";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {deleteObject,getObjectStream,headObject,presignUrl} from "@/modules/storage/s3-client";
@@ -23,6 +23,7 @@ async function scoped(ctx:RequestContext,rawId:unknown){
  const [college]=await getDb().select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status,
   logoObjectPath:colleges.logoObjectPath}).from(colleges).where(eq(colleges.id,id)).limit(1);
  if(!college||college.status!=="ACTIVE")throw new CollegeLogoError("COLLEGE_NOT_FOUND");
+ if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
  requirePermission(ctx,"college.manage",{collegeId:id,organizationId:college.organizationId});
  return college;
 }

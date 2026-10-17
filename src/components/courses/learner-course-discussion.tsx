@@ -73,8 +73,27 @@ export function LearnerCourseDiscussion({
     window.addEventListener("beforeunload",guard);
     return ()=>window.removeEventListener("beforeunload",guard);
   },[draft,posting]);
+  useEffect(()=>{
+    if(!draft.trim()&&!posting)return;
+    function guard(event:MouseEvent){
+      const target=event.target;
+      const link=target instanceof Element?target.closest("a[href]"):null;
+      if(!link||event.defaultPrevented||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+      const href=link.getAttribute("href");
+      if(!href||href.startsWith("#"))return;
+      try{
+        const destination=new URL(href,window.location.href);
+        if(destination.origin!==window.location.origin)return;
+        if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
+        if(!window.confirm("Discard your unsent discussion message?"))event.preventDefault();
+      }catch{return;}
+    }
+    document.addEventListener("click",guard,true);
+    return ()=>document.removeEventListener("click",guard,true);
+  },[draft,posting]);
   const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteTarget,setDeleteTarget]=useState<string|null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
   const [atBottom, setAtBottom] = useState(true);
@@ -281,7 +300,6 @@ export function LearnerCourseDiscussion({
   async function remove(messageId: string) {
     const current=messages.find(row=>row.id===messageId);
     if(!current){setModerationError("Message snapshot missing. Refresh and retry.");return;}
-    if (!window.confirm("Delete this message?")) return;
     setDeletingId(messageId);setModerationError(null);
     try {
       await apiFetch(
@@ -294,6 +312,7 @@ export function LearnerCourseDiscussion({
       locallyDeletedIds.current.add(messageId);
       setMessages((current) => current.filter((item) => item.id !== messageId));
       setHighlightedPinned((current) => current?.id === messageId ? null : current);
+      setDeleteTarget(null);
       await load(true);
     } catch(e) {
       setModerationError(e instanceof Error?e.message:"Discussion deletion failed.");
@@ -318,7 +337,7 @@ export function LearnerCourseDiscussion({
           body:JSON.stringify({expectedUpdatedAt:current.updatedAt,confirmed:true}) },
       );
       const updated = payload?.message;
-      if(updated?.id===highlightedPinned?.id && !updated.pinned)
+      if(updated && updated.id===highlightedPinned?.id && !updated.pinned)
         setHighlightedPinned(null);
       if (updated?.id) {
         setMessages((current) =>
@@ -378,6 +397,19 @@ export function LearnerCourseDiscussion({
         </section>
       ) : null}
 
+      {deleteTarget?<div role="dialog" aria-modal="true" aria-label="Delete this message?"
+        className="space-y-3 rounded-xl border border-warning bg-surface p-4">
+        <h3 className="font-semibold">Delete this message?</h3>
+        <p className="text-sm text-body">This cannot be undone.</p>
+        <div className="flex flex-wrap gap-2">
+          <button type="button" disabled={deletingId!==null}
+           onClick={()=>void remove(deleteTarget)} className="min-h-10 rounded border border-error px-4 text-sm font-semibold text-error">
+           {deletingId?"Deleting…":"Delete"}
+          </button>
+          <button type="button" disabled={deletingId!==null}
+           onClick={()=>setDeleteTarget(null)} className="min-h-10 rounded border border-border px-4 text-sm font-semibold">Cancel</button>
+        </div>
+      </div>:null}
       {moderationError?<p role="alert" className="text-sm text-error">
         {moderationError}
       </p>:null}
@@ -522,7 +554,7 @@ export function LearnerCourseDiscussion({
                         {(moderate || row.item.isMine) ? <button
                           type="button"
                           disabled={deletingId === row.item.id}
-                          onClick={() => void remove(row.item.id)}
+                          onClick={() => setDeleteTarget(row.item.id)}
                           className="text-xs font-semibold text-error hover:underline disabled:opacity-50"
                         >
                           {deletingId === row.item.id ? "Deleting…" : "Delete"}

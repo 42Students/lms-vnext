@@ -28,7 +28,7 @@ export function LearnerVideoPlayer({
   const activeRef = useRef<AbortController | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const selectedId = useRef<string | null>(null);
-  const seekRef = useRef(initialPositionSeconds);
+  const seekRef = useRef(completed ? 0 : initialPositionSeconds);
   const shouldPlayRef = useRef(false);
   const failureRefreshRef = useRef(0);
   const hasPlaybackGrantRef = useRef(false);

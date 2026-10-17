@@ -40,6 +40,9 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  legacyStage?:string|string[];minRoundReached?:string|string[];needsAttention?:string|string[];
+  minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
+  passingYear?:string|string[];maxGapYears?:string|string[];marksVerified?:string|string[];isLateralEntry?:string|string[];
   profileStatus?:string|string[];
   minApplications?:string|string[];maxApplications?:string|string[];
   minOffers?:string|string[];maxOffers?:string|string[];
@@ -557,7 +560,7 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
-      {data.uninvitedCount>0?<section role="status" className="rounded-xl border border-border bg-surface p-4 text-sm">
+      {(data.uninvitedCount??0)>0?<section role="status" className="rounded-xl border border-border bg-surface p-4 text-sm">
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="ml-2 font-semibold text-primary-text underline">Open Placement eligibility</Link>
       </section>:null}

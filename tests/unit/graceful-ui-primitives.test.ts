@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { createElement } from "react";
+import { createElement, type ComponentType } from "react";
 import { readFileSync } from "node:fs";
 import { ConfirmActionDialog } from "@/components/ui/confirm-action-dialog";
 import { DisabledReason } from "@/components/ui/disabled-reason";
@@ -20,7 +20,7 @@ describe("graceful shared UI primitives", () => {
     expect(readFileSync("src/components/ui/confirm-action-dialog.tsx", "utf8")).not.toContain("window.confirm(");
   });
   it("GR-36 explains disabled controls", () => {
-    const html = renderToStaticMarkup(createElement(DisabledReason, {
+    const html = renderToStaticMarkup(createElement(DisabledReason as unknown as ComponentType<Record<string, unknown>>, {
       reason: "Complete your profile first.",
     }, createElement("button", { disabled: true }, "Submit")));
     expect(html).toContain("Complete your profile first.");

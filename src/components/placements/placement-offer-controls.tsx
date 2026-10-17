@@ -5,6 +5,8 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
@@ -152,8 +154,8 @@ export function PlacementOfferControls({
       title,
       description:
         error instanceof Error
-          ? humanize(error.message)
-          : "Please try again.",
+          ? error.message
+          : friendlyApiError({}),
     });
   }
 
@@ -162,26 +164,12 @@ export function PlacementOfferControls({
     method: "POST" | "PUT",
     body: unknown,
   ) {
-    const response = await fetch(url, {
+    return apiFetch<Record<string, unknown>>(url, {
       method,
-      headers: {
-        "content-type":
-          "application/json",
-      },
+      credentials: "same-origin",
+      headers: {"content-type":"application/json"},
       body: JSON.stringify(body),
     });
-    const payload = (await response
-      .json()
-      .catch(() => null)) as
-      | { error?: string }
-      | null;
-    if (!response.ok) {
-      throw new Error(
-        payload?.error ??
-          "PLACEMENT_OFFER_ACTION_FAILED",
-      );
-    }
-    return payload;
   }
 
   async function issue(

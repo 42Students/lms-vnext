@@ -1,10 +1,10 @@
 import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeBranding, colleges } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import { requirePermission } from "@/modules/permissions/policy";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {
   collegeBrandingInputSchema,
   type CollegeBrandingInput,
@@ -120,6 +120,7 @@ export async function saveCollegeBranding(
   const input = collegeBrandingInputSchema.parse(rawInput);
   const college = await loadCollege(collegeId);
 
+  if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
   requirePermission(context, "college.manage", {
     organizationId: college.organizationId,
     collegeId: college.id,

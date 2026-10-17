@@ -2,6 +2,8 @@ import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-m
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
+import {learnerCourseTabPersistentQuery} from "@/modules/courses/learner-course-tab-context-model";
+import {LearnerCourseDocumentTitle} from "@/components/courses/learner-course-document-title";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCourseAttendance } from "@/components/courses/learner-course-attendance";
@@ -185,10 +187,10 @@ export default async function LearnerCourseTabPage({
       {readOnly?<p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
         Past semester course · Read only. Submitted work remains accessible.
       </p>:null}
-      <LearnerCourseTabs
-        deliveryId={deliveryId}
-        activeTab={activeTab}
-      />
+      <LearnerCourseDocumentTitle courseName={workspace.course.name}
+        tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
+       <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
+        persistentQuery={learnerCourseTabPersistentQuery(query)}/>
       {content}
     </div>
   );

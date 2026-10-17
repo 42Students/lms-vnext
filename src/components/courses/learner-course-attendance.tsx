@@ -48,6 +48,9 @@ function dateLabel(value: Date) {
   }).format(value);
 }
 
+function weekdayLabel(value:Date){
+ return new Intl.DateTimeFormat("en-IN",{weekday:"long",timeZone:"Asia/Kolkata"}).format(value);
+}
 function timeLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
     hour: "numeric",
@@ -342,6 +345,10 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
+      <section aria-label="Attendance this month" className="space-y-2">
+        <h3 className="text-base font-semibold">Attendance this month</h3>
+        <p className="text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
+      </section>
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
         <Metric
           label="Classes held"
@@ -401,6 +408,10 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
+      <section aria-label="Attendance History" className="space-y-1">
+        <h3 className="font-semibold">Attendance History</h3>
+        <p className="text-sm text-muted-foreground">Review each scheduled class and your status for it.</p>
+      </section>
       {records.length === 0 ? (
         <EmptyState
           title="No classes in this period"
@@ -415,6 +426,7 @@ export function LearnerCourseAttendance({
                   <th className="px-4 py-3">
                     Date
                   </th>
+                  <th className="px-4 py-3">Day</th>
                   <th className="px-4 py-3">
                     Class
                   </th>
@@ -444,7 +456,8 @@ export function LearnerCourseAttendance({
                         )}
                       </p>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-body">{weekdayLabel(row.startsAt)}</td>
+                  <td className="px-4 py-3">
                       <p className="m-0 font-semibold text-foreground">
                         {row.title}
                       </p>

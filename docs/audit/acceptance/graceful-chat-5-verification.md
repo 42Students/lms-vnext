@@ -16,3 +16,16 @@ Scope: TPO Drive Workspace and TPO Batches only. Shared helpers are authored by 
 | GR-91 | DONE on touched controls | Keyboard-reachable reviewed checkboxes and buttons; same test file — `GR-91 keeps explicit acknowledgement and retry controls keyboard-operable`. |
 
 Not claimed: global GR-31 coverage across every action, GR-33/34/40, application-wide GR-70, all failure-injection Playwright GR-80 and provider-outbox recovery. These require orchestrator and/or other lane acceptance.
+
+## Next-round graceful adoption — scoped, not app-wide
+
+| ID | Status | Evidence |
+|---|---|---|
+| GR-04 | DONE on touched offer, applicant-review and batch-decision actions | `src/components/placements/tpo-offer-lifecycle-panel.tsx`, `placement-offer-controls.tsx`, `tpo-applicant-review-form.tsx`, `src/components/tpo/tpo-batch-inline-decision.tsx`, and `tpo-batch-undo-control.tsx` use `apiFetch`; `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` — `GR-04 GR-30 GR-31 handles offer API failures and double submissions through shared guards`. |
+| GR-30 / GR-31 | DONE on same actions | `useGuardedAction` plus pending states; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `GR-04 GR-30 GR-32 prevent raw errors and double submissions in batch decision editor`. |
+| GR-35 | DONE on the newly touched offer and batch-undo actions | No native `window.confirm` in these forms; explicit consequence checkbox. `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` — `GR-35 GR-90 GR-91 uses an explicit check and announced error for offer confirmations`. |
+| GR-39 / GR-91 | DONE on Drive navigation | Mobile select has minimum size and usable keyboard target. `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` — `GR-39 prevents an overlong drive-navigation name from breaking the mobile selector`. |
+| GR-71 | DONE on the Batches loading fragment | Accessible skeleton and recovery route; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `TPO-batches-50 has a complete keyboard-safe loading and recovery state`. |
+| GR-90 | DONE on touched inline errors | `role="alert"` messages retained while forms keep their input; `tests/unit/tpo-batches-chat5-next-round.test.ts` — `GR-35 GR-90 avoids native confirmation and exposes an alert for failed batch undo`. |
+
+Tests are **not run** by chat-5; this is authored contract evidence only.

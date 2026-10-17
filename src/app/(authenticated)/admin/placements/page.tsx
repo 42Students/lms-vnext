@@ -7,7 +7,9 @@ import { PlacementOperationsWorkspace } from "@/components/placements/placement-
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 
-export default async function AdminPlacementsPage() {
+export default async function AdminPlacementsPage({searchParams}:{searchParams:Promise<{staleDays?:string}>}) {
+  const raw=await searchParams;
+  const staleDays=[3,7,14,30].includes(Number(raw.staleDays))?Number(raw.staleDays):7;
   const context = await getCurrentRequestContext();
   const collegeId =
     context.adminScope?.collegeId ?? null;
@@ -55,6 +57,7 @@ export default async function AdminPlacementsPage() {
         context={context}
         collegeId={collegeId}
         basePath="/admin/placements"
+        staleDays={staleDays}
       />
     </div>
   );
