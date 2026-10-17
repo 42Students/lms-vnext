@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,count,desc,eq,ilike,inArray,or,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10AuditFindings,db10AuditFindingEvents} from "@/db/schema/db10-audit-findings.draft";
+import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {independentFindingActionSchema} from "./independent-finding-actions-model";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -99,4 +99,21 @@ export async function listIndependentAuditFindingEvents(context:RequestContext,f
   fromStatus:db10AuditFindingEvents.fromStatus,toStatus:db10AuditFindingEvents.toStatus})
   .from(db10AuditFindingEvents).where(eq(db10AuditFindingEvents.findingId,findingId))
   .orderBy(desc(db10AuditFindingEvents.createdAt)).limit(100);
+}
+
+/** SA-placements-projects-120: read persisted sync evidence, never infer success
+ * from an empty board or attempt provider access without verified credentials.
+ */
+export async function readIndependentFindingSyncState(context:RequestContext){
+ requireIndependentFindingAccess(context);
+ if(!independentAuditFindingsReady())return null;
+ const [row]=await getDb().select({
+  source:db10AuditFindingSyncs.source,lastSyncedAt:db10AuditFindingSyncs.lastSyncedAt,
+  lastResult:db10AuditFindingSyncs.lastResult,importedCount:db10AuditFindingSyncs.importedCount,
+  refusedFiles:db10AuditFindingSyncs.refusedFiles,
+ }).from(db10AuditFindingSyncs)
+  .where(eq(db10AuditFindingSyncs.source,"42Students/lms-findings")).limit(1);
+ if(!row)return null;
+ return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,
+  importedCount:row.importedCount,refusedCount:row.refusedFiles.length};
 }

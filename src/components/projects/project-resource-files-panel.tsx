@@ -1,6 +1,8 @@
 "use client";
 
 import {useRef,useState,type FormEvent} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {acceptAttributeFor,formatFileSize,isSafeSignedUrl,limitsSummary} from "@/modules/storage/ui-models";
 import {
   fileStatusDescriptor,projectFileUsable,projectResourceFileDeclaration,
@@ -47,20 +49,31 @@ function putWithProgress(file:File,url:string,headers:Record<string,string>,
     xhr.send(file);
   });
 }
-export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canUpload=canManage}:{
+export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],canManage,canUpload=canManage}:{
   projectId:string;initialFiles:ProjectResourceFile[];canManage:boolean;canUpload?:boolean;
+  resources?:readonly {id:string;title:string}[];
 }){
   const [files,setFiles]=useState(initialFiles);
   const [selected,setSelected]=useState<File|null>(null);
   const [uploadTitle,setUploadTitle]=useState("");
   const [uploadDescription,setUploadDescription]=useState("");
+  const [linkedResourceId,setLinkedResourceId]=useState("");
   const [progress,setProgress]=useState<number|null>(null);
   const [busy,setBusy]=useState(false);
   const [feedback,setFeedback]=useState<string|null>(null);
   const [editing,setEditing]=useState<string|null>(null);
+  const [deleteTarget,setDeleteTarget]=useState<ProjectResourceFile|null>(null);
   const [editTitle,setEditTitle]=useState("");
   const [editDescription,setEditDescription]=useState("");
   const xhrRef=useRef<XMLHttpRequest|null>(null);
+  const editingFile=files.find(file=>file.id===editing);
+  const dirty=Boolean(selected||uploadTitle.trim()||uploadDescription.trim()||linkedResourceId)||
+    Boolean(editingFile&&(editTitle!==editingFile.title||editDescription!==(editingFile.description??"")));
+  function discardDraft(){
+    setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
+    setEditing(null);setEditTitle("");setEditDescription("");
+  }
+  const discardGuard=useProjectEditorDiscardGuard(true,dirty,busy,discardDraft);
   const endpoint="/api/projects/"+encodeURIComponent(projectId)+"/resource-files";
   const fileEndpoint=(fileId:string)=>endpoint+"/"+encodeURIComponent(fileId);
   async function refresh(){
@@ -68,7 +81,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
     setFiles(next.files);
   }
   function problem(error:unknown){
-    setFeedback(error instanceof Error?error.message:storageErrorMessage(null));
+    setFeedback(error instanceof FileApiError?error.message:storageErrorMessage(null));
   }
   async function upload(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
@@ -82,7 +95,8 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
     try{
       const response=await jsonRequest<GrantResponse>(endpoint,"POST",{
         originalName:declaration.originalName,contentType:declaration.contentType,
-        sizeBytes:declaration.sizeBytes,...(uploadTitle.trim()?{title:uploadTitle.trim()}:{}),
+        sizeBytes:declaration.sizeBytes,...(linkedResourceId?{resourceId:linkedResourceId}:{}),
+        ...(uploadTitle.trim()?{title:uploadTitle.trim()}:{}),
         ...(uploadDescription.trim()?{description:uploadDescription.trim()}:{}),
       });
       if(!validProjectResourceUploadGrant(response.grant)||
@@ -96,7 +110,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
       const completed=await jsonRequest<FileResponse>(fileEndpoint(response.file.id)+"/complete","POST");
       setFiles(current=>current.map(row=>row.id===completed.file.id?completed.file:row));
       await refresh();
-      setSelected(null);setUploadTitle("");setUploadDescription("");
+      setSelected(null);setUploadTitle("");setUploadDescription("");setLinkedResourceId("");
       setFeedback(completed.file.status==="READY"?"Attached":fileStatusDescriptor(completed.file.status).label);
     }catch(error){
       problem(error);
@@ -142,11 +156,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   async function remove(file:ProjectResourceFile){
-    if(!window.confirm('Delete "'+file.title+'"?'))return;
+    if(busy)return;
     setBusy(true);setFeedback(null);
     try{
       await jsonRequest<FileResponse>(fileEndpoint(file.id),"DELETE");
       setFiles(rows=>rows.filter(row=>row.id!==file.id));
+      setDeleteTarget(null);
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
@@ -164,6 +179,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
             disabled={busy} placeholder="Short note about this resource"/>
         </label>
       </div>
+      {resources.length>0?<label className="block text-sm font-medium text-body">Related resource (optional)
+        <select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
+          className="mt-1 block min-h-10 w-full rounded border border-border bg-surface px-3">
+          <option value="">New standalone file</option>
+          {resources.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
+        </select>
+      </label>:null}
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <input id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
@@ -196,6 +218,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
               {file.description&&<p className="mt-1 text-sm text-body">{file.description}</p>}
+              {file.resourceId&&resources.some(item=>item.id===file.resourceId)?
+                <p className="mt-1 text-xs font-semibold text-body">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
+              <p className="mt-1 text-xs text-muted-foreground">
+                Last updated: <time dateTime={file.completedAt??file.createdAt}>
+                  {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
+                    .format(new Date(file.completedAt??file.createdAt))} IST
+                </time>
+              </p>
               <p role="status" className="mt-1 text-xs text-body" title={descriptor.detail}>
                 {descriptor.label}
               </p>
@@ -208,7 +238,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
                   onClick={()=>void retryComplete(file)} className="rounded border border-border px-3 py-1.5 text-sm">Retry</button>}
                 <button type="button" disabled={busy} onClick={()=>beginEdit(file)}
                   className="rounded border border-border px-3 py-1.5 text-sm">Edit resource</button>
-                <button type="button" disabled={busy} onClick={()=>void remove(file)}
+                <button type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
                   className="rounded border border-border px-3 py-1.5 text-sm">Delete</button>
               </>}
             </div>
@@ -228,7 +258,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
             <div className="flex gap-2 sm:col-span-2">
               <button type="submit" disabled={busy||!editTitle.trim()}
                 className="rounded bg-primary px-3 py-2 text-sm text-primary-foreground">Update resource</button>
-              <button type="button" disabled={busy} onClick={()=>setEditing(null)}
+              <button type="button" disabled={busy} onClick={discardGuard.requestClose}
                 className="rounded border border-border px-3 py-2 text-sm">Cancel</button>
             </div>
           </form>}
@@ -236,5 +266,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
       })}
     </ul>}
     {feedback&&<p role="status" className="text-sm text-body">{feedback}</p>}
+    <ConfirmDialog open={discardGuard.discardOpen} onOpenChange={discardGuard.setDiscardOpen}
+      title="Discard resource changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy} onConfirm={discardGuard.confirmDiscard}/>
+    <ConfirmDialog open={deleteTarget!==null} onOpenChange={open=>{if(!open&&!busy)setDeleteTarget(null);}}
+      title={deleteTarget?`Delete "${deleteTarget.title}"?`:"Delete resource?"}
+      description="This permanently removes the resource for everyone on the project."
+      confirmLabel="Delete resource" confirmVariant="danger" pending={busy}
+      onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
   </section>;
 }

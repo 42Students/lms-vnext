@@ -19,7 +19,7 @@ export class TpoCompanyLifecycleError extends Error {
 }
 async function companyScope(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO") ||
+  if (!membership || !(hasMembershipRole(context, "TPO")||hasMembershipRole(context, "COLLEGE_ADMIN")) ||
     membership.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
@@ -62,7 +62,7 @@ export async function saveTpoCompanyLifecycle(
     const [principal] = await tx.select({ id: collegeMemberships.id })
       .from(collegeMemberships)
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
-      .innerJoin(membershipRoles, and(eq(membershipRoles.membershipId, collegeMemberships.id), eq(membershipRoles.role, "TPO")))
+      .innerJoin(membershipRoles, and(eq(membershipRoles.membershipId, collegeMemberships.id), inArray(membershipRoles.role, ["TPO","COLLEGE_ADMIN"])))
       .where(and(eq(collegeMemberships.id, scope.actorMembershipId),
         eq(collegeMemberships.collegeId, scope.collegeId),
         eq(collegeMemberships.userId, scope.actorUserId),
