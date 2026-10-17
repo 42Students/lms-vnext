@@ -20,10 +20,21 @@ function errorMessage(code:string){
  STALE:"This message or ask changed. Reload before trying again."} as Record<string,string>)[code]??
   "Team conversation could not be updated. Retry.";
 }
-function formatTokens(body:string){
- return body.split(/(@team|@[a-zA-Z][a-zA-Z0-9_.-]{0,60}|#(?:drive|company|student):[A-Za-z0-9-]+)/g)
-  .map((chunk,i)=>chunk.startsWith("@")||chunk.startsWith("#")?
-   <span key={i} className="rounded bg-primary-subtle px-0.5 font-semibold">{chunk}</span>:chunk);
+function formatTokens(body:string,members:TeamPayload["members"]){
+ return body.split(/(@team|@member:[0-9a-f-]{36}|#(?:drive|company|student):[0-9a-f-]{36})/gi)
+  .map((chunk,i)=>{
+    if(chunk.startsWith("@member:")){
+      const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">@{name??"team member"}</span>;
+    }
+    if(chunk.startsWith("#drive:"))return <Link key={i} className="text-primary-text underline"
+      href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
+    if(chunk.startsWith("#company:"))return <Link key={i} className="text-primary-text underline"
+      href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
+    if(chunk.startsWith("@")||chunk.startsWith("#"))
+      return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
+    return chunk;
+  });
 }
 /** TPO-companies-05: internal college team only; read operations are authorized server side. */
 export function TpoCompanyTeamConversation({companyId,companyName,actorMembershipId}:{
@@ -122,7 +133,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
       </p>
       {m.decision&&!m.deletedAt?<strong className="text-xs text-success">Decision</strong>:null}
       <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">
-       {m.deletedAt?"Message removed":formatTokens(m.body)}
+       {m.deletedAt?"Message removed":formatTokens(m.body,data.members)}
       </p>
       {m.askAssigneeMembershipId?<div className="mt-2 rounded border border-border p-2 text-xs">
         Ask · {data.members.find(person=>person.membershipId===m.askAssigneeMembershipId)?.name??"Team member"}
@@ -164,6 +175,18 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
        }}}
        className="rounded border border-border bg-surface p-3"/>
     </label>
+    <label className="grid gap-1 text-sm">Mention a teammate
+      <select disabled={busy} defaultValue="" className="min-h-10 rounded border border-border bg-surface px-2"
+        onChange={event=>{if(event.target.value){
+          setBody(current=>(current.trimEnd()+" @member:"+event.target.value+" ").slice(0,4000));
+          event.currentTarget.value="";
+        }}}>
+        <option value="">Choose a colleague to @mention</option>
+        {data.members.filter(m=>m.membershipId!==actorMembershipId).map(m=>
+          <option key={m.membershipId} value={m.membershipId}>{m.name}</option>)}
+      </select>
+    </label>
+    <p className="text-xs text-muted-foreground">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
     <div className="grid gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
        <select value={assignee} disabled={busy} onChange={event=>setAssignee(event.target.value)}
