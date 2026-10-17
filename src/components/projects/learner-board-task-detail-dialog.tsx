@@ -73,6 +73,10 @@ export function LearnerBoardTaskDetailDialog({
           <a href={submissionUrl} target="_blank" rel="noopener noreferrer"
             className="text-primary-text underline">Submission link attached ↗</a>:null}
       </div>
+      {task.approach?<section className="mt-5" aria-label="Task approach">
+        <h3 className="font-semibold">Approach</h3>
+        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.approach}</p>
+      </section>:null}
       <section className="mt-5">
         <h3 className="font-semibold">Details</h3>
         <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">{task.description??"No task description provided."}</p>
