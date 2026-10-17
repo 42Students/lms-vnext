@@ -185,7 +185,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-companies-09 | S3 | COPY | IN-BRANCH |
 | TPO-companies-18 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-companies-20 | S3 | STATE | OPEN |
+| TPO-companies-20 | S3 | STATE | NOT-A-GAP |
 | TPO-companies-21 | S3 | COPY | IN-BRANCH |
 | TPO-companies-22 | S3 | COPY | IN-BRANCH |
 | TPO-companies-24 | S3 | A11Y | FIXED-ON-MAIN |
@@ -315,3 +315,13 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - TPO-companies-21: separate placed-policy warning and friendly not-found/unavailable Retry supported for dynamically checked tables; named test.
 - TPO-campaigns-public-37: intentional opt-in, fresh, small-cohort suppression protects public student data and is verified by a pure model test.
 - TPO-recruiters-36: phone board and dialog improved, but table selection still incomplete; keep OPEN.
+
+## Chat-2 further OPEN-gap sweep (thirty-plus IDs reviewed total this round)
+- TPO-inbox-team-18: set Following as default instead of All; still OPEN for object-kind and @ filters; `tests/unit/chat2-tpo-team-open-increments.test.ts`.
+- TPO-inbox-team-24/29: edit/remove mutations now record recipient-specific active-participant bells atomically; full ask-delete, mentions and object-kind parity remains OPEN; `tests/unit/chat2-team-message-change-notifications.test.ts`.
+- Other TPO-inbox-team-07/20/22/26/30/31/54/60 incrementally source-tested and recorded as PARTIAL — OPEN in acceptance; do not mark full closure without missing functionality.
+- TPO-recruiters-36 remains OPEN, with source test for horizontal stage board, keyboard trap and actions; mobile table selection unresolved. TPO-recruiters-R05 has true bulk run audit but other lifecycle event types remain OPEN.
+- TPO-companies-20: NOT-A-GAP — default navigation is Engage Companies, while explicit advanced directory and name memory links intentionally preserve scoped identity/bookmarks; test in `chat2-campaign-open-increments.test.ts`.
+- TPO-campaigns-public-04/23: real campaign delivery batch/receipts and public join bell/counter covered by gap-named tests; universal invite/provider-history and welcome email remain OPEN pending provider implementation.
+- Needs shell (chat-9): TPO-inbox-team-54 complete From 42 unread sidebar badge if not already exposed by central shell; no unauthorized `src/components/shell` edits here.
+- No new numbered migration was added, and tests were written but not run locally.
