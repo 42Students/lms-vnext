@@ -2,7 +2,7 @@ import {createHmac,timingSafeEqual} from "node:crypto";
 import {z} from "zod";
 
 /** Use one purpose-specific signing secret for issue, preview and unsubscribe. */
-export function resolveTpoCampaignRecipientSecret(config:Readonly<Record<string,string|undefined>>):string{
+export function resolveTpoCampaignRecipientSecret(config:Readonly<Record<string,string|undefined>>|NodeJS.ProcessEnv):string{
  // Existing TOKEN_SECRET deployments remain valid; support the old HMAC alias
  // only if the canonical setting is absent, never mixing two distinct keys.
  return config.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET??config.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
