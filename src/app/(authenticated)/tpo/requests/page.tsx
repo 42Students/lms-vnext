@@ -77,7 +77,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
      </div>
      <p className="text-xs text-muted-foreground">Attention category numbers cover this visible request page only. Proof hints are text-based and are not verified attachment counts.</p>
     </section>
-    <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export current page CSV</Link>
+    <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export filtered requests CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
       {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
@@ -109,7 +109,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       {data.page>1?<Link href={href({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Previous</Link>:null}
       {data.page<data.totalPages?<Link href={href({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Next</Link>:null}
     </nav>
-    <p className="text-xs text-muted-foreground">CSV exports only the current authorized page (maximum 100), omits private request reasons and decision notes, and neutralizes spreadsheet formulas.</p>
+    <p className="text-xs text-muted-foreground">CSV exports matching authorized requests across pages (up to 5,000), includes their recorded reasons and decisions, and neutralizes spreadsheet formulas. If the export is truncated, narrow the filters.</p>
     <p className="text-xs text-muted-foreground">Pending actions require explicit confirmation. The learner receives an in-app notice when a request is approved or rejected; no email is sent from this inbox.</p>
   </main>;
 }
