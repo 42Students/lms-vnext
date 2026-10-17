@@ -348,7 +348,7 @@ export function LearnerApplicationsBrowse({
             View all applications
           </button>
         </div>
-      ) : <LearnerPlacementJourney items={paged} />}
+      ) : <LearnerPlacementJourney items={paged} scheduledRounds={scheduledRounds} />}
 
       {totalPages>1 ? (
         <nav aria-label="Application results pages" className="flex items-center justify-between gap-3">
