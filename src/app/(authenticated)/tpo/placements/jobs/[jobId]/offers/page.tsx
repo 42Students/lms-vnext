@@ -50,10 +50,20 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
      <option value="ALL">All kinds</option><option value="OFFER">Offer</option><option value="LOI">Letter of intent</option>
     </select>
    </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Response deadline
+    <select name="expiry" defaultValue={parsed.data.expiry}
+      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="ALL">Any response deadline</option>
+     <option value="DUE_SOON">Due within 7 days</option>
+     <option value="EXPIRED">Time is up</option>
+     <option value="OPEN">More than 7 days left</option>
+     <option value="UNKNOWN">No expiry recorded</option>
+    </select>
+   </label>
    <label className="grid flex-1 gap-1 text-sm font-semibold text-body">Search learner, roll, batch, branch or role
     <input type="search" name="q" maxLength={100} defaultValue={searchQuery} placeholder="Name or offer role" className="min-h-11 w-full min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
    </label><button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Search</button>
-   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
+   {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Clear filters</Link>:null}
   </form>
   <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<p role="status" className="rounded border border-border p-5 text-sm">No offers match this filter.</p>:
