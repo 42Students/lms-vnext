@@ -103,7 +103,7 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal, roundSlotCounts } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
@@ -787,6 +787,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xs text-muted-foreground">
                {round.participants.filter(person=>person.result?.status==="STAGED").length} waiting for the cell ·
                {" "}{round.participants.filter(person=>person.result?.status==="APPLIED").length} applied
+               {" · "}{roundSlotCounts[round.id]?.confirmed??0}/{roundSlotCounts[round.id]?.total??0} slots confirmed by the placement cell
               </p>
 
               {!driveOverview.readOnly && round.createdByUserId===context.user.id ?
