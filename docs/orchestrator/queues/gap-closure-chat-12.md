@@ -207,3 +207,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 55 TPO-requests-verification-13: add idempotent server-verified bulk audit for 10-request run, no duplicate learner notices and truthful partial outcomes; proof-aware skip, all-filtered selection remain OPEN and DB acceptance unrun.
 
 - Round 56: verified 14 previously FIXED-ON-MAIN Students IDs at the source-contract level using tests/unit/chat12-fixed-main-students-audit-r1.test.ts; no claim of runtime acceptance. Failed candidate assertions were not added.
+
+- Round 57: checked 15 additional FIXED-ON-MAIN source contracts in tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts; runtime and browser acceptance still required.
