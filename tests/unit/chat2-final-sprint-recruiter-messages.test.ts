@@ -88,4 +88,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-10 |");
  });
 
+ it("REC-calendar-messages-profile-11 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("Message the placement cell · General");
+  expect(src("src/app/(authenticated)/hr/conversations/page.tsx")).toContain("aria-label=\"General placement-cell messages\"");
+  expect(src("src/components/hr/recruiter-conversation-reply-form.tsx")).toContain("event.ctrlKey||event.metaKey");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-11 |");
+ });
+
 });
