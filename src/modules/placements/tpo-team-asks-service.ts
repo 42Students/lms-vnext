@@ -184,9 +184,12 @@ export async function changeTpoTeamAsk(context:RequestContext,raw:unknown){
   const [recipient]=await tx.select({userId:collegeMemberships.userId})
    .from(collegeMemberships).where(and(eq(collegeMemberships.id,notifyMembershipId),
     eq(collegeMemberships.collegeId,college.id))).limit(1);
+  const [actor]=await tx.select({displayName:users.displayName}).from(users)
+   .where(eq(users.id,context.user.id)).limit(1);
+  const actorName=actor?.displayName?.trim()||"TPO colleague";
   if(event&&recipient)await tx.insert(inAppNotifications).values({
    userId:recipient.userId,eventId:event.id,
-   title:nextStatus==="DONE"?"Team ask done":"Team ask cancelled",
+   title:nextStatus==="DONE"?actorName+" marked an ask done":actorName+" cancelled an ask",
    body:ask.title.slice(0,120),
    actionHref:"/tpo/team/"+input.threadId+"?ask="+ask.id,
   });
