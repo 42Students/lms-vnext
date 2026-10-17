@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -20,7 +20,6 @@ export function MentorTaskCreate({
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -65,7 +64,7 @@ export function MentorTaskCreate({
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Task added."});
-      setOpen(false);resetForm();
+      discardDraft();
       router.refresh();
     }catch{
       showToast({tone:"error",title:"Task was not created",
