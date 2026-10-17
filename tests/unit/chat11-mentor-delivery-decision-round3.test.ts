@@ -9,7 +9,7 @@ describe("mentor review parity",()=>{
     for(const phrase of ["Accept this submission?","Request changes on this submission?",
       "The learner will be notified their submission was accepted.",
       "The learner will see your feedback and be able to edit and resubmit it.",
-      'mode!=="MENTOR" ? <label>',"Review final delivery"])
+      'mode!=="MENTOR" ? <label className',"Review final delivery"])
       expect(code).toContain(phrase);
   });
   it("MEN-projects-meetings-65 preserves feedback and shows safe stale-review guidance",()=>{
