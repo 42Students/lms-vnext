@@ -35,6 +35,12 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
    lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
      where m.thread_id=placement_tpo_internal_threads.id
      order by m.created_at desc,m.id desc limit 1)`,
+   following:readsReady?sql<boolean>`coalesce((select r.following
+    from placement_tpo_internal_reads r where r.thread_id=${tpoInternalThreads.id}
+    and r.membership_id=${membership.id}::uuid),true)`:sql<boolean>`true`,
+   muted:readsReady?sql<boolean>`coalesce((select r.muted_at is not null
+    from placement_tpo_internal_reads r where r.thread_id=${tpoInternalThreads.id}
+    and r.membership_id=${membership.id}::uuid),false)`:sql<boolean>`false`,
    unreadMessages:readsReady?sql<number>`(select count(*)::integer from placement_tpo_internal_messages m
      where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid
        and m.author_membership_id<>${membership.id}::uuid
@@ -56,7 +62,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
         and position(lower(${q}) in lower(m.body))>0)`) : undefined))
    .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(100);
   if(readsReady)return {status:"READY" as const,items:items.map(row=>({
-   ...row,unreadCount:Number(row.unreadMessages),
+   ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
   }))};
   // Legacy fallback while the proposed read-receipt migration is not yet registered.
   // Unread counts are per original recipient: query results never change who may read a thread.
