@@ -121,3 +121,5 @@ These **32 authored test cases** do not represent 32 new GR IDs. The source was 
 | GR-80 GR-81 / big-round phone/error | BLOCKED | `tests/e2e/graceful-unexpected-phone-error.spec.ts`: 10 real-form unknown diagnostic cases; browser execution required. |
 
 | GR-80 GR-81 / big-round phone/code | BLOCKED | `tests/e2e/graceful-unexpected-phone-code.spec.ts`: 10 real-form unknown diagnostic cases; browser execution required. |
+
+| GR-80 GR-81 / big-round phone/message | BLOCKED | `tests/e2e/graceful-unexpected-phone-message.spec.ts`: 10 real-form unknown diagnostic cases; browser execution required. |
