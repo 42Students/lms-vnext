@@ -2,9 +2,10 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
-type Existing={id:string;lessonId:string;title:string;externalUrl:string|null;notes:string|null;
+type Existing={id:string;lessonId:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
+type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
 const dateInput=(iso:string|null)=>iso?new Intl.DateTimeFormat("sv-SE",{
  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
@@ -14,8 +15,8 @@ function isoIst(local:string){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))
  if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
  return date.toISOString();
 }
-export function CollegeContentAuthoringControl({kind,lessons,existing}:{
- kind:Kind;lessons:Lesson[];existing:Existing[];
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing}:{
+ kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
@@ -23,14 +24,17 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
+ const [deliveryId,setDeliveryId]=useState("");
+ const selectedLesson=lessons.find(row=>row.id===lessonId);
+ const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
   setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setError("");setMessage("");
+  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setError("");setMessage("");
  }
  function fresh(){
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");setDeliveryId("");
   setError("");setMessage("");
  }
  async function save(){
@@ -62,7 +66,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
       {title:title.trim(),...(kind==="RESOURCE"?{externalUrl:url.trim()||null}:(url.trim()?{externalUrl:url.trim()}:{})),...extra}:
-      {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
+      {lessonId,deliveryId:deliveryId||null,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
        sequence:nextOverride[lessonId]??lessons.find(row=>row.id===lessonId)?.nextSequence??0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
     throw Error(problem.error??"Unable to save content");}
@@ -101,9 +105,16 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
    <label className="text-sm">Lesson
     <select className="mt-1 w-full rounded border bg-background p-2" value={lessonId}
-     onChange={e=>setLessonId(e.target.value)} disabled={Boolean(editing)}>
+     onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
+    </select></label>
+   <label className="text-sm">Section
+    <select value={deliveryId} disabled={Boolean(editing)} onChange={e=>setDeliveryId(e.target.value)}
+      className="mt-1 w-full rounded border bg-background p-2">
+     <option value="">All sections taking this course</option>
+     {allowedDeliveries.map(row=><option key={row.deliveryId} value={row.deliveryId}>
+      {row.sectionName} ({row.sectionCode})</option>)}
     </select></label>
    <label className="text-sm">Title
     <input required maxLength={200} className="mt-1 w-full rounded border bg-background p-2"
@@ -133,7 +144,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
    <ul className="space-y-1">{existing.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
-    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status})</span></span>
+    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
