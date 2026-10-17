@@ -5,9 +5,9 @@ export type AdminContentKind = z.infer<typeof adminContentKindSchema>;
 export const adminContentQuerySchema = z.strictObject({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","DRAFT","PUBLISHED","ARCHIVED"]).default("ALL"),
- offeringId:z.string().uuid().optional(),
- lessonId:z.string().uuid().optional(),
- deliveryId:z.string().uuid().optional(),
+ offeringId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+ lessonId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+ deliveryId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
  scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
 });
