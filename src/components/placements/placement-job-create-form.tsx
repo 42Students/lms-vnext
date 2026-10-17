@@ -12,7 +12,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
@@ -121,6 +121,8 @@ export function PlacementJobCreateForm({
   const [restoredBackup,setRestoredBackup]=useState(false);
   const [lastLocalSaveAt,setLastLocalSaveAt]=useState<number|null>(null);
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
+  const uncertainKey=backupKey+":create-outcome-unknown";
+  const [uncertainCreate,setUncertainCreate]=useState(false);
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
       companies.length > 0
@@ -183,6 +185,22 @@ export function PlacementJobCreateForm({
 
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
+  // TPO-drives-43: lost POST replies have unknown commit outcome; never blind-retry.
+  async function createDriveWithKnownResponse(body:Record<string,unknown>){
+    if(uncertainCreate)throw new Error("Check your existing Drives before submitting again. The prior create request may have succeeded.");
+    try{return await requestJson("/api/placements/jobs","POST",body);}
+    catch(reason){
+      if(reason instanceof FriendlyFetchError&&[0,499,504].includes(reason.status)){
+        setUncertainCreate(true);
+        try{localStorage.setItem(uncertainKey,"1");}catch{}
+        throw new Error("The create request might have succeeded, but its response was lost. Check Drives before retrying.");
+      }
+      throw reason;
+    }
+  }
+  useEffect(()=>{
+    try{setUncertainCreate(localStorage.getItem(uncertainKey)==="1");}catch{}
+  },[uncertainKey]);
   const saveBrowserDraft=useCallback((form:HTMLFormElement)=>{
     if(clearedBackup.current)return;
     try{
@@ -445,10 +463,7 @@ export function PlacementJobCreateForm({
       );
       
       const jobResult = createdJobRef.current?{id:createdJobRef.current.jobId}:
-       await requestJson(
-        "/api/placements/jobs",
-        "POST",
-        {
+       await createDriveWithKnownResponse({
           collegeId,
           seasonId: activeSeason.id,
           companyRelationshipId:
@@ -631,7 +646,7 @@ export function PlacementJobCreateForm({
       );
       clearDirty();
       clearedBackup.current=true;
-      try{localStorage.removeItem(backupKey);}catch{}
+      try{localStorage.removeItem(backupKey);localStorage.removeItem(uncertainKey);}catch{}
       createdJobRef.current=null;
       setPartialJobId(null);
       router.refresh();
@@ -1429,20 +1444,27 @@ export function PlacementJobCreateForm({
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
         <div className="flex flex-wrap gap-3">
-          <Button type="submit" disabled={pending || !activeSeason}>
+          <Button type="submit" disabled={pending || !activeSeason || uncertainCreate}>
             {pending ? "Creating…" : "Create draft"}
           </Button>
           <button
             type="submit"
             value="review-publish"
             aria-label="Publish after reviewing the drive"
-            disabled={pending || !activeSeason}
+            disabled={pending || !activeSeason || uncertainCreate}
             className="min-h-10 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
           >
             Publish
           </button>
         </div>
       </section>
+      {uncertainCreate?<div role="alert" className="space-y-2 rounded-md border border-warning p-3 text-sm text-body">
+        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline">Review Drives</Link> before retrying.
+        <button type="button" className="ml-3 font-semibold text-primary-text underline"
+          onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
+          I checked Drives — allow another attempt
+        </button>
+      </div>:null}
       {restoredBackup?<p role="status" className="text-sm text-body">A saved drive draft was restored from this browser. Review the values before submitting.</p>:null}
       {dirty?<button type="button" onClick={()=>{
         clearedBackup.current=true;
