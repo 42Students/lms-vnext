@@ -6,6 +6,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {listLearnerCourseDeliveries} from "./learner-course-service";
 import {listOwnLearnerAssessmentRows} from "./learner-assessment-flat-query";
+import {learnerAssessmentAuthorizedCourse} from "./learner-assessment-course-query-model";
 
 function byDueDateThenTitle<
   T extends {
@@ -28,6 +29,7 @@ function byDueDateThenTitle<
 
 export async function getLearnerAssessmentOverview(
   context: RequestContext,
+  options:{courseId?:unknown}={},
 ) {
   await requireOwnCourseLearnerRead(context);
   const snapshotNowMs = Date.now();
@@ -51,7 +53,9 @@ export async function getLearnerAssessmentOverview(
     if(error instanceof AuthorizationError)throw error;
     classScope="UNAVAILABLE";
   }
-  const {assignments,quizzes}=await listOwnLearnerAssessmentRows(deliveries,context.membership!.id,snapshotNowMs);
+  const selectedCourseId=learnerAssessmentAuthorizedCourse(options.courseId,deliveries);
+  const scopedDeliveries=selectedCourseId?deliveries.filter(row=>row.courseId===selectedCourseId):deliveries;
+  const {assignments,quizzes}=await listOwnLearnerAssessmentRows(scopedDeliveries,context.membership!.id,snapshotNowMs);
 
   assignments.sort(byDueDateThenTitle);
   quizzes.sort(byDueDateThenTitle);
@@ -74,6 +78,7 @@ export async function getLearnerAssessmentOverview(
   return {
     snapshotNowMs,
     classScope,
+    selectedCourseId,
     courses,
     assignments,
     quizzes,

@@ -8,6 +8,7 @@ import { AssignmentFileOpenControl } from "@/components/courses/assignment-file-
 import { AssignmentSubmissionControl } from "@/components/courses/assignment-submission-control";
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
+import {listOwnLearnerAssignmentMaterialLinks} from "@/modules/courses/learner-assignment-materials-service";
 import { resolveLearnerOfferingDelivery } from "@/modules/courses/learner-offering-delivery-model";
 import { findOwnLearnerAssignment } from "@/modules/courses/learner-assignment-detail-model";
 
@@ -41,6 +42,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
     assignmentId: path.assignmentId, deliveryId: resolution.deliveryId,
   });
   if (!item) notFound();
+  const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
     <Link href="/learn/allAssignments" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← All Assignments</Link>
     <PageHeader title={item.title} />
@@ -59,6 +61,17 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
       <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">
         {item.description || "Your faculty hasn't added any resources to this assignment yet."}
       </p>
+      {!materials.available ? <p role="status" className="mt-3 text-sm text-body">
+        Assignment resources are temporarily unavailable. Your assignment and submission are unchanged.
+      </p> : null}
+      {materials.links.length>0 ? <ul className="mt-3 space-y-2" aria-label="Instructor resources">
+        {materials.links.map(link=><li key={link.id} className="text-sm">
+          <a href={link.href} target="_blank" rel="noopener noreferrer"
+            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+            Open link: {link.title}
+          </a>
+        </li>)}
+      </ul> : null}
     </section>
     <section className="rounded-xl border border-border bg-surface p-4 sm:p-6">
       <h2 className="font-semibold text-foreground">Your submission</h2>
