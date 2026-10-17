@@ -32,6 +32,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  .where(and(
   query.status==="ALL"?undefined:eq(placementApplications.status,query.status as "SUBMITTED"|"WITHDRAWN"),
   query.jobId?eq(placementApplications.jobId,query.jobId):undefined,
+  query.source!=="ALL"?eq(placementApplications.channel,query.source):undefined,
   query.pipelineStage!=="ALL"?sql`coalesce(${placementCollegeApplicationStages.stage}, 'APPLIED') = ${query.pipelineStage}`:undefined,
   query.departmentId||query.programId||query.cohortId?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
