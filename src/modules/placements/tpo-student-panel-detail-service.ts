@@ -25,7 +25,7 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   .limit(1);
  if(!student)return null;
  const applications=await db.select({id:placementApplications.id,jobId:placementJobs.id,
-  title:placementJobs.title}).from(placementApplications)
+  title:placementJobs.title,status:placementApplications.status}).from(placementApplications)
   .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
     eq(placementJobs.collegeId,college.id)))
   .where(eq(placementApplications.membershipId,id)).limit(1000);
@@ -36,7 +36,7 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   .from(activityEvents).where(and(eq(activityEvents.collegeId,college.id),
    eq(activityEvents.subjectId,id),inArray(activityEvents.module,["PLACEMENTS","IDENTITY","ACADEMICS"])))
   .orderBy(desc(activityEvents.occurredAt)).limit(100);
- if(!applicationIds.length)return {student,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),teamHistory,truncated:teamHistory.length===100};
+ if(!applicationIds.length)return {student,applications,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),teamHistory,truncated:teamHistory.length===100};
  const [requests,notes,studentNotes]=await Promise.all([
   db.select({id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
    status:placementLearnerRequests.status,type:placementLearnerRequests.requestType,
@@ -55,7 +55,7 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
   listTpoStudentNotes(ctx,id),
  ]);
  const jobs=new Map(applications.map(x=>[x.id,x.title]));
- return {student,requests:requests.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
+ return {student,applications,requests:requests.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
   notes:notes.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
   studentNotes:studentNotes??[],teamHistory,
   truncated:applications.length===1000||requests.length===100||notes.length===100||teamHistory.length===100};
