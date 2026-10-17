@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { safeReturnTo } from "@/lib/return-to";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -82,16 +85,28 @@ const RESTART_ERRORS = new Set([
   "WRONG_TENANT",
 ]);
 
-async function post<T>(url: string, body: unknown) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
-  const data = (await response.json().catch(() => ({}))) as T & {
-    error?: string;
-  };
-  return { ok: response.ok, data };
+/**
+ * GR-04/GR-53: preserve the existing safe, legacy OTP error strings while
+ * never parsing HTML as JSON or leaking a transport/provider error.
+ */
+async function post<T>(url: string, body: unknown): Promise<{
+  ok: boolean;
+  data: T & { error?: string };
+}> {
+  try {
+    const data = await apiFetch<T>(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+      timeoutMs: 30_000,
+    });
+    return { ok: true, data: data as T & { error?: string } };
+  } catch (reason) {
+    if (reason instanceof FriendlyFetchError && reason.status > 0) {
+      return { ok: false, data: { error: reason.code ?? undefined } as T & { error?: string } };
+    }
+    throw reason;
+  }
 }
 
 export function LoginForm({
@@ -112,6 +127,7 @@ export function LoginForm({
   const [secondCode, setSecondCode] = useState("");
   const [attempt, setAttempt] = useState<StartResult | null>(null);
   const [busy, setBusy] = useState(false);
+  const { run: runGuarded } = useGuardedAction({ timeoutMs: 31_000 });
   const [error, setError] = useState<string | null>(null);
   const [errorCode, setErrorCode] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -188,12 +204,17 @@ export function LoginForm({
     setError(null);
     setErrorCode(null);
     setNotice(null);
+    const slowNotice = window.setTimeout(() => {
+      setNotice("Your code is on its way. You can request another code when the timer ends.");
+    }, 3_000);
     try {
-      const result = await post<StartResult>("/api/auth/login/start", {
+      const result = await runGuarded(() => post<StartResult>("/api/auth/login/start", {
         channel,
         contact: contact.trim(),
-      });
-      if (!result.ok) return fail(result.data.error);
+      }));
+      if (!result) return;
+      if (!result.ok) { setNotice(null); return fail(result.data.error); }
+      setNotice(channel === "PHONE" ? "Your code is on its way." : "Your email code is on its way.");
       setAttempt(result.data);
       saveLoginAttempt({
         attempt: result.data,
@@ -203,9 +224,11 @@ export function LoginForm({
       setCode("");
       setSecondCode("");
       setCooldown(RESEND_SECONDS);
-    } catch {
-      setError("That took too long. Check your connection and try again.");
+    } catch (reason) {
+      setError(reason instanceof FriendlyFetchError ? reason.message :
+        "That took too long. Check your connection and try again.");
     } finally {
+      window.clearTimeout(slowNotice);
       setBusy(false);
     }
   }
@@ -216,7 +239,7 @@ export function LoginForm({
     setBusy(true);
     setError(null);
     try {
-      const result = await post<{ next?: string }>(
+      const result = await runGuarded(() => post<{ next?: string }>(
         "/api/auth/login/verify",
         {
           attemptId: attempt.attemptId,
@@ -225,12 +248,15 @@ export function LoginForm({
             ? { secondCode: secondCode.trim() }
             : {}),
         },
-      );
-      if (!result.ok) return fail((result.data as { error?: string }).error);
+      ));
+      if (!result) return;
+      if (!result.ok) return fail(result.data.error);
       saveLoginAttempt(null);
-      window.location.assign(result.data.next ?? "/dashboard");
-    } catch {
-      setError("Network problem. Check your connection and try again.");
+      const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+      window.location.assign(returnTo ?? result.data.next ?? "/dashboard");
+    } catch (reason) {
+      setError(reason instanceof FriendlyFetchError ? reason.message :
+        "Network problem. Check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -242,11 +268,12 @@ export function LoginForm({
     setError(null);
     setNotice(null);
     try {
-      const result = await post<{ maskedEmail?: string }>(
+      const result = await runGuarded(() => post<{ maskedEmail?: string }>(
         "/api/auth/login/email",
         { attemptId: attempt.attemptId },
-      );
-      if (!result.ok) return fail((result.data as { error?: string }).error);
+      ));
+      if (!result) return;
+      if (!result.ok) return fail(result.data.error);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
       setCooldown(RESEND_SECONDS);
@@ -255,8 +282,9 @@ export function LoginForm({
         expiresAt: Date.now() + Math.min(300, Math.max(1,attempt.expiresInSeconds)) * 1000,
         nextResendAt: Date.now() + RESEND_SECONDS * 1000,
       });
-    } catch {
-      setError("Network problem. Check your connection and try again.");
+    } catch (reason) {
+      setError(reason instanceof FriendlyFetchError ? reason.message :
+        "Network problem. Check your connection and try again.");
     } finally {
       setBusy(false);
     }

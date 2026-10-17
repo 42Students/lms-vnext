@@ -24,6 +24,8 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }:
 
   useEffect(() => {
     const id = createRequestId();
+    // Chat-16 accepts UUID report IDs; the visible 8-digit reference remains searchable.
+    const reportId = `00000000-0000-4000-8000-0000${id}`;
     const timer = setTimeout(() => setRequestId(id), 0);
     const kind = stale ? "stale_chunk" : "render";
     void fetch("/api/client-errors", {
@@ -35,6 +37,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }:
         component: "GracefulErrorBoundary",
         event: kind,
         path: window.location.pathname.slice(0, 255),
+        requestId: reportId,
       }),
       keepalive: true,
     }).catch(() => { /* The fallback must work without a connection. */ });
