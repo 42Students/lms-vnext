@@ -252,7 +252,6 @@ export function RequestProjectMeetingControl({
             onEndsAt={setEndsAt}
             onTimeZone={setTimeZone}
           />
-
           {error ? (
             <p
               role="alert"
