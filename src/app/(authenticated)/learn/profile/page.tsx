@@ -98,6 +98,10 @@ export default async function LearnerProfilePage({
           </p>
         )}
       </section>
+      <Link href="/learn/profile/academic-record"
+        className="inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        View my academic record →
+      </Link>
       <section aria-label="Verification status" className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <h2 className="text-base font-semibold text-foreground">Education and identity verification</h2>
         <p className="mt-2 text-sm text-body">View the actual college review state, including documents sent back with a reason. Saved profile details are not verification.</p>
