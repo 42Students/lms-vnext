@@ -32,8 +32,8 @@ describe("non-sensitive profile completion on a fresh learner",()=>{
     const own=await getOwnLearnerProfileWithRuntime(f.context);
     expect(own.profile.profileDocument.headline).toBe("Own persisted profile");
     const result=learnerProfileCareerCoverage(learnerProfileChecklist(own.profile.profileDocument));
-    expect(result).toMatchObject({completed:1,total:15,percentage:7});
-    expect(result.next?.section).toBe("contacts");
+    expect(result).toMatchObject({completed:1,total:15,percentage:0});
+    expect(result.next?.section).toBe("personal-details");
   },30000);
   it("denies forged college, suspended and wrong-role membership",async()=>{
     const ctx=fixture!.context;

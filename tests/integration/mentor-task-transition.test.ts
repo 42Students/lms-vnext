@@ -87,7 +87,7 @@ describe("Mentor Board task transition PostgreSQL",()=>{
       where id=$1`,[task.id]);
     const params={projectId:project.id,taskId:task.id};
     const input={status:"BLOCKED" as const,expectedUpdatedAt:task.updatedAt.toISOString(),
-      confirmed:true as const};
+      confirmed:true as const,blockerReason:"Waiting on a dependency"};
     const updated=await transitionMentorProjectTask(mentor,params,input);
     expect(updated.status).toBe("BLOCKED");
     const history=await pool.query<{actor_user_id:string;college_id:string;

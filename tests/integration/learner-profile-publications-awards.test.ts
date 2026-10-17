@@ -4,7 +4,7 @@ import {afterAll,afterEach,beforeEach,describe,expect,it} from "vitest";
 import {closeDatabaseConnection} from "@/db/client";
 import type {RequestContext} from "@/modules/identity/context";
 import {getOwnLearnerProfileWithRuntime} from "@/modules/people/runtime";
-import {learnerProfilePublicationsAwards} from "@/modules/people/learner-profile-publications-awards-model";
+import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry} from "@/modules/people/learner-profile-publications-awards-model";
 import {SEED_IDS} from "../../scripts/db-seed-data";
 import {newLearnerPlacementWriteFixture,seedLearnerPlacementWriteFixture,cleanupLearnerPlacementWriteFixture,type LearnerPlacementWriteFixture} from "../support/learner-placement-write-fixture";
 if(!process.env.TEST_DATABASE_URL)throw new Error("Disposable TEST_DATABASE_URL required");
@@ -13,8 +13,9 @@ let f:LearnerPlacementWriteFixture;
 beforeEach(async()=>{
  f=newLearnerPlacementWriteFixture();await seedLearnerPlacementWriteFixture(pool,f);
  await pool.query("INSERT INTO learner_profiles(membership_id,profile_document) VALUES($1,$2::jsonb)",[
-   f.ids.membership,JSON.stringify({achievements:[{id:randomUUID(),title:"Self-reported honor",year:"2025",description:""}],
-     metadata:[{id:randomUUID(),key:"Publication",type:"text",value:"Self-reported paper"}]})
+   f.ids.membership,JSON.stringify({achievements:[],
+     metadata:[newLearnerShowcaseEntry(randomUUID(),"award",{title:"Self-reported honor",organization:"",date:"2025",url:"",description:""}),
+       {id:randomUUID(),key:"Publication",type:"text",value:"Self-reported paper"}]})
  ]);
 },45000);
 afterEach(async()=>{await pool.query("DELETE FROM learner_profiles WHERE membership_id=$1",[f.ids.membership]);await cleanupLearnerPlacementWriteFixture(pool,f);},45000);

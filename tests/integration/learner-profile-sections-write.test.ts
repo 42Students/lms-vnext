@@ -82,7 +82,7 @@ describe("own education skills projects jsonb_set PATCH on fresh PostgreSQL",()=
     })).rejects.toMatchObject({code:"LEARNER_PROFILE_SECTION_STALE"});
     await updateOwnLearnerProfileSection(context,{
       confirmed:true,section:"education",
-      items:[{id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"}],
+      items:[{id:randomUUID(),educationType:"UG",program:"B.Tech",institution:"College",gradingType:"CGPA",gradeObtained:"8.5",maxGrade:"10"}],
       expectedItems:[],
     });
     const rows=await pool.query<{profile_document:Record<string,unknown>}>(
@@ -99,7 +99,7 @@ describe("own education skills projects jsonb_set PATCH on fresh PostgreSQL",()=
 
   it("patches only each submitted section, preserves all others and audits without payload",async()=>{
     const {ids,context}=fixture!;
-    const edu={id:randomUUID(),educationType:"Degree",program:"B.Tech",institution:"College"};
+    const edu={id:randomUUID(),educationType:"UG",program:"B.Tech",institution:"College",gradingType:"CGPA",gradeObtained:"8.5",maxGrade:"10"};
     const skill={id:randomUUID(),name:"TypeScript"};
     const project={id:randomUUID(),name:"LMS"};
     await updateOwnLearnerProfileSection(context,{confirmed:true,section:"education",items:[edu]});

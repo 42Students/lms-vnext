@@ -20,7 +20,7 @@ describe("learner course notification target",()=>{
   const courses=await listLearnerCourseDeliveries(ctx,{includeHistorical:true});
   expect(courses.some(c=>c.deliveryId===fixture.ids.delivery)).toBe(true);
   expect(learnerNotificationCourseAction("/learn/courses/"+fixture.ids.delivery+"?collegeId=other"))
-    .toEqual({href:"/learn/courses/"+fixture.ids.delivery,label:"View course"});
+    .toEqual({href:"/learn/courses/"+fixture.ids.delivery,label:"View Course"});
  },30000);
  it("denies forged college, suspended membership and wrong role",async()=>{
   const ctx=fixture.context;

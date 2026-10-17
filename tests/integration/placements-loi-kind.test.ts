@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
@@ -72,6 +73,7 @@ async function cleanup() {
 async function passedApplication() {
   const company = await createPlacementCompany(tpo, { collegeId: SEED_IDS.collegeA, name: "Loi Systems", primaryDomain: "loi-systems.example" });
   const job = await createPlacementJob(tpo, {
+    ...publishableJobTerms,
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId: company.relationship.id,
     title: "Loi Engineer",

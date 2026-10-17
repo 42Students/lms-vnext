@@ -19,7 +19,7 @@ describe("learner interview notification exact persisted destination",()=>{
   const workspace=await getLearnerPlacementRequestWorkspace(ctx);
   const action=learnerNotificationPlacementAction(
    "/learn/my-placements/interviews?applicationId="+fixture.applicationId+"&roundId="+fixture.roundId+"&collegeId=foreign");
-  expect(action?.label).toBe("View interview details");
+  expect(action?.label).toBe("View Interview");
   expect(resolveOwnInterviewDeepLink(workspace.rounds, {
    applicationId:fixture.applicationId,roundId:fixture.roundId
   })).toEqual({valid:true,key:fixture.applicationId+":"+fixture.roundId});

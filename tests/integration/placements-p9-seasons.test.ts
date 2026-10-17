@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -161,6 +162,7 @@ describe("Placement P9 seasons", () => {
     const job = await createPlacementJob(
       tpo,
       {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,
@@ -231,6 +233,7 @@ describe("Placement P9 seasons", () => {
 
     await expect(
       createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,
@@ -257,6 +260,7 @@ describe("Placement P9 seasons", () => {
 
     const nextJob =
       await createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         seasonId: next.id,
         companyRelationshipId:
@@ -335,6 +339,7 @@ describe("Placement P9 seasons", () => {
 
     await expect(
       createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         seasonId:
           SEED_IDS.placementSeasonB,

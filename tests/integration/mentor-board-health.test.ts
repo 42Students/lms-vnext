@@ -37,7 +37,7 @@ const created:{projectIds:string[];templateIds:string[];members:string[];users:s
 };
 async function cleanup(){
   if(created.projectIds.length){
-    for(const table of ["project_task_submissions","project_submission_reviews",
+    for(const table of ["project_delivery_events","project_task_submissions","project_submission_reviews",
       "project_submissions","project_meetings","project_members","project_resources",
       "project_tasks","project_sprints","project_releases"]){
       await pool.query("delete from "+table+" where project_id=any($1::uuid[])",[created.projectIds]);
@@ -178,7 +178,7 @@ describe("Mentor meeting audited optimistic decisions on disposable PostgreSQL",
   expect(done.status).toBe("COMPLETED");
   await expect(decideMentorProjectMeeting(mentor,project.id,meeting.id,token)).rejects.toBeDefined();
   const audit=await pool.query<{count:string}>(`select count(*)::text as count from activity_events
-    where subject_id=$1::text and event_type='projects.meeting.decided'`,[meeting.id]);
+    where subject_id=$1::text and event_type='projects.meeting.decided' and summary='Project meeting completed'`,[meeting.id]);
   expect(audit.rows[0]?.count).toBe("1");
  });
 });

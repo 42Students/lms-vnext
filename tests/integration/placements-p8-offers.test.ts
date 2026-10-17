@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -155,6 +156,7 @@ async function preparePassedApplication() {
   const job = await createPlacementJob(
     tpo,
     {
+    ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId:
         company.relationship.id,
@@ -503,6 +505,7 @@ describe("Placement P8 offers and joining", () => {
       });
     const job =
       await createPlacementJob(tpo, {
+    ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,
