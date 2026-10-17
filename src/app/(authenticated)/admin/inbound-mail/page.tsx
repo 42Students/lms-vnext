@@ -44,7 +44,7 @@ export default async function InboundMailPage({searchParams}:{searchParams:Promi
    </Link>})}</nav>
   <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="min-w-0 flex-1 text-sm">Search
-    <input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border px-3" placeholder="Sender or subject"/></label>
+    <input name="q" defaultValue={parsed.data.q} maxLength={120} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border px-3" placeholder="Sender, subject or message body"/></label>
    <label className="min-w-0 text-sm">Recipient inbox
     <input type="email" name="recipient" defaultValue={parsed.data.recipient??""} maxLength={320} className="mt-1 min-h-11 w-full min-w-0 rounded-md border border-border px-3" placeholder="inbox@example.edu"/></label>
    <label className="text-sm">Status
