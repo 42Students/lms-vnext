@@ -340,11 +340,11 @@ export function RecruiterLeadsWorkspace({
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
-    nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter};
-  const visible=useMemo(()=>filterEngageRoster(rows,filters,lead=>
+    nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter,drives:driveFilter};
+  const visible=useMemo(()=>filterEngageRoster(rosterRows,filters,lead=>
     matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
-    [rows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,sourceFilter,
-      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter]);
+    [rosterRows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,
+      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter]);
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
   const filterChips=([
