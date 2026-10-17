@@ -4,6 +4,8 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
@@ -35,6 +37,14 @@ export function MentorTaskCreate({
     sprintId?[{id:sprintId,title:"Current sprint",status:"PLANNED",updatedAt}]:[];
   const chosenSprint=choices.find(item=>item.id===selectedSprintId);
   const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
+  const dirty=Boolean(title||description||approach||criteria||estimate||taskType||dueDate||blockerReason||
+    priority!=="MEDIUM"||selectedSprintId!==sprintId||status!=="TODO"||assigneeMembershipId);
+  function discardDraft(){
+    setOpen(false);setTitle("");setDescription("");setApproach("");setCriteria("");
+    setPriority("MEDIUM");setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
+    setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
+  }
+  const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const valid=title.trim().length>0&&title.trim().length<=200&&
     description.length<=4000&&approach.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
     (estimate===""||(Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000))&&
@@ -65,10 +75,10 @@ export function MentorTaskCreate({
   }
   return <>
     <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>Create task</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Confirm new task"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Confirm new task"
       description="Leave Sprint blank for the backlog. Select an assignee, priority and task details."
       footer={<>
-        <Button variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
+        <Button variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button disabled={busy||!valid} onClick={()=>void create()}>
           {busy?"Creating…":"Create task"}
         </Button>
@@ -148,5 +158,10 @@ export function MentorTaskCreate({
         </p>:null}
       </div>
     </Dialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard task changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={busy}
+      onConfirm={guard.confirmDiscard}/>
   </>;
 }
