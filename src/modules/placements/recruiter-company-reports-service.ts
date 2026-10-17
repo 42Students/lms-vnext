@@ -13,6 +13,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   placementApplications,
+  placementApplicationScreenings,
   placementJobs,
   placementOffers,
   placementJoiningOutcomes,
@@ -231,6 +232,10 @@ export async function getRecruiterCompanyReports(
             ),
           ),
         )
+        .innerJoin(placementApplicationScreenings,and(
+          eq(placementApplicationScreenings.applicationId,placementApplications.id),
+          eq(placementApplicationScreenings.status,"SHORTLISTED"),
+        ))
         .leftJoin(
           placementOffers,
           eq(placementOffers.applicationId,placementApplications.id),
