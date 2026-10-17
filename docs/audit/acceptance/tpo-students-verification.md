@@ -68,3 +68,8 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 ### Acceptance limitations
 
 All tests are authored but not executed by chat-12. The orchestrator must run tests, typecheck, real PostgreSQL acceptance and browser coverage. OPEN is not a claim of parity closure.
+
+| TPO-students-20 | OPEN (complete legacy facet set pending) | Boolean YES/NO URL filters survive service reparse; `tests/unit/chat12-students-boolean-roundtrip.test.ts` `TPO-students-20` |
+| TPO-students-22 | OPEN (other profile filters remain) | Reject unrecognized presence flags, preserve optional states; `tests/unit/chat12-students-boolean-roundtrip.test.ts` `TPO-students-22` |
+| TPO-students-24 | OPEN (remaining drawer UI) | URL booleans and typed booleans round-trip; `tests/unit/chat12-students-boolean-roundtrip.test.ts` `TPO-students-24` |
+| TPO-students-31 | OPEN (prep accuracy remains) | Missing booleans are distinct from false; `tests/unit/chat12-students-boolean-roundtrip.test.ts` `TPO-students-31` |

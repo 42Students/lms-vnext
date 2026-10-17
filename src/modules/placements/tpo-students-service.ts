@@ -73,6 +73,10 @@ import {
 } from "./tpo-students-model";
 
 const uuid = z.string().uuid();
+/** Route filter strings are re-parsed by the service after URL validation. */
+const yesNo=z.union([z.boolean(),z.enum(["YES","NO"])]).transform(
+ value=>typeof value==="boolean"?value:value==="YES",
+);
 
 const paginationFields = {
   page: z.coerce.number().int().min(1).max(100000).default(1),
@@ -93,15 +97,15 @@ export const tpoStudentsQuerySchema = z
     legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
     minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
     interviewedWith:z.string().trim().max(100).optional(),
-    needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
-    debarred:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    needsAttention:yesNo.optional(),
+    debarred:yesNo.optional(),
     gender:z.enum(["Male","Female","Other"]).optional(),
     birthYear:z.coerce.number().int().min(1900).max(2100).optional(),
     minSkills:z.coerce.number().int().min(0).max(100).optional(),
     minProjects:z.coerce.number().int().min(0).max(50).optional(),
     minCertifications:z.coerce.number().int().min(0).max(50).optional(),
     minExperiences:z.coerce.number().int().min(0).max(30).optional(),
-    hasProfileLinks:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    hasProfileLinks:yesNo.optional(),
     minApplications:z.coerce.number().int().min(0).max(10000).optional(),
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
@@ -114,8 +118,8 @@ export const tpoStudentsQuerySchema = z
     minUgPct:z.coerce.number().min(0).max(100).optional(),
     passingYear:z.coerce.number().int().min(1950).max(2100).optional(),
     maxGapYears:z.coerce.number().int().min(0).max(100).optional(),
-    marksVerified:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
-    isLateralEntry:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    marksVerified:yesNo.optional(),
+    isLateralEntry:yesNo.optional(),
     maxCgpa:z.coerce.number().min(0).max(10).optional(),
     maxActiveBacklogs:z.coerce.number().int().min(0).max(100).optional(),
     maxPastBacklogs:z.coerce.number().int().min(0).max(100).optional(),
