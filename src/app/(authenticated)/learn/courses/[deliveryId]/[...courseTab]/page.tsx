@@ -155,6 +155,7 @@ export default async function LearnerCourseTabPage({
       <LearnerCourseAttendance
         key={selectedMonth}
         defaultMonth={selectedMonth}
+        currentMonth={currentMonth}
         deliveryId={deliveryId}
         workspace={attendance}
       />
