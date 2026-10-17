@@ -83,7 +83,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
             {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
             <p className="mt-2 whitespace-pre-wrap break-words text-sm">{request.reason}</p>
-            {request.decisionNote?<p className="mt-2 whitespace-pre-wrap break-words text-sm">Decision note: {request.decisionNote}</p>:null}
+            {request.decidedAt?<dl className="mt-2 grid gap-1 text-sm">
+             <div><dt className="inline font-semibold">Decided by: </dt><dd className="inline">{request.decidedBy??"Authorized placement team"}</dd></div>
+             <div><dt className="inline font-semibold">Decided on: </dt><dd className="inline">{request.decidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
+             <div><dt className="inline font-semibold">Why: </dt><dd className="inline">{request.decisionNote||"No additional decision note recorded"}</dd></div>
+            </dl>:null}
             <Link href={tpoRequestContextLink(request).href} className="mt-2 inline-flex min-h-10 items-center text-primary-text underline">{tpoRequestContextLink(request).label}</Link>
           </div>
           {request.status==="PENDING"?<TpoRequestDecisionControl requestId={request.id} expectedUpdatedAt={request.updatedAt.toISOString()} requestType={request.requestType}/>:<span className="text-sm text-body">{request.status}</span>}
