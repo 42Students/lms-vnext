@@ -141,6 +141,11 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
      .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)));
    const notifyIds=new Set(subscribers.map(f=>f.membershipId));
    if(input.assigneeId)notifyIds.add(input.assigneeId);
+   // Explicit @member:<UUID> is an unambiguous, scoped person mention.
+   // Resolve recipients only through active TPO/college-admin memberships.
+   for(const match of input.body.matchAll(/@member:([0-9a-f-]{36})/gi)){
+    if(uuid.safeParse(match[1]).success)notifyIds.add(match[1]);
+   }
    if(/(?:^|\s)@team(?:\b|$)/i.test(input.body)){
     const colleagues=await tx.selectDistinct({id:collegeMemberships.id}).from(collegeMemberships)
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
