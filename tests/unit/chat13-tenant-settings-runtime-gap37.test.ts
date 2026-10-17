@@ -19,6 +19,13 @@ describe("SA-tenants-modules-37 saved course settings are honored",()=>{
   expect(service).toContain('percentComplete >= minInProgressPercent');
   expect(service).toContain('settings.minInProgressPercent');
  });
+ it("SA-tenants-modules-37 applies the same save interval to YouTube and hosted video",()=>{
+  const workspace=read("src/components/courses/learner-course-workspace.tsx");
+  const video=workspace.slice(workspace.indexOf("<LearnerVideoPlayer"),workspace.indexOf("/>",workspace.indexOf("<LearnerVideoPlayer")));
+  const youtube=workspace.slice(workspace.indexOf("<LearnerYouTubePlayer"),workspace.indexOf("/>",workspace.indexOf("<LearnerYouTubePlayer")));
+  expect(video).toContain("saveIntervalMs={saveIntervalMs}");
+  expect(youtube).toContain("saveIntervalMs={saveIntervalMs}");
+ });
  it("SA-tenants-modules-37 retains video completion guard and unknown duration semantics",()=>{
   const service=read("src/modules/courses/progress-service.ts");
   expect(service).toContain('duration*settings.watchedThresholdPercent');
