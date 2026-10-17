@@ -15,7 +15,11 @@ export const runtime = "nodejs";
 /** SA-academics-people-54: selected-college CSV, not the College Admin endpoint. */
 export async function GET(request: Request): Promise<Response> {
   try {
-    const input=Object.fromEntries(new URL(request.url).searchParams);
+    const params=new URL(request.url).searchParams;
+    if([...params.keys()].some((key,index,keys)=>keys.indexOf(key)!==index)){
+      return Response.json({error:"INVALID_FILTERS",message:"Choose one value per filter."},{status:400});
+    }
+    const input=Object.fromEntries(params);
     const query=collegeCourseCatalogueExportQuerySchema.safeParse(input);
     if(!query.success){
       return Response.json({error:"INVALID_FILTERS",message:"Check the search and sort filters."},{status:400});
@@ -32,7 +36,7 @@ export async function GET(request: Request): Promise<Response> {
       description:courses.description,status:courses.status,
     }).from(courses)
       .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,scope.collegeId)))
-      .where(query.data.q?or(ilike(courses.name,term),ilike(courses.code,term),ilike(departments.name,term)):undefined)
+      .where(and(eq(courses.status,"ACTIVE"),query.data.q?or(ilike(courses.name,term),ilike(courses.code,term),ilike(departments.name,term)):undefined))
       .orderBy(...order).limit(COLLEGE_COURSE_EXPORT_CAP+1);
     const truncated=rows.length>COLLEGE_COURSE_EXPORT_CAP;
     const csv=renderCollegeCourseCatalogueCsv(rows.slice(0,COLLEGE_COURSE_EXPORT_CAP),truncated);
