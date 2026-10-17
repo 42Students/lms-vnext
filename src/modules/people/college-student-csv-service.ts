@@ -142,8 +142,9 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
       }
       if (data.sectionId) {
         try { await placeImportedLearnerInSection(context, enrollment.id, data.sectionId); }
-        catch (reason) {
-          partial.push(reason instanceof Error ? "Class placement failed: " + reason.message : "Class placement failed");
+        catch {
+          // COL-people-05/25: never export internal DB errors in a learner import receipt.
+          partial.push("Class placement failed; review section capacity and learner eligibility");
         }
       }
       results.push({ row: entry.row, status: partial.length ? "PARTIAL" : "IMPORTED",
