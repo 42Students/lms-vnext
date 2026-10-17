@@ -955,7 +955,7 @@ export function RecruiterLeadsWorkspace({
                       <td style={{display:visibleColumns.includes("Actions")?undefined:"none"}} className="px-4 py-3">
                         {!lead.recruiterUserId?(
                           <button type="button" className={buttonStyle}
-                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                            disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)||lead.manualStage==="NOT_NOW"}
                             onClick={()=>void createInviteLink(lead)}>
                             {lead.inviteSentAt?"Resend invite":"Invite"}
                           </button>
