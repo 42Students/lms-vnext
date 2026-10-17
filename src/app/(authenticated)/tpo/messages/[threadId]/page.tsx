@@ -47,6 +47,7 @@ export default async function TpoRecruiterConversationPage({params}:{
       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
      </p>
      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
+     {item.senderType==="TPO"&&item.readAt?<p className="mt-2 text-right text-xs text-muted-foreground">Seen</p>:null}
     </article></div>)}
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />

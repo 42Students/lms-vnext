@@ -2,6 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
+import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -332,9 +333,9 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.companyName || "Company not provided"}
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
                <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
-              <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Invite: {({NOT_SENT:"Not invited",NOT_INVITED:"Not invited",SENT:"Invite sent, not opened",OPENED:"Invite opened",CLICKED:"Invite opened",BOUNCED:"Invite bounced",JOINED:"Joined"} as Record<string,string>)[lead.inviteStatus]??lead.inviteStatus}</p>
               <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
               <p className="mt-1 text-sm text-muted-foreground">Recruiter last login: {lead.recruiterLastLoginAt?
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
@@ -385,7 +386,7 @@ export function RecruiterLeadDetailWorkspace({
                   <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="text-primary-text underline">{lead.emailNorm}</a>
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add email</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
-                  <dd>{lead.phoneNorm ? <a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
+                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add phone</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
