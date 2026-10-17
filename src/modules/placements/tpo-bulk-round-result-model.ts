@@ -9,7 +9,10 @@ export const bulkTpoRoundResultSchema = z.object({
   }).strict()).min(1).max(25).refine((entries) =>
     new Set(entries.map((item) => item.result.applicationId)).size === entries.length,
     "Duplicate application IDs are not permitted",
-  ),
+  ).refine((entries)=>{
+    const ranks=entries.filter(item=>item.result.outcome==="HOLD").map(item=>item.result.waitlistRank);
+    return new Set(ranks).size===ranks.length;
+  },"Duplicate waitlist ranks are not permitted in one batch"),
 }).strict();
 
 export type TpoBulkRoundResultOutcome = {
