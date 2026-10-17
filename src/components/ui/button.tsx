@@ -1,14 +1,14 @@
-import type { ButtonHTMLAttributes } from "react";
+import type { ComponentPropsWithRef } from "react";
 import { cx } from "@/lib/class-names";
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ButtonProps = ComponentPropsWithRef<"button"> & {
   variant?: "primary" | "secondary" | "ghost" | "danger";
   size?: "sm" | "md";
   loading?: boolean;
 };
 
 const variantClasses = {
-  primary: "border-primary bg-primary text-foreground hover:border-primary-hover hover:bg-primary-hover",
+  primary: "border-primary bg-primary text-on-primary hover:border-primary-hover hover:bg-primary-hover",
   secondary: "border-border bg-surface text-foreground hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle",
   ghost: "border-transparent bg-transparent text-foreground hover:bg-primary-subtle",
   danger: "border-error bg-[var(--lms-error-subtle)] text-foreground hover:brightness-95",

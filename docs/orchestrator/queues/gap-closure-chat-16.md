@@ -86,3 +86,14 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - `SA-placements-projects-120` now surfaces persisted failed/partial/unconfigured sync results. Current GitHub connector returns 404 for `42Students/lms-findings`; no successful import was claimed or persisted. More work needs a readable findings source and authorized server-side importer.
 - `MEN-projects-meetings-75` dirty-form interception allows same-route fragment jumps without triggering a destructive discard prompt. Regression assertion added.
 - Page UI/UX restyling remains frozen pending the signed-off playbook. New work changes only gap behavior, audit metadata, and tests.
+
+## Chat-16 graceful-operation test and privacy round — 2026-10-18
+
+- Synced main before edits via reverse-direction PR #149 and again via #150 after other lanes advanced. The branch was not merged into main and the UX playbook hold remains in force.
+- `docs/orchestrator/typecheck-errors.md` at the time of inspection listed **no chat-16 owned TypeScript errors**; the listed errors belonged to tabs, recruiter drive requests, and college company/interview files. Earlier `MEN-projects-meetings-27` and `MEN-projects-meetings-R09` compiler problems already have merged fixes.
+- Inspected `graceful-telegram-foundations.test.ts` and `graceful-logs-ui-contract.test.ts` against notifier, signature, redaction, Known Errors UI and readiness logic. Their historical failure report is not proof they still fail. CI/Vitest was not available in the GitHub-only execution path, so **no green-run claim** is made.
+- Added four gap-named regression suites with 79 data-driven cases in total: `chat16-graceful-redaction-r8.test.ts` (29), `chat16-graceful-signatures-r8.test.ts` (14), `chat16-graceful-telegram-r8.test.ts` (18), `chat16-graceful-logs-ui-r8.test.ts` (18). The tests cover bounded privacy output, dynamic route masking, transient error grouping, Telegram provider failures, and guarded Logs actions.
+- Closed a real SA-placements-projects-113 / GR-113 privacy weakness: relative querystrings, Unix/Windows home paths, OTP and generic session credentials are now removed by `src/modules/log-alerts/redaction.ts` before user-facing alerts. Tests include regression fixtures for all added rules.
+- All 32 reassigned mentor/SA queue IDs were already accounted for (27 authored-source DONE, 4 NOT-A-GAP, 1 blocked). `SA-placements-projects-120` cannot perform real GitHub findings imports: `42Students/lms-findings` is not accessible through the connected GitHub account (404). Real sync remains OPEN; the read-only status UI never claims success.
+- Rescanned OPEN mentor and Super Admin IDs against all builder queues: **zero unowned**. Do not repurpose another lane's gaps or falsely claim 30 new feature closures; this round adds 79 regression scenarios and one scoped security hardening.
+- No page UI/UX restyling. New suites still need execution in project CI.

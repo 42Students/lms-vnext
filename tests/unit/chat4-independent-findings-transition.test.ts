@@ -29,6 +29,8 @@ describe("SA-tenants-modules-47 independent findings lifecycle",()=>{
   expect(service).toContain('reason:"INVALID_STATUS_TRANSITION"');
   expect(route).toContain("INVALID_STATUS_TRANSITION");
   expect(route).toContain("422");
+  expect(service).toContain('target.status==="DUPLICATE"');
+  expect(service).toContain('patch.duplicateOf=null');
   expect(view).toContain("disabled={!canTransitionIndependentFinding");
  });
 });

@@ -36,9 +36,11 @@ export default async function CollegeCompaniesPage({
   const exportParams=new URLSearchParams({
     q:query.q,sort:query.sort,showDeleted:query.showDeleted,pageSize:String(query.pageSize),
   });
+  const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
     <CollegeCompanyCreate collegeId={collegeId}/>
+    <a href={"/api/college/companies/export?"+exportParams.toString()} className="font-semibold text-primary-text underline">Export CSV</a>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
@@ -48,6 +50,19 @@ export default async function CollegeCompaniesPage({
         <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-3">
           <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
         </select>
+      </label>
+      <label className="grid gap-1 text-sm">Sort
+        <select name="sort" defaultValue={query.sort} className="min-h-11 rounded-md border border-border px-3">
+          <option value="LAST_ACTIVE">Last active</option><option value="COMPANY">Company</option><option value="DRIVES">Drive count</option>
+        </select>
+      </label>
+      <label className="grid gap-1 text-sm">Rows
+        <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded-md border border-border px-3">
+          {[10,20,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+        </select>
+      </label>
+      <label className="flex items-center gap-2 text-sm">
+        <input name="showDeleted" type="checkbox" value="1" defaultChecked={query.showDeleted==="1"}/>Show deleted
       </label>
       <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>

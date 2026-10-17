@@ -6,7 +6,7 @@ import {findTpoPeopleAndCompanies} from "@/modules/placements/tpo-find-people-se
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import { PageHeader } from "@/components/ui/page-header";
 export const dynamic="force-dynamic";
-const querySchema=z.string().trim().min(1).max(100);
+const querySchema=z.string().trim().min(2).max(100);
 export default async function TpoRecordFinder({searchParams}:{searchParams:Promise<{q?:string|string[]}>}){
  const raw=await searchParams;
  const rawText=Array.isArray(raw.q)?raw.q[0]:raw.q;
@@ -29,7 +29,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
      className="mt-1 block min-h-11 w-full min-w-0 rounded border border-border bg-surface px-3" placeholder="Find a student, recruiter, company or drive"/>
    </label><button type="submit" className="min-h-11 self-end rounded bg-primary px-4 text-on-primary">Find</button>
   </form>
-  {invalid?<p role="alert">Search must contain 1–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
+  {invalid?<p role="alert">Search must contain 2–100 characters.</p>:!text?<p role="status">Type a name or a roll number, for example 21CS001</p>:<>
    {!hasMatches?<p role="status">No student, recruiter, company or drive matches &quot;{rawText}&quot;</p>:null}
    <section className="space-y-2"><h2 className="font-semibold">Batches ({foundBatches.length}{batches.batches.length>30?"+":""})</h2>
     {foundBatches.length===0?<p className="text-sm">No matching batches.</p>:<ul className="space-y-2">{foundBatches.map(b=><li key={b.id} className="rounded border border-border p-3 text-sm">
@@ -38,7 +38,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
    <section className="space-y-2"><h2 className="font-semibold">Students ({named.students.length})</h2>
     {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="space-y-2">
       {named.students.slice(0,5).map(s=><li key={s.id} className="rounded border border-border p-3 text-sm">
-       <Link href={"/tpo/students?q="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-primary-text underline">{s.name??"Student"}</Link>
+       <Link href={"/tpo/students?q="+encodeURIComponent(s.rollNumber??s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-primary-text underline">{s.name??"Student"}{s.rollNumber?" · "+s.rollNumber:""}{s.branch?" · "+s.branch:""}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>

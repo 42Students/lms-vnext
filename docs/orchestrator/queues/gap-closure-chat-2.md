@@ -55,7 +55,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-40 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-49 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-50 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
-| TPO-inbox-team-51 | S3 | MISSING-FIELD | OPEN |
+| TPO-inbox-team-51 | S3 | MISSING-FIELD | IN-BRANCH |
 | TPO-inbox-team-52 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-53 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-inbox-team-56 | S3 | COPY | IN-BRANCH |
@@ -335,3 +335,19 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - TPO-recruiters-17: BLOCKED actual Day-4 email provider/scheduled sender (allowlist and credentials); existing policy is not a verified automatic reminder. Unsigned invite link creation is audited as NOT_SENT, not a delivered message.
 - TPO-inbox-team-07/08/11/16/18/20/22/24/26/30/33/34/35/42/44/51/54/59/60/R02/R06, TPO-recruiters-07/30/34/36, TPO-companies-04/05/20/21/25/R03 and TPO-campaigns-public-04/17/23/25/37/R08 source reviewed and concrete unresolved behavior recorded in corresponding four page acceptance docs (40+ gap IDs reviewed; do not promote partial source tests to full DONE).
 - No migrations renumbered; no UI restyling. Latest CI/typecheck/unit test status must be established by orchestrator. Recruiter/calendar-messages-profile gaps are now owned by chat-14 and skipped.
+
+## Chat-2 new backend closure batch — 2026-10-18
+- First read `typecheck-errors.md` and `unit-failures-r1.md` from current main. The published 01:15 typecheck report has zero chat-2-owned failures; existing chat-2 unit failures refer to the stale round-1 report, and new regression cases are written on this branch without claiming execution.
+- TPO-inbox-team-51: DONE IN BRANCH, database/CI pending. Unsent future scheduled notices now explicitly change audience, backed by locked notice version, frozen tenant recipients and delivered/expired protection; named `chat2-notice-retarget-before-send.test.ts`.
+- TPO-inbox-team-60: PARTIAL, leave OPEN. Added current active-TPO in-app bells for company lifecycle, lead creation/stage changes and CSV imports. Existing invite-unsubscribe, recruiter joined and team events also remain. Missing legacy event producers remain to implement; tests `chat2-company-lifecycle-bell-60.test.ts`, `chat2-recruiter-import-audit.test.ts`.
+- TPO-recruiters-R05: PARTIAL, leave OPEN. Immutable recruiter CSV import audit and scoped current-TPO notifications built. Invitation delivery, owner and undo audit parity not fully verified; no false SENT statuses.
+- TPO-companies-05 / TPO-inbox-team-16/29: PARTIAL, leave OPEN. One company relationship per whole-Team thread, idempotent message insert, archive read-only and active college TPO recipient bell proposed. Explicit migration draft `docs/proposed-migrations/tpo-company-team-conversations.sql` requires numbering by orchestrator. React page, server/service, API, draft-safe composer and Company Memory/detail links have regression tests. No invented mentions, asks, decisions or other object kinds.
+- Queue work handed to chat-14: all REC-calendar-messages-profile statuses including REC-calendar-messages-profile-46 UNCONFIRMED. No recruiter page restyling.
+- No numbered migrations or central shell/auth/security edited; no UX page restyling.
+
+
+## Chat-2 final-sprint reassignment (2026-10-18)
+- Latest `docs/orchestrator/queues/final-sprint.md` assigns chat-2 **22 REC-calendar-messages-profile** evidence items despite the earlier chat-14 OPEN-page split. Independent source tests now cite all 22 IDs: `tests/unit/chat2-final-sprint-recruiter-calendar.test.ts`, `chat2-final-sprint-recruiter-messages.test.ts`, `chat2-final-sprint-recruiter-profile-company.test.ts`; outcomes are documented per ID in `docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md`.
+- Exact legacy copy repaired without page restyling for REC-calendar-messages-profile-05, -35 and -36. REC-calendar-messages-profile-18, -32, -41 are explicitly PARTIAL, with missing legacy event variants, verified/multi-domain evidence and real invited-drive data respectively; REC-calendar-messages-profile-20, -30, -33 retain safer pagination/self-revoke/private-trust decisions as NOT-A-GAP.
+- Final-sprint now assigns TPO-companies-05 to chat-3. Chat-2's preassignment company Team schema, proposed SQL, scoped route and tests remain in branch for chat-3 to finish. It still lacks whole-module @mentions, asks, decisions and a numbered migration.
+- One SQL proposal only (`docs/proposed-migrations/tpo-company-team-conversations.sql`); orchestrator must register it, run `tsc`, lint, Vitest and PostgreSQL integration tests. Do not call source assertions CI passing.
