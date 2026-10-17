@@ -8,6 +8,7 @@ import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
 import { getTpoNonApplicantReminderPreview } from "@/modules/placements/tpo-remind-not-applied-service";
 import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
+import {TpoDeleteDraftAction} from "./tpo-delete-draft-action";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -288,6 +289,8 @@ export async function PlacementDriveWorkspace({
                 Review close consequences
               </Link>
             ) : null}
+            {isTpo&&job.status==="DRAFT"?
+              <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
             {isTpo && job.status === "PUBLISHED" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
