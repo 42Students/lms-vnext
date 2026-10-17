@@ -20,10 +20,10 @@ export function TpoTeamAwayForm({until}:{until:string|null}){
  }
  return <form className="mt-3 space-y-2"
   onSubmit={event=>{event.preventDefault();
-   if(!date)return;const parsed=new Date(date);
+   if(!date)return;const parsed=new Date(date+"+05:30");
    if(!Number.isFinite(parsed.getTime())){setError("Choose when you will be back.");return;}
    void submit(parsed.toISOString());}}>
-  <label className="grid gap-1 text-xs font-semibold">Away until
+  <label className="grid gap-1 text-xs font-semibold">Away until (IST)
    <input type="datetime-local" value={date} disabled={busy} onChange={event=>setDate(event.target.value)}
     className="min-h-11 rounded border border-border bg-surface px-3" />
   </label>
