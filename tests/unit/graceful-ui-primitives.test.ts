@@ -7,7 +7,7 @@ import { DisabledReason } from "@/components/ui/disabled-reason";
 import { LongText } from "@/components/ui/long-text";
 import { formatCount, formatCurrencyINR, formatDateIST, safeDisplayText, validateDateRange } from "@/lib/safe-format";
 import { validateUpload } from "@/lib/upload-validation";
-import { fetchDownload, FriendlyFetchError } from "@/lib/safe-download";
+import { fetchDownload } from "@/lib/safe-download";
 
 describe("graceful shared UI primitives", () => {
   it("GR-35 confirms consequences without browser confirm", () => {

@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * GR-36: disabled actions remain understandable and keyboard discoverable.
  * Usage: <DisabledReason reason="Complete your profile first.">
