@@ -454,6 +454,8 @@ export type UpdateProjectMemberInput = z.infer<
   typeof updateProjectMemberInputSchema
 >;
 
+export const projectReleaseVersionInputSchema = z.object({expectedUpdatedAt:z.iso.datetime({offset:true}).optional()}).strict();
+
 export const projectReleaseIdSchema = z.string().uuid();
 export const projectSprintIdSchema = z.string().uuid();
 export const projectTaskIdSchema = z.string().uuid();
