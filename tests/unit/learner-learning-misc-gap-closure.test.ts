@@ -72,6 +72,14 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(schedule()).toContain("todayEvents.map");
   expect(schedule()).toContain("nextEvent?");
  });
+ it("LEARNER-learning-misc-33 route-level network failures and week emptiness have safe, distinct legacy wording",()=>{
+  const page=schedule();
+  const err=source("src/app/(authenticated)/learn/calendar/error.tsx");
+  expect(page).toContain("You are not assigned to a class yet");
+  expect(page).toContain("No scheduled classes this week.");
+  expect(err).toContain("Unable to load class schedule. Please try again.");
+  expect(err).toContain("Retry");
+ });
  it("LEARNER-learning-misc-33 schedule load error offers an explicit Retry",()=>{
   const fail=source("src/app/(authenticated)/learn/calendar/error.tsx");
   expect(fail).toContain("Unable to load class schedule");
@@ -93,6 +101,15 @@ describe("Learner Learning Misc legacy gap evidence",()=>{
   expect(attendance()).toContain('label="Absent"');
   expect(attendance()).toContain('history={recentStatusDates("PRESENT")}');
   expect(attendance()).toContain('history={recentStatusDates("ABSENT")}');
+ });
+ it("LEARNER-learning-misc-38 attendance distinguishes unselected course, no month records and load error",()=>{
+  const page=attendance();
+  const err=source("src/app/(authenticated)/learn/attendance/error.tsx");
+  expect(page).toContain('deliveryId ? "No attendance records" : "Select a course"');
+  expect(page).toContain("No classes scheduled for this month. Try selecting a different period.");
+  expect(page).toContain("Choose a course from the dropdown above to view your attendance records.");
+  expect(err).toContain("Something went wrong loading attendance for this month.");
+  expect(err).toContain("Retry");
  });
  it("LEARNER-learning-misc-38 attendance empty/error distinction retains course guidance",()=>{
   expect(attendance()).toContain("Select a course");
