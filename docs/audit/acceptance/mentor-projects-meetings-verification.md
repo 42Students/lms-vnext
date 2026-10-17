@@ -122,3 +122,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-31 | DONE (source checked; CI pending) | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-31 tenant-scoped team meeting notifications`. |
 | MEN-projects-meetings-32 | DONE (source checked; CI pending) | `src/components/projects/mentor-release-editor.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-32 release CRUD controls`. |
 | MEN-projects-meetings-34 | DONE (source checked; CI pending) | `src/components/projects/mentor-sprint-write.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-34 release-first sprint scheduling and definition of done`. |
+
+## Chat-7 round 2 — sprint and board controls (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-35 | DONE (source checked; CI pending) | `src/components/projects/mentor-sprint-delete-control.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-35 sprint deletion warns about returning tasks to backlog`. |
+| MEN-projects-meetings-36 | DONE (source checked; CI pending) | `src/components/projects/mentor-product-backlog.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-36 backlog and sprint-pull actions with velocity`. |
+| MEN-projects-meetings-37 | DONE (source checked; CI pending) | `src/components/projects/project-lifecycle-actions.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-37 release shipment and reversal confirmations`. |
+| MEN-projects-meetings-39 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-39 task board includes backlog and status lanes`. |
+| MEN-projects-meetings-40 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-40 board filters expose clear-all and priority/member state`. |
