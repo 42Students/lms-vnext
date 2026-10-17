@@ -250,7 +250,7 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-13 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-projects-04 | S3 | MISSING-ACTION | OPEN |
 | COL-projects-05 | S3 | MISSING-PAGE | NOT-A-GAP |
-| COL-projects-08 | S3 | MISSING-EXPORT | OPEN |
+| COL-projects-08 | S3 | MISSING-EXPORT | DONE-BRANCH |
 | COL-projects-15 | S3 | MISSING-MODAL | OPEN |
 | COL-projects-16 | S3 | MISSING-COLUMN | DONE-BRANCH |
 | COL-projects-17 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
