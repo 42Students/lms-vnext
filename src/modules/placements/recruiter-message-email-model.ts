@@ -31,3 +31,22 @@ export function verifyRecruiterMailBridgeSignature(secret:string,body:string,sup
  const expected=Buffer.from(recruiterMailBridgeSignature(secret,body),"hex");
  return timingSafeEqual(expected,Buffer.from(supplied,"hex"));
 }
+
+/** Plain-text email replies can contain full quoted recruiter/TPO history.
+ * Admit only the human's new message, not mail headers or earlier participants'
+ * private conversation text. An all-quoted reply is not a message.
+ */
+export function extractRecruiterEmailReply(raw:string):string|null{
+ if(typeof raw!=="string"||raw.length>20_000)return null;
+ const lines=raw.replace(/\r\n?/g,"\n").split("\n");
+ const reply:string[]=[];
+ for(const line of lines){
+  const trimmed=line.trim();
+  if(/^On .{8,240} wrote:$/i.test(trimmed)||trimmed==="-----Original Message-----"||
+     trimmed==="-- Forwarded message --"||/^From:\s+.{3,}$/i.test(trimmed)||
+     /^>/.test(trimmed)||/^_{8,}$/.test(trimmed)||trimmed==="-- " )break;
+  reply.push(line.replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g,""));
+ }
+ const body=reply.join("\n").trim();
+ return body.length>=1&&body.length<=4000?body:null;
+}
