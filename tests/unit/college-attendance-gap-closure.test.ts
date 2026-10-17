@@ -52,7 +52,9 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   const service=source("src/modules/attendance/admin-service.ts");
   const form=workspace();
   expect(service).toContain('isPast:sql<boolean>');
-  expect(service).toContain("case when ${courseSectionDeliveries.endedAt} is null then 0 else 1 end");
+  expect(service).toContain("case when ${courseSectionDeliveries.endedAt} is null and ${academicPeriods.endDate} >=");
+  expect(service).toContain("(now() at time zone 'Asia/Kolkata')::date");
+  expect(service).toContain("or ${academicPeriods.endDate} <");
   expect(service).not.toContain('isNull(\n              courseSectionDeliveries.endedAt,');
   expect(form).toContain('isPast:boolean');
   expect(form).toContain('item.isPast?" · past":""');
