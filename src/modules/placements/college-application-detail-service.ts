@@ -103,6 +103,9 @@ export async function appendCollegeApplicationNote(ctx:RequestContext,job:unknow
  const {collegeId,application}=await scoped(ctx,job,id);
  const acting=await resolveActingCollege(ctx,"placements.manage");
  return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId:acting.collegeId,organizationId:acting.organizationId,
+  });
   const [parent]=await tx.select({id:placementApplications.id}).from(placementApplications)
    .where(and(eq(placementApplications.id,application.id),
     eq(placementApplications.jobId,application.jobId))).for("update").limit(1);
