@@ -4,7 +4,7 @@
  */
 import { NextResponse } from "next/server";
 import { isSameOriginRequest } from "@/auth/origin";
-import { isRequestId, createRequestId } from "@/lib/request-id";
+import { isRequestId } from "@/lib/request-id";
 import { logError } from "@/observability/logger";
 import { friendlyApiError } from "@/lib/friendly-error";
 
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   let body: unknown;
   try { body = await request.json(); }
   catch { body = null; }
-  const value = body && typeof body === "object"
+  const value: { requestId?: unknown; kind?: unknown } = body && typeof body === "object"
     ? body as { requestId?: unknown; kind?: unknown } : {};
   if (!isRequestId(value.requestId) || !["stale_chunk", "render"].includes(String(value.kind))) {
     return NextResponse.json({ message: friendlyApiError({ status: 400 }) }, { status: 400 });

@@ -32,7 +32,7 @@ function safeFields(input: unknown): Record<string, string> {
   const body = errorBody(input);
   const fields: Record<string, string> = {};
   for (const [field, value] of Object.entries(body)) {
-    if (typeof value === "string" && /^[\w.[\]-]{1,128}$/.test(field)) {
+    if (typeof value === "string" && /^[A-Za-z0-9_.\[\]-]{1,128}$/.test(field)) {
       // Form errors are server-authored safe summaries, not provider text.
       fields[field] = value;
     }
