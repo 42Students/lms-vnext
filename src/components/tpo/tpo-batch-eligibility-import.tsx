@@ -76,7 +76,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
-  <h2 className="font-semibold">Import eligibility decisions</h2>
+  <h2 className="font-semibold">Import eligibility</h2>
   <button type="button" disabled={busy} onClick={()=>dialog.current?.showModal()}
    className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">
    Import eligibility decisions
@@ -145,7 +145,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      Unusable rows must be explicitly skipped before the matched decisions can be saved.
    </label>
    <button type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
-    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
+    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm import</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
