@@ -36,7 +36,9 @@ describe("chat-9 round9 TPO recruiter and communication settings",()=>{
   expect(editor).toContain("Monthly limit on optional SMS");
   expect(editor).toContain("SMS used this month: unavailable until delivery usage is connected.");
   expect(service).toContain("smsMonthlyCap:z.number().int().min(0).max(100000)");
-  expect(service).toContain('section:"SMS_CAP"');
+  expect(editor).toContain('section:"SMS_CAP"');
+  expect(service).toContain('section:z.literal("SMS_CAP")');
+  expect(service).toContain('input.section==="SMS_CAP"?{smsMonthlyCap:input.smsMonthlyCap}');
  });
  it("TPO-settings-audit-72 maintains sharing choices on a 409 conflict without widening learner disclosure",()=>{
   const sourceUi=source("src/components/tpo/tpo-company-visibility-editor.tsx");

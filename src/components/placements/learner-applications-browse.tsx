@@ -65,6 +65,8 @@ export function LearnerApplicationsBrowse({
   const [withdrawTarget, setWithdrawTarget] = useState<LearnerPlacementJourneyItem | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
   const [withdrawPending, setWithdrawPending] = useState(false);
+  // A synchronous flight lock prevents duplicate withdrawals before React rerenders.
+  const pendingRef = useRef(false);
   const [withdrawError, setWithdrawError] = useState<string | null>(null);
   const [withdrawNotice, setWithdrawNotice] = useState<string | null>(null);
   const updateQuery=useCallback((changes:Record<string,string|null>)=>{
@@ -102,7 +104,7 @@ export function LearnerApplicationsBrowse({
     return ()=>window.clearTimeout(timer);
   },[search,url.q,updateQuery]);
   async function confirmWithdrawal() {
-    if (!withdrawTarget || withdrawPending) return;
+    if (!withdrawTarget || withdrawPending || pendingRef.current) return;
     const parsed = learnerApplicationWithdrawalSchema.safeParse({
       action: "WITHDRAW",
       confirmed: true,
@@ -118,6 +120,7 @@ export function LearnerApplicationsBrowse({
       scheduledRoundCount:scheduledRounds.filter(r=>
         r.applicationId===withdrawTarget.applicationId&&(r.booked||r.isRescheduled)).length,
     })==="REQUEST";
+    pendingRef.current = true;
     setWithdrawPending(true);
     setWithdrawError(null);
     try {
@@ -139,6 +142,7 @@ export function LearnerApplicationsBrowse({
     } catch (error) {
       setWithdrawError(error instanceof Error ? error.message : "Unable to withdraw application.");
     } finally {
+      pendingRef.current = false;
       setWithdrawPending(false);
     }
   }
