@@ -239,6 +239,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.result.staged",
   PLACEMENTS_RESULT_APPLIED:
     "placements.result.applied",
+  PLACEMENTS_LEARNER_ROUND_ATTENDANCE_CONFIRMED:"placements.learner_round_attendance.confirmed",
   PLACEMENTS_OFFER_ISSUED:
     "placements.offer.issued",
   PLACEMENTS_OFFER_RESPONDED:
