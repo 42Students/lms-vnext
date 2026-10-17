@@ -65,7 +65,7 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    approach:input.approach,
    acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,dueDate:input.dueDate,
    estimatePoints:input.estimatePoints,taskType:input.taskType,assigneeMembershipId:membership.id,
-   status:"TODO",
+   status:input.status,blockerReason:input.blockerReason,
   }).returning();
   if(!task)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await tx.update(projectSprints).set({updatedAt:new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1))})
