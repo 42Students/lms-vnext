@@ -1,0 +1,2 @@
+ALTER TABLE "project_tasks" ADD COLUMN "approach" text;--> statement-breakpoint
+ALTER TABLE "project_tasks" ADD CONSTRAINT "project_tasks_approach_length_ck" CHECK ("project_tasks"."approach" is null or length("project_tasks"."approach") <= 4000);

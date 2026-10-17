@@ -417,6 +417,7 @@ export const projectTasks = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     acceptanceCriteria: text("acceptance_criteria"),
+    approach: text("approach"),
     priority: varchar("priority", { length: 16 })
       .notNull()
       .default("MEDIUM"),
@@ -487,6 +488,10 @@ export const projectTasks = pgTable(
     check(
       "project_tasks_task_type_ck",
       sql`${table.taskType} is null or ${table.taskType} in ('STORY', 'BUG', 'CHORE', 'SPIKE')`,
+    ),
+    check(
+      "project_tasks_approach_length_ck",
+      sql`${table.approach} is null or length(${table.approach}) <= 4000`,
     ),
   ],
 );
