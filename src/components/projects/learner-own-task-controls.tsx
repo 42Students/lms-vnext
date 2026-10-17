@@ -51,6 +51,7 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    <label className="text-sm font-semibold">Sprint
     <select value={sprintId} onChange={e=>{setSprintId(e.target.value);setStatus("TODO")}}
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+     <option value="">Leave blank for the backlog</option>
      {available.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
     </select></label>
    <label className="text-sm font-semibold sm:col-span-2">Description
