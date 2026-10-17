@@ -87,7 +87,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     :"This blocks new placement applications for the student. The reason and duration will be recorded."}
    footer={<><Button variant="secondary" disabled={pending} onClick={()=>setConfirm(null)}>Cancel</Button>
     <Button disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button></>}>
-   <p className="text-sm">The student's existing applications will remain recorded.</p>
+   <p className="text-sm">The student&apos;s existing applications will remain recorded.</p>
   </Dialog>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
