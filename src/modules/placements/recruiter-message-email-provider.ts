@@ -23,6 +23,7 @@ export async function sendRecruiterMessageDigest(
  if(!config.token||!key||key===config.otpTemplateKey ||
     !digest.replyTo.includes("@")||digest.messages.length===0)return false;
  try{
+  const excerpts=safeRecruiterDigestMessages(digest.messages);
   const response=await outboundFetch(config.apiUrl,{
    method:"POST",
    headers:{Authorization:config.token,"Content-Type":"application/json",Accept:"application/json"},
@@ -33,9 +34,9 @@ export async function sendRecruiterMessageDigest(
     merge_info:{name:safeRecruiterEmailMergeText(digest.recipientName,160),
       college:safeRecruiterEmailMergeText(digest.collegeName,160),
       company:safeRecruiterEmailMergeText(digest.companyName,160),
-      message1:safeRecruiterDigestMessages(digest.messages)[0]??"",
-      message2:safeRecruiterDigestMessages(digest.messages)[1]??"",
-      message3:safeRecruiterDigestMessages(digest.messages)[2]??"",
+      message1:excerpts[0]??"",
+      message2:excerpts[1]??"",
+      message3:excerpts[2]??"",
     },
    }),
    timeoutMs:10_000,maxAttempts:1,fetchImpl,
