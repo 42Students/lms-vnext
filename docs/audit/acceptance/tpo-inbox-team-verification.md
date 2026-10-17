@@ -326,3 +326,19 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 | TPO-inbox-team-R02 | PARTIAL — OPEN | Team page and detail now accept college admins via centralized placement permission. Messages/Announcements and shared bell producers require further widening. Same test. |
 
 | TPO-inbox-team-38 | PARTIAL — OPEN | Authenticated TPO and COLLEGE_ADMIN Team participants now supported consistently in private create/reply/read/asks/decision/rename/away/follow/everyone with same-college persisted permissions; faculty TPO_ADMIN and handover still require parity. Named `tests/unit/chat2-team-college-admin-workflows.test.ts`. |
+
+## Chat-2 follow-up — permission, event copy and failing regression tests
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-38 | DONE (source; tests unrun) | Team member picker now includes active TPO, TPO-admin and college-admin members while create/reply retain persisted `placements.manage` and college membership checks; `src/app/(authenticated)/tpo/team/page.tsx`; `tests/unit/chat2-team-member-and-alert-parity.test.ts` test **TPO-inbox-team-38 lets authorized college admins and TPO admins participate…**. |
+| TPO-inbox-team-29 | PARTIAL — OPEN | Reply/decision bell text and Ask-created/done/cancelled notifications now name the actual actor, show a bounded preview and deep link; `src/modules/placements/tpo-team-internal-reply-service.ts`, `tpo-team-asks-service.ts`; named tests **TPO-inbox-team-29** in `tests/unit/chat2-team-member-and-alert-parity.test.ts`. @mentions, team assignments and object events still missing. |
+| TPO-inbox-team-22 | PARTIAL — OPEN | Existing scoped Ask lifecycle now has actual actor-named recipient notification; `tests/unit/chat2-team-member-and-alert-parity.test.ts` **TPO-inbox-team-22 TPO-inbox-team-29…**. Multi-person/object ask parity remains open. |
+| TPO-inbox-team-34 | DONE (source; tests unrun) | Persisted self-service Away until and Back now controls show success status, preserve errors, maintain CAS; `src/components/tpo/tpo-team-away-form.tsx`, `src/modules/placements/tpo-team-away-service.ts`; named **TPO-inbox-team-34** in `tests/unit/chat2-team-member-and-alert-parity.test.ts`. |
+| TPO-inbox-team-18 | PARTIAL — OPEN | Filter regression fixture now supplies persisted Decisions/Asks/@ Me evidence rather than asserting invented events; `tests/unit/tpo-team-filter-round4.test.ts` **TPO-inbox-team-18 counts and filters…**. Object threads and full legacy filters remain open. |
+| TPO-inbox-team-32 | DONE (source contract; tests unrun) | Source renders the actual filtered People roster count with accessible status; `tests/unit/tpo-team-legacy-people-chat2.test.ts` **TPO-inbox-team-32…** now protects the rendered status. |
+| TPO-inbox-team-54 | PARTIAL — OPEN | From 42 read-cell action uses shared guarded action with timeout, preserves a friendly inline error; `tests/unit/tpo-inbox-team-graceful-round3.test.ts` **TPO-inbox-team-54 and GR-90…** follows the guarded-hook implementation. Sidebar unread counter remains chat-9-owned. |
+| TPO-inbox-team-60 | PARTIAL — OPEN | Bell renders optimistic-read-filtered twenty most recent items, uses guarded read actions; `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` **TPO-inbox-team-60…** covers actual display array. Legacy producer coverage still missing. |
+
+No tests were run here; orchestrator CI and database verification remain necessary.
+| TPO-inbox-team-37 | DONE (source; tests unrun) | `src/app/(authenticated)/tpo/team/page.tsx` now renders TPO, TPO-admin and college-admin labels while excluding date-scoped coordinators from the permanent roster; `tests/unit/chat2-team-member-and-alert-parity.test.ts` **TPO-inbox-team-37 shows permanent placement Team roles…** and `tests/unit/tpo-team-legacy-people-chat2.test.ts` **TPO-inbox-team-37…**. |
