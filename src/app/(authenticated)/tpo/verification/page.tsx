@@ -82,7 +82,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    </label>
    <label className="grid gap-1 text-sm">Page size
     <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded border border-border bg-surface px-2">
-     <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+     <option value="25">25</option><option value="50">50</option><option value="100">100</option><option value="1000">First 1,000 (legacy view)</option>
     </select>
    </label>
    <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
@@ -93,6 +93,10 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     {queue.counts.WAITING} waiting · {queue.counts.SENT_BACK} sent back · {queue.counts.VERIFIED} verified
     {queue.hasMore?" · More students on the next page":""}
    </p>:null}
+  {queue.available&&queue.enabled&&queue.permitted&&query.pageSize===1000&&
+   (query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)!==undefined&&
+   ((query.tab==="WAITING"?queue.counts?.WAITING:query.tab==="VERIFIED"?queue.counts?.VERIFIED:queue.counts?.SENT_BACK)??0)>1000?
+    <p role="status" className="rounded border border-border p-3 text-sm">Showing the first 1,000 students in this view. Narrow the filters to find more students.</p>:null}
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
    <p>Verification records are not available right now. Please try again or contact your college admin.</p>

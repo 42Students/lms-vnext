@@ -1,5 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementRecruiterPublicContacts} from "@/db/schema/placement-recruiter-public-contacts";
+import {placementTableExists} from "./staged-tables";
 import {
   placementCompanies,
   placementRecruiterCollegeGrants,
@@ -56,7 +58,12 @@ export async function getRecruiterSelfProfile(context: RequestContext) {
     ))
     .limit(1);
   if (!row) throw new AuthorizationError("placements.recruiter.read");
-  return { ...row, grants: context.recruiter.grants };
+  const contactReady=await placementTableExists("placement_recruiter_public_contacts");
+  const [contact]=contactReady?await getDb().select({phone:placementRecruiterPublicContacts.phoneDigits})
+   .from(placementRecruiterPublicContacts).where(
+    eq(placementRecruiterPublicContacts.recruiterUserId,context.user.id)).limit(1):[];
+  return { ...row, contactPhoneDigits:contact?.phone??null,contactReady,
+   grants: context.recruiter.grants };
 }
 
 export async function leaveOwnRecruiterCollegeAccess(

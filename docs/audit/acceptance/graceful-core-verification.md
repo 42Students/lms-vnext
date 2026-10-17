@@ -79,3 +79,17 @@ The cloud report `docs/orchestrator/unit-failures-r1.md` lists seven chat-14 ass
 | GR-31 | `src/components/auth/membership-chooser.tsx` + `tests/unit/graceful-login-guards.test.ts` demonstrate actual guarded, friendly membership switching (GR-04/GR-30/GR-31 named). Static scan inventory in `docs/audit/graceful/gr31-outstanding-mutations-r1.md` identifies 27 **unfixed** account-lane business-write components. The global GR-31 scanner remains expected to fail until owners adopt the guard. |
 
 This audit does **not** mark the remaining 27 violations DONE, NOT-A-GAP or BLOCKED. The initial DONE row for GR-31 denotes the shared regression gate, not application-wide adoption. GR-51 is still provider-blocked.
+
+
+## Round 4 — GR-04 / GR-30 / GR-31 / GR-35 adoption evidence
+
+Shared guarded-action adoptions on the chat-14 branch, authored but not run:
+
+| ID | Status | Source and ID-named test |
+| --- | --- | --- |
+| GR-04 / GR-30 / GR-31 | DONE on eight listed call sites only | `src/components/activity/notification-toolbar.tsx`, `learner-notifications-inbox.tsx`, `src/components/admin/department-create-form.tsx`, `super-admin-batch-graduate-action.tsx`, `src/components/courses/resource-progress-control.tsx`, `src/components/placements/tpo-public-placement-toggle.tsx`, `src/components/tpo/tpo-new-followup-modal.tsx`, `tpo-placement-cell-read-action.tsx`; `tests/unit/graceful-mutation-adoption-round4.test.ts`, eight individual GR-31-named tests |
+| GR-35 | DONE on shared notification toolbar | `src/components/activity/notification-toolbar.tsx` uses `ConfirmActionDialog` instead of a native blocking confirmation; `tests/unit/graceful-mutation-adoption-round4.test.ts` — GR-35 |
+| GR-31 | OPEN: global adoption still incomplete | `docs/audit/graceful/gr31-outstanding-mutations-r1.md`: **19** account-lane business-write components still lack `useGuardedAction`. The global `tests/unit/graceful-raw-error-scan.test.ts` remains a live failing gate until fixed; do not refresh the SHA baseline to fake a pass. |
+| GR-51 | BLOCKED | Real provider delivery acceptance/idempotency guarantees are still required before automatic resend can safely be enabled. |
+
+The 43 prior DONE core entries describe existing helpers and screens, not newly closed GR IDs this round. There are no further explicitly OPEN core queue entries. No migrations proposed. Tests were written but not run in this lane.

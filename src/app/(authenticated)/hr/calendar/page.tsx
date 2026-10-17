@@ -322,6 +322,7 @@ export default async function HrCalendarPage({
             have access to any college hiring drives.
             Contact the placement cell that invited you
             to restore or approve access.
+            Open this on your college&apos;s placement address to see your recruiter calendar.
           </p>
 
           <Link

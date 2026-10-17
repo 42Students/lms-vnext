@@ -10,7 +10,8 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  const rawToken=form?.get("token");
- if(typeof rawToken!=="string"||rawToken.length>2048)return NextResponse.json({error:"INVALID_TOKEN"},{status:400});
+ if(typeof rawToken!=="string"||rawToken.length>2048)
+  return NextResponse.redirect(new URL("/campaign-unsubscribe/confirmed?scope=placement-cell",request.url),303);
  const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"",Date.now());
  if(tpoClaim){
   try{
@@ -23,7 +24,7 @@ export async function POST(request:Request){
   }
  }
  const claim=verifyUnsubscribeToken(rawToken,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
- if(!claim)return NextResponse.json({error:"INVALID_TOKEN"},{status:400});
+ if(!claim)return NextResponse.redirect(new URL("/campaign-unsubscribe/confirmed",request.url),303);
  const db=getDb();
  const exists=await db.execute<{ready:boolean}>(sql`select to_regclass('public.outbound_global_email_suppressions') is not null as ready`);
  if(exists.rows[0]?.ready!==true)return NextResponse.json({error:"SUPPRESSIONS_NOT_READY"},{status:503});

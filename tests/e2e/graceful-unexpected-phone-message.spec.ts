@@ -1,0 +1,50 @@
+import { expect, test } from "@playwright/test";
+import { captureUncaughtErrors, expectNoRawErrors } from "./support/no-raw-error";
+
+/** GR-80/GR-81: unknown error codes, including provider diagnostics, must never
+ * be echoed after a user retries phone sign-in. No real OTP is sent.
+ */
+const codes = ["AUTH_PROVIDER_EXCEPTION","DOWNSTREAM_SMS_GATEWAY","DATABASE_CONNECTION_FAILED","TENANT_CONFIG_MISSING","MFA_DELIVERY_FAILED","PROVIDER_RESPONSE_INVALID","POSTGRES_TRANSACTION_ABORTED","AUTH_SESSION_CACHE_FAILURE","IDENTITY_STORE_UNAVAILABLE","UNKNOWN_HANDLER_EXCEPTION"] as const;
+
+for (const code of codes) {
+  test("GR-80 GR-81 phone unknown message " + code + " remains private after retry", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("tab", { name: "Phone" }).click();
+    const contact = page.getByRole("textbox", { name: "Mobile number" });
+    await contact.fill("9876543210");
+    const errors = captureUncaughtErrors(page);
+    const observed: string[] = [];
+    const handler: Parameters<typeof page.route>[1] = async route => {
+      observed.push(route.request().method() + " " + new URL(route.request().url()).pathname);
+      await route.fulfill({
+        status: 500,
+        contentType: "application/json",
+        headers: { "x-request-id": "ab12cd34" },
+        body: JSON.stringify({
+          message: "Error: " + code + " in relation private_auth violates SQLSTATE 23505",
+          requestId: "ab12cd34",
+        }),
+      });
+    };
+    await page.route("**/api/auth/login/start", handler);
+    try {
+      const continueButton = page.getByRole("button", { name: "Continue", exact: true });
+      for (const expected of [1, 2]) {
+        await continueButton.click();
+        await expect.poll(() => observed.length).toBe(expected);
+        await expect(page.getByRole("alert").filter({
+          hasText: "Something went wrong. Try again in a moment.",
+        })).toBeVisible();
+        await expect(contact).toHaveValue("9876543210");
+        await expect(continueButton).toBeEnabled();
+        await expectNoRawErrors(page);
+      }
+      expect(observed).toEqual([
+        "POST /api/auth/login/start", "POST /api/auth/login/start",
+      ]);
+      expect(errors).toEqual([]);
+    } finally {
+      await page.unroute("**/api/auth/login/start", handler);
+    }
+  });
+}

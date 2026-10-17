@@ -11,7 +11,7 @@ export const tpoVerificationQuerySchema=z.object({
  batchId:z.string().uuid().optional(),
  branchId:z.string().uuid().optional(),
  page:z.coerce.number().int().min(1).max(100000).default(1),
- pageSize:z.coerce.number().int().refine(n=>[25,50,100].includes(n)).default(50),
+ pageSize:z.coerce.number().int().refine(n=>[25,50,100,1000].includes(n)).default(1000),
 }).strict();
 export type TpoVerificationQuery=z.infer<typeof tpoVerificationQuerySchema>;
 export function tpoVerificationStatuses(query:Pick<TpoVerificationQuery,"tab"|"waitingState">){

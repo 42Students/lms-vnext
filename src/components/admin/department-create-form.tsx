@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,7 @@ export function DepartmentCreateForm({
   const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const {pending,run} = useGuardedAction({timeoutMs:30000});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -25,7 +26,7 @@ export function DepartmentCreateForm({
     if (!name.trim()) { setError("Please enter department name"); return; }
     if (name.trim().length > 255) { setError("Department name must be 255 characters or less"); return; }
 
-    startTransition(async () => {
+    void run(async () => {
       try {
       const response = await fetch("/api/college/departments", {
         method: "POST",
@@ -44,7 +45,7 @@ export function DepartmentCreateForm({
       setName("");
       router.refresh();
       } catch { setError(DEPARTMENT_COPY.createFailed + ". Please try again."); }
-    });
+    }).catch(() => setError(DEPARTMENT_COPY.createFailed + ". Please try again."));
   }
 
   return (
