@@ -2,21 +2,21 @@
 import {useEffect,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
 type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string};
-const keyFor=(path:string,collegeId:string)=>"lms.tpo.report-view."+collegeId+"."+path.replace(/[^a-z0-9/-]/gi,"");
+const keyFor=(path:string,collegeId:string,userId:string)=>"lms.tpo.report-view."+collegeId+"."+userId+"."+path.replace(/[^a-z0-9/-]/gi,"");
 const clean=(value:unknown):SavedView[]=>Array.isArray(value)?value.flatMap(item=>
  item&&typeof item==="object"&&typeof item.name==="string"&&
  typeof item.seasonId==="string"&&typeof item.jobId==="string"?
  [{name:item.name.slice(0,50),seasonId:item.seasonId.slice(0,80),jobId:item.jobId.slice(0,80),batchId:typeof item.batchId==="string"?item.batchId.slice(0,80):"",branchId:typeof item.branchId==="string"?item.branchId.slice(0,80):"",sort:typeof item.sort==="string"?item.sort.slice(0,30):"",outcome:typeof item.outcome==="string"?item.outcome.slice(0,30):"",q:typeof item.q==="string"?item.q.slice(0,100):"",group:typeof item.group==="string"?item.group.slice(0,30):""}]:[]).slice(0,12):[];
-export function TpoReportSavedFilters({path,collegeId}:{path:string;collegeId:string}){
+export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;collegeId:string;userId:string}){
  const router=useRouter(),params=useSearchParams();
  const [views,setViews]=useState<SavedView[]>([]);
  const [name,setName]=useState(""),[picked,setPicked]=useState("");
  const [message,setMessage]=useState("");
  useEffect(()=>{
-  try{const stored=localStorage.getItem(keyFor(path,collegeId));if(stored)setViews(clean(JSON.parse(stored)));}catch{/* Private browsing can disable storage. */}
- },[path,collegeId]);
+  try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));if(stored)setViews(clean(JSON.parse(stored)));}catch{/* Private browsing can disable storage. */}
+ },[path,collegeId,userId]);
  function persist(next:SavedView[]){
-  try{localStorage.setItem(keyFor(path,collegeId),JSON.stringify(next));setViews(next);return true;}
+  try{localStorage.setItem(keyFor(path,collegeId,userId),JSON.stringify(next));setViews(next);return true;}
   catch{setMessage("Browser storage is unavailable; saved views cannot be kept.");return false;}
  }
  function save(){
