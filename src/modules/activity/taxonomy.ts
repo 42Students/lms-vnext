@@ -148,6 +148,7 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_TEMPLATE_ASSIGNED: "projects.template.assigned",
   PROJECTS_TEMPLATE_UNASSIGNED: "projects.template.unassigned",
   PROJECTS_TEMPLATE_METADATA_UPDATED: "projects.template.metadata_updated",
+  PROJECTS_TEMPLATE_ROLLED_BACK: "projects.template.rolled_back",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
