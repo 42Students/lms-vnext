@@ -34,6 +34,8 @@ describe("Telegram alert fundamentals", () => {
       expect(safe).not.toContain(secret);
     }
     expect(safeAlertPath("/api/users/12345?token=secret")).toEqual("/api/users/[id]");
+    expect(safeAlertPath("/api/users/jane.smith%40example.com")).toEqual("/api/users/[id]");
+    expect(safeAlertPath("/tracker/logs/sensitive-person-name")).toEqual("/tracker/logs/[id]");
   });
 
   it("GR-111 never throws when unconfigured and sends no request", async () => {
