@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
+import {MentorProjectAboutEditor} from "./mentor-project-about-editor";
 import {WorkspaceBriefEditor} from "./workspace-brief-editor";
 import {parseWorkspaceBrief} from "@/modules/projects/workspace-brief-model";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
