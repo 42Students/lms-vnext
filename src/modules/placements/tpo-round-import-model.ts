@@ -62,7 +62,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
+   outcome:result,invalidRank:rankValue!==null&&(result!=="HOLD"||!Number.isSafeInteger(rankValue)||rankValue<1||rankValue>100000),
    rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
