@@ -512,6 +512,7 @@ export async function getLearnerCourseWorkspace(
 
   if (!path) {
     return {
+      playbackSettings:await readLearnerPlaybackSettings(membership.collegeId),
       course: {
         id: course.id,
         name: course.name,
