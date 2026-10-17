@@ -100,3 +100,15 @@ These are **named source-contract regressions**, not completed browser/DB accept
 | TPO-companies-12 | DONE (source) | Person rows show effective recruiter stage and persisted invite/join/sign-in activity, with explicit joined-not-signed-in and bounced cases, not solely `manualStage`. Same test file `TPO-companies-12`. |
 
 Tests were authored but not executed here. Browser, PostgreSQL and CI verification remain with the orchestrator.
+
+## Chat-3 final sprint — Engage and company actions
+
+| Gap ID | Disposition | Evidence |
+| --- | --- | --- |
+| TPO-companies-13 | DONE (source) | Canonical detail exposes Create drive before Add contact; the TPO create route consumes `?company=` and initializes the selected employer. `tests/unit/chat3-final-sprint-company-engage.test.ts`, named `TPO-companies-13`. |
+| TPO-companies-14 | DONE (source, shell untouched) | The name-based company view has a context-specific `+ New` menu with “New recruiter lead for …”, “New drive for …”, and “Follow-up” links. No shared-shell modification was attempted. Same file `TPO-companies-14`. |
+| TPO-companies-15 | DONE (source) | Engage Companies communication is a persisted per-company status loaded from its scoped API, with legacy-derived fallback and Not contacted/Emailed/Replied/Meeting set/Not interested options. Same file `TPO-companies-15`. |
+| TPO-companies-16 | DONE (source) | Engage Companies independently filters by company/people search, contacts, drive presence, communication and alias spellings; “Clear company filters” restores defaults without accidentally filtering only recruiter leads. Same file `TPO-companies-16`. |
+| TPO-companies-17 | DONE (source) | Engage Companies lists linked People names or “Add a contact” with company prefill, plus “Drives that ran” and student-placement counts. Same file `TPO-companies-17`. |
+
+All five named source regressions were added; integration, mobile and browser acceptance remain unrun.
