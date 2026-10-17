@@ -1,4 +1,5 @@
 import { expect, type Page } from "@playwright/test";
+import { FRIENDLY_MESSAGES } from "../../../src/lib/friendly-error";
 
 /** GR-81: a product screen must contain useful content, never implementation text. */
 const forbidden = [
@@ -103,20 +104,20 @@ export function captureUncaughtErrors(page: Page): string[] {
 }
 
 /**
- * GR-02 exact customer copy from chat-14's FRIENDLY_MESSAGES catalog.
- * Keep literals here until chat-14 has merged to main; importing unfinished
- * branch-only helpers would make this lane uncompilable.
+ * GR-02 exact customer copy directly from the now-merged FRIENDLY_MESSAGES.
+ * No duplicated literals: changes to the shared catalog remain immediately
+ * visible to every browser assertion.
  */
 export const GR02_TEXT: Record<FailureKind, string> = {
-  "backend-down": "You appear to be offline. Check your connection and try again.",
-  "html-502": "Something went wrong on our side. Please try again in a moment.",
-  "json-500": "Something went wrong on our side. Please try again in a moment.",
-  forbidden: "You do not have permission to do this. Please contact your administrator if needed.",
-  "missing-record": "We could not find that. Please refresh and try again.",
-  conflict: "This changed while you were working. Refresh and try again.",
-  "rate-limit": "Too many attempts. Please wait a minute and try again.",
-  slow: "This is taking longer than expected. Please try again.",
-  "session-expired": "Your session has ended. Please sign in again.",
+  "backend-down": FRIENDLY_MESSAGES.offline,
+  "html-502": FRIENDLY_MESSAGES.unexpected,
+  "json-500": FRIENDLY_MESSAGES.unexpected,
+  forbidden: FRIENDLY_MESSAGES.forbidden,
+  "missing-record": FRIENDLY_MESSAGES.missing,
+  conflict: FRIENDLY_MESSAGES.conflict,
+  "rate-limit": FRIENDLY_MESSAGES.rateLimit,
+  slow: FRIENDLY_MESSAGES.timeout,
+  "session-expired": FRIENDLY_MESSAGES.session,
 };
 export async function expectFriendlyFailure(
   page: Page, kind: FailureKind,

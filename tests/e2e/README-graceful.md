@@ -1,6 +1,6 @@
 # Graceful-operation browser acceptance — GR-80 through GR-83
 
-**Tests are authored, not run.** These assertions are product release gates, not evidence of a passing environment. Do not mark a gap closed until the orchestrator runs the relevant suite on a pinned merged commit. The browser suite assumes the GR-02 message catalog and GR-11 screens currently authored on chat-14's branch; a page that has not adopted the helper is expected to fail.
+**Tests are authored, not run.** These assertions are product release gates, not evidence of a passing environment. Do not mark a gap closed until the orchestrator runs the relevant suite on a pinned merged commit. The GR-02 catalog and GR-11 screens are now on main (checked at the round-2 merge). Page-level adoption is still not universal; a page that has not adopted the helper is expected to fail.
 
 ## Environment and commands
 
@@ -51,17 +51,17 @@ When applicable, test cases inject an API abort across all `/api/**`, HTML 502, 
 
 ## GR-81 negative self-tests and approved GR-02 copy
 
-The shared `tests/e2e/support/no-raw-error.ts` rejects long uppercase codes, stack frames, SQL/database/provider leaks, numeric HTTP status codes, `Error:`, `Exception`, `ECONN`, `undefined`, `null`, `NaN`, `[object`, an empty body and the `nextjs-portal` overlay. The negative tests in `graceful-helper.spec.ts` demonstrate these failures; its positive fixture verifies plain recovery prose. `GR02_TEXT` is a literal snapshot of chat-14's `src/lib/friendly-error.ts` catalog for now, intentionally avoiding a compile-time dependency on a branch not in main.
+The shared `tests/e2e/support/no-raw-error.ts` rejects long uppercase codes, stack frames, SQL/database/provider leaks, numeric HTTP status codes, `Error:`, `Exception`, `ECONN`, `undefined`, `null`, `NaN`, `[object`, an empty body and the `nextjs-portal` overlay. The negative tests in `graceful-helper.spec.ts` demonstrate these failures; its positive fixture verifies plain recovery prose. `GR02_TEXT` is imported directly from the merged `src/lib/friendly-error.ts` catalog, so browser expectations track the shared approved sentences.
 
 ## GR-83 helper/unit and integration certification
 
-Chat-14 has authored unit suites under `tests/unit/graceful-api-helpers.test.ts`, `graceful-action-helpers.test.ts`, `graceful-server-helpers.test.ts`, `graceful-root-screens.test.ts`, `graceful-ui-primitives.test.ts`, `graceful-route-coverage.test.ts`, `graceful-login-guards.test.ts`, and `graceful-raw-error-scan.test.ts`. These cover GR-01–08, GR-30–34, GR-50/52, GR-60 and additional fallback rules; the orchestrator must verify the complete checklist mapping, merge the sources, and execute them. The real PostgreSQL retry and outbound queue integration also require disposable database gates; `tests/integration/db10-outbound-queue.test.ts` is an existing related integration witness, not by itself certification of GR-83. Chat-15 does not duplicate or falsely mark those tests passed.
+Chat-14 has merged unit suites under `tests/unit/graceful-api-helpers.test.ts`, `graceful-action-helpers.test.ts`, `graceful-server-helpers.test.ts`, `graceful-root-screens.test.ts`, `graceful-ui-primitives.test.ts`, `graceful-route-coverage.test.ts`, `graceful-login-guards.test.ts`, and `graceful-raw-error-scan.test.ts`. These cover GR-01–08, GR-30–34, GR-50/52, GR-60 and additional fallback rules; the orchestrator must verify the complete checklist mapping, merge the sources, and execute them. The real PostgreSQL retry and outbound queue integration also require disposable database gates; `tests/integration/db10-outbound-queue.test.ts` is an existing related integration witness, not by itself certification of GR-83. Chat-15 does not duplicate or falsely mark those tests passed.
 
 ## Known blockers — do not silently skip
 
 - Mentor base fixtures do not guarantee a nonzero unread count; the notification mutation test explicitly skips until the orchestrator provides a deterministic unread Mentor row and must never be counted as passing.
 - The Recruiter seed's grants must be presently valid, verified and authorized for the relevant capabilities; rerun the seed or provide a conforming fixture before browser certification.
-- Shared helpers, role-specific adoption and area not-found screens authored on chat-14's branch are not yet included in main as of this round. A controlled test failure against old code is an open implementation dependency.
+- The chat-14 helpers and area not-found screens are merged on main. Many page-specific clients still use older domain-only error wording and must adopt GR-02/guarded helpers; controlled browser failures remain implementation dependencies.
 - GR-82 needs a real production build and a provisioned isolated external origin. A local dev build cannot close it.
 - GR-83 needs independently executed unit and disposable-PostgreSQL integration evidence from chat-14/orchestrator.
 
