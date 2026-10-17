@@ -452,10 +452,10 @@ export default async function HrPlacementJobPage({
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
-              {focusedNavigation ? <RecruiterFocusedReviewShortcuts
+              {<RecruiterFocusedReviewShortcuts
                 closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
-                previousHref={focusedNavigation.previous?focusedHref(focusedNavigation.previous):null}
-                nextHref={focusedNavigation.next?focusedHref(focusedNavigation.next):null}/> : null}
+                previousHref={focusedNavigation?.previous?focusedHref(focusedNavigation.previous):null}
+                nextHref={focusedNavigation?.next?focusedHref(focusedNavigation.next):null}/>}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                 <span className="text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                 {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
