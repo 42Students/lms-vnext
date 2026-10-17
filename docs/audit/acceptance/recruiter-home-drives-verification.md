@@ -173,3 +173,9 @@ Source-only evidence: tests below were authored or verified by source inspection
 | REC-home-drives-33 | DONE — regression hardened | Fixed undefined `approvedJobId` and `autoReason` references introduced by concurrent main changes: requests are first inserted as `REQUEST`, then moved to `DRAFT` only after successful authoring, preserving audit metadata `{autoReason, approvedJobId}`; unsupported combined internship/fulltime employment is rejected safely before violating persisted job/role constraints. `recruiter-chat14-autoapprove-contract.test.ts` asserts five atomicity/replay/notice cases. |
 | REC-home-drives-38 | DONE — disclosure hardened | The college-wide `showCgpaExact` and `showTenthTwelfth` visibility controls now gate verified academic values *in addition* to employer `shareColumnDefaults`. Missing settings fail closed. `recruiter-chat14-round4-ownership-private-review.test.ts` verifies these gates. |
 | REC-home-drives-41 | DONE — authorization hardened; migration registration pending | Read and write both require `SUBMITTED` *and* `SHORTLISTED` applications. The private-rating route returns a clear, no-store 503 when its proposed table is not registered, but never exposes the readiness state to a caller lacking an active recruiter profile. |
+
+## Chat-6 final sprint (11-item queue)
+
+| Gap ID | Status | Test and source acceptance |
+|---|---|---|
+| REC-home-drives-04 | DONE (source verified; tests not run) | `tests/unit/chat6-final-sprint-rec-home-drives-04.test.ts` — `REC-home-drives-04 greeting and action-count copy are time-zone deterministic`; recruiter-today-greeting-model.ts formats morning/afternoon/evening in IST with exact name and task count; hr/home/page.tsx consumes its title and subtitle. |
