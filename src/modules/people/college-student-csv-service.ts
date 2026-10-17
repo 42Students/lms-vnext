@@ -1,8 +1,9 @@
 import "server-only";
+import {randomUUID} from "node:crypto";
 
 import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { cohorts, departments, programs, sections } from "@/db/schema";
+import {activityEvents, cohorts, departments, programs, sections } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -147,5 +148,16 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
         membershipId });
     }
   }
-  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid };
+  const runId=randomUUID();
+  await getDb().insert(activityEvents).values({
+   organizationId:member.organizationId,collegeId:member.collegeId,
+   actorUserId:context.user.id,actorMembershipId:member.id,
+   module:"IDENTITY",eventType:"IDENTITY_COLLEGE_STUDENT_CSV_IMPORT",
+   subjectType:"college_student_import",subjectId:runId,
+   summary:"College Student CSV import completed",
+   metadata:{count:results.length,created:results.filter(x=>x.status==="IMPORTED").length,
+    partial:results.filter(x=>x.status==="PARTIAL").length,
+    failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length},
+  });
+  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,runId };
 }
