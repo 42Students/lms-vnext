@@ -91,6 +91,9 @@ export function MentorSprintCreate({
           <label className="text-xs font-semibold">Due date
             <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}/></label>
         </div>
+        {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
+          Sprint end and due dates must not come before the start date.
+        </p>:null}
       </div>
     </Dialog>
   </>;
