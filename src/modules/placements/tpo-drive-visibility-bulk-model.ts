@@ -9,5 +9,5 @@ export function tpoDriveVisibilityValid(input:{
  jobId:string;decision:"INCLUDE"|"EXCLUDE"|"CLEAR";reason:string;count:number;
 }):boolean{
  return input.jobId.length>0&&input.count>0&&input.count<=25&&
-  (input.decision==="CLEAR"||input.reason.trim().length>=3&&input.reason.trim().length<=500);
+  input.reason.trim().length>=3&&input.reason.trim().length<=500;
 }

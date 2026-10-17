@@ -187,3 +187,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 45: TPO-students-12 OPEN (partial) now supports a bounded page-scoped Show/Hide/Clear action backed by tenant-checked PUT/DELETE with named tests; exact optimistic undo and audit still require work.
 
 - Round 46: TPO-students-34 OPEN (runtime acceptance): implemented transactionally scoped academic-import application recheck and NOW_INELIGIBLE notifications; real-Postgres before/after, concurrency and notifications tests must still execute.
+
+- Round 47: TPO-students-12 now has expected override CAS undo of last successful bulk action and audit on SET/CLEAR in the shared service; remain OPEN pending live DB concurrency proof and true legacy visibility semantics.
