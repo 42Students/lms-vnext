@@ -46,3 +46,6 @@ Beyond friendly messages, read `docs/orchestrator/work-packages/graceful-operati
 
 ## Failing unit tests (added 2026-10-17)
 docs/orchestrator/unit-failures-r1.md lists the unit tests that fail on main and who owns each. Fix the ones in your area first in your next round (before new gaps), then continue the queue. Each fix commit cites the test name.
+
+## Typecheck errors (added 2026-10-17 23:15)
+docs/orchestrator/typecheck-errors.md lists tsc errors on main that block the deploy. Fix the ones in your area FIRST in your next round (restore missing schema exports, state variables, props that merge conflicts dropped), then continue your queue.
