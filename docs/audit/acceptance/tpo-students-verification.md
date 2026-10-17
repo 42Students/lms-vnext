@@ -76,3 +76,6 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-52 | OPEN (remaining legacy facets) | Stage/round/attention evidence filters and columns; `tests/unit/chat12-stage-round5.test.ts` `TPO-students-52` |
 
 | TPO-students-45 | OPEN (round-stage and company CTC detail pending) | All-season application history now links each drive and shows persisted Add-by-College provenance, without inferring from actor identity; `tests/unit/chat12-student-history-links-round5.test.ts` named `TPO-students-45` |
+
+| TPO-students-36 | OPEN (XLSX and whole-filtered-view export pending) | Authorized visible selected CSV and richer persisted academics/stage/outcome columns, with formula escaping and safe failure; `tests/unit/chat12-selected-students-csv-round5.test.ts` `TPO-students-36` |
+| TPO-students-17 | OPEN (whole-filter selection and Shift range pending) | Selection download intersects authorized visible rows; no hidden-row selection exported; `tests/unit/chat12-selected-students-csv-round5.test.ts` `TPO-students-17` |
