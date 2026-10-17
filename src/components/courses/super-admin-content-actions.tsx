@@ -37,6 +37,13 @@ export function SuperAdminContentActions({item}:{item:Content}){
   if(["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)&&replacementUrl.trim()){
    const href=facultyContentExternalHref(item.contentType,replacementUrl.trim());
    if(!href){setError("Enter a secure HTTPS link for this content.");return;}
+   const parsed=new URL(href),host=parsed.hostname.toLowerCase();
+   if(parsed.hash||host==="localhost"||host.endsWith(".localhost")||
+    host==="0.0.0.0"||host==="::1"||/^127\./.test(host)||/^10\./.test(host)||
+    /^192\.168\./.test(host)||/^169\.254\./.test(host)||
+    /^172\.(?:1[6-9]|2\d|3[01])\./.test(host)){
+    setError("Use a publicly reachable HTTPS link without fragments.");return;
+   }
    changes={...changes,externalUrl:href};
   }
   if(item.contentType==="RESOURCE"){
