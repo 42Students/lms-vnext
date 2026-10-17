@@ -1026,7 +1026,7 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations
+      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations today={today}
         events={visibleEvents.filter(event=>event.kind==="ROUND").map(event=>({
          id:event.id,roundId:event.roundId,jobId:event.jobId,jobTitle:event.jobTitle,
          title:event.title,companyName:event.companyName,status:event.status,

@@ -11,7 +11,8 @@ export function hiringFunnel(totals:HiringStageCounts){
  const max=Math.max(1,...HIRING_STAGES.map(step=>totals[step.key]));
  return HIRING_STAGES.map((step,index)=>{
   const current=totals[step.key];
-  const prior=index?totals[HIRING_STAGES[index-1].key]:null;
+  const previous=index>0?HIRING_STAGES[index-1]:undefined;
+  const prior=previous?totals[previous.key]:null;
   return {key:step.key,label:step.label,count:current,
    percentPrevious:prior===null?null:prior===0?0:Math.round(current/prior*100),
    widthPercent:Math.max(0,Math.min(100,Math.round(current/max*100)))};
