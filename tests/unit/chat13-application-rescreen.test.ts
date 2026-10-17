@@ -17,6 +17,8 @@ describe("Application re-screen on real academic evidence",()=>{
   expect(ui).toContain("Re-screen");
   expect(ui).toContain("Application re-screened");
   expect(ui).toContain("Current eligibility:");
-  expect(ui).toContain("No invented private document URL or computed match score");
+  expect(ui).toContain("The private document endpoint checks access again.");
+  expect(ui).toContain("No fabricated public resume URL or match score is shown.");
+  expect(ui).toContain("It does not fabricate a match score or reverse an existing screening decision.");
  });
 });

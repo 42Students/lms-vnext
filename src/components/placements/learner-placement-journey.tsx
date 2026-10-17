@@ -22,6 +22,7 @@ export type LearnerPlacementJourneyItem = {
   };
   results: Array<{
     resultId: string;
+    roundId?: string;
     roundSequence: number;
     roundName: string;
     outcome: string;
@@ -225,7 +226,16 @@ export function LearnerPlacementJourney({
               <aside role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-4">
                 <p className="font-semibold text-foreground">The placement cell applied for you</p>
                 <p className="mt-1 text-sm text-body">If you do not wish to continue with this application, ask your placement cell about available withdrawal options.</p>
-                <Link href="/learn/my-placements/placement#requests" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Contact the placement cell</Link>
+                <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
+                  <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                    Opt out or ask to withdraw
+                  </Link>
+                  <Link href="/learn/my-placements/placement#requests"
+                    className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                    Contact the placement cell
+                  </Link>
+                </div>
               </aside>
             ) : null}
             {item.driveStatus === "CANCELLED" ? (
@@ -322,6 +332,16 @@ export function LearnerPlacementJourney({
                         >
                           {roundOutcomeLabel(result.outcome)}
                         </StatusBadge>
+                        {result.outcome==="ABSENT"&&result.appliedAt&&result.roundId ? (
+                          <Link
+                            href={"/learn/my-placements/placement?"+new URLSearchParams({
+                              request:"absence-dispute",applicationId:item.applicationId,
+                              roundId:result.roundId,
+                            }).toString()+"#requests"}
+                            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                            Wrong? Tell the placement cell
+                          </Link>
+                        ) : null}
                       </div>
                     </div>
                   ))}

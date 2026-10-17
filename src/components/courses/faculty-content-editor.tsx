@@ -18,6 +18,7 @@ type Item = {
   externalUrl: string | null;
   storageKey: string | null;
   durationSeconds: number | null;
+  points: number;
   startsAt: Date | string | null;
   endsAt: Date | string | null;
 };
@@ -30,6 +31,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
   const [notes, setNotes] = useState(item.notes ?? "");
   const [url, setUrl] = useState(item.externalUrl ?? "");
   const [duration, setDuration] = useState(String(item.durationSeconds ?? 300));
+  const [points,setPoints]=useState(String(item.points));
   const [starts, setStarts] = useState(authoringLocalDateTime(item.startsAt));
   const [ends, setEnds] = useState(authoringLocalDateTime(item.endsAt));
   const [saving, setSaving] = useState(false);
@@ -37,9 +39,9 @@ export function FacultyContentEditor({ item }: { item: Item }) {
 
   const dirty = facultyContentDraftChanged({
     title:item.title, notes:item.notes??"", url:item.externalUrl??"",
-    duration:String(item.durationSeconds??300),
+    duration:String(item.durationSeconds??300),points:String(item.points),
     starts:authoringLocalDateTime(item.startsAt), ends:authoringLocalDateTime(item.endsAt),
-  }, {title,notes,url,duration,starts,ends});
+  }, {title,notes,url,duration,starts,ends,points});
 
   function openEditor() {
     // Each RSC refresh can change the persisted item while this Client
@@ -48,6 +50,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
     setNotes(item.notes ?? "");
     setUrl(item.externalUrl ?? "");
     setDuration(String(item.durationSeconds ?? 300));
+    setPoints(String(item.points));
     setStarts(authoringLocalDateTime(item.startsAt));
     setEnds(authoringLocalDateTime(item.endsAt));
     setError(null);
@@ -61,7 +64,7 @@ export function FacultyContentEditor({ item }: { item: Item }) {
     let body: ReturnType<typeof facultyContentPatch>;
     try {
       body = facultyContentPatch({
-        kind: item.contentType, title, notes, url, duration, starts, ends,
+        kind: item.contentType, title, notes, url, duration, starts, ends, points,
         hasStoredResource: Boolean(item.storageKey),
       });
     } catch (caught) {
@@ -117,6 +120,11 @@ export function FacultyContentEditor({ item }: { item: Item }) {
           <label className="block text-sm font-semibold text-body">
             Title
             <Input className="mt-1.5" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
+          </label>
+          <label className="block text-sm font-semibold text-body">
+            Points
+            <Input className="mt-1.5" type="number" min={0} max={1000}
+              value={points} onChange={(event)=>setPoints(event.target.value)} required/>
           </label>
           <label className="block text-sm font-semibold text-body">
             Notes

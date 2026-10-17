@@ -105,6 +105,14 @@ describe("College People legacy audited page contracts",()=>{
   expect(collegeRoleDirectoryHref("FACULTY",faculty)).toContain("teaching=ASSIGNED");
   expect(()=>parseCollegeRoleDirectorySearchParams({page:["1","2"]})).toThrow("INVALID_ROLE_DIRECTORY_FILTERS");
   expect(()=>assertCompatibleCollegeRoleDirectoryFilters("FACULTY",collegeRoleDirectoryQuerySchema.parse({classPresence:"ASSIGNED"}))).toThrow();
+  const page=directory();
+  for(const field of ["Active class / section","Active program","Active batch","Department","Employment type","Membership status"])
+    expect(page).toContain(field);
+  expect(page).toContain("Advanced filters");
+  expect(page).toContain("collegeRoleDirectoryHasActiveFilters(kind,result.filter)");
+  expect(page.indexOf("Active class / section")).toBeLessThan(page.indexOf("<summary"));
+  expect(page.indexOf("Department")).toBeLessThan(page.indexOf("<summary"));
+  expect(page).toContain('name="accountStatus"');
  });
  it("COL-people-16 visible CSV neutralizes spreadsheet formula injection",()=>{
   expect(escapeRoleDirectoryCsvCell("=HYPERLINK(1)")).toBe('"\'=HYPERLINK(1)"');
@@ -119,9 +127,13 @@ describe("College People legacy audited page contracts",()=>{
   expect(contacts).toContain("Student accounts");
   expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain('redirect("/college/contacts")');
  });
- it("COL-people-18 unauthorised student contacts must remain masked until a policy grants access",()=>{
+ it("COL-people-18 college contacts keep learner phone and email masked without a need-to-know grant",()=>{
   const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
+  const model=src("src/modules/people/college-contacts-privacy.ts");
   expect(contacts).toContain("Student contact details are masked");
+  expect(model).toContain("input.isLearner?maskedEmail(input.email)");
+  expect(model).toContain("phone:maskedPhone(input.phone)");
+  expect(model).toContain("a separate need-to-know workflow");
  });
  it("COL-people-19 contact directory presents legacy search and tabs before advanced filters",()=>{
   const page=src("src/app/(authenticated)/college/contacts/page.tsx");
@@ -175,9 +187,20 @@ describe("College People legacy audited page contracts",()=>{
   expect(sourceText).toContain("Some enrollment steps need attention.");
   expect(sourceText).not.toContain('(body?.failures??[]).join');
  });
- it("COL-people-27 Faculty and Learner rows render cards before desktop table",()=>{
-  expect(directory()).toContain("md:hidden");
-  expect(directory()).toContain("md:table");
+ it("COL-people-27 Faculty and Learner use responsive cards and bounded desktop table",()=>{
+  const page=directory();
+  expect(page).toContain("md:hidden");
+  expect(page).toContain("md:table");
+  expect(page).toContain("overflow-x-auto");
+  expect(page).toContain("min-w-0");
+  expect(page).toContain("Advanced filters");
+ });
+ it("COL-people-12 OTP lockout is a short-lived challenge, not an account state to clear",()=>{
+  const login=src("src/modules/auth/login-service.ts");
+  expect(login).toContain("ATTEMPT_LIFETIME_SECONDS = 300");
+  expect(login).toContain("OTP_ATTEMPTS_EXCEEDED");
+  expect(login).toContain("verificationAttempts");
+  expect(login).not.toContain("clearUserLockout");
  });
  it("COL-people-24 mentor reassignment preserves selection and uses explicit confirmed legacy copy",()=>{
   const reassignment=src("src/components/projects/project-mentor-reassignment.tsx");
@@ -216,6 +239,41 @@ describe("College People legacy audited page contracts",()=>{
   const policy=src("src/modules/permissions/policy.ts");
   expect(policy).toContain('permission === "admin-scope.select"');
   expect(policy).toContain("return isSuperAdmin(context);");
+ });
+
+ it("COL-people-21 shows persisted mentor workload risk and an Unassigned filter",()=>{
+  const page=src("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  const svc=src("src/modules/projects/mentor-reassignment-workload-service.ts");
+  expect(page).toContain("Mentor workload");
+  expect(page).toContain("listCollegeProjectMentorWorkload");
+  expect(page).toContain("row.activeWorkspaces");
+  expect(page).toContain("row.atRisk");
+  expect(page).toContain("Overloaded");
+  expect(page).toContain('"UNASSIGNED"');
+  expect(page).toContain("fromMentorId=");
+  expect(svc).toContain("listCollegeProjectMentorWorkload");
+ });
+ it("COL-people-22 preserves current-mentor filters and skips already-assigned workspace selection",()=>{
+  const form=src("src/components/projects/project-mentor-reassignment.tsx");
+  const page=src("src/components/projects/project-admin-reassign-mentor-page.tsx");
+  expect(page).toContain("Filter by current mentor");
+  expect(page).toContain('name="fromMentorId"');
+  expect(page).toContain("matchingWorkspaces={projects.matchingWorkspaces}");
+  expect(form).toContain("Already this mentor — will skip");
+  expect(form).toContain("skippedSelection.length");
+  expect(form).toContain("selected workspaces will be skipped.");
+  expect(form).toContain("matchingWorkspaces.map(row => row.id)");
+ });
+ it("COL-people-23 server atomically clears outgoing tasks and notifies mentors and project learners",()=>{
+  const service=src("src/modules/projects/member-service.ts");
+  expect(service).toContain("COL-people-23: ownership of the outgoing mentor");
+  expect(service).toContain("await tx.update(projectTasks)");
+  expect(service).toContain("assigneeMembershipId: null");
+  expect(service).toContain("eq(projectTasks.assigneeMembershipId, currentPrimary.membershipId)");
+  expect(service).toContain("await notifyProjectMemberships(tx, reassignedEvent.id");
+  expect(service).toContain("await notifyActiveProjectMembers(tx, reassignedEvent.id");
+  expect(service).toContain('roles: ["LEARNER"]');
+  expect(service).toContain("taskAssignmentClearingSupported: true");
  });
 
 });

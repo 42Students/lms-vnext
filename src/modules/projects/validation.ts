@@ -702,8 +702,12 @@ export const createProjectResourceInputSchema = z
     },
   );
 
+export const projectResourceExpectedVersionSchema = z.iso.datetime({offset:true});
+export const archiveProjectResourceInputSchema = z.object({expectedUpdatedAt:projectResourceExpectedVersionSchema.optional()}).strict();
+
 export const updateProjectResourceInputSchema = z
   .object({
+    expectedUpdatedAt: projectResourceExpectedVersionSchema.optional(),
     title: titleSchema.optional(),
     description: z
       .string()
@@ -824,6 +828,8 @@ export const scheduleProjectMeetingInputSchema =
       .enum(PROJECT_MEETING_TYPES)
       .optional(),
     meetingUrl: projectMeetingWebUrlSchema,
+    expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
+    expectedProjectUpdatedAt: z.iso.datetime({offset:true}).optional(),
     linkedSprintId:
       projectSprintIdSchema.nullable().optional(),
     linkedTaskId:

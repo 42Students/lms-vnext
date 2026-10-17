@@ -14,7 +14,7 @@ describe("TPO People roster legacy copy",()=>{
  it("TPO-inbox-team-32 keeps the number of displayed team members consistent with the filtered roster",()=>{
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
   expect(page).toContain("sortTpoPeople(activeTeam,peopleSort)");
-  expect(page).toContain('className="text-sm text-body">{people.length} people');
+  expect(page).toContain('role="status" className="text-sm text-body">{people.length} people');
   expect(page).toContain('aria-label="Sort team people"');
  });
 });

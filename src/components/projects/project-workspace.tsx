@@ -183,6 +183,7 @@ export function ProjectWorkspace({
   activeSection,
   sectionBaseHref,
   sectionQuerySuffix = "",
+  riskReason = null,
   readOnlyOverride = false,
 }: {
   workspace: Workspace;
@@ -279,6 +280,10 @@ export function ProjectWorkspace({
         {backLabel === "Projects" ? "Back to projects" : backLabel}
       </Link>
 
+      {mode === "ADMIN" ? <nav aria-label="Workspace breadcrumb" className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+        <Link href={backHref}>Projects</Link><span aria-hidden="true">/</span>
+        <span aria-current="page">{workspace.project.title}</span>
+      </nav> : null}
       {sectionBaseHref ? (
         <nav
           aria-label="Project workspace sections"
@@ -305,8 +310,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        title={workspace.project.title}
-        description={mode==="MENTOR"
+        title={mode==="LEARNER"?"Projects":workspace.project.title}
+        description={mode==="LEARNER"?workspace.project.title:mode==="MENTOR"
           ? [workspace.project.courseLabel??"Course not linked",
              "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
                ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
@@ -329,6 +334,19 @@ export function ProjectWorkspace({
           </div>
         }
       />
+
+      {mode === "ADMIN" && riskReason ? (
+        <section role="status" className="rounded-xl border border-warning-border bg-surface p-4 text-sm">
+          Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
+        </section>
+      ) : null}
+
+      {mode === "ADMIN" && show("readiness") ? (
+        <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          Manage override
+        </Link>
+      ) : null}
 
       {readOnly ? (
         <section
@@ -707,7 +725,31 @@ export function ProjectWorkspace({
           </p>
         ) : null}
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {workspace.members.map((member) => (
+          {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
+            const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
+              member.accountStatus==="ACTIVE";
+            const linkedIn=member.role==="MENTOR"?safeProjectExternalHref(member.linkedIn):null;
+            return <article key={member.id} className="rounded-xl border border-border bg-surface p-4">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="font-semibold text-foreground">{member.displayName??"Unnamed member"}</p>
+                  <p className="mt-1 text-xs text-body">{member.roleLabel?.trim()||label(member.role)}</p>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <StatusBadge tone={active?"success":"neutral"}>{active?"Active":"Inactive"}</StatusBadge>
+                  {member.role==="MENTOR"?<StatusBadge tone="info">{member.isPrimary?"Primary mentor":"Mentor"}</StatusBadge>:null}
+                </div>
+              </div>
+              {member.role==="MENTOR"?<div className="mt-3 space-y-2 text-sm text-body">
+                <p className="font-semibold text-foreground">{member.academicTitle?.trim()||"Project mentor"}</p>
+                {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
+                  <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
+                {linkedIn?<a href={linkedIn} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex min-h-10 items-center text-primary-text underline">LinkedIn profile ↗</a>:null}
+              </div>:null}
+            </article>;
+          }):null}
+          {mode!=="MENTOR"?workspace.members.map((member) => (
             <article
               key={member.id}
               className="rounded-xl border border-border bg-surface p-4"
@@ -748,7 +790,7 @@ export function ProjectWorkspace({
                 />
               ) : null}
             </article>
-          ))}
+          )):null}
         </div>
       </section> : null}
 
@@ -1391,7 +1433,10 @@ export function ProjectWorkspace({
               <h2 className="m-0 text-lg font-semibold text-foreground">
                 Resources
               </h2>
-
+              {mode==="LEARNER"?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
+                {workspace.resources.filter(resource=>resource.status!=="ARCHIVED").length} active resources ·
+                {" "}{workspace.resources.filter(resource=>resource.required&&resource.status!=="ARCHIVED").length} required
+              </p>:null}
             </div>
             {!readOnly && (mode !== "LEARNER" || workspace.project.status === "ACTIVE") ? (
               <CreateProjectResourceControl
@@ -1601,7 +1646,9 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={renderTime.toISOString()} resourceAudit={mode==="ADMIN"}/>
+          {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View full project audit</Link> : null}
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()}/>
 
 
         </section>

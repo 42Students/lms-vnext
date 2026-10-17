@@ -21,7 +21,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [search,setSearch]=useState("");
  const [type,setType]=useState("ALL");
  const [visibility,setVisibility]=useState("ALL");
- const [status,setStatus]=useState("ALL");
+ const [status,setStatus]=useState("ACTIVE");
  const [pinned,setPinned]=useState(false);
  const [sprint,setSprint]=useState("");
  const [task,setTask]=useState("");
@@ -31,7 +31,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [reordering,setReordering]=useState(false);
  const [reorderError,setReorderError]=useState("");
  const canReorder=mode!=="LEARNER"&&!readOnly&&!reordering&&
-    !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ALL"&&!pinned&&
+    !search.trim()&&type==="ALL"&&visibility==="ALL"&&status==="ACTIVE"&&!pinned&&
     !sprint&&!task&&activeRows.length<=250;
  async function saveOrder(ids:string[]){
    if(!canReorder)return;
@@ -76,7 +76,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     &&(!sprint||row.sprintId===sprint)
     &&(!task||row.taskId===task);
  });
- const links=rows.filter(row=>Boolean(row.url&&safeProjectExternalHref(row.url))).length;
+ const files=rows.filter(row=>row.resourceType==="FILE").length;
+ const links=rows.filter(row=>row.resourceType==="LINK"||
+   (!row.resourceType&&Boolean(row.url&&safeProjectExternalHref(row.url)))).length;
+ const other=rows.length-files-links;
  const archive=rows.filter(row=>row.status==="ARCHIVED").length;
  const drafts=rows.filter(row=>row.status==="DRAFT").length;
  const pinnedCount=rows.filter(row=>row.pinned).length;
@@ -85,7 +88,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  return <section aria-label="Project resource directory" className="space-y-3">
   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Resource counts">
    {([["Total",rows.length],["Showing",filtered.length],["Links",links],
-     ["Files/other",rows.length-links],["Drafts",drafts],["Archived",archive],
+     ["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],
      ["Pinned",pinnedCount]] as const)
      .map(([label,value])=><div key={label} className="rounded-lg border border-border p-3 text-sm">
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
@@ -94,7 +97,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   <div className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-3">
     <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Search
       <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       placeholder="Search resources" className="min-h-10 rounded border border-border bg-background px-3"/>
+       aria-label="Search resources" placeholder="Search title, description, file name, or link" className="min-h-10 rounded border border-border bg-background px-3"/>
     </label>
     <label className="grid gap-1 text-xs font-semibold">Type
       <select value={type} onChange={event=>setType(event.target.value)}
@@ -139,7 +142,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
         </select>
       </label>
     </>:null}
-    <button type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ALL");setPinned(false);setSprint("");setTask("");}}
+    <button type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
       className="min-h-10 text-sm font-semibold text-primary-text underline">Clear filters</button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground">
@@ -179,7 +182,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </div>
       <div className="flex flex-wrap gap-2">
        <StatusBadge tone="neutral">{resource.resourceType??(safe?"Link":"Other")}</StatusBadge>
-       <StatusBadge tone="neutral">{resource.status==="ARCHIVED"?"Archived":"Active"}</StatusBadge>
+       <StatusBadge tone="neutral">{resource.status==="ARCHIVED"?"Archived":resource.status==="DRAFT"?"Draft":"Active"}</StatusBadge>
        {resource.visibility==="MENTOR_ONLY"&&mode!=="LEARNER"?<StatusBadge tone="neutral">Mentors only</StatusBadge>:null}
        {resource.required?<StatusBadge tone="warning">Required</StatusBadge>:null}
        {resource.pinned?<StatusBadge tone="warning">Pinned</StatusBadge>:null}
@@ -187,7 +190,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        {resource.taskId?<StatusBadge tone="neutral">Task linked</StatusBadge>:null}
       </div>
      </div>
-     {resource.url?<ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>:null}
+     <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <button type="button" disabled={stableOrder[0]===resource.id}
          className="min-h-9 rounded border border-border px-3 text-xs font-semibold disabled:opacity-50"
@@ -204,6 +207,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
            ?resource.resourceType:"LINK") as "FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT",
          status:resource.status==="DRAFT"?"DRAFT":resource.status==="ARCHIVED"?"ARCHIVED":"ACTIVE",
          pinned:resource.pinned,accessNotes:resource.accessNotes,
+         updatedAt:resource.updatedAt,
          sprintId:resource.sprintId,taskId:resource.taskId}}
         sprints={sprints} tasks={tasks}/>:null}
     </article>;

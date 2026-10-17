@@ -8,7 +8,7 @@ const rows=[
  {id:"one",kind:"PRIVATE" as const,following:true,muted:false,unreadCount:3},
  {id:"two",kind:"PRIVATE" as const,following:true,muted:true,unreadCount:1},
  {id:"three",kind:"PRIVATE" as const,following:false,muted:false,unreadCount:7},
- {id:"four",kind:"TOPIC" as const,following:true,muted:false,unreadCount:0},
+ {id:"four",kind:"TOPIC" as const,following:true,muted:false,unreadCount:0,hasDecisions:true,openAsks:1,asksForMe:1},
 ];
 describe("TPO conversations filters",()=>{
  it("TPO-inbox-team-18 counts and filters available thread types without guessing unsupported object threads",()=>{

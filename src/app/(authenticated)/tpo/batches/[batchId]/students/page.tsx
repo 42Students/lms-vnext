@@ -26,7 +26,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
-  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId),
+  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q,view.data.source==="LEARNER"),getTpoBatch(ctx,batchId),
   getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
  ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
@@ -79,7 +79,6 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
- <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}
  <form action={"/tpo/batches/"+batchId+"/students"} method="get" className="flex flex-wrap items-end gap-2 rounded border border-border bg-surface p-3">

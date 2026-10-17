@@ -76,6 +76,28 @@ Remaining gaps (including private applicant disclosure and ZIP export) require f
 | REC-home-drives-32 | DONE | `hr-drive-draft-form.tsx` browser beforeunload and accessible `Discard this drive draft?` in-app confirmation, including brand-new drafts; named test |
 | REC-home-drives-52 | PARTIAL — OPEN | Offers now 15/page and `EXPIRED` filter, with persisted scoped count in `hr-job-read-service.ts`. Selection/PENDING/REVOKED are not `placement_offers` statuses, so require separate source; named unit test |
 
+## Chat-14 reassignment — combined final evidence (tests not run)
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-home-drives-16 | DONE | Unanswered placement-cell requests sort first and cards visibly highlighted without changing remaining order; `recruiter-placement-portfolio.tsx` and `recruiter-chat14-round2.test.ts`. |
+| REC-home-drives-27 | DONE | `hr-drive-draft-model.ts` title minimum 3 returns `Enter a role title`; description/location remain optional, valid CTC required; round2 Zod test. |
+| REC-home-drives-30 | DONE | Confirmed request feedback now `Sent to the placement cell for review`; failed saves retain draft/idempotency; round2 test. |
+| REC-home-drives-31 | DONE | `Hire again` caption and existing legacy round presets; round1/round2 tests. |
+| REC-home-drives-32 | DONE | In-app accessible `Discard this drive draft?` plus `Leave without these changes?` and beforeunload for new/edit/copy; round2 test. |
+| REC-home-drives-33 | OPEN | Trusted-domain or approval-off auto-approval must reuse transactional TPO job creation, real approval settings and audit; current request submit still correctly waits for placement-cell decision. Do not bypass TPO review or invent settings. |
+| REC-home-drives-34 | DONE | Drive page has role title, status labels, college/CTC/location/mode/applicants/offers/rounds/deadline subtitle and scoped Back to Drives; round3 named source test. |
+| REC-home-drives-38 | OPEN | Implemented explicit active-company/college `shareColumnDefaults` gate for Roll no. with scoped applicant disclosure. Additional branch, verified grades, skill matching, resume/GitHub/portfolio consent and link policies remain unimplemented; round3 test covers the safe slice. |
+| REC-home-drives-41 | DONE | Private 1–5 rating and <=1000-character note per recruiter+application with per-author auth, write/upsert/clear, scoped applicant check and no-store, UI and tests. SQL proposed in `docs/proposed-migrations/recruiter-private-candidate-ratings.sql`; page gracefully warns until registered. |
+| REC-home-drives-45 | OPEN | Implemented truthful `The placement cell has not shared the applicants yet` empty; complete legacy stage-button counts require consent-aware stage sources beyond shared-only shortlist. Do not expose rejected/private students. |
+| REC-home-drives-46 | OPEN | Added round status Not scheduled / Scheduled / Completed, Added by you, IST date/venue, change/remove link. Legacy inline modal, results and slots counters still missing; round3 test covers implemented facts. |
+| REC-home-drives-47 | OPEN | Recruiter round editor still limited to PUBLISHED jobs; approved DRAFT requests must atomically update both request rounds and draft-job rounds, not rewrite one and leave the other stale. |
+| REC-home-drives-50 | DONE | Offers table now uses Candidate, Type, CTC LPA, readable Status, Reply by, Joining; no unauthorized preissue offers falsely synthesized. `recruiter-chat14-round3.test.ts`. |
+| REC-home-drives-52 | OPEN | 15/page, EXPIRED filter and correct scoped counts implemented. SELECTED/PENDING_VERIFICATION and REVOKED do not exist in `placement_offers` status check; require separate TPO selections/issue audit data source; round2 test. |
+| REC-home-drives-53 | DONE | Focusable-visibility refresh with stale-data banner and manual Retry, plus error fallback safe copy; `recruiter-drive-focus-refresh.tsx` + round3 test. |
+| REC-home-drives-R03 | OPEN | Current `recruiter-service.ts` sees all company jobs under the recruiter grant, not only per-user assigned drives. Persisted per-job recruiter owner/assignment is needed before restricting every URL/summary/notification consistently; no insecure UI-only hide. |
+| REC-home-drives-R07 | NOT-A-GAP | Owner rule IST everywhere overrides viewer-local legacy; round1 tests confirm recruiter Today and portfolio India Standard Time. |
+
 ## Chat-14 reassignment closure audit (2026-10-17)
 
 Source-only evidence: tests below were authored or verified by source inspection, **not executed**. Actual database runtime closure for private reviews requires orchestrator registration of the proposed migration.

@@ -4,6 +4,8 @@ import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   createCollegeSectionSchema, sectionIdentityChanged,
   updateCollegeSectionSchema,
@@ -180,9 +182,9 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </button>
-    {editing ? <div role="dialog" aria-modal="true" aria-label={"Edit class " + row.name}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <form onSubmit={save} className="w-full max-w-lg space-y-3 rounded-xl border border-border bg-surface p-5 shadow-lg">
+    {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
+      title={"Edit class " + row.name}>
+      <form onSubmit={save} className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Edit class</h2>
         <p className="text-sm text-muted-foreground">
           Batch and academic period are immutable. Name and code changes require no dependent records.
@@ -206,13 +208,6 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
-        {discardConfirm?<div role="group" aria-label="Discard unsaved class changes?" className="rounded-md border border-border bg-muted p-3 text-sm">
-          <p>Discard unsaved class changes?</p>
-          <div className="mt-2 flex gap-2">
-            <button type="button" disabled={pending} onClick={cancel} className="rounded bg-primary px-3 py-2 font-semibold text-on-primary">Discard changes</button>
-            <button type="button" onClick={()=>setDiscardConfirm(false)} className="rounded border border-border px-3 py-2">Keep editing</button>
-          </div>
-        </div>:null}
         <div className="flex justify-end gap-2">
           <button disabled={pending} type="button" onClick={cancel}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
@@ -224,7 +219,12 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
           </button>
         </div>
       </form>
-    </div> : null}
+    </Dialog> : null}
+    <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
+      title="Discard unsaved class changes?"
+      description="The changes to this class will be lost."
+      confirmLabel="Discard changes" pending={pending}
+      onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
     {!editing && notice ? <p role="status" className="mt-1 text-xs text-body">{notice}</p> : null}
   </div>;
 }

@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import { LearnerPlacementAlerts } from "@/components/placements/learner-placement-alerts";
 import { LearnerPlacementRequests } from "@/components/placements/learner-placement-requests";
+import {LearnerGeneralRequests} from "@/components/placements/learner-general-requests";
 import { LearnerPlacementRegistration } from "@/components/placements/learner-placement-registration";
 import { getOwnLearnerRegistration } from "@/modules/placements/learner-registration-read-service";
 import { listOwnPlacementOffers } from "@/modules/placements/offer-service";
@@ -12,7 +13,13 @@ import {readOptionalLearnerPlacementSource} from "@/modules/placements/learner-o
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import {learnerPlacementCellOfferEmptyMessage} from "@/modules/placements/learner-placement-cell-offer-empty-model";
 
-export default async function LearnerPlacementCellPage() {
+export default async function LearnerPlacementCellPage({
+ searchParams,
+}:{searchParams:Promise<{request?:string;applicationId?:string;roundId?:string;offerId?:string}>}) {
+  const query=await searchParams;
+  const validUuid=(s:string|undefined)=>s&&/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(s)?s:"";
+  const prefillAbsence=query.request==="absence-dispute";
+  const prefillAcceptance=query.request==="acceptance-dispute";
   const context = await getCurrentRequestContext();
   const [offerRows, requestRead, alertRead, registration] = await Promise.all([
     listOwnPlacementOffers(context),
@@ -29,7 +36,7 @@ export default async function LearnerPlacementCellPage() {
       </section>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Need help with a placement decision?</h2>
-        <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling or offer-extension requests. Your placement team owns the final decision.</p>
+        <p className="mt-2 text-sm leading-6 text-body">Use the request actions below for application withdrawal, round rescheduling, offer extensions, registration changes, off-campus offers, corrections, absence disputes or placement after placement. Your placement team owns the final decision.</p>
         <Link href="/learn/my-placements/support" className="mt-3 mr-4 inline-flex text-sm font-semibold text-primary-text">My support-request history →</Link>
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex text-sm font-semibold text-primary-text">Read placement rules →</Link>
       </section>
@@ -62,13 +69,21 @@ export default async function LearnerPlacementCellPage() {
           offerId:row.request.offerId,status:row.request.status,
           requestType:row.request.requestType,
         }))}
-        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(), joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />}
+        snapshotNowIso={new Date().toISOString()} offers={offerRows.map((row) => ({ offerId: row.offer.id, applicationId: row.offer.applicationId, companyName: row.company.name, jobTitle: row.job.title, roleTitle: row.offer.roleTitle, status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN", annualCtcInr: row.offer.annualCtcInr, joiningDate: row.offer.joiningDate, expiresAt: row.offer.expiresAt?.toISOString() ?? null, issuedAt: row.offer.issuedAt.toISOString(),
+        acceptanceChannel:row.offer.acceptanceChannel,
+        acceptedDisputableUntil:row.offer.acceptedDisputableUntil?.toISOString()??null, joining: row.joining ? { status: row.joining.status as "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED", joiningDate: row.joining.joiningDate, reason: row.joining.reason } : null }))} />}
       <section id="requests" className="scroll-mt-24" aria-label="Your requests">
       {requestWorkspace ? <LearnerPlacementRequests
         requests={requestWorkspace.requests.map((row) => ({ id: row.request.id, requestType: row.request.requestType as "APPLICATION_WITHDRAWAL" | "ROUND_RESCHEDULE" | "OFFER_EXTENSION", status: row.request.status as "PENDING" | "APPROVED" | "REJECTED" | "CANCELLED", reason: row.request.reason, decisionNote: row.request.decisionNote, requestedAt: row.request.requestedAt.toISOString(), decidedAt: row.request.decidedAt?.toISOString() ?? null, roleTitle: row.roleOption.title, jobTitle: row.job.title, companyName: row.company.name, roundName: row.round?.name ?? null, offerRoleTitle: row.offer?.roleTitle ?? null, effectPayload: (row.request.effectPayload ?? {}) as Record<string, unknown> }))}
         rounds={requestWorkspace.rounds.map((row) => ({ applicationId: row.applicationId, roundId: row.roundId, roundName: row.roundName, sequence: row.sequence, roleTitle: row.roleTitle, companyName: row.companyName, scheduledAt: row.scheduledAt?.toISOString() ?? null, timezone: row.timezone, mode: row.mode, venue: row.venue, meetingUrl: row.meetingUrl, exception: row.exception ? { scheduledAt: row.exception.scheduledAt.toISOString(), timezone: row.exception.timezone, mode: row.exception.mode, venue: row.exception.venue, meetingUrl: row.exception.meetingUrl } : null }))}
         offers={requestWorkspace.offers.map((row) => ({ ...row, expiresAt: row.expiresAt?.toISOString() ?? null }))}
       /> : null}
+        <LearnerGeneralRequests
+          initialKind={prefillAcceptance?"OFFER_ACCEPTANCE_DISPUTE":prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}
+          initialApplicationId={prefillAbsence?validUuid(query.applicationId):""}
+          initialRoundId={prefillAbsence?validUuid(query.roundId):""}
+          initialOfferId={prefillAcceptance?validUuid(query.offerId):""}
+        />
       </section>
       <section id="rules" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
         <h2 className="font-semibold text-foreground">Placement rules</h2>

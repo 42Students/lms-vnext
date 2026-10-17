@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { adminAssessmentQuerySchema, adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/admin-assessment-directory-model";
 describe("Super Admin assessments read model", () => {
   it("keeps links inside admin, and strictly validates query", () => {
-    expect(adminAssessmentHref("ASSIGNMENT", { q: "A", status: "PUBLISHED", page: 2 }))
+    expect(adminAssessmentHref("ASSIGNMENT", adminAssessmentQuerySchema.parse({ q: "A", status: "PUBLISHED", page: 2 })))
       .toBe("/admin/assignments?q=A&status=PUBLISHED&page=2");
     expect(adminAssessmentQuerySchema.safeParse({ page: "-1" }).success).toBe(false);
     expect(adminAssessmentQuerySchema.safeParse({ unexpected: "true" }).success).toBe(false);

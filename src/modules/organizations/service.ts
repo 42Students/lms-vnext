@@ -280,3 +280,50 @@ export async function archiveOrganization(
     return archived;
   });
 }
+
+/** SA-tenants-modules-R02: archived organizations are recoverable, but only by
+ * a Super Admin in the authorized organization scope. No college is implicitly restored. */
+export async function restoreOrganization(context:RequestContext, rawId:unknown){
+ const organizationId=organizationIdSchema.parse(rawId);
+ if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ requirePermission(context,"organization.manage",{organizationId});
+ const db=getDb();
+ const [candidate]=await db.select({name:organizations.name,status:organizations.status})
+  .from(organizations).where(eq(organizations.id,organizationId)).limit(1);
+ if(!candidate||candidate.status!=="ARCHIVED")
+  throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+ await assertUniqueActiveName(candidate.name,organizationId);
+ try{
+  return await db.transaction(async tx=>{
+   const [restored]=await tx.update(organizations)
+    .set({status:"ACTIVE",updatedAt:new Date()})
+    .where(and(eq(organizations.id,organizationId),eq(organizations.status,"ARCHIVED")))
+    .returning({id:organizations.id,name:organizations.name,status:organizations.status});
+   if(!restored)throw new OrganizationServiceError("ORGANIZATION_NOT_FOUND");
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_ORGANIZATION_RESTORED,
+    organizationId:restored.id,subjectType:"organization",subjectId:restored.id,
+    subjectLabel:restored.name,summary:"Archived organization restored",
+    metadata:{fromStatus:"ARCHIVED",toStatus:"ACTIVE"},
+   });
+   return restored;
+  });
+ }catch(error){
+  if(isUniqueViolation(error))
+   throw new OrganizationServiceError("ORGANIZATION_NAME_CONFLICT");
+  throw error;
+ }
+}
+export async function listArchivedOrganizations(context:RequestContext){
+ if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ requirePermission(context,"organization.manage",{
+  organizationId:context.adminScope?.organizationId??undefined,
+  collegeId:context.adminScope?.collegeId??undefined,
+ });
+ return getDb().select({
+  id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+ }).from(organizations).where(and(
+  eq(organizations.status,"ARCHIVED"),
+  context.adminScope?.organizationId?eq(organizations.id,context.adminScope.organizationId):undefined,
+ )).orderBy(asc(organizations.name)).limit(200);
+}

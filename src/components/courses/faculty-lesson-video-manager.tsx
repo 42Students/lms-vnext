@@ -31,6 +31,7 @@ export function FacultyLessonVideoManager({
   const [error,setError]=useState<string|null>(null);
   const [info,setInfo]=useState<string|null>(null);
   const [title,setTitle]=useState("");
+  const [contentPoints,setContentPoints]=useState("1");
   const [duration,setDuration]=useState("");
   const [file,setFile]=useState<File|null>(null);
   const [durationDraft,setDurationDraft]=useState<Record<string,string>>({});
@@ -132,6 +133,8 @@ export function FacultyLessonVideoManager({
   function linkContent(video:ManagedVideo){
     if(video.processingStatus!=="READY"){setError("Video must be ready before linking to a lesson.");return;}
     if(!video.durationSeconds){setError("Set a valid duration before adding video lesson content.");return;}
+    const points=Number(contentPoints);
+    if(!Number.isInteger(points)||points<0||points>1000){setError("Enter Points from 0 to 1000.");return;}
     run(async signal=>{
       const key=`video-asset/${video.id}`;
       const current=await lessonContents(signal);
@@ -144,12 +147,15 @@ export function FacultyLessonVideoManager({
       if(!contentId){
         const created=await request("/api/courses/lesson-contents","POST",{
           lessonId,deliveryId,title:video.title,sequence:nextContentSequence,
-          contentType:"VIDEO",storageKey:key,durationSeconds:video.durationSeconds,
+          contentType:"VIDEO",storageKey:key,durationSeconds:video.durationSeconds,points,
         },signal) as {content?:{id?:string;status?:string}};
         contentId=created.content?.id;
         currentStatus=created.content?.status;
       }
       if(!contentId)throw new Error("Video content was not created. Refresh before trying again.");
+      if(contentId && currentStatus!==undefined){
+        await request(`/api/courses/lesson-contents/${encodeURIComponent(contentId)}`,"PATCH",{points},signal);
+      }
       if(video.lessonContentId!==contentId){
         await request(`/api/courses/videos/${encodeURIComponent(video.id)}`,"PATCH",{lessonContentId:contentId},signal);
       }
@@ -197,6 +203,10 @@ export function FacultyLessonVideoManager({
       </label>
       <label className="text-sm font-semibold text-body">Duration (seconds, optional)
         <Input className="mt-1" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
+      </label>
+      <label className="text-sm font-semibold text-body">Points (lesson content)
+        <Input className="mt-1" type="number" min={0} max={1000}
+          value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
       </label>
       <label className="text-sm font-semibold text-body">Upload Video
         <input type="file" className="mt-1 block min-h-11 w-full text-xs"

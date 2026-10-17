@@ -1,9 +1,11 @@
 "use client";
 
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -150,6 +152,9 @@ export function RequestProjectMeetingControl({
   const [error, setError] =
     useState<string | null>(null);
 
+  const dirty=Boolean(title||agenda||startsAt||endsAt);
+  function discardDraft(){setOpen(false);setTitle("");setAgenda("");setStartsAt("");setEndsAt("");setError(null);}
+  const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
   function openDialog() {
     setMinStart(toLocalInput(new Date()));
     setTimeZone(
@@ -222,7 +227,7 @@ export function RequestProjectMeetingControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
         title="Request a meeting"
         description="Suggest a time window and agenda. A mentor or admin can turn the request into a scheduled meeting."
       >
@@ -257,7 +262,7 @@ export function RequestProjectMeetingControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={guard.requestClose}
             >
               Cancel
             </Button>
@@ -278,6 +283,9 @@ export function RequestProjectMeetingControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+        title="Discard meeting request?" description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
     </>
   );
 }
@@ -298,6 +306,7 @@ export function ScheduleProjectMeetingControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [title, setTitle] = useState(
     meeting?.title ?? "",
   );
@@ -329,7 +338,34 @@ export function ScheduleProjectMeetingControl({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
+    startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
+    endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
+    meetingUrl!==(meeting?.meetingUrl??"")||meetingType!==(meeting?.meetingType??"GENERAL")||
+    linkedSprintId!==(meeting?.linkedSprintId??"")||linkedTaskId!==(meeting?.linkedTaskId??"");
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setConfirmDiscard(true);else setOpen(false);
+  }
 
+  const dirty=title!==(meeting?.title??"")||agenda!==(meeting?.agenda??"")||
+    startsAt!==(meeting?toLocalInput(meeting.startsAt):"")||
+    endsAt!==(meeting?toLocalInput(meeting.endsAt):"")||
+    meetingUrl!==(meeting?.meetingUrl??"")||
+    meetingType!==(meeting?.meetingType??"GENERAL")||
+    linkedSprintId!==(meeting?.linkedSprintId??"")||
+    linkedTaskId!==(meeting?.linkedTaskId??"");
+  function discardDraft(){setOpen(false);setError(null);}
+  const guard=useProjectEditorDiscardGuard(open,dirty,pending,discardDraft);
   function openDialog() {
     setScheduleMinStart(toLocalInput(new Date(Date.now() + 60_000)));
     setTitle(meeting?.title ?? "");
@@ -423,12 +459,8 @@ export function ScheduleProjectMeetingControl({
           : "Meeting added.",
       });
       router.refresh();
-    } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not schedule the meeting.",
-      );
+    } catch {
+      setError("Could not schedule this meeting. Review its latest details and try again.");
     } finally {
       setPending(false);
     }
@@ -449,7 +481,7 @@ export function ScheduleProjectMeetingControl({
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
         title={
           meeting
             ? "Schedule Project meeting"
@@ -592,7 +624,7 @@ export function ScheduleProjectMeetingControl({
               type="button"
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={guard.requestClose}
             >
               Cancel
             </Button>
@@ -607,6 +639,9 @@ export function ScheduleProjectMeetingControl({
           </div>
         </form>
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+        title="Discard meeting changes?" description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
     </>
   );
 }
@@ -630,7 +665,24 @@ export function ProjectMeetingTransitionActions({
   const [note, setNote] = useState("");
   const [pending, setPending] =
     useState(false);
+  const [confirmDiscard,setConfirmDiscard]=useState(false);
+  const dirty=Boolean(note.trim());
+  useEffect(()=>{
+    if(!open||!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="You have unsaved project changes. Leave this page and discard them?";
+    };
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[open,dirty]);
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setConfirmDiscard(true);else setOpen(null);
+  }
 
+  function discardNote(){setOpen(null);setNote("");}
+  const guard=useProjectEditorDiscardGuard(open!==null,Boolean(note.trim()),pending,discardNote);
   const manager =
     mode === "MENTOR" || mode === "ADMIN";
   const learnerOwnRequest =
@@ -692,14 +744,11 @@ export function ProjectMeetingTransitionActions({
             : withdrawing?"Meeting request withdrawn.":"Meeting cancelled",
       });
       router.refresh();
-    } catch (caught) {
+    } catch {
       showToast({
         tone: "error",
         title: "Meeting update failed",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        description: "Review the meeting status and try again.",
       });
     } finally {
       setPending(false);
@@ -736,7 +785,7 @@ export function ProjectMeetingTransitionActions({
       <Dialog
         open={open !== null}
         onOpenChange={(next) => {
-          if (!next) setOpen(null);
+          if (!next) guard.requestClose();
         }}
         title={
           open === "COMPLETE"
@@ -753,7 +802,7 @@ export function ProjectMeetingTransitionActions({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(null)}
+              onClick={guard.requestClose}
             >
               Back
             </Button>
@@ -798,6 +847,9 @@ export function ProjectMeetingTransitionActions({
           />
         </label>:null}
       </Dialog>
+      <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+        title="Discard meeting note?" description="You have unsaved project changes. Leave this page and discard them?"
+        confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
     </>
   );
 }

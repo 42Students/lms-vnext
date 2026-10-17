@@ -31,3 +31,11 @@ Audit `docs/audit/pages/public/auth-public-2-links-marketing.md`. Protocol `docs
 | PUB-auth-public-66 | DONE | /request-demo headline, What to expect section and mailto contact without form; named test PUB-auth-public-66 |
 
 A verified implementation is a source-level closure awaiting orchestrator execution, not evidence that SMTP, live object buckets or production tenant mailboxes are configured. Other OPEN entries are not promoted to DONE by having a code snippet or a partial source test.
+
+
+## Round 6 — public invite and share copy (tests not executed)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| PUB-auth-public-47 | OPEN | Exact legacy permission copy "Contact details are shared only as the placement cell allows." added to recruiter invite. Drive-specific title sentence cannot be shown absent a persisted drive-review association. `recruiter-invite-landing.tsx`; PUB-auth-public-47 unit test. |
+| PUB-auth-public-54 | DONE (approved bounded CSV) | Existing audited, capped company applicant CSV export remains; public action now says "Download list (CSV, up to 500 applicants)" rather than an implementation label. `company-share/[token]/page.tsx` and `tests/unit/public-auth-links-gap-closure.test.ts`, case PUB-auth-public-54. The owner explicitly retains capped exports as a vNext improvement. |

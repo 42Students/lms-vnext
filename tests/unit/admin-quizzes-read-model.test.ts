@@ -5,7 +5,7 @@ describe("Super Admin quiz directory", () => {
     expect(adminAssessmentQuerySchema.safeParse({ status: "CLOSED", page: "3" })).toMatchObject({
       success: true, data: { status: "CLOSED", page: 3 },
     });
-    expect(adminAssessmentHref("QUIZ", { q: "term", status: "CLOSED", page: 3 }))
+    expect(adminAssessmentHref("QUIZ", adminAssessmentQuerySchema.parse({ q: "term", status: "CLOSED", page: 3 })))
       .toBe("/admin/quizzes?q=term&status=CLOSED&page=3");
   });
   it("does not invent percentage results from attempt counts", () => {

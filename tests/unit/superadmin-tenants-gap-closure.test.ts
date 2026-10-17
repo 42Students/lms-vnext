@@ -97,4 +97,84 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(signin).toContain("apiFetch<void>");
   expect(signin).toContain("useGuardedAction");
  });
+ it("SA-tenants-modules-04 unscoped platform has four described navigation cards including Recruiter accounts",()=>{
+  const nav=source("src/modules/admin-ui/admin-dashboard-navigation.ts");
+  const page=source("src/components/admin/admin-dashboard-actions.tsx");
+  expect(nav).toContain('href: "/admin/tenants"');
+  expect(nav).toContain('label: "Recruiter accounts", href: "/admin/recruiters"');
+  expect(nav).not.toContain('label: "Tenant Setup", href: "/admin/tenants/setup"');
+  expect(page).toContain("Choose the level you need to operate at.");
+  expect(page).toContain("subtitle={item.subtitle}");
+ });
+ it("SA-tenants-modules-07 archive is intentionally non-destructive with dependent-college guard",()=>{
+  const actions=source("src/components/admin/organization-actions.tsx");
+  const service=source("src/modules/organizations/service.ts");
+  expect(actions).toContain("Archive organization");
+  expect(actions).toContain("ORGANIZATION_HAS_COLLEGES");
+  expect(service).toContain('status:"ARCHIVED"');
+  expect(actions).not.toContain("Delete organization");
+ });
+ it("SA-tenants-modules-14 college archive intentionally preserves dependencies and historical records",()=>{
+  const component=source("src/components/admin/college-archive-button.tsx");
+  const service=source("src/modules/colleges/service.ts");
+  expect(component).toContain("COLLEGE_HAS_DEPENDENCIES");
+  expect(component).toContain("The server checks memberships");
+  expect(service).toContain("assertCollegeCanArchive(usage)");
+  expect(service).toContain('status:"ARCHIVED"');
+ });
+ it("SA-tenants-modules-R03 Audit Findings requires an active Super Admin rather than a broad logs role",()=>{
+  const board=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
+  const permission=source("src/modules/permissions/policy.ts");
+  expect(board).toContain('if(!isSuperAdmin(ctx) || ctx.user.platformStatus !== "ACTIVE")redirect("/dashboard")');
+  expect(board).toContain('requirePermission(ctx,"admin-scope.select"');
+  expect(permission).toContain('return isSuperAdmin(context);');
+ });
+
+ it("SA-tenants-modules-R02 restores only archived organization or college with scoped transactional audit",()=>{
+  const org=source("src/modules/organizations/service.ts");
+  const college=source("src/modules/colleges/service.ts");
+  const ui=source("src/components/admin/tenant-restore-action.tsx");
+  const directory=source("src/app/(authenticated)/admin/organizations/page.tsx");
+  const detail=source("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
+  for(const [entity,route] of [
+    ["organization","src/app/api/organizations/[organizationId]/restore/route.ts"],
+    ["college","src/app/api/colleges/[collegeId]/restore/route.ts"],
+  ]){
+   const sourceText=source(route);
+   expect(sourceText).toContain("isSameOriginRequest(request)");
+   expect(sourceText).toContain("getCurrentRequestContext()");
+   expect(sourceText).toContain("export async function POST");
+   expect(sourceText).toContain("apiErrorResponse(error)");
+   expect(ui).toContain(entity);
+  }
+  expect(org).toContain("export async function restoreOrganization");
+  expect(org).toContain('eq(organizations.status,"ARCHIVED")');
+  expect(org).toContain("await assertUniqueActiveName(candidate.name,organizationId)");
+  expect(org).toContain("PLATFORM_ORGANIZATION_RESTORED");
+  expect(college).toContain("export async function restoreCollege");
+  expect(college).toContain('candidate.organizationStatus!=="ACTIVE"');
+  expect(college).toContain('eq(colleges.status,"ARCHIVED")');
+  expect(college).toContain("PLATFORM_COLLEGE_RESTORED");
+  expect(ui).toContain("<ConfirmDialog");
+  expect(ui).toContain("useGuardedAction");
+  expect(directory).toContain("listArchivedOrganizations(context)");
+  expect(detail).toContain('<TenantRestoreAction kind="college"');
+  expect(detail).toContain("Restore the parent organization");
+  expect(source("src/modules/activity/taxonomy.ts")).toContain("PLATFORM_COLLEGE_RESTORED");
+ });
+
+ it("SA-tenants-modules-23 distinguishes measured required failures from optional advice",()=>{
+  const page=source("src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx");
+  const evalModel=source("src/modules/colleges/readiness-model.ts");
+  expect(page).toContain("Must fix before launch");
+  expect(page).toContain('evaluation.checks.filter(check=>check.status!=="PASS")');
+  expect(page).toContain("Recommended setup");
+  expect(page).toContain("supplemental.activeLectureHalls===null");
+  expect(page).toContain("supplemental.attendancePolicyRecord===null");
+  expect(page).toContain("Runtime DNS, login, teaching and placement verification are still required before launch.");
+  expect(page).toContain("readinessRemediationLink(check.id,college.id)");
+  expect(evalModel).toContain('"NOT_READY"');
+  expect(evalModel).toContain('"INCOMPLETE"');
+ });
+
 });

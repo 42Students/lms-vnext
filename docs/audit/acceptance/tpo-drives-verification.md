@@ -102,3 +102,16 @@ All tests below were authored but **not executed**. The prior "Remaining unaddre
 | TPO-drives-49 | DONE (source verified; browser unrun) | Frozen Closed/Cancelled drive explains that it cannot be changed and links to Create drive/Clone; the edit route already had a non-destructive loading skeleton, and its error boundary now has exact safe failed-load wording, Retry and Back to drives. `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/{page,error,loading}.tsx`; `tests/unit/tpo-drives-chat-3-round4.test.ts` — TPO-drives-49 closed drive has immutable explanation, clone path and retriable read boundary. |
 
 No new schema or proposed migrations in this round. Shell was not edited. `TPO-drives-27` remains blocked by private storage and malware scanning; TPO-drives-47/-48/-50 retain their full server behavior backlog.
+
+
+## Round 6 — TPO creation and source test reconciliation
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-39 | OPEN (functional advance) | Real legacy Talk/Test/Interview, Test/Technical/HR, Test/GD/Interview presets in `tpo-drive-round-presets.ts`; Create persists actual pending rounds after the draft and eligibility policy through the scoped rounds API. On retry it reads back already-created round sequence before adding only absent rows, refusing changed sequences to prevent duplication. Modes and dates are intentionally scheduled later; custom per-row mode editor is still OPEN. Source test `tpo-drives-chat-3-open-verification.test.ts` now covers the real flow, not obsolete "not created" copy. |
+| TPO-drives-37 | DONE | No retired Max active/past backlog or gap-year fields exist in Create; `tests/unit/tpo-drives-chat-3-round4.test.ts`, named TPO-drives-37 test. |
+| TPO-drives-43 | OPEN | Partial job retry now also inspects round readback to avoid duplicate preset insertion, but persisted idempotency across lost job POST responses still needs server-side work. |
+| TPO-drives-51 | NOT-A-GAP | Existing College Admin Create route has explicit role gate; named source regression now matches the current route formatting. |
+| TPO-drives-42 | OPEN | Legacy future deadline/pay/HTTPS/company checks are performed before company creation; source regression assertions match current form, but full server publication parity remains. |
+
+| TPO-drives-11 | DONE (source verified; tests not executed) | Five persisted Needs doing categories on lifecycle list with SQL-scoped counts (pending review Requests, no applicants, no deadline, due soon, overdue), URL-filtered category links and active state. `tpo-drive-lifecycle-list-service.ts`, `lifecycle/page.tsx`, `tests/unit/tpo-drives-gap-closure.test.ts` named TPO-drives-11. |
