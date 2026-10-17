@@ -86,10 +86,18 @@ export default async function TpoHome(){
   }
  }
  const inviteReady=!!inviteCandidate;
+ // TPO-home-04: the visible batch must show its own persisted eligible and
+ // registered totals, even when an invitation has already been sent.
+ const [shownEligibility,shownRegistrations]=firstBatch?await Promise.all([
+  getTpoBatchEligibilitySummary(ctx,firstBatch.id),
+  getTpoBatchRegistrationSummary(ctx,firstBatch.id),
+ ]):[null,null];
+ const shownEligible=shownEligibility?.summary.complete?shownEligibility.summary.eligible:null;
+ const shownRegistered=shownRegistrations?.available?shownRegistrations.registered:null;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
-   eligible:firstBatch.id===inviteCandidate?.id?candidateEligible:null,
-   registered:firstBatch.id===inviteCandidate?.id?candidateRegistered:null,placed:null}:null,
+   eligible:shownEligible,
+   registered:shownRegistered,placed:null}:null,
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
