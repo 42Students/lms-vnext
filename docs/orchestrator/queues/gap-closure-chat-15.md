@@ -79,3 +79,53 @@ SOURCE DONE: LEARNER-placements-R03 (policy-aware acceptance cascade already bui
 ## Chat-15 calendar range group H
 
 - PARTIAL LEARNER-learning-misc-34: class schedule now fetches only the selected three-month IST window (previous/current/next month, including week spillover) with strict 100-day bound and SQL overlap predicate; attendance calendar still needs similar bounded query. `tests/unit/chat15-calendar-window-bounds.test.ts` authored, not run.
+
+## Chat-15 2026-10-17 verification ledger (not runtime-certified)
+
+The historical OPEN list above is the reassigned queue; this ledger records actual source progress without equating authored tests with executed, database-backed acceptance. No main-branch changes have been made by this lane. All named source tests were authored, not executed here. Migration `docs/proposed-migrations/learner-general-placement-requests.sql` must be numbered, registered and PostgreSQL replayed by the orchestrator before requests `-43/-51/-52` can be certified.
+
+| Gap ID | Current source status | Evidence / blocker |
+|---|---|---|
+| LEARNER-course-detail-03 | OPEN | Instructor-provided resource read path missing |
+| LEARNER-course-detail-05 | OPEN | Rich-text/Drive import/submission discard details unresolved |
+| LEARNER-course-detail-08 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-09 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-12 | PARTIAL | Rate selection present; platform-tunable cadence/threshold missing |
+| LEARNER-course-detail-13 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-14 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-15 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-16 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-course-detail-17 | SOURCE-DONE | chat15-missed-quiz-release.test.ts |
+| LEARNER-course-detail-19 | OPEN | Graceful partial-failure read and retry states missing |
+| LEARNER-course-detail-20 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-learning-misc-01 | BLOCKED | Private scanned object storage integration required |
+| LEARNER-learning-misc-02 | OPEN | Faculty-authored resource attachments absent |
+| LEARNER-learning-misc-04 | OPEN | Multi-part combined submission not yet complete for all methods |
+| LEARNER-learning-misc-07 | OPEN | Source/Notebook upload type policy differs from legacy |
+| LEARNER-learning-misc-11 | OPEN | Rich-text editor response authoring absent |
+| LEARNER-learning-misc-12 | OPEN | Google Drive file import absent |
+| LEARNER-learning-misc-13 | SOURCE-DONE | chat15-assessment-legacy-copy.test.ts |
+| LEARNER-learning-misc-15 | OPEN | Server-side page filtering not implemented |
+| LEARNER-learning-misc-16 | SOURCE-DONE | chat15-quiz-table-legacy.test.ts |
+| LEARNER-learning-misc-19 | SOURCE-DONE | chat15-class-scope-quiz-empty.test.ts |
+| LEARNER-learning-misc-24 | SOURCE-DONE | chat15-missed-quiz-release.test.ts |
+| LEARNER-learning-misc-27 | SOURCE-DONE | chat15-missed-quiz-release.test.ts |
+| LEARNER-learning-misc-28 | SOURCE-DONE | chat15-missed-quiz-release.test.ts |
+| LEARNER-learning-misc-29 | SOURCE-DONE | chat15-assessment-legacy-copy.test.ts |
+| LEARNER-learning-misc-34 | PARTIAL | Schedule and calendar bounded by IST window; general attendance history unbounded |
+| LEARNER-placements-01 | SOURCE-DONE | chat15-personal-placement-alert-read.test.ts |
+| LEARNER-placements-03 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-placements-05 | SOURCE-DONE | chat15-reassigned-learner-parity.test.ts |
+| LEARNER-placements-09 | SOURCE-DONE | chat15-player-and-placement-copy.test.ts |
+| LEARNER-placements-28 | PARTIAL | Company profile is not the actual employer-visible selected applicant projection |
+| LEARNER-placements-30 | PARTIAL | Staff applied tag; opt-out lifecycle not verified |
+| LEARNER-placements-33 | NOT-A-GAP | OD-38 approves additional vNext count tiles |
+| LEARNER-placements-41 | PARTIAL | Assessment link visible; persisted due date not confirmed |
+| LEARNER-placements-43 | SOURCE-DONE | chat15-learner-general-requests.test.ts; schema proposal unregistered |
+| LEARNER-placements-51 | SOURCE-DONE | chat15-learner-general-requests.test.ts; schema proposal unregistered; scanned letter attachment blocked |
+| LEARNER-placements-52 | SOURCE-DONE | chat15-learner-general-requests.test.ts; schema proposal unregistered |
+| LEARNER-placements-R03 | SOURCE-DONE | chat15-placement-policy-and-escalation.test.ts |
+| LEARNER-placements-R04 | OPEN | Twenty-seven placement event notification families not yet all wired |
+| LEARNER-placements-R08 | NOT-A-GAP | OD-38 protects out-of-audience drive privacy |
+
+This reconciliation is not a claim that all 41 gaps are closed. Final VERIFIED decisions require orchestrator tests, migration registration where applicable, and application acceptance.
