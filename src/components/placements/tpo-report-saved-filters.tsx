@@ -1,12 +1,12 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter,useSearchParams} from "next/navigation";
-type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string};
+type SavedView={name:string;seasonId:string;jobId:string;batchId?:string;branchId?:string;sort?:string;outcome?:string;q?:string;group?:string;state?:string;days?:string};
 const keyFor=(path:string,collegeId:string,userId:string)=>"lms.tpo.report-view."+collegeId+"."+userId+"."+path.replace(/[^a-z0-9/-]/gi,"");
 const clean=(value:unknown):SavedView[]=>Array.isArray(value)?value.flatMap(item=>
  item&&typeof item==="object"&&typeof item.name==="string"&&
  typeof item.seasonId==="string"&&typeof item.jobId==="string"?
- [{name:item.name.slice(0,50),seasonId:item.seasonId.slice(0,80),jobId:item.jobId.slice(0,80),batchId:typeof item.batchId==="string"?item.batchId.slice(0,80):"",branchId:typeof item.branchId==="string"?item.branchId.slice(0,80):"",sort:typeof item.sort==="string"?item.sort.slice(0,30):"",outcome:typeof item.outcome==="string"?item.outcome.slice(0,30):"",q:typeof item.q==="string"?item.q.slice(0,100):"",group:typeof item.group==="string"?item.group.slice(0,30):""}]:[]).slice(0,12):[];
+ [{name:item.name.slice(0,50),seasonId:item.seasonId.slice(0,80),jobId:item.jobId.slice(0,80),batchId:typeof item.batchId==="string"?item.batchId.slice(0,80):"",branchId:typeof item.branchId==="string"?item.branchId.slice(0,80):"",sort:typeof item.sort==="string"?item.sort.slice(0,30):"",outcome:typeof item.outcome==="string"?item.outcome.slice(0,30):"",q:typeof item.q==="string"?item.q.slice(0,100):"",group:typeof item.group==="string"?item.group.slice(0,30):"",state:typeof item.state==="string"?item.state.slice(0,30):"",days:typeof item.days==="string"?item.days.slice(0,5):""}]:[]).slice(0,12):[];
 export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;collegeId:string;userId:string}){
  const router=useRouter(),params=useSearchParams();
  const [views,setViews]=useState<SavedView[]>([]);
@@ -27,7 +27,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   if(!label||label.length>50){setMessage("Choose a name up to 50 characters.");return;}
   if(views.length>=12&&!views.some(item=>item.name===label)){setMessage("Up to 12 saved filters per report.");return;}
   const next=views.filter(item=>item.name!==label);
-  next.push({name:label,seasonId:params.get("seasonId")??"",jobId:params.get("jobId")??"",batchId:params.get("batchId")??"",branchId:params.get("branchId")??"",sort:params.get("sort")??"",outcome:params.get("outcome")??"",q:params.get("q")??"",group:params.get("group")??""});
+  next.push({name:label,seasonId:params.get("seasonId")??"",jobId:params.get("jobId")??"",batchId:params.get("batchId")??"",branchId:params.get("branchId")??"",sort:params.get("sort")??"",outcome:params.get("outcome")??"",q:params.get("q")??"",group:params.get("group")??"",state:params.get("state")??"",days:params.get("days")??""});
   if(persist(next)){setPicked(label);setName("");setMessage("Saved filters for this report.");}
  }
  function apply(){
@@ -35,7 +35,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
   const next=new URLSearchParams();
   if(selected.seasonId)next.set("seasonId",selected.seasonId);
   if(selected.jobId)next.set("jobId",selected.jobId);
-  for(const field of ["batchId","branchId","sort","outcome","q","group"] as const){
+  for(const field of ["batchId","branchId","sort","outcome","q","group","state","days"] as const){
    if(selected[field])next.set(field,selected[field]);
   }
   router.push(path+(next.size?"?"+next:""));
@@ -47,7 +47,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
  }
  return <details className="min-w-0 rounded-xl border border-border bg-surface p-4">
   <summary className="cursor-pointer text-sm font-semibold">Saved filters ({views.length}/12)</summary>
-  <p className="mt-2 text-xs text-muted-foreground">Save this report's season and drive filter in this browser. Nothing is sent to other users or devices.</p>
+  <p className="mt-2 text-xs text-muted-foreground">Save this report's active filters in this browser for your account. Nothing is sent to other users or devices.</p>
   <div className="mt-3 flex flex-wrap items-end gap-2">
    <label className="grid min-w-40 flex-1 gap-1 text-xs font-semibold">Name this view
     <input value={name} onChange={e=>setName(e.target.value)} maxLength={50}
