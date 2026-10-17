@@ -7,6 +7,10 @@ describe("Mentor faculty role parity",()=>{
   expect(code).toContain("mentor_role.role='MENTOR'");
   expect(code).toContain('query.employmentType.toLowerCase()==="mentor"');
   expect(code).toContain('row.mentorRole?"Mentor"');
+  const create=readFileSync("src/components/admin/person-onboard-dialog.tsx","utf8");
+  expect(create).toContain("Faculty Type");
+  expect(create).toContain("registerAsMentor");
+  expect(create).toContain('["FACULTY","MENTOR"]');
   expect(readFileSync("src/components/admin/admin-scoped-read-page.tsx","utf8"))
     .toContain('placeholder="Professor, Mentor…"');
  });
