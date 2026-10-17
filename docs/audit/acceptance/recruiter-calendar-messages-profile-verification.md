@@ -20,3 +20,9 @@
 | REC-calendar-messages-profile-42 | DONE | Existing invite declined/unsubscribed copy already exact; independently inspected `src/components/tpo/recruiter-invite-landing.tsx`; named test |
 | REC-calendar-messages-profile-47 | DONE | Existing `/recruiter` and `/recruiter/colleges` redirects both land at canonical Today; named test |
 | REC-calendar-messages-profile-R03 | DONE | `src/app/(authenticated)/hr/notifications/page.tsx` now links Messages, no contradictory unavailable sentence; named test |
+
+## Chat-14 reassignment — batch 2 (tests authored, not run)
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-23 | DONE | `src/components/hr/hr-recruiter-bell.tsx` opens notification bell and acknowledges only when all unread are on visible preview; `tests/unit/recruiter-chat14-round2.test.ts` GR ID test; no hidden-older unread silently cleared |
