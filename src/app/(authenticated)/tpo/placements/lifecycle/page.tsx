@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
+import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -294,9 +295,12 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 </details>
               </div>
             </div></article>)}
+          <div className="flex flex-wrap items-start gap-3">
           <button type="submit" className="min-h-11 justify-self-start rounded border border-primary px-4 text-sm font-semibold text-primary-text">
             Export selected drives (CSV)
           </button>
+           <TpoBulkDriveReminder/>
+          </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
        {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
