@@ -195,7 +195,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
             <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
             <span className="mt-1 block text-xs text-muted-foreground">
-              {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
+              {item.dayLabel ? item.dayLabel+" · ":""}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
             </span>
           </Link>
         </li>)}
