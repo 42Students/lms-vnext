@@ -282,7 +282,7 @@ export function RecruiterLeadsWorkspace({
   }, [collegeId]);
 
   useEffect(() => {
-    if (view !== "companies") return;
+    // Company count is shown in every Engage tab, including a brand-new roster.
     const controller = new AbortController();
     const timer = setTimeout(() => void loadCompanies(controller.signal), 0);
     return () => {
