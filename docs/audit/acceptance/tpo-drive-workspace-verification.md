@@ -208,3 +208,15 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 |---|---|---|
 | TPO-drive-workspace-69 | DONE | `src/modules/placements/tpo-bulk-exception-groups.ts`, `src/components/tpo/tpo-bulk-action-panel.tsx`, `src/modules/placements/tpo-bulk-action-confirm-service.ts`, `tests/unit/tpo-drive-workspace-69-chat5.test.ts` — named tests `TPO-drive-workspace-69 groups skipped and failed outcomes by friendly reason without exposing unknown IDs`, `TPO-drive-workspace-69 shows grouped failures, retry preview and audited per-run results`, `TPO-drive-workspace-69 requires confirmation and consequence acknowledgement for serious actions`. Supersedes earlier OPEN notes for grouped exception UX. |
 | TPO-drive-workspace-39 | OPEN | `src/components/placements/tpo-round-reorder.tsx` uses beforeunload protection; `tests/unit/tpo-drive-workspace-39-chat5.test.ts` — `TPO-drive-workspace-39 preserves a dirty round order on reload and clears it only after save or explicit undo`. App navigation and other round forms still need guard coverage. |
+
+| TPO-drive-workspace-57 | OPEN (copy regression repaired) | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx` now contains `respond-by deadline`, `holiday rules` and `Time is up` for reported source tests `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` and `tests/unit/tpo-drive-workspace-chat5-round6.test.ts`; full policy calculation and vacation calendar evidence still require end-to-end acceptance. |
+
+| TPO-drive-workspace-11 | OPEN (overview route fixed) | `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx` now checks the centrally granted college-scoped `placements.manage` permission before `getPlacementJob` verifies the actual drive's college, instead of requiring TPO role exclusively. `tests/unit/tpo-drive-workspace-11-chat5.test.ts` — `TPO-drive-workspace-11 checks central college-scoped placement permissions instead of the TPO role only`. Other TPO-only subpages/services remain under review; not a full access-parity claim. |
+
+| TPO-drive-workspace-70 | OPEN (round preset confirmation fixed) | `src/components/placements/placement-drive-controls.tsx` replaces the remaining native round-plan replacement confirmation with a keyboard-accessible `ConfirmDialog`, plainly explaining unsaved draft loss and requiring a second intentional action. `tests/unit/tpo-drive-workspace-70-chat5.test.ts` — `TPO-drive-workspace-70 reviews current draft round replacement in an accessible dialog instead of native window.confirm`. Confirm other destructive offer and drive action surfaces separately. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-drive-workspace-51 | OPEN | Decision: Employer-reported acceptance must remain provisional during a 48-hour dispute window and require source evidence; do not silently turn it into an acknowledged learner acceptance or joining record. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-drive-workspace-51` (source/policy regression; executable CI pending). |

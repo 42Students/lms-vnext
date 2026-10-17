@@ -14,7 +14,7 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { joinGroup } from "@/modules/groups/service";
 
 const uuid = z.string().uuid();
-const fieldStyle = "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
+const fieldStyle = "min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground";
 const base = (id: string) => "/college/electives/" + encodeURIComponent(id) + "/allocate";
 
 async function scopedSlot(slotId: string) {
@@ -145,7 +145,7 @@ export default async function CollegeElectiveAllocatePage({
       (reason ? "&reason=" + encodeURIComponent(reason) : ""));
   }
 
-  return <main className="space-y-6">
+  return <main className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Eligible students"
       description={"Allocate eligible learners to " + slot.name + ". Existing capacity, waitlist and maximum-choice rules are enforced."}
       actions={<Link href="/college/electives" className="font-semibold text-primary-text">Back to Electives</Link>} />
@@ -164,7 +164,7 @@ export default async function CollegeElectiveAllocatePage({
         <input name="q" type="search" maxLength={128} defaultValue={input.q ?? ""}
           className={fieldStyle} placeholder="Search eligible students" />
       </label>
-      <button className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Search</button>
+      <button className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Search</button>
     </form>
     <form action={allocate} className="space-y-4 rounded-lg border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold">Allocate selected to…
@@ -179,7 +179,7 @@ export default async function CollegeElectiveAllocatePage({
         Add a course offering to this slot before allocating learners.</p>}
       <div className="max-h-80 overflow-auto rounded-md border border-border">
         <table className="w-full text-left text-sm">
-          <thead><tr className="border-b border-border">
+          <thead className="sticky top-0 z-10 bg-surface"><tr className="border-b border-border">
             <th className="p-2">Select</th><th className="p-2">Student</th>
             <th className="p-2">Roll No.</th><th className="p-2">Section</th>
           </tr></thead>

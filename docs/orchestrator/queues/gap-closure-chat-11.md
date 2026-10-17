@@ -48,7 +48,7 @@ Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if prese
 | LEARNER-projects-35 | S4 | COPY | DONE |
 | LEARNER-projects-R04 | S4 | MISSING-FIELD | DONE |
 
-## public/auth-public-1-login-session (39: DONE 26, NOT-A-GAP 2, OPEN 8, UNCONFIRMED 3)
+## public/auth-public-1-login-session (39: DONE 27, NOT-A-GAP 2, OPEN 7, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-public-1-login-session-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/public-auth-public-1-login-session-verification.md`.
 
@@ -92,9 +92,9 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-36 | S4 | COPY | DONE |
 | PUB-auth-public-37 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
-| PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
+| PUB-auth-public-39 | S4 | MISSING-PAGE | DONE |
 
-## college/academic-setup (34: DONE 31, NOT-A-GAP 2, UNCONFIRMED 1)
+## college/academic-setup (34: DONE 32, NOT-A-GAP 2)
 
 Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-academic-setup-verification.md`.
 
@@ -133,7 +133,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-36 | S4 | VALIDATION | DONE |
 | COL-academic-setup-38 | S4 | COPY | NOT-A-GAP |
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
-| COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
+| COL-academic-setup-41 | S4 | RESPONSIVE | DONE |
 
 ## mentor/projects-meetings-part2 (25: DONE 21, OPEN 4)
 
@@ -221,7 +221,7 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-18 | S4 | STATE | UNCONFIRMED |
 | LEARNER-course-detail-20 | S4 | COPY | DONE |
 
-## superadmin/tenants-modules-2 (12: OPEN 5, FIXED-ON-MAIN 4, UNCONFIRMED 3)
+## superadmin/tenants-modules-2 (12: DONE 1, OPEN 5, FIXED-ON-MAIN 3, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-tenants-modules-2-verification.md`.
 
@@ -294,3 +294,6 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - MEN-projects-meetings-75: final delivery decision feedback and evaluation rubric now get styled discard + beforeunload guard; still OPEN for other mentor form audit and client router navigation.
 
 - COL-academic-setup-16: batch/class edits now use native focus-managed Dialog and ConfirmDialog with unsaved-change checks; semester row controls still need parity.
+
+## 2026-10-17 chat-11 validation checkpoint
+- SA-tenants-modules-36/37/38/39: legacy keys, bounds and audited editor were verified with four named tests in tests/unit/chat11-tenant-legacy-settings-round9.test.ts. Remain OPEN/UNCONFIRMED because saved overrides are not yet consumed by SMS, course, placement and operational services; tests were not run.

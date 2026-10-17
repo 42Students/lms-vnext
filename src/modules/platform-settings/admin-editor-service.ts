@@ -72,7 +72,9 @@ export async function listAdminTenantSettings(ctx:RequestContext,kind:"GLOBAL"|"
  const rows=await getDb().select({key:platformSettingOverrides.key,value:platformSettingOverrides.value,
   version:platformSettingOverrides.version}).from(platformSettingOverrides)
   .where(and(eq(platformSettingOverrides.scopeType,kind),eq(platformSettingOverrides.scopeId,selected.scopeId)));
- return {ready:true,scope:kind,scopeId:selected.scopeId,entries:rows};
+ return {ready:true,scope:kind,scopeId:selected.scopeId,entries:rows.map(row=>({
+  ...row,value:/secret|token|password|credential|api[._-]?key|private[._-]?key/i.test(row.key)?"[redacted]":row.value,
+ }))};
 }
 /** Each key is committed and audited independently so unrelated, valid edits
  * survive stale versions or invalid entries. No credentials are accepted. */

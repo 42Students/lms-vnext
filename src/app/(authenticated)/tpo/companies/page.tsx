@@ -6,7 +6,7 @@ import { TpoCompanyMemoryWorkspace } from "@/components/tpo/tpo-company-memory-w
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoCompanyCreateForm } from "@/components/tpo/tpo-company-create-form";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { can } from "@/modules/permissions/policy";
 import {
   getTpoCompaniesView,
   tpoCompaniesQuerySchema,
@@ -64,7 +64,7 @@ export default async function TpoCompanyMemoryPage({
 
   if (
     !context.membership ||
-    !hasMembershipRole(context, "TPO")
+    !can(context,"placements.manage",{collegeId:context.membership.collegeId})
   ) {
     redirect("/dashboard");
   }

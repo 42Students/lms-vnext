@@ -72,7 +72,7 @@ export default async function CollegeGroupsPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin"
         title="Student groups"

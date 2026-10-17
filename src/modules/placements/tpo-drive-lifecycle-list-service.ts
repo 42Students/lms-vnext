@@ -14,7 +14,7 @@ import { requireTpoJobActor } from "./tpo-job-write-base";
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
   const member = context.membership;
-  if (!member || !hasMembershipRole(context, "TPO") ||
+  if (!member || !(hasMembershipRole(context, "TPO")||hasMembershipRole(context,"COLLEGE_ADMIN")) ||
       member.status !== "ACTIVE" || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
