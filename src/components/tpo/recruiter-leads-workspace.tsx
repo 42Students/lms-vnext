@@ -615,7 +615,11 @@ export function RecruiterLeadsWorkspace({
                   if (e.target.value === "campaigns") {
                     window.location.assign("/tpo/recruiters?view=campaigns");
                   } else {
-                    setView(e.target.value as typeof view);
+                    const nextView=e.target.value as typeof view;
+                   const params=new URLSearchParams(window.location.search);
+                   if(nextView==="table")params.delete("view");else params.set("view",nextView);
+                   window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+                   setView(nextView);
                   }
                 }}>
                 <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies ({companies.length})</option><option value="campaigns">Emails</option>
