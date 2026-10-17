@@ -13,12 +13,12 @@ import { projectMutation } from "./project-api";
 export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
   description:originalDescription,updatedAt,goal:originalGoal,definitionOfDone:originalDone,
-  startDate:originalStart,endDate:originalEnd,dueDate:originalDue,status,
+  startDate:originalStart,endDate:originalEnd,dueDate:originalDue,status,estimationUnit,
 }:{
   projectId:string;sprintId:string;title:string;
   description:string|null;updatedAt:string;
   goal:string|null;definitionOfDone:string|null;startDate:string|null;endDate:string|null;
-  dueDate:string|null;status:string;
+  dueDate:string|null;status:string;estimationUnit:string|null;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -99,6 +99,9 @@ export function MentorSprintDetailsEdit({
           <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
         <label className="grid gap-1 text-xs font-semibold text-body">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
+        {estimationUnit ? <p className="m-0 text-xs text-body">
+          Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}
+        </p> : null}
         <div className="grid gap-3 sm:grid-cols-3">
           {([{label:"Start date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
