@@ -141,3 +141,37 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | TPO-inbox-team-18 | PARTIAL — OPEN | `readTpoInternalConversation` projects counterpart name with a same-college user join and displays it in the detail header; existing Team list has preview, 100-row search and partial filters. Named **TPO-inbox-team-18** in `tests/unit/tpo-team-person-context-chat2.test.ts`. Object thread kinds, Asks/Decisions/@Me filters still absent. |
 | TPO-inbox-team-31 | PARTIAL — OPEN | People now marks the current membership **You** in `tpo/team/page.tsx`; named **TPO-inbox-team-31** in the same test file. Five workload counts and away status require actual persisted data. |
 | TPO-inbox-team-42 | PARTIAL — OPEN | Team detail provides native keyboard-operable **All conversations** back action for single-pane navigation; named **TPO-inbox-team-42** in same suite. Legacy split-master desktop layout and detail context not built. |
+
+## Chat-2 continuation: first 25 originally OPEN gaps reviewed in severity/queue order
+
+This is a **truthful disposition**, not a claim of 25 completed builds. Earlier source work predates this continuation; tests are written but not executed. Partial items remain OPEN until their complete legacy workflow and PostgreSQL acceptance exist.
+
+| ID | Disposition | Evidence or remaining work |
+| --- | --- | --- |
+| TPO-inbox-team-15 | DONE | Everyone channel source and proposed persistence; named unit and DB09 tests; migration registration pending |
+| TPO-inbox-team-07 | OPEN | Drive Discussion/Discuss handoff and request history need first-class route |
+| TPO-inbox-team-10 | DONE | Legacy Messages subtitle; tpo-inbox-team-copy.test.ts |
+| TPO-inbox-team-16 | OPEN | Typed object conversations for drives, companies and students absent |
+| TPO-inbox-team-17 | PARTIAL — OPEN | 200-character topic schema/form and test; richer participant control absent |
+| TPO-inbox-team-18 | PARTIAL — OPEN | Counterpart, preview, search and some filters; @Me/asks/decisions/object inbox absent |
+| TPO-inbox-team-20 | PARTIAL — OPEN | Persistent follow/mute in proposed read receipts; object mention semantics absent |
+| TPO-inbox-team-22 | OPEN | Assignable asks, lifecycle, due dates and Home integration absent |
+| TPO-inbox-team-24 | OPEN | Edit-within-15-minutes and delete-message lifecycle absent |
+| TPO-inbox-team-31 | PARTIAL — OPEN | You chip added; drives/companies/asks workload and away counts absent |
+| TPO-inbox-team-33 | OPEN | Unowned assignments banner, safe reassign workflow and notification absent |
+| TPO-inbox-team-36 | OPEN | Impact-aware teammate removal and work handover absent |
+| TPO-inbox-team-39 | DONE | Preserved Team drafts, bounded friendly post, retry; named round2/round3 tests |
+| TPO-inbox-team-44 | PARTIAL — OPEN | Scoped picker source and options test; batch/branch multi-select and searchable drive target missing |
+| TPO-inbox-team-54 | PARTIAL — OPEN | From 42 scoped read state on page; cross-page unread badge/bell parity missing; shell note for chat-9 |
+| TPO-inbox-team-60 | PARTIAL — OPEN | Bell read path improved but legacy informational event producers largely absent |
+| TPO-inbox-team-09 | DONE | 4-second recruiter inbox focus refresh; named round2 test |
+| TPO-inbox-team-13 | DONE | Phone cards and All conversations control; named round2 test |
+| TPO-inbox-team-14 | DONE | Duplicate notifications screen canonical redirect; named round2 test |
+| TPO-inbox-team-23 | OPEN | First-class decisions tagging, pin and filter absent |
+| TPO-inbox-team-26 | OPEN | Object facts/asks/decisions context panel absent |
+| TPO-inbox-team-27 | DONE | 30-second Team focus refresh; named round2 test |
+| TPO-inbox-team-29 | OPEN | Rich targeted Team mentions/asks/assignments alert variants absent |
+| TPO-inbox-team-30 | PARTIAL — OPEN | ?c/?m, ?filter, ?tab=members accepted; ?about and ?ask depend on unsupported object/ask records |
+| TPO-inbox-team-34 | OPEN | Away interval and warnings missing |
+
+Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64, -65, -67, -68; partial improvements -32, -37, -42, -49; TPO-inbox-team-52 Delete confirmation and TPO-inbox-team-R04 paged listing reviewed but complete legacy acceptance still requires check.
