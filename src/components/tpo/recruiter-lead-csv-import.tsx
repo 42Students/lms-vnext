@@ -30,6 +30,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [fileName, setFileName] = useState("");
   const [rowGroup,setRowGroup]=useState<"ALL"|"NEW"|"EXISTING"|"INVALID"|"SKIPPED">("ALL");
   const [error, setError] = useState("");
+  const [copyNotice,setCopyNotice]=useState("");
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ImportResponse | null>(null);
   const [skipRows,setSkipRows]=useState<number[]>([]);
@@ -67,7 +68,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setPreview(null);
     setReviewReady(false);
     setCsv("");
-    setError("");
+    setError("");setCopyNotice("");
     setFileName(file?.name ?? "");
     if (!file) return;
     if(!/\.(?:csv|xlsx)$/i.test(file.name)){
