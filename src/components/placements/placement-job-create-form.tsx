@@ -792,6 +792,19 @@ export function PlacementJobCreateForm({
               step="0.1"
             />
           </label>
+          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+            Fixed CTC (LPA)
+          </span><input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+            Variable CTC (LPA)
+          </span><input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          <label><span className="mb-1.5 block text-xs font-semibold text-body">
+            Stipend per month (INR)
+          </span><input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
+          <label className="flex items-center gap-3 text-sm font-semibold text-body">
+            <input name="isDream" type="checkbox" className="h-4 w-4 accent-primary"/>
+            Dream drive (college held-offer cap exception)
+          </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Application mode
