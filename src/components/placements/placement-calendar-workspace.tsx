@@ -174,7 +174,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view" | "kind">
+    Pick<CalendarState, "anchor" | "view" | "kind" | "company">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -189,9 +189,8 @@ function calendarHref(
     overrides.view ?? state.view,
   );
 
-  if (state.company) {
-    params.set("company", state.company);
-  }
+  const company="company" in overrides?overrides.company:state.company;
+  if(company)params.set("company",company);
 
   if (audience === "TPO") {
     const requestedKind="kind" in overrides?overrides.kind:state.kind;
@@ -774,7 +773,18 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          {isTpo?<datalist id="tpo-calendar-company-choices">
+          {isTpo&&eventTypeCountsSource.events.length>0?<div aria-label="Quick company filters" className="flex max-w-full flex-wrap items-center gap-2">
+    <span className="text-xs font-semibold text-muted-foreground">Companies in this period:</span>
+    {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
+      .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,16).map(name=>
+      <Link key={name} href={calendarHref(basePath,audience,state,{company:name})}
+       aria-current={state.company===name?"page":undefined}
+       className="inline-flex min-h-9 max-w-52 items-center truncate rounded-full border border-border px-3 text-xs text-primary-text"
+       title={name}>{name}</Link>)}
+    {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
+       className="inline-flex min-h-9 items-center text-xs text-primary-text underline">All companies</Link>:null}
+   </div>:null}
+   {isTpo?<datalist id="tpo-calendar-company-choices">
            {[...new Set(eventTypeCountsSource.events.map(event=>event.companyName).filter(Boolean))]
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
           </datalist>:null}
