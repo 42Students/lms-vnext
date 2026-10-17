@@ -28,7 +28,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · People" title="Contacts"
    description="Read-only college contacts. Student contact details are masked; account management is separate."
-   actions={<Link href="/college/people/manage" className="rounded-md border px-3 py-2 text-sm font-semibold">Manage memberships</Link>}/>
+   actions={<div className="flex flex-wrap gap-2"><Link href="/college/students" className="rounded-md border px-3 py-2 text-sm font-semibold">Student accounts</Link><Link href="/college/faculty" className="rounded-md border px-3 py-2 text-sm font-semibold">Faculty accounts</Link><Link href="/college/people/manage" className="rounded-md border px-3 py-2 text-sm font-semibold">Teaching assignments</Link></div>}/>
   <nav aria-label="Contacts categories" className="flex flex-wrap gap-2">
    <Link href={collegeContactsTabHref(filter,"ALL")} aria-current={filter.tab==="ALL"?"page":undefined}
      className="rounded-md border px-3 py-2 text-sm">All contacts</Link>
@@ -166,7 +166,7 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    </label>
    <label className="min-w-0 flex-1 basis-32 text-sm">Rows per page
     <select name="pageSize" defaultValue={filter.pageSize} className="mt-1 block min-h-10 w-full min-w-0 rounded-md border bg-background px-3">
-     <option value="10">10</option><option value="25">25</option><option value="50">50</option>
+     <option value="10">10</option><option value="20">20</option><option value="50">50</option>{filter.pageSize===25?<option value="25">25 (saved view)</option>:null}
     </select>
    </label>
    <button type="submit" className="min-h-10 rounded-md border px-4 text-sm font-semibold">Apply</button>
