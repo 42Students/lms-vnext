@@ -16,7 +16,7 @@ const transitions:Record<string,readonly string[]>={
  INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
  WAITLISTED:["OFFERED","REJECTED"],OFFERED:["HIRED","REJECTED"],HIRED:[],REJECTED:[],
 };
-export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery}){
+export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements"}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements"}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [allMatching,setAllMatching]=useState(false);
@@ -41,7 +41,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
   try{
    const body=await apiFetch<CollegeApplicationDetail>("/api/placements/college/jobs/"+encodeURIComponent(jobId)+
     "/applications/"+encodeURIComponent(id),{cache:"no-store"});
-   if(!body?.application)throw Error("Unable to load application");
+   if(!body?.application)throw Error("Could not load this application. Please try again.");
    setDetailPayload(body);
    setDetailId(id);
   }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
@@ -159,7 +159,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query}:{job
    </table>
   </div>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
-    applicationId={detailId} initialDetail={detailPayload??undefined}
+    applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
   {dialog?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div role="dialog" aria-modal="true" aria-label="Application status update"

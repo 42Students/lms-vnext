@@ -24,11 +24,11 @@ export async function GET(request:Request){
    if(page>=result.totalPages)break;
   }
   const rows:(string|number|null)[][]=records.map(s=>[
-   s.id,s.name,s.termNumber,s.programId,s.programName,s.mappedCredits,s.mappedCourses,s.isActive?"TRUE":"FALSE",
+   s.id,s.name,s.termNumber,s.programId,s.mappedCredits,s.isActive?"TRUE":"FALSE",
   ]);
-  if(records.length<total)rows.push(["TRUNCATED to first 1000 matching semesters","","","","","","",""]);
+  if(records.length<total)rows.push(["TRUNCATED to first 1000 matching semesters","","","","",""]);
   return new Response("\uFEFF"+placementReportCsv([
-   "id","name","semesterNumber","programId","program","totalCredits","courses","isActive",
+   "id","name","semesterNumber","programId","totalCredits","isActive",
   ],rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="semesters.csv"',

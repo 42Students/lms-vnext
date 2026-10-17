@@ -22,8 +22,11 @@ export function DepartmentCreateForm({
     event.preventDefault();
     setError(null);
     setNotice(null);
+    if (!name.trim()) { setError("Please enter department name"); return; }
+    if (name.trim().length > 255) { setError("Department name must be 255 characters or less"); return; }
 
     startTransition(async () => {
+      try {
       const response = await fetch("/api/college/departments", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -31,13 +34,16 @@ export function DepartmentCreateForm({
       });
 
       if (!response.ok) {
-        setError(DEPARTMENT_COPY.createFailed);
+        const payload: unknown = await response.json().catch(() => null);
+        const conflict = payload && typeof payload === "object" && "error" in payload && payload.error === "DEPARTMENT_NAME_CONFLICT";
+        setError(conflict ? "Department was not created. That department name is already active in this college." : DEPARTMENT_COPY.createFailed + ". Please check the name and try again.");
         return;
       }
 
       setNotice(`Created department “${name.trim()}”. Next, add programs or courses under it.`);
       setName("");
       router.refresh();
+      } catch { setError(DEPARTMENT_COPY.createFailed + ". Please try again."); }
     });
   }
 

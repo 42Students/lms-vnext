@@ -175,7 +175,18 @@ export async function updateCollegeProgram(
   try {
     return await getDb().transaction(async tx => {
       const current = await lockedProgram(tx, programId, member.collegeId);
-      await ensureUnique(tx, current.departmentId, input.name, input.code, current.id);
+      const nextDepartmentId = input.departmentId ?? current.departmentId;
+      if (nextDepartmentId !== current.departmentId) {
+        await lockedDepartment(tx, nextDepartmentId, member.collegeId);
+        const [term, cohort, enrollment] = await Promise.all([
+          tx.select({ id: programTerms.id }).from(programTerms).where(eq(programTerms.programId, current.id)).limit(1),
+          tx.select({ id: cohorts.id }).from(cohorts).where(eq(cohorts.programId, current.id)).limit(1),
+          tx.select({ id: learnerProgramEnrollments.id }).from(learnerProgramEnrollments).where(eq(learnerProgramEnrollments.programId, current.id)).limit(1),
+        ]);
+        if (term.length || cohort.length || enrollment.length)
+          throw new CollegeProgramMutationError("PROGRAM_DEPENDENCY_CONFLICT");
+      }
+      await ensureUnique(tx, nextDepartmentId, input.name, input.code, current.id);
       if (input.durationTerms < current.durationTerms) {
         const [highestTerm] = await tx.select({ term: programTerms.termNumber }).from(programTerms)
           .where(eq(programTerms.programId, current.id))
@@ -191,7 +202,7 @@ export async function updateCollegeProgram(
         }
       }
       const [updated] = await tx.update(programs).set({
-        name: input.name, code: input.code, durationTerms: input.durationTerms,
+        name: input.name, code: input.code, departmentId: nextDepartmentId, durationTerms: input.durationTerms,
         updatedAt: new Date(),
       }).where(and(eq(programs.id, current.id), eq(programs.status, "ACTIVE"))).returning();
       if (!updated) throw new CollegeProgramMutationError("PROGRAM_NOT_FOUND");
@@ -202,6 +213,7 @@ export async function updateCollegeProgram(
         subjectLabel: updated.name, summary: "Program updated",
         metadata: {
           departmentId: updated.departmentId,
+          previousDepartmentId: current.departmentId,
           fromName: current.name, fromCode: current.code,
           fromDurationTerms: current.durationTerms,
           toCode: updated.code, toDurationTerms: updated.durationTerms,
