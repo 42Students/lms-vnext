@@ -98,6 +98,7 @@ export function TpoBulkRoundResultRecorder({
       "Some rows may succeed even if others fail. Continue?",
     )) return;
 
+    setReportedOutcomeByApplicant(Object.fromEntries(entries.map(entry=>[entry.result.applicationId,entry.result.outcome])));
     setBusy(true);
     setError(null);
     setResults([]);
