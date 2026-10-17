@@ -15,6 +15,10 @@ COPY src/observability ./src/observability
 COPY src/modules/auth/retention.ts ./src/modules/auth/retention.ts
 CMD ["npm", "run", "db:migrate"]
 
+FROM migrator AS nsrit-loader
+COPY src ./src
+CMD ["sleep", "infinity"]
+
 FROM node:22-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
