@@ -3,7 +3,7 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
-import {TpoStudentsSelectionProvider} from "@/components/tpo/tpo-students-selection";
+import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
@@ -652,7 +652,7 @@ export default async function TpoStudentsPage({
         </div>
 
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Student placement journey">
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-lg border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold">{step.label}</h3>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
@@ -937,6 +937,7 @@ export default async function TpoStudentsPage({
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
+        <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>
 
         {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
           <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
