@@ -39,8 +39,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       texts.some(x=>!x||x.length>2000)||new Set(texts.map(x=>x.toLocaleLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
    const correct=q.options.filter(x=>x.correct).length;
-   if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1)||
-      (q.type==="MULTIPLE_CHOICE"&&correct>=q.options.length))return "Select at least one correct and one incorrect answer for each multiple-choice question.";
+   if(q.type==="SINGLE_CHOICE"&&correct!==1)return "Choose exactly one correct answer for each single-choice question.";
+   if(q.type==="MULTIPLE_CHOICE"&&(correct<1||correct>=q.options.length))
+    return "Choose at least one correct and one incorrect answer for each multiple-choice question.";
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
   if(dueAt&&!parseCollegeIstLocal(dueAt))return "Use a valid deadline.";
