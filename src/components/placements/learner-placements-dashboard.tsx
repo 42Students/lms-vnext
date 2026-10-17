@@ -42,13 +42,14 @@ function Metric({
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,
+  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,profileFixes=[],
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
   learnerName?:string|null;
   applicationFunnel?:ReturnType<typeof learnerPlacementApplicationFunnel>|null;
   registration?:{stage:string;choice:string|null}|null;
+  profileFixes?:readonly {label:string;href:string}[];
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
   const next = display.nextAction;
@@ -62,6 +63,7 @@ export function LearnerPlacementsDashboard({
     urgentInterview:display.urgentInterview,
     nextAction:next,
     registration,
+    profileFixes,
     eligibleToApply:display.eligibleJobs,
     applications:display.applications,
   });
