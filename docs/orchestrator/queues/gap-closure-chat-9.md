@@ -322,3 +322,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 
 - TPO-calendar-reports-21 DONE source: draft confirmation on escape/cancel/navigation/reload in both follow-up dialogs; orchestrator UI tests outstanding.
 - TPO-calendar-reports-14 DONE source: verified responsive TPO view defaults and mobile agenda against actual existing implementation; browser checks outstanding.
+
+- TPO-calendar-reports-24 DONE source: transactional activity event on follow-up create and move; test written and not executed.
