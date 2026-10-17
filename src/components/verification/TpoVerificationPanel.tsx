@@ -25,10 +25,16 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  const visible=filterTpoVerificationRows(rows,filters,asOf);
  const waiting=visible.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
  const active=sequenceIndex===null?selected:sequenceRows[sequenceIndex]??null;
- function finishSequential(){setSequenceIndex(null);setSelected(null);router.refresh();}
+ function finishSequential(completed=false){
+  if(sequenceIndex!==null&&sequenceIndex<sequenceRows.length-1&&!completed){
+   const remaining=sequenceRows.length-sequenceIndex-1;
+   showToast({tone:"info",title:"Stopped at "+(sequenceIndex+1)+" of "+sequenceRows.length+". The other "+remaining+" are still in the queue."});
+  }
+  setSequenceIndex(null);setSelected(null);router.refresh();
+ }
  function nextSequential(){
   if(sequenceIndex===null)return;
-  if(sequenceIndex+1>=sequenceRows.length){finishSequential();return;}
+  if(sequenceIndex+1>=sequenceRows.length){finishSequential(true);return;}
   setSequenceIndex(sequenceIndex+1);
  }
  function saved(action?:"VERIFY"|"SEND_BACK"){
@@ -74,9 +80,9 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
   {active&&<VerificationReviewDrawer
    key={active.learnerMembershipId+active.section} row={active}
    apiBase="/api/tpo/verification"
-   onClose={()=>{setSelected(null);setSequenceIndex(null);}}
+   onClose={()=>sequenceIndex!==null?finishSequential():setSelected(null)}
    sequenceProgress={sequenceIndex===null?undefined:(sequenceIndex+1)+" of "+sequenceRows.length}
-   onNext={nextSequential} onFinish={finishSequential}
+   onNext={nextSequential} onFinish={()=>finishSequential()}
    onSaved={saved} />}
  </section>;
 }

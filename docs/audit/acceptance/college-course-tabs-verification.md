@@ -16,8 +16,21 @@ DONE claims are provisional until orchestrator integration and runtime checks pa
 | COL-course-tabs-13 | DONE | `src/components/courses/college-learning-directory.tsx`, `src/components/courses/college-lesson-visibility-controls.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts`, `COL-course-tabs-13` |
 | COL-course-tabs-24 | DONE | `src/components/courses/college-learning-directory.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts`, `COL-course-tabs-24` |
 
-OPEN/PARTIAL: COL-course-tabs-01/02/03/04/14/15/16/17/18/19/22/23/26/27.
-In particular, COL-course-tabs-19 still lacks full CSV parity for Videos, Resources and Live
-Classes; COL-course-tabs-16 still lacks registered Section ordering. Do not mark either DONE.
+| COL-course-tabs-17 | DONE | `src/components/courses/college-content-preview.tsx`, `src/components/courses/college-content-aggregate.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts`, `COL-course-tabs-17` (OD-35 metadata-only) |
+| COL-course-tabs-19 | DONE | `src/modules/courses/college-content-csv-model.ts`, `src/components/courses/college-content-csv-export.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts`, `COL-course-tabs-19` |
+
+OPEN/PARTIAL: COL-course-tabs-01/02/03/04/14/15/16/18/23/26/27.
+COL-course-tabs-19 exports are now page-scoped CSV for Videos, Resources and Live Classes; COL-course-tabs-16 still lacks registered Section ordering. Do not mark either DONE.
 Lesson bulk changes now call the shared `apiFetch` helper so failed writes preserve
 the selection and return plain retry guidance.
+| COL-course-tabs-22 | DONE | `src/components/courses/college-course-missing-scope.tsx`, eight College Courses & Content pages; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-22` |
+
+### Continued open-gap regression contracts
+
+| Gap | Status | Evidence | Still open |
+|---|---|---|---|
+| COL-course-tabs-03 | PARTIAL | `src/components/courses/college-content-authoring-control.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-03` | Private file attachments and up-to-20-material editing remain dependent on DB05/storage |
+| COL-course-tabs-04 | PARTIAL | `src/components/courses/college-assignment-create.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-04` | Attachments and link authoring still not full legacy parity |
+| COL-course-tabs-14 | PARTIAL | `src/components/courses/college-lesson-reorder-actions.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-14` | Drag-and-drop and one-list reorder/rollback are not implemented |
+| COL-course-tabs-16 | PARTIAL | `src/components/courses/college-content-authoring-control.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-16` | Per-Section custom ordering still requires DB05 |
+| COL-course-tabs-18 | PARTIAL | `src/components/courses/college-content-aggregate.tsx`; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-18` | Course and Lesson picker filtering across pages remains incomplete |

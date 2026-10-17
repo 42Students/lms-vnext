@@ -2,65 +2,65 @@
 
 Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-9-b`. 225 gaps on 5 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
 
-## tpo/calendar-reports (56: OPEN 25, FIXED-ON-MAIN 30, UNCONFIRMED 1)
+## tpo/calendar-reports (56: OPEN 5, DONE-BRANCH 20, FIXED-ON-MAIN 30, UNCONFIRMED 1)
 
 Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-calendar-reports-verification.md`.
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-calendar-reports-01 | S2 | MISSING-FIELD | OPEN |
-| TPO-calendar-reports-02 | S2 | VALIDATION | OPEN |
+| TPO-calendar-reports-01 | S2 | MISSING-FIELD | DONE-BRANCH |
+| TPO-calendar-reports-02 | S2 | VALIDATION | DONE-BRANCH |
 | TPO-calendar-reports-10 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-calendar-reports-19 | S2 | COPY | OPEN |
+| TPO-calendar-reports-19 | S2 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-23 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-calendar-reports-31 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-calendar-reports-32 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
 | TPO-calendar-reports-35 | S2 | VALIDATION | FIXED-ON-MAIN |
-| TPO-calendar-reports-36 | S2 | COPY | OPEN |
+| TPO-calendar-reports-36 | S2 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-38 | S2 | COPY | OPEN |
 | TPO-calendar-reports-43 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-calendar-reports-44 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-48 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-calendar-reports-49 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-calendar-reports-R01 | S2 | VALIDATION | OPEN |
+| TPO-calendar-reports-R01 | S2 | VALIDATION | DONE-BRANCH |
 | TPO-calendar-reports-03 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | TPO-calendar-reports-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-calendar-reports-08 | S3 | VALIDATION | OPEN |
+| TPO-calendar-reports-08 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-calendar-reports-09 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-calendar-reports-14 | S3 | RESPONSIVE | OPEN |
-| TPO-calendar-reports-15 | S3 | STATE | OPEN |
-| TPO-calendar-reports-16 | S3 | COPY | OPEN |
-| TPO-calendar-reports-17 | S3 | COPY | OPEN |
-| TPO-calendar-reports-18 | S3 | COPY | OPEN |
-| TPO-calendar-reports-37 | S3 | COPY | OPEN |
+| TPO-calendar-reports-14 | S3 | RESPONSIVE | DONE-BRANCH |
+| TPO-calendar-reports-15 | S3 | STATE | DONE-BRANCH |
+| TPO-calendar-reports-16 | S3 | COPY | DONE-BRANCH |
+| TPO-calendar-reports-17 | S3 | COPY | DONE-BRANCH |
+| TPO-calendar-reports-18 | S3 | COPY | DONE-BRANCH |
+| TPO-calendar-reports-37 | S3 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-39 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-40 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-41 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-42 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-45 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-calendar-reports-46 | S3 | COPY | OPEN |
+| TPO-calendar-reports-46 | S3 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-47 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-calendar-reports-52 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-calendar-reports-54 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-calendar-reports-56 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-calendar-reports-57 | S3 | STATE | OPEN |
-| TPO-calendar-reports-R02 | S3 | COPY | OPEN |
-| TPO-calendar-reports-R03 | S3 | SIDE-EFFECT | OPEN |
-| TPO-calendar-reports-R04 | S3 | MISSING-FIELD | OPEN |
-| TPO-calendar-reports-R06 | S3 | COPY | OPEN |
+| TPO-calendar-reports-R02 | S3 | COPY | DONE-BRANCH |
+| TPO-calendar-reports-R03 | S3 | SIDE-EFFECT | DONE-BRANCH |
+| TPO-calendar-reports-R04 | S3 | MISSING-FIELD | DONE-BRANCH |
+| TPO-calendar-reports-R06 | S3 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
 | TPO-calendar-reports-07 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-12 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-13 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-calendar-reports-21 | S4 | STATE | OPEN |
+| TPO-calendar-reports-21 | S4 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-22 | S4 | STATE | OPEN |
-| TPO-calendar-reports-24 | S4 | SIDE-EFFECT | OPEN |
+| TPO-calendar-reports-24 | S4 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-calendar-reports-25 | S4 | A11Y | OPEN |
 | TPO-calendar-reports-50 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-51 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-53 | S4 | STATE | OPEN |
-| TPO-calendar-reports-55 | S4 | STATE | OPEN |
+| TPO-calendar-reports-55 | S4 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-58 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-R05 | S4 | STATE | FIXED-ON-MAIN |
 | TPO-calendar-reports-R07 | S4 | PERFORMANCE | FIXED-ON-MAIN |
@@ -298,3 +298,45 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 - TPO-inbox-team-28 OPEN: Team and Messages count producers exist, but Announcements requires its own authoritative unread count, not the personal Notifications total. No false count displayed.
 - TPO-settings-audit-56 OPEN: extending timed grants works, but No end date is not offered. TPO-settings-audit-70 OPEN: optional SMS cap works, usage-this-month figure is not sourced.
 - All source verification DONE entries still require orchestrator's tests, typecheck, lint and browser acceptance; none were run in this lane.
+
+
+## Round 4 continuation — next 28 gaps and gap evidence (2026-10-17)
+
+Merged latest origin/main before editing; no test, lint, typecheck or build runs. All writes are on `chatgpt/chat-9-b`; the orchestrator owns execution. See page-specific acceptance files.
+
+- TPO calendar: TPO-calendar-reports-13/14/21/25 PARTIAL / OPEN with `tests/unit/chat9-calendar-adaptive-draft.test.ts`; instant company chips, mobile Agenda/desktop Week, unsaved follow-up guard and keyboard hour actions. TPO-calendar-reports-11 OPEN: color/count legend implemented with `chat9-calendar-event-legend.test.ts`, but multi-kind selection and a separate Talk type remain.
+- TPO settings: TPO-settings-audit-03/06/13/42/73/75/94/96 PARTIAL / OPEN in `chat9-tpo-settings-legacy-graceful.test.ts`: legacy labels, readiness search and beforeunload safeguard, friendly apiFetch, sharing explanation, public status and audit names. Further S2 producer gaps TPO-settings-audit-05/12/22/33/41/44/50/51/52/56/70/74 remain open.
+- College Projects: COL-projects-01/02/09/14/17 DONE source-level; COL-projects-10/11/19/20 PARTIAL / OPEN via existing functional implementations and `chat9-college-projects-round4-evidence.test.ts`; COL-projects-22 NOT-A-GAP (mentor/class/template filters were not legacy features). COL-projects-03/08/18/21/23 OPEN with partial source work. Visible-page safe CSV, card/table view, 10/20/50/100 sizing, archived shortcut and no-college recovery have been added. COL-projects-04/05/15/16 remain open and are next.
+- The two reassigned Super Admin pages remain with chat-13; shell work from round 3 is already on main. Existing provider/bucket blockers TPO-calendar-reports-23 and -43 remain unchanged.
+
+## Round 5 scoped implementation (2026-10-17)
+- COL-projects-16 DONE source-level: template catalogue now has searchable table, all five section counts and scoped visible-row CSV.
+- COL-projects-08 OPEN: template label displayed; legacy In progress/Ready/Blocked semantics remain unmapped.
+- Tests authored but NOT run; orchestrator executes. Other gaps are not marked DONE by this source patch.
+
+- TPO-calendar-reports-11 DONE source-level: multi-select calendar chips, independent Talks and Rounds, backward-compatible single-kind URLs. Test authored, not run.
+
+- COL-projects-15 OPEN: Team tab has validated preselected bulk-reassignment deep link; full per-member legacy roster actions remain unverified.
+
+- COL-projects-18 OPEN: project Audit now filters resource events by Added/Edited/Saved/Removed and searches text, with persisted event-type model; exact Saved event origin unverified.
+
+- TPO-calendar-reports-21 DONE source: draft confirmation on escape/cancel/navigation/reload in both follow-up dialogs; orchestrator UI tests outstanding.
+- TPO-calendar-reports-14 DONE source: verified responsive TPO view defaults and mobile agenda against actual existing implementation; browser checks outstanding.
+
+- TPO-calendar-reports-24 DONE source: transactional activity event on follow-up create and move; test written and not executed.
+
+- TPO-calendar-reports-55 DONE source: no empty snapshot on failure, explicit alert and Retry; source test authored.
+
+## Main CI unit-failure inventory (2026-10-17)
+- Fixed test fixture `chat9-tpo-calendar-needs` hours with `padStart` (2099-02-04 09,10,11; not invalid 010/011).
+- Updated `chat9-super-admin-college-create-copy` source expectation from raw fetch to shared safe `apiFetch`; `colleges-domain` slug normalization expectation to lowercase `eec`.
+- Updated tenant-domain service and DB01 positive authorization fixtures to the current superadmin-only policy without weakening negative college/TPO permission tests.
+- `notification-providers` tests now read Headers correctly after outbound transport added `new Headers`; `src/lib/outbound.ts` redacts exception detail before structured provider logging (leaked PII/OTP prevented). Tests not run.
+
+- TPO-calendar-reports-25 OPEN: hour Enter activates Add, Escape/cancel focus restored; Enter-to-Move on existing followup not yet paritied.
+
+## Round 5 — full S2/S3/S4 TPO calendar-reports queue reconciliation
+- Reviewed 25 next OPEN entries. 20 have existing (or Round 5) DONE acceptance evidence and a gap-ID test in the branch; queue marked DONE-BRANCH only, NOT merged or CI verified.
+- Remaining OPEN after this 25-gap group: TPO-calendar-reports-38, TPO-calendar-reports-57, TPO-calendar-reports-22, TPO-calendar-reports-25, TPO-calendar-reports-53.
+- TPO-calendar-reports-38: remaining report-page subtitle parity; -57: seasonless report totals; -22: last-good cached calendar data/partial banner; -25: Enter on existing follow-up should open Move; -53: full-width report states and unknown slug recovery. All still OPEN; no unverified closure claim.
+- Source tests are written but never run by builder; the orchestrator performs tests, typecheck, lint and UI acceptance.

@@ -120,4 +120,17 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(s).toContain("Discard your unsent discussion message?");
  });
 
+ it("LEARNER-home-courses-16 renders one legacy attendance percentage and Present Absent Held counts",()=>{
+   const s=source("src/components/courses/learner-course-attendance.tsx");
+   expect(s).toContain('aria-label="Attendance this month"');
+   expect(s).toContain('summary.percentage===null?"—":summary.percentage+"%"');
+   for(const label of ["Present","Absent","Held","Attendance History"])
+     expect(s).toContain(label);
+   expect(s).not.toContain('label="Attendance threshold"');
+ });
+ it("LEARNER-home-courses-20 shows who pinned a discussion and number of pinned messages",()=>{
+   const s=source("src/components/courses/learner-course-discussion.tsx");
+   expect(s).toContain('Pinned by {pinned.senderName??"Unknown"} · 1 of {pinnedMessages.length||1}');
+   expect(s).toContain('moderate || row.item.isMine');
+ });
 });

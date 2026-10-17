@@ -43,7 +43,7 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const tpoCanVerify=effectiveTpoVerifierSetting(setting);
  // Cap the working set and FAIL LOUDLY rather than silently reporting
  // truncated counts. Indexed DB-side paging is a later optimization.
- const rows=await getDb().select({
+ const candidateRows=await getDb().select({
   membershipId:collegeMemberships.id,name:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
   version:profileVerifications.rowVersion,submittedAt:profileVerifications.submittedAt,
@@ -62,8 +62,9 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
    inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(5001);
- if(rows.length>5000)throw new VerificationQueueLimitError();
+ .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(1001);
+ const truncated=candidateRows.length>1000;
+ const rows=candidateRows.slice(0,1000);
  const filtered=rows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
@@ -104,5 +105,5 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},
    attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
- return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify};
+ return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify,truncated};
 }

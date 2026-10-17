@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
 import { PageHeader } from "@/components/ui/page-header";
@@ -11,9 +11,7 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
     await getCurrentRequestContext();
   const membership = context.membership;
 
-  if (!membership) {
-    redirect("/dashboard");
-  }
+  if(!membership)return <CollegeCourseMissingScope area="college"/>;
 
   const raw=await searchParams;
   const parsedCatalogue=collegeCourseCatalogueQuerySchema.safeParse({q:raw.q,sort:raw.sort,page:raw.page});

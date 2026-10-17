@@ -97,4 +97,61 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
+ it("COL-course-tabs-22 keeps all College Course pages usable when no college is assigned",()=>{
+  const files=["src/app/(authenticated)/college/assignments/page.tsx","src/app/(authenticated)/college/course-progress/page.tsx","src/app/(authenticated)/college/courses/page.tsx","src/app/(authenticated)/college/lessons/page.tsx","src/app/(authenticated)/college/live-classes/page.tsx","src/app/(authenticated)/college/quizzes/page.tsx","src/app/(authenticated)/college/resources/page.tsx","src/app/(authenticated)/college/videos/page.tsx"];
+  for(const path of files){
+   const s=source(path);
+   expect(s).toContain("CollegeCourseMissingScope");
+  }
+  const notice=source("src/components/courses/college-course-missing-scope.tsx");
+  expect(notice).toContain("Admin not assigned to a college");
+  expect(notice).toContain("Ask a Super Admin to assign a college");
+ });
+
+ it("COL-course-tabs-17 permits only metadata in authorized admin content preview",()=>{
+  const preview=source("src/components/courses/college-content-preview.tsx");
+  expect(preview).toContain('aria-label="Content preview"');
+  expect(preview).toContain("Private files, meeting links and signed playback addresses are not exposed here.");
+  expect(preview).not.toContain("storageKey");
+  expect(preview).not.toContain("signedUrl");
+  expect(source("src/components/courses/college-content-aggregate.tsx")).toContain("CollegeContentPreview");
+ });
+ it("COL-course-tabs-19 exports page-scoped safe Video Resource and Live Class CSV",async()=>{
+  const {collegeContentCsv}=await import("@/modules/courses/college-content-csv-model");
+  const csv=collegeContentCsv([{title:"=HYPERLINK(1)",course:"CS101",lesson:"Lesson 1",status:"DRAFT",scope:"Shared",visible:"Hidden",details:"No materials"}]);
+  expect(csv).toContain("\"'=HYPERLINK(1)\"");
+  expect(source("src/components/courses/college-content-aggregate.tsx")).toContain("CollegeContentCsvExport");
+  expect(source("src/components/courses/college-live-classes-directory.tsx")).toContain("CollegeContentCsvExport");
+ });
+
+ it("COL-course-tabs-03 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-authoring-control.tsx");
+   expect(s).toContain("Existing Content");
+   expect(s).toContain("RESOURCE");
+   expect(s).toContain("materials");
+ });
+ it("COL-course-tabs-04 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-assignment-create.tsx");
+   expect(s).toContain("Create New Assignment");
+   expect(s).toContain("allowedMethods");
+   expect(s).toContain("dueAt");
+ });
+ it("COL-course-tabs-14 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-lesson-reorder-actions.tsx");
+   expect(s).toContain("apiFetch<unknown>");
+   expect(s).toContain("Move up");
+   expect(s).toContain("Move down");
+   expect(s).toContain("Lesson order updated");
+ });
+ it("COL-course-tabs-16 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-authoring-control.tsx");
+   expect(s).toContain("listSectionId");
+   expect(s).toContain("item.offeringId");
+   expect(s).toContain("Section");
+ });
+ it("COL-course-tabs-18 protects current Course Tabs controls while legacy work remains",()=>{
+   const s=source("src/components/courses/college-content-aggregate.tsx");
+   expect(s).toContain("Course code (exact)");
+   expect(s).toContain("Section");
+ });
 });

@@ -11,6 +11,20 @@ describe("GR-114 request ID correlation and GR-124 config safety", () => {
     expect(first).not.toBe(observedEventHash("PRODUCTION", "b".repeat(64), "abcd1234"));
     expect(observedEventHash("PRODUCTION", "a".repeat(64), "jane@example.com")).toBeNull();
     expect(first).not.toContain("abcd1234");
+    const providerId = "projects/project/logs/stderr:insertId-123";
+    const withoutRequest = observedEventHash("PRODUCTION", "a".repeat(64), undefined, providerId);
+    expect(withoutRequest).toMatch(/^[0-9a-f]{64}$/);
+    expect(withoutRequest).toBe(observedEventHash("PRODUCTION", "a".repeat(64), undefined, providerId));
+    expect(withoutRequest).not.toBe(observedEventHash("PRODUCTION", "a".repeat(64), undefined, providerId + "-other"));
+  });
+  it("GR-113 GR-114 refuses a non-reference user value in formatted Telegram messages", () => {
+    const alert = formatAlert({
+      kind: "new error", environment: "DEVELOPMENT",
+      time: new Date("2099-07-01T03:30:00Z"), event: "api.unhandled_error",
+      path: "/api/jobs", message: "failure", requestId: "AlicePrivateName",
+    });
+    expect(alert).toContain("Request ID: -");
+    expect(alert).not.toContain("AlicePrivateName");
   });
   it("GR-114 retains an opaque request ID and timestamp in Telegram alert payloads", async () => {
     const original = {
