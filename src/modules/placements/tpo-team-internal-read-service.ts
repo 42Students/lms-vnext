@@ -7,7 +7,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
-import {tpoInternalThreads,tpoInternalMessages} from "./tpo-team-staged-schema";
+import {tpoInternalThreads} from "./tpo-team-staged-schema";
 /** Read only threads where the active TPO membership is a named participant. */
 export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=""){
  const search=rawSearch.trim().slice(0,120);
