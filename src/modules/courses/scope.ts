@@ -425,6 +425,7 @@ export async function loadLessonContentScope(
     learningPathId: lesson.learningPathId,
     learningPathStatus:
       lesson.learningPathStatus,
+    lessonVisibleToStudents: lesson.visibleToStudents,
     collegeId: lesson.collegeId,
     organizationId: lesson.organizationId,
   };
