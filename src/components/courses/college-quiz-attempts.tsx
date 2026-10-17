@@ -47,7 +47,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     <button type="button" className="underline" disabled={loading} onClick={()=>void open(page)}>Retry</button>
    </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
-    No quiz submissions yet for this Section.</p>:null}
+    {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
     <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student on this page
      <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
