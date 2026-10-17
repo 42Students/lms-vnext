@@ -468,6 +468,7 @@ export function RecruiterLeadsWorkspace({
   async function checkContact() {
     const contact = form.email.trim() || form.phone.trim();
     if (!contact) return;
+    const sequence=++contactCheckSeq.current;
     setChecking(true);
     setSaveError("");
     try {
