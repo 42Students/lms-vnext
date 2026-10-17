@@ -392,7 +392,7 @@ export default async function HrPlacementJobPage({
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Open drive discussion</button>
         </form>}
       </section>:null}
-      {requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
