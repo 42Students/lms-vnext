@@ -12,7 +12,7 @@ describe("chat-14 final sprint",()=>{
  });
  it("TPO-drives-31 keeps college-scoped parent and learner foreign keys",()=>{
   const schema=read("src/db/schema/placement-outside-drives.ts");
-  const sql=read("docs/proposed-migrations/tpo-outside-drive-participants.sql");
+  const sql=read("docs/proposed-migrations/registered-0135/tpo-outside-drive-participants.sql");
   expect(schema).toContain("outside_drive_participant_record_college_fk");
   expect(schema).toContain("outside_drive_participant_learner_college_fk");
   expect(sql).toContain("UNIQUE INDEX IF NOT EXISTS outside_drive_participant_once_uq");
