@@ -27,6 +27,13 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 14. Configuration safety (GR-124): `TELEGRAM_ALERT_*` unset means silently no-op with one startup log line; a readiness note on the Logs page ("Telegram alerts are not configured") using `src/modules/log-alerts/readiness.ts`.
 15. Tests (GR-125): fake HTTP server for Telegram (assert body, no `parse_mode`, truncation, tag, no button outside production, failure returns false and never throws, token never appears in logs), signature and redaction suites, policy suite (new once, known silent, cap of 5, delivery-gated persistence, regression, spike), client-error endpoint (origin, size, rate limit), integration tests on PostgreSQL for the counters and states.
 
+## Round follow-up — unit-failure list, source-reconciled (not CI certified)
+- GR-112 / GR-125: reconciled `graceful-telegram-foundations` against the merged main implementation; added timezone-offset normalization regression assertions to the existing GR-112 test.
+- GR-123 / GR-125: reconciled `graceful-logs-ui-contract`; the test explicitly permits vetted `FriendlyFetchError` messages but rejects raw arbitrary `Error` content.
+- GR-115 / GR-116 / GR-122: undelivered new-signature retry counts no longer inflate overflow; a fixed signature reopening after regression clears stale Acknowledge, and production callbacks require the configured Telegram chat.
+- GR-119 / GR-125: digest date, signature and commit fields survive redaction only under strict metadata shape checks; fake Telegram server covers production reply_markup and failed provider responses.
+- Tests in this lane remain **written, not run**; `docs/orchestrator/unit-failures-r1.md` is a historical CI report pending the orchestrator's new targeted run.
+
 ## Notes (blockers, one line each)
 - RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including daily counts, observed-event deduplication, and resumable Cloud Logging page-window columns before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.

@@ -9,8 +9,19 @@ const callbackSchema = z.object({
   callback_query: z.object({
     id: z.string().min(1).max(120),
     data: z.string().regex(/^ack:[0-9a-f-]{36}$/i),
+    message: z.object({
+      chat: z.object({
+        id: z.union([z.number().int(), z.string().min(1).max(40)]),
+      }).passthrough(),
+    }).passthrough(),
   }).passthrough(),
 }).passthrough();
+
+/** An authentic bot callback from another conversation must never triage alerts. */
+export function validTelegramCallbackChat(chatId: string | number): boolean {
+  const expected = process.env.TELEGRAM_ALERT_CHAT_ID;
+  return Boolean(expected && String(chatId) === expected);
+}
 
 export function validTelegramWebhookSecret(header: string | null): boolean {
   if (process.env.APP_ENV !== "production") return false;
@@ -44,6 +55,7 @@ export async function handleTelegramCallback(payload: unknown): Promise<boolean>
   if (process.env.APP_ENV !== "production" || !logAlertsRuntimeEnabled()) return false;
   const parsed = callbackSchema.safeParse(payload);
   if (!parsed.success) return false;
+  if (!validTelegramCallbackChat(parsed.data.callback_query.message.chat.id)) return false;
   const id = parsed.data.callback_query.data.slice(4);
   const updated = await getDb().update(signatures).set({ acknowledgedAt: new Date() })
     .where(and(eq(signatures.id, id), eq(signatures.environment, "PRODUCTION")))
