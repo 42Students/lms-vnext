@@ -1,8 +1,10 @@
+import { cloudLoggingAccessToken, isCloudLogNamespace, isCloudLogProject, readCloudLogErrorPage } from "./cloud-log-reader";
+import { reportErrorForAlert } from "./reporter";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { db10ScheduledJobLeases as leases } from "@/db/schema/db10-scheduled-job-leases.draft";
-import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily } from "@/db/schema/db10-log-alerts.draft";
+import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db10LogAlertDailyCounts as daily, db10LogAlertObservedEvents as observed } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
@@ -47,7 +49,7 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
   if (!logAlertsRuntimeEnabled()) return false;
   const db = getDb();
   const lockedBy = randomUUID();
-  const lockedUntil = new Date(now.getTime() + 90_000);
+  const lockedUntil = new Date(now.getTime() + 180_000);
   const [acquired] = await db.insert(leases).values({
     jobName, lockedBy, lockedUntil,
   }).onConflictDoUpdate({
@@ -149,6 +151,79 @@ export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
   return delivered;
 }
 
+
+let cloudPollFailureLogged = false;
+
+function noteCloudPollingFailure() {
+  if (cloudPollFailureLogged) return;
+  cloudPollFailureLogged = true;
+  process.stderr.write("[log-alerts] Cloud Logging poll unavailable; other scheduled checks continue\n");
+}
+
+/** Operator-opted Cloud Logging backup. Production cannot silently query the dev namespace. */
+export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
+  { project: string; namespace: string } | null {
+  if (env.LOG_ALERT_CLOUD_POLL_ENABLED !== "true") return null;
+  const project = env.GOOGLE_CLOUD_PROJECT;
+  const namespace = env.LOG_ALERT_K8S_NAMESPACE ??
+    (env.APP_ENV === "production" ? "" : "lms-dev-2026");
+  if (!isCloudLogProject(project) || !isCloudLogNamespace(namespace)) return null;
+  return { project, namespace };
+}
+
+/**
+ * Consume ordered Cloud Logging entries with the durable poll cursor.
+ * A delivery failure stops before advancing the cursor, so the same log
+ * can be retried. Process a bounded batch to keep the lease under 3 minutes.
+ */
+export async function pollCloudLoggingErrors(now = new Date()): Promise<number> {
+  const settings = cloudPollSettings();
+  if (!settings || !logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return 0;
+  let handled = 0;
+  await withScheduledLease("telegram-cloud-log-poll", now, async () => {
+    const db = getDb();
+    const stateKey = "PRODUCTION_ERROR_POLL";
+    await db.insert(states).values({ stateKey }).onConflictDoNothing();
+    const [state] = await db.select().from(states)
+      .where(eq(states.stateKey, stateKey)).limit(1);
+    const end = new Date(now.getTime() - 60_000);
+    const start = state?.pollCursorAt ?? new Date(now.getTime() - 10 * 60_000);
+    if (end <= start) return;
+    const token = await cloudLoggingAccessToken();
+    let nextPageToken: string | undefined;
+    let limit = 12;
+    let finished = false;
+    for (let page = 0; page < 3 && limit > 0; page++) {
+      const result = await readCloudLogErrorPage({
+        project: settings.project, namespace: settings.namespace,
+        start, end, token, ...(nextPageToken ? { pageToken: nextPageToken } : {}),
+      });
+      for (const record of result.errors) {
+        if (limit <= 0) break;
+        if (record.timestamp <= start || record.timestamp > end) continue;
+        const success = await reportErrorForAlert({
+          event: record.event, error: record.message, path: record.path,
+          requestId: record.requestId, component: record.component,
+        });
+        if (!success) return; // Must be eligible for the next poll.
+        await db.update(states).set({ pollCursorAt: record.timestamp })
+          .where(eq(states.stateKey, stateKey));
+        handled++;
+        limit--;
+      }
+      nextPageToken = result.nextPageToken;
+      if (!nextPageToken) { finished = true; break; }
+    }
+    if (finished && limit > 0) {
+      // The result set was exhausted; advance over a quiet window.
+      await db.update(states).set({ pollCursorAt: end })
+        .where(eq(states.stateKey, stateKey));
+    }
+  });
+  cloudPollFailureLogged = false;
+  return handled;
+}
+
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
@@ -157,6 +232,14 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
   // The locked state row preserves the five-per-minute ceiling across web replicas.
   await flushOverflow(now);
   await sweepUndeliveredRegressions(now);
+  try {
+    await pollCloudLoggingErrors(now);
+  } catch {
+    // Cloud Logging may lack IAM permission or Workload Identity temporarily.
+    // Do not lose the digest or recovery sweep because a backup source is down.
+    // Never log a provider exception: URLs and request headers are sensitive.
+    noteCloudPollingFailure();
+  }
   let digest = false;
   const acquired = await withScheduledLease("telegram-digest", now, async () => {
     if (hour < 9) return;
@@ -165,6 +248,9 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     const [state] = await db.select().from(states)
       .where(eq(states.stateKey, "TELEGRAM_DIGEST")).limit(1);
     if (state?.lastDigestDay === day) return;
+    // Bound the privacy-preserving event fingerprint table's growth.
+    await db.delete(observed)
+      .where(lt(observed.observedAt, new Date(now.getTime() - 30 * 86_400_000)));
     // Digest covers the completed prior IST calendar date.
     const previous = new Date(Date.parse(day + "T00:00:00Z") - 86_400_000);
     const previousDay = previous.toISOString().slice(0, 10);
