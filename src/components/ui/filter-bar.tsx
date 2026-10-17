@@ -52,14 +52,12 @@ export function FilterBar({ title = "Filters", activeCount = 0, search, filters,
   }, [open]);
 
   return <section data-slot="filter-bar" aria-label={title} className={cx("min-w-0 space-y-3", className)}>
-    <div className="flex min-w-0 flex-wrap items-end gap-3 sm:hidden">
-      {search ? <div className="min-w-0 flex-1 basis-40">{search}</div> : null}
-      <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls="lms-filter-panel"
-        onClick={() => setOpen(true)}>{title} ({count})</Button>
-      {action}
-    </div>
-    <div className="hidden min-w-0 flex-wrap items-end gap-3 sm:flex">
-      {search ? <div className="min-w-0 flex-1 basis-48">{search}</div> : null}
+    <div className="flex min-w-0 flex-wrap items-end gap-3">
+      {search ? <div className="min-w-0 flex-1 basis-40 sm:basis-48">{search}</div> : null}
+      <div className="sm:hidden">
+        <Button ref={launcher} variant="secondary" aria-expanded={open} aria-controls="lms-filter-panel"
+          onClick={() => setOpen(true)}>{title} ({count})</Button>
+      </div>
       {action}
     </div>
     {open ? <button type="button" aria-label="Close filters" onClick={() => setOpen(false)}
