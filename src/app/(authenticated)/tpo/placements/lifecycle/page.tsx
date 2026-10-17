@@ -88,6 +88,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </select>
       </label>
+      {data.view!=="REQUESTS"?<label className="min-w-40 flex-1 text-sm font-semibold text-body">Created by
+        <select name="ownerUserId" defaultValue={data.ownerUserId??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">Any creator</option>
+          {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
+        </select>
+      </label>:null}
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
         <select name="view" defaultValue={data.view}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
