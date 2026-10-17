@@ -5,6 +5,23 @@ const read=(path:string)=>readFileSync(path,"utf8");
 const draftWarning="You have unsaved project changes. Leave this page and discard them?";
 
 describe("chat-16 mentor editor draft recovery",()=>{
+  it("MEN-projects-meetings-72 delivers project brief update notices transactionally to active project members",()=>{
+    const service=read("src/modules/projects/workspace-brief-service.ts");
+    expect(service).toContain('import {notifyActiveProjectMembers} from "./project-notification-service"');
+    expect(service).toContain("const updatedEvent=await recordActivityEventInTransaction(tx,context,");
+    expect(service).toContain("await notifyActiveProjectMembers(tx,updatedEvent.id,");
+    expect(service).toContain('roles:["MENTOR"]');
+    expect(service).toContain('roles:["LEARNER"]');
+    expect(service).toContain("exceptUserId:context.user.id");
+    expect(service).toContain('title:"Project updated"');
+  });
+
+  it("MEN-projects-meetings-76 protects task transition errors from raw exception text",()=>{
+    const task=read("src/components/projects/mentor-task-status-transition.tsx");
+    expect(task).toContain("The task state could not be changed. Reload the latest status and retry.");
+    expect(task).not.toContain("caught instanceof Error?caught.message");
+  });
+
   it("MEN-projects-meetings-55 displays independent Files, Links, Other resource counts",()=>{
     const list=read("src/components/projects/project-resource-list.tsx");
     expect(list).toContain('row.resourceType==="FILE"');
