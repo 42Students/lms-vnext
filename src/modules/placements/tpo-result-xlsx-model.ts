@@ -28,6 +28,7 @@ function unpackXlsx(bytes:Buffer):Map<string,string>{
   const zip=bytes.subarray(pos,pos+packed);
   const unzipped=compression===0?zip:compression===8?inflateRawSync(zip,{maxOutputLength:12_000_000}):null;
   if(!unzipped||unzipped.length>12_000_000)throw Error("Unsupported workbook compression.");
+  if(entries.has(name))throw Error("Workbook contains duplicate worksheet or shared-string entries.");
   entries.set(name,unzipped.toString("utf8"));
  }
  if(!entries.has("xl/worksheets/sheet1.xml"))throw Error("First worksheet was not found.");
