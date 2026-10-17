@@ -1465,6 +1465,12 @@ export function ProjectWorkspace({
                         {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
                       </StatusBadge>
                     </div>
+                    {meeting.requestedByMembershipId ? (
+                      <p className="mt-2 text-xs text-body">
+                        Organised by {" "}
+                        {workspace.members.find(member=>member.membershipId===meeting.requestedByMembershipId)?.displayName??"Project member"}
+                      </p>
+                    ) : null}
                     {meeting.agenda ? (
                       <p className="mt-2 text-sm leading-6 text-body">
                         {meeting.agenda}
