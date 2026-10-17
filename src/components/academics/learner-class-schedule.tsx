@@ -330,6 +330,12 @@ export function LearnerClassSchedule({
   const [view, setView] =
     useState<LearnerScheduleView>(initialView);
   const [chosenDay, setChosenDay] = useState(() => initialAnchorDay ?? istCalendarDay(initialAnchor ?? new Date()));
+  // The legacy learner schedule opens its compact month calendar on phones.
+  useEffect(()=>{
+    if(courseBasePath!=="/learn/courses")return;
+    if(window.matchMedia("(max-width: 767px)").matches)setView("month");
+  },[courseBasePath]);
+
   const [anchor, setAnchor] = useState(
     () => initialAnchorDay ? learnerScheduleDateFromDay(initialAnchorDay) : initialAnchor ?? new Date(),
   );
@@ -652,6 +658,12 @@ export function LearnerClassSchedule({
                         (selected?"ring-2 ring-inset ring-primary ":"")+
                         (!inside?"text-muted-foreground opacity-60":"text-foreground")}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
+                      {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
+                        {dayItems.slice(0,3).map(event=><span key={event.id} className={"size-1.5 rounded-full bg-primary " +
+                          (learnerCourseTint(event)==="border-l-success"?"bg-success":
+                            learnerCourseTint(event)==="border-l-warning"?"bg-warning":
+                            learnerCourseTint(event)==="border-l-info"?"bg-info":"bg-primary")}/>)}
+                      </span>:null}
                       {dayItems.length ? <span className="mt-1 block break-words text-[10px] font-semibold text-primary-text sm:text-xs">
                         {dayItems.length} {dayItems.length===1?"class":"classes"}
                       </span> : null}
