@@ -44,7 +44,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
     Select all eligible on this page ({eligible.length})
    </label>
    <span className="text-sm">{selected.length} selected</span>
-   <select aria-label="Drive bulk action" value={action} onChange={e=>{setAction(e.target.value as "OPEN"|"CLOSE");setPreview(null);}}
+   <select aria-label="Drive bulk action" value={action} onChange={e=>{setAction(e.target.value as "OPEN"|"CLOSE");setSelected([]);setPreview(null);setResult(null);setError("");}}
     className="min-h-10 rounded border border-border bg-surface px-3">
     <option value="CLOSE">Close selected</option><option value="OPEN">Open closed drives</option>
    </select>
