@@ -43,6 +43,8 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   message=locate("reason","message","studentmessage","comment"),name=locate("student","studentname","name");
  if(status<0||Math.max(app,email,roll)<0)throw Error("Include Result and an Application ID, Email or Roll number column. Company portal IDs are not mapped to internal applicants.");
  if(grid.length>1000)throw Error("Import up to 1,000 student rows per file.");
+ if(grid.length===0)throw Error("The results file has no student rows.");
+ if(grid.some(parts=>parts.every(value=>!value.trim())))throw Error("Remove blank data rows from the result file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
   const value=(col:number)=>col>=0?parts[col]?.trim()??"":"";
   const rankText=value(rank),rankValue=rankText?Number(rankText):null;
