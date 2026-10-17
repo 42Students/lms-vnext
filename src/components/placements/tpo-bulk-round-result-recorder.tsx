@@ -136,6 +136,12 @@ export function TpoBulkRoundResultRecorder({
             <legend className="text-sm font-semibold text-foreground">
               Select learners ({selected.length} / 25)
             </legend>
+            <div className="flex flex-wrap gap-3 text-sm">
+              <button type="button" disabled={busy} onClick={()=>setSelected(available.slice(0,25).map(row=>row.applicationId))}
+                className="font-semibold text-primary-text">Select first 25 unmarked</button>
+              <button type="button" disabled={busy||selected.length===0} onClick={()=>setSelected([])}
+                className="font-semibold text-primary-text">Clear selection</button>
+            </div>
             <div className="max-h-52 overflow-auto rounded-md border border-border p-2">
               {available.map((row) => (
                 <label key={row.applicationId} className="flex min-h-10 items-center gap-3 px-2 text-sm text-body">
