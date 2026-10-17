@@ -21,7 +21,7 @@ describe("learner vendor assessment deadline source of truth",()=>{
  });
  it("LEARNER-placements-37 and LEARNER-placements-41 expose safe test links with no inferred attempt or attendance",()=>{
   const page=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
-  expect(page).toContain('row.testUrl&&/^https:\\/\\//i.test(row.testUrl)');
+  expect(page).toContain(String.raw`row.testUrl&&/^https:\/\//i.test(row.testUrl)`);
   expect(page).toContain("Open test");
   expect(page).toContain('rel="noopener noreferrer"');
   expect(page).toContain("not an attendance confirmation or final outcome");
