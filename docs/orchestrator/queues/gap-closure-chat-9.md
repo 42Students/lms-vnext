@@ -340,3 +340,7 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Remaining OPEN after this 25-gap group: TPO-calendar-reports-38, TPO-calendar-reports-57, TPO-calendar-reports-22, TPO-calendar-reports-25, TPO-calendar-reports-53.
 - TPO-calendar-reports-38: remaining report-page subtitle parity; -57: seasonless report totals; -22: last-good cached calendar data/partial banner; -25: Enter on existing follow-up should open Move; -53: full-width report states and unknown slug recovery. All still OPEN; no unverified closure claim.
 - Source tests are written but never run by builder; the orchestrator performs tests, typecheck, lint and UI acceptance.
+
+## Round 6 CI failure triage
+- `public-auth-login-gap-verification.test.ts` PUB-auth-public-04 and PUB-auth-public-12: assertions updated to the retained legacy-approved OTP expired phrase and the `sessionExpiredHref` safe redirect helper; guard still requires 401/session revoked/expired checks. Tests written, not executed by builder.
+- Other chat-9 test fixture fixes from previous merged round retained; scanner and provider checks continue to be audited.
