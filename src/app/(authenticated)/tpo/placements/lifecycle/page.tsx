@@ -4,13 +4,14 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
+import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
 import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -19,6 +20,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
     ...(first(params.companyId)?{companyId:first(params.companyId)}:{}),
+    ...(first(params.ownerUserId)?{ownerUserId:first(params.ownerUserId)}:{}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
@@ -33,9 +35,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
+  const savedViewScope=context.user.id+":"+context.membership.collegeId;
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
     ...(data.companyId?{companyId:data.companyId}:{}),
+    ...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
     journey:data.journey,
@@ -53,7 +57,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
    journey:data.journey,
    display:data.display,
@@ -61,6 +65,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
   return <div className="space-y-6">
+    <TpoDriveSavedViews scopeKey={savedViewScope}/>
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
       description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -83,6 +88,13 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </select>
       </label>
+      {data.view!=="REQUESTS"?<label className="min-w-40 flex-1 text-sm font-semibold text-body">Created by
+        <select name="ownerUserId" defaultValue={data.ownerUserId??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">Any creator</option>
+          {data.owners.map(owner=><option key={owner.id} value={owner.id}>{owner.name??"College staff"}</option>)}
+        </select>
+      </label>:null}
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
         <select name="view" defaultValue={data.view}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">

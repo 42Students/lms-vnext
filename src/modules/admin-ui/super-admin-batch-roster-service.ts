@@ -19,7 +19,7 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
   .where(eq(cohorts.id,batchId)).limit(1);
  if(!batch)return null;
  const classes=await db.select({
-  id:sections.id,name:sections.name,code:sections.code,capacity:sections.capacity,status:sections.status,
+  id:sections.id,name:sections.name,code:sections.code,capacity:sections.capacity,status:sections.status,academicPeriodId:sections.academicPeriodId,
   learnerCount:count(collegeMemberships.id),
  }).from(sections)
   .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))

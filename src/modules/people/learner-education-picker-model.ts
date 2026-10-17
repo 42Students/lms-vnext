@@ -11,6 +11,18 @@ export const LEARNER_QUALIFYING_EXAMS=[
  "SSC","CBSE 10th","ICSE","Intermediate","CBSE 12th","Diploma",
  "B.Tech","B.E.","B.Sc.","B.Com.","B.A.","M.Tech","M.E.","MBA","M.Sc.",
 ] as const;
+/** Catalog suggestions only: colleges may use their own exam names. Do not
+ * coerce imported or manually entered exam names into these display options. */
+export function learnerQualifyingExamSuggestions(educationType:string):readonly string[]{
+ switch(educationType){
+  case "10th":return ["SSC","CBSE 10th","ICSE"];
+  case "12th":return ["Intermediate","CBSE 12th"];
+  case "Diploma":return ["Diploma"];
+  case "UG":return ["B.Tech","B.E.","B.Sc.","B.Com.","B.A."];
+  case "PG":return ["M.Tech","M.E.","MBA","M.Sc."];
+  default:return LEARNER_QUALIFYING_EXAMS;
+ }
+}
 /** Keep historical free-text institutions/exams, but validate numeric grade range
  * and impossible year order both in UI and server Zod writes. */
 export function learnerEducationValidationProblem(input:{
@@ -27,8 +39,8 @@ export function learnerEducationValidationProblem(input:{
  if(!input.gradeObtained?.trim())return {field:"gradeObtained",message:"Grade obtained is required"};
  if(!input.maxGrade?.trim())return {field:"maxGrade",message:"Max grade is required for job screening"};
  const examYear=String(input.examDetails?.passingYear??"").trim();
- if(examYear && !/^\d{4}$/.test(examYear))
-  return {field:"examDetails.passingYear",message:"Enter a 4-digit qualifying exam passing year"};
+ if(examYear && (!/^\d{4}$/.test(examYear)||Number(examYear)<1900||Number(examYear)>2100))
+  return {field:"examDetails.passingYear",message:"Enter a valid four-digit exam year (1900–2100)"};
  if(input.isCurrentlyPursuing && input.endYear?.trim())
   return {field:"endYear",message:"End year must be empty when currently pursuing"};
  const start=input.startYear?.trim(),end=input.endYear?.trim();

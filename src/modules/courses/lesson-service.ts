@@ -103,6 +103,9 @@ export async function listCourseLessons(
       eq(courseLessons.status, "ACTIVE"),
     );
   }
+  if (access === "LEARNER") {
+    conditions.push(eq(courseLessons.visibleToStudents, true));
+  }
 
   return getDb()
     .select()

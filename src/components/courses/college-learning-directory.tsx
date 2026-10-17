@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
@@ -530,6 +531,11 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
           </Link>
         </form>
       </section>
+      {data.kind==="LESSONS" && data.items.length>0 ?
+        <CollegeLessonBulkVisibility items={data.items.map(item=>({
+          id:item.id,name:item.name,visibleToStudents:item.visibleToStudents,
+          updatedAt:item.updatedAt.toISOString(),
+        }))}/> : null}
       <section aria-label={title + " records"} className="overflow-x-auto rounded-xl border border-border bg-surface">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching {lessons ? "lessons" : "course offerings"}
@@ -570,6 +576,8 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                     </td>
                     <td className="px-4 py-4 tabular-nums text-body">{item.sequence + 1}</td>
                     <td className="px-4 py-4 text-body">{collegeLessonVisibilityLabel(item)}
+                      <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
+                        visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>
                       <Link href={collegeOfferingProgressHref(item.offeringId)}
                         className="mt-2 inline-block font-semibold text-primary-text hover:underline">
                         View recorded course activity

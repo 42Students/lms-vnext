@@ -14,7 +14,8 @@ export async function getLearnerAssignmentMethods(context:RequestContext,rawId:u
  const assignmentId=z.string().uuid().parse(rawId);
  const deliveryId=z.string().uuid().parse(rawDeliveryId);
  const assignment=await loadCourseAssignmentScope(assignmentId);
- if(assignment.status!=="PUBLISHED"||assignment.deliveryId&&assignment.deliveryId!==deliveryId)
+ if(assignment.status!=="PUBLISHED"||!assignment.lessonVisibleToStudents||
+  assignment.learningPathStatus!=="PUBLISHED"||assignment.deliveryId&&assignment.deliveryId!==deliveryId)
   throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
  const access=await requireLearningReadAccess(context,assignment.offeringId,deliveryId);
  if(access!=="LEARNER"||!context.membership?.roles.includes("LEARNER"))

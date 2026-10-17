@@ -71,6 +71,7 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    organizationId:target.organizationId,collegeId:target.id,
    receiverType:"COLLEGE",receiverId:target.id,
    title:input.title,message:input.message,
+   buttonLabel:input.buttonLabel||null,buttonUrl:input.buttonUrl||null,
    senderUserId:context.user.id,senderType:"SUPER_ADMIN",
    scheduledAt:input.scheduledAt?new Date(input.scheduledAt):null,
    expiresAt:input.expiresAt?new Date(input.expiresAt):null,

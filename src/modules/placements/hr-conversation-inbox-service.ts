@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,desc,eq,ilike,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoMessages,placementTpoMessageThreads} from "@/db/schema/tpo-collaboration";
 import {conversationSnippet} from "./hr-conversation-snippet-model";
@@ -20,13 +20,24 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   choices:grants,items:[],collegeId:null};
  const [threads,jobs]=await Promise.all([
   listMessageThreads(context,collegeId),
-  listOwnRecruiterPlacementJobs(context),
+  listOwnRecruiterPlacementJobs(context,collegeId),
  ]);
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
  const recruiterOwned=threads.filter(thread=>thread.recruiterUserId===context.user.id);
- const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);
+ // Search only threads this recruiter may open. Never read or return
+ // message bodies from another company, recruiter or college.
+ const accessibleIds=recruiterOwned.filter(thread=>!thread.jobId||knownJobIds.has(thread.jobId)).map(thread=>thread.id);
+ const messageMatches=query.q.trim()&&accessibleIds.length
+  ?await getDb().selectDistinct({threadId:placementTpoMessages.threadId})
+    .from(placementTpoMessages)
+    .where(and(inArray(placementTpoMessages.threadId,accessibleIds),
+      ilike(placementTpoMessages.body,"%"+query.q.trim().replace(/[\\%_]/g,"\\ const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles);")+"%")))
+    .limit(1000)
+  :[];
+ const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles,
+   new Set(messageMatches.map(row=>row.threadId)));
  const unreadRows=query.unreadOnly==="true"?await getDb().selectDistinct({
    threadId:placementTpoMessages.threadId,
  }).from(placementTpoMessages)

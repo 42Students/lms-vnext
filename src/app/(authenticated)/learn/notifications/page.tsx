@@ -81,6 +81,8 @@ export default async function NotificationsPage({searchParams}:{
           senderType: announcement.senderType,
           receiverType: announcement.receiverType,
           isPinned: announcement.isPinned,
+          buttonLabel:announcement.buttonLabel,
+          buttonUrl:announcement.buttonUrl,
           createdAt: announcement.createdAt,
         }))}
       />

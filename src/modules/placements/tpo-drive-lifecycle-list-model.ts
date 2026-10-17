@@ -2,6 +2,7 @@ import { z } from "zod";
 export const tpoDriveLifecycleQuerySchema = z.object({
   seasonId: z.string().uuid().optional(),
   companyId:z.string().uuid().optional(),
+  ownerUserId:z.string().uuid().optional(),
   view: z.enum(["ALL", "REQUESTS", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
   deadline:z.enum(["ALL","TODAY","DUE_SOON","LATER","OVERDUE","UNSET"]).default("ALL"),
@@ -83,8 +84,11 @@ export function tpoDriveWhereItIs(job:{
  if(job.status==="CANCELLED")return "Cancelled";
  if(job.status==="CLOSED")return "Closed";
  if(job.status!=="PUBLISHED")return job.status;
- if(job.applicationDeadline&&job.applicationDeadline>nowIso)
+ if(!job.applicationDeadline)return "Taking applications · no deadline";
+ if(job.applicationDeadline>nowIso)
   return "Taking applications";
+ if(job.offersMade>0&&job.roundsCompleted>=job.roundCount)
+  return "Offers · "+job.offersMade+" issued/accepted";
  if(job.roundCount>0){
   const next=job.nextRoundAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
    timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(job.nextRoundAt))+" IST":"No upcoming date";

@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
+import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -11,7 +13,7 @@ export default async function SuperAdminCourseProgressPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page });
+  const parsed = adminLearningQuerySchema.safeParse({ q: raw.q, status: raw.status, page: raw.page,courseCode:raw.courseCode||undefined,cohortCode:raw.cohortCode||undefined });
   if (!parsed.success) return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <ErrorState title="Invalid course progress filters" description="Search, status or page is invalid."
@@ -22,7 +24,7 @@ export default async function SuperAdminCourseProgressPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress" />
     <EmptyState title="Choose a college" description="Select a college scope to inspect recorded learner content activity." />
   </div>;
-  const data = await listCollegeCourseProgress(context, parsed.data);
+  const [data,filters] = await Promise.all([listCollegeCourseProgress(context, parsed.data),getSuperAdminLearningFilterOptions(context)]);
   const summary = adminProgressStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Course Progress"
@@ -30,9 +32,9 @@ export default async function SuperAdminCourseProgressPage({
     <p className="rounded-md border border-border bg-surface p-3 text-sm text-body">
       Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
     </p>
-    <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status}).toString()}
+    <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
      className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export course-progress.csv</a>
-    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+    <form className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-5">
       <label className="grid gap-1 text-sm font-semibold text-body">Course or cohort
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -42,8 +44,10 @@ export default async function SuperAdminCourseProgressPage({
           <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
         </select>
       </label>
+      <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
+    <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text" href="/admin/course-progress">Clear filters</Link>
     <p className="text-sm text-muted-foreground">
       {data.total} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.

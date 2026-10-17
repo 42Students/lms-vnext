@@ -648,6 +648,7 @@ export async function completeVideoThumbnailUpload(context: RequestContext, vide
 type LessonScope = Awaited<ReturnType<typeof loadCourseLessonScope>>;
 
 async function learnerVisibility(row: VideoRow, lesson: LessonScope) {
+  if (!lesson.visibleToStudents) return false;
   let content: { status: "DRAFT" | "PUBLISHED" | "ARCHIVED"; visibleToStudents: boolean } | null = null;
   if (row.lessonContentId) {
     const [linked] = await getDb()
