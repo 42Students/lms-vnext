@@ -242,4 +242,41 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
   expect(workspace).toContain("View full project audit");
  });
 
+
+ it("SA-placements-projects-65 records the readiness override author",()=>{
+  const service=source("src/modules/projects/readiness-override-service.ts");
+  const display=source("src/components/projects/project-workspace-readiness.tsx");
+  expect(service).toContain("overriddenBy:users.displayName");
+  expect(service).toContain("leftJoin(users,eq(users.id,activityEvents.actorUserId))");
+  expect(display).toContain("Overridden by {readiness.readinessOverride.overriddenBy}");
+ });
+ it("SA-placements-projects-66 protects scoped readiness links and shows 25-row picker",()=>{
+  const picker=source("src/components/projects/admin-readiness-workspace-picker.tsx");
+  const list=source("src/components/projects/project-admin-readiness-page.tsx");
+  expect(picker).toContain("pageSize=25");
+  expect(picker).toContain("Search workspace title or ID");
+  expect(list).toContain("outsideScope=Boolean(chosenId&&!selected)");
+  expect(list).toContain("This workspace belongs to a different college — switch colleges in the header and try again.");
+  expect(list).toContain("Target date");
+ });
+ it("SA-placements-projects-71 offers guarded page CSV export and review evidence fields",()=>{
+  const exportFile=source("src/components/projects/project-submissions-page-export.tsx");
+  const page=source("src/components/projects/project-admin-submissions-page.tsx");
+  expect(exportFile).toContain("project-submissions-page.csv");
+  expect(exportFile).toContain('function csvField(');
+  expect(exportFile).toContain("Pending (days)");
+  expect(page).toContain("<ProjectSubmissionsPageExport");
+  expect(page).toContain("Reviewed by");
+  expect(page).toContain("Revisions");
+  expect(page).toContain("Reassign mentor");
+ });
+ it("SA-placements-projects-75 retains audit filters and global log navigation",()=>{
+  const page=source("src/components/projects/project-admin-audit-page.tsx");
+  expect(page).toContain("People who made changes");
+  expect(page).toContain("Destructive actions");
+  expect(page).toContain("View activity log");
+  expect(page).toContain("Refresh");
+  expect(page).toContain("<ActivityCenter");
+ });
+
 });
