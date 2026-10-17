@@ -295,8 +295,24 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
-            {isTpo && ["CLOSED","CANCELLED"].includes(job.status) ?
-              <TpoDriveCloneAction jobId={jobId} label="Run it again as a draft"/>:null}
+            {isTpo ? <details className="relative self-start">
+              <summary className="flex min-h-10 cursor-pointer list-none items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
+                More ▾
+              </summary>
+              <div className="absolute right-0 z-20 mt-1 grid min-w-56 gap-2 rounded-lg border border-border bg-surface p-3 shadow-lg">
+                <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
+                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  Export applicants
+                </Link>
+                {job.status!=="DRAFT"?<Link
+                  href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
+                  className="min-h-10 rounded-md px-2 py-2 text-sm font-semibold text-primary-text hover:bg-surface-subtle">
+                  Share with company
+                </Link>:null}
+                {["CLOSED","CANCELLED"].includes(job.status)
+                  ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
+              </div>
+            </details>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
