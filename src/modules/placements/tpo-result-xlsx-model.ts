@@ -15,6 +15,8 @@ function unpackXlsx(bytes:Buffer):Map<string,string>{
  for(let i=0;i<count;i++){
   if(offset+46>bytes.length||bytes.readUInt32LE(offset)!==0x02014b50)throw Error("Invalid workbook directory.");
   const compression=bytes.readUInt16LE(offset+10);
+  const flags=bytes.readUInt16LE(offset+8);
+  if((flags&1)!==0)throw Error("Password-protected Excel workbooks are not supported.");
   const packed=bytes.readUInt32LE(offset+20),raw=bytes.readUInt32LE(offset+24);
   const nameLen=bytes.readUInt16LE(offset+28),extra=bytes.readUInt16LE(offset+30),comment=bytes.readUInt16LE(offset+32);
   const local=bytes.readUInt32LE(offset+42);
