@@ -61,6 +61,12 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
     throw Error("End time must be after start time");
+   if(editing&&deliveryId&& !allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
+    setError("This Section is no longer active for the selected Lesson.");return;
+   }
+   if(!editing&&deliveryId&&!allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
+    setError("Select a Section for this Course.");return;
+   }
    if(!window.confirm(editing?"Save changes?":"Create this content?"))return;
    const res=await fetch(editing?"/api/courses/lesson-contents/"+encodeURIComponent(editing):
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
