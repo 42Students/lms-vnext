@@ -111,7 +111,16 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
   const projection=await db.transaction(async tx=>{
    const end=new Date(now.getTime()+7*86400000);
-   const deadlineCondition=filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
+   const parts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",
+    year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(now);
+   const number=(kind:string)=>parts.find(part=>part.type===kind)?.value??"01";
+   const day=number("year")+"-"+number("month")+"-"+number("day");
+   const startOfToday=new Date(day+"T00:00:00+05:30");
+   const endOfToday=new Date(startOfToday.getTime()+86400000);
+   const deadlineCondition=filters.deadline==="TODAY"?
+    and(gte(placementJobs.applicationDeadline,startOfToday),lt(placementJobs.applicationDeadline,endOfToday)):
+    filters.deadline==="LATER"?gte(placementJobs.applicationDeadline,end):
+    filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
     filters.deadline==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
     filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;
    const scope=and(eq(placementJobs.collegeId,collegeId),
