@@ -26,7 +26,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-5-04-batches-placements-s2 | TODO | 20 gaps: S2 20
 5. WP-chat-5-05-batches-calendar-reports-s2 | TODO | 15 gaps: S2 15
 6. WP-chat-5-06-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — 03/16/20/35/37/42/49 advanced, round preview/report CSV and scoped live journey implemented; other screen/tab parity still open, no checks run
-7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — role-package clone, offer expiry UI/API/export, lifecycle and creator filters, saved browser views, CSV content parity advanced; Excel, true shared saved views, secure attachments, company disclosure and acceptance open
+7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — role-package clone, offer expiry/email/roll/batch/branch CSV, lifecycle and creator filters, saved browser views advanced; Excel, team-shared views, secure attachments, company disclosure and acceptance remain
 8. WP-chat-5-08-drives-requests-verification-s2 | IN-PROGRESS | 20 gaps: S2 20 — TPO-requests-verification-02/03 decision dialogs with reasons now on main; earlier -07 settlement and -08 urgency queue already present; other IDs remain
 9. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps: S2 20
 10. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps: S2 12, S3 11
@@ -138,3 +138,17 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - BLOCKED LEARNER-placements-20: private resume storage and sharing consent not registered; no substitute URLs or public attachments.
 - MOVED TPO-requests-verification-05: 24-hour withdrawal scheduler invocation belongs to chat-3 WP-chat-5-02; no edits in this lane.
 - Remaining WPs 01,03,06,07,08,12,13 are IN-PROGRESS; no unverified WP marked DONE. No tests, lint, typecheck, build or CI waits under FAST v2.
+
+## FAST v2 batch after main migration 0130 — 2026-10-17
+
+- TPO-drive-workspace-17/18: stop notices distinguish accepted offers and already withdrawn learners from applicants newly rejected at close/cancel.
+- TPO-drive-workspace-20/42: journey Applied links to all-history; PASS preview distinguishes interview, GD and external assessment; whole-round outcome copy is tab-separated with a header and clipboard failure feedback.
+- TPO-drive-workspace-40: empty mass-fail uploads, duplicate column headers, contradictory identifiers, unknown skipped identities, invalid ranks and ranks on non-waitlist results are rejected or surfaced for correction.
+- TPO-drive-workspace-47: active offer with unmatching terms stops verified-selection release rather than issuing another offer.
+- TPO-drive-workspace-49: offer search includes email; filtered CSV includes roll, batch and branch, with columns and row counts aligned; privacy footer accurately discloses email.
+- TPO-drives-02/03/06: registered 0101 recruiter-request table read without optional staged gate; Requests total reflects persisted records.
+- TPO-drives-05/10: offer phase shown for completed rounds even if application deadline unset; Today/Later deadline filters are live-drive-only; no false mapping of recruiter to TPO owner.
+- BLOCKED TPO-drive-workspace-28: migration 0130 concerns project comment kinds, not consent/48-hour apply-on-behalf opt-out; needs a registered consent decision and persisted notification state.
+- SKIP TPO-drive-workspace-65: OD-09 private company disclosure requires owner security decision.
+- BLOCKED TPO-drive-workspace-54 / LEARNER-placements-20: secure letter/resume object storage and approved consent are not configured; no public link or fabricated attachment.
+- WP-chat-5-01/06/07/13 remain IN-PROGRESS; other outstanding gaps and runtime acceptance remain. No tests, build, lint, typecheck or CI were run under FAST v2.
