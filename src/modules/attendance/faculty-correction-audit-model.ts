@@ -20,3 +20,16 @@ export function facultyAttendanceConfirmation(
   if (!delta.changed) return null;
   return `Confirm correction: ${delta.movedToAbsent} changed to absent, ${delta.movedToPresent} changed to present. Your explanation will be retained in the activity audit.`;
 }
+
+/** Learner notification recipients are status transitions, never a whole roster.
+ * Initial marking sends only newly absent; a correction notifies only changed rows.
+ */
+export function facultyAttendanceChangedMemberships(
+ previousAbsent:readonly string[],nextAbsent:readonly string[],
+):{newlyAbsent:string[];correctedPresent:string[]}{
+ const previous=new Set(previousAbsent),next=new Set(nextAbsent);
+ return {
+  newlyAbsent:[...next].filter(id=>!previous.has(id)),
+  correctedPresent:[...previous].filter(id=>!next.has(id)),
+ };
+}
