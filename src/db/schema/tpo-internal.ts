@@ -52,6 +52,7 @@ export const placementTpoInternalThreads = pgTable(
   ],
 );
 
+/** The Everybody/Everyone channel is implicit for every active TPO membership. */
 export const placementTpoInternalMessages = pgTable(
   "placement_tpo_internal_messages",
   {
