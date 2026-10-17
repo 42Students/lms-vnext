@@ -65,6 +65,7 @@ describe.skipIf(!enabled)("TPO-inbox-team-R05 read receipts PostgreSQL",()=>{
   const client=await pool.connect();
   try{
    await client.query("BEGIN");
+   await client.query("INSERT INTO membership_roles(membership_id,role) VALUES($1,'TPO') ON CONFLICT (membership_id,role) DO NOTHING", [SEED_IDS.collegeAdminMembership]);
    const created=await client.query<{id:string}>(
     "INSERT INTO placement_tpo_internal_threads(college_id,started_by_membership_id,invited_membership_id,topic) VALUES($1,$2,$3,$4) RETURNING id",
     [SEED_IDS.collegeA,SEED_IDS.facultyCollegeAMembership,SEED_IDS.collegeAdminMembership,"Follow preference test"],
