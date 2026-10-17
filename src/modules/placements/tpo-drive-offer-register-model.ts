@@ -55,7 +55,7 @@ export function tpoDriveOfferRegisterCsv(
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
  ]);
- rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","",""]);
+ rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","","","","",""]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
  if(truncated)rows.push(["TRUNCATED",
   "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null]);
