@@ -256,6 +256,15 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 - Public/auth login: documented and covered `PUB-auth-public-01/02/03/04/05/06/07/08/09/11/12/13/16/17/19/25/33/34/37` (19 IDs). Updated login copy/failures, default/allowed methods, legal links, branding/title, unknown host, expired notice, recruiter deep-link, last-used chooser, suspended accounts, keyboard/focus. `tests/unit/public-auth-login-gap-verification.test.ts` and `tests/unit/public-auth-chooser-graceful-gap.test.ts`; public verification created/updated.
 - Total for this reply: 29 gap IDs with source evidence and tests authored (not run). Public remaining: `PUB-auth-public-10/14/15/18/20/21/22/23/24/26/27/28/29/30/31/32/35/36/38/39`. Remaining chat-11 pages: college academic setup; mentor projects meetings part2; faculty attendance grades; learner course detail; superadmin tenants modules 2. Tests, build, typecheck, lint delegated to orchestrator. No migration proposals.
 
+
+## Round-three public-auth checkpoint — 2026-10-17
+
+- `PUB-auth-public-10/14/18/27`: source verified or corrected; named tests and public page acceptance file updated. `PUB-auth-public-15`: NOT-A-GAP per owner OD-19. Shared `apiFetch`, `friendlyApiError` and `useGuardedAction` adopted in login, missing imports and malformed guarded-email callback fixed.
+- Needs shell: `PUB-auth-public-20/21/22/23/24/29/31/38` need chat-9-owned switcher, logout and other shell edits; chat-11 leaves their source unchanged.
+- BLOCKED `PUB-auth-public-26`: owner sign-in to the legacy JNTU/DGIPUC tenant environments is required to confirm whether the special PIN login must exist (OD-14).
+- Remaining non-shell public gaps `PUB-auth-public-28/30/32/35/36/39` still OPEN pending end-to-end legacy and runtime evidence.
+- Tests authored but not run; orchestrator runs them.
+
 ## Notes (blockers, one line each)
 
 ## Needs shell (chat-9 only)

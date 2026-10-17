@@ -25,7 +25,13 @@ DONE below means implemented plus a named acceptance test written, **not that th
 | PUB-auth-public-08 | DONE | src/components/auth/membership-chooser.tsx; tests/unit/public-auth-chooser-graceful-gap.test.ts — `it("PUB-auth-public-08 restores last used active college as radio default")` |
 | PUB-auth-public-09 | DONE | src/components/auth/membership-chooser.tsx; tests/unit/public-auth-chooser-graceful-gap.test.ts — `it("PUB-auth-public-09 shows suspended memberships but never allows selection")` |
 
+| PUB-auth-public-10 | DONE | src/lib/return-to.ts; src/app/(authenticated)/layout.tsx; src/components/auth/login-form.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-10 preserves authorized returnTo through re-login")` |
+| PUB-auth-public-14 | DONE | src/components/auth/login-form.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-14 leaves unusable OTP screen open with immediate resend")` |
+| PUB-auth-public-15 | NOT-A-GAP | docs/audit/owner-decisions-resolved.md OD-19 explicitly excludes login mascot; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-15 legacy mascot is NOT-A-GAP by owner decision OD-19")` |
+| PUB-auth-public-18 | DONE | src/modules/auth/request-tenant.ts; src/app/page.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-18 never caches domain lookup outages as unknown tenants")` |
+| PUB-auth-public-27 | DONE | src/app/not-found.tsx; src/components/public/graceful-screen.tsx; tests/unit/public-auth-round3-gap-verification.test.ts — `it("PUB-auth-public-27 maintains legacy 404 text on graceful recovery")` |
+
 ## Outstanding gaps (not claimed closed)
-`PUB-auth-public-10/14/15/18/20/21/22/23/24/26/27/28/29/30/31/32/35/36/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
+`PUB-auth-public-20/21/22/23/24/26/28/29/30/31/32/35/36/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.
