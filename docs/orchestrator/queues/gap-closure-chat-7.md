@@ -176,8 +176,8 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | REC-home-drives-29 | S3 | STATE | FIXED-ON-MAIN |
 | REC-home-drives-30 | S3 | STATE | OPEN |
-| REC-home-drives-31 | S3 | COPY | OPEN |
-| REC-home-drives-34 | S3 | COPY | OPEN |
+| REC-home-drives-31 | S3 | COPY | FIXED-ON-MAIN |
+| REC-home-drives-34 | S3 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-36 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | REC-home-drives-37 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | REC-home-drives-40 | S3 | MISSING-TAB | FIXED-ON-MAIN |
@@ -186,22 +186,22 @@ Audit: `docs/audit/pages/recruiter/home-drives.md` (and `home-drives-review.md` 
 | REC-home-drives-45 | S3 | STATE | OPEN |
 | REC-home-drives-46 | S3 | COPY | OPEN |
 | REC-home-drives-47 | S3 | STATE | OPEN |
-| REC-home-drives-50 | S3 | COPY | OPEN |
-| REC-home-drives-55 | S3 | COPY | OPEN |
+| REC-home-drives-50 | S3 | COPY | FIXED-ON-MAIN |
+| REC-home-drives-55 | S3 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-R02 | S3 | SIDE-EFFECT | UNCONFIRMED |
 | REC-home-drives-R03 | S3 | PERMISSION | OPEN |
 | REC-home-drives-R04 | S3 | STATE | FIXED-ON-MAIN |
 | REC-home-drives-R05 | S3 | A11Y | FIXED-ON-MAIN |
 | REC-home-drives-R06 | S3 | STATE | FIXED-ON-MAIN |
 | REC-home-drives-09 | S4 | MISSING-ACTION | UNCONFIRMED |
-| REC-home-drives-11 | S4 | COPY | OPEN |
+| REC-home-drives-11 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-19 | S4 | PERMISSION | UNCONFIRMED |
 | REC-home-drives-32 | S4 | STATE | OPEN |
 | REC-home-drives-52 | S4 | MISSING-COLUMN | OPEN |
 | REC-home-drives-53 | S4 | STATE | OPEN |
-| REC-home-drives-54 | S4 | COPY | OPEN |
+| REC-home-drives-54 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-56 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| REC-home-drives-R07 | S4 | COPY | OPEN |
+| REC-home-drives-R07 | S4 | COPY | FIXED-ON-MAIN |
 | REC-home-drives-R08 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 
 ## faculty/courses (43: FIXED-ON-MAIN 33, OPEN 8, WRONG 2)
@@ -232,7 +232,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-25 | S3 | STATE | FIXED-ON-MAIN |
 | FAC-courses-26 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-courses-27 | S3 | STATE | OPEN |
-| FAC-courses-31 | S3 | COPY | OPEN |
+| FAC-courses-31 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-courses-34 | S3 | RESPONSIVE | FIXED-ON-MAIN |
 | FAC-courses-R01 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | FAC-courses-R02 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -246,13 +246,13 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-19 | S4 | MISSING-FIELD | OPEN |
 | FAC-courses-21 | S4 | MISSING-ACTION | OPEN |
 | FAC-courses-28 | S4 | MISSING-FIELD | WRONG |
-| FAC-courses-29 | S4 | COPY | OPEN |
+| FAC-courses-29 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-courses-30 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-courses-32 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
 | FAC-courses-33 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-courses-35 | S4 | A11Y | FIXED-ON-MAIN |
-| FAC-courses-R05 | S4 | STATE | OPEN |
-| FAC-courses-R06 | S4 | STATE | OPEN |
+| FAC-courses-R05 | S4 | STATE | FIXED-ON-MAIN |
+| FAC-courses-R06 | S4 | STATE | FIXED-ON-MAIN |
 
 ## Notes (blockers, one line each)
 - LEARNER-placements-20 BLOCKED: secure resume upload, preview and attachment receipts await private bucket and malware scanning.
