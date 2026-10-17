@@ -16,6 +16,8 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import { collegeIdSchema } from "@/modules/academics/validation";
 import { loadProjectCollegeScope } from "./scope";
 import {
@@ -277,6 +279,12 @@ export async function createProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_CREATED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Project template created",metadata:{version:1,source:"manual"},
+        groupKey:"template:"+template.id,
+      });
       return { template, version };
     });
   } catch (error) {
@@ -344,6 +352,13 @@ export async function reviseProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_REVISED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Project template revised",
+        metadata:{previousVersion:input.expectedVersion,newVersion:template.currentVersion,
+         changeNote:input.changeNote??null},groupKey:"template:"+template.id,
+      });
       return { template, version };
     });
   } catch (error) {
@@ -451,6 +466,11 @@ export async function publishProjectTemplate(
         ),
       );
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_PUBLISHED,
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template published",metadata:{previousStatus:template.status,publishedVersion:published.publishedVersion,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
+    });
     return published;
   });
 }
@@ -494,6 +514,11 @@ export async function unpublishProjectTemplate(
       )
       .returning();
 
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNPUBLISHED,
+      subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+      summary:"Project template unpublished",metadata:{previousStatus:template.status,previousPublishedVersion:template.publishedVersion},groupKey:"template:"+templateId,
+    });
     return draft!;
   });
 }
@@ -579,6 +604,13 @@ export async function duplicateProjectTemplate(
         })
         .returning();
 
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_DUPLICATED,
+        subjectType:"project_template",subjectId:template.id,subjectLabel:template.title,
+        summary:"Project template duplicated",
+        metadata:{sourceTemplateId:templateId,sourceVersion:source.currentVersion,
+          createdVersion:template.currentVersion},groupKey:"template:"+template.id,
+      });
       return { template, version };
     });
   } catch (error) {
