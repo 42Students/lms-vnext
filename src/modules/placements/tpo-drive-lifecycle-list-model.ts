@@ -19,7 +19,12 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   display:z.enum(["DETAILED","COMPACT"]).default("DETAILED"),
   sort:z.enum(["COMPANY","DEADLINE_ASC","DEADLINE_DESC"]).default("COMPANY"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
-}).strict();
+}).strict().superRefine((query,ctx)=>{
+ if(query.minApplied!==undefined&&query.maxApplied!==undefined&&query.maxApplied<query.minApplied)
+  ctx.addIssue({code:"custom",path:["maxApplied"],message:"Maximum applied cannot be below minimum applied"});
+ if(query.minOffers!==undefined&&query.maxOffers!==undefined&&query.maxOffers<query.minOffers)
+  ctx.addIssue({code:"custom",path:["maxOffers"],message:"Maximum offers cannot be below minimum offers"});
+});
 export const TPO_DRIVE_PAGE_SIZE=25;
 export function tpoDriveLifecyclePage(total:number,requestedPage:number){
  const totalPages=Math.max(1,Math.ceil(total/TPO_DRIVE_PAGE_SIZE));
