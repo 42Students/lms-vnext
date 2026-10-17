@@ -282,6 +282,13 @@ export function LearnerFinalDeliveryControl({
           </ul>}
         </section>
         {review?.feedback?<p className="mb-3 text-sm text-body">Mentor review: {review.status}. {review.feedback}</p>:null}
+        <p className="mb-3 text-xs text-body" role="status" aria-live="polite">
+          {!draft?"Save draft to enable autosave.":
+            autosaveStatus==="saving"?"Saving…":
+            autosaveStatus==="saved"?"Draft saved.":
+            autosaveStatus==="failed"?"Autosave failed. Save draft to retry.":
+            "Changes autosave after you stop typing."}
+        </p>
         <form
           onSubmit={save}
           className="grid gap-4"
