@@ -39,6 +39,7 @@ export async function getPlacementTpoOperations(
   context: RequestContext,
   collegeIdInput: string,
   now: Date = new Date(),
+  staleApplicationDays = 7,
 ) {
   const collegeId =
     createPlacementJobInputSchema.shape.collegeId.parse(
@@ -523,6 +524,22 @@ export async function getPlacementTpoOperations(
       "JOINING_OUTCOME_PENDING",
       acceptedPendingJoining,
     );
+    if (job.status === "PUBLISHED") {
+      const stale = jobApplications.filter(({application,screening}) =>
+        (screening.status === "PENDING" || screening.status === "HOLD") &&
+        now.getTime()-application.submittedAt.getTime() >= Math.max(1,Math.min(90,staleApplicationDays))*86400000).length;
+      pushQueue("HIGH","STALE_APPLICATIONS",stale);
+      if(shortlisted > 0 && jobRounds.some(round=>round.kind==="INTERVIEW") &&
+        !jobRounds.some(round=>round.kind==="INTERVIEW" && round.status==="SCHEDULED")){
+        pushQueue("MEDIUM","INTERVIEW_UNSCHEDULED",shortlisted);
+      }
+      if(job.applicationDeadline && job.openings &&
+        job.applicationDeadline.getTime()>now.getTime() &&
+        job.applicationDeadline.getTime()-now.getTime()<=7*86400000 &&
+        jobApplications.length < Math.ceil(job.openings/2)){
+        pushQueue("MEDIUM","CLOSING_SOON_LOW_CONVERSION",jobApplications.length || 1);
+      }
+    }
 
     const nextScheduledRound =
       jobRounds
