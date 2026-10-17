@@ -50,7 +50,7 @@ export function LearnerApplicationsBrowse({
 }: {
   items: readonly LearnerPlacementJourneyItem[];
   scheduledRounds?:readonly {applicationId:string;roundId:string;roundName:string;
-    scheduledAt:string|null;mode:string;venue:string|null;isRescheduled:boolean}[];
+    scheduledAt:string|null;mode:string;venue:string|null;isRescheduled:boolean;booked:boolean}[];
   interviewLinks?:readonly OwnApplicationInterviewLink[];
   assessmentLinks?:readonly OwnApplicationAssessmentLink[];
 }) {
@@ -115,7 +115,7 @@ export function LearnerApplicationsBrowse({
     const requested=learnerWithdrawalMode({
       applicationStatus:withdrawTarget.applicationStatus,
       screeningStatus:withdrawTarget.screening.status,
-      scheduledRoundCount:scheduledRounds.filter(r=>r.applicationId===withdrawTarget.applicationId).length,
+      scheduledRoundCount:scheduledRounds.filter(r=>r.applicationId===withdrawTarget.applicationId&&r.booked).length,
     })==="REQUEST";
     setWithdrawPending(true);
     setWithdrawError(null);
