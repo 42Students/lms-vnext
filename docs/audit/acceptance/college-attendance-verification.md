@@ -37,3 +37,9 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | COL-attendance-03 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-03` |
 | COL-attendance-05 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-05` |
 | COL-attendance-12 | DONE — sub-contract only | `tests/unit/chat3-college-round12-parity-contracts.test.ts` / `COL-attendance-12` |
+
+## Chat-3 round 12 — COL-attendance-09 functional data fix
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| COL-attendance-09 | PARTIAL (data fix committed; runtime unverified) | `src/modules/attendance/admin-service.ts` now includes ended course deliveries and projects `isPast` from actual endedAt, ordered current first; `src/components/attendance/admin-attendance-workspace.tsx` appends `· past` only for ended deliveries and continues to pass the exact deliveryId. `tests/unit/college-attendance-gap-closure.test.ts` named `COL-attendance-09 past-term options use persisted ended-at facts, active first and delivery-specific selection`. Archived courses/sections still excluded by existing ACTIVE predicates; full historic roster parity is not claimed. |
