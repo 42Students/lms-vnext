@@ -118,4 +118,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-35 |");
  });
 
+ it("REC-calendar-messages-profile-36 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("eyebrow=\"Recruiter\"");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("Your profile");
+  expect(src("src/app/(authenticated)/hr/company/page.tsx")).toContain("description={\"Your work with \" + result.grant.collegeName}");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-36 |");
+ });
+
 });
