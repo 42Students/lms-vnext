@@ -11,5 +11,10 @@ describe("Recruiter CSV audit completeness",()=>{
   expect(service).toContain("actorUserId:context.user.id");
   expect(service).toContain("const counts=summarizeTpoLeadImport(rows)");
   expect(service).not.toContain("metadata:{csv");
+  expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
+  expect(service).toContain('eq(membershipRoles.role,"TPO")');
+  expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(service).toContain('title:"Recruiter leads imported"');
+  expect(service).toContain("inAppNotifications");
  });
 });
