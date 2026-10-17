@@ -1,0 +1,79 @@
+# Out-of-process, runs when the web pods are dead. Database must remain reachable.
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: vnext-health-watch-script, namespace: lms-dev-2026 }
+data:
+  health-watch.sh: |
+    #!/bin/sh
+    set -eu
+    # This watcher needs a network-reachable DATABASE_URL, not a web-pod Unix socket.
+    : "${DATABASE_URL:?Health watch database URL is required}"
+    db() { psql "$DATABASE_URL" -X -A -t -v ON_ERROR_STOP=1 -c "$1"; }
+    send() {
+      [ -n "${TELEGRAM_ALERT_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_ALERT_CHAT_ID:-}" ] || return 1
+      wget -q -T 5 -O /dev/null --post-data="chat_id=$TELEGRAM_ALERT_CHAT_ID&text=$1" \
+        "https://api.telegram.org/bot$TELEGRAM_ALERT_BOT_TOKEN/sendMessage" >/dev/null 2>&1
+    }
+    db "INSERT INTO scheduled_job_leases(job_name,locked_until,locked_by,fence)
+       VALUES('vnext-health-watch',now(),'HEALTHY',1) ON CONFLICT DO NOTHING" >/dev/null
+    prior="$(db "SELECT locked_by FROM scheduled_job_leases WHERE job_name='vnext-health-watch'")"
+    if wget -q -T 5 -O /dev/null "$READY_URL" &&
+       wget -q -T 5 -O /dev/null "$LOGIN_URL"; then
+      if [ "$prior" = DOWN ]; then
+        send "vNext%20is%20back" || exit 1
+      fi
+      db "UPDATE scheduled_job_leases SET locked_by='HEALTHY',fence=1,updated_at=now()
+         WHERE job_name='vnext-health-watch'" >/dev/null
+    else
+      case "$prior" in
+        HEALTHY)
+          db "UPDATE scheduled_job_leases SET locked_by='FAILING',fence=1,updated_at=now()
+             WHERE job_name='vnext-health-watch'" >/dev/null ;;
+        FAILING)
+          send "vNext%20is%20not%20responding%20%28ready%20check%20failed%29" || exit 1
+          db "UPDATE scheduled_job_leases SET locked_by='DOWN',fence=2,updated_at=now()
+             WHERE job_name='vnext-health-watch'" >/dev/null ;;
+        DOWN) : ;;
+        *) exit 1 ;;
+      esac
+    fi
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: vnext-health-watch, namespace: lms-dev-2026 }
+spec:
+  schedule: "* * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: watch
+              image: postgres:16-alpine
+              command: ["/bin/sh", "/etc/health-watch/health-watch.sh"]
+              envFrom:
+                - secretRef: { name: vnext-integrations }
+              env:
+                - name: DATABASE_URL
+                  valueFrom:
+                    secretKeyRef: { name: vnext-db, key: DATABASE_URL }
+                - { name: READY_URL, value: "http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/ready" }
+                - { name: LOGIN_URL, value: "http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/" }
+              volumeMounts:
+                - { name: script, mountPath: /etc/health-watch, readOnly: true }
+              resources:
+                requests: { cpu: 50m, memory: 64Mi }
+                limits: { cpu: 200m, memory: 128Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
+          volumes:
+            - name: script
+              configMap: { name: vnext-health-watch-script, defaultMode: 0555 }
