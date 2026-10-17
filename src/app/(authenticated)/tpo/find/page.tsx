@@ -36,7 +36,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
    <section className="space-y-2"><h2 className="font-semibold">Students ({named.students.length})</h2>
     {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="space-y-2">
       {named.students.map(s=><li key={s.id} className="rounded border border-border p-3 text-sm">
-       <Link href={"/tpo/students?search="+encodeURIComponent(s.name??"")} className="text-primary-text underline">{s.name??"Student"}</Link>
+       <Link href={"/tpo/students?search="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-primary-text underline">{s.name??"Student"}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>
