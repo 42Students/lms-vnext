@@ -1,0 +1,20 @@
+import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
+import {hrTodayLiveDriveRows} from "@/modules/placements/hr-today-live-drive-model";
+describe("Final sprint recruiter live drive highlight",()=>{
+ it("REC-home-drives-07 live drive highlight counts only college-shared applicants",()=>{
+  const rows=[
+   {collegeId:"college",companyId:"company",job:{id:"late",title:"Later",status:"PUBLISHED",archivedAt:null,applicationDeadline:new Date("2099-08-10T00:00:00Z")}},
+   {collegeId:"college",companyId:"company",job:{id:"early",title:"Earlier",status:"PUBLISHED",archivedAt:null,applicationDeadline:new Date("2099-08-02T00:00:00Z")}},
+   {collegeId:"college",companyId:"company",job:{id:"closed",title:"Closed",status:"CLOSED",archivedAt:null,applicationDeadline:null}},
+   {collegeId:"foreign",companyId:"company",job:{id:"foreign",title:"Foreign",status:"PUBLISHED",archivedAt:null,applicationDeadline:null}},
+  ];
+  expect(hrTodayLiveDriveRows(rows,"college","company").map(row=>row.job.id)).toEqual(["early","late"]);
+  const source=readFileSync("src/app/(authenticated)/hr/home/page.tsx","utf8");
+  expect(source).toContain("recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id))");
+  expect(source).toContain("mostSharedLiveId");
+  expect(source).toContain("sharedApplicants");
+  expect(source).toContain("No shortlisted applicants have been shared yet.");
+  expect(source).toContain("Applications close ");
+ });
+});
