@@ -4,6 +4,7 @@ import {useState} from "react";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
 import {TpoStudentOutcomePill} from "./tpo-student-outcome-pill";
 import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
+import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
@@ -63,7 +64,18 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
  ];
- return <div className="space-y-3">
+ return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
+  onKeyDown={event=>{
+   const target=event.target;
+   if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
+    event.preventDefault();setNoteSelection(rows.slice(0,100).map(row=>row.membershipId));
+   }
+   if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
+    event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
+    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen)).catch(()=>{});
+   }
+  }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected on this visible page.</p>
