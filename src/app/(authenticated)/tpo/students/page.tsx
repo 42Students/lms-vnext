@@ -39,6 +39,7 @@ type SearchParams = {
   branchId?: string | string[];
   programId?: string | string[];
   afterCollege?:string|string[];
+  profileStatus?:string|string[];
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
@@ -66,6 +67,7 @@ function studentsHref(
     branchId?: string;
     programId?:string;
     afterCollege?:string;
+    profileStatus?:string;
     classId?:string;
     batchId?: string;
     search?: string;
@@ -86,6 +88,7 @@ function studentsHref(
   }
   if(filters.programId)params.set("programId",filters.programId);
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
+  if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
   if(filters.classId)params.set("classId",filters.classId);
   if(filters.batchId)params.set("batchId",filters.batchId);
 
@@ -152,6 +155,7 @@ export default async function TpoStudentsPage({
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
     afterCollege:first(raw.afterCollege)||undefined,
+    profileStatus:first(raw.profileStatus)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
@@ -231,13 +235,15 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
+    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
       branchId: query.branchId,
       programId:query.programId,
       afterCollege:query.afterCollege,
+    profileStatus:query.profileStatus,
+      profileStatus:query.profileStatus,
       classId:query.classId,
       search: query.search,
     },
