@@ -93,3 +93,5 @@ export * from "./placement-company-share-selection";
 export * from "./lesson-content-materials";
 
 export * from "./placement-public-page-content";
+
+export * from "./recruiter-message-email";
