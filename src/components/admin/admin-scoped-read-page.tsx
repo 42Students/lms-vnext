@@ -33,6 +33,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const data=await loader(parsed.data);
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
+  {applicationFilters?<p role="status" className="text-sm text-muted-foreground">Filters apply within your selected college. {data.total} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
@@ -65,6 +66,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       <select name="channel" defaultValue={data.query.channel} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </select>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Source
+     <select name="source" defaultValue={data.query.source} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+       {["ALL","INTERNAL","EXTERNAL"].map(s=><option value={s} key={s}>{s==="ALL"?"All sources":s}</option>)}
+     </select>
     </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
      <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -112,6 +118,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="status" value={data.query.status} />
     {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
     {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}

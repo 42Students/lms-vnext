@@ -25,7 +25,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {choices?<section id="register-student" className="space-y-2"><h2 className="text-lg font-semibold">Register student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
-  description="Read-only learner memberships in the selected college, without private contact details. Use the scoped membership detail for authorized contact."
+  description="Selected-college learner roster with roll number, assigned class and authorized administrative contact fields. Account status changes stay scoped to college membership."
   searchParams={searchParams}
   renderBulkActions={rows=><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/>}
   renderRowActions={row=><div className="flex flex-wrap items-start gap-3"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<CollegePersonEditAction membershipId={row.id} kind="LEARNER"/>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;

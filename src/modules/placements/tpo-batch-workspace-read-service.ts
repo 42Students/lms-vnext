@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, desc, eq, inArray, or, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { cohorts, collegeMemberships, departments, learnerProgramEnrollments, learnerProfiles, membershipRoles, programs, sectionEnrollments, sections, users } from "@/db/schema";
@@ -57,10 +57,13 @@ export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
   note:stored?.note??null,expectedVersion:stored?.updatedAt.toISOString()??"none"};
  return {batch,collegeId,ready,lifecycle:lifecycle??null,decision};
 }
-export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1) {
+export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPage:unknown=1,rawSearch:unknown="") {
  const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);
+ const search=z.string().trim().max(100).parse(rawSearch);
+ const term="%"+search.replace(/[\\%_]/g,"\\ const {batch,collegeId}=await getTpoBatch(ctx,rawId);const page=pageSchema.parse(rawPage);")+"%";
  const filter=and(eq(learnerProgramEnrollments.cohortId,batch.id),eq(learnerProgramEnrollments.status,"ACTIVE"),
-  eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"));
+  eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+  search?or(ilike(users.displayName,term),ilike(learnerProfiles.rollNumber,term)):undefined);
  const roster=()=>getDb().select({membershipId:collegeMemberships.id,name:users.displayName,rollNumber:learnerProfiles.rollNumber,enrollmentId:learnerProgramEnrollments.id})
  .from(learnerProgramEnrollments).innerJoin(collegeMemberships,eq(collegeMemberships.id,learnerProgramEnrollments.membershipId))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))

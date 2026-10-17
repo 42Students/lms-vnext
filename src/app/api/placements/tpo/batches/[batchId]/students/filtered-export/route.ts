@@ -15,7 +15,7 @@ export async function GET(request:Request,{params}:{params:Promise<{batchId:stri
   const page=pageSchema.parse(raw.page??undefined);
   const view=parseBatchStudentSearchParams(raw);
   if(!view.success)throw new Error("Invalid batch student filters");
-  const records=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,page);
+  const records=await getTpoBatchStudentRegistrations(await getCurrentRequestContext(),batchId,page,view.data.q);
   const chosen=selectTpoBatchStudentView(records.students,view.data,records.registrationAvailable);
   return new Response("\uFEFF"+serializeTpoBatchStudentViewCsv(chosen),{headers:{
    "Content-Type":"text/csv; charset=utf-8",

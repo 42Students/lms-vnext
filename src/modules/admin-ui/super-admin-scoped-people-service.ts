@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,eq,exists,ilike,or} from "drizzle-orm";
+import {and,asc,count,eq,exists,ilike,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
 import {cohorts,colleges,collegeMemberships,departments,facultyProfiles,learnerProfiles,
@@ -30,11 +30,13 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   joinedAt:collegeMemberships.createdAt,
   name:aliasedColumn(users.displayName,"admin_role_user_name"),
   platformStatus:users.platformStatus,
+  email:users.email,phone:users.phoneE164,
   collegeName:aliasedColumn(colleges.name,"admin_role_college_name"),
   departmentName:departments.name,
   employmentType:facultyProfiles.employmentType,
   academicTitle:facultyProfiles.academicTitle,
   rollNumber:learnerProfiles.rollNumber,
+  className:sql<string|null>`(select s.name from section_enrollments se join learner_program_enrollments e on e.id=se.learner_enrollment_id join sections s on s.id=se.section_id where e.membership_id=${collegeMemberships.id} and se.status='ACTIVE' and e.status='ACTIVE' order by se.created_at desc limit 1)`.as("admin_learner_class"),
  }).from(collegeMemberships)
  .innerJoin(colleges,and(eq(colleges.id,collegeMemberships.collegeId),
   eq(colleges.id,selected.collegeId),
@@ -52,7 +54,8 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   enrollmentFilter,
   query.q?or(ilike(users.displayName,scopedSearchLike(query.q)),
    ilike(users.email,scopedSearchLike(query.q)),
-   role==="LEARNER"?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined):undefined,
+   role==="LEARNER"?ilike(learnerProfiles.rollNumber,scopedSearchLike(query.q)):undefined,
+   ilike(users.phoneE164,scopedSearchLike(query.q))):undefined,
  )).as("super_admin_role_directory");
  const [counts,rows]=await Promise.all([
   db.select({total:count()}).from(source),
@@ -69,9 +72,11 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
     "Department: "+(row.departmentName??"Not assigned"),
     "Type: "+(row.employmentType??"Not set"),
     "Academic title: "+(row.academicTitle??"Not set"),
-   ]:["Roll number: "+(row.rollNumber??"Not recorded")]),
+    "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
+   ]:["Roll number: "+(row.rollNumber??"Not recorded"),"Class: "+(row.className??"Not assigned"),
+     "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded")]),
    "Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
-   "Private contact details are not shown in this directory.",
+   "Contact shown only within selected college administrative scope.",
   ],
   href:`/admin/people/directory/${encodeURIComponent(row.id)}`,
  }))};
