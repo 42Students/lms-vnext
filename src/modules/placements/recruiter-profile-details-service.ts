@@ -5,7 +5,7 @@ import {users,placementRecruiterProfiles,placementRecruiterPublicContacts} from 
 import {type RequestContext,hasActiveRecruiter} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
-import {joinHrRecruiterName} from "./hr-recruiter-name-fields-model";
+import {joinHrRecruiterName,sameHrNameVersion} from "./hr-recruiter-name-fields-model";
 import {sameRecruiterProfileVersion,normalizeRecruiterDesignation} from "./recruiter-designation-model";
 import {recruiterProfileDetailsPatchSchema} from "./recruiter-profile-details-model";
 import {placementTableExists} from "./staged-tables";
@@ -34,7 +34,7 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
     eq(placementRecruiterProfiles.companyId,context.recruiter!.companyId)))
    .for("update").limit(1);
   if(!person)throw new AuthorizationError("identity.self.manage");
-  if(Date.parse(input.expectedUserUpdatedAt)!==person.userUpdatedAt.getTime()||
+  if(!sameHrNameVersion(person.userUpdatedAt,input.expectedUserUpdatedAt)||
    !sameRecruiterProfileVersion(person.profileUpdatedAt,input.expectedProfileUpdatedAt))
    throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
   const [existing]=contactReady?await tx.select({phone:placementRecruiterPublicContacts.phoneDigits})
