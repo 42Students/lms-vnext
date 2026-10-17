@@ -9,7 +9,8 @@ import {
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   requiresStudentSectionMove,
@@ -26,7 +27,8 @@ export class CollegeStudentSectionMoveError extends Error {
   }
 }
 
-function ownAdmin(context: RequestContext) {
+async function ownAdmin(context: RequestContext) {
+  if(isSuperAdmin(context))return resolveActingCollege(context,"academics.manage");
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
     !can(context, "academics.manage", {
@@ -91,7 +93,7 @@ async function loadCurrent(tx: Parameters<Parameters<ReturnType<typeof getDb>["t
 
 export async function collegeStudentSectionOptions(context: RequestContext, rawMembershipId: unknown) {
   const membershipId = studentSectionMemberIdSchema.parse(rawMembershipId);
-  const own = ownAdmin(context);
+  const own = await ownAdmin(context);
   return getDb().transaction(async tx => {
     const { enrollment, placement } = await loadCurrent(tx, membershipId, own.collegeId);
     const options = await tx.select({
