@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { recruiterInvitePreviewDisposition,RECRUITER_INVITE_LOAD_ERROR_HEADING } from "@/modules/placements/recruiter-invite-preview-disposition-model";
 
 type Invite = {
@@ -33,34 +34,23 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    fetch("/api/public/recruiter-invite/" + encodeURIComponent(token), {
-      cache: "no-store",
-      signal: controller.signal,
-    })
-      .then(async response => {
-        const data = await response.json() as {
-          invite?: Invite;
-          error?: string;
-        };
-        const outcome=recruiterInvitePreviewDisposition(response.status,Boolean(data.invite));
-        if(outcome!=="ready") {
-          setState(outcome);
-          return;
-        }
-        setInvite(data.invite ?? null);
-        setName(data.invite?.contactName??"");
-        setDesignation(data.invite?.designation??"");
-        setState("ready");
-        // T-S2-03: GET is read-only. A same-origin POST records first open.
-        // Best-effort telemetry must not block the visitor's invitation.
-        void fetch(
-          "/api/public/recruiter-invite/" + encodeURIComponent(token) + "/opened",
-          { method: "POST", credentials: "same-origin", signal: controller.signal },
-        ).catch(() => undefined);
-      })
-      .catch(() => {
-        if (!controller.signal.aborted) setState("load_error");
-      });
+    apiFetch<{invite?:Invite}>("/api/public/recruiter-invite/" + encodeURIComponent(token), {
+      cache:"no-store",signal:controller.signal,
+    }).then(data=>{
+      if(controller.signal.aborted)return;
+      const outcome=recruiterInvitePreviewDisposition(data.invite?200:404,Boolean(data.invite));
+      if(outcome!=="ready"){setState(outcome);return;}
+      setInvite(data.invite??null);
+      setName(data.invite?.contactName??"");
+      setDesignation(data.invite?.designation??"");
+      setState("ready");
+      void apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/opened",{
+        method:"POST",credentials:"same-origin",signal:controller.signal,
+      }).catch(()=>undefined);
+    }).catch(error=>{
+      if(controller.signal.aborted)return;
+      setState(error instanceof FriendlyFetchError && (error.status===404||error.status===410)?"invalid":"load_error");
+    });
     return () => controller.abort();
   }, [token,retrySequence]);
 
@@ -68,23 +58,14 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     setBusy(true);
     setActionError("");
     try {
-      const response = await fetch(
-        "/api/public/recruiter-invite/" +
-          encodeURIComponent(token) +
-          "/" +
-          kind,
-        { method: "POST", credentials: "same-origin" },
+      await apiFetch<void>(
+        "/api/public/recruiter-invite/"+encodeURIComponent(token)+"/"+kind,
+        {method:"POST",credentials:"same-origin"},
       );
-      if (!response.ok) {
-        if (response.status === 404) {
-          setState("invalid");
-          return;
-        }
-        throw new Error("request failed");
-      }
       setState("declined");
-    } catch {
-      setActionError("That did not work. Please try again.");
+    } catch(error) {
+      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
+      else setActionError(error instanceof Error?error.message:"That did not work. Please try again.");
     } finally {
       setBusy(false);
     }
@@ -101,36 +82,31 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     }
     setBusy(true);setActionError("");
     try{
-      const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
+      await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
         method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
         body:JSON.stringify({code,name,designation,mobile}),
       });
-      if(!response.ok){
-        if(response.status===404){setState("invalid");return;}
-        if(response.status===503)throw new Error("Joining is temporarily unavailable. Ask the placement cell to check verification settings.");
-        throw new Error("That code did not work. Check the latest email or send a new code.");
-      }
       setState("joined");
-    }catch(error){setActionError(error instanceof Error?error.message:"Couldn't join. Please try again.");}
+    }catch(error){
+      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
+      else setActionError(error instanceof FriendlyFetchError && error.status===400
+        ?"That code did not work. Check the latest email or send a new code."
+        :error instanceof Error?error.message:"Couldn't join. Please try again.");
+    }
     finally{setBusy(false);}
   }
   async function sendCode(){
     if(busy)return;
     setBusy(true);setActionError("");
     try{
-      const response=await fetch("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
+      await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
         method:"POST",credentials:"same-origin",
       });
-      if(!response.ok){
-        if(response.status===404){setState("invalid");return;}
-        if(response.status===503)throw new Error("Verification is temporarily unavailable. Ask the placement cell to check email delivery.");
-        if(response.status===429)throw new Error("Too many codes. Please try again later.");
-        throw new Error("We couldn't send the code. Please try again.");
-      }
       setCodeSent(true);
       setCode("");
     }catch(error){
-      setActionError(error instanceof Error?error.message:"We couldn't send the code. Please try again.");
+      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
+      else setActionError(error instanceof Error?error.message:"We couldn't send the code. Please try again.");
     }finally{setBusy(false);}
   }
 

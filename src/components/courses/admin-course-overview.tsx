@@ -91,6 +91,13 @@ export function AdminCourseOverview({
     );
   }
 
+  const activeOfferingCountByCourse=new Map<string,number>();
+  for(const item of workspace.offerings){
+    if(item.status!=="ACTIVE")continue;
+    activeOfferingCountByCourse.set(item.courseId,
+      (activeOfferingCountByCourse.get(item.courseId)??0)+1);
+  }
+
   const courseColumns: DataTableColumn<
     Workspace["courses"][number]
   >[] = [
@@ -120,6 +127,16 @@ export function AdminCourseOverview({
         course.departmentName,
     },
     {
+      key: "dependencies",
+      header: "Dependencies",
+      cell: course=>{
+        const count=activeOfferingCountByCourse.get(course.id)??0;
+        return <span title="Active Course Offerings to archive before this Course can be archived">
+          {count} active offering{count===1?"":"s"}
+        </span>;
+      },
+    },
+    {
       key: "status",
       header: COLLEGE_COURSES_COPY.studentsSeeIt,
       cell: (course) => (
@@ -145,6 +162,7 @@ export function AdminCourseOverview({
       cell: (course) => (
         <CourseActions
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
+          activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
           course={{
             id: course.id,
             name: course.name,

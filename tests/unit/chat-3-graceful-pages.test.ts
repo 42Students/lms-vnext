@@ -6,6 +6,41 @@ const courseError=()=>load("src/app/(authenticated)/college/courses/offerings/[o
 const attendance=()=>load("src/components/attendance/admin-attendance-workspace.tsx");
 const profile=()=>load("src/components/profile/learner-profile-workspace.tsx");
 describe("Chat-3 graceful-operation coverage for touched pages",()=>{
+ it("GR-04 course, college, attendance, profile and recruiter actions use guarded network and JSON parsing",()=>{
+  for(const path of [
+   "src/components/courses/admin-course-actions.tsx",
+   "src/components/courses/admin-course-create-panel.tsx",
+   "src/components/courses/admin-course-display-editor.tsx",
+   "src/components/college/college-faculty-assignment-actions.tsx",
+   "src/components/attendance/admin-attendance-workspace.tsx",
+   "src/components/admin/organization-create-form.tsx",
+   "src/components/admin/college-create-form.tsx",
+   "src/components/profile/learner-profile-workspace.tsx",
+   "src/components/tpo/recruiter-invite-landing.tsx",
+   "src/components/placements/placement-job-create-form.tsx",
+   "src/components/college/college-student-register-form.tsx",
+   "src/components/college/college-student-csv-import.tsx",
+   "src/components/college/college-faculty-csv-import.tsx",
+   "src/components/admin/college-signin-method-form.tsx",
+  ])expect(load(path)).toContain("apiFetch");
+ });
+ it("GR-30 attendance correction uses the shared ref-locked guarded action",()=>{
+  expect(attendance()).toContain("useGuardedAction");
+  expect(attendance()).toContain("correctionGuard.run(async()=>");
+ });
+ it("GR-33 TPO-drives-42 preflight refuses missing deadline and pay before first write",()=>{
+  const drive=load("src/components/placements/placement-job-create-form.tsx");
+  expect(drive).toContain("Set a future application deadline before publishing.");
+  expect(drive).toContain("Add a CTC figure or stipend for at least one role before publishing.");
+ });
+ it("GR-60 SA-tenants-modules-09 organization and college forms retain drafts on failed writes",()=>{
+  const a=load("src/components/admin/organization-create-form.tsx");
+  const b=load("src/components/admin/college-create-form.tsx");
+  expect(a).toContain("useFormDraft");
+  expect(b).toContain("useFormDraft");
+  expect(a).toContain("Draft restored");
+  expect(b).toContain("Draft restored");
+ });
  it("GR-19 course detail, college attendance and learner profile show loading skeletons",()=>{
   for(const path of [
    "src/app/(authenticated)/college/courses/offerings/[offeringId]/loading.tsx",
@@ -51,12 +86,12 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
  });
  it("GR-90 no raw error code in corrected attendance alert and course load error summary",()=>{
   expect(attendance()).toContain('role="alert"');
-  expect(attendance()).toContain("Attendance could not be corrected. Check the record and retry.");
+  expect(attendance()).toContain('apiFetch<void>(');
   expect(courseError()).toContain('role="alert"');
   expect(courseError()).not.toContain("{error.message}");
   expect(attendance()).not.toContain("body?.error");
   expect(attendance()).not.toContain("body?.message");
-  expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("return courseApiError(response)");
+  expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("apiFetch<BulkResult>");
  });
  it("GR-91 Retry is keyboard-accessible in all three role error screens",()=>{
   expect(courseError()).toContain("<Button onClick={reset}>Retry</Button>");

@@ -1,5 +1,7 @@
 "use client";
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { FACULTY_CSV_COLUMNS } from "@/modules/people/college-faculty-csv-columns";
 import { neutralStudentCsvCell } from "@/modules/people/college-student-csv-model";
@@ -13,19 +15,18 @@ export function CollegeFacultyCsvImport(){
   const [report,setReport]=useState<Report|null>(null);
   const [error,setError]=useState("");
   const [confirmed,setConfirmed]=useState(false);
-  const [pending,start]=useTransition();
+  const {pending,run:guardRun}=useGuardedAction({busyLabel:"Importing..."});
   async function submit(action:"PREVIEW"|"IMPORT"){
     setError("");
-    const response=await fetch("/api/college/faculty/import",{
+    const payload=await apiFetch<{report:Report}>("/api/college/faculty/import",{
       method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify({action,csv,confirm:action==="IMPORT"?confirmed:false}),
     });
-    const payload=await response.json().catch(()=>null);
-    if(!response.ok||!payload?.report)throw Error(payload?.error??"CSV import failed");
+    if(!payload?.report)throw Error("CSV import could not be completed. Please try again.");
     setReport(payload.report as Report);
     if(action==="IMPORT"){setConfirmed(false);router.refresh();}
   }
-  const run=(action:"PREVIEW"|"IMPORT")=>start(async()=>{
+  const run=(action:"PREVIEW"|"IMPORT")=>void guardRun(async()=>{
     try{await submit(action);}catch(reason){
       setError(reason instanceof Error?reason.message:"Import unavailable");
     }
