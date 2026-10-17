@@ -119,8 +119,8 @@ export function FacultyCourseRoster({
   if (learners.length === 0) {
     return (
       <EmptyState
-        title="No learners in this Section"
-        description="Learners appear here after an active Section enrollment or active elective-group membership grants this exact Course delivery."
+        title="No students yet"
+        description="Students will appear here once they are enrolled in this class."
       />
     );
   }
@@ -194,7 +194,7 @@ export function FacultyCourseRoster({
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="No matching students"
+          title="No students match this search"
           description="Try another name, roll number, phone number or email."
         />
       ) : (
