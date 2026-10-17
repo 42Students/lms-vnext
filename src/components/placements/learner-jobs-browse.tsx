@@ -175,7 +175,7 @@ export function LearnerJobsBrowse({
               })}
               className="h-4 w-4 accent-[var(--lms-primary)]"
             />
-            Eligible to apply only
+            Eligible only
           </label>
           <label className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-body">
             <input
@@ -186,7 +186,7 @@ export function LearnerJobsBrowse({
               })}
               className="h-4 w-4 accent-[var(--lms-primary)]"
             />
-            Closing within seven days
+            Closing in 7 days
           </label>
           <label className="ml-auto inline-flex min-h-10 items-center gap-2 text-sm text-body">
             Sort by
@@ -196,7 +196,7 @@ export function LearnerJobsBrowse({
               className="min-h-10 rounded-md border border-border bg-surface px-3 text-sm text-foreground">
               <option value="deadline">Deadline soonest</option>
               <option value="newest">Newest first</option>
-              <option value="ctc">Highest pay</option>
+              <option value="ctc">Highest CTC</option>
               <option value="title">Role A–Z</option>
             </select>
           </label>
