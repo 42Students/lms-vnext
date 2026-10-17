@@ -65,3 +65,10 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-55 | DONE source | `src/app/(authenticated)/tpo/reports/page.tsx` catches failed headline snapshot reads with explicit nonzero-inference warning and Retry link; `tests/unit/chat9-tpo-report-snapshot-error.test.ts` — `TPO-calendar-reports-55 never presents an empty placement snapshot as a successful zero and exposes Retry`. Test not run. |
 
 | TPO-calendar-reports-25 | OPEN | Week hour buttons already keyboard-focusable; this pass restores focus to the triggering hour on Escape, cancel or save. `tests/unit/chat9-tpo-calendar-draft-and-mobile.test.ts` — `TPO-calendar-reports-25 returns keyboard focus to the activated hour after Escape, cancel or successful create`. Existing follow-up Enter-to-Move parity remains. |
+
+## Round 5 reconciliation for remaining OPEN IDs
+| TPO-calendar-reports-38 | OPEN | Gallery subtitle already covered by `tests/unit/chat9-tpo-reports-legacy-copy.test.ts`; individual report descriptions not verified. |
+| TPO-calendar-reports-57 | OPEN | Seasonless multi-season report aggregation remains absent. Need all-report tenant-scoped service design. |
+| TPO-calendar-reports-22 | OPEN | `src/app/(authenticated)/tpo/calendar/error.tsx` shows retry and no fabricated counts, but no last-good cached snapshot or partial-data notice. |
+| TPO-calendar-reports-25 | OPEN | Hour keyboard Add and focus restore are source-covered; existing follow-up Enter-to-Move absent. |
+| TPO-calendar-reports-53 | OPEN | `src/app/(authenticated)/tpo/reports/error.tsx` retries safely, but stale-refresh, unknown slug and per-filter copy are not all paritied. |
