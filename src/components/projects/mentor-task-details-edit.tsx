@@ -23,6 +23,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [title,setTitle]=useState(props.title);
   const [description,setDescription]=useState(props.description??"");
+  const [approach,setApproach]=useState(props.approach??"");
   const [criteria,setCriteria]=useState(props.acceptanceCriteria??"");
   const [priority,setPriority]=useState(props.priority);
   const [taskType,setTaskType]=useState(props.taskType??"");
