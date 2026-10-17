@@ -9,6 +9,7 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {readLearnerPlaybackSettings} from "./learner-playback-settings";
 import {
   academicPeriods,
   cohorts,
@@ -1224,6 +1225,7 @@ export async function getLearnerCourseWorkspace(
     }) ?? null;
 
   return {
+    playbackSettings:await readLearnerPlaybackSettings(membership.collegeId),
     course: {
       id: course.id,
       name: course.name,
