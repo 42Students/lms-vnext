@@ -28,7 +28,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-54 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-57 | S3 | COPY | DONE |
-| SA-placements-projects-58 | S3 | MISSING-FIELD | UNCONFIRMED |
+| SA-placements-projects-58 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-59 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-61 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
@@ -296,3 +296,12 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Next queue: finish the still-open Projects template, readiness and team flows, TPO full palette/team/recruiter inputs, learner semester/setup/performance, College content materials and Section ordering, verification saved views, then later academic/operations pages. No package, migration, shared shell, auth or security edits by this lane.
 - Blocked `COL-course-tabs-03/16` full private file materials and per-Section ordering: private object storage, scanner and registered DB05/runtime owner dependency; metadata and scoped filters remain usable. Continue unrelated open gaps without delay.
 
+
+## Chat-4 next-round recovery — 2026-10-17
+
+- Main fast-forwarded into `chatgpt/chat-4-b` before writes (main was 675 commits ahead; branch had no private commits).
+- Corrected failing `SA-placements-projects-58` and `SA-placements-projects-63` expectations by restoring the specified project page descriptions and implementing explicit retryable mentor reassignment failure dialog; corrected stale Faculty zero-point assignment fixture (`FAC-assessments-R08`).
+- Repaired missing `points` values in `courses-ui2a-faculty` and `faculty-section-authoring` TypeScript integration fixtures. Other owners' schema and course fixture errors are not claimed as resolved.
+- `SA-placements-projects-58`: DONE (workload overload, deep links, success, partial-failure dialog and failed-only retry).
+- `SA-placements-projects-56`: still OPEN/PARTIAL; scoped learner preflight now lists individual to-create/covered/duplicate decisions; remaining standalone team create fields and per-student failure details are not yet closed.
+- Tests authored or repaired but **not run**; orchestrator must verify TypeScript, lint, unit and PostgreSQL.
