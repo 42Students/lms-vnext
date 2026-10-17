@@ -5,7 +5,7 @@ import {
  tpoStudentNudgeInputSchema,type TpoStudentNudgeTemplate,
 } from "@/modules/placements/tpo-student-nudge-send-model";
 
-type Row={id:string;label:string;registered:boolean};
+type Row={id:string;label:string;registered:boolean|null};
 export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  const [selected,setSelected]=useState<string[]>([]);
  const [template,setTemplate]=useState<TpoStudentNudgeTemplate>("REGISTRATION");
@@ -56,7 +56,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     <input type="checkbox" checked={validSelected.includes(row.id)}
      disabled={pending||(!validSelected.includes(row.id)&&validSelected.length>=25)}
      onChange={e=>setSelected(current=>e.target.checked?[...current,row.id]:current.filter(id=>id!==row.id))}/>
-    {row.label}{!row.registered?<span className="text-xs text-muted-foreground">(not in placements)</span>:null}
+    {row.label}{row.registered===false?<span className="text-xs text-muted-foreground">(not in placements)</span>:null}
    </label>)}
   </div>
   <p role="status" className="text-xs text-muted-foreground">{validSelected.length} selected;
