@@ -155,6 +155,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
 
   const existingNumbers=new Set(existing.map(item=>item.row));
   const newRows=preview?.rows.filter(item=>item.lead&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)).length??0;
+  const previewRows=preview?.rows.filter(item=>{
+    if(rowGroup==="ALL")return true;
+    if(rowGroup==="INVALID")return !item.lead;
+    if(rowGroup==="EXISTING")return existingNumbers.has(item.row);
+    if(rowGroup==="SKIPPED")return Boolean(item.lead)&&skipRows.includes(item.row);
+    return Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row);
+  })??[];
   return (
     <>
       <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
