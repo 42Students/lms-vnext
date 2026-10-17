@@ -585,3 +585,38 @@ export async function archiveCollege(
     return archived;
   });
 }
+
+/** SA-tenants-modules-R02: restore only the selected archived tenant under
+ * an ACTIVE parent. No memberships, domains, or services are turned on here. */
+export async function restoreCollege(context:RequestContext,rawId:unknown){
+ const collegeId=collegeIdSchema.parse(rawId);
+ if(!isSuperAdmin(context))throw new AuthorizationError("college.manage");
+ const db=getDb();
+ const [candidate]=await db.select({
+  id:colleges.id,name:colleges.name,code:colleges.code,status:colleges.status,
+  organizationId:colleges.organizationId,organizationStatus:organizations.status,
+ }).from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+ .where(eq(colleges.id,collegeId)).limit(1);
+ if(!candidate||candidate.status!=="ARCHIVED")
+  throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+ requirePermission(context,"college.manage",{collegeId,organizationId:candidate.organizationId});
+ if(candidate.organizationStatus!=="ACTIVE")
+  throw new CollegeServiceError("ORGANIZATION_NOT_FOUND");
+ return db.transaction(async tx=>{
+  const [restored]=await tx.update(colleges)
+   .set({status:"ACTIVE",updatedAt:new Date()})
+   .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ARCHIVED"),
+    sql`exists(select 1 from organizations o where o.id=${colleges.organizationId} and o.status='ACTIVE')`))
+   .returning({id:colleges.id,name:colleges.name,organizationId:colleges.organizationId,
+    code:colleges.code,status:colleges.status});
+  if(!restored)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_RESTORED,
+   collegeId:restored.id,organizationId:restored.organizationId,
+   subjectType:"college",subjectId:restored.id,subjectLabel:restored.name,
+   summary:"Archived college restored",
+   metadata:{code:restored.code,fromStatus:"ARCHIVED",toStatus:"ACTIVE"},
+  });
+  return restored;
+ });
+}
