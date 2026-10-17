@@ -215,6 +215,12 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplications.id,request.applicationId),
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,request.applicationId),
+     eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+     eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+   if(withdrawal)throw Error("Resolve the pending withdrawal before approving another interview time.");
    const [target]=await tx.select().from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.id,input.targetSlotId),
     eq(placementRoundCandidateSlots.roundId,info.round.id))).for("update").limit(1);
