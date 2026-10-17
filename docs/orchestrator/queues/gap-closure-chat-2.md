@@ -236,6 +236,8 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-R10 | S4 | PERFORMANCE | OPEN |
 
 ## Notes (blockers, one line each)
+- TPO-inbox-team-08 BLOCKED: recruiter email relay and reply-by-email need verified provider credentials plus registered inbound webhook; no live email delivery attempted.
+
 
 ## Needs shell (chat-9 only)
 
