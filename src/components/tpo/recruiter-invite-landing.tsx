@@ -185,7 +185,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="text-center">
         <h1 className="text-xl font-semibold text-foreground">Thank you, we have told the placement cell</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Your response has been recorded and this invitation link can no longer be used.
+          You will not be contacted about this again.
         </p>
       </div>,
     );

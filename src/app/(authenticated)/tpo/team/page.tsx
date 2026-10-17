@@ -1,5 +1,8 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
+import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
+import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
 import Link from "next/link";
+import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import {redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -12,22 +15,34 @@ import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
 import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model";
 import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional()}).strict();
+const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];c?:string|string[];m?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
- const parsed=tabSchema.safeParse({tab:Array.isArray(raw.tab)?raw.tab[0]:raw.tab,
-  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort});
+ const threadId=Array.isArray(raw.c)?raw.c[0]:raw.c;
+ const messageId=Array.isArray(raw.m)?raw.m[0]:raw.m;
+ if(threadId&&z.string().uuid().safeParse(threadId).success){
+  const target=messageId&&z.string().uuid().safeParse(messageId).success?
+   "?m="+encodeURIComponent(messageId):"";
+  redirect("/tpo/team/"+encodeURIComponent(threadId)+target);
+ }
+ const tabInput=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
+ const parsed=tabSchema.safeParse({tab:tabInput==="members"?"people":tabInput,
+  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
+  q:Array.isArray(raw.q)?raw.q[0]:raw.q});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
  const people=sortTpoPeople(team.members,peopleSort);
- const conversations=tab==="conversations"?await listMyTpoInternalThreads(context):null;
+ const search=parsed.success?(parsed.data.q??""):"";
+ const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search)
+  .catch(()=>({status:"FAILED" as const,items:[]})):null;
  return <div className="space-y-6">
+  <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Internal" title={TPO_OWNER_PAGE_COPY.team}
-   description="People are taken from active college memberships and recorded coordinator assignments, not employer conversations." />
+   description="Who does what, and what you decided. Recruiters and students never see this." />
   <nav aria-label="Team tabs" className="flex flex-wrap gap-2">
    {(["conversations","people"] as const).map(item=><Link key={item} href={"/tpo/team?tab="+item}
      aria-current={tab===item?"page":undefined}
@@ -58,38 +73,32 @@ export default async function TpoTeamPage({searchParams}:{
     </ul>:<EmptyState title="No active team assignments" description="No members match this college's currently active role evidence." />}
   </section>:<section className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
-    {conversations?.status==="READY" ? <form method="post" action="/api/placements/tpo/team/threads"
-      className="mt-4 grid gap-3 rounded-lg border border-border p-4">
-      <h3 className="font-semibold text-foreground">Start a private TPO conversation</h3>
-      <label className="grid gap-1 text-sm text-body">Team member
-        <select name="recipientMembershipId" required defaultValue=""
-          className="min-h-11 rounded-md border border-border bg-surface px-3">
-          <option value="" disabled>Choose an active TPO colleague</option>
-          {team.members.filter(member=>member.membershipId!==context.membership?.id && member.roles.includes("TPO")).map(member=>
-            <option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
-        </select>
-      </label>
-      <label className="grid gap-1 text-sm text-body">Topic
-        <input name="topic" required maxLength={160} className="min-h-11 rounded-md border border-border bg-surface px-3"
-          placeholder="Drive coordination" />
-      </label>
-      <p className="text-xs text-muted-foreground">Only two named active TPO members can participate; the recipient is revalidated before saving.</p>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Start conversation</button>
-    </form> : null}
+    <div className="mt-3"><TpoTeamSearch value={search}/></div>
+    <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
+    {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
+      member=>member.membershipId!==context.membership?.id&&member.roles.includes("TPO"))
+      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
+    {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
+     Could not load conversations right now. Your search has been kept.
+     <Link className="ml-2 font-semibold text-primary-text underline" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
+    </div>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
+      conversations?.status==="FAILED"?null:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>{row.topic}</Link>
+         <Link className="min-w-0 break-words font-semibold text-primary-text" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
          {row.unreadCount>0 ? <span aria-label={row.unreadCount+" unread updates"}
           className="rounded-full border border-border px-2 py-1 text-xs font-semibold text-primary-text">
           {row.unreadCount} unread
          </span>:null}
         </div>
+        <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
+        {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
-       <p role="status" className="mt-2 text-sm text-body">No private team conversations are available to your active membership.</p>}
+       <p role="status" className="mt-2 text-sm text-body">No private team conversations yet. Everyone is always available.</p>}
     <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-primary-text">
       Open existing recruiter communications
     </Link>

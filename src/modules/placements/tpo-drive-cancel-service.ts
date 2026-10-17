@@ -1,6 +1,7 @@
 import "server-only";
 import { and, count, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import {
   placementApplications,
   placementJobRoundEvents,
@@ -214,6 +215,13 @@ export async function cancelTpoDriveWithPreview(
         reason: input.reason,
       });
     }
+    // Release is irreversible: retire only selections that have not yet
+    // produced an official offer. Registration: proposed cancellation CHECK.
+    const retiredSelections=await tx.update(placementDriveSelections).set({
+      status:"CANCELLED",updatedAt:now,
+    }).where(and(eq(placementDriveSelections.jobId,jobId),
+      inArray(placementDriveSelections.status,["SELECTED","VERIFIED"])))
+      .returning({id:placementDriveSelections.id});
     const cancelledRounds = await tx
       .update(placementJobRounds)
       .set({ status: "CANCELLED", cancelledAt: now, updatedAt: now })
@@ -257,6 +265,7 @@ export async function cancelTpoDriveWithPreview(
         impact: current,
         roundsCancelled: cancelledRounds.length,
         issuedOffersWithdrawn: issued.length,
+        pendingSelectionsCancelled:retiredSelections.length,
         settledWithdrawalRequests,applicantEffects,recruiterNotified,
         previewVersion: input.expectedUpdatedAt,
         updatedAt: saved.updatedAt.toISOString(),
@@ -268,6 +277,7 @@ export async function cancelTpoDriveWithPreview(
       updatedAt: saved.updatedAt.toISOString(),
       roundsCancelled: cancelledRounds.length,
       issuedOffersWithdrawn: issued.length,
+      pendingSelectionsCancelled:retiredSelections.length,
       settledWithdrawalRequests,applicantEffects,recruiterNotified,
       impact: current,
     };

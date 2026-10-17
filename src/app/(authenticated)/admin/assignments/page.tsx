@@ -20,7 +20,7 @@ export default async function SuperAdminAssignmentsPage({
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Courses" title="Assignments" />
-    <EmptyState title="Choose a college" description="Select a college scope before opening its assignments directory." />
+    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its assignments." />
   </div>;
   const data = await listCollegeAssessmentAggregate(context, "ASSIGNMENT", query.data);
   return <div className="space-y-4">

@@ -1058,10 +1058,11 @@ export function PlacementJobCreateForm({
           <button
             type="submit"
             value="review-publish"
+            aria-label="Publish after reviewing the drive"
             disabled={pending || !activeSeason}
             className="min-h-10 rounded-md border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50"
           >
-            Create &amp; review publish
+            Publish
           </button>
         </div>
       </section>

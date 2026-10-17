@@ -25,7 +25,7 @@ function ActionLink({
       >
         <p className="m-0 text-sm font-semibold text-foreground">{label}</p>
         <p className="mt-1 text-xs text-muted-foreground">
-          {subtitle ?? "This workflow is not yet available in vNext."}
+          {subtitle ?? "This page is currently unavailable."}
         </p>
       </div>
     );

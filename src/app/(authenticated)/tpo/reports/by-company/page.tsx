@@ -60,7 +60,7 @@ export default async function TpoByCompanyReportPage({
     <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Placement by company"
+        title="By company"
         description="Compare companies by drives, applicants, accepted offers, unique placed learners and accepted full-time packages."
         actions={<div className="flex flex-wrap items-center gap-2">
           <ReportCsvLink workspace={workspace} kind="by-company" />

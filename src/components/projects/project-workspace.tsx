@@ -11,10 +11,12 @@ import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/proje
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
+import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import {ProjectResourceOpenLink} from "./project-resource-open-link";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -300,8 +302,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        title={workspace.project.title}
-        description={workspace.project.summary ?? undefined}
+        title={mode==="LEARNER"?"Projects":workspace.project.title}
+        description={mode==="LEARNER"?workspace.project.title:(workspace.project.summary ?? undefined)}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge
@@ -486,6 +488,33 @@ export function ProjectWorkspace({
             <p className="mt-2 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
               {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>
           </section>:null}
+          {mode==="LEARNER"?<section aria-label="Task completion donut" className="mt-4 rounded-lg border border-border p-4">
+            <h3 className="text-sm font-semibold">Task completion</h3>
+            {readiness.execution.tasks.total>0?<div className="mt-3 flex flex-wrap items-center gap-4">
+              <svg viewBox="0 0 42 42" role="img"
+                aria-label={Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total)+"% tasks completed"}
+                className="size-28 shrink-0">
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="currentColor"
+                  className="text-muted" strokeWidth="6"/>
+                <circle cx="21" cy="21" r="15.915" fill="none" stroke="currentColor"
+                  className="text-primary" strokeWidth="6"
+                  strokeDasharray={String(100*readiness.execution.tasks.done/readiness.execution.tasks.total)+" "+String(100*(readiness.execution.tasks.total-readiness.execution.tasks.done)/readiness.execution.tasks.total)}
+                  transform="rotate(-90 21 21)"/>
+                <text x="21" y="23" textAnchor="middle" fontSize="7" fill="currentColor">
+                  {Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total)}%
+                </text>
+              </svg>
+              <div className="min-w-0 text-sm text-body">
+                {readiness.execution.tasks.done} of {readiness.execution.tasks.total} tasks completed
+              </div>
+            </div>:<p className="mt-2 text-sm text-body">
+              No tasks on the board yet. Add your first task to start tracking progress.
+            </p>}
+            {readiness.execution.sprints.total>0?
+              <p className="mt-3 text-xs text-body">Submission also needs all {readiness.execution.sprints.total}
+                {" "}sprints signed off ({readiness.execution.sprints.completed} so far).</p>:
+              <p className="mt-3 text-xs text-body">Tasks only — this project has no sprints.</p>}
+          </section>:null}
           {mode==="LEARNER"?<section aria-label="Task lane progress" className="mt-4 rounded-lg border border-border p-3">
             <h3 className="font-semibold text-foreground">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 lg:grid-cols-6">
@@ -522,7 +551,9 @@ export function ProjectWorkspace({
             <div className="mt-3 space-y-2 text-sm text-body">
               {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
               {workspace.project.dueLabel || workspace.project.endDate ?
-                <p>Due date: <strong>{workspace.project.dueLabel ||
+                <p>Due date: <strong>{workspace.project.endDate?
+                  (projectTaskDueState(workspace.project.endDate,workspace.project.status==="COMPLETED"?"DONE":"TODO",renderTime)
+                    ??"Due")+" · ":""}{workspace.project.dueLabel ||
                   workspace.project.endDate}</strong></p> : <p>No due date</p>}
               {workspace.project.nextAction ?
                 <p>Next step: {workspace.project.nextAction}</p> : null}
@@ -545,14 +576,14 @@ export function ProjectWorkspace({
                   readiness.finalSubmission.latest?.status === "SUBMITTED" ? "info" : "warning"}>
                   {readiness.finalSubmission.latest?.status === "APPROVED" ? "Accepted" :
                     readiness.finalSubmission.latest?.status === "SUBMITTED" ? "Submitted" :
-                    "Waiting for completion"}
+                    readiness.finalSubmission.canSubmitDraft ? "Ready for review" : "Waiting for completion"}
                 </StatusBadge>
               </div>
               <p className="mt-2 text-sm text-body">{readiness.finalSubmission.latest
                 ? "Latest submission: " + label(readiness.finalSubmission.latest.status)
-                : "Complete project work to prepare your final submission."}</p>
+                : readiness.finalSubmission.canSubmitDraft?"Ready for review. Submit final work on behalf of your team.":"What’s left: complete all tasks, sign off each sprint and ship releases before submitting."}</p>
               {workspace.finalDelivery.reviews.at(-1)?.feedback ? (
-                <p className="mt-2 text-sm text-body">Mentor left feedback: {
+                <p className="mt-2 text-sm text-body">Mentor left feedback ({workspace.finalDelivery.reviews.at(-1)?.decision?.replaceAll("_"," ")}) — open Final submission to read it. {
                   workspace.finalDelivery.reviews.at(-1)?.feedback
                 }</p>
               ) : null}
@@ -623,8 +654,12 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              Project people
+              {mode==="LEARNER"?"Project team":"Project people"}
             </h2>
+            {mode==="LEARNER"?<p className="mt-1 text-sm text-body">
+              See who is assigned, what role they play, and how the project is staffed.
+              {" "}{workspace.members.length} member(s)
+            </p>:null}
           </div>
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
@@ -702,22 +737,43 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Execution
+            {mode==="LEARNER"?"Releases and Sprints":"Execution"}
           </h2>
           {mentorReviewHref ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
             Review submission
           </Link> : null}
-          <p className="mt-1 text-sm text-body">
-            Release → sprint → task state from normalized
-            Project records.
-          </p>
+          {mode!=="LEARNER"?<p className="mt-1 text-sm text-body">
+            Release and sprint execution records.
+          </p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
+        {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+          {(()=>{
+            const today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",
+              year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
+            const rollup=learnerSprintRollup(workspace.sprints,workspace.tasks,today);
+            return <>Sprints completed {rollup.completed} of {rollup.total}
+              {" · "}{rollup.overdue} Overdue</>;
+          })()}
+        </div>:null}
+        {mode==="LEARNER"&&workspace.releases.length>0?
+          <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {workspace.releases.map(release=><a key={release.id}
+              href={"#project-release-"+release.id}
+              aria-current={release.status==="ACTIVE"?"step":undefined}
+              className={"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold "+
+                (release.status==="SHIPPED"?"border-success-border bg-success-subtle text-success-text":
+                  release.status==="ACTIVE"?"border-primary bg-primary-subtle text-primary-text":
+                  "border-border bg-surface text-body")}>
+              {release.title} · {label(release.status)}
+            </a>)}
+          </nav>:null}
         <div className="space-y-4">
           {workspace.releases.map((release) => (
             <article
               key={release.id}
+              id={"project-release-"+release.id}
               className="rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -780,6 +836,14 @@ export function ProjectWorkspace({
                           Sprint {sprint.sequence + 1} ·{" "}
                           {sprint.title}
                         </p>
+                        {mode==="LEARNER"?(()=>{
+                          const progress=learnerSprintProgress(sprint,workspace.tasks);
+                          return <p className="mt-2 text-xs text-body"
+                            aria-label={sprint.title+": "+progress.percentage+"% complete"}>
+                            {progress.percentage}% complete · {progress.completed}/{progress.total} tasks
+                            {" · "}Due {sprint.dueDate??sprint.endDate??"not set"}
+                          </p>;
+                        })():null}
                         {sprint.description ? (
                           <p className="mt-1 text-xs leading-5 text-body">
                             {sprint.description}
@@ -1305,6 +1369,14 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
+          {mode==="LEARNER"?<div aria-label="Resource counts" className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Total</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Showing</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.length}</p></div>
+            <div className="rounded-lg border border-border p-3 text-sm"><strong>Links</strong>
+              <p className="mt-1 tabular-nums">{workspace.resources.filter(resource=>Boolean(safeHttpHref(resource.url))).length}</p></div>
+          </div>:null}
           <div className="space-y-3">
             {workspace.resources.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
@@ -1354,16 +1426,11 @@ export function ProjectWorkspace({
                         Required resource has no usable external link or description.
                       </p>
                     ) : null}
-                    {href ? (
-                      <a
-                        href={href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
-                      >
+                    {mode==="LEARNER"?<ProjectResourceOpenLink url={resource.url}/>:
+                      href?<a href={href} target="_blank" rel="noopener noreferrer"
+                      className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover">
                         Open resource ↗
-                      </a>
-                    ) : null}
+                      </a>:null}
                     {mode !== "LEARNER" && !readOnly ? (
                       <ProjectResourceActions
                         projectId={workspace.project.id}
@@ -1399,8 +1466,7 @@ export function ProjectWorkspace({
                 Meetings
               </h2>
               <p className="mt-1 text-sm text-body">
-                Requested, scheduled and completed Project
-                conversations.
+                {mode==="LEARNER"?"Upcoming meetings and recent history.":"Requested, scheduled and completed Project conversations."}
               </p>
             </div>
             {!readOnly && mode === "LEARNER" ? (
@@ -1452,10 +1518,13 @@ export function ProjectWorkspace({
                 }))}/>
             </section>;
           })():null}
+          {mode==="LEARNER"&&workspace.meetings.length>0?<h3 className="text-sm font-semibold">
+            Meeting history
+          </h3>:null}
           <div className="space-y-3">
             {workspace.meetings.length === 0 ? (
               <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-                No meetings yet.
+                {mode==="LEARNER"?"No meetings yet.":"No meetings yet."}
               </div>
             ) : (
               workspace.meetings.map((meeting) => {

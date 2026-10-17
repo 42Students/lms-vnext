@@ -94,8 +94,8 @@ export async function ProjectAdminSubmissionsPage({
       />
       <PageHeader
         eyebrow={eyebrow}
-        title="Project submissions"
-        description="Final-delivery versions across project workspaces, newest activity first."
+        title="Submissions dashboard"
+        description="Final project deliverables across all workspaces."
       />
 
       <nav aria-label="Submission categories" className="flex flex-wrap gap-3 text-sm font-semibold">

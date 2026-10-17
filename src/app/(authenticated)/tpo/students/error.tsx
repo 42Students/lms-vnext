@@ -14,7 +14,7 @@ export default function TpoStudentsError({
       className="rounded-xl border border-border bg-surface px-6 py-10 text-center"
     >
       <h1 className="text-lg font-semibold text-foreground">
-        Couldn&apos;t load Students intelligence
+        Could not load students
       </h1>
       <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-body">
         College-wide learner and placement data could not be
