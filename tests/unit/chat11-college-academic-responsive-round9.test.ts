@@ -14,8 +14,11 @@ describe("College Admin narrow-screen academic setup",()=>{
   expect(academic).toContain('grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4');
   for(const source of [semester,batch,classes]){
    expect(source).toContain('grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5');
-   expect(source).toContain('className="space-y-3"');
+   expect(source).toContain("sm:grid-cols-2");
   }
+  expect(semester).toContain('className="space-y-2"');
+  expect(batch).toContain('className="space-y-3"');
+  expect(classes).toContain('className="space-y-3"');
   for(const source of [academic,structure]){
    expect(source).toContain('role="region" tabIndex={0}');
    expect(source).toContain("overflow-x-auto");
