@@ -130,4 +130,37 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(permission).toContain('return isSuperAdmin(context);');
  });
 
+ it("SA-tenants-modules-R02 restores only archived organization or college with scoped transactional audit",()=>{
+  const org=source("src/modules/organizations/service.ts");
+  const college=source("src/modules/colleges/service.ts");
+  const ui=source("src/components/admin/tenant-restore-action.tsx");
+  const directory=source("src/app/(authenticated)/admin/organizations/page.tsx");
+  const detail=source("src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx");
+  for(const [entity,route] of [
+    ["organization","src/app/api/organizations/[organizationId]/restore/route.ts"],
+    ["college","src/app/api/colleges/[collegeId]/restore/route.ts"],
+  ]){
+   const sourceText=source(route);
+   expect(sourceText).toContain("isSameOriginRequest(request)");
+   expect(sourceText).toContain("getCurrentRequestContext()");
+   expect(sourceText).toContain("export async function POST");
+   expect(sourceText).toContain("apiErrorResponse(error)");
+   expect(ui).toContain(entity);
+  }
+  expect(org).toContain("export async function restoreOrganization");
+  expect(org).toContain('eq(organizations.status,"ARCHIVED")');
+  expect(org).toContain("await assertUniqueActiveName(candidate.name,organizationId)");
+  expect(org).toContain("PLATFORM_ORGANIZATION_RESTORED");
+  expect(college).toContain("export async function restoreCollege");
+  expect(college).toContain('candidate.organizationStatus!=="ACTIVE"');
+  expect(college).toContain('eq(colleges.status,"ARCHIVED")');
+  expect(college).toContain("PLATFORM_COLLEGE_RESTORED");
+  expect(ui).toContain("<ConfirmDialog");
+  expect(ui).toContain("useGuardedAction");
+  expect(directory).toContain("listArchivedOrganizations(context)");
+  expect(detail).toContain('<TenantRestoreAction kind="college"');
+  expect(detail).toContain("Restore the parent organization");
+  expect(source("src/modules/activity/taxonomy.ts")).toContain("PLATFORM_COLLEGE_RESTORED");
+ });
+
 });
