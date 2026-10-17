@@ -111,6 +111,7 @@ export function AdminCourseOverview({
           <p className="m-0 font-semibold text-foreground">
             {course.name}
           </p>
+          {courseBasePath.startsWith("/admin/")&&course.shortTitle?<p className="text-sm text-body">Short display name: {course.shortTitle}</p>:null}
           <p className="mt-1 text-xs font-semibold text-primary-text">
             {course.code}
           </p>
@@ -164,12 +165,16 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (course) => (
         <CourseActions
+          allowMetadata={courseBasePath.startsWith("/admin/")}
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
           course={{
             id: course.id,
             name: course.name,
             code: course.code,
+            shortTitle:course.shortTitle,
+            officialCode:course.officialCode,
+            cardColor:course.cardColor,
             description:
               course.description,
           }}
