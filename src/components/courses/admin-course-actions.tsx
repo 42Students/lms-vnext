@@ -63,9 +63,10 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,
+  course,duplicateHref,activeOfferingCount=0,
 }: {
   duplicateHref?:string;
+  activeOfferingCount?:number;
   course: {
     id: string;
     name: string;
@@ -219,7 +220,9 @@ export function CourseActions({
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
         title={"Archive " + course.name + "?"}
-        description="A Course with active Offerings cannot be archived. Historical records remain preserved."
+        description={activeOfferingCount>0
+          ?activeOfferingCount+" active Course Offering(s) must be archived before you can archive this Course. Historical records remain preserved."
+          :"A Course with active Offerings cannot be archived. Historical records remain preserved."}
         confirmLabel="Archive Course"
         pending={pending}
         onConfirm={() =>
