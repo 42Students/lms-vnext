@@ -88,4 +88,5 @@ export * from "./platform-setting-overrides";
 export * from "./placement-tpo-company-communication";
 export * from "./placement-company-share-selection";
 export * from "./lesson-content-materials";
-\nexport * from "./placement-recruiter-candidate-ratings";\n
+
+export * from "./placement-recruiter-candidate-ratings";
