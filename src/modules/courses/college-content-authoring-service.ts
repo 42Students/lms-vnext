@@ -37,6 +37,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .orderBy(asc(sections.name)).limit(2000);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
+  deliveryId:lessonContents.deliveryId,
   notes:lessonContents.notes,
   externalUrl:lessonContents.externalUrl,durationSeconds:lessonContents.durationSeconds,
   startsAt:lessonContents.startsAt,endsAt:lessonContents.endsAt,
