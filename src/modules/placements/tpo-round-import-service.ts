@@ -1,6 +1,6 @@
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq,ne} from "drizzle-orm";
+import {and,eq,inArray,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
@@ -157,11 +157,34 @@ export async function stageTpoRoundImport(
   }
  }
  const results:Array<{applicationId:string;line:number;status:"staged"|"skipped";reason?:string}>=[...rejected];
+ // Preserve unique ranks in an import even when another row supplies an
+ // explicit rank or an earlier result is already applied.
+ const existingRanks=await getDb().select({
+  applicationId:placementRoundResults.applicationId,rank:placementRoundResults.waitlistRank,
+ }).from(placementRoundResults).where(and(
+   eq(placementRoundResults.roundId,preview.roundId),
+   eq(placementRoundResults.outcome,"HOLD"),
+   inArray(placementRoundResults.status,["STAGED","APPLIED"])));
+ const importing=new Set(entries.map(e=>e.applicationId));
+ const occupied=new Set(existingRanks.filter(r=>r.rank!==null&&!importing.has(r.applicationId)).map(r=>r.rank!));
  let nextWaitlistRank=1;
  for(const entry of entries){
   try{
    const candidate=candidates.get(entry.applicationId)!;
-   const waitlistRank=entry.outcome==="HOLD"?(entry.rank??nextWaitlistRank++):null;
+   let waitlistRank:number|null=null;
+   if(entry.outcome==="HOLD"){
+    if(entry.rank!==null)waitlistRank=entry.rank;
+    else{
+     while(occupied.has(nextWaitlistRank))nextWaitlistRank++;
+     waitlistRank=nextWaitlistRank++;
+    }
+    if(occupied.has(waitlistRank)){
+     results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
+      reason:"Waitlist rank "+waitlistRank+" is already assigned in this round"});
+     continue;
+    }
+    occupied.add(waitlistRank);
+   }
    const candidateMessage=entry.outcome==="PASS"?null:entry.message??
     (entry.outcome==="HOLD"?"You are waitlisted for this round.":
      entry.outcome==="ABSENT"?"You were marked absent for this round. Contact the placement cell if this is incorrect.":
