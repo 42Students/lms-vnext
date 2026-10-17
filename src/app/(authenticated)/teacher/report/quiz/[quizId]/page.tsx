@@ -5,6 +5,7 @@ import { FacultyReportStudentTable } from "@/components/courses/faculty-report-s
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
 import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
 import { FacultyReportDownload } from "@/components/courses/faculty-report-download";
+import {facultyReportIsIncomplete} from "@/modules/courses/faculty-report-completeness";
 import { FacultyReportCsvDownload } from "@/components/courses/faculty-report-csv-download";
 import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-request";
 import { FacultyQuizReview } from "@/components/courses/faculty-quiz-review";
@@ -81,6 +82,8 @@ export default async function FacultyQuizReportPage({
       />
       <FacultyReportDownload
         kind="quiz"
+        incomplete={facultyReportIsIncomplete({kind:"quiz",eligibleLearners:metrics.eligibleLearners,
+          submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount})}
         title={quiz.title}
         subtitle={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
         summary={[

@@ -26,6 +26,7 @@ type EditableAssessment = {
   updatedAt: Date | string;
   maxPoints?: number;
   maxAttempts?: number;
+  hasSubmissions?: boolean;
 };
 
 export function FacultyAssessmentEditor({
@@ -35,6 +36,7 @@ export function FacultyAssessmentEditor({
 }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const titleOnly = assessment.kind==="ASSIGNMENT" && assessment.hasSubmissions===true;
   const [title, setTitle] = useState(
     assessment.title,
   );
@@ -101,7 +103,7 @@ export function FacultyAssessmentEditor({
       return;
     }
 
-    if (!window.confirm(assessment.kind === "QUIZ" && assessment.status !== "DRAFT"
+    if (!window.confirm(titleOnly?"Confirm title correction? Learner submissions and assessment requirements will stay unchanged.":assessment.kind === "QUIZ" && assessment.status !== "DRAFT"
       ? "Confirm metadata-only Quiz edits? Existing questions and learner attempts remain unchanged."
       : "Confirm these draft assessment edits?")) return;
     setError(null);
@@ -116,14 +118,16 @@ export function FacultyAssessmentEditor({
           expectedUpdatedAt: new Date(assessment.updatedAt).toISOString(),
           confirmed: true,
           title: cleanTitle,
-          description:
-            description.trim() || null,
-          dueAt: authoringDueInstant(dueAt),
-          ...facultyAssessmentLimitPatch(assessment.kind,assessment.status,number),
+          ...(titleOnly?{}:{
+            description:description.trim() || null,
+            dueAt: authoringDueInstant(dueAt),
+            ...facultyAssessmentLimitPatch(assessment.kind,assessment.status,number),
+          }),
         }),
       });
       if (!response.ok) {
-        setError(response.status===409 && assessment.kind==="ASSIGNMENT"
+        const result=await response.clone().json().catch(()=>null);
+        setError(result?.error==="ASSIGNMENT_HAS_SUBMISSIONS"
           ? "Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title."
           : await courseApiError(response));
         return;
@@ -259,6 +263,9 @@ export function FacultyAssessmentEditor({
           onSubmit={save}
           className="space-y-4"
         >
+          {titleOnly?<p role="status" className="rounded-md border border-border p-3 text-sm text-body">
+            Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
+          </p>:null}
           <label className="block text-sm font-semibold text-body">
             Title
             <Input
@@ -276,6 +283,7 @@ export function FacultyAssessmentEditor({
             Description
             <Textarea
               className="mt-1.5"
+              disabled={titleOnly}
               value={description}
               onChange={(event) =>
                 setDescription(
@@ -291,7 +299,7 @@ export function FacultyAssessmentEditor({
             <Input
               className="mt-1.5"
               type="datetime-local"
-              disabled={assessment.kind==="QUIZ" && assessment.status==="CLOSED"}
+              disabled={titleOnly || (assessment.kind==="QUIZ" && assessment.status==="CLOSED")}
               value={dueAt}
               onChange={(event) =>
                 setDueAt(event.target.value)
@@ -314,7 +322,7 @@ export function FacultyAssessmentEditor({
                   : 20
               }
               value={points}
-              disabled={!facultyAssessmentLimitEditable(assessment.kind,assessment.status)}
+              disabled={titleOnly || !facultyAssessmentLimitEditable(assessment.kind,assessment.status)}
               onChange={(event) =>
                 setPoints(event.target.value)
               }
