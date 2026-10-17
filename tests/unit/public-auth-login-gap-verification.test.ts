@@ -106,6 +106,8 @@ describe("public sign-in verified gap closure",()=>{
   expect(s).toContain('!authValue && !recruiterValue && !requested) redirect("/home")');
   expect(source("src/app/login/page.tsx")).toContain('export { default, generateMetadata } from "../page"');
   expect(source("src/components/marketing/marketing-layout.tsx")).toContain('href="/login"');
+  expect(s).toContain("https://42lms.com/login");
+  expect(login()).toContain("https://42lms.com/login");
  });
  it("PUB-auth-public-34 method tabs announce selection and allow keyboard arrows",()=>{
   const s=login();expect(s).toContain('role="tablist"');
