@@ -33,6 +33,15 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(results).toContain("if(recruiterCanStage && !(await recruiterOwnJobExists(context.user.id,job.id)))");
   expect(results).toContain('new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND")');
  });
+ it("REC-home-drives-47 permits recruiter-owned unpublished rounds without reopening closed drives",()=>{
+  const service=source("src/modules/placements/hr-round-editor-service.ts");
+  expect(service.match(/inArray\(placementJobs.status,\["DRAFT","PUBLISHED"\]\)/g)?.length).toBe(2);
+  expect(service).toContain("recruiterOwnJobPredicate(context.user.id)");
+  expect(service).toContain("placements.recruiter.round.manage");
+  expect(service).not.toContain('eq(placementJobs.status,"CLOSED")');
+  const page=source("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx");
+  expect(page).toContain('href="/hr/drives"');
+ });
  it("REC-home-drives-41 stores 1–5 reviews individually by recruiter and applicant",()=>{
   const schema=source("src/db/schema/placement-recruiter-candidate-ratings.ts");
   expect(schema).toContain("prpr_recruiter_application_uq");
