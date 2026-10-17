@@ -99,4 +99,25 @@ describe.skipIf(!enabled)("TPO-inbox-team-R05 read receipts PostgreSQL",()=>{
   }
  });
 
+ it("TPO-inbox-team-21 GR-34 PostgreSQL enforces a single event per retry key",async()=>{
+  if(!pool)throw new Error("Disposable PostgreSQL is required");
+  const client=await pool.connect();
+  try{
+   await client.query("BEGIN");
+   const dedupe="chat2-team-msg:"+randomUUID();
+   const query="INSERT INTO activity_events (organization_id,college_id,actor_user_id,actor_membership_id,module,event_type,subject_type,subject_id,summary,dedupe_key) VALUES($1,$2,$3,$4,'PLACEMENTS','placements.tpo_team.message_sent','team_thread',$5,'Private message sent',$6)";
+   const args=[SEED_IDS.organization,SEED_IDS.collegeA,SEED_IDS.facultyUser,
+    SEED_IDS.facultyCollegeAMembership,randomUUID(),dedupe];
+   await client.query(query,args);
+   await client.query("SAVEPOINT duplicate_attempt");
+   await expect(client.query(query,args)).rejects.toBeDefined();
+   await client.query("ROLLBACK TO SAVEPOINT duplicate_attempt");
+   const {rows}=await client.query<{count:number}>(
+    "SELECT count(*)::integer AS count FROM activity_events WHERE dedupe_key=$1",[dedupe]);
+   expect(rows[0]?.count).toBe(1);
+  }finally{
+   await client.query("ROLLBACK");client.release();
+  }
+ });
+
 });
