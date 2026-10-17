@@ -3,7 +3,8 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {getIndependentAuditFinding} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {getIndependentAuditFinding,listIndependentAuditFindingEvents} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
  const {publicId}=await params;
  return {title:publicId+" · 42 Tracker"};
@@ -12,6 +13,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
  const {publicId}=await params;
  const finding=await getIndependentAuditFinding(await getCurrentRequestContext(),publicId);
  if(!finding)notFound();
+ const events=await listIndependentAuditFindingEvents(await getCurrentRequestContext(),finding.id);
  const details=[
   ["Summary",finding.summary],["Steps",finding.steps],["Expected",finding.expected],
   ["Actual",finding.actual],["Evidence",finding.evidence],["Suggested fix",finding.suggestedFix],
@@ -30,6 +32,14 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
    {([["Paths",finding.paths],["Pages",finding.pages],["Endpoints",finding.endpoints]] as const).map(([label,values])=>
     <div key={label} className="mt-3"><h3 className="text-sm font-semibold">{label}</h3>
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}
+  </section>
+  <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}/>
+  <section className="rounded-xl border border-border bg-surface p-4">
+   <h2 className="font-semibold">Audit event history</h2>
+   <ol className="mt-3 space-y-2 text-sm">{events.map(event=><li key={event.id} className="border-b border-border pb-2">
+    {event.action} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(event.createdAt)}
+    {event.note?<p className="mt-1 whitespace-pre-wrap break-words">{event.note}</p>:null}
+   </li>)}</ol>
   </section>
   <section className="rounded-xl border border-border bg-surface p-4">
    <h2 className="font-semibold">Fix commits</h2>
