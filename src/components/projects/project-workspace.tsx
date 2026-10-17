@@ -11,6 +11,7 @@ import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/proje
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
+import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
@@ -747,6 +748,15 @@ export function ProjectWorkspace({
           </p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
+        {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+          {(()=>{
+            const today=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",
+              year:"numeric",month:"2-digit",day:"2-digit"}).format(renderTime);
+            const rollup=learnerSprintRollup(workspace.sprints,workspace.tasks,today);
+            return <>Sprints completed {rollup.completed} of {rollup.total}
+              {" · "}{rollup.overdue} Overdue</>;
+          })()}
+        </div>:null}
         {mode==="LEARNER"&&workspace.releases.length>0?
           <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
             {workspace.releases.map(release=><a key={release.id}
@@ -826,6 +836,14 @@ export function ProjectWorkspace({
                           Sprint {sprint.sequence + 1} ·{" "}
                           {sprint.title}
                         </p>
+                        {mode==="LEARNER"?(()=>{
+                          const progress=learnerSprintProgress(sprint,workspace.tasks);
+                          return <p className="mt-2 text-xs text-body"
+                            aria-label={sprint.title+": "+progress.percentage+"% complete"}>
+                            {progress.percentage}% complete · {progress.completed}/{progress.total} tasks
+                            {" · "}Due {sprint.dueDate??sprint.endDate??"not set"}
+                          </p>;
+                        })():null}
                         {sprint.description ? (
                           <p className="mt-1 text-xs leading-5 text-body">
                             {sprint.description}
