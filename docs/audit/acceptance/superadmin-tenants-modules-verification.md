@@ -22,7 +22,7 @@ Audit `docs/audit/pages/superadmin/tenants-modules.md`. Protocol `docs/orchestra
 | SA-tenants-modules-23 | OPEN | Launch readiness copy/list distinctions need original semantic states |
 | SA-tenants-modules-R02 | OPEN | Action not verified across legacy parity |
 | SA-tenants-modules-05 | OPEN | Native scope picker is not equivalent to searchable/clearable switcher at scale |
-| SA-tenants-modules-09 | OPEN | Unsaved form guard for organizations/colleges remains unverified |
+| SA-tenants-modules-09 | DONE | `src/components/admin/organization-create-form.tsx`, `college-create-form.tsx` use per-form `useFormDraft` restored state, beforeunload warning and clear-on-commit; `tests/unit/superadmin-tenants-gap-closure.test.ts` test SA-tenants-modules-09 |
 | SA-tenants-modules-R01 | OPEN | Metadata not independently verified |
 | SA-tenants-modules-R03 | OPEN | Permission scenario not independently verified |
 
