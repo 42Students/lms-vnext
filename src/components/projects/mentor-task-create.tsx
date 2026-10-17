@@ -54,7 +54,7 @@ export function MentorTaskCreate({
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Task added."});
-      setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
+      setOpen(false);setTitle("");setDescription("");setApproach("");setCriteria("");setPriority("MEDIUM");
       setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
       setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
       router.refresh();
