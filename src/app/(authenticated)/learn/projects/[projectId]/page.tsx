@@ -143,7 +143,10 @@ export default async function LearnerProjectPage({
           assigneeName={workspace.members.find(member =>
             member.membershipId===selectedTask.assigneeMembershipId)?.displayName??null}
           currentMembershipId={context.membership?.id??null}
-          sprintTitle={workspace.sprints.find(sprint=>sprint.id===selectedTask.sprintId)?.title??null} />
+          sprintTitle={workspace.sprints.find(sprint=>sprint.id===selectedTask.sprintId)?.title??null}
+          activityEvents={workspace.activity.filter(event=>event.subjectId===selectedTask.id)
+            .map(event=>({summary:event.summary,actorDisplayName:event.actorDisplayName,
+              occurredAt:event.occurredAt}))} />
       ) : null}
       {goals ? <LearnerProjectGoals overview={goals} /> : null}
       {activeSection === "audit" ? <LearnerProjectActivity projectId={projectId}
