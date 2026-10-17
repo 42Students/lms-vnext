@@ -395,8 +395,7 @@ export async function transitionCourseAssignment(
 
   if (
     input.action === "PUBLISH" &&
-    current.dueAt &&
-    current.dueAt.getTime() <= Date.now()
+    (!current.dueAt || current.dueAt.getTime() <= Date.now())
   ) {
     throw new CoursesServiceError(
       "ASSIGNMENT_DEADLINE_PASSED",
