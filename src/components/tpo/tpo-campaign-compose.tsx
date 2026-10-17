@@ -20,6 +20,8 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
+ const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
+ const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">("idle");
  async function save(){
   const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
