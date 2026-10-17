@@ -292,6 +292,7 @@ function eventDateTime(value: Date): string {
 function eventTypeLabel(
   event: PlacementCalendarEvent,
 ): string {
+  if (event.kind === "BLOCKED") return "Blocked";
   if (event.kind === "APPLICATION_DEADLINE") {
     return "Deadline";
   }
@@ -308,6 +309,7 @@ function eventTypeLabel(
 function eventTone(
   event: PlacementCalendarEvent,
 ): "neutral" | "info" | "success" | "warning" {
+  if (event.kind === "BLOCKED") return "neutral";
   if (
     event.status === "DONE" ||
     event.status === "COMPLETED"
@@ -900,7 +902,7 @@ export async function PlacementCalendarWorkspace({
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
-       events={events.map(item=>({
+       events={visibleEvents.map(item=>({
         id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
         roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,followupId:item.followupId,
         startsAt:item.startsAt.toISOString(),endsAt:item.endsAt?.toISOString()??null,
@@ -1028,8 +1030,8 @@ export async function PlacementCalendarWorkspace({
                 : "Events in visible period"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {events.length} matching event
-              {events.length === 1 ? "" : "s"} ·{" "}
+              {visibleEvents.length} matching event
+              {visibleEvents.length === 1 ? "" : "s"} ·{" "}
               {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)}
             </p>
