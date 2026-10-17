@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -29,7 +29,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.employmentType)?{employmentType:first(params.employmentType)}:{}),
     ...(first(params.sort)?{sort:first(params.sort)}:{}),
     ...(first(params.minApplied)?{minApplied:first(params.minApplied)}:{}),
+    ...(first(params.maxApplied)?{maxApplied:first(params.maxApplied)}:{}),
     ...(first(params.minOffers)?{minOffers:first(params.minOffers)}:{}),
+    ...(first(params.maxOffers)?{maxOffers:first(params.maxOffers)}:{}),
     ...(first(params.payCategory)?{payCategory:first(params.payCategory)}:{}),
     ...(first(params.attention)?{attention:first(params.attention)}:{}),
     ...(first(params.journey)?{journey:first(params.journey)}:{}),
@@ -47,7 +49,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     journey:data.journey,
     display:data.display,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
+    ...(data.maxApplied!==undefined?{maxApplied:String(data.maxApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
+    ...(data.maxOffers!==undefined?{maxOffers:String(data.maxOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
     sort:data.sort,page:String(data.page),
     ...(data.season?{seasonId:data.season.id}:{}),
@@ -64,7 +68,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    journey:data.journey,
    display:data.display,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
-   ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
+   ...(data.maxApplied!==undefined?{maxApplied:data.maxApplied}:{}),
+   ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),
+   ...(data.maxOffers!==undefined?{maxOffers:data.maxOffers}:{}),page,
   }};}
   return <div className="space-y-6">
     <TpoDriveSavedViews scopeKey={savedViewScope}/>
