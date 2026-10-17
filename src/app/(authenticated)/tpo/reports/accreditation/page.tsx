@@ -1,3 +1,4 @@
+import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -65,7 +66,7 @@ export default async function TpoAccreditationReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Accreditation export"
-        description="Download a college-scoped working CSV of recorded placement outcomes. This is not a NAAC/NIRF-approved submission template."
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/accreditation"].description}
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
            className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
