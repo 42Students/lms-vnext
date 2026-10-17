@@ -80,10 +80,12 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
     id:placementTpoLeads.id,
     manualStage:placementTpoLeads.manualStage,notNowReason:placementTpoLeads.notNowReason,
     notNowUntil:placementTpoLeads.notNowUntil,ownerMembershipId:placementTpoLeads.ownerMembershipId,
+    updatedAt:placementTpoLeads.updatedAt,
    }).from(placementTpoLeads).where(and(
     eq(placementTpoLeads.id,change.leadId),eq(placementTpoLeads.collegeId,college.id),
    )).for("update").limit(1);
-   if(!lead)throw new TpoBulkUndoError("STALE");
+   if(!lead||lead.updatedAt.getTime()!==new Date(change.afterUpdatedAt).getTime())
+    throw new TpoBulkUndoError("STALE");
    if(stageRun){
     if(lead.manualStage!==change.afterStage||lead.notNowReason!==change.afterReason||
        lead.notNowUntil!==change.afterUntil)throw new TpoBulkUndoError("STALE");
