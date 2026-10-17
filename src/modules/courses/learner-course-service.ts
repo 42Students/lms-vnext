@@ -10,6 +10,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {readLearnerPlaybackSettings} from "./learner-playback-settings";
+import {learnerVisibleContentExternalUrl} from "./learner-live-link-availability-model";
 import {
   academicPeriods,
   cohorts,
@@ -757,10 +758,13 @@ export async function getLearnerCourseWorkspace(
       type: row.contentType!,
       title: row.contentTitle!,
       notes: row.contentNotes,
-      externalUrl:
-        (contentAvailability === "AVAILABLE" || row.contentType === "LIVE_CLASS")
-          ? row.contentExternalUrl
-          : null,
+      // A published live meeting link is usable before the scheduled start.
+      // Do not release scheduled files/videos or an ended meeting link.
+      externalUrl: learnerVisibleContentExternalUrl({
+        contentType: row.contentType!,
+        availability: contentAvailability,
+        externalUrl: row.contentExternalUrl,
+      }),
       storageKey:
         contentAvailability === "AVAILABLE"
           ? row.contentStorageKey
