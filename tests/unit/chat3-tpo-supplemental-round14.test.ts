@@ -63,4 +63,14 @@ describe("TPO supplemental job metadata",()=>{
   expect(form).toContain("timeZone:\"Asia/Kolkata\"");
  });
 
+ it("TPO-drives-43 stores an uncertain create outcome after timeout instead of retrying blindly",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain('if(reason instanceof FriendlyFetchError&&[0,499,504].includes(reason.status))');
+  expect(form).toContain('localStorage.setItem(uncertainKey,"1")');
+  expect(form).toContain('disabled={pending || !activeSeason || uncertainCreate}');
+  expect(form).toContain("The previous create request may have succeeded.");
+  expect(form).toContain("I checked Drives — allow another attempt");
+  expect(form).toContain('createDriveWithKnownResponse({');
+ });
+
 });
