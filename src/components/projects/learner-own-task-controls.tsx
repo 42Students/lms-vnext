@@ -37,7 +37,7 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
   finally{setBusy(false);}
  }
  return <section className="space-y-3">
-  <button type="button" disabled={!available.length} onClick={()=>setOpen(x=>!x)}
+  <button type="button" onClick={()=>setOpen(x=>!x)}
    className="min-h-11 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground disabled:opacity-50">
    Add my task
   </button>
