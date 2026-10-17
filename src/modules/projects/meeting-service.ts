@@ -358,7 +358,8 @@ export async function transitionProjectMeeting(
       );
     }
 
-    const [completed] = await getDb()
+    return getDb().transaction(async tx => {
+    const [completed] = await tx
       .update(projectMeetings)
       .set({
         status: "COMPLETED",
