@@ -56,7 +56,7 @@ export default async function MentorProjectPage({
       <MentorProjectTabs
         projectId={projectId}
       />
-      {access.access === "MENTOR" ? <div className="flex flex-wrap gap-3">
+      {access.access === "MENTOR" ? <details className="rounded-md border border-border p-3"><summary className="cursor-pointer text-sm font-semibold text-primary-text">Additional project tools</summary><div className="mt-3 flex flex-wrap gap-3">
         <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/board-review"}
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Task board status
@@ -109,7 +109,7 @@ export default async function MentorProjectPage({
         >
           Recorded project activity →
         </Link>
-      </div> : null}
+      </div></details> : null}
       {selectedTab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
