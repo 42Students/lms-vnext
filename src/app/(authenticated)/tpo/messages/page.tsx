@@ -77,7 +77,7 @@ export default async function TpoMessagesPage({
         <PageHeader
           eyebrow="TPO · Communication"
           title="Messages"
-          description="Read-only college-scoped communication records."
+          description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         />
         <ErrorState
           title="Invalid message filters"
