@@ -142,6 +142,10 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});continue;
     }
     const candidate=candidateMap.get(selection.applicationId);
+   if(!candidate){
+    results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",
+     reason:"Learner is no longer a candidate for this drive"});continue;
+   }
     // A previous request can issue the canonical offer and time out before
     // marking the selection RELEASED. Reconcile the exact issued offer first.
     if(selection.status==="VERIFIED"&&candidate?.offer&&
