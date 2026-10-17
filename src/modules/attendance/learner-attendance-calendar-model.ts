@@ -98,3 +98,17 @@ export function attendanceCalendarHref(query: LearnerAttendanceCalendarQuery) {
   if(query.status !== "ALL") params.set("status",query.status);
   return "/learn/attendance/calendar?" + params.toString();
 }
+
+/**
+ * A calendar month is an Asia/Kolkata wall-clock range, not a UTC month.
+ * Use a half-open interval so month boundaries cannot double-count sessions.
+ */
+export function learnerAttendanceMonthWindow(month: string) {
+  if (!monthSchema.safeParse(month).success) throw new Error("Invalid attendance calendar month");
+  const [year, monthNumber] = month.split("-").map(Number);
+  const istOffsetMilliseconds = 330 * 60 * 1000;
+  return {
+    from: new Date(Date.UTC(year!, monthNumber! - 1, 1) - istOffsetMilliseconds),
+    to: new Date(Date.UTC(year!, monthNumber!, 1) - istOffsetMilliseconds),
+  };
+}
