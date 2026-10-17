@@ -74,25 +74,23 @@ export function LearnerPlacementJobDetail({
             <StatusBadge tone="warning">Review eligibility</StatusBadge>
           )}
         </div>
-        <dl className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div>
-            <dt className="text-xs font-semibold uppercase text-muted-foreground">Role options</dt>
-            <dd className="mt-1 font-semibold tabular-nums text-foreground">{summary.rolesCount}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-semibold uppercase text-muted-foreground">Openings</dt>
-            <dd className="mt-1 font-semibold text-foreground">
-              {item.job.openings === null ? "Not specified" : item.job.openings.toLocaleString("en-IN")}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs font-semibold uppercase text-muted-foreground">Work mode</dt>
-            <dd className="mt-1 font-semibold text-foreground">{humanize(item.job.workMode)}</dd>
-          </div>
-          <div>
-            <dt className="text-xs font-semibold uppercase text-muted-foreground">Application deadline</dt>
-            <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd>
-          </div>
+
+        <dl className="mt-6 grid gap-4 border-t border-border pt-5 sm:grid-cols-2 lg:grid-cols-3">
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Where</dt>
+            <dd className="mt-1 font-semibold text-foreground">{item.job.locations.length?item.job.locations.join(", "):"Not specified"}</dd></div>
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Job type</dt>
+            <dd className="mt-1 font-semibold text-foreground">{humanize(item.job.employmentType)}</dd></div>
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Compensation</dt>
+            <dd className="mt-1 font-semibold text-foreground">{item.job.minimumAnnualCtcInr!==null
+              ? "₹"+(item.job.minimumAnnualCtcInr/100000).toLocaleString("en-IN")+" LPA" : "Not disclosed"}</dd></div>
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Pay</dt>
+            <dd className="mt-1 font-semibold text-foreground">{item.job.stipendPerMonthInr!==null&&item.job.stipendPerMonthInr!==undefined
+              ? "₹"+item.job.stipendPerMonthInr.toLocaleString("en-IN")+" / month" : "See role breakdown"}</dd></div>
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Posted</dt>
+            <dd className="mt-1 font-semibold text-foreground">{item.job.publishedAt&&Number.isFinite(Date.parse(item.job.publishedAt))
+              ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(item.job.publishedAt)) : "Not specified"}</dd></div>
+          <div><dt className="text-xs font-semibold uppercase text-muted-foreground">Applications close</dt>
+            <dd className="mt-1 font-semibold text-foreground">{learnerJobDeadlineLabel(item.job.applicationDeadline)}</dd></div>
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
           <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
@@ -135,7 +133,7 @@ export function LearnerPlacementJobDetail({
 
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-6"
         aria-label="Registration and evidence requirements">
-        <h2 className="text-base font-semibold text-foreground">Registration and evidence requirements</h2>
+        <h2 className="text-base font-semibold text-foreground">Requirements &amp; preferences</h2>
         <p className="mt-2 text-sm leading-6 text-body">
           These are role-specific eligibility checks from your college placement data.
           Separate placement registration or consent status is not established by this checklist.
@@ -173,6 +171,8 @@ export function LearnerPlacementJobDetail({
           <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-body">
             {item.job.description || "No additional description was published for this drive."}
           </p>
+          <h3 className="mt-6 text-base font-semibold text-foreground">Key dates</h3>
+          <p className="mt-2 text-sm text-body">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Company & role details</h3>
           <dl className="mt-4 grid gap-4 sm:grid-cols-2">
             <div>
