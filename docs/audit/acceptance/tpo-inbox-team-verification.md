@@ -182,3 +182,8 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 | --- | --- | --- |
 | TPO-inbox-team-R05 | DONE (source; tests unrun) | `tests/unit/tpo-inbox-team-round2.test.ts` now asserts per-member `read_through`, excluding own authored messages, and **followed and unmuted** unread count rather than the obsolete unqualified expression. `src/modules/placements/tpo-team-internal-read-service.ts` provides the actual behavior. |
 | TPO-inbox-team-07 | PARTIAL — OPEN | `tests/unit/tpo-drive-tabs.test.ts` now asserts the actual seventh primary **Discussion** route; the Discussion feature remains scoped to the full conversation audit. |
+
+## Chat-2 round 5 — Team read on open
+
+| TPO-inbox-team-R05 | DONE (source; tests not run) | Explicit same-origin POST on Team detail open via `TpoTeamOpenRead`, JSON success support on acknowledgement route, and graceful manual Retry; named `TPO-inbox-team-R05` in `tests/unit/tpo-team-read-on-open-chat2.test.ts`. The read pointer remains separate from personal bell read state. |
+| TPO-inbox-team-20 | PARTIAL — OPEN | Opening conversation clears per-thread unread through authorized POST (existing follow/mute survives), guarded failure shows manual retry. `tests/unit/tpo-team-read-on-open-chat2.test.ts` names `TPO-inbox-team-20`. Mentions/object subscription remains open. |
