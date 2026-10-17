@@ -2,10 +2,55 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {mentorActivityCategory,mentorActivityLabel} from "@/modules/projects/mentor-activity-display-model";
 import {deriveMentorProjectAttention} from "@/modules/projects/mentor-attention";
+import {createProjectResourceInputSchema,updateProjectResourceInputSchema} from "@/modules/projects/validation";
 
 const read=(path:string)=>readFileSync(path,"utf8");
 
 describe("chat-16 reassigned mentor legacy parity",()=>{
+  it("MEN-projects-meetings-53 models type, status, pin, access notes and scoped sprint/task associations",()=>{
+    const uid="123e4567-e89b-42d3-a456-426614174001";
+    const resource=createProjectResourceInputSchema.parse({
+      title:"Resource A",description:"Useful context",resourceType:"DOCUMENT",
+      status:"DRAFT",pinned:true,accessNotes:"Available during review",sprintId:uid,taskId:null,
+    });
+    expect(resource.status).toBe("DRAFT");
+    expect(resource.resourceType).toBe("DOCUMENT");
+    expect(resource.pinned).toBe(true);
+    expect(createProjectResourceInputSchema.safeParse({
+      title:"Resource B",description:"Context",resourceType:"SECRET",
+    }).success).toBe(false);
+    expect(updateProjectResourceInputSchema.safeParse({pinned:true}).success).toBe(true);
+    const schema=read("src/db/schema/projects.ts");
+    expect(schema).toContain('resourceType: varchar("resource_type"');
+    expect(schema).toContain('sprintId: uuid("sprint_id")');
+    expect(schema).toContain('taskId: uuid("task_id")');
+    const service=read("src/modules/projects/resource-service.ts");
+    expect(service).toContain("eq(projectSprints.projectId,scope.project.id)");
+    expect(service).toContain("eq(projectTasks.projectId,scope.project.id)");
+    expect(read("docs/proposed-migrations/mentor-resources-legacy-metadata.sql"))
+      .toContain("project_resources_task_project_fk");
+  });
+  it("MEN-projects-meetings-55 exposes type, status, pin, visibility, sprint/task and reset filters",()=>{
+    const list=read("src/components/projects/project-resource-list.tsx");
+    for(const label of ["All statuses","Pinned only","All sprints","All tasks",
+      "Search resources","Clear filters","All types","Visible to","Drafts","Archived"]){
+      expect(list).toContain(label);
+    }
+    expect(list).toContain("row.sprintId===sprint");
+    expect(list).toContain("row.taskId===task");
+    expect(list).toContain("status===\"ALL\"||row.status===status");
+  });
+  it("MEN-projects-meetings-57 shows resource status, pin, file/link type, notes and safe link action",()=>{
+    const list=read("src/components/projects/project-resource-list.tsx");
+    expect(list).toContain("Last updated:");
+    expect(list).toContain("resource.resourceType");
+    expect(list).toContain("resource.accessNotes");
+    expect(list).toContain("resource.pinned");
+    expect(list).toContain("resource.status");
+    expect(list).toContain("ProjectResourceOpenLink");
+    const popup=read("src/components/projects/project-resource-open-link.tsx");
+    expect(popup).toContain("Copy the link to open it manually.");
+  });
   it("MEN-projects-meetings-56 reorders only owned active resources in two collision-safe phases",()=>{
     const service=read("src/modules/projects/resource-service.ts");
     const route=read("src/app/api/projects/[projectId]/resources/reorder/route.ts");
