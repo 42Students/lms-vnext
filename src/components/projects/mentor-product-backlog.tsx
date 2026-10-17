@@ -81,6 +81,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
         </select>
       </label>
+      <label className="text-sm font-semibold">Due date
+        <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/>
+      </label>
+      <label className="text-sm font-semibold sm:col-span-2">What's blocking this task?
+        <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background p-2"/>
+      </label>
       <div className="flex items-end gap-2"><button type="submit" disabled={busy||!title.trim()}
         className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
       <button type="button" onClick={()=>setAdding(false)}
