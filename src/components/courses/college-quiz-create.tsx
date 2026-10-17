@@ -39,6 +39,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1)||
       (q.type==="MULTIPLE_CHOICE"&&correct>=q.options.length))return "Select at least one correct and one incorrect answer for each multiple-choice question.";
   }
+  if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
   if(dueAt&&Number.isNaN(new Date(dueAt+":00+05:30").getTime()))return "Use a valid deadline.";
   return null;
  }
