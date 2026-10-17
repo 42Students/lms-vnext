@@ -175,8 +175,9 @@ export default async function HrProfilePage() {
                     </td>
                     <td className="px-4 py-4 text-body">
                       {grant.accessUntilIso
-                        ? <time dateTime={grant.accessUntilIso}>{grant.accessUntilLabel}</time>
-                        : grant.accessUntilLabel}
+                        ? <><span>Access until </span><time dateTime={grant.accessUntilIso}>{grant.accessUntilLabel}</time>
+                          <p className="mt-1 text-xs text-muted-foreground">The placement cell can extend it.</p></>
+                        : "Access has no end date"}
                     </td>
                   </tr>
                 ))}

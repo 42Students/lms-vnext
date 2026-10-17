@@ -1,5 +1,5 @@
 "use client";
-import {useState,type FormEvent} from "react";
+import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 
 type InterviewRound={id:string;name:string;sequence:number};
@@ -12,12 +12,19 @@ function nowInIst(){
 }
 export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds:readonly InterviewRound[]}){
  const router=useRouter();
+ const submitLock=useRef(false);
  const [submitting,setSubmitting]=useState(false);
  const [notice,setNotice]=useState<string|null>(null);
  const [start,setStart]=useState("");
  const [end,setEnd]=useState("");
  const [error,setError]=useState<string|null>(null);
  const today=nowInIst();
+ useEffect(()=>{
+  if((!start&&!end)||submitting)return;
+  const onExit=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",onExit);
+  return ()=>window.removeEventListener("beforeunload",onExit);
+ },[start,end,submitting]);
  async function submit(event:FormEvent<HTMLFormElement>){
   const form=event.currentTarget;
   const current=nowInIst();
@@ -25,7 +32,8 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   if(start<current){event.preventDefault();setError("Interview time must be in the future (IST).");return;}
   if(end<=start){event.preventDefault();setError("End time must be after start time.");return;}
   event.preventDefault();
-  if(submitting)return;
+  if(submitLock.current)return;
+  submitLock.current=true;
   setError(null);setNotice(null);setSubmitting(true);
   try{
    const response=await fetch(action,{
@@ -48,7 +56,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    router.refresh();
   }catch{
    setError("Could not reach the server. Your entered times are still here.");
-  }finally{setSubmitting(false);}
+  }finally{submitLock.current=false;setSubmitting(false);}
  }
  return <form method="post" action={action} onSubmit={event=>void submit(event)} className="grid gap-3 sm:grid-cols-2">
   <input type="hidden" name="action" value="CREATE"/>
@@ -96,11 +104,13 @@ export function RecruiterInterviewSlotActions({action,slot}:{
  action:string;slot:{id:string;version:number;status:string;bookedCount:number;capacity:number};
 }){
  const router=useRouter();
+ const actionLock=useRef(false);
  const [busy,setBusy]=useState<string|null>(null);
  const [error,setError]=useState<string|null>(null);
  async function act(kind:"OFFER"|"BOOK"|"CANCEL"){
-  if(busy)return;
+  if(busy||actionLock.current)return;
   if(kind==="CANCEL"&&!window.confirm("Cancel this proposed interview time block?"))return;
+  actionLock.current=true;
   setBusy(kind);setError(null);
   try{
    const form=new FormData();
@@ -120,7 +130,7 @@ export function RecruiterInterviewSlotActions({action,slot}:{
    router.refresh();
   }catch{
    setError("Connection interrupted. Refresh this time block and retry.");
-  }finally{setBusy(null);}
+  }finally{actionLock.current=false;setBusy(null);}
  }
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">

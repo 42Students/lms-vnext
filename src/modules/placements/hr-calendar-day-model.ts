@@ -41,7 +41,7 @@ export function combineHrCalendarDays(
 }
 
 export function hrResultsDueHref(jobId:string,roundId?:string) {
-  const base="/hr/placements/jobs/"+encodeURIComponent(jobId)+"?tab=rounds";
+  const base="/recruiter/drives/"+encodeURIComponent(jobId)+"?tab=rounds";
   return roundId?base+"&roundId="+encodeURIComponent(roundId):base;
 }
 
