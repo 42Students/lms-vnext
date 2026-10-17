@@ -241,7 +241,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-sm text-body">Employer-visible pipeline for this college. Applicants are limited to records shared by the placement cell; offer history may contain multiple versions per recipient.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
-                {driveOverview.deadlineState.replaceAll("_"," ")}
+                {driveOverview.deadlineState==="DUE_SOON"?"Applications close soon":driveOverview.deadlineState==="PASSED"?"Application deadline passed":driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
           <section aria-label="What students see" className="rounded-lg border border-border bg-surface-secondary p-4">
