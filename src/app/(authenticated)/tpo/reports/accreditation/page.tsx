@@ -60,14 +60,14 @@ export default async function TpoAccreditationReportPage({
         eyebrow="TPO · Reports"
         title="Accreditation evidence export"
         description="Download a college-scoped working CSV of recorded placement outcomes. This is not a NAAC/NIRF-approved submission template."
-        actions={
-          <a
-            href={selectedBatch?"/api/placements/reports?"+query.toString():"#accreditation-batch"}
-            aria-disabled={!selectedBatch}
-            className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary hover:border-primary-hover"
-          >
-            Export student list CSV
-          </a>
+        actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
+          <a href={"/api/placements/reports?"+query.toString()}
+           className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+           Export student list CSV
+          </a>:
+          <span aria-disabled="true" role="status" className="inline-flex min-h-10 cursor-not-allowed items-center rounded-md border border-border bg-surface-subtle px-4 text-sm font-semibold text-muted-foreground">
+           Export student list CSV — {selectedBatch?"No placed students":"Pick a batch first"}
+          </span>
         }
       />
       <Link
@@ -91,6 +91,7 @@ export default async function TpoAccreditationReportPage({
         <button type="submit" className="min-h-10 rounded border px-4 text-sm">Show students</button>
        </form>
        {batchId&&!selectedBatch&&<p role="alert" className="text-sm">Choose a batch from this college.</p>}
+       {selectedBatch&&studentReport?.rows.length===0?<p role="status" className="text-sm text-muted-foreground">No placed students in this batch. Export is unavailable until a recorded placement exists.</p>:null}
        {studentReport&&<>
         {completeness?<div aria-label="NAAC and NIRF completeness" className="space-y-2 rounded border border-border bg-surface-subtle p-4">
          <h3 className="font-semibold">{completeness.missingStudents} of {completeness.total} students are missing data NAAC/NIRF ask for</h3>
