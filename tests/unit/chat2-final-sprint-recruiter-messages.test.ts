@@ -130,4 +130,12 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-20 |");
  });
 
+ it("REC-calendar-messages-profile-R02 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("const conversationSubject=result.thread.jobId");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("title={conversationSubject}");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("Open drive:");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("\"/hr/conversations?collegeId=\"+result.thread.collegeId");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-R02 |");
+ });
+
 });
