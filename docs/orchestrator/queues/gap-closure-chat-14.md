@@ -44,4 +44,6 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - REC-home-drives-46 — DONE: inline editor and legacy toasts were present; now adds staged/applied counts and TPO-confirmed slot totals from 0116.
 - REC-home-drives-52 — DONE: separate authorized selection history from 0115 distinguishes selected, verified-awaiting-release and cancelled selections from issued offers; the SQL offer table does not support a REVOKED issued-offer status, so never pretend that selection cancellation revokes an offer.
 - REC-home-drives-41 — implementation and proposed SQL are on the lane branch; numbered migration registration and runtime verification remain with the orchestrator.
+- Typecheck report refreshed 2026-10-18 01:15: only 11 main errors remain globally, and the chat-14 recruiter subset (undefined autoReason/approvedJobId) is repaired on this branch. The branch has not received an independently executed CI typecheck.
+- Five UNCONFIRMED decisions REC-calendar-messages-profile-46, REC-home-drives-09, -19, -44, -R02 are documented in both recruiter acceptance files and regression-tested; no implicit login acceptance, uncapped private export, or auto-apply of private placement outcomes.
 - Tests authored, not run locally: the orchestrator must run unit suite, typecheck, lint, and migration integration tests after merge.
