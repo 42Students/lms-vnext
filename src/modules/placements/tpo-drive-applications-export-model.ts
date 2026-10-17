@@ -43,7 +43,7 @@ export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicat
  ]);
  if(truncated)data.push(["TRUNCATED",
   "First "+TPO_DRIVE_APPLICATION_EXPORT_LIMIT+" application rows are shown; further matching applications exist.",
-  ...Array.from({length:17},()=>null)]);
+  ...Array.from({length:18},()=>null)]);
  return {rows:displayed,truncated,jobTitle,csv:placementReportCsv([
   "Application ID","Student","Role","Stage","Application status","Screening status","Eligibility evidence","Channel","Submitted (IST)","Screening updated (IST)","Roll number","Email","Phone","Batch","Branch","Academic year",
   "Withdrawal requested","No-show","Accepted offer elsewhere","Added by college",
