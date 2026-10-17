@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {colleges,placementCompanies,placementCompanyRelationships,placementJobs} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {isExactRecruiterEmployerRow} from "./recruiter-own-company-policy";
 import {HR_DRIVE_PAGE_SIZE,type RecruiterDriveListQuery} from "./recruiter-drive-list-model";
 import type {listOwnRecruiterPlacementJobs} from "./recruiter-service";
@@ -36,6 +37,7 @@ export async function searchOwnRecruiterDrives(
   .innerJoin(colleges,eq(colleges.id,placementJobs.collegeId));
  const scope=and(
   inArray(placementJobs.companyRelationshipId,relationshipIds),
+  recruiterOwnJobPredicate(context.user.id),
   eq(placementJobs.collegeId,collegeId),
   eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
   eq(placementCompanies.id,context.recruiter.companyId),
