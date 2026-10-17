@@ -133,6 +133,8 @@ export function RecruiterLeadsWorkspace({
   const [exportFeedback,setExportFeedback]=useState("");
   const [actionToast,setActionToast]=useState("");
   const [freshInvite,setFreshInvite]=useState<{leadId:string;url:string}|null>(null);
+  const [draggedBoardId,setDraggedBoardId]=useState<string|null>(null);
+  const [boardMoving,setBoardMoving]=useState(false);
   const [invitingId,setInvitingId]=useState<string|null>(null);
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
@@ -365,6 +367,26 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="lastActivity")setActivityFilter(value);
    else if(kind==="added")setAddedFilter(value);
    else setQuery(value==="ALL"?"":value);
+  }
+
+  async function moveBoardLeadToContacted(leadId:string){
+    const lead=rows.find(row=>row.id===leadId);
+    if(!lead||lead.manualStage!=="NEW"||boardMoving)return;
+    if(!window.confirm("Mark "+lead.name+" as Contacted? This adds an audited stage-change entry."))return;
+    setBoardMoving(true);setActionToast("");
+    try{
+      const response=await fetch("/api/placements/tpo/leads/bulk-stage",{
+        method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({confirmed:true,action:"CONTACTED",
+          selections:[{id:lead.id,expectedStage:"NEW"}]}),
+      });
+      const data=await response.json() as {results?:{status:string;reason:string|null}[]};
+      if(!response.ok||data.results?.[0]?.status!=="updated")
+        throw new Error(data.results?.[0]?.reason??"The contact changed. Reload before trying again.");
+      setActionToast(lead.name+" moved to Contacted.");
+      await load();
+    }catch(e){setActionToast(e instanceof Error?e.message:"Could not move this recruiter.");}
+    finally{setBoardMoving(false);setDraggedBoardId(null);}
   }
 
   async function createInviteLink(lead:Lead){
@@ -912,7 +934,18 @@ export function RecruiterLeadsWorkspace({
           ) : (
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
-                <section key={column} className="w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4">
+                <section key={column} className={
+                  "w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4 "+
+                  (draggedBoardId&&column==="CONTACTED"?"ring-2 ring-primary":"")
+                 }
+                  onDragOver={event=>{
+                    if(column==="CONTACTED"&&draggedBoardId&&!boardMoving)event.preventDefault();
+                  }}
+                  onDrop={event=>{
+                    if(column!=="CONTACTED"||!draggedBoardId)return;
+                    event.preventDefault();
+                    void moveBoardLeadToContacted(draggedBoardId);
+                  }}>
                   <p className="mb-2 text-xs text-muted-foreground">
                     {column==="NEW"?"New contacts are moved when outreach is recorded":
                      column==="CONTACTED"?"Manually move or log a follow-up":
@@ -922,7 +955,11 @@ export function RecruiterLeadsWorkspace({
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
-                      <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary">
+                      <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary"
+                        draggable={lead.manualStage==="NEW"&&!boardMoving}
+                        onDragStart={()=>{if(lead.manualStage==="NEW")setDraggedBoardId(lead.id);}}
+                        onDragEnd={()=>setDraggedBoardId(null)}
+                        title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
                           className="block text-primary-text underline-offset-2 hover:underline">
                         <span className="block font-medium">{lead.name}</span>
