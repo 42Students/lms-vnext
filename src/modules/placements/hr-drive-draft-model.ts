@@ -109,6 +109,9 @@ export function hrDraftFromAuthorizedJob(job: {
   title: string; description: string; locations: readonly string[];
   employmentType: string; workMode: string;
   recruiterDriveMode?: string; externalApplicationUrl?:string|null;
+  eligibleBranches?:readonly string[];eligiblePassingYear?:number|null;
+  ctcLpa?:string|null;fixedCtcLpa?:string|null;variableCtcLpa?:string|null;
+  stipendPerMonthInr?:number|null;
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
