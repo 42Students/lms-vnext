@@ -40,7 +40,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
         where m.thread_id=${tpoInternalThreads.id}
         and m.college_id=${college.id}::uuid
         and position(lower(${q}) in lower(m.body))>0)`) : undefined))
-   .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(50);
+   .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(100);
   const unread = await tx.select({
    href:inAppNotifications.actionHref,
    total:sql<number>`count(*)::integer`,
