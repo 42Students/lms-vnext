@@ -73,6 +73,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
+      <label className="text-sm font-semibold">Task type
+        <select value={taskType} onChange={e=>setTaskType(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+          <option value="">Not specified</option>
+          <option value="STORY">Story</option><option value="BUG">Bug</option>
+          <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
+        </select>
+      </label>
       <div className="flex items-end gap-2"><button type="submit" disabled={busy||!title.trim()}
         className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
       <button type="button" onClick={()=>setAdding(false)}
