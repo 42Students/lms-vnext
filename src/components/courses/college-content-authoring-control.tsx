@@ -36,10 +36,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
   setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(item.durationSeconds===null?"":String(item.durationSeconds));
-  setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);setError("");setMessage("");
+  setTimeZone("Asia/Kolkata");setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setDeliveryId(item.deliveryId??"");setRemoveLink(false);setError("");setMessage("");
  }
  function fresh(){
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");setDeliveryId("");
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("");setStart("");setEnd("");setTimeZone("Asia/Kolkata");setDeliveryId("");
   setError("");setMessage("");setRemoveLink(false);
  }
  async function save(){
