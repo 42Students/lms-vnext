@@ -17,7 +17,7 @@ test.describe("GR-80 Learner profile editing and autosave", () => {
     "Requires disposable seeded Learner and E2E development harness");
   for (const kind of [
     "backend-down", "html-502", "json-500", "forbidden",
-    "conflict", "rate-limit", "slow", "session-expired",
+    "conflict", "rate-limit", "maintenance", "slow", "session-expired",
   ] as FailureKind[]) {
     test(`GR-80 Learner profile ${kind} never destroys a draft`, async ({ page, context }) => {
       test.setTimeout(40_000);

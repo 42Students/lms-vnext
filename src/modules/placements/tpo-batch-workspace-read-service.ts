@@ -40,7 +40,9 @@ export async function listTpoBatches(ctx:RequestContext){
 }
 export async function getTpoBatch(ctx:RequestContext,rawId:unknown){
  const collegeId=await requireTpoBatchActor(ctx),id=uuid.parse(rawId);
- const [batch]=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,program:programs.name,department:departments.name})
+ const [batch]=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,program:programs.name,department:departments.name,
+  startYear:sql<number|null>`(select extract(year from ap.start_date)::int from academic_periods ap where ap.id=${cohorts.startPeriodId})`,
+  endYear:sql<number|null>`(select extract(year from ap.end_date)::int from academic_periods ap where ap.id=${cohorts.expectedEndPeriodId})`})
  .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId)).innerJoin(departments,eq(departments.id,programs.departmentId))
  .where(and(eq(cohorts.id,id),eq(departments.collegeId,collegeId))).limit(1);
  if(!batch)throw new AuthorizationError("placements.manage");

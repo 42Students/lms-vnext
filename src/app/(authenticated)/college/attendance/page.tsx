@@ -57,10 +57,15 @@ export default async function CollegeAttendancePage({
     query.sectionId ?? requestedDelivery?.sectionId ?? null;
   const selectedCourseId =
     query.courseId ?? requestedDelivery?.courseId ?? null;
+  // The selected delivery takes precedence over a same-course offering in
+  // another academic period. Never silently show a different term's records.
   const delivery = options.deliveries.find(
+    (entry)=>entry.deliveryId===query.deliveryId &&
+      entry.sectionId===selectedSectionId && entry.courseId===selectedCourseId,
+  ) ?? options.deliveries.find(
     (entry) => entry.sectionId === selectedSectionId &&
       entry.courseId === selectedCourseId,
-  ) ?? requestedDelivery ?? null;
+  ) ?? null;
   const grid = delivery
     ? await getAdminAttendanceGrid(context, {
         collegeId,

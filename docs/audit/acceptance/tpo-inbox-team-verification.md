@@ -56,3 +56,40 @@ Other queued gaps remain outstanding until individually inspected and recorded.
 - `TPO-inbox-team-R04`: **PARTIAL, not closed** — 100-row pagination and next cursor exists but author-only filtering needs review; named unit test `TPO-inbox-team-R04`.
 
 No tests were executed by chat-2; orchestrator owns execution and migration registration.
+
+### Round 3: verified-closure source additions
+- `TPO-inbox-team-17`: PARTIAL — retried creation is idempotent via per-actor persisted audit key, but multiple participants, rename, visibility and leave remain open. Evidence `src/modules/placements/tpo-team-internal-create-service.ts`, `src/components/tpo/tpo-team-forms.tsx`; test **TPO-inbox-team-17 GR-34 prevents duplicate private conversation creation on retry** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-19`: DONE source-level Team search and failure fallback — failed search retains query and exposes Retry without false empty. Test **TPO-inbox-team-19 GR-71/72/73/76 preserves Team search…** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-45`: PARTIAL — live preview and zero-target send guard existed; now preview failures keep the notice list and the selected target with an explicit Retry. Test **TPO-inbox-team-45 GR-71/72/73 preserves audience preview filters…** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`. Complete legacy reach wording and picker parity remains open.
+- `TPO-inbox-team-54`: PARTIAL — college-scoped From 42 read receipts are now projected and genuinely unread cards display **New**, only when receipt storage is registered. Test **TPO-inbox-team-54 GR-90 marks From 42 announcements New only with verified college-scoped reads** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`. Tab/sidebar/bell unread parity remains open.
+- `TPO-inbox-team-21`: PARTIAL — message send idempotency is backed by `activity_events.dedupe_key` and the author's session draft. `tests/unit/tpo-inbox-team-graceful-round3.test.ts` tests **TPO-inbox-team-21 GR-34…** and `tests/integration/db09-tpo-team-read-receipts.test.ts` **TPO-inbox-team-21 GR-34 PostgreSQL enforces…**. Mentions and object links remain open.
+- `TPO-inbox-team-39`: DONE source-level friendly JSON create/reply success and failure preserving drafts, evidenced by **TPO-inbox-team-39 GR-32 treats login redirects…**.
+- Sections GR-31/32/34/35/60/61/62/71/72/73/76/90/91 are **page-scoped adoptions only**, not platform-wide closures. Shared chat-14 helpers were not on `main` when this batch was authored.
+- All mentioned tests are authored but **not run**; orchestrator owns verification and any migration registration.
+
+## Round 4 — shared friendly errors, safe delivery and filtered Team inbox
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-15 | DONE (source; orchestration pending) | `src/components/tpo/tpo-everyone-controls.tsx`, `src/app/api/placements/tpo/team/everyone/{messages,mute}/route.ts`, `src/app/(authenticated)/tpo/team/everyone/page.tsx`: guarded JSON responses, preserved unsent text, timeout and in-page failed-history Retry. `tests/unit/tpo-inbox-team-round4-graceful.test.ts` **TPO-inbox-team-15**. Proposed Everyone migration still requires orchestrator registration. |
+| TPO-inbox-team-04 | DONE (source; unrun) | `src/components/tpo/tpo-recruiter-message-reply.tsx` acknowledges by bounded POST; same round-4 test **TPO-inbox-team-04**. |
+| TPO-inbox-team-09 | DONE (source; unrun) | Same recruiter composer retains text and bounds pending operations; round-4 test **TPO-inbox-team-09**. |
+| TPO-inbox-team-18 | PARTIAL — remains OPEN | `src/modules/placements/tpo-team-conversation-filter-model.ts`, `src/app/(authenticated)/tpo/team/page.tsx` implement All/Following/Unread/Topics with counts. Named tests **TPO-inbox-team-18** in `tests/unit/tpo-team-filter-round4.test.ts`. Mentions, asks, decisions, drive/company/student threads remain to build. |
+| TPO-inbox-team-20 | PARTIAL — remains OPEN | Same filter and `src/modules/placements/tpo-team-internal-read-service.ts` use persisted following/mute and member unread. Named test **TPO-inbox-team-20**. Mention indicators and computed object owner following remain open. |
+| TPO-inbox-team-47 | PARTIAL — remains OPEN | `src/components/tpo/tpo-notice-read-progress.tsx` uses `apiFetch`, 15-second timeout, no data clearing on failure; named test **TPO-inbox-team-47**. Full roll/branch recipient parity pending. |
+| TPO-inbox-team-60 | PARTIAL — remains OPEN | `src/components/tpo/tpo-bell-panel.tsx` now uses bounded `apiFetch` for read and mark-all, with safe errors. Named test **TPO-inbox-team-60**. Legacy event-producer coverage still missing. |
+| TPO-inbox-team-64 | PARTIAL — remains OPEN | Bell acknowledges with friendly fetch and retains keyboard-visible row actions; named test **TPO-inbox-team-64**. Full notification-list parity pending. |
+
+**Shared graceful-operation adoption:** `tests/unit/tpo-inbox-team-round4-graceful.test.ts` contains explicit `GR-30/31/35/60/61/62/70/71/72/73/75/90/91/92` test names. These are per-page source changes, **not platform-wide GR closure**. Tests were written but not run. 
+
+## Round 4 — audience selection, confirmation and receipt fidelity
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-44 | PARTIAL — remains OPEN | `src/modules/announcements/tpo-notice-target-options-service.ts` queries college-scoped batches and branches plus published drives; `src/components/tpo/tpo-notice-audience-picker.tsx` presents labelled choices, legacy empty-state strings and a recoverable options-unavailable state; wired in `src/app/(authenticated)/tpo/announcements/page.tsx`. Unit test **TPO-inbox-team-44** in `tests/unit/tpo-notice-audience-round4.test.ts`; disposable PostgreSQL test **TPO-inbox-team-44** in `tests/integration/tpo-notice-target-options.test.ts`. Legacy multi-select batch/branch parity and full search remain open. |
+| TPO-inbox-team-45 | PARTIAL — remains OPEN | Announcement preview now displays **Goes to n students** only for targeted student populations, and preserves college-member semantics for whole-college scope. Named tests **TPO-inbox-team-45** in `tests/unit/tpo-notice-audience-round4.test.ts` and `tests/unit/tpo-notice-round4-verification.test.ts`. Exact picker and notification counts still require acceptance. |
+| TPO-inbox-team-46 | PARTIAL — remains OPEN | `src/modules/announcements/tpo-notice-read-receipts-service.ts` now flags a published but undelivered announcement as awaiting delivery rather than implying successful send. Named source test **TPO-inbox-team-46** in `tests/unit/tpo-notice-round4-verification.test.ts`. Missing durable send/outbox remains an implementation gap, **not a provider-credential blocker**. |
+| TPO-inbox-team-47 | PARTIAL — remains OPEN | Read-receipt widget is guarded and preserves last successful data across bounded fetch failures; same round-4 named test **TPO-inbox-team-47**. Full recipient metadata and delivery pipeline still to build. |
+| TPO-inbox-team-54 | PARTIAL — remains OPEN | From 42 tab shows accurately qualified per-page unread count on registered read state, not a falsely global number. `src/app/(authenticated)/tpo/announcements/page.tsx`; named source test **TPO-inbox-team-54** in `tests/unit/tpo-notice-round4-verification.test.ts`. Bell and sidebar count parity remain open (shell belongs to chat-9). |
+
+The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` contains named cases for `TPO-inbox-team-48/49/50/51/52/53/55/56/58/R03/R04` to protect existing source behavior. Those cases are **not** independent verification of complete legacy parity. No tests were executed by chat-2; the orchestrator runs them and registers proposed migrations.

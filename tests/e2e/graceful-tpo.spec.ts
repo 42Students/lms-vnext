@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 const journeys = [
   { title: "recruiter roster", route: "/tpo/recruiters", endpoint: /\/api\/placements\/tpo\/leads\?/ },
@@ -8,7 +8,7 @@ const journeys = [
 ] as const;
 const kinds: FailureKind[] = [
   "backend-down", "html-502", "json-500", "forbidden",
-  "missing-record", "conflict", "rate-limit", "slow", "session-expired",
+  "missing-record", "conflict", "rate-limit", "maintenance", "slow", "session-expired",
 ];
 
 test.describe("GR-80 TPO client-side roster and company directory failures", () => {
@@ -24,11 +24,8 @@ test.describe("GR-80 TPO client-side roster and company directory failures", () 
         try {
           await page.goto(journey.route);
           const errors = captureUncaughtErrors(page);
-          await expect.poll(failure.hits).toBeGreaterThan(0);
-          await expect(page.getByRole("alert").first()).toContainText(
-            /try again|could not load|temporarily|unavailable|retry|sign in|access/i,
-            { timeout: 15_000 },
-          );
+          await expect.poll(() => failure.requests().some((request) => request.includes(journey.title === "recruiter roster" ? "/api/placements/tpo/leads" : "/api/placements/tpo/companies"))).toBe(true);
+          await expectFriendlyFailure(page, kind);
           await expectNoRawErrors(page);
           expect(errors).toEqual([]);
         } finally {

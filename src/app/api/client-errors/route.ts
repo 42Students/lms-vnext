@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { logError } from "@/observability/logger";
-import { acceptClientErrorRate, browserErrorSchema } from "@/modules/log-alerts/client-report";
-import { redactAlertText, safeAlertLabel, safeAlertPath } from "@/modules/log-alerts/redaction";
+import { acceptClientErrorRate, browserErrorSchema, safeBrowserComponent } from "@/modules/log-alerts/client-report";
+import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
@@ -73,10 +73,14 @@ export async function POST(request: Request) {
     // Anonymous failures are valid; never trust a client-supplied account ID.
   }
   const report = parsed.data;
-  logError("client.error", new Error(redactAlertText(report.message)), {
-    ...identity, component: safeAlertLabel(report.component ?? report.name),
+  // Root error boundaries intentionally send only the category and reference.
+  const safeMessage = report.message ??
+    (report.kind === "stale_chunk" ? "Browser failed to load updated application code" :
+      "Browser rendering failed");
+  logError("client.error", new Error(redactAlertText(safeMessage)), {
+    ...identity, component: safeBrowserComponent(report),
     path: safeAlertPath(report.path), requestId: report.requestId,
-    errorName: safeAlertLabel(report.name), status: 500,
+    errorName: safeBrowserComponent({ name: report.name }), status: 500,
   });
   return NextResponse.json({ received: true }, { status: 202 });
 }

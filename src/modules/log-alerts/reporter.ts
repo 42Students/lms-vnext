@@ -87,6 +87,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
     await emergencySend(hash, summary);
     return;
   }
+  let providerAccepted = false;
   try {
     await getDb().transaction(async (tx) => {
       const key = "TELEGRAM_BURST_" + environment;
@@ -155,6 +156,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
         affectedAccounts: radius?.total ?? 0,
       }), { acknowledgeSignatureId: id });
       if (!delivered) return;
+      providerAccepted = true;
       if (!current) {
         await tx.insert(signatures).values({
           id, environment, signatureHash: hash, sampleMessage: message,
@@ -180,6 +182,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
       }).where(eq(states.stateKey, key));
     });
   } catch {
-    await emergencySend(hash, summary);
+    // If Telegram accepted but DB commit failed, never send an immediate duplicate.
+    if (!providerAccepted) await emergencySend(hash, summary);
   }
 }

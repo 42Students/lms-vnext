@@ -15,8 +15,7 @@ export default async function SuperAdminProgramsPage() {
   if (!collegeId) {
     return (
       <div className="space-y-6">
-      <AcademicSetupSteps step={2} />
-        <PageHeader eyebrow="Super Admin" title="Programs"
+        <PageHeader  title="Programs"
           description="Choose a college scope before managing programs." />
         <EmptyState title="Select a college to continue"
           description="Choose a college in the header above to see its programs." />
@@ -34,7 +33,7 @@ export default async function SuperAdminProgramsPage() {
     <div className="space-y-6">
       <AcademicSetupSteps step={2} />
       <PageHeader
-        eyebrow="Super Admin"
+        
         title="Programs"
         description="Manage programs within the selected college safety scope."
       />

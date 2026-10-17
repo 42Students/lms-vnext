@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api-fetch";
 import {
   createCollegeSectionSchema, sectionIdentityChanged,
   updateCollegeSectionSchema,
@@ -16,15 +17,10 @@ type ClassRow = {
 };
 
 async function requestWrite(method: "POST" | "PATCH", url: string, input: unknown) {
-  const response = await fetch(url, {
+  await apiFetch(url, {
     method, headers: { "content-type": "application/json" },
     body: JSON.stringify(input),
   });
-  const data: unknown = await response.json().catch(() => null);
-  if (!response.ok) {
-    throw new Error(data && typeof data === "object" && "error" in data
-      ? String(data.error) : "CLASS_REQUEST_FAILED");
-  }
 }
 
 function capacityInput(value: string): number | null {

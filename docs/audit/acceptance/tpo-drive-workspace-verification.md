@@ -52,3 +52,12 @@ Tests have been **written but not run**. All cases below are named in `tests/uni
 | TPO-drive-workspace-74 | NOT-A-GAP | legacy recruiter key bug is not inherited; vNext returns college-scoped recruiterContacts; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-74: validates the scoped drive-workspace behavior`. |
 
 The new S3 empty-state and offer release copy lives in `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` and `offers/page.tsx`. The actual target is `id="drive-registered-not-applied"` in `src/components/placements/placement-drive-workspace.tsx`. Shared GR helpers were not yet on origin/main during this round; raw provider codes were not introduced.
+
+## Round 4 — current source and gentle-failure adoption
+
+| ID | Result | Evidence |
+|---|---|---|
+| TPO-drive-workspace-59 | OPEN | `src/modules/placements/tpo-drive-discussion-service.ts`, `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`, and `src/modules/placements/tpo-drive-tab-model.ts`; `tests/unit/tpo-drive-discussion-chat5.test.ts` — `TPO-drive-workspace-59 provides real Discussion navigation and scoped message data`. Recruiter threads now work; the independent internal-team thread requested by legacy is still missing. |
+| TPO-drive-workspace-64 | DONE | The same scoped Discussion reader retains recruiter conversations on closed drives, with a reply link; `tests/unit/tpo-drive-discussion-chat5.test.ts` — `TPO-drive-workspace-64 keeps recruiter follow-up accessible after closing a drive`. |
+| TPO-drive-workspace-70 | OPEN | `src/components/placements/tpo-drive-cancel-form.tsx` and `tpo-drive-lifecycle-controls.tsx` now use explicit accessible consequence checks and `useGuardedAction`; `tests/unit/tpo-drive-graceful-chat5-round4.test.ts` — `TPO-drive-workspace-70 and GR-35 require an explicit reviewed destructive-action confirmation`. Other destructive offer controls still require conversion. |
+| TPO-drive-workspace-14 | DONE (existing) | The publish/reopen screen now uses the shared `apiFetch` and guarded-action hook; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-04 uses guarded JSON fetch in all four changed mutating forms`. |

@@ -2,6 +2,8 @@
 
 import {useRouter} from "next/navigation";
 import {useState,useTransition} from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 type Item={id:string;name:string;visibleToStudents:boolean;updatedAt:string};
 type Result={changed:{id:string;visibleToStudents:boolean;updatedAt:string}[];
@@ -19,16 +21,15 @@ export function CollegeLessonVisibilityControl({lesson}: {lesson:Item}){
   setError("");
   start(async()=>{
    try{
-    const response=await fetch("/api/courses/college-lesson-visibility",{
-     method:"PATCH",headers:{"content-type":"application/json"},
-     body:JSON.stringify({lessonId:lesson.id,expectedUpdatedAt:version,
-      visibleToStudents:!visible,confirmed:true}),
-    });
-    if(!response.ok)throw Error("This Lesson could not be updated. Refresh and try again.");
-    const saved=await response.json() as {visibleToStudents:boolean;updatedAt:string};
+    const saved=await apiFetch<{visibleToStudents:boolean;updatedAt:string}>(
+     "/api/courses/college-lesson-visibility",{
+      method:"PATCH",headers:{"content-type":"application/json"},
+      body:JSON.stringify({lessonId:lesson.id,expectedUpdatedAt:version,
+       visibleToStudents:!visible,confirmed:true}),
+     });
     setVisible(saved.visibleToStudents);setVersion(saved.updatedAt);
     router.refresh();
-   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to update Lesson.");}
+   }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
   });
  }
  return <div className="space-y-1">
@@ -68,18 +69,20 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     // The endpoint caps each transaction group at 25; batch a full 100-row page safely.
     for(let from=0;from<chosen.length;from+=25){
      const batch=chosen.slice(from,from+25);
-     const response=await fetch("/api/courses/college-lesson-visibility",{
-      method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({items:batch.map(item=>({
-       lessonId:item.id,expectedUpdatedAt:versions[item.id]??item.updatedAt,
-      })),visibleToStudents:next,confirmed:true}),
-     });
-     if(!response.ok){
-      failedRows.push(...batch.map(item=>({lessonId:item.id,reason:"Unable to update this batch."})));
-      continue;
+     try{
+      const result=await apiFetch<Result>("/api/courses/college-lesson-visibility",{
+       method:"POST",headers:{"content-type":"application/json"},
+       body:JSON.stringify({items:batch.map(item=>({
+        lessonId:item.id,expectedUpdatedAt:versions[item.id]??item.updatedAt,
+       })),visibleToStudents:next,confirmed:true}),
+      });
+      changed.push(...result.changed);
+      failedRows.push(...result.failed.map(item=>({...item,
+       reason:"This Lesson could not be updated. Refresh and retry."})));
+     }catch{
+      failedRows.push(...batch.map(item=>({lessonId:item.id,
+       reason:"Could not update this batch. Retry after checking the latest Lesson state."})));
      }
-     const result=await response.json() as Result;
-     changed.push(...result.changed);failedRows.push(...result.failed);
     }
     setVersions(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.updatedAt]))}));
     setLatestVisible(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.visibleToStudents]))}));
@@ -90,7 +93,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     setMessage(changed.length+" Lessons updated. "+failures.length+
      " failed."+ (detail?" "+detail:""));
     router.refresh();
-   }catch(error){setMessage(error instanceof Error?error.message:"Unable to save visibility.");}
+   }catch(error){setMessage(error instanceof Error?error.message:friendlyApiError({}));}
   });
  }
  return <details className="rounded-lg border border-border p-3 text-sm text-body">

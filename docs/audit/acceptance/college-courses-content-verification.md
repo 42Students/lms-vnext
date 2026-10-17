@@ -8,7 +8,7 @@ Protocol `docs/orchestrator/briefs/gap-closure-lane.md`; audit `docs/audit/pages
 | COL-courses-content-02 | OPEN | Course display editor has overview/takeaways/thumbnail but gated on DB05; no dedicated colour or real image storage. Test COL-courses-content-02 |
 | COL-courses-content-03 | OPEN | Course status is not a stand-alone visibility control; bulk hide/retry not implemented. Test COL-courses-content-03 covers currently visible signals only |
 | COL-courses-content-04 | DONE | Duplicate link/metadata-only prefill and conflict-safe copy code. Test COL-courses-content-04 |
-| COL-courses-content-05 | OPEN | Department and Students see it indicators exist; separate image/short title/dependencies still missing. Test COL-courses-content-05 |
+| COL-courses-content-05 | OPEN | Department, student status and accurate active-offering Dependencies count now render; image and official short title remain missing. Test COL-courses-content-05 |
 | COL-courses-content-07 | DONE | Guided wizard Course→Offering→Delivery→Faculty maps records. Test COL-courses-content-07; final runtime integration unrun |
 | COL-courses-content-08 | DONE | Offering Home, Syllabus, Back and persisted teaching roster visible. Test COL-courses-content-08 |
 | COL-courses-content-09 | DONE | Section choice and privacy-limited shared/section content preview. Test COL-courses-content-09 |
@@ -17,7 +17,7 @@ Protocol `docs/orchestrator/briefs/gap-closure-lane.md`; audit `docs/audit/pages
 | COL-courses-content-12 | OPEN | Reassign and end lifecycle works, but full edit fields still missing. Test COL-courses-content-12 |
 | COL-courses-content-14 | DONE | Class dropdown, role labels and non-destructive assignment end copy. Test COL-courses-content-14 |
 | COL-courses-content-16 | NOT-A-GAP | These named lesson/media/assessment/progress routes exist and are separately owned/audited; not a missing course overview feature. Test COL-courses-content-16 |
-| COL-courses-content-17 | OPEN | Archive dialog warns about active offerings, but dependency count preview absent. Test COL-courses-content-17 |
-| COL-courses-content-15 | DONE | Mapped friendly Course API errors in update toast. Test COL-courses-content-15 |
+| COL-courses-content-17 | OPEN | Archive dialog now previews how many active offerings block archiving, but nested lesson/content counts remain missing. Test COL-courses-content-17 |
+| COL-courses-content-15 | DONE | Shared apiFetch maps HTML 502, non-JSON, network and timeout failures, with ref-locked action guard in course create/edit/display flows; test COL-courses-content-15 |
 
 Graceful operation: `GR-20` per-offering error retry, `GR-71` catalogue empty/filter guidance, `GR-90` role=alert, `GR-91` keyboard reachable Retry. Existing shared `src/lib/friendly-error.ts` and `api-fetch.ts` were not yet on main when work began; no raw code is rendered in the new boundaries. GR entries in `docs/audit/acceptance/graceful-chat-3-verification.md`.

@@ -10,7 +10,7 @@ const identities: Record<GracefulRole, {
 }> = {
   learner: { uid: "seed-learner", membershipId: SEED_IDS.learnerCollegeAMembership },
   faculty: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership },
-  mentor: { uid: "seed-shared-faculty", membershipId: SEED_IDS.facultyCollegeAMembership },
+  mentor: { uid: "lms_test_919100061103", membershipRole: "MENTOR" },
   college: { uid: "seed-college-admin", membershipId: SEED_IDS.collegeAdminMembership },
   tpo: { uid: "lms_test_919100061105", membershipRole: "TPO" },
   recruiter: { uid: "lms_test_919100061301" },

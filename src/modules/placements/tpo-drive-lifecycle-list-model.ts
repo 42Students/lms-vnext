@@ -68,6 +68,12 @@ export const TPO_REQUESTS_COPY = {
   needsReview: "Needs your review",
   sentBack: "Sent back",
 } as const;
+export function driveRequestStatusTone(status:string):"warning"|"info"|"neutral"|"error"{
+ if(status==="REQUEST")return "warning";
+ if(status==="SENT_BACK")return "info";
+ if(status==="REJECTED")return "error";
+ return "neutral";
+}
 export function driveRequestStatusLabel(status:string) {
   if(status==="REQUEST")return TPO_REQUESTS_COPY.needsReview;
   if(status==="SENT_BACK")return TPO_REQUESTS_COPY.sentBack;
@@ -77,6 +83,13 @@ export function driveRequestStatusLabel(status:string) {
 }
 
 /** TPO-drives-R04: cancellation and ordinary closure must not share a tag. */
+export function tpoDriveStatusTone(status:string):"success"|"warning"|"info"|"neutral"|"error"{
+ if(status==="PUBLISHED")return "success";
+ if(status==="DRAFT")return "info";
+ if(status==="CANCELLED")return "error";
+ if(status==="CLOSED")return "neutral";
+ return "warning";
+}
 export function tpoDriveStatusLabel(status:string){
  return status==="CANCELLED"?"Cancelled":
    status==="CLOSED"?"Closed":status==="PUBLISHED"?"Live":

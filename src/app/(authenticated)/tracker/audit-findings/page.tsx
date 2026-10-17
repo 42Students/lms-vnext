@@ -14,6 +14,7 @@ import { parseAuditFindingsSearchParams, trackerAuditFindingsInput } from "@/mod
 
 type Params=Record<string,string|string[]|undefined>;
 
+export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function AuditFindingsBoard({searchParams}:{searchParams:Promise<Params>}) {
  const ctx=await getCurrentRequestContext();
  if(!isSuperAdmin(ctx) || ctx.user.platformStatus !== "ACTIVE")redirect("/dashboard");
@@ -23,7 +24,7 @@ export default async function AuditFindingsBoard({searchParams}:{searchParams:Pr
  });
  const params=await searchParams;
  const query=parseAuditFindingsSearchParams(params);
- const header=<PageHeader eyebrow="42 Tracker · Super Admin" title="Audit Findings"
+ const header=<PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
  description="Review recorded tracker findings in the selected administrative scope. Status changes are audited and version-checked. This is not independent security-audit evidence."/>;
  if(!query) return <div className="space-y-5">{header}
   <div role="alert" className="rounded-xl border border-border p-5"><p>Invalid audit findings filters or pagination cursor.</p>

@@ -53,3 +53,17 @@ CREATE TABLE IF NOT EXISTS log_alert_daily_counts (
   PRIMARY KEY (signature_id, day_key)
 );
 CREATE INDEX IF NOT EXISTS db10_log_alert_daily_day_idx ON log_alert_daily_counts (day_key);
+
+-- If W01 registered the original DB10 draft before this proposal, do not rely
+-- on CREATE TABLE IF NOT EXISTS to add newly introduced telemetry columns.
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS alerted_at timestamptz;
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS acknowledged_at timestamptz;
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS last_spike_alert_at timestamptz;
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS recent_window_at timestamptz;
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS recent_window_count bigint NOT NULL DEFAULT 1;
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS day_key varchar(10);
+ALTER TABLE log_alert_signatures ADD COLUMN IF NOT EXISTS day_occurrences bigint NOT NULL DEFAULT 1;
+ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS burst_minute_at timestamptz;
+ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS burst_count bigint NOT NULL DEFAULT 0;
+ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS overflow_count bigint NOT NULL DEFAULT 0;
+ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS last_digest_day varchar(10);

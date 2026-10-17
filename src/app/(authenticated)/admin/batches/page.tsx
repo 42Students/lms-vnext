@@ -28,7 +28,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
   return <div className="space-y-6">
-      <AcademicSetupSteps step={5} />
+      {data ? <AcademicSetupSteps step={5} /> : null}
+    {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its batches.</p> : null}
     {data ? <>
       <CollegeCohortCreateForm programs={data.programs.filter(row => row.status === "ACTIVE")} periods={periods} />
       <section aria-label="Filter managed batches" className="rounded-xl border border-border bg-surface p-4">

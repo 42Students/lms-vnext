@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { LEGACY_STUDENT_CSV_COLUMNS, studentImportReportCsv, type StudentCsvResult } from "@/modules/people/college-student-csv-model";
 
@@ -23,22 +25,18 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
   const [cohortId,setCohortId] = useState("");
   const [sectionId,setSectionId] = useState("");
   const [report, setReport] = useState<Report | null>(null);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardRun}=useGuardedAction({busyLabel:"Importing..."});
   const [confirm, setConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit(action: "PREVIEW" | "IMPORT") {
     setError(null);
-    const response = await fetch("/api/people/student-import", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action, csv, programId, cohortId, sectionId:sectionId||undefined,
-        confirm: action === "IMPORT" ? confirm : false }),
+    const payload=await apiFetch<{report:Report}>("/api/people/student-import",{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({action,csv,programId,cohortId,sectionId:sectionId||undefined,
+        confirm:action==="IMPORT"?confirm:false}),
     });
-    const payload = await response.json().catch(() => null);
-    if (!response.ok || !payload?.report) {
-      throw new Error(payload?.error ?? "Unable to validate student CSV");
-    }
+    if(!payload?.report)throw Error("Unable to validate student CSV. Please try again.");
     setReport(payload.report as Report);
     if (action === "IMPORT") {
       setConfirm(false);
@@ -109,7 +107,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         }} rows={8} spellCheck={false}
           className="w-full rounded-md border border-border bg-surface p-3 font-mono text-xs text-foreground" />
       </label>
-      <button type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => startTransition(async () => {
+      <button type="button" disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
@@ -153,7 +151,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
           and any partial onboarding requires manual enrollment recovery.
         </label>
         <button type="button" disabled={!confirm || pending}
-          onClick={() => startTransition(async () => {
+          onClick={() => guardRun(async () => {
             try { await submit("IMPORT"); } catch (reason) {
               setError(reason instanceof Error ? reason.message : "Import failed");
             }

@@ -1,35 +1,12 @@
-export async function projectApiError(
-  response: Response,
-) {
-  try {
-    const body = (await response.json()) as {
-      error?: string;
-      issues?: Array<{ message?: string }>;
-    };
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
-    if (body.issues?.[0]?.message) {
-      return body.issues[0].message;
-    }
-
-    if (body.error) {
-      return body.error
-        .toLowerCase()
-        .split("_")
-        .map(
-          (part) =>
-            part.charAt(0).toUpperCase() +
-            part.slice(1),
-        )
-        .join(" ");
-    }
-  } catch {
-    // Fall through to the HTTP status label.
-  }
-
-  return (
-    response.statusText ||
-    "The Project request could not be completed."
-  );
+export async function projectApiError(response: Response): Promise<string> {
+ try {
+  const data:unknown=await response.json();
+  const code=data&&typeof data==="object"&&"error" in data&&typeof data.error==="string"?data.error:null;
+  return friendlyApiError({status:response.status,code});
+ } catch{return friendlyApiError({status:response.status});}
 }
 
 export async function projectMutation(
@@ -37,25 +14,9 @@ export async function projectMutation(
   method: "POST" | "PATCH" | "DELETE",
   body?: unknown,
 ) {
-  const response = await fetch(path, {
+  return apiFetch<Awaited<ReturnType<Response["json"]>>>(path, {
     method,
-    headers:
-      body === undefined
-        ? undefined
-        : {
-            "Content-Type": "application/json",
-          },
-    body:
-      body === undefined
-        ? undefined
-        : JSON.stringify(body),
+    headers:body===undefined?undefined:{"Content-Type":"application/json"},
+    body:body===undefined?undefined:JSON.stringify(body),
   });
-
-  if (!response.ok) {
-    throw new Error(
-      await projectApiError(response),
-    );
-  }
-
-  return response.json();
 }

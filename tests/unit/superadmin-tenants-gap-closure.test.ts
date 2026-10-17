@@ -28,6 +28,15 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(org()).toContain("Organization name already exists");
   expect(org()).toContain("Created organization “");
  });
+ it("SA-tenants-modules-09 unsaved organization and college creation drafts restore after navigation",()=>{
+  const organization=org(),college=create();
+  expect(organization).toContain('useFormDraft("admin-create-organization"');
+  expect(college).toContain('useFormDraft("admin-create-college:"+initialOrganizationId');
+  expect(organization).toContain("Draft restored");
+  expect(college).toContain("Draft restored");
+  expect(organization).toContain("clearDraft()");
+  expect(college).toContain("clearDraft()");
+ });
  it("SA-tenants-modules-11 college create stores all optional address fields from typed form",()=>{
   const body=create();
   expect(body).toContain("Address details (optional)");
@@ -72,5 +81,7 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(signin).toContain("Phone only");
   expect(signin).toContain("Sign-in settings saved");
   expect(signin).toContain("expectedVersion");
+  expect(signin).toContain("apiFetch<void>");
+  expect(signin).toContain("useGuardedAction");
  });
 });

@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
@@ -14,9 +15,11 @@ import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 export function DepartmentActions({
   departmentId,
   name,
+  usage,
 }: {
   departmentId: string;
   name: string;
+  usage?: { programs: number; courses: number; faculty: number } | null;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -24,6 +27,14 @@ export function DepartmentActions({
   const [archiveOpen, setArchiveOpen] =
     useState(false);
   const [nextName, setNextName] = useState(name);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const [archiveError, setArchiveError] = useState("");
+  const hasDependencies = usage === null || usage === undefined || (usage.programs + usage.courses + usage.faculty) > 0;
+  function requestEditClose() {
+    if (pending) return;
+    if (nextName.trim() !== name) setDiscardOpen(true);
+    else setOpen(false);
+  }
   const [pending, startTransition] = useTransition();
 
   function rename() {
@@ -92,6 +103,7 @@ export function DepartmentActions({
               .join(", ")
           : "";
 
+        setArchiveError("Department was not deleted. Move or remove its programs, courses, faculty before deleting. Refresh and retry after resolving dependencies.");
         showToast({
           tone: "error",
           title: "Archive blocked",
@@ -104,6 +116,7 @@ export function DepartmentActions({
         return;
       }
 
+      setArchiveError("");
       setArchiveOpen(false);
       showToast({
         tone: "success",
@@ -131,14 +144,16 @@ export function DepartmentActions({
       <Button
         variant="danger"
         size="sm"
-        onClick={() => setArchiveOpen(true)}
+        disabled={pending || hasDependencies}
+        title={hasDependencies ? "Move or remove its programs, courses, faculty before deleting." : "Archive this department"}
+        onClick={() => { setArchiveError(""); setArchiveOpen(true); }}
       >
         Archive
       </Button>
       </div>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={(next) => next ? setOpen(true) : requestEditClose()}
         title={DEPARTMENT_COPY.editTitle}
         description="Department names stay unique within the active college."
         footer={
@@ -146,7 +161,7 @@ export function DepartmentActions({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() => setOpen(false)}
+              onClick={requestEditClose}
             >
               Cancel
             </Button>
@@ -178,6 +193,10 @@ export function DepartmentActions({
           maxLength={255}
         />
       </Dialog>
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard department changes?" description="Discard the unsaved department name?"
+        confirmLabel="Discard changes" pending={pending}
+        onConfirm={() => { setDiscardOpen(false); setOpen(false); setNextName(name); }} />
       <Dialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
@@ -206,6 +225,7 @@ export function DepartmentActions({
           </>
         }
       >
+        {archiveError ? <p role="alert" className="rounded border border-border p-3 text-sm text-error">{archiveError} <button type="button" disabled={pending} onClick={archive} className="font-semibold underline focus-visible:ring-2 focus-visible:ring-primary">Retry delete</button></p> : null}
         <p className="m-0 text-sm text-body">
           Existing dependencies are checked
           server-side immediately before the

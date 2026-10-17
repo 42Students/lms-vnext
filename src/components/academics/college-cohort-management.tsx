@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { apiFetch } from "@/lib/api-fetch";
 import {
   createCollegeCohortSchema,
   hasUnsavedCollegeCohortEdit,
@@ -25,17 +26,11 @@ type Batch = {
 };
 
 async function send(method: "POST" | "PATCH", url: string, body: unknown) {
-  const response = await fetch(url, {
+  await apiFetch(url, {
     method,
     headers: { "content-type": "application/json" },
     body: JSON.stringify(body),
   });
-  const data: unknown = await response.json().catch(() => null);
-  if (!response.ok) {
-    const error = data && typeof data === "object" && "error" in data
-      ? String(data.error) : "BATCH_REQUEST_FAILED";
-    throw new Error(error);
-  }
 }
 
 export function CollegeCohortCreateForm({ programs, periods }: {

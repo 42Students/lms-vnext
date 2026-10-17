@@ -9,12 +9,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {apiFetch} from "@/lib/api-fetch";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { authoringDueInstant } from "@/modules/courses/faculty-authoring-datetime-model";
 import { facultyYouTubeLinkIssue,facultyLiveClassIssue } from "@/modules/courses/faculty-content-input-model";
-import { courseApiError } from "./learner-course-api";
+
 
 type Mode =
   | "RESOURCE"
@@ -147,7 +148,7 @@ export function FacultyLessonAuthoring({
     endpoint: string,
     body: unknown,
   ) {
-    const response = await fetch(endpoint, {
+    return apiFetch<{content?:{id:string}}>(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -155,10 +156,7 @@ export function FacultyLessonAuthoring({
       body: JSON.stringify(body),
     });
 
-    if (!response.ok) throw new Error(await courseApiError(response));
-    const saved:unknown=await response.json().catch(()=>null);
-    if(!saved||typeof saved!=="object")throw new Error("Saved response was incomplete; refresh before retrying.");
-    return saved as {content?:{id:string}};
+
   }
 
   function quizPayload() {

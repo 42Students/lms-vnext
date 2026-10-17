@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -114,30 +116,10 @@ function toLocalInput(
   return local.toISOString().slice(0, 16);
 }
 
-async function requestJson(
-  url: string,
-  method: "PATCH" | "PUT",
-  body: unknown,
-) {
-  const response = await fetch(url, {
-    method,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  const payload = (await response
-    .json()
-    .catch(() => null)) as
-    | { error?: string }
-    | null;
-
-  if (!response.ok) {
-    throw new Error(
-      payload?.error ??
-        "Placement draft could not be updated.",
-    );
-  }
+async function requestJson(url:string,method:"POST"|"PUT"|"PATCH",body:unknown){
+ return await apiFetch<Record<string,unknown>>(url,{
+  method,headers:{"content-type":"application/json"},body:JSON.stringify(body),
+ });
 }
 
 export function PlacementDraftEditForm({
@@ -150,8 +132,7 @@ export function PlacementDraftEditForm({
   const router = useRouter();
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
-  const [pending, setPending] =
-    useState(false);
+  const {pending,run}=useGuardedAction();
   const [
     applicationMode,
     setApplicationMode,
@@ -193,8 +174,7 @@ export function PlacementDraftEditForm({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    setPending(true);
-
+    await run(async()=>{
     try {
       const data = new FormData(
         event.currentTarget,
@@ -369,9 +349,8 @@ export function PlacementDraftEditForm({
             ? error.message
             : "Please try again.",
       });
-    } finally {
-      setPending(false);
     }
+    });
   }
 
   return (
