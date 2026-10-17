@@ -19,7 +19,7 @@ describe("college lessons CSV",()=>{
  });
  it("CSV neutralizes metadata formulas and does not infer completion",()=>{
   const csv=renderLessonsCsv([{
-   name:"=lesson",sequence:0,status:"ACTIVE",pathStatus:"PUBLISHED",
+   name:"=lesson",sequence:0,status:"ACTIVE",pathStatus:"PUBLISHED",visibleToStudents:true,
    courseName:"+course",courseCode:"CS-1",cohortName:"2026",periodName:"Year",
    offeringStatus:"ACTIVE",contentCount:2,publishedContentCount:1,publishedAndVisibleFlagCount:1,
   }],true);

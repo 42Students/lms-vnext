@@ -271,12 +271,13 @@ describe("assignment submission files against PostgreSQL", () => {
     const submitted = await submitAssignmentWithFiles(learner, assignment.id, {
       deliveryId: structure.deliveryA.id,
       fileIds: [done.id],
+      links: [],
     });
     expect(submitted.submission.submissionType).toBe("FILE");
     expect(submitted.files).toMatchObject([{ id: done.id, sequence: 0, status: "READY" }]);
 
     await expect(
-      submitAssignmentWithFiles(learner, assignment.id, { deliveryId: structure.deliveryA.id, fileIds: [done.id] }),
+      submitAssignmentWithFiles(learner, assignment.id, { deliveryId: structure.deliveryA.id, fileIds: [done.id], links: [] }),
     ).rejects.toMatchObject({ code: "STORAGE_ALREADY_SUBMITTED" });
     await expect(
       issueSubmissionFileUploadGrant(learner, assignment.id, {
@@ -338,7 +339,7 @@ describe("assignment submission files against PostgreSQL", () => {
     expect(deleted.length).toBe(1);
     await expect(issueSubmissionFileDownloadGrant(learner, file.id)).rejects.toMatchObject({ code: "STORAGE_FILE_NOT_READY" });
     await expect(
-      submitAssignmentWithFiles(learner, assignment.id, { deliveryId: structure.deliveryA.id, fileIds: [file.id] }),
+      submitAssignmentWithFiles(learner, assignment.id, { deliveryId: structure.deliveryA.id, fileIds: [file.id], links: [] }),
     ).rejects.toMatchObject({ code: "STORAGE_FILE_NOT_READY" });
   });
 

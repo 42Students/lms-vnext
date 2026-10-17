@@ -11,7 +11,7 @@ describe("Super Admin Classes CSV export",()=>{
  });
  it("preserves directory filters without pagination override",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=ACTIVE&q=A%20%26%20B"));
-  expect(superAdminScopedCsvHref("/api/admin/classes/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/classes/export",{...query,page:1}))
    .toBe("/api/admin/classes/export?q=A+%26+B&status=ACTIVE");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=5"))).toThrow();
  });

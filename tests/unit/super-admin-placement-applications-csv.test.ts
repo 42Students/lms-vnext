@@ -12,7 +12,7 @@ describe("Super Admin Placement Applications CSV export",()=>{
  });
  it("preserves role/learner search, formula protection and cap disclosure",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=WITHDRAWN&q=Engineering"));
-  expect(superAdminScopedCsvHref("/api/admin/placements/applications/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/placements/applications/export",{...query,page:1}))
    .toBe("/api/admin/placements/applications/export?q=Engineering&status=WITHDRAWN");
   const csv=buildSuperAdminScopedCsv([{id:"app1",title:"=HYPERLINK(A1)",subtitle:"Engineer",status:"WITHDRAWN",details:["No private contact"]}],true);
   expect(csv).toContain("EXPORT TRUNCATED");

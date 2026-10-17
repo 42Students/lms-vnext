@@ -1,6 +1,6 @@
 import {describe,it,expect} from "vitest";
 import {offerRegisterQuery,projectOfferRegister,offerExpiryIndicator,tpoDriveOfferRegisterCsv} from "@/modules/placements/tpo-drive-offer-register-model";
-const row=(id:string,status:string,joining:string|null=null)=>({offer:{id,status,roleTitle:"Engineer",issuedAt:new Date("2026-10-01T00:00:00Z"),respondedAt:null},joining:joining?{status:joining}:null,candidate:{membershipId:id,displayName:" Name "}});
+const row=(id:string,status:string,joining:string|null=null)=>({offer:{id,status,roleTitle:"Engineer",kind:"OFFER",annualCtcInr:null,issuedAt:new Date("2026-10-01T00:00:00Z"),respondedAt:null},joining:joining?{status:joining}:null,candidate:{membershipId:id,displayName:" Name "}});
 describe("offer register",()=>{
  it("counts versions, filters status and avoids invented joining",()=>{
   const facts=[row("1","ISSUED"),row("2","ACCEPTED","JOINED"),row("3","ACCEPTED")];
@@ -49,11 +49,11 @@ describe("offer register",()=>{
  it("exports matching versions with formula-safe names and explicit truncation",()=>{
   const fact=row("1","ISSUED");
   fact.candidate.displayName="=HYPERLINK(1)";
-  const report=tpoDriveOfferRegisterCsv([fact],{status:"ISSUED",q:"",joining:"ALL"});
+  const report=tpoDriveOfferRegisterCsv([fact],{status:"ISSUED",q:"",joining:"ALL",kind:"ALL",expiry:"ALL"});
   expect(report.totalMatching).toBe(1);
   expect(report.csv).toContain("\"\u0027=HYPERLINK(1)\"");
   expect(report.csv).toContain("Issued (IST)");
-  const many=tpoDriveOfferRegisterCsv(Array.from({length:501},(_,i)=>row(String(i),"ISSUED")),{status:"ALL",q:"",joining:"ALL"});
+  const many=tpoDriveOfferRegisterCsv(Array.from({length:501},(_,i)=>row(String(i),"ISSUED")),{status:"ALL",q:"",joining:"ALL",kind:"ALL",expiry:"ALL"});
   expect(many.truncated).toBe(true);
   expect(many.csv).toContain("TRUNCATED");
   expect(many.csv).toContain("First 500 of 501");

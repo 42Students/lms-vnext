@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref,superAdminReadPages} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin applications directory filters",()=>{
  it("rejects malformed queries, no silent array selection",()=>{
@@ -7,7 +8,7 @@ describe("Super Admin applications directory filters",()=>{
   expect(superAdminReadPages(0)).toBe(1);
  });
  it("preserves search/status through navigation",()=>{
-  expect(superAdminReadHref("/admin/placements/applications",{q:"Intern & job",status:"WITHDRAWN",page:2}))
+  expect(superAdminReadHref("/admin/placements/applications",superAdminReadQuerySchema.parse({q:"Intern & job",status:"WITHDRAWN",page:2})))
    .toBe("/admin/placements/applications?q=Intern+%26+job&status=WITHDRAWN&page=2");
  });
 });

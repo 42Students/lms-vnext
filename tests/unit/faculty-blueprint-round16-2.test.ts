@@ -5,5 +5,5 @@ it("rejects loopback hosts and localhost aliases in Faculty Blueprint links",()=
  for(const url of ["https://localhost/file","https://preview.localhost/file","https://127.0.0.1/file","https://[::1]/file"]){
   expect(()=>facultyContentPatch({...base,url})).toThrow("publicly reachable");
  }
- expect(facultyContentPatch(base).externalUrl).toBe(base.url);
+ expect(facultyContentPatch(base)).toMatchObject({externalUrl:base.url});
 });

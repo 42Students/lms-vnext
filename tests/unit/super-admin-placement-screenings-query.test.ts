@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin Screening queue query",()=>{
  it("only parses a single validated status/page",()=>{
@@ -8,7 +9,7 @@ describe("Super Admin Screening queue query",()=>{
   expect(readAdminQuery({page:"-1"}).success).toBe(false);
  });
  it("maintains review status filters in page links",()=>{
-  expect(superAdminReadHref("/admin/placements/screenings",{q:"Candidate A",status:"HOLD",page:2}))
+  expect(superAdminReadHref("/admin/placements/screenings",superAdminReadQuerySchema.parse({q:"Candidate A",status:"HOLD",page:2})))
   .toBe("/admin/placements/screenings?q=Candidate+A&status=HOLD&page=2");
  });
 });

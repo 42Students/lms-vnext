@@ -493,7 +493,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Shared Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 1,
+        maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
         sequence: 0,
         questions: quizQuestions(),
       },
@@ -503,7 +503,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       createCourseQuiz(faculty, {
         lessonId: structure.lesson.id,
         title: "C4B Unsafe Shared Quiz",
-        maxAttempts: 1,
+        maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
         sequence: 1,
         questions: quizQuestions(),
       }),
@@ -519,7 +519,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Section A Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 2,
+        maxAttempts: 2, shuffleQuestions: false, shuffleOptions: false,
         sequence: 1,
         questions: quizQuestions(),
       },
@@ -530,7 +530,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         lessonId: structure.lesson.id,
         deliveryId: structure.deliveryB.id,
         title: "C4B Section B Unsafe",
-        maxAttempts: 1,
+        maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
         sequence: 2,
         questions: quizQuestions(),
       }),
@@ -598,7 +598,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Attempts Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 2,
+        maxAttempts: 2, shuffleQuestions: false, shuffleOptions: false,
         sequence: 0,
         questions: quizQuestions(),
       },
@@ -711,7 +711,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Results Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 3,
+        maxAttempts: 3, shuffleQuestions: false, shuffleOptions: false,
         sequence: 0,
         questions: quizQuestions(),
       },
@@ -852,7 +852,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Race Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 1,
+        maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
         sequence: 0,
         questions: quizQuestions(),
       },
@@ -937,7 +937,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
       deliveryId: structure.deliveryA.id,
       title: "C4B Close Race Quiz",
       dueAt: "2027-12-01T12:00:00.000Z",
-      maxAttempts: 2,
+      maxAttempts: 2, shuffleQuestions: false, shuffleOptions: false,
       sequence: 0,
       questions: quizQuestions(),
     });
@@ -980,7 +980,7 @@ describe("courses C4B quizzes against PostgreSQL", () => {
         title: "C4B Editable Draft Quiz",
         dueAt:
           "2027-12-01T12:00:00.000Z",
-        maxAttempts: 2,
+        maxAttempts: 2, shuffleQuestions: false, shuffleOptions: false,
         sequence: 0,
         questions: quizQuestions(),
       },

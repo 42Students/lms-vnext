@@ -49,9 +49,9 @@ describe("College Admin lessons and course progress pure models", () => {
   });
 
   it("generates only fixed role-safe routes with escaped search", () => {
-    const query = {
-      q: "a & b", status: "ALL" as const, page: 2,
-    };
+    const query = collegeLearningQuerySchema.parse({
+      q: "a & b", status: "ALL", page: 2,
+    });
     const lessons = new URL(collegeLearningHref("LESSONS", query), "https://example.test");
     const progress = new URL(collegeLearningHref("PROGRESS", query), "https://example.test");
     expect(lessons.pathname).toBe("/college/lessons");
@@ -114,9 +114,9 @@ describe("College Admin lessons and course progress pure models", () => {
     expect(collegeLearningHref("LESSONS",collegeLessonQuerySchema.parse({courseCode:"CS 101"})))
       .toContain("courseCode=CS+101");
     expect(progress.searchParams.has("collegeId")).toBe(false);
-    expect(collegeLearningHref("LESSONS", {
+    expect(collegeLearningHref("LESSONS", collegeLearningQuerySchema.parse({
       q: "", status: "ACTIVE", page: 1,
-    })).toBe("/college/lessons");
+    }))).toBe("/college/lessons");
   });
 
   it("distinguishes recorded activity from eligible-learner completion", () => {

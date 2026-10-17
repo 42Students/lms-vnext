@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {CoursesServiceError} from "@/modules/courses/errors";
 import { facultyCourseListQuerySchema, pageFacultyCourseList, facultyCourseListHref,parseFacultyCourseListLocation,facultyCourseWorkspaceRevokedError } from "@/modules/courses/faculty-course-list-model";
 const period="10000000-0000-4000-8000-000000000001";
-const rows=Array.from({length:75},(_,i)=>({courseName:"Java "+i,courseCode:"JAVA",sectionName:"Section "+i,sectionCode:"A",academicPeriodId:period,academicPeriodName:"Term 1",teachingRole:i%2?"TA":"PRIMARY"}));
+const rows=Array.from({length:75},(_,i)=>({courseName:"Java "+i,courseCode:"JAVA",sectionName:"Section "+i,sectionCode:"A",sectionId:"section-"+i,academicPeriodId:period,academicPeriodName:"Term 1",teachingRole:i%2?"TA":"PRIMARY"}));
 describe("Faculty Course list query and bounded cards", () => {
  it("returns recoverable invalid-filter state without querying a broader Section list",()=>{
   expect(parseFacultyCourseListLocation({q:" Java ",page:"2"})).toMatchObject({q:"Java",page:2});

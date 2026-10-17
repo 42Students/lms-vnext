@@ -11,7 +11,7 @@ describe("Super Admin Batches CSV export",()=>{
  });
  it("preserves search/status but never page or explicit college",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=PLANNED&q=A%20%26%20B"));
-  expect(superAdminScopedCsvHref("/api/admin/batches/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/batches/export",{...query,page:1}))
    .toBe("/api/admin/batches/export?q=A+%26+B&status=PLANNED");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=3"))).toThrow();
  });

@@ -12,7 +12,7 @@ describe("Super Admin Students CSV export",()=>{
  it("uses matching filtered query without allowing page override",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=ACTIVE&q=A%20%26%20B"));
   expect(query.q).toBe("A & B");
-  expect(superAdminScopedCsvHref("/api/admin/students/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/students/export",{...query,page:1}))
    .toBe("/api/admin/students/export?q=A+%26+B&status=ACTIVE");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=3"))).toThrow();
  });

@@ -438,7 +438,7 @@ async function createStructure() {
       title: "C4C Checkpoint",
       dueAt:
         "2027-12-01T12:00:00.000Z",
-      maxAttempts: 1,
+      maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
       sequence: 2,
       questions: [
         {
@@ -495,7 +495,7 @@ async function createStructure() {
       title: "C4C Section B Quiz",
       dueAt:
         "2027-12-01T12:00:00.000Z",
-      maxAttempts: 1,
+      maxAttempts: 1, shuffleQuestions: false, shuffleOptions: false,
       sequence: 4,
       questions: [
         {

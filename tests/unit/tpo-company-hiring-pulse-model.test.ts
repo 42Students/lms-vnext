@@ -5,9 +5,9 @@ describe("company hiring pulse",()=>{
   const input={
    drives:[{status:"PUBLISHED",archivedAt:null},{status:"CLOSED",archivedAt:null},{status:"PUBLISHED",archivedAt:new Date("2026-10-03T00:00:00Z")}],
    seasonIds:["a","a","b",null],
-   offers:[{membershipId:"x",status:"ACCEPTED",joiningStatus:"JOINED"},
-    {membershipId:"x",status:"ACCEPTED",joiningStatus:"PENDING"},
-    {membershipId:"y",status:"ISSUED",joiningStatus:null}],
+   offers:[{membershipId:"x",status:"ACCEPTED",joiningStatus:"JOINED",joiningRecordedAt:null},
+    {membershipId:"x",status:"ACCEPTED",joiningStatus:"PENDING",joiningRecordedAt:null},
+    {membershipId:"y",status:"ISSUED",joiningStatus:null,joiningRecordedAt:null}],
    timeline:[{at:new Date("2026-10-01T00:00:00Z")},{at:new Date("2026-10-02T00:00:00Z")}],
   };
   expect(projectTpoCompanyHiringPulse(input)).toEqual({

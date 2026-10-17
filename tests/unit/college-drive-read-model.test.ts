@@ -11,7 +11,7 @@ describe("College drives filters", () => {
     expect(driveQueryFromSearch({relationshipId:""})).toEqual({q:"",status:"ALL",page:1});
   });
   it("encodes only trusted drive path/filter", () => {
-    const url = new URL(driveListHref({q:"a & b",status:"DRAFT",page:2}),"https://example.test");
+    const url = new URL(driveListHref(collegeDriveListQuerySchema.parse({q:"a & b",status:"DRAFT",page:2})),"https://example.test");
     expect(url.pathname).toBe("/college/placements/drives");
     expect(url.searchParams.get("q")).toBe("a & b");
     expect(url.searchParams.has("collegeId")).toBe(false);

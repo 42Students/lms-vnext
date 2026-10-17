@@ -12,7 +12,7 @@ describe("Super Admin Semester–Course Mapping CSV export",()=>{
  });
  it("keeps the current mapping filters without caller paging override",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=ACTIVE&q=Calculus"));
-  expect(superAdminScopedCsvHref("/api/admin/semester-courses/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/semester-courses/export",{...query,page:1}))
    .toBe("/api/admin/semester-courses/export?q=Calculus&status=ACTIVE");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=2"))).toThrow();
  });

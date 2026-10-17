@@ -1,5 +1,5 @@
 import {describe,expect,it} from "vitest";
-import {buildSuperAdminScopedCsv,parseSuperAdminScopedCsvParams,superAdminScopedCsvHref,scopedCsvStatusAllowed}
+import {buildSuperAdminScopedCsv,superAdminScopedCsvQuerySchema,parseSuperAdminScopedCsvParams,superAdminScopedCsvHref,scopedCsvStatusAllowed}
  from "@/modules/admin-ui/super-admin-scoped-csv-model";
 describe("Super Admin faculty CSV security",()=>{
  it("rejects caller-supplied scope, page overrides and duplicated filters",()=>{
@@ -13,7 +13,7 @@ describe("Super Admin faculty CSV security",()=>{
   expect(csv).toContain('"\'=IMPORT(""secret"")"');
   expect(csv).toContain('""x""');
   expect(csv).not.toContain("EXPORT TRUNCATED");
-  expect(superAdminScopedCsvHref("/api/admin/faculty/export",{q:"A & B",status:"ACTIVE"}))
+  expect(superAdminScopedCsvHref("/api/admin/faculty/export",{...superAdminScopedCsvQuerySchema.parse({q:"A & B",status:"ACTIVE"}),page:1}))
    .toBe("/api/admin/faculty/export?q=A+%26+B&status=ACTIVE");
  });
 });

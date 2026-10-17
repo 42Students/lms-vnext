@@ -19,6 +19,10 @@ import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner
 import { filterLearnerBoardTasks, learnerBoardEmptyState, learnerBoardActiveFilterCount } from "@/modules/projects/learner-project-board-model";
 import { SEED_IDS } from "../../scripts/db-seed-data";
 
+function boardTasks<T extends { sprintId: string | null }>(tasks: readonly T[]) {
+  return tasks.map(task => ({ ...task, sprintId: task.sprintId ?? undefined }));
+}
+
 if (!process.env.TEST_DATABASE_URL) {
   throw new Error("Requires disposable TEST_DATABASE_URL");
 }
@@ -210,9 +214,9 @@ describe("L25-006 own persisted task Board search",()=>{
     await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,description,sequence) values($1,$2,$3,'search-task','Build unit checks','Own acceptance',0)",
       [ids.taskA,ids.project,ids.sprint]);
     const workspace=await getProjectInstanceWorkspace(context,ids.project);
-    expect(filterLearnerBoardTasks(workspace.tasks,"acceptance").map(task=>task.id))
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"acceptance").map(task=>task.id))
       .toEqual([ids.taskA]);
-    expect(filterLearnerBoardTasks(workspace.tasks,"another")).toEqual([]);
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"another")).toEqual([]);
   });
   it("denies foreign college, suspended and wrong-role actors",async()=>{
     const denied:RequestContext[]=[
@@ -231,7 +235,7 @@ describe("L25-002 learner priority filter from own persisted task rows",()=>{
     await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'priority-sprint','Sprint',0)",[ids.sprint,ids.project,ids.release]);
     await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,priority) values($1,$2,$3,'priority-a','Own high task',0,'HIGH'),($4,$2,$3,'priority-b','Own low task',1,'LOW')",[ids.taskA,ids.project,ids.sprint,ids.taskB]);
     const workspace=await getProjectInstanceWorkspace(context,ids.project);
-    expect(filterLearnerBoardTasks(workspace.tasks,"",{priority:"HIGH"}).map(task=>task.id)).toEqual([ids.taskA]);
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"",{priority:"HIGH"}).map(task=>task.id)).toEqual([ids.taskA]);
     for(const denied of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
@@ -246,8 +250,8 @@ describe("L25-003 Board sprint filter from persisted assigned project",()=>{
     await pool.query("insert into project_sprints(id,project_id,release_id,template_key,title,sequence) values($1,$2,$3,'sprint-a','Sprint A',0)",[ids.sprint,ids.project,ids.release]);
     await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence,status) values($1,$2,$3,'sprint-task','Task',0,'TODO')",[ids.taskA,ids.project,ids.sprint]);
     const workspace=await getProjectInstanceWorkspace(context,ids.project);
-    expect(filterLearnerBoardTasks(workspace.tasks,"",{sprintId:ids.sprint}).map(task=>task.id)).toEqual([ids.taskA]);
-    expect(filterLearnerBoardTasks(workspace.tasks,"",{sprintId:randomUUID()})).toEqual([]);
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"",{sprintId:ids.sprint}).map(task=>task.id)).toEqual([ids.taskA]);
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"",{sprintId:randomUUID()})).toEqual([]);
     for(const actor of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
@@ -263,9 +267,9 @@ describe("L25-005 authorized learner Board release filter",()=>{
     await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence) values($1,$2,$3,'release-task','Task',0)",[ids.taskA,ids.project,ids.sprint]);
     const workspace=await getProjectInstanceWorkspace(context,ids.project);
     const links=new Map(workspace.sprints.map(sprint=>[sprint.id,sprint.releaseId]));
-    expect(filterLearnerBoardTasks(workspace.tasks,"",{releaseId:ids.release,
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"",{releaseId:ids.release,
       sprintReleaseById:links}).map(task=>task.id)).toEqual([ids.taskA]);
-    expect(filterLearnerBoardTasks(workspace.tasks,"",{releaseId:randomUUID(),
+    expect(filterLearnerBoardTasks(boardTasks(workspace.tasks),"",{releaseId:randomUUID(),
       sprintReleaseById:links})).toEqual([]);
     for(const denied of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
@@ -284,7 +288,7 @@ describe("L25-013 source-backed empty Board on own learner project",()=>{
     await pool.query("insert into project_tasks(id,project_id,sprint_id,template_key,title,sequence) values($1,$2,$3,'empty-task','Persisted Task',0)",[ids.taskA,ids.project,ids.sprint]);
     const populated=await getProjectInstanceWorkspace(context,ids.project);
     expect(learnerBoardEmptyState(populated.tasks.length,
-      filterLearnerBoardTasks(populated.tasks,"nonexistent").length)).toBe("FILTERED_EMPTY");
+      filterLearnerBoardTasks(boardTasks(populated.tasks),"nonexistent").length)).toBe("FILTERED_EMPTY");
     for(const denied of [
       {...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},
       {...context,membership:{...context.membership!,status:"SUSPENDED"}},
@@ -388,7 +392,7 @@ describe("L25-007 learner Board persisted task context",()=>{
     const own=await getProjectInstanceWorkspace(context,ids.project);
     const task=own.tasks.find(row=>row.id===ids.taskA);
     if(!task)throw new Error("Expected own fixture task");
-    expect(learnerBoardCardMetadata(task,own.sprints)).toMatchObject({title:"Own Task",status:"IN PROGRESS",priority:"HIGH",sprintTitle:"Own Sprint"});
+    expect(learnerBoardCardMetadata({...task,sprintId:task.sprintId ?? ""},own.sprints)).toMatchObject({title:"Own Task",status:"IN PROGRESS",priority:"HIGH",sprintTitle:"Own Sprint"});
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,collegeId:SEED_IDS.collegeB}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,status:"SUSPENDED"}},ids.project)).rejects.toBeDefined();
     await expect(getProjectInstanceWorkspace({...context,membership:{...context.membership!,roles:["FACULTY"]}},ids.project)).rejects.toBeDefined();

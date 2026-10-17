@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin Joining Outcomes query",()=>{
  it("handles lifecycle states, strict statuses and duplicate protection",()=>{
@@ -7,7 +8,7 @@ describe("Super Admin Joining Outcomes query",()=>{
   expect(readAdminQuery({status:["JOINED","PENDING"]}).success).toBe(false);
  });
  it("preserves status during pagination",()=>{
-  expect(superAdminReadHref("/admin/placements/joining",{q:"Engineer",status:"DEFERRED",page:2}))
+  expect(superAdminReadHref("/admin/placements/joining",superAdminReadQuerySchema.parse({q:"Engineer",status:"DEFERRED",page:2})))
   .toBe("/admin/placements/joining?q=Engineer&status=DEFERRED&page=2");
  });
 });

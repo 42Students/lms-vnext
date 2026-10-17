@@ -11,7 +11,7 @@ describe("Super Admin Faculty Assignment CSV export",()=>{
  });
  it("preserves teacher search and ENDED filter, never page",()=>{
   const query=parseSuperAdminScopedCsvParams(new URLSearchParams("status=ENDED&q=Professor"));
-  expect(superAdminScopedCsvHref("/api/admin/faculty-assignment/export",query))
+  expect(superAdminScopedCsvHref("/api/admin/faculty-assignment/export",{...query,page:1}))
    .toBe("/api/admin/faculty-assignment/export?q=Professor&status=ENDED");
   expect(()=>parseSuperAdminScopedCsvParams(new URLSearchParams("page=3"))).toThrow();
  });

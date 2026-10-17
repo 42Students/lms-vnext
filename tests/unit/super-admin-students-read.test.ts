@@ -1,4 +1,5 @@
 import {describe,expect,it} from "vitest";
+import {superAdminReadQuerySchema} from "@/modules/admin-ui/super-admin-read-directory-model";
 import {readAdminQuery,superAdminReadHref,superAdminReadPages} from "@/modules/admin-ui/super-admin-read-directory-model";
 describe("Super Admin students directory model",()=>{
  it("guards statuses/pages before any data access",()=>{
@@ -8,7 +9,7 @@ describe("Super Admin students directory model",()=>{
   expect(superAdminReadPages(26)).toBe(2);
  });
  it("preserves search and membership status in pagination",()=>{
-  expect(superAdminReadHref("/admin/students",{q:"A&B",status:"ENDED",page:3}))
+  expect(superAdminReadHref("/admin/students",superAdminReadQuerySchema.parse({q:"A&B",status:"ENDED",page:3})))
    .toBe("/admin/students?q=A%26B&status=ENDED&page=3");
  });
 });

@@ -219,7 +219,7 @@ async function fixture() {
     lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Assignment " + runId,maxPoints:10,sequence:0,
   });
   const quiz=await createCourseQuiz(faculty,{
-    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz " + runId,maxAttempts:2,sequence:1,
+    lessonId:lesson.id,deliveryId:delivery.id,title:"Chat4 Quiz " + runId,maxAttempts:2,shuffleQuestions:false,shuffleOptions:false,sequence:1,
     questions:[{
       type:"SINGLE_CHOICE",prompt:"Which is FIFO?",points:5,sequence:0,
       options:[{text:"Queue",correct:true,sequence:0},{text:"Stack",correct:false,sequence:1}],

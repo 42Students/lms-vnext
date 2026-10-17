@@ -41,12 +41,12 @@ describe("College Admin classes/electives read-only filters", () => {
   });
 
   it("builds fixed relative routes with escaped search text", () => {
-    const query = { q: "x & y", status: "ALL" as const, page: 2 };
+    const query = collegeClassQuerySchema.parse({ q: "x & y", status: "ALL", page: 2 });
     const url = new URL(collegeStructureHref("CLASSES", query), "https://example.test");
     expect(url.pathname).toBe("/college/classes");
     expect(url.searchParams.get("q")).toBe("x & y");
     expect(url.searchParams.has("collegeId")).toBe(false);
-    expect(collegeStructureHref("ELECTIVES", { q: "", status: "ACTIVE", page: 1 }))
+    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ q: "", status: "ACTIVE", page: 1 })))
       .toBe("/college/electives");
     expect(collegeClassQuerySchema.parse({ minimumCapacity: "36" }).minimumCapacity).toBe(36);
     expect(collegeClassQuerySchema.safeParse({ minimumCapacity: 0 }).success).toBe(false);
@@ -54,8 +54,8 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeClassQuerySchema.safeParse({ maximumCapacity: 100001 }).success).toBe(false);
     expect(readCollegeStructureParams({maximumCapacity:""})).toEqual({});
     expect(collegeStructureQuerySchema.safeParse({ minimumCapacity: 36 }).success).toBe(false);
-    expect(collegeStructureHref("CLASSES", { ...query, minimumCapacity: 36 })).toContain("minimumCapacity=36");
-    expect(collegeStructureHref("CLASSES", { ...query, maximumCapacity: 36 })).toContain("maximumCapacity=36");
+    expect(collegeStructureHref("CLASSES", collegeClassQuerySchema.parse({ ...query, minimumCapacity: 36 }))).toContain("minimumCapacity=36");
+    expect(collegeStructureHref("CLASSES", collegeClassQuerySchema.parse({ ...query, maximumCapacity: 36 }))).toContain("maximumCapacity=36");
     expect(collegeStructureTotalPages(0)).toBe(1);
     expect(collegeElectiveQuerySchema.parse({ semesterNumber: "1" }).semesterNumber).toBe(1);
     expect(collegeElectiveQuerySchema.safeParse({ semesterNumber: 25 }).success).toBe(false);
@@ -63,8 +63,8 @@ describe("College Admin classes/electives read-only filters", () => {
     expect(collegeElectiveQuerySchema.safeParse({ minimumCredits: 501 }).success).toBe(false);
     expect(readCollegeStructureParams({minimumCapacity:"",semesterNumber:"",minimumCredits:""})).toEqual({});
     expect(collegeClassQuerySchema.safeParse({ semesterNumber: 1 }).success).toBe(false);
-    expect(collegeStructureHref("ELECTIVES", { ...query, semesterNumber: 1 })).toContain("semesterNumber=1");
-    expect(collegeStructureHref("ELECTIVES", { ...query, minimumCredits: 3 })).toContain("minimumCredits=3");
+    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ ...query, semesterNumber: 1 }))).toContain("semesterNumber=1");
+    expect(collegeStructureHref("ELECTIVES", collegeElectiveQuerySchema.parse({ ...query, minimumCredits: 3 }))).toContain("minimumCredits=3");
     expect(collegeStructureTotalPages(26)).toBe(2);
   });
 
