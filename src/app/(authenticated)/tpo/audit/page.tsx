@@ -219,6 +219,18 @@ export default async function TpoAuditPage({
         {look.label}
        </Link>)}
       </nav>
+      <nav aria-label="Filter audit by category" className="flex flex-wrap gap-2">
+        {[{kind:"ALL" as const,label:"All",count:summary.total},
+          ...TPO_AUDIT_KINDS.map(kind=>({kind,label:TPO_AUDIT_KIND_LABELS[kind],count:summary.byKind[kind]}))]
+         .map(item=><Link key={item.kind}
+          href={tpoAuditHref({...paginationFilters,kind:item.kind,page:1})}
+          aria-current={query.kind===item.kind?"page":undefined}
+          className={query.kind===item.kind
+           ?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary"
+           :"inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
+          {item.label} ({item.count})
+         </Link>)}
+      </nav>
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">
           Audit filters
@@ -230,7 +242,7 @@ export default async function TpoAuditPage({
           className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
         >
           <label className="grid gap-1 text-sm font-semibold text-body">
-            Event kind
+            About
             <select
               name="kind"
               defaultValue={query.kind}
@@ -277,7 +289,7 @@ export default async function TpoAuditPage({
               name="q"
               maxLength={120}
               defaultValue={query.q}
-              placeholder="Job, action or status"
+              placeholder="What happened, job or who"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
             />
           </label>
