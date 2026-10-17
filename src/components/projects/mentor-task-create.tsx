@@ -98,6 +98,17 @@ export function MentorTaskCreate({
             <option value="HIGH">High</option><option value="CRITICAL">Critical</option>
           </select>
         </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Status
+          <select value={status} disabled={busy||!selectedSprintId}
+            onChange={event=>setStatus(event.target.value as typeof status)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="TODO">To Do</option>
+            {chosenSprint?.status==="ACTIVE"?<>
+              <option value="IN_PROGRESS">In Progress</option>
+              <option value="BLOCKED">Blocked</option>
+            </>:null}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Estimate
           <Input inputMode="numeric" type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
