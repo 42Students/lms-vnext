@@ -8,10 +8,11 @@ describe("Learner contacts persisted write and UI route contracts", () => {
   it("only exposes a confirmed contact-edit dialog, leaving login credentials alone", () => {
     const ui = read("src/components/profile/learner-profile-workspace.tsx");
     expect(ui).toContain("Edit contact details");
+    expect(ui).toContain("FriendlyFetchError");
     expect(ui).toContain("Confirm contact details");
     expect(ui).toContain("Keep current details");
     expect(ui).toContain("learnerContactEditSchema.safeParse");
-    expect(ui).toContain('fetch("/api/profile/me/contacts"');
+    expect(ui).toContain('apiFetch<{contacts:LearnerProfileDocument["contacts"]}>("/api/profile/me/contacts"');
     expect(ui).toContain('method: "PATCH"');
     expect(ui).toContain("sm:grid-cols-2");
     expect(ui).toContain('role="alert"');

@@ -20,7 +20,7 @@ export default async function MentorLandingPage() {
     redirect("/mentor/projects");
   }
   return <div className="space-y-6">
-    <PageHeader eyebrow="Mentor" title={access===null?"Projects could not be loaded":"Projects is currently unavailable"}
+    <PageHeader title={access===null?"Projects could not be loaded":"Projects is currently unavailable"}
       description={access===null?"Check your connection and try again. This does not mean Projects is disabled.":"Projects is disabled for this account. You can still check notifications."} />
     <div className="rounded-xl border border-border bg-surface p-6">
       <p className="text-sm text-body">

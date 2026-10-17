@@ -93,6 +93,7 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
  const sendKey=useRef<string|null>(null);
  const draftKey="tpo-team-reply:"+actorUserId+":"+threadId;
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ const [markDecision,setMarkDecision]=useState(false);
  useEffect(()=>{
   const task=window.setTimeout(()=>{
    try{const saved=sessionStorage.getItem(draftKey);if(saved&&saved.length<=4000)setBody(saved);
@@ -118,12 +119,12 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
    if(!sendKey.current){sendKey.current=crypto.randomUUID();
     try{sessionStorage.setItem(draftKey+":sendKey",sendKey.current);}catch{/* Optional. */}}
    const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{
-    body:body.trim(),idempotencyKey:sendKey.current,
+    body:body.trim(),idempotencyKey:sendKey.current,markDecision:String(markDecision),
    });
    if(!result.ok){setError(result.code==="TEAM_PARTICIPANT_INACTIVE"||result.code==="STALE_MESSAGE"||result.code==="SESSION_EXPIRED"?
     tpoTeamFormErrorMessage(result.code,"REPLY"):
     result.message??tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
-   changeBody("");setSuccess("Sent");router.refresh();
+   changeBody("");setMarkDecision(false);setSuccess("Sent");router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","REPLY"));}
   finally{pending.current=false;setBusy(false);}
  }
@@ -140,6 +141,12 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
     }}
     className="rounded-md border border-border bg-surface p-3" placeholder="Share a private team update"/>
   </label>
+  <label className="flex items-center gap-2 text-sm">
+   <input type="checkbox" checked={markDecision} disabled={busy}
+    onChange={event=>{setMarkDecision(event.target.checked);sendKey.current=null;}}/>
+   Mark as decision
+  </label>
+  {markDecision?<p role="status" className="text-xs text-muted-foreground">Will be pinned as a decision</p>:null}
   <p className="text-xs text-muted-foreground" aria-live="polite">Enter to send · Shift+Enter for a new line · {body.length}/4000</p>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   {success?<p role="status" className="text-sm text-body">{success}</p>:null}

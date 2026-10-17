@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, exists, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
-  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
+  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments,placementCandidateAcademicEvidence } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -42,7 +42,22 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
         or(ilike(cohorts.name,queryPattern),ilike(cohorts.code,queryPattern),
           ilike(programs.name,queryPattern),ilike(departments.name,queryPattern))))
    ):undefined;
+   const flagScope=input.flag==="WITHDRAWAL_REQUESTED"?sql<boolean>`exists(
+      select 1 from placement_learner_requests req
+       where req.application_id=${placementApplications.id}
+        and req.request_type='APPLICATION_WITHDRAWAL' and req.status='PENDING')`:
+    input.flag==="NO_SHOW"?sql<boolean>`exists(
+      select 1 from placement_round_results r
+       where r.application_id=${placementApplications.id}
+        and r.status='APPLIED' and r.outcome='ABSENT' and r.superseded_at is null)`:
+    input.flag==="PLACED_ELSEWHERE"?sql<boolean>`exists(
+      select 1 from placement_offers o
+       join placement_applications other on other.id=o.application_id
+       where other.membership_id=${placementApplications.membershipId}
+        and other.job_id<>${job.id} and o.status='ACCEPTED')`:
+    input.flag==="ADDED_BY_COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:undefined;
    const scope=and(eq(placementApplications.jobId,job.id),
+    flagScope,
     since?gte(placementApplications.submittedAt,since):undefined,
     input.channel!=="ALL"?eq(placementApplications.channel,input.channel):undefined,
     input.eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,input.eligibility):undefined,
@@ -65,6 +80,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
      eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(placementCandidateAcademicEvidence,
+     eq(placementCandidateAcademicEvidence.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
      eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -82,6 +99,33 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     rollNumber:learnerProfiles.rollNumber,
     email:users.email,
     phone:users.phoneE164,
+    batchName:sql<string|null>`(select c.name from learner_program_enrollments e
+      join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
+      join departments d on d.id=p.department_id
+      where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+        and d.college_id=${collegeId}
+      order by e.admitted_at desc,e.id desc limit 1)`,
+    branchName:sql<string|null>`(select d.name from learner_program_enrollments e
+      join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
+      join departments d on d.id=p.department_id
+      where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+        and d.college_id=${collegeId}
+      order by e.admitted_at desc,e.id desc limit 1)`,
+    cgpaHundredths:placementCandidateAcademicEvidence.cgpaHundredths,
+    activeBacklogs:placementCandidateAcademicEvidence.activeBacklogs,
+    pastBacklogs:placementCandidateAcademicEvidence.pastBacklogs,
+    tenthPctBasisPoints:placementCandidateAcademicEvidence.tenthPctBasisPoints,
+    twelfthPctBasisPoints:placementCandidateAcademicEvidence.twelfthPctBasisPoints,
+    lastRound:sql<string|null>`(select r.name from placement_round_results result
+      join placement_job_rounds r on r.id=result.round_id
+      where result.application_id=${placementApplications.id}
+       and result.status='APPLIED' and result.superseded_at is null
+      order by r.sequence desc,result.updated_at desc limit 1)`,
+    lastResult:sql<string|null>`(select result.outcome from placement_round_results result
+      join placement_job_rounds r on r.id=result.round_id
+      where result.application_id=${placementApplications.id}
+       and result.status='APPLIED' and result.superseded_at is null
+      order by r.sequence desc,result.updated_at desc limit 1)`,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
@@ -140,5 +184,5 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
-  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,...projection};
+  return {job,stage:input.stage,search:input.search,channel:input.channel,eligibility:input.eligibility,sort:input.sort,submittedWithin:input.submittedWithin,flag:input.flag,...projection};
 }
