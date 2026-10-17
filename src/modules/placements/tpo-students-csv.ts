@@ -50,6 +50,9 @@ const STUDENT_CSV_HEADERS = [
   "Accepted offers",
   "Verified external offers",
   "Placed (provisional)",
+  "Profile verification",
+  "Waiting verification sections",
+  "Verified sections",
 ] as const;
 
 /**
@@ -87,6 +90,9 @@ export function exportTpoStudentsCsv(
       row.acceptedOfferCount,
       row.verifiedExternalOfferCount,
       row.placed ? "Yes" : "No",
+      row.verification.status,
+      row.verification.waitingSections.join("; "),
+      row.verification.verifiedSections.join("; "),
     ].map(tpoStudentCsvCell).join(","),
   );
 
