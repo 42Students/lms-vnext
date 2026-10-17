@@ -2,6 +2,7 @@ export type TpoDriveHeaderFacts={
  status:string;applicationMode:string;workMode:string;employmentType:string;
  minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  applicationDeadline:Date|string|null;
+ isDream?:boolean;stipendPerMonthInr?:number|null;
  recordedOutside?:boolean;needsReview?:boolean;
 };
 const STATUS:Record<string,string>={
@@ -18,7 +19,9 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts){
  const payLow=facts.minimumAnnualCtcInr;
  const payHigh=facts.maximumAnnualCtcInr;
  const amount=(inr:number)=>"₹"+new Intl.NumberFormat("en-IN",{maximumFractionDigits:2}).format(inr/100000)+" LPA";
- const ctc=payLow===null&&payHigh===null?"CTC not yet announced":
+ const ctc=payLow===null&&payHigh===null?(facts.stipendPerMonthInr!=null?
+  "₹"+new Intl.NumberFormat("en-IN").format(facts.stipendPerMonthInr)+" stipend/month":
+  "CTC not yet announced"):
   payLow!==null&&payHigh!==null?(payLow===payHigh?amount(payLow):amount(payLow)+" – "+amount(payHigh)):
    payLow!==null?"From "+amount(payLow):"Up to "+amount(payHigh!);
  const deadline=facts.applicationDeadline===null?"Deadline not set":
@@ -27,6 +30,7 @@ export function projectTpoDriveHeader(facts:TpoDriveHeaderFacts){
  return {
   status,applicationMode:parts[0],workMode:facts.workMode.replaceAll("_"," ").toLowerCase(),
   employmentType:facts.employmentType.replaceAll("_"," ").toLowerCase(),
-  ctc,deadline,recordedOutside:Boolean(facts.recordedOutside),
+  ctc,deadline,category:facts.isDream?"Dream":"Regular",
+  recordedOutside:Boolean(facts.recordedOutside),
  };
 }
