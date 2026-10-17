@@ -23,7 +23,7 @@ export function buildRecruiterActionQueue(input:{
   .slice(0,5).map(item=>({key:"due:"+item.id, tone:"SOON" as const, at:item.dueAt,
     label:"Check results deadline · "+item.roundName,
     description:"Recorded deadline for "+item.jobTitle+"; this does not establish whether results are outstanding.",
-    href:"/hr/placements/jobs/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
+    href:"/recruiter/drives/"+encodeURIComponent(item.jobId)+"?tab=rounds&roundId="+encodeURIComponent(item.id)}));
  const live=input.jobs.filter(row=>row.collegeId===input.collegeId&&row.companyId===input.companyId&&
    row.job.status==="PUBLISHED"&&row.job.archivedAt===null).slice(0,3);
  const reviews=live.map(row=>({key:"review:"+row.job.id, tone:"FINE" as const, at:null as Date|null,
