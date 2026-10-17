@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * GR-35: confirmation with plain consequences; never use window.confirm().
+ * GR-35: accessible confirmation with plain consequences; avoid native browser prompts.
  * Usage: <ConfirmActionDialog open={open} title="Remove student"
  *   consequence="This removes their access." onCancel={close}
  *   onConfirm={remove} confirmLabel="Remove student" />

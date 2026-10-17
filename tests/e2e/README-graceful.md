@@ -82,3 +82,9 @@ The new `graceful-leak-matrix.spec.ts` contributes **42 deliberately hostile tex
 The production-only `graceful-production-faults.spec.ts` runs four additional sign-in fault variants (403, 429, 503, delayed 504). It asserts the exact catalog sentence, one intercepted POST, preserved input, re-enabled Continue, and no unhandled browser errors. A fifth test requests the `.map` for **every** initial Next.js application chunk and rejects anything other than HTTP 404. The dedicated production config includes this spec and never starts `npm run dev`. Do not run these with the development-only bypass or treat a skipped production test as passing.
 
 **Still unverified:** the orchestrator must execute all browser suites against a pinned merged SHA, provide real logged-in production storage states, supply deterministic unread notifications and employer grants, and record successful provider-outbox integration evidence. These source changes do not close GR-80–83 for a release.
+
+## Round 5: accessible DOM and retry-cycle regression
+
+`graceful-recovery-cycle.spec.ts` exercises 18 two-request controlled failure/retry cases (email and phone across nine fault types) and 16 responsive offline/reconnect journeys for public and seven seeded roles. Do not replace this with a static mocked page; the request method, URL, and attempt count are part of the contract. Both login attempts fail under interception, so no real OTP is sent.
+
+`graceful-dom-surfaces.spec.ts` provides 26 synthetic disclosures and two safe controls across accessible names, tooltips, placeholders, hidden alerts, status/live regions, and framework overlays. The shared `expectNoRawErrors` checks those DOM surfaces in every existing role journey and keeps legitimate uppercase role/status labels outside failure surfaces intact. Browser execution and production release gates are still required.

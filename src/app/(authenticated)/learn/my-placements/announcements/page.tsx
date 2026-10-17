@@ -8,7 +8,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { learnerPlacementNoticeFeed } from "@/modules/placements/learner-placement-announcement-model";
 import { learnerPlacementNoticeView } from "@/modules/placements/learner-placement-notice-view-model";
-import {getOwnLearnerPlacementAlerts} from "@/modules/placements/learner-placement-alerts-service";
+import {getOwnLearnerPlacementAlerts,getUnreadOwnLearnerPlacementAlertCount} from "@/modules/placements/learner-placement-alerts-service";
 import {LearnerPlacementAlerts} from "@/components/placements/learner-placement-alerts";
 import {searchLearnerAlertPreview} from "@/modules/placements/learner-alert-preview-search-model";
 import {readLearnerNoticeFilters} from "@/modules/placements/learner-notices-query-model";
@@ -64,6 +64,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
   const personalAlerts = await readOptionalLearnerAlertSource(
     ()=>getOwnLearnerPlacementAlerts(context,{unreadOnly,limit:20}));
   const searchedAlerts=searchLearnerAlertPreview(personalAlerts.items,alertQ);
+  const unreadCount=await readOptionalLearnerAlertSource(async()=>[await getUnreadOwnLearnerPlacementAlertCount(context)]);
   return (
     <main className="min-w-0 space-y-6">
       <div>
@@ -74,7 +75,7 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
       </div>
       <nav aria-label="Placement notice views" className="flex flex-wrap gap-3">
         <a href="#college-notices" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Announcements</a>
-        <a href="#personal-updates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Updates about you ({personalAlerts.items.length})</a>
+        <a href="#personal-updates" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Updates about you ({unreadCount.available ? unreadCount.items[0] : "?"} unread)</a>
       </nav>
       <div id="college-notices" className="scroll-mt-24"/>
       <form method="GET" action="/learn/my-placements/announcements" className="flex min-w-0 flex-wrap items-end gap-3">

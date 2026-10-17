@@ -8,6 +8,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
@@ -269,6 +270,10 @@ export function AdminCourseCreatePanel({
       </p>
       <form id="setup-course" onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
+        {departments.length===0?<p role="status" className="mt-3 text-sm text-body">
+          No departments in this college yet. Create a department before adding a course.{" "}
+          <Link className="font-semibold text-primary-text underline" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
+        </p>:null}
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
           <button type="button" className="font-semibold text-primary-text underline" onClick={()=>router.replace(courseBasePath)}>Cancel copy</button>

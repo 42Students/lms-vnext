@@ -16,6 +16,8 @@ describe("known error triage UI resilience", () => {
     // An arbitrary Error instance can contain raw provider text.
     expect(source).toContain("error instanceof FriendlyFetchError");
     expect(source).not.toMatch(/error instanceof Error\s*\?\s*error\.message/);
+    expect(source).toContain('description: error instanceof FriendlyFetchError');
+    expect(source).toContain('friendlyApiError({})');
   });
   it("GR-123 preserves legacy Known errors empty and mute confirmation wording", () => {
     const ui = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");

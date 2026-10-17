@@ -4,6 +4,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "@/modules/placements/learner-participation-guard";
 import { LearnerPlacementsTabs } from "@/components/placements/learner-placements-tabs";
+import { getUnreadOwnLearnerPlacementAlertCount } from "@/modules/placements/learner-placement-alerts-service";
+import { readOptionalLearnerPlacementSource } from "@/modules/placements/learner-optional-placement-source";
 
 /**
  * Direct links are subject to the same college-level paid module +
@@ -23,9 +25,11 @@ export default async function LearnerPlacementsLayout({
     if (error instanceof AuthorizationError) notFound();
     throw error;
   }
+  const unread=await readOptionalLearnerPlacementSource(
+    ()=>getUnreadOwnLearnerPlacementAlertCount(context));
   return (
     <div className="space-y-6">
-      <LearnerPlacementsTabs />
+      <LearnerPlacementsTabs unreadPersonalAlerts={unread.available?unread.value:null} />
       {children}
     </div>
   );

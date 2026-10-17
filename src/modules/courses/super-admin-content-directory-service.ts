@@ -34,6 +34,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   contentType:lessonContents.contentType,
   status:aliased(lessonContents.status,"admin_content_status"),
   sequence:lessonContents.sequence,
+  visibleToStudents:lessonContents.visibleToStudents,
+  externalUrl:lessonContents.externalUrl,
   durationSeconds:lessonContents.durationSeconds,
   startsAt:lessonContents.startsAt,
   endsAt:lessonContents.endsAt,

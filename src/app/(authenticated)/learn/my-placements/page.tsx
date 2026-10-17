@@ -18,6 +18,7 @@ import { LearnerPlacementOffers } from "@/components/placements/learner-placemen
 import { LearnerPlacementsDashboard } from "@/components/placements/learner-placements-dashboard";
 import { LearnerPlacementPartialAlert } from "@/components/placements/learner-placement-partial-alert";
 import { getOwnLearnerRecentCollegeNotices } from "@/modules/placements/learner-dashboard-college-notices-service";
+import { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerNoticeHref} from "@/modules/placements/learner-notice-deep-link-model";
 import { learnerDashboardPartialState, type PlacementDashboardAvailability }
   from "@/modules/placements/learner-dashboard-partial-model";
@@ -139,6 +140,7 @@ export default async function LearnerPlacementsPage({
       eligibility: row.eligibility,
       deadlinePassed: row.deadlinePassed,
       canApply: row.canApply,
+      applicationBlockers: row.applicationBlockers,
     }));
 
   const journey: LearnerPlacementJourneyItem[] =
@@ -209,6 +211,8 @@ export default async function LearnerPlacementsPage({
     if(error instanceof AuthorizationError)throw error;
     collegeNoticesFailed=true;
   }
+  const personalNoticeRead=await readOptionalLearnerPlacementSource(
+   ()=>getOwnLearnerPlacementAlerts(context,{limit:3}));
   const verificationRead=await readOptionalLearnerPlacementSource(
     ()=>getOwnLearnerVerificationStatus(context));
   const verificationCue=verificationRead.available
@@ -305,9 +309,28 @@ export default async function LearnerPlacementsPage({
               ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(notice.createdAt))}</time>
             </li>)}</ul>}
+        <div className="mt-4 border-t border-border pt-4">
+          <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>
+          {!personalNoticeRead.available ? (
+            <p role="status" className="mt-2 text-sm text-body">Personal placement updates are temporarily unavailable. College notices above remain visible.</p>
+          ) : personalNoticeRead.value.length===0 ? (
+            <p className="mt-2 text-sm text-body">No personal placement updates have been delivered yet.</p>
+          ) : <ul className="mt-3 space-y-2">
+            {personalNoticeRead.value.map(alert=>(
+              <li key={alert.id} className="rounded-md border border-border px-3 py-2 text-sm text-body">
+                <p className="font-semibold text-foreground">{alert.title}{alert.unread?" · Unread":""}</p>
+                <p className="mt-1 line-clamp-2">{alert.body}</p>
+                {alert.actionHref?<Link href={alert.actionHref} className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open update →</Link>:null}
+              </li>
+            ))}
+          </ul>}
+          <Link href="/learn/my-placements/announcements#personal-updates"
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">See all personal updates →</Link>
+        </div>
       </section>
       <LearnerPlacementPartialAlert missing={display.failed} />
-      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null} />
+      <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
+        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null} />
 
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 

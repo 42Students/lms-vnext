@@ -36,7 +36,15 @@
 | COL-academic-setup-32 | DONE | src/components/academics/college-structure-directory.tsx, src/app/(authenticated)/college/classes/recurring-preview/page.tsx, src/components/academics/college-recurring-preview.tsx; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-32 launches a selected class schedule from its list row")` |
 | COL-academic-setup-39 | DONE | src/app/(authenticated)/college/{classes,batches,semesters,lecture-halls}/page.tsx; tests/unit/college-academic-setup-round5-gap-verification.test.ts — `it("COL-academic-setup-39 uses Export CSV labels and keeps intentional capped server export")` |
 
+| COL-academic-setup-28 | DONE | src/app/(authenticated)/college/batches/[cohortId]/students/page.tsx and src/components/college/student-class-move-action.tsx; tests/unit/college-faculty-round6-gap-verification.test.ts — `it("COL-academic-setup-28 verifies batch roster, search and class-move entry")` |
+
+| COL-academic-setup-19 | NOT-A-GAP | docs/audit/owner-decisions-resolved.md explicitly keeps archive instead of hard delete; src/components/admin/department-actions.tsx already disables archive with dependency tooltip and has Retry delete after server rejection; tests/unit/college-mentor-round7-gap-verification.test.ts — `it("COL-academic-setup-19 retains owner-approved archive and dependency blocking")`. |
+
+## Partial (still open)
+
+- COL-academic-setup-16: Styled class lifecycle and recurring schedule confirmations now exist; other create/edit and keyboard-modality parity is not yet verified. Source test: `it("COL-academic-setup-16 uses styled confirmation for class lifecycle and recurring schedules")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
+
 ## Outstanding and partial
-COL-academic-setup-15/16/19/28/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
+COL-academic-setup-15/16/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
 
 Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integration coverage for S1/S2 behavior.

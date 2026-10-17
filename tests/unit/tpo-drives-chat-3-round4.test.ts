@@ -49,4 +49,161 @@ describe("chat-3 Drives round 4",()=>{
   expect(driveEligibilityPresetValue("OPEN","minCgpa")).toBe("");
   expect(source("src/components/placements/placement-job-create-form.tsx")).toContain('key={eligibilityPreset+":"+name}');
  });
+ it("TPO-drives-R02 publish path opens workspace review instead of silently publishing",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain('?publish=1#drive-lifecycle-publish');
+  expect(body).not.toContain('"/api/placements/jobs/"+jobId+"/status"');
+ });
+ it("TPO-drives-R03 preflight shows nonblocking rounds and eligibility warnings",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("No interview rounds added yet");
+  expect(body).toContain("No eligibility rules set - every registered student will see this drive");
+  expect(body).toContain("selectedProgramIds.length===0");
+  expect(body).toContain("These are warnings, not publication blockers.");
+ });
+ it("TPO-drives-R05 numeric validation has correct client upper bounds",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("max={1000}");
+  expect(body).toContain("Minimum CGPA");
+  expect(body).toContain("Percentage throughout");
+ });
+ it("TPO-drives-44 broken internal create responses do not expose implementation details",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).not.toContain("Created job id was not returned");
+  expect(body).not.toContain("Company relationship was not returned");
+  expect(body).toContain("Check your drafts before trying again.");
+ });
+ it("TPO-drives-25 Company Memory uses scoped historical drive facts",()=>{
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(workspace).toContain("eq(placementJobs.collegeId,collegeId)");
+  expect(workspace).toContain("joined.status='JOINED'");
+  expect(workspace).toContain("memoryByRelationship.get(company.relationshipId)");
+  expect(form).toContain('aria-label="Company Memory"');
+  expect(form).toContain("A drive for {selectedEmployer.name}");
+ });
+ it("TPO-drives-R03 selected eligibility preset suppresses false unrestricted warning",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain('!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"');
+ });
+ it("TPO-drives-43 retry reuses a partial draft and refuses changed form payload",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  expect(body).toContain("createdJobRef.current?{id:createdJobRef.current.jobId}");
+  expect(body).toContain("createdJobRef.current.fingerprint!==fingerprint");
+  expect(body).toContain("createdJobRef.current={jobId,relationshipId,fingerprint}");
+  expect(body).toContain("open the existing draft");
+  expect(body).toContain("if (companyMode === \"NEW\" && !createdJobRef.current)");
+ });
+ it("TPO-drives-15 first deadline is writable and explains the consequence",()=>{
+  const service=source("src/modules/placements/tpo-drive-deadline-service.ts");
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(service).toContain('extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"');
+  expect(service).toContain('action:job.applicationDeadline===null?"SET":"EXTEND"');
+  expect(form).toContain("Set first application deadline?");
+ });
+ it("TPO-drives-45 deadline edit uses same IST validator as creation",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain('driveDeadlineIstToIso(String(values.get("newDeadline")??""))');
+ });
+ it("GR-04 TPO-drives-15 deadline mutation handles non-JSON and 5xx responses",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("await apiFetch(");
+  expect(form).not.toContain("body?.error");
+ });
+ it("GR-30 TPO-drives-15 deadline mutation uses guarded pending lock",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("useGuardedAction");
+  expect(form).toContain("await run(async()=>");
+ });
+ it("GR-35 TPO-drives-15 deadline consequences use accessible ConfirmDialog",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("<ConfirmDialog");
+  expect(form).not.toContain("window.confirm");
+ });
+ it("TPO-drives-46 legacy direct publish notifies eligible users before counting new debarments",()=>{
+  const body=source("src/modules/placements/job-service.ts");
+  const start=body.indexOf("export async function publishPlacementJob");
+  const published=body.slice(start,body.indexOf("export async function closePlacementJob",start));
+  expect(published).toContain("notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id)");
+  expect(published.indexOf("notifyEligiblePublishedDrive(tx,context,published,publishedEvent.id)"))
+   .toBeLessThan(published.indexOf("const localDateParts"));
+  expect(source("src/modules/placements/tpo-drive-publish-effects.ts")).toContain("tx.insert(inAppNotifications)");
+ });
+ it("TPO-drives-R01 direct job publish validates deadline and pay in server path",()=>{
+  const service=source("src/modules/placements/job-service.ts");
+  expect(service).toContain("!current.applicationDeadline||current.applicationDeadline<=new Date()");
+  expect(service).toContain("current.stipendPerMonthInr===null");
+ });
+ it("TPO-drives-51 college administrator has a real separate create flow",()=>{
+  const college=source("src/app/(authenticated)/college/placements/new/page.tsx");
+  expect(college).toContain('hasMembershipRole(\n      context,\n      "COLLEGE_ADMIN"');
+  expect(college).toContain("<PlacementJobCreateWorkspace");
+  expect(college).toContain('basePath="/college/placements"');
+ });
+ it("TPO-drives-26 Create drive now provides a scoped clone-past picker",()=>{
+  const body=source("src/components/placements/placement-job-create-workspace.tsx");
+  expect(body).toContain("Clone a past drive");
+  expect(body).toContain("inArray(placementJobs.status");
+  expect(body).toContain("eq(placementJobs.collegeId,collegeId)");
+  expect(body).toContain("<TpoDriveCloneAction jobId={job.id}");
+  const service=source("src/modules/placements/tpo-drive-clone-service.ts");
+  expect(service).toContain("sourceJobId:source.id");
+  expect(service).toContain("cleared:[");
+ });
+ it("TPO-drives-41 long Create draft is restored only within the actor and college scope",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  expect(body).toContain('const backupKey="lms:drive-create:"+userId+":"+collegeId');
+  expect(workspace).toContain("userId={context.user.id}");
+  expect(body).toContain("localStorage.setItem(backupKey");
+  expect(body).toContain("localStorage.getItem(backupKey)");
+  expect(body).toContain("localStorage.removeItem(backupKey)");
+  expect(body).toContain("Discard saved browser backup");
+  expect(body).toContain("useGuardedAction");
+ });
+ it("GR-60 TPO-drives-41 autosave restoration uses stable guards without lint suppression",()=>{
+  const body=source("src/components/placements/placement-job-create-form.tsx");
+  const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
+  expect(body).not.toContain("eslint-disable");
+  expect(body).toContain("const saveBrowserDraft=useCallback");
+  expect(guard).toContain("const markDirty=useCallback");
+ });
+ it("TPO-drives-26 cloning requires an accessible confirmation and safe JSON response",()=>{
+  const action=source("src/components/placements/tpo-drive-clone-action.tsx");
+  expect(action).toContain("<ConfirmDialog");
+  expect(action).toContain("await apiFetch<");
+  expect(action).toContain("useGuardedAction");
+  expect(action).toContain("Check your drives before trying again.");
+ });
+ it("GR-35 TPO-drives-26 clone confirmation does not use window.confirm",()=>{
+  const action=source("src/components/placements/tpo-drive-clone-action.tsx");
+  expect(action).not.toContain("window.confirm");
+  expect(action).toContain("<ConfirmDialog");
+ });
+ it("TPO-drives-22 creation and edit wording matches the familiar drive actions",()=>{
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  const create=source("src/components/placements/placement-job-create-form.tsx");
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(workspace).toContain('title="Create drive"');
+  expect(workspace).toContain("Back to drives");
+  expect(create).toContain("Create draft");
+  expect(create).toContain("Publish");
+  expect(edit).toContain("Save changes");
+  expect(edit).toContain("Open drive page");
+ });
+ it("GR-04 TPO-drives-22 edit action never surfaces a raw API error code",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("await apiFetch(");
+  expect(edit).not.toContain("result?.error");
+ });
+ it("GR-30 TPO-drives-22 edit blocks duplicate writes",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("useGuardedAction");
+  expect(edit).toContain("await run(async()=>");
+ });
+ it("GR-35 TPO-drives-22 edit uses accessible confirmation rather than window.confirm",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("<ConfirmDialog");
+  expect(edit).not.toContain("window.confirm");
+ });
 });

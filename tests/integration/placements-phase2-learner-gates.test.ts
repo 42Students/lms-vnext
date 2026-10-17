@@ -463,4 +463,51 @@ describe("Section A: placement write/read integration boundaries", () => {
   });
 
 
+  it("LEARNER-placements-R03 accepting an internship never withdraws another live application or offer",async()=>{
+    const internship=await makeJob("Internship accepted");
+    const other=await makeJob("Full-time opportunity");
+    const internApplication=await applyToPlacementJob(learner,internship.id,{});
+    const otherApplication=await applyToPlacementJob(learner,other.id,{});
+    // Simulate the persisted internship classification independently from role titles.
+    await pool.query("UPDATE placement_jobs SET employment_type='INTERNSHIP' WHERE id=$1",[internship.id]);
+    const expiresAt=new Date(Date.now()+7*24*3_600_000);
+    const create=async(applicationId:string,ctc:number)=>(await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+      VALUES ($1,1,'OFFER','ISSUED','Candidate offer',$2,$3,$4) RETURNING id
+    `,[applicationId,ctc,SEED_IDS.facultyUser,expiresAt])).rows[0]!.id;
+    const acceptedId=await create(internApplication.id,300000);
+    const siblingId=await create(otherApplication.id,900000);
+    await actOnPlacementOffer(learner,acceptedId,{action:"ACCEPT"});
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_applications WHERE id=$1",[otherApplication.id],
+    )).rows[0]?.status).toBe("SUBMITTED");
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_offers WHERE id=$1",[siblingId],
+    )).rows[0]?.status).toBe("ISSUED");
+  });
+
+  it("LEARNER-placements-R03 retains a Dream drive and its offer after another offer is accepted",async()=>{
+    const chosen=await makeJob("Accepted full-time offer");
+    const dream=await makeJob("Dream upgrade still eligible");
+    await pool.query("UPDATE placement_jobs SET is_dream=true WHERE id=$1",[dream.id]);
+    const chosenApplication=await applyToPlacementJob(learner,chosen.id,{});
+    const dreamApplication=await applyToPlacementJob(learner,dream.id,{});
+    const expiresAt=new Date(Date.now()+7*24*3_600_000);
+    const create=async(applicationId:string,ctc:number)=>(await pool.query<{id:string}>(`
+      INSERT INTO placement_offers
+        (application_id,version,kind,status,role_title,annual_ctc_inr,issued_by_user_id,expires_at)
+      VALUES ($1,1,'OFFER','ISSUED','Candidate offer',$2,$3,$4) RETURNING id
+    `,[applicationId,ctc,SEED_IDS.facultyUser,expiresAt])).rows[0]!.id;
+    const chosenId=await create(chosenApplication.id,1000000);
+    const dreamOfferId=await create(dreamApplication.id,1200000);
+    await actOnPlacementOffer(learner,chosenId,{action:"ACCEPT"});
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_applications WHERE id=$1",[dreamApplication.id],
+    )).rows[0]?.status).toBe("SUBMITTED");
+    expect((await pool.query<{status:string}>(
+      "SELECT status FROM placement_offers WHERE id=$1",[dreamOfferId],
+    )).rows[0]?.status).toBe("ISSUED");
+  });
+
 });
