@@ -69,7 +69,9 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
    const raw=/<v\b[^>]*>([\s\S]*?)<\/v>/.exec(body)?.[1]??"";
    values[position]=type==="s"?shared[Number(raw)]??"":type==="inlineStr"?inline:decodeXml(raw);
   }
-  if(values.some(Boolean))rows.push(values.map(x=>x??""));
+  if(!values.some(value=>value!==undefined&&value.trim()!==""))
+   throw Error("A blank worksheet row would shift the learner-to-result mapping. Remove it before import.");
+  rows.push(values.map(x=>x??""));
  }
  return rows;
 }
