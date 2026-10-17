@@ -3,6 +3,7 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoDebouncedStudentSearch} from "@/components/tpo/tpo-debounced-student-search";
 import {TpoStudentsBulkDebar} from "@/components/tpo/tpo-students-bulk-debar";
 import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
@@ -869,14 +870,7 @@ export default async function TpoStudentsPage({
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
             Search
-            <input
-              type="search"
-              name="search"
-              defaultValue={query.search ?? ""}
-              maxLength={150}
-              placeholder="Search name, roll no., email"
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
-            />
+            <TpoDebouncedStudentSearch initial={query.search??""} />
           </label>
 
           <label className="flex flex-col gap-1 text-sm font-semibold text-body">
