@@ -19,3 +19,5 @@
 
 | TPO-campaigns-public-16 | DONE (source, tests not run) | Unsubscribe confirmation now guarded client POST with inline retry instead of raw JSON navigation; unknown used tokens get non-enumerating success response. Named `tests/unit/chat2-unsubscribe-graceful.test.ts`. |
 | TPO-campaigns-public-R09 | DONE (source, tests not run) | Missing storage and network failures preserve confirmation page and show retry rather than raw JSON; same named test. |
+
+| TPO-campaigns-public-R10 | DONE (source; unrun) | Engagement audience count by segment is now one tenant-scoped aggregate SQL query instead of unbounded JS roster, and selected preview uses SQL IN with <=100 IDs; named `tests/unit/chat2-engage-sql-audience-preview.test.ts`. |
