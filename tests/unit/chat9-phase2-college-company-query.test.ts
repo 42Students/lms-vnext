@@ -8,7 +8,7 @@ describe("college company search and pagination",()=>{
     expect(parseCollegeCompaniesQuery({q:["a","b"]}).success).toBe(false);
     expect(parseCollegeCompaniesQuery({collegeId:"foreign"}).success).toBe(false);
     expect(literalCompanySearch("A_B%")).toBe("%A\\_B\\%%");
-    expect(collegeCompaniesHref({q:"Acme",page:2,pageSize:25})).toContain("q=Acme&page=2");
+    expect(collegeCompaniesHref({q:"Acme",page:2,pageSize:10,sort:"LAST_ACTIVE",showDeleted:"0"} as never)).toContain("q=Acme&page=2");
     expect(COLLEGE_COMPANIES_PAGE_SIZE).toBe(25);
   });
   it("counts and pages in SQL after the persisted college role check",()=>{
