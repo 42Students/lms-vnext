@@ -170,6 +170,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       })}</tbody>
     </table>
   </section>
+  {filtered.length===0?<p role="status" className="rounded-lg border border-border p-4 text-sm text-body">
+    {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
+  </p>:null}
   <div className="overflow-x-auto pb-3"><div className="flex min-w-max gap-3">
    {groups.map(group=>{
     const cards=filtered.filter(task=>task.assigneeMembershipId===group.membershipId);
