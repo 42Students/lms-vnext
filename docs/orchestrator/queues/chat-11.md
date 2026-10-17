@@ -24,7 +24,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 2. WP-chat-11-02-projects-meetings-projects-s2 | IN-PROGRESS | 22 S2 gaps. LEARNER-projects-38 last-editor attribution and MEN-projects-meetings-41 card facts enhanced; MEN-projects-meetings-44 full create action progressed including backlog, status, sprint and assignee. Other unblocked task/review/meeting gaps remain; MEN-projects-meetings-31 external calendar sync needs provider config.
 3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. SA-placements-projects-88 rollback source added; workspace/table/export and template improvements implemented across neighboring WPs. This round added SA-placements-projects-60 blocker accuracy, SA-placements-projects-61 Watch/Risk severity and SQL sorting, SA-placements-projects-63 scoped CSV and title/ID search. Remaining creation, tracker and historical audit gaps still open; reporter auth, storage and external logs marked SKIP by owner/config.
 4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 advanced; LEARNER-projects-37 existing-draft autosave added; remaining parity open)
-5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/33/40/51/52 source advanced; MEN-26 meeting history/notes and MEN-68 exact missed status advanced; other mentor S3 gaps still open)
+5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/26/33/40/43/44/45/49/51/52 source advanced; migration 0132 unblocks separate Approach but broader edits remain; other mentor S3 gaps still open)
 6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 S3 gaps. SA-placements-projects-53/54/71/74/75/76/80 row export/facts/filtering advanced; broader audit, resources and permissions parity remains.
 7. WP-chat-11-07-tracker-projects-s3 | TODO | 16 gaps: S3 9, S4 7
 8. WP-chat-11-08-projects-projects-meetings-part-s4 | IN-PROGRESS | 15 S4 gaps. Existing LEARNER-projects-11/30 prior progress retained; remaining legacy and accessibility parity pending.
@@ -224,10 +224,25 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - `MEN-projects-meetings-44`: create task now supports product backlog (null sprint), project-scoped sprint picker with optimistic sprint timestamp, selected initial TODO/IN_PROGRESS/BLOCKED state (active sprint required for work statuses), and an explicit assignee picker. Server verifies active same-college learner project membership before storing assignee. Backlog sequence is project-scoped, sprint sequence is scoped, and project status/release guards remain enforced. UI validates estimate and blocker reason, resets all fields, and Board hero has Create task even with no sprint. Closed/archived workspaces cannot create from Board.
 - `MEN-projects-meetings-49`: new task creation records selected assignee/status in the activity metadata and transactionally notifies the newly assigned learner using the event ID.
 - `MEN-projects-meetings-48`: task-created feedback uses legacy Task added. copy and Create task label.
-- BLOCKED `MEN-projects-meetings-44/45`: separate legacy Approach field cannot be persisted with current schema; staged `docs/proposed-migrations/chat-11-men-projects-meetings-44-45-task-approach.sql` for orchestrator registration. The existing Description field retains its correct label; Approach UI and editing remain OPEN.
+- RESOLVED `MEN-projects-meetings-44/45` Approach storage: orchestrator registered migration `drizzle/0132_bored_red_ghost.sql`; creation, edits and read-only presentation wired using independent `project_tasks.approach`. Broader task edit/sprint/status/assignee parity remains OPEN.
 - BLOCKED `MEN-projects-meetings-31`: external calendar provider credentials/configuration not available.
 - BLOCKED `SA-placements-projects-101`: unauthenticated reporter model requires owner security decision OD-27.
 - BLOCKED `SA-placements-projects-103`: private screenshot storage and consent settings unavailable.
 - BLOCKED `SA-placements-projects-113`: live GCP logging requires runtime IAM.
 - BLOCKED `SA-placements-projects-120`: external findings importer needs credentials.
 - WP-02 and WP-05 stay IN-PROGRESS: remaining S2/S3 gaps need work and acceptance has not been verified. No tests, lint, typecheck, build or CI waits under FAST v2.
+
+## [chat-11] FAST v2 continuation — registered migration 0132 (2026-10-17)
+
+- Fast-forwarded `chatgpt/chat-11-b` from `0d28c9ce` to latest merged `main` `933c7301` before edits, preserving all orchestrator lane merges. Migration `drizzle/0132_bored_red_ghost.sql` and the ORM `project_tasks.approach` column are registered.
+- `MEN-projects-meetings-44`: corrected an earlier schema misplacement: task-creation validation now runs on `mentorTaskCreateSchema`, not the route's project-id-only params schema. Sprint token, backlog null-sprint status and blocker reason validation are enforced on actual submitted fields.
+- `MEN-projects-meetings-44/45`: separate nullable Approach field (max 4000) is now created, edited, version-tracked, stored independently of Description and Done when, and represented in project audit change metadata. Mentor create modal and inline backlog create both include Approach; reset and validation included.
+- `MEN-projects-meetings-42`: task Approach rendered in Mentor Board detail modal, inline Board task details, workspace task cards and product backlog cards.
+- `LEARNER-projects-R02`: learner task detail modal now displays the recorded Approach.
+- RESOLVED `MEN-projects-meetings-44/45` storage prerequisite; do not keep migration-0132 Approach as blocked. Legacy task editing of status, sprint and assignee within a single modal remains OPEN.
+- BLOCKED `MEN-projects-meetings-31`: external calendar sync requires provider credentials and event-provider configuration.
+- BLOCKED `SA-placements-projects-101`: unauthenticated reporting requires security owner decision OD-27.
+- BLOCKED `SA-placements-projects-103`: screenshot storage requires private bucket and consent configuration.
+- BLOCKED `SA-placements-projects-113`: Cloud Logging requires production GCP IAM.
+- BLOCKED `SA-placements-projects-120`: external findings import needs provider credentials.
+- WP-02/WP-05 remain IN-PROGRESS; no other work package is represented as completely accepted. No tests, typecheck, lint, builds, or CI waits under FAST v2. Branch-only commits and pushes.
