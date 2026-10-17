@@ -46,7 +46,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <RecruiterConversationLiveRefresh/>
   <PageHeader eyebrow="Recruiter · Conversations" title={conversationSubject}
    description={"Placement cell discussion · "+(result.thread.jobId?"Hiring drive":"General")}/>
-  {matchingDrive?<Link href={"/hr/placements/jobs/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
+  {matchingDrive?<Link href={"/recruiter/drives/"+encodeURIComponent(matchingDrive.job.id)+"?tab=overview"}
    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
    Open drive: {matchingDrive.job.title}
   </Link>:null}
@@ -67,6 +67,10 @@ export default async function RecruiterConversationDetail({params,searchParams}:
           </span>
           <span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">{request.status}</span>
           <p className="mt-1 break-words text-body">{request.reason}</p>
+          {request.decisionNote?<p className="mt-2 break-words text-body">
+            <strong>Placement-cell response:</strong> {request.decisionNote}
+          </p>:null}
+          <p className="mt-1 text-xs text-muted-foreground">Discussion replies: {request.messages.length}</p>
           <p className="mt-1 text-xs text-muted-foreground">
             {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(request.createdAt))}
           </p>
@@ -99,6 +103,8 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <nav aria-label="Conversation history" className="flex flex-wrap gap-3">
    {result.page>1?<Link href={hrConversationDetailHref(threadId,1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Newest messages</Link>:null}
+   {result.page<result.pages&&result.pages>2?<Link href={hrConversationDetailHref(threadId,result.pages)}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Oldest messages</Link>:null}
    {result.page<result.pages?<Link href={hrConversationDetailHref(threadId,result.page+1)}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text">Older</Link>:null}
    {result.page>1?<Link href={hrConversationDetailHref(threadId,result.page-1)}

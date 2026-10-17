@@ -13,6 +13,7 @@ export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
  if(query.status!=="ALL")params.set("status",query.status);
+ if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
  for(const key of ["jobId","departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  return path+(params.size?"?"+params.toString():"");
 }

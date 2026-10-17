@@ -24,7 +24,11 @@ export type TpoInboxRecord = {
   messageCount: number | null;
   unreadCount: number | null;
   lastPreview?:string|null;
+  searchSnippet?:string|null;
   waitingForYou?:boolean;
+  companyName?:string|null;
+  accessEnded?:boolean;
+  bodySearchMatch?:boolean;
 };
 
 export type TpoInboxFilters = {
@@ -57,7 +61,8 @@ export function getTpoMessagesPage(
   records: readonly TpoInboxRecord[],
   filters: TpoInboxFilters,
 ) {
-  const q = filters.q.trim().toLocaleLowerCase("en-IN");
+  const text = filters.q.trim();
+  const q = text.length >= 2 ? text.toLocaleLowerCase("en-IN") : "";
 
   const filtered = records
     .filter((record) => {
@@ -87,10 +92,10 @@ export function getTpoMessagesPage(
 
       if (q) {
         const searchable =
-          `${record.participantName} ${record.subject} ${record.lastPreview??""}`
+          `${record.participantName} ${record.companyName??""} ${record.subject} ${record.lastPreview??""}`
             .toLocaleLowerCase("en-IN");
 
-        if (!searchable.includes(q)) return false;
+        if (!searchable.includes(q) && !record.bodySearchMatch) return false;
       }
 
       return true;

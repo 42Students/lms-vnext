@@ -1,0 +1,3 @@
+ALTER TABLE "project_task_comments" ADD COLUMN "comment_kind" varchar(24) DEFAULT 'NOTE' NOT NULL;--> statement-breakpoint
+CREATE INDEX "project_task_comments_kind_idx" ON "project_task_comments" USING btree ("project_id","task_id","comment_kind","created_at");--> statement-breakpoint
+ALTER TABLE "project_task_comments" ADD CONSTRAINT "project_task_comments_kind_ck" CHECK ("project_task_comments"."comment_kind" in ('NOTE','PROGRESS_UPDATE','FLAG_FOR_MENTOR'));

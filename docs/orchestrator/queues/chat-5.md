@@ -127,3 +127,14 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - SKIP TPO-drive-workspace-65 (OD-09): owner approval still required before disclosing recruiter candidate documents/columns.
 - Reassigned WPs 02,09,10,14,15 remain chat-3; 04,05,11,16 remain chat-6. Do not claim their completion in chat-5.
 - Every edit was branch-only, source-level; no tests, lint, typecheck, builds or CI run. All seven retained WPs stay IN-PROGRESS because nonblocked gaps/acceptance remain.
+
+## chat-5 FAST v2 continuation after latest main sync (2026-10-17)
+
+- WP-chat-5-01: TPO-drive-workspace-40 result import now invalidates stale identity previews, distinguishes invalid rows from missing learners, clears contradictory Skip/Match UI, requires mass-failure confirmation and returns ranks after individual failed writes. TPO-drive-workspace-47/48 selection manager now searches/selects eligible rows, verifies CSV identity consistency and shows a clear recorded-but-not-released receipt. TPO-drive-workspace-53 waitlist promotion has an irreversible-action confirmation, skip summary and refresh. Source changed; runtime acceptance still pending.
+- WP-chat-5-06: TPO-drive-workspace-44 interview planner now confirms unbooked-slot clearing and room-range updates, blocks reversed roll ranges. TPO-drive-workspace-20 journey distinguishes applied-ever from currently submitted, excludes absent from interviewed, and explains historical counting. Source changed; remaining tab and behavioral parity open.
+- WP-chat-5-07: TPO-drive-workspace-48 CSV company selection import now requires explicit partial-recording confirmation before the 100-row chunks are issued. Selection imports still do not release offers automatically.
+- BLOCKED TPO-drive-workspace-65: OD-09 requires owner security decision for recruiter data/attachments; leave restrictive, move on.
+- BLOCKED TPO-drive-workspace-28: 48-hour apply-on-behalf consent/opt-out needs registered schema and policy; do not infer consent.
+- BLOCKED LEARNER-placements-20: private resume storage and sharing consent not registered; no substitute URLs or public attachments.
+- MOVED TPO-requests-verification-05: 24-hour withdrawal scheduler invocation belongs to chat-3 WP-chat-5-02; no edits in this lane.
+- Remaining WPs 01,03,06,07,08,12,13 are IN-PROGRESS; no unverified WP marked DONE. No tests, lint, typecheck, build or CI waits under FAST v2.

@@ -173,7 +173,7 @@ export default async function RecruiterCompanyReportsPage({
             className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-primary-text">
             Export report CSV
           </Link>
-          <Link href="/hr/placements" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-body">
+          <Link href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm text-body">
             Drives →
           </Link>
         </div>}

@@ -143,7 +143,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
       return;
     }
-    if(!window.confirm("Save semester changes? Deactivation is blocked for mapped curriculum or live cohort progression."))return;
+
     startTransition(async () => {
       try {
         await mutate("PATCH", url, parsed.data);

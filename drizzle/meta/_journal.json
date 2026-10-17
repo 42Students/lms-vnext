@@ -911,6 +911,13 @@
       "when": 1792199887797,
       "tag": "0129_lesson_visibility_announcement_cta_reads",
       "breakpoints": true
+    },
+    {
+      "idx": 130,
+      "version": "7",
+      "when": 1792203117350,
+      "tag": "0130_project_task_comment_kinds",
+      "breakpoints": true
     }
   ]
 }
