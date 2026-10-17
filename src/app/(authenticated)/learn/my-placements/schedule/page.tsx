@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
-import { partitionLearnerPlacementSchedule } from "@/modules/placements/learner-placement-schedule-model";
+import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 
@@ -50,7 +50,9 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       " · "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short"}).format(date);
   };
   const fmt = (date: Date | null) => date
-    ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }).format(date)
+    ? new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium",
+        ...(learnerRoundIsDayOnly(date)?{}:{timeStyle:"short" as const}) }).format(date)+
+      (learnerRoundIsDayOnly(date)?" · Time to be told":"")
     : "Date to be told";
   const details = (row: typeof workspace.rounds[number]) => {
     const outcome=outcomeByRound.get(row.applicationId+":"+row.roundId);
