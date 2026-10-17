@@ -435,7 +435,7 @@ export function LearnerCourseOverview({
                 ? priorityActivity.type === "Live Session" ? "View session" : "Open task"
                 : nextAction
                   ? "Continue"
-                  : "Open Learning Path"}
+                   : "Start learning"}
           </Link>
         </div>
       </section>
