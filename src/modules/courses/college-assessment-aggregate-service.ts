@@ -332,6 +332,7 @@ export async function listCollegeAssessmentAggregate(
           eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"LEARNER"),
         ))
+        .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
         .where(inArray(quizAttempts.quizId,ids))
         .groupBy(quizAttempts.quizId);
   const statsById=new Map(submissionStats.map(item=>[item.id,item]));
