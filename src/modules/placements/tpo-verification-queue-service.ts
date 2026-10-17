@@ -74,15 +74,15 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
   .orderBy(desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
  const selected=query?records.slice(0,query.pageSize):records;
- const memberIds=[...new Set(selected.map(row=>row.id))];
- const enrollments=memberIds.length?await getDb().select({
+ const selectedMemberIds=[...new Set(selected.map(row=>row.id))];
+ const enrollments=selectedMemberIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
   batchName:cohorts.name,branchName:departments.name,
  }).from(learnerProgramEnrollments)
   .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
   .innerJoin(programs,and(eq(programs.id,learnerProgramEnrollments.programId),eq(programs.id,cohorts.programId)))
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
-  .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
+  .where(and(inArray(learnerProgramEnrollments.membershipId,selectedMemberIds),
    eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
  const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
  const evaluatedAt=new Date();
