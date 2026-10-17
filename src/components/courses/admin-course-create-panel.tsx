@@ -234,7 +234,8 @@ export function AdminCourseCreatePanel({
         sectionId: deliverySectionId,
       }),
       "Section delivery created",
-      () => { setDeliveryOfferingId(""); setDeliverySectionId(""); },
+      (result) => {const id=createdRecordId(result,"delivery");if(id)setTeacherDeliveryId(id);
+        setDeliverySectionId("");},
     );
   }
 
