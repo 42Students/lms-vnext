@@ -6,7 +6,7 @@ export function validatePublicJoinClient(input:{
  companyDomain:string;scope:"COLLEGE"|"COMPANY";
 }):string|null{
  const email=input.email.trim().toLowerCase();
- if(!email)return "Company email is required";
+ if(!email)return "Enter your work email";
  if(!publicRecruiterWorkEmailSchema.safeParse(email).success)
   return "Enter a company work email address. Personal emails such as Gmail cannot be used.";
  const domain=email.split("@")[1];
