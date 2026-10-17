@@ -175,7 +175,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-102 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-103 | S2 | MISSING-FIELD | BLOCKED |
 | SA-placements-projects-113 | S2 | MISSING-PAGE | BLOCKED |
-| SA-placements-projects-119 | S2 | MISSING-PAGE | OPEN |
+| SA-placements-projects-119 | S2 | MISSING-PAGE | DONE |
 | SA-placements-projects-120 | S2 | MISSING-ACTION | BLOCKED |
 | SA-placements-projects-104 | S3 | STATE | DONE |
 | SA-placements-projects-105 | S3 | COPY | DONE |
@@ -188,7 +188,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-116 | S3 | MISSING-ACTION | OPEN |
 | SA-placements-projects-117 | S3 | MISSING-EXPORT | OPEN |
 | SA-placements-projects-121 | S3 | MISSING-ACTION | OPEN |
-| SA-placements-projects-122 | S3 | MISSING-FILTER | OPEN |
+| SA-placements-projects-122 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-107 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
