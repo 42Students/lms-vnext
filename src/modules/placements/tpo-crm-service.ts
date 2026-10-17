@@ -190,7 +190,7 @@ export async function createTpoLead(
     throw new AuthorizationError("placements.manage");
   }
   requirePermission(context, "placements.manage", { collegeId: input.collegeId });
-  await requirePlacementManageScope(context, input.collegeId);
+  const college=await requirePlacementManageScope(context, input.collegeId);
 
   // Insert and durable staff-attributed audit either both commit, or
   // both roll back. DB unique constraints remain the race-safe duplicate
@@ -230,6 +230,13 @@ export async function createTpoLead(
         ownerMembershipId:ownerMembership(context,input.collegeId),
       });
     }
+    await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:input.collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+      module:"PLACEMENTS",eventType:"RECRUITER_LEADS_CREATED",
+      subjectType:"placement_tpo_lead",subjectId:created.id,
+      summary:"Recruiter lead added",metadata:{source:created.source,hasFollowup:Boolean(input.followup)},
+    });
     return created;
   });
     return tpoLeadView(lead);
