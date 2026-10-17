@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TERM_MAPPING_COPY, collegeTermCourseAddSchema, collegeTermCourseUpdateSchema, collegeTermMappingErrorMessage } from "@/modules/academics/college-term-mapping-model";
@@ -34,15 +35,11 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         const create = confirm.type === "ADD";
         const url = create ? "/api/academics/semester-course-mappings" :
           "/api/academics/semester-course-mappings/" + encodeURIComponent(confirm.id);
-        const response = await fetch(url, {
+        await apiFetch(url, {
           method: create ? "POST" : "DELETE",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(create ? confirm.body : { confirm: true }),
         });
-        if (!response.ok) {
-          const body: { error?: string } | null = await response.json().catch(() => null);
-          throw new Error(collegeTermMappingErrorMessage(body?.error ?? ""));
-        }
         const removedCourse = confirm.type === "REMOVE"
           ? data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course" : null;
         const addedCount = confirm.type === "ADD"
@@ -54,7 +51,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         if (confirm.type === "ADD") setDraftByTerm(current => ({ ...current, [termId]: [] }));
         router.refresh();
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "Unable to change mapping");
+        setError(cause instanceof FriendlyFetchError && cause.code
+          ? collegeTermMappingErrorMessage(cause.code)
+          : cause instanceof Error ? cause.message : "Unable to change mapping");
       }
     });
   }
@@ -91,22 +90,20 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     setError(null);
     start(async () => {
       try {
-        const response = await fetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
+        await apiFetch("/api/academics/semester-course-mappings/" + encodeURIComponent(id), {
           method: "PATCH",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(parsed.data),
         });
-        if (!response.ok) {
-          const body: { error?: string } | null = await response.json().catch(() => null);
-          throw new Error(collegeTermMappingErrorMessage(body?.error ?? ""));
-        }
         const previous = data.mapped.find(row => row.id === id);
         const oldPosition = previous ? orderedPeers(previous).findIndex(row => row.id === id) + 1 : position;
         setNotice(oldPosition === position ? "Semester course mapping updated." : "Semester course order saved.");
         setEditing(null);
         router.refresh();
       } catch (cause) {
-        setError(cause instanceof Error ? cause.message : "Unable to update mapping.");
+        setError(cause instanceof FriendlyFetchError && cause.code
+          ? collegeTermMappingErrorMessage(cause.code)
+          : cause instanceof Error ? cause.message : "Unable to update mapping.");
       }
     });
   }
