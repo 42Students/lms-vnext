@@ -326,7 +326,7 @@ export function RecruiterResultControls({
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       try{
-        const response=await fetch("/api/placements/rounds/"+encodeURIComponent(round.id)+"/results",{
+        await apiFetch("/api/placements/rounds/"+encodeURIComponent(round.id)+"/results",{
           method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
           body:JSON.stringify({
             applicationId:participant.applicationId,outcome:draft.outcome,
@@ -335,8 +335,7 @@ export function RecruiterResultControls({
             reasonCategory:draft.reasonCategory||null,candidateMessage:draft.candidateMessage.trim()||null,
           }),
         });
-        if(response.ok)succeeded.push(participant.applicationId);
-        else failures++;
+        succeeded.push(participant.applicationId);
       }catch{failures++;}
     }
     setSelected(current=>({...current,
