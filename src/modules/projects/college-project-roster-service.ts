@@ -45,7 +45,7 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
     throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
   }
   if(toAdd.length===0&&toRemove.length===0)return {added:0,removed:0,updatedAt:project.updatedAt.toISOString()};
-  const now=new Date();
+  const now=new Date(Math.max(Date.now(),project.updatedAt.getTime()+1));
   for(const member of toRemove){
    const [ended]=await tx.update(projectMembers).set({endedAt:now,isPrimary:false,updatedAt:now})
     .where(and(eq(projectMembers.id,member.id),isNull(projectMembers.endedAt))).returning();
