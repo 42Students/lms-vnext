@@ -23,6 +23,8 @@ describe("chat-11 faculty attendance confirmation and mobile marking", () => {
     expect(source).toContain('aria-label="Attendance roster"');
     expect(source).toContain("Mark all present");
     expect(source).toContain("Mark all absent");
-    expect(source).toContain("min-h-11");
+    // Buttons inherit the 44px minimum from the audited shared primitive.
+    expect(source).toContain("<Button");
+    expect(readFileSync(join(process.cwd(), "src/components/ui/button.tsx"), "utf8")).toContain("min-h-11");
   });
 });
