@@ -6,7 +6,7 @@ export type SuperAdminCalendarRound={
  departmentId?:string|null;departmentName?:string|null;
  mode?:"Virtual"|"On campus"|"Not recorded";
 };
-export function calendarMode(row:SuperAdminCalendarRound):"On campus"|"Not recorded"{
+export function calendarMode(row:SuperAdminCalendarRound):"Virtual"|"On campus"|"Not recorded"{
  return row.mode??(row.venue?"On campus":"Not recorded");
 }
 export function potentialRoomConflicts(rows:readonly SuperAdminCalendarRound[]){
