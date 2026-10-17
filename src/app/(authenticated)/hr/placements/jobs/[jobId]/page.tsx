@@ -23,6 +23,8 @@ import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
+import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
+import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
 function safeDriveReturnTo(raw:string|undefined){
  if(!raw)return "/hr/drives";
@@ -85,6 +87,7 @@ export default async function HrPlacementJobPage({
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
+  const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
   if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
     const destination=query.tab==="selections"?"offers":"rounds";
     const search=new URLSearchParams({tab:destination,returnTo});
@@ -349,6 +352,13 @@ export default async function HrPlacementJobPage({
           Change requests
         </Link>
       </nav>
+      {requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="text-lg font-semibold text-foreground">Requests</h2>
+        <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
+        {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
+          userId={context.user.id} requests={requestData.requests}/> :
+         <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
+      </section>:null}
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
