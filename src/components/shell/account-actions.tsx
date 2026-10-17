@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useTransition } from "react";
+import { useEffect,useState,useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import {apiFetch} from "@/lib/api-fetch";
+import {InlineNotice} from "@/components/ui/inline-notice";
 import { accountActionCopy, type AccountMenuVariant } from "./college-account-copy";
 
 export function AccountActions({
@@ -18,20 +20,26 @@ export function AccountActions({
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
+  useEffect(()=>{
+   const sync=(event:StorageEvent)=>{
+    if(event.key==="lms:signout"&&event.newValue){router.replace("/");router.refresh();}
+   };
+   window.addEventListener("storage",sync);
+   return ()=>window.removeEventListener("storage",sync);
+  },[router]);
+
   function signOut() {
     setError(null);
     startTransition(async () => {
-      const response = await fetch("/api/auth/session", {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        setError("Sign out failed");
-        return;
+      try{
+        await apiFetch("/api/auth/session",{method:"DELETE"});
+        try{window.localStorage.setItem("lms:signout",String(Date.now()));}catch{/* signout must work without storage */}
+        router.push("/");
+        router.refresh();
+      }catch{
+        setError("Could not sign out right now. Please try again.");
       }
 
-      router.push("/");
-      router.refresh();
     });
   }
 
@@ -61,11 +69,7 @@ export function AccountActions({
       >
         {copy.signOutLabel}
       </Button>
-      {error ? (
-        <p role="alert" className="mt-1 text-xs font-medium text-error">
-          {error}
-        </p>
-      ) : null}
+      {error ? <InlineNotice tone="error" message={error} onDismiss={()=>setError(null)}/> : null}
     </div>
   );
 }
