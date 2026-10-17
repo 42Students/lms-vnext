@@ -86,7 +86,11 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
  const [contact]=await db.select().from(attendanceParentContacts).where(and(
   eq(attendanceParentContacts.membershipId,entry.membershipId),
   eq(attendanceParentContacts.collegeId,entry.collegeId))).limit(1);
- if(!contact||!canNotifyVerifiedParent(contact)){
+ // A changed verified guardian number must not inherit older queued notices.
+ const verifiedAtEvent=contact?.verifiedAt!==null&&contact?.verifiedAt!==undefined&&
+  contact.verifiedAt.getTime()<=entry.createdAt.getTime() &&
+  contact.consentAt!==null&&contact.consentAt.getTime()<=entry.createdAt.getTime();
+ if(!contact||!canNotifyVerifiedParent(contact)||!verifiedAtEvent){
   await db.update(attendanceParentSmsOutbox).set({status:"SKIPPED"}).where(and(
    eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED")));
   return {status:"SKIPPED" as const};
