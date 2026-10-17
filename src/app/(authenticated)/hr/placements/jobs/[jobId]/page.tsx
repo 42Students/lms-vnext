@@ -529,7 +529,7 @@ export default async function HrPlacementJobPage({
                   className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Review applicant</Link>
               </article>
             ))}
-          </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
+          </div> : <p className="text-sm text-muted-foreground">{applicants.counts.all===0 ? "The placement cell has not shared the applicants yet" : "No shared applicants match this stage."}</p>}
           {selectedApplicant ? (<>
             <div aria-hidden="true" className="fixed inset-0 z-20 bg-black/40"/>
             <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
