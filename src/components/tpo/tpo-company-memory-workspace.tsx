@@ -12,7 +12,7 @@ type Person = {
   phone: string | null;
   stage: string;
   inviteSentAt:string|null;inviteClickedAt:string|null;
-  recruiterUserId:string|null;inviteBouncedAt:string|null;
+  recruiterUserId:string|null;recruiterLastLoginAt:string|null;inviteBouncedAt:string|null;
   source: string | null;
   updatedAt: string;
 };
@@ -241,7 +241,9 @@ export function TpoCompanyMemoryWorkspace({
                         {[person.designation, person.email].filter(Boolean).join(" · ") || "No contact details"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        {person.recruiterUserId?"Joined · has not signed in yet":
+                        {person.recruiterUserId?(person.recruiterLastLoginAt
+                            ?"Joined · signed in "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(person.recruiterLastLoginAt))
+                            :"Joined · has not signed in yet"):
                           person.inviteBouncedAt?"Invite bounced":
                           person.inviteClickedAt?"Invite opened, not joined yet":
                           person.inviteSentAt?"Invite sent, not opened":"No invite sent"}
