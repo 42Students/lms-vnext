@@ -4,6 +4,7 @@ import { AdminCourseOverview } from "@/components/courses/admin-course-overview"
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 import {collegeCourseCatalogueQuerySchema} from "@/modules/courses/college-course-catalogue-model";
+import {listCollegeCourseCatalogue} from "@/modules/courses/college-course-catalogue-service";
 
 export default async function CollegeCoursesPage({searchParams}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context =
