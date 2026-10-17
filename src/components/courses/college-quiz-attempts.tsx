@@ -18,7 +18,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const chosen=options.find(x=>x.deliveryId===deliveryId)??options[0];
  async function open(requestedPage=1){
   if(!chosen||loading)return;
-  setOpened(true);setLoading(true);setError("");setAttempts([]);
+  setOpened(true);setLoading(true);setError("");setAttempts([]);setPage(requestedPage);setHasMore(false);
   try{
    const response=await fetch("/api/courses/quiz-attempts?quizId="+encodeURIComponent(quizId)+
     "&deliveryId="+encodeURIComponent(chosen.deliveryId)+
