@@ -143,7 +143,7 @@ export default async function TpoMessagesPage({
       <PageHeader
         eyebrow="TPO · Communication"
         title="Messages"
-        description="Recruiter conversations and placement notifications for your college. Times are displayed in IST."
+        description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."
         actions={
           <div className="flex flex-wrap gap-2">
             {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
