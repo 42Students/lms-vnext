@@ -121,3 +121,9 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-drives-25 | DONE (source-level; tests not run) | `placement-job-create-workspace.tsx` aggregates **all** non-archived college-scoped prior drive titles/status/IDs for the selected employer, independently of three recent-role highlights; `placement-job-create-form.tsx` warns of an existing drive with its status and a direct drive link; ID-named `tests/unit/tpo-drives-chat-3-round4.test.ts` test `TPO-drives-25 Company Memory uses scoped historical drive facts`. |
+
+## Round 11 — API error translation (not yet full legacy parity)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-44 | OPEN (improved) | `src/modules/placements/tpo-drive-form-error-copy.ts` now maps common company, season, draft/edit, deadline, compensation, role, round and eligibility server codes to actionable sentences. `tests/unit/tpo-drives-44-error-copy.test.ts` names TPO-drives-44 in both cases and checks unmapped codes do not appear. Exact messaging for every legacy backend error remains to be verified; tests are written, not executed. |
