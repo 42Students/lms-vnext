@@ -997,7 +997,7 @@ export function LearnerCourseWorkspace({
                             )}
                             title={assignment.title}
                             kind="Assignment"
-                            caption="Assignment" dueText={assignment.dueAt?formatDateTime(assignment.dueAt):undefined}
+                            caption="Assignment" dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -1018,7 +1018,7 @@ export function LearnerCourseWorkspace({
                           )}
                           title={quiz.title}
                           kind="Quiz"
-                          caption="Quiz" dueText={quiz.dueAt?formatDateTime(quiz.dueAt):undefined}
+                          caption="Quiz" dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}
