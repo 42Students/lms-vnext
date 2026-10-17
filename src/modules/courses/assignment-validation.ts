@@ -73,6 +73,7 @@ export const updateCourseAssignmentInputSchema =
       dueAt: dateTimeSchema
         .nullable()
         .optional(),
+      allowedMethods:assignmentMethodsSchema.optional(),
       maxPoints: z
         .number()
         .int()
