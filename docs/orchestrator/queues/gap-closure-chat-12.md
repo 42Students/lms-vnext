@@ -108,6 +108,8 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 ## Notes (blockers, one line each)
 
+- TPO-requests-verification-01: registered migration 0134 has duplicate IF NOT EXISTS definitions for the general request tables; the first effective CHECK omits OFFER_ACCEPTANCE_DISPUTE, and target_key is varchar(150); a separately registered follow-up migration is required to align the sixth learner request kind, do not edit 0134.
+
 - TPO-students-06/07 OPEN: timed/date/N-drive debarment is wired, but bulk, student dispute/notification and true drive counting transitions are not closed; database acceptance not run.
 - TPO-students-14/15 OPEN: dialog and transactional learner notification are wired; inclusion override and 48-hour opt-out, summary bell and whole-view selections still remain.
 - TPO-requests-verification-01/37/38 OPEN: missing learner request kinds and recruiter REQUEST transitions require staged schema/service changes, not an external blocker.
@@ -181,3 +183,13 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 43: TPO-requests-verification-01 remains OPEN (partial): TPO panel now shows kind-specific submitted details and safe proof links with missing-proof warning; three kinds still prohibit approve until real transactional effects are implemented. Tests authored, not run.
 
 - Round 44 (source-only): TPO-students-47 DONE for current exact header/search, filtered empty state, counts and recoverable route error (browser stale-success fallback still requires acceptance); TPO-requests-verification-13 OPEN (partial): failed-row copying now formula-safe; bulk-run audit and proof-aware skips remain. `tests/unit/chat12-requests-bulk-copy-failed.test.ts` named `TPO-requests-verification-13` (authored, unrun). Round 44 reconciled existing selection tests to filtered cross-page behavior.
+
+- Round 45: TPO-students-12 OPEN (partial) now supports a bounded page-scoped Show/Hide/Clear action backed by tenant-checked PUT/DELETE with named tests; exact optimistic undo and audit still require work.
+
+- Round 46: TPO-students-34 OPEN (runtime acceptance): implemented transactionally scoped academic-import application recheck and NOW_INELIGIBLE notifications; real-Postgres before/after, concurrency and notifications tests must still execute.
+
+- Round 47: TPO-students-12 now has expected override CAS undo of last successful bulk action and audit on SET/CLEAR in the shared service; remain OPEN pending live DB concurrency proof and true legacy visibility semantics.
+
+- Round 48: TPO-students-14 OPEN (partial): explicit ineligible Add to Drive with audited reason and scoped transactional eligibility override; hard guards cannot be bypassed, application conflict rolls back override; 48-hour opt-out and user-visible release still need verified work.
+
+- Round 49: TPO-requests-verification-01 OPEN (partial): effective 0134 target-key varchar(150) bounds enforced at both learner entry and Zod boundary, while sixth OFFER_ACCEPTANCE_DISPUTE remains unsupported by the active first CHECK; additive correction proposed, not registered.
