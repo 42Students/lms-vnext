@@ -68,7 +68,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
    setSaved(next);setForm(next);
    setVersions({userUpdatedAt:body.profile.userUpdatedAt,profileUpdatedAt:body.profile.profileUpdatedAt});
    setFeedback("Profile saved");router.refresh();
-  }catch{setFeedback("Profile was not saved. Your changes are still here; try again.");}
+  }catch{setFeedback("Could not save your profile. Your changes are still here; try again.");}
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
  }
  return <form onSubmit={e=>void save(e)} className="sm:col-span-2 space-y-3">
@@ -90,7 +90,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
    onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
-    const href=leaveHref;setLeaveHref(null);setSaved(form);
+    const href=leaveHref;setLeaveHref(null);setForm(saved);
     if(href)router.push(href);
    }}/>
  </form>;
