@@ -1,3 +1,8 @@
+/** A new incident must never inherit the acknowledgment of a prior fixed one. */
+export function reopenRegressedSignature(now: Date) {
+  return { fixStatus: "OPEN" as const, regressedAt: now, acknowledgedAt: null };
+}
+
 export type AlertDecision = "NEW" | "REGRESSION" | "SPIKE" | "NONE";
 
 export function decideAlert(input: {

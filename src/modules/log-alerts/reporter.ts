@@ -11,7 +11,7 @@ import {
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
 import { alertEnvironment, errorSignatureHash } from "./signature";
-import { burstSlot, countSuppressedOccurrence, decideAlert } from "./policy";
+import { burstSlot, countSuppressedOccurrence, decideAlert, reopenRegressedSignature } from "./policy";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
 export type ReportableError = {
@@ -218,7 +218,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
           signatureId: id, accountKeyHash: accountHash, firstSeenAt: now,
         }).onConflictDoNothing();
       } else if (decision === "REGRESSION") {
-        await tx.update(signatures).set({ fixStatus: "OPEN", regressedAt: now })
+        await tx.update(signatures).set(reopenRegressedSignature(now))
           .where(eq(signatures.id, id));
       } else {
         await tx.update(signatures).set({ lastSpikeAlertAt: now })
