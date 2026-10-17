@@ -4,6 +4,7 @@ import {
   type AdminAttendanceWorkspaceData,
 } from "@/components/attendance/admin-attendance-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SuperAdminAttendanceSettingsEditor } from "@/components/admin/super-admin-attendance-settings-editor";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   getAdminAttendanceGrid,
@@ -122,6 +123,9 @@ export default async function SuperAdminAttendancePage({
         title="Attendance"
         description={`Scoped attendance oversight for ${options.college.name}.`}
       />
+      <SuperAdminAttendanceSettingsEditor collegeId={collegeId}
+        correctionWindowHours={options.policy.correctionWindowHours}
+        eligibilityThresholdPercent={options.policy.eligibilityThresholdPercent} />
       <AdminAttendanceWorkspace
         data={data}
         basePath="/admin/attendance"
