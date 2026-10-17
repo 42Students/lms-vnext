@@ -167,7 +167,7 @@ export async function listProjectMeetings(
           // A cancelled learner request still has a requester and remains visible.
           not(and(eq(projectMeetings.status,"CANCELLED"),
             isNull(projectMeetings.requestedByMembershipId),
-            isNull(projectMeetings.scheduledByUserId))),
+            isNull(projectMeetings.scheduledByUserId))!),
         ] : [])),
     )
     .orderBy(
