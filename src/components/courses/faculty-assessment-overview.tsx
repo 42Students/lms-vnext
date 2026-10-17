@@ -178,10 +178,10 @@ export function FacultyAssessmentOverview({
                   </div>
                   <h2 className="mt-2 text-base font-semibold text-foreground">{item.title}</h2>
                   <p className="mt-1 text-sm text-body">
-                    {item.courseName} · {item.sectionName} · {item.lessonName}
+                    {item.courseName} · {item.sectionName} · {item.lessonName} · {item.dueAt?`Due date: ${formatDate(item.dueAt)}`:"Needs due date"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {item.academicPeriodName} · Due {formatDate(item.dueAt)}
+                    {item.academicPeriodName} · {item.dueAt?`Due ${formatDate(item.dueAt)}`:`Created: ${formatDate(item.createdAt)}`}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
                     Course: {item.courseName} · Lesson: {item.lessonName}
@@ -208,7 +208,7 @@ export function FacultyAssessmentOverview({
                           updatedAt: item.updatedAt,
                           ...(item.kind === "QUIZ"
                             ? { maxAttempts: item.maxAttempts }
-                            : { maxPoints: item.maxPoints }),
+                            : { maxPoints: item.maxPoints, hasSubmissions:item.hasSubmissions }),
                         }}
                       />
                       {item.kind === "QUIZ" &&
@@ -242,6 +242,11 @@ export function FacultyAssessmentOverview({
                   >
                     View Report
                   </Link>
+                  {item.kind==="ASSIGNMENT"?<Link
+                    href={`/teacher/report/assignment/${item.id}?deliveryId=${encodeURIComponent(item.deliveryId)}#submissions`}
+                    className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+                    View submissions
+                  </Link>:null}
                   <Link
                     href={facultyCourseTabHref(item.deliveryId, "blueprint")}
                     className="rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text hover:border-primary"
