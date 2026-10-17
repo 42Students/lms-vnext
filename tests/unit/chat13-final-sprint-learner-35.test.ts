@@ -4,10 +4,11 @@ const source=(p:string)=>readFileSync(p,"utf8");
 describe("LEARNER-placements-35 booked-round attendance confirmation",()=>{
  it("LEARNER-placements-35 preserves TPO booking time separately from learner consent",()=>{
   const schema=source("src/db/schema/placement-round-candidate-slots.ts");
-  const proposal=source("docs/proposed-migrations/chat13-learner-round-attendance-confirmation.sql");
+  const registered=source("drizzle/0135_lanes_round_3.sql");
   expect(schema).toContain('learnerConfirmedAt:timestamp("learner_confirmed_at"');
   expect(schema).toContain('confirmedAt:timestamp("confirmed_at"');
-  expect(proposal).toContain("learner_confirmed_at timestamptz");
+  expect(registered).toContain("ADD COLUMN IF NOT EXISTS learner_confirmed_at timestamptz");
+  expect(registered).toContain("prcs_learner_confirmed_at_idx");
  });
  it("LEARNER-placements-35 POST validates origin, enrollment ownership, booked status, future start and optimistic update",()=>{
   const route=source("src/app/api/placements/learner/rounds/confirm/route.ts");

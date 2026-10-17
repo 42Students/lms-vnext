@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -174,6 +174,8 @@ function JobActions({
   const { showToast } = useToast();
   const [pendingAction, setPendingAction] =
     useState<string | null>(null);
+  // One request per row at a time, even before a state rerender.
+  const pendingRef = useRef(false);
   const [confirmation, setConfirmation] =
     useState<"WITHDRAW" | "EXTERNAL" | "INTERNAL" | null>(null);
   const [withdrawReason, setWithdrawReason] = useState("");
@@ -192,7 +194,8 @@ function JobActions({
     const checked=learnerDriveApplySelectionSchema.safeParse({
       roleOptionId:roleOption.id,channel,confirmed:true,
     });
-    if(preview!=="READY" || !checked.success) return;
+    if(preview!=="READY" || !checked.success || pendingRef.current) return;
+    pendingRef.current = true;
     setPendingAction(channel);
     try {
       await placementMutation(
@@ -235,13 +238,15 @@ function JobActions({
             : "Please try again.",
       });
     } finally {
+      pendingRef.current = false;
       setPendingAction(null);
     }
   }
 
   async function requestWithdrawal() {
-    if (!application || !validWithdrawalReason || pendingAction !== null) return;
+    if (!application || !validWithdrawalReason || pendingAction !== null || pendingRef.current) return;
 
+    pendingRef.current = true;
     setPendingAction("WITHDRAW");
     try {
       await placementMutation(
@@ -272,6 +277,7 @@ function JobActions({
             : "Please try again.",
       });
     } finally {
+      pendingRef.current = false;
       setPendingAction(null);
     }
   }

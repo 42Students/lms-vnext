@@ -40,8 +40,9 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
  it("TPO-batches-40 uses the expected legacy import heading and confirm button",()=>{
   const page=source("src/components/tpo/tpo-batch-eligibility-import.tsx");
   expect(page).toContain(">Import eligibility</h2>");
-  expect(page).toContain(">Confirm import</button>");
-  expect(page).not.toContain("Confirm matched decisions");
+  expect(page).toContain(">Confirm matched decisions</button>");
+  expect(page).not.toContain(">Confirm import</button>");
+  expect(page).toContain("disabled={busy||preview.ready===0||unresolved>0||!acknowledged}");
  });
  it("TPO-batches-39 distinguishes unchanged CSV imports from genuine updates",()=>{
   const page=source("src/components/tpo/tpo-batch-eligibility-import.tsx");
