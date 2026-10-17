@@ -373,7 +373,7 @@ export function RecruiterResultControls({
                   </StatusBadge>
                 </div>
                 {canStage?<div className="mt-3 flex flex-wrap items-center gap-3 text-xs text-body">
-                  <span>{(selected[round.id]??[]).length} selected for results</span>
+                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>
                   <span className="text-muted-foreground">S Pass · W/H Hold · R Fail · A Absent · Z Undo (draft only)</span>
                   {([
                     ["PASS","Pass"],["HOLD","Waitlist"],["FAIL","Not selected"],["ABSENT","Absent"],
