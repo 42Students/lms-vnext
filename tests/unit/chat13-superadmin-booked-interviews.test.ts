@@ -34,6 +34,9 @@ describe("Super Admin candidate-level interview conflicts",()=>{
   expect(service).toContain("eq(placementJobs.collegeId,scope.collegeId)");
   expect(service).toContain("learnerProgramEnrollments.status");
   expect(service).toContain(".limit(2001)");
+  const workspace=source("src/components/placements/placement-calendar-workspace.tsx");
+  expect(workspace).toContain("Could not load candidate interviews right now.");
+  expect(workspace).toContain("Retry interviews");
   expect(source("src/components/admin/super-admin-interview-operations.tsx")).toContain("First 2,000 bookings shown");
  });
 });

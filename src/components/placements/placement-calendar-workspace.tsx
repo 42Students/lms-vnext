@@ -458,7 +458,8 @@ export async function PlacementCalendarWorkspace({
       },
     );
 
-  const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to):null;
+  const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
+    .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,
@@ -1029,7 +1030,13 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary><SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} /></PlacementPanelErrorBoundary> : null}
+      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
+        {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
+          <p>Could not load candidate interviews right now. The calendar is still available.</p>
+          <Link href={calendarHref(basePath,audience,state,{})}
+           className="mt-3 inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
+        </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+       </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
         className="space-y-4"
