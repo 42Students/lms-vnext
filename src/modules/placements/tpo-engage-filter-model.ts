@@ -2,7 +2,7 @@ import type {TpoRecruiterLeadStage} from "./tpo-recruiter-lead-policy";
 export type EngageRosterFilters={
  stage:string;query:string;owner:string;invite:string;status:string;source:string;
  company?:string;designation?:string;reach?:string;nextFollowup?:string;
- lastActivity?:string;added?:string;
+ lastActivity?:string;added?:string;drives?:string;
 };
 export type EngageRosterRow={
  stage:TpoRecruiterLeadStage;name:string;companyName:string|null;
