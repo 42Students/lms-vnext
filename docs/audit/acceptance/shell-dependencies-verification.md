@@ -4,7 +4,7 @@ Tests were authored but not run by the builder; orchestrator confirms execution 
 
 | ID | Status | Evidence |
 |---|---|---|
-| TPO-inbox-team-28 | DONE | `src/components/shell/sidebar-nav.tsx`; `tests/unit/chat9-shell-unread-graceful.test.ts` — `TPO-inbox-team-28 validates distinct Messages and Team unread counts without fabricating zero` |
+| TPO-inbox-team-28 | OPEN | `src/components/shell/sidebar-nav.tsx`; `tests/unit/chat9-shell-unread-graceful.test.ts` — `TPO-inbox-team-28 validates distinct Messages and Team unread counts without fabricating zero` |
 | TPO-inbox-team-63 | DONE | `src/components/shell/shell-counts-model.ts`; `tests/unit/chat9-shell-unread-graceful.test.ts` — `TPO-inbox-team-63 and TPO-requests-verification-06 preserve unknown badges instead of treating failure as empty` |
 | TPO-requests-verification-06 | DONE | `src/components/shell/sidebar-nav.tsx`; `tests/unit/chat9-shell-unread-graceful.test.ts` — `TPO-inbox-team-63 and TPO-requests-verification-06 preserve unknown badges instead of treating failure as empty` |
 | TPO-requests-verification-21 | DONE | `src/components/shell/app-shell.tsx`; `tests/unit/chat9-shell-tpo-graceful-topbar.test.ts` — `TPO-requests-verification-21 only includes Verification when authorization explicitly enables it` |
@@ -16,4 +16,4 @@ Tests were authored but not run by the builder; orchestrator confirms execution 
 | PUB-auth-public-22 | DONE | `src/components/shell/membership-switcher.tsx`; `tests/unit/chat9-shell-notifications-auth-graceful.test.ts` — `PUB-auth-public-22 keeps the membership selector usable after an API failure` |
 | PUB-auth-public-24 | DONE | `src/components/shell/shell-connectivity-notice.tsx`; `tests/unit/chat9-shell-tpo-graceful-topbar.test.ts` — `GR-16 PUB-auth-public-24 shows an offline notice and removes it on reconnect` |
 
-Remaining: PUB-auth-public-29/31 global membership-switching and sign-in edge conditions require further role-journey acceptance; not marked DONE.
+Remaining: TPO-inbox-team-28 needs an authoritative Announcements-specific unread producer; Team and Messages badges are verified. PUB-auth-public-29/31 global membership-switching and sign-in edge conditions require further role-journey acceptance; not marked DONE.

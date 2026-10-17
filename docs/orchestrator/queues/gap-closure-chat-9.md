@@ -291,3 +291,10 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 - BLOCKED TPO-calendar-reports-23: live provider credentials required for delivered evening-before round reminder verification.
 - BLOCKED TPO-calendar-reports-43: verified private resume storage and malware scanning integration not available to this lane.
 - Chat-13 reassigned Super Admin placements and academic pages were not changed. Tests authored but never executed by chat-9.
+
+## Round 3 college/projects continuation and precise open items
+- COL-projects-03 OPEN (admin Overview/Resources edits are available; sprint/task plan edits remain Mentor-gated); COL-projects-06/07/12/13 DONE source-evidence, tests/unit/chat9-college-projects-s2-closure.test.ts and docs/audit/acceptance/college-projects-verification.md. Tests not run by builder.
+- TPO-calendar-reports-15 DONE source-level: legacy TPO query scope for any status round on DRAFT/PUBLISHED drive, PUBLISHED-only deadlines and OPEN follow-ups; verified independently from admin calendar scope. Test tests/unit/chat9-calendar-legacy-event-scope.test.ts.
+- TPO-inbox-team-28 OPEN: Team and Messages count producers exist, but Announcements requires its own authoritative unread count, not the personal Notifications total. No false count displayed.
+- TPO-settings-audit-56 OPEN: extending timed grants works, but No end date is not offered. TPO-settings-audit-70 OPEN: optional SMS cap works, usage-this-month figure is not sourced.
+- All source verification DONE entries still require orchestrator's tests, typecheck, lint and browser acceptance; none were run in this lane.
