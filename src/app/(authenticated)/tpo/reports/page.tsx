@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {legacyTpoReportCard,TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} from "@/modules/placements/tpo-legacy-report-copy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -55,7 +56,7 @@ export default async function TpoReportsPage({
   const groups = [
     {
       heading: "Overview and performance",
-      description: "Season outcomes, applications, offers and placement performance.",
+      description: "Start with the college-wide picture, then compare branches, companies and compensation."
       cards: [
         {
           title: "Placement summary",
@@ -93,9 +94,9 @@ export default async function TpoReportsPage({
       ],
     },
     {
-      heading: "Student outcomes",
+      heading: "Offers, joining and readiness gaps",
       description:
-        "Unplaced placement-pool learners, offer decisions and recorded joining outcomes.",
+        "Understand who is still unplaced, what happened to offers, and where students are dropping out of the funnel.",
       cards: [
         {
           title: "Unplaced students",
@@ -134,9 +135,9 @@ export default async function TpoReportsPage({
       ],
     },
     {
-      heading: "Relationships and compliance",
+      heading: "Recruiter funnel and accreditation",
       description:
-        "Company-level placement outcomes and performance.",
+        "Measure employer engagement and export the formal data required for accreditation workflows.",
       cards: [
         {
           title: "By company",
@@ -160,13 +161,14 @@ export default async function TpoReportsPage({
     },
   ];
 
-  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(groups,parsedSearch.data,parsedGroup.data));
+  const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
+  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data));
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow="TPO · Insights"
         title="Reports"
-        description="Explore read-only placement performance inside your college."
+        description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION}
         actions={
           <Link
             href={reportHref("/tpo/reports/placement-summary", workspace)}
@@ -257,6 +259,7 @@ export default async function TpoReportsPage({
                   <h3 className="font-semibold text-primary-text">
                     {card.title}
                   </h3>
+                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-primary-text">Start here</p>:null}
                   <p className="mt-2 text-sm leading-6 text-body">
                     {card.description}
                   </p>
