@@ -25,6 +25,13 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   const items=await tx.select({
    id:tpoInternalThreads.id,topic:tpoInternalThreads.topic,
    createdAt:tpoInternalThreads.createdAt,
+   counterpartName:sql<string|null>`(select coalesce(nullif(btrim(u.display_name),''),'Team member')
+    from college_memberships cm join users u on u.id=cm.user_id
+    where cm.college_id=${college.id}::uuid and cm.id=
+     (case when ${tpoInternalThreads.startedByMembershipId}=${membership.id}::uuid
+       then ${tpoInternalThreads.invitedMembershipId} else ${tpoInternalThreads.startedByMembershipId} end)
+    limit 1)`,
+   kind:sql<"PRIVATE">`'PRIVATE'`,
    lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
      where m.thread_id=placement_tpo_internal_threads.id
      order by m.created_at desc,m.id desc limit 1)`,
