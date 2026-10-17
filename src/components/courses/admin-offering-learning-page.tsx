@@ -6,6 +6,8 @@ import type { RequestContext } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
 import { AdminCourseDisplayEditor } from "./admin-course-display-editor";
 import {AdminOfferingTeachersPanel} from "./admin-offering-teachers-panel";
+import {AdminOfferingSectionPreview} from "./admin-offering-section-preview";
+import {listOfferingSectionPreview} from "@/modules/courses/college-offering-section-preview-service";
 import {listOfferingTeachingOverview} from "@/modules/courses/college-course-teachers-service";
 import { courseDisplayRuntimeEnabled } from "@/modules/courses/course-display-readiness";
 import { getAdminCourseDisplayContent } from "@/modules/courses/course-display-service";
@@ -21,11 +23,13 @@ export async function AdminOfferingLearningPage({
   offeringId,
   eyebrow,
   backHref,
+  deliveryId=null,
 }: {
   context: RequestContext;
   offeringId: string;
   eyebrow: string;
   backHref: string;
+  deliveryId?:string|null;
 }) {
   const workspace =
     await getAdminOfferingLearningWorkspace(
@@ -41,7 +45,11 @@ export async function AdminOfferingLearningPage({
       }
       throw error;
     });
-  const roster=await listOfferingTeachingOverview(context,offeringId);
+  const [roster,sectionPreview]=await Promise.all([
+   listOfferingTeachingOverview(context,offeringId),
+   listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons,
+    workspace.learningPath?.status==="PUBLISHED"),
+  ]);
   const displayEnabled =
     courseDisplayRuntimeEnabled();
   const display = displayEnabled
@@ -79,6 +87,7 @@ export async function AdminOfferingLearningPage({
        <a href="#course-home" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Home</a>
        <a href="#course-syllabus" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Syllabus</a>
        <a href="#who-teaches-it" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Who teaches it</a>
+       <a href="#section-content" className="inline-flex min-h-10 items-center rounded border border-border px-3 font-semibold text-primary-text">Section content</a>
       </nav>
       <section id="course-home" aria-label="Course Home" className="space-y-2">
       <h2 className="text-lg font-semibold">Home</h2>
@@ -103,6 +112,7 @@ export async function AdminOfferingLearningPage({
       />
       </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
+      <AdminOfferingSectionPreview data={sectionPreview}/>
       <section id="course-syllabus" aria-label="Course Syllabus" className="space-y-2">
        <h2 className="text-lg font-semibold">Syllabus</h2>
        <AdminOfferingLearningOverview workspace={workspace}/>
