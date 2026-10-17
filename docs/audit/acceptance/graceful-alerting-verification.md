@@ -16,7 +16,7 @@ Branch: `chatgpt/chat-16-b`. All tests below are **authored but NOT RUN**. DONE 
 | GR-120 | BLOCKED (cluster prerequisites) | `deploy/k8s/dev/alerting/vnext-health-watch.yaml`; `tests/unit/graceful-alert-ops-contract.test.ts` GR-120 |
 | GR-121 | DONE | `scripts/ops/deploy-health-check.sh`; `tests/unit/graceful-alert-ops-contract.test.ts` GR-121 |
 | GR-122 | BLOCKED (production webhook secret) | `src/app/api/webhooks/telegram/route.ts`, `src/modules/log-alerts/telegram-webhook.ts`; `tests/unit/graceful-telegram-webhook.test.ts` GR-122 |
-| GR-123 | DONE | `src/modules/log-alerts/admin-service.ts`, `src/components/tracker/known-errors-workspace.tsx`; `tests/unit/graceful-telegram-webhook.test.ts` GR-123, preexisting `tests/integration/db10-log-alert-admin.test.ts` |
+| GR-123 | DONE | `src/modules/log-alerts/admin-service.ts`, `src/components/tracker/known-errors-workspace.tsx`; `tests/unit/graceful-telegram-webhook.test.ts` GR-123, `tests/unit/graceful-logs-ui-contract.test.ts` GR-123; preexisting `tests/integration/db10-log-alert-admin.test.ts` |
 | GR-124 | DONE | `src/modules/log-alerts/readiness.ts`, notifier, `src/app/(authenticated)/tracker/logs/page.tsx` |
 | GR-125 | BLOCKED (test execution / migration) | `tests/unit/graceful-telegram-foundations.test.ts`, `graceful-telegram-fake-server.test.ts`, `graceful-alert-policy.test.ts`, `graceful-alert-scheduler.test.ts`, `graceful-client-error.test.ts`, `graceful-telegram-webhook.test.ts`, `graceful-alert-ops-contract.test.ts`, `tests/integration/graceful-telegram-persistence.test.ts` |
 
