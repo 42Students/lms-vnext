@@ -1,9 +1,10 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {and,eq,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementTpoInternalReads,placementTpoInternalThreads} from "@/db/schema/tpo-internal";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
@@ -16,7 +17,7 @@ export const tpoTeamPreferenceActionSchema=z.strictObject({
 async function scope(context:RequestContext,threadId:string){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-  !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  !hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  return {member,college,threadId};
 }
