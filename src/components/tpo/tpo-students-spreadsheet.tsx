@@ -161,7 +161,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
-    event.preventDefault();setNoteSelection(shared?.allIds??rows.map(row=>row.membershipId));
+    event.preventDefault();setNoteSelection([...(shared?.allIds??rows.map(row=>row.membershipId))]);
    }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
