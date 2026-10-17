@@ -83,11 +83,13 @@ export default async function TpoUnplacedReportPage({
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </select></label>
        <button type="submit" className="min-h-10 rounded bg-primary px-4 text-on-primary">Filter</button>
+       {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-10 items-center text-primary-text underline">Clear batch and branch</Link>:null}
        <Link href="/tpo/students?journeyState=READY_NOT_APPLYING"
         className="inline-flex min-h-10 items-center text-primary-text underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
       {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}
+      <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
       <p className="text-xs text-muted-foreground">Applications count is all recorded activity across the current roster; academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} path="/tpo/reports/unplaced" />
 
