@@ -298,6 +298,14 @@ export default async function TpoStudentsPage({
             {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
           </select>
         </label>
+        <label className="text-sm font-semibold">After college
+          <select name="afterCollege" defaultValue={query.afterCollege??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All outcomes</option>
+            {AFTER_COLLEGE_OUTCOMES.map(outcome=>
+              <option key={outcome} value={outcome}>{AFTER_COLLEGE_LABELS[outcome]}</option>)}
+          </select>
+        </label>
         <label className="text-sm font-semibold">Batch
           <select name="batchId" defaultValue={query.batchId??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
