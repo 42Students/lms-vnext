@@ -103,7 +103,7 @@ describe("Chat-7 learner placement verified-closure source contracts",()=>{
   it("LEARNER-placements-37 source behavior or reviewed disposition",()=>{
     const text=source("src/app/(authenticated)/learn/my-placements/schedule/page.tsx");
     expect(text).toContain("Join online round");
-    expect(text).toContain("Open test");
+    expect(text).toContain("Take online assessment");
     expect(text).toContain("Venue to be told");
   });
   it("LEARNER-placements-38 source behavior or reviewed disposition",()=>{
