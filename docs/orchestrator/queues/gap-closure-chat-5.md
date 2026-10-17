@@ -127,7 +127,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-28 | S3 | STATE | DONE |
 | TPO-batches-29 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | TPO-batches-40 | S3 | COPY | DONE |
-| TPO-batches-43 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-batches-43 | S3 | MISSING-MODAL | DONE |
 | TPO-batches-46 | S3 | MISSING-ACTION | OPEN |
 | TPO-batches-47 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-48 | S3 | STATE | FIXED-ON-MAIN |
