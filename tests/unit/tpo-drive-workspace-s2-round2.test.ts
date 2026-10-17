@@ -4,7 +4,7 @@ import {cloneTpoEligibilityAudience} from "@/modules/placements/tpo-drive-clone-
 import {evaluateTpoDriveLifecycle,tpoDriveReadinessMessage,type TpoDriveReadinessFacts} from "@/modules/placements/tpo-drive-lifecycle-model";
 import {evaluateTpoDriveDeadline} from "@/modules/placements/tpo-drive-deadline-model";
 import {projectTpoDriveApplicationsExport,tpoApplicantExportSearchPattern} from "@/modules/placements/tpo-drive-applications-export-model";
-import {bulkTpoRoundResultSchema,summarizeBulkRoundResults} from "@/modules/placements/tpo-bulk-round-result-model";
+import {bulkTpoRoundResultSchema,summarizeBulkRoundResults,resolveBulkRoundLearnerTokens} from "@/modules/placements/tpo-bulk-round-result-model";
 import {projectOfferRegister,offerRulesCheck,offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
 import {projectTpoRoundFacts} from "@/modules/placements/tpo-round-facts-model";
 import {tpoDriveRequestDecisionSchema,TPO_DRIVE_REQUEST_DECISION_COPY} from "@/modules/placements/tpo-drive-request-decision-model";
@@ -138,4 +138,16 @@ describe("TPO drive workspace S2 verification round 2",()=>{
   expect(projected.state).toBe("UNAVAILABLE");
   expect(projected.warnings).toEqual([]);
  });
+ it("TPO-drive-workspace-41 resolves exact roll-number paste only when identity is unique",()=>{
+  const roster=[{applicationId,rollNumber:"CSE-123"},
+   {applicationId:"33333333-3333-4333-8333-333333333333",rollNumber:"ECE-124"}];
+  expect(resolveBulkRoundLearnerTokens("CSE-123,ECE-124",roster).ids)
+   .toEqual([applicationId,"33333333-3333-4333-8333-333333333333"]);
+  expect(resolveBulkRoundLearnerTokens("CSE-123 "+applicationId,roster).error).toContain("more than once");
+  expect(resolveBulkRoundLearnerTokens("UNKNOWN",roster).error).toContain("ambiguous");
+  expect(resolveBulkRoundLearnerTokens("CSE-123",[
+   ...roster,{applicationId:"44444444-4444-4444-8444-444444444444",rollNumber:"CSE-123"}]).ids)
+   .toEqual([]);
+ });
+
 });
