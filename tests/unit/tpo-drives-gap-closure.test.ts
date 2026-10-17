@@ -165,6 +165,21 @@ describe("TPO Drives independently inspected legacy gap contracts",()=>{
   expect(create()).toContain("Minimum CGPA");
   expect(create()).toContain('max={name === "minCgpa" ? 10');
  });
+ it("TPO-drives-42 direct publish enforces policy and evaluative round atomically",()=>{
+  const job=source("src/modules/placements/job-service.ts");
+  const start=job.indexOf("export async function publishPlacementJob(");
+  const end=job.indexOf("type PlacementTx",start);
+  const code=job.slice(start,end);
+  expect(code).toContain('eq(placementJobRounds.jobId, jobId)');
+  expect(code).toContain('ne(placementJobRounds.kind, "TALK")');
+  expect(code).toContain('ne(placementJobRounds.status, "CANCELLED")');
+  expect(code).toContain('eq(placementJobEligibilityPolicies.jobId, jobId)');
+  expect(code).toContain("if (!rounds.length || !policy.length)");
+  expect(code.indexOf("if (!rounds.length || !policy.length)"))
+    .toBeLessThan(code.indexOf(".update(placementJobs)"));
+  expect(code).toContain('eq(placementJobs.collegeId, current.collegeId)');
+  expect(code).toContain('.for("update").limit(1)');
+ });
  it("TPO-drives-42 future deadline pay and HTTPS preflight happen before creating a company",()=>{
   const body=create();
   expect(body).toContain("if(reviewPublish){");

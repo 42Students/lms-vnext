@@ -1,9 +1,9 @@
 import "server-only";
 import {randomUUID} from "node:crypto";
 
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {activityEvents, cohorts, departments, programs, sections } from "@/db/schema";
+import {activityEvents, cohorts, collegeMemberships, departments, learnerProfiles, programs, sections, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
@@ -76,6 +76,29 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     .where(and(eq(departments.collegeId, member.collegeId),
       inArray(sections.id, sectionIds))) : [];
   const validSections = new Map(rows.map(row => [row.id, row]));
+  // Privacy-conscious preflight: only return a per-row conflict code, never
+  // reveal the identity, college or personal details behind an existing phone.
+  const incoming = parsed.entries.flatMap(entry=>entry.data?[entry.data]:[]);
+  const phones=[...new Set(incoming.map(entry=>entry.phoneE164))];
+  const emails=[...new Set(incoming.map(entry=>entry.email?.toLowerCase()).filter(
+    (value):value is string=>Boolean(value)))];
+  const rolls=[...new Set(incoming.map(entry=>entry.rollNumber?.trim().toLowerCase()).filter(
+    (value):value is string=>Boolean(value)))];
+  const existingIdentities=phones.length||emails.length?await getDb().select({
+    phone:users.phoneE164,email:users.email,
+  }).from(users).where(or(
+    phones.length?inArray(users.phoneE164,phones):undefined,
+    emails.length?inArray(sql<string>`lower(${users.email})`,emails):undefined,
+  )):[];
+  const existingRolls=rolls.length?await getDb().select({
+    roll:learnerProfiles.rollNumber,
+  }).from(learnerProfiles).innerJoin(collegeMemberships,
+    eq(collegeMemberships.id,learnerProfiles.membershipId))
+    .where(and(eq(collegeMemberships.collegeId,member.collegeId),
+      inArray(sql<string>`lower(${learnerProfiles.rollNumber})`,rolls))):[];
+  const takenPhones=new Set(existingIdentities.map(row=>row.phone).filter(Boolean));
+  const takenEmails=new Set(existingIdentities.map(row=>row.email?.toLowerCase()).filter(Boolean));
+  const takenRolls=new Set(existingRolls.map(row=>row.roll?.trim().toLowerCase()).filter(Boolean));
   const checked = parsed.entries.map(entry => {
     const errors = [...entry.errors];
     const cohort = entry.data ? validCohorts.get(entry.data.cohortId) : undefined;
@@ -83,6 +106,13 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
       cohort.programStatus !== "ACTIVE" ||
       !["ACTIVE", "PLANNED"].includes(cohort.cohortStatus))) {
       errors.push("PROGRAM_COHORT_UNAVAILABLE");
+    }
+    if(entry.data){
+      if(takenPhones.has(entry.data.phoneE164))errors.push("PHONE_ALREADY_REGISTERED");
+      if(entry.data.email&&takenEmails.has(entry.data.email.toLowerCase()))
+        errors.push("EMAIL_ALREADY_REGISTERED");
+      if(entry.data.rollNumber&&takenRolls.has(entry.data.rollNumber.trim().toLowerCase()))
+        errors.push("ROLL_NUMBER_ALREADY_REGISTERED");
     }
     if (entry.data?.sectionId) {
       const section = validSections.get(entry.data.sectionId);
@@ -94,13 +124,20 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   const initial: StudentCsvResult[] = checked.map(entry => ({
     row: entry.row,
     status: entry.errors.length ? "INVALID" : "VALID",
-    detail: entry.errors.join("; ") || "Validated fields and college-owned cohort; existing identity conflicts are checked during import",
+    detail: entry.errors.join("; ") || "Validated fields, college-owned cohort and existing identity conflicts",
   }));
   const valid = checked.filter(entry => entry.data && entry.errors.length === 0);
   const invalid = checked.length - valid.length;
   if (request.action === "PREVIEW") {
     return { preview: true, structuralErrors: [], results: initial,
       valid: valid.length, invalid };
+  }
+  // COL-people-R03: import is never a permissive "skip bad rows" action.
+  // Revalidate the complete submitted roster on the server and refuse the
+  // whole request when any parsed row or ownership check fails.
+  if (invalid > 0) {
+    return { preview: true, structuralErrors: ["RESOLVE_INVALID_ROWS_BEFORE_IMPORT"],
+      results: initial, valid: valid.length, invalid };
   }
 
   // No cross-system ACID transaction exists between identity provisioning and

@@ -44,9 +44,11 @@ function formatTime(value: string) {
 export function LearnerCourseDiscussion({
   deliveryId,
   moderate = false,
+  pollIntervalMs = 15000,
 }: {
   deliveryId: string;
   moderate?: boolean;
+  pollIntervalMs?: number;
 }) {
   const [messages, setMessages] = useState<DiscussionMessage[]>([]);
   const [highlightedPinned, setHighlightedPinned] = useState<{
@@ -187,12 +189,12 @@ export function LearnerCourseDiscussion({
       if (document.visibilityState === "visible") {
         void load(true);
       }
-    }, 15000);
+    }, Math.max(5000,Math.min(120000,pollIntervalMs)));
     return () => {
       window.clearTimeout(first);
       window.clearInterval(interval);
     };
-  }, [load]);
+  }, [load,pollIntervalMs]);
 
   const pinnedMessages = useMemo(
     () => messages.filter((item) => item.pinned),

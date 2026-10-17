@@ -20,10 +20,11 @@ export async function listCollegeCompanyDirectory(
   const search=query.q?literalCompanySearch(query.q):null;
   const where=and(
     eq(placementCompanyRelationships.collegeId,collegeId),
-    eq(placementCompanyRelationships.status,query.status),
-    query.status==="ACTIVE"?isNull(placementCompanyRelationships.archivedAt):undefined,
-    eq(placementCompanies.status,"ACTIVE"),
-    query.q?ilike(placementCompanies.name,literalCompanySearch(query.q)):undefined,
+    showDeleted?undefined:eq(placementCompanyRelationships.status,"ACTIVE"),
+    showDeleted?undefined:isNull(placementCompanyRelationships.archivedAt),
+    showDeleted?undefined:eq(placementCompanies.status,"ACTIVE"),
+    search?or(ilike(placementCompanies.name,search),
+      ilike(placementCompanies.industry,search)):undefined,
   );
   // Correlated aggregates stay tenant-scoped: neither another college's jobs
   // nor private relationship notes can affect these directory counts.

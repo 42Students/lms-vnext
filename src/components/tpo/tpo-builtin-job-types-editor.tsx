@@ -20,7 +20,7 @@ export function TpoBuiltinJobTypesEditor({stored,customActive}:{stored:readonly 
    const data=await response.json() as {error?:string};
    if(!response.ok)throw Error(data.error==="TPO_SETTINGS_STALE"?"Settings changed; refresh and retry.":
     data.error==="TPO_JOB_TYPE_LAST_ACTIVE"?"Keep at least one job type visible.":
-    data.error??"Could not save this job type.");
+    "Could not save this job type. Refresh and try again.");
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to change type");}finally{setBusy(false);}
  }
