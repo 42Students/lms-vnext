@@ -419,6 +419,7 @@ export default async function TpoMessagesPage({
                       {item.participantName}
                       {item.companyName ? <p className="mt-1 text-xs font-normal text-muted-foreground">{item.companyName}</p> : null}
                        {item.waitingForYou?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Waiting for you</span>:null}
+                       {item.accessEnded?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">Access ended</span>:null}
                     </td>
 
                     <td className="px-4 py-4 text-body">
