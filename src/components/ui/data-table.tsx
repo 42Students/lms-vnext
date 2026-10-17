@@ -8,7 +8,9 @@ export type DataTableColumn<Row> = {
   cell: (row: Row) => ReactNode;
   className?: string;
   mobileLabel?: string;
-  mobilePriority?: "primary" | "secondary" | "hidden";
+  mobilePriority?: "primary" | "secondary" | "action" | "hidden";
+  /** Only hide on phone if redundant AND a full-detail URL exists. */
+  mobileHiddenReason?: string;
 };
 export type DataTableProps<Row> = {
   columns: readonly DataTableColumn<Row>[];
@@ -23,20 +25,31 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
   if (rows.length === 0) return <div className="rounded-xl border border-border bg-surface p-4 sm:p-6">
     {empty ?? <p className="m-0 text-sm text-muted-foreground">No records found.</p>}
   </div>;
-  const primary = columns.find(column => column.mobilePriority === "primary") ?? columns.find(column => column.mobilePriority !== "hidden");
-  const secondary = columns.filter(column => column.key !== primary?.key && column.mobilePriority !== "hidden");
+  const primary = columns.find(column => column.mobilePriority === "primary") ??
+    columns.find(column => column.mobilePriority === undefined || column.mobilePriority === "secondary");
+  const actions = columns.filter(column => column.mobilePriority === "action");
+  const secondary = columns.filter(column => column.key !== primary?.key && column.mobilePriority !== "action" &&
+    !(column.mobilePriority === "hidden" && column.mobileHiddenReason && rowHref));
   const shown = secondary.slice(0, 3);
   const extra = secondary.slice(3);
   return <div data-slot="data-table" className="min-w-0">
     <div className="space-y-3 sm:hidden" role="list" aria-label={caption ?? "Records"}>
       {rows.map(row => (
         <article key={getRowKey(row)} role="listitem" className="min-w-0 rounded-xl border border-border bg-surface p-4">
-          {primary ? <div role="heading" aria-level={3} className="min-w-0 break-words text-base font-semibold leading-6 text-foreground">{primary.cell(row)}</div> : null}
+          {primary ? (() => {
+            const content = primary.cell(row);
+            return typeof content === "string" || typeof content === "number"
+              ? <h3 className="min-w-0 break-words text-base font-semibold leading-6 text-foreground">{content}</h3>
+              : <div className="min-w-0 break-words text-base font-semibold leading-6 text-foreground">{content}</div>;
+          })() : null}
           {shown.length ? <dl className="mt-3 grid min-w-0 grid-cols-1 gap-2 text-sm leading-5">
             {shown.map(column => <div key={column.key} className="min-w-0"><dt className="font-medium text-body">{column.mobileLabel ?? column.header}</dt>
               <dd className="mt-0.5 min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}
           </dl> : null}
           {extra.length ? <details className="mt-3 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-teal-deep)]">More details</summary><dl className="grid gap-2 text-sm">{extra.map(column => <div key={column.key} className="min-w-0"><dt className="text-body">{column.mobileLabel ?? column.header}</dt><dd className="min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}</dl></details> : null}
+          {actions.length ? <div className="mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3" aria-label="Row actions">
+            {actions.map(column => <div key={column.key} className="min-w-0">{column.cell(row)}</div>)}
+          </div> : null}
           {rowHref ? <Link href={rowHref(row)} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">View details</Link> : null}
         </article>
       ))}
