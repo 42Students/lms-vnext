@@ -84,8 +84,8 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     </label>
     <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
-     {(mode==="RECORD"?recordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
-       releasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
+     {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
+       visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
        .map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 px-2 text-sm">
         <input type="checkbox" checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
         <span>{item.name} · {item.note}</span>
