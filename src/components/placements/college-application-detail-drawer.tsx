@@ -31,12 +31,12 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [linkNotice,setLinkNotice]=useState("");
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
- const url="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
+ const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
   setLoading(true);setError("");
   try{
-   const body=await apiFetch<CollegeApplicationDetail>(url,{cache:"no-store"});
+   const body=await apiFetch<CollegeApplicationDetail>(endpoint,{cache:"no-store"});
    if(!body?.application)throw Error("Could not load this application. Please try again.");
    setDetail(body);
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load application");}
@@ -46,7 +46,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   if(!note.trim()||saving)return;
   setSaving(true);setError("");setSuccess("");
   try{
-   await apiFetch(url,{method:"POST",headers:{"content-type":"application/json"},
+   await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim()})});
    setNote("");await reload();setSuccess("Internal note saved to application history.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
@@ -58,13 +58,12 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   if(!url.startsWith("https://")){setError("Enter a secure HTTPS offer-letter URL.");return;}
   setSavingLetter(true);setError("");setSuccess("");
   try{
-   await apiFetch(urlPath(),{method:"PATCH",headers:{"content-type":"application/json"},
+   await apiFetch(endpoint,{method:"PATCH",headers:{"content-type":"application/json"},
     body:JSON.stringify({offerId,url,confirmed:true})});
    await reload();setSuccess("Offer letter attached");
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
  }
- function urlPath(){return url;}
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[]},
   {label:"Screening history",rows:detail?.screeningHistory??[]},

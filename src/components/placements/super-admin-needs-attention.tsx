@@ -5,7 +5,7 @@ type Attention={code:string;jobId:string;jobTitle:string;companyName:string;coun
 const categories=[
  {code:"STALE_APPLICATIONS",label:"Applications with no action in a week",tab:"APPLIED"},
  {code:"INTERVIEW_UNSCHEDULED",label:"Marked Interview, nothing scheduled",tab:"INTERVIEW"},
- {code:"OFFERED_NO_LETTER",label:"Offered, no offer letter attached",tab:"ALL"},
+ {code:"OFFERED_NO_LETTER",label:"Offered, no offer letter attached",tab:"OFFERED"},
  {code:"CLOSING_SOON_LOW_CONVERSION",label:"Closing soon, low conversion",tab:"ALL"},
 ] as const;
 export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attention[];basePath:string}){
@@ -23,7 +23,7 @@ export function SuperAdminNeedsAttention({items,basePath}:{items:readonly Attent
     return <div key={category.code} className="space-y-2 p-5">
      <h3 className="text-sm font-semibold">{category.label} ({category.rows.length})</h3>
      {visible.map(item=><Link key={item.jobId} href={basePath+"/jobs/"+
-      encodeURIComponent(item.jobId)+"/applications?status="+category.tab}
+      encodeURIComponent(item.jobId)"+/applications?stage="+category.tab}
       className="block min-h-10 rounded border border-border p-3 text-sm text-primary-text hover:bg-primary-subtle">
        {item.companyName} · {item.jobTitle}
        <span className="ml-2 text-xs text-muted-foreground">{item.count} affected</span>
