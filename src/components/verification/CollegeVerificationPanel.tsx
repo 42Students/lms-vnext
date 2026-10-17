@@ -1,5 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {verificationSessionProgress,verificationSessionStopped,verificationSessionFinished} from "@/modules/verification/sequential-review-progress";
 import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
@@ -85,12 +87,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
   if(body.items.length===0){setBulkError("Every one picked has a document missing. Open them to send back with a reason.");return;}
   setBulkBusy(true);setBulkError("");setBulkResult(null);
   try{
-   const response=await fetch("/api/college/verification/bulk-review",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-   if(!response.ok){
-    const failure=await response.json().catch(()=>({error:"REQUEST_FAILED"})) as {error?:string};
-    throw Error(failure.error??"Bulk review was not accepted");
-   }
-   const data=parseCollegeBulkReviewReceipt(await response.json(),body.items);
+   const payload=await apiFetch<unknown>("/api/college/verification/bulk-review",{
+    method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body),
+   });
+   const data=parseCollegeBulkReviewReceipt(payload,body.items);
    setBulkResult({...data,labels:describeBulkReviewOutcomeRows(data.outcomes,selectedRows)});
    setReviewFeedback(action==="VERIFY"
     ? `${data.summary.succeeded} verified. The students have been told.`
@@ -158,10 +158,10 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     </ul>
     {bulkAction==="SEND_BACK"&&<div className="flex flex-wrap gap-2">
       {(selectedRows.every(row=>row.section==="IDENTITY")
-        ? ["Identity document is missing or unclear","Submitted details do not match the document"]
+        ? tpoVerificationSectionReasons("IDENTITY")
         : selectedRows.every(row=>row.section==="EDUCATION")
-        ? ["Marksheet is missing or unreadable","Submitted details do not match the document"]
-        : ["Submitted details do not match the document"]).map(reason=>
+          ? tpoVerificationSectionReasons("EDUCATION")
+          : ["Submitted details do not match the document"] as const).map(reason=>
           <button key={reason} type="button" disabled={bulkBusy}
             onClick={()=>setBulkReason(reason)} className="rounded-md border px-3 py-2 text-xs">
             {reason}

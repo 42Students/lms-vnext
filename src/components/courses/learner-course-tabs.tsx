@@ -10,9 +10,11 @@ export const learnerCourseTabs = [
 export function LearnerCourseTabs({
   deliveryId,
   activeTab,
+  persistentQuery="",
 }: {
   deliveryId: string;
   activeTab: string;
+  persistentQuery?:string;
 }) {
   return (
     <nav aria-label="Course workspace" className="overflow-x-auto border-b border-border">
@@ -22,7 +24,7 @@ export function LearnerCourseTabs({
           return (
             <Link
               key={tab.path}
-              href={`/learn/courses/${encodeURIComponent(deliveryId)}/${tab.path}`}
+              href={`/learn/courses/${encodeURIComponent(deliveryId)}/${tab.path}${persistentQuery?"?"+persistentQuery:""}`}
               aria-current={active ? "page" : undefined}
               className={
                 active
