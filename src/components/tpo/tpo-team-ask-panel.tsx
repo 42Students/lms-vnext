@@ -49,8 +49,8 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
   </div>:null}
  </div>;
 }
-export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,items,highlightAskId}:{
- threadId:string;actorId:string;recipientId:string;recipientName:string;items:Ask[];highlightAskId?:string;
+export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,items,serverNowMs,highlightAskId}:{
+ threadId:string;actorId:string;recipientId:string;recipientName:string;items:Ask[];serverNowMs:number;highlightAskId?:string;
 }){
  const router=useRouter(),pending=useRef(false),key=useRef<string|null>(null);
  const [title,setTitle]=useState(""),[due,setDue]=useState("");
@@ -99,7 +99,7 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,item
     {busy?"Sending…":"Ask someone"}</button>
   </form>
   <ul className="space-y-2">{items.map(ask=>{
-   const overdue=ask.status==="OPEN"&&ask.dueAt&&new Date(ask.dueAt).getTime()<Date.now();
+   const overdue=ask.status==="OPEN"&&ask.dueAt&&new Date(ask.dueAt).getTime()<serverNowMs;
    const label=ask.status==="OPEN"&&overdue?"Overdue":ask.status==="OPEN"?"Open":ask.status==="DONE"?"Done":"Cancelled";
    return <li key={ask.id} id={"team-ask-"+ask.id} className="rounded border border-border bg-surface p-3 text-sm">
     <p className="font-semibold">{ask.title}</p>

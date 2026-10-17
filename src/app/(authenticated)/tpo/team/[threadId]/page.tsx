@@ -59,7 +59,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     result.thread.invitedMembershipId:result.thread.startedByMembershipId}
    recipientName={result.thread.counterpartName}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
-   highlightAskId={highlightAskId}/>:asks.status==="FAILED"?
+   highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
    <p role="alert" className="text-sm text-danger">Could not load team asks. Other messages are still available.</p>:null}
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
