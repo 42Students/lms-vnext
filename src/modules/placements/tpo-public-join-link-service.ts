@@ -30,7 +30,7 @@ export class TpoPublicJoinLinkError extends Error {
 async function requireTpoLinkScope(context: RequestContext) {
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
-      !hasMembershipRole(context, "TPO") || context.user.platformStatus !== "ACTIVE") {
+      !(hasMembershipRole(context, "TPO")||hasMembershipRole(context, "COLLEGE_ADMIN")) || context.user.platformStatus !== "ACTIVE") {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;
