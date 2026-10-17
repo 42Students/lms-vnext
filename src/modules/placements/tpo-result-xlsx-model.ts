@@ -65,6 +65,7 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
    if(/<f(?:\s|>|\/)/i.test(body))
     throw Error("Formula cells are not accepted for company results. Paste values first.");
    const ref=/\br="([^"]+)"/.exec(attr)?.[1]??"";
+   if(!/^[A-Z]{1,3}[1-9][0-9]*$/i.test(ref))throw Error("Worksheet cell coordinate is missing or invalid.");
    const position=cellIndex(ref);
    if(position<0||position>39)throw Error("Each worksheet cell must have a valid column from A to AN.");
    if(values[position]!==undefined)throw Error("Duplicate worksheet cell coordinate. Export a clean sheet before importing.");
