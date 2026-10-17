@@ -7,7 +7,7 @@ export const offerRegisterQuery=z.object({jobId:z.string().uuid(),status:z.enum(
  if(input.minCtcLpa!==undefined&&input.maxCtcLpa!==undefined&&input.maxCtcLpa<input.minCtcLpa)
   ctx.addIssue({code:"custom",path:["maxCtcLpa"],message:"Maximum package must be at least the minimum package"});
 });
-export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
+export type OfferRegisterFact={offer:{id:string;status:string;roleTitle:string;kind:string;annualCtcInr:number|null;fixedLpa?:string|null;variableLpa?:string|null;joiningBonusLpa?:string|null;bondMonths?:number|null;bondAmount?:string|null;acceptanceChannel?:string|null;acceptedDisputableUntil?:Date|null;issuedAt:Date;respondedAt:Date|null;expiresAt?:Date|null},joining:{status:string}|null,candidate:{membershipId:string;displayName:string|null;email?:string|null;phone?:string|null;rollNumber?:string|null;batch?:string|null;branch?:string|null}};
 /** Offer-level states only; campus held-offer policy is intentionally not inferred here. */
 export function offerRulesCheck(status:string,kind:string){
  if(kind==="LOI")return "Letter of intent · placement count not established";
@@ -49,7 +49,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
  return {counts,totalMatching:match.length,page,pageSize:OFFER_REGISTER_PAGE_SIZE,totalPages,rows:match.slice(start,start+OFFER_REGISTER_PAGE_SIZE).map(({offer,candidate,joining})=>({
-  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
+  id:offer.id,name:candidate.displayName?.trim()||"Unnamed learner",membershipId:candidate.membershipId,email:candidate.email??null,phone:candidate.phone??null,rollNumber:candidate.rollNumber??null,batch:candidate.batch??null,branch:candidate.branch??null,role:offer.roleTitle,kind:offer.kind,annualCtcInr:offer.annualCtcInr,fixedLpa:offer.fixedLpa??null,variableLpa:offer.variableLpa??null,joiningBonusLpa:offer.joiningBonusLpa??null,bondMonths:offer.bondMonths??null,bondAmount:offer.bondAmount??null,acceptanceChannel:offer.acceptanceChannel??null,acceptedDisputableUntil:offer.acceptedDisputableUntil?.toISOString()??null,status:offer.status,ruleCheck:offerRulesCheck(offer.status,offer.kind),
   issued:offer.issuedAt.toISOString(),responded:offer.respondedAt?.toISOString()??null,
   expires:offer.expiresAt?.toISOString()??null,respondByHours:offer.status==="ISSUED"&&offer.expiresAt?Math.max(0,Math.ceil((offer.expiresAt.getTime()-asOf.getTime())/3600000)):null,expiryIndicator:offerExpiryIndicator(offer.status,offer.expiresAt,asOf),
   joining:offer.status==="ACCEPTED"?(joining?.status??"PENDING"):null,
@@ -68,19 +68,19 @@ export function tpoDriveOfferRegisterCsv(
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
-  f.offer.kind,f.offer.annualCtcInr,f.candidate.email??null,f.candidate.phone??null,
+  f.offer.kind,f.offer.annualCtcInr,f.offer.fixedLpa??null,f.offer.variableLpa??null,f.offer.joiningBonusLpa??null,f.offer.bondMonths??null,f.offer.bondAmount??null,f.candidate.email??null,f.candidate.phone??null,
   f.candidate.rollNumber??null,f.candidate.batch??null,f.candidate.branch??null,
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
-  csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
+  csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),f.offer.acceptanceChannel??null,csvDate(f.offer.acceptedDisputableUntil),
   offerRulesCheck(f.offer.status,f.offer.kind),
   offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf),
   f.offer.status==="ISSUED"&&f.offer.expiresAt
     ? Math.max(0,Math.ceil((f.offer.expiresAt.getTime()-asOf.getTime())/3600000)) : null,
  ]);
- rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.",...Array(16).fill("")]);
+ rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.",...Array(23).fill("")]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
  if(truncated)rows.push(["TRUNCATED",
-  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",...Array(16).fill(null)]);
- return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Email","Phone","Roll number","Batch","Branch","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)","Rules check","Response timing","Hours to respond"],rows),
+  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",...Array(23).fill(null)]);
+ return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Fixed (LPA)","Variable (LPA)","Joining bonus (LPA)","Bond (months)","Bond amount (INR)","Email","Phone","Roll number","Batch","Branch","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)","Acceptance channel","Dispute until (IST)","Rules check","Response timing","Hours to respond"],rows),
   totalMatching:matches.length,truncated};
 }

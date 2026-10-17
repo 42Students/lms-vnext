@@ -11,7 +11,7 @@ import {collectTpoExportPages,projectTpoDriveApplicationsExport,tpoDriveApplicat
  TPO_DRIVE_APPLICATION_EXPORT_LIMIT,tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 export async function getTpoDriveApplicationsExport(context:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
  const collegeId=await requireTpoJobCollege(context);
- const {jobId,stage,search,channel,eligibility,sort,submittedWithin}=tpoDriveApplicationsExportQuerySchema.parse(raw);
+ const {jobId,stage,search,channel,eligibility,sort,submittedWithin,flag}=tpoDriveApplicationsExportQuerySchema.parse(raw);
  const since=tpoApplicantSubmittedSince(submittedWithin,new Date());
  const db=getDb();
  await db.transaction(async(tx)=>{await requireTpoJobActor(tx,context);},{accessMode:"read only"});
@@ -31,6 +31,20 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
     or(ilike(cohorts.name,queryPattern),ilike(cohorts.code,queryPattern),
        ilike(programs.name,queryPattern),ilike(departments.name,queryPattern))))
  ):undefined;
+ const flagScope=flag==="WITHDRAWAL_REQUESTED"?sql<boolean>`exists(
+   select 1 from placement_learner_requests req
+    where req.application_id=${placementApplications.id}
+      and req.request_type='APPLICATION_WITHDRAWAL' and req.status='PENDING')`:
+  flag==="NO_SHOW"?sql<boolean>`exists(
+   select 1 from placement_round_results r
+    where r.application_id=${placementApplications.id}
+     and r.status='APPLIED' and r.outcome='ABSENT' and r.superseded_at is null)`:
+  flag==="PLACED_ELSEWHERE"?sql<boolean>`exists(
+   select 1 from placement_offers o
+    join placement_applications other on other.id=o.application_id
+    where other.membership_id=${placementApplications.membershipId}
+     and other.job_id<>${job.id} and o.status='ACCEPTED')`:
+  flag==="ADDED_BY_COLLEGE"?sql<boolean>`${placementApplications.submittedByUserId}<>${collegeMemberships.userId}`:undefined;
  const readPage=async(offset:number,limit:number)=>await tx.select({
   applicationId:placementApplications.id,studentName:users.displayName,
   roleTitle:placementJobRoleOptions.title,status:placementApplications.status,
@@ -86,6 +100,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   .leftJoin(placementApplicationScreenings,
    eq(placementApplicationScreenings.applicationId,placementApplications.id))
   .where(and(eq(placementApplications.jobId,job.id),
+   flagScope,
    since?gte(placementApplications.submittedAt,since):undefined,
    channel!=="ALL"?eq(placementApplications.channel,channel):undefined,
    eligibility!=="ALL"?eq(placementApplications.eligibilityStatus,eligibility):undefined,
@@ -106,7 +121,7 @@ export async function getTpoDriveApplicationsExport(context:RequestContext,raw:u
   ? await collectTpoExportPages(readPage)
   : await readPage(0,TPO_DRIVE_APPLICATION_EXPORT_LIMIT+1);
  },{isolationLevel:"repeatable read",accessMode:"read only"});
- return {job,stage,search,channel,eligibility,sort,submittedWithin,...projectTpoDriveApplicationsExport(records.map(r=>({
+ return {job,stage,search,channel,eligibility,sort,submittedWithin,flag,...projectTpoDriveApplicationsExport(records.map(r=>({
   ...r,addedByCollege:r.submittedByUserId!==r.learnerUserId,
   submittedAt:r.submittedAt.toISOString(),screeningUpdatedAt:r.screeningUpdatedAt?.toISOString()??null,
  })),job.title,options)};

@@ -13,7 +13,7 @@ import {senderTypeForTpoTab,tpoAnnouncementTabSchema,projectTpoAnnouncementRows}
 
 /** Read only explicitly college-targeted TPO/42 announcements; no learner targeting guesses. */
 export async function listTpoPlacementAnnouncements(
- context:RequestContext,rawTab:unknown="yours",now:Date=new Date(),page=1,
+ context:RequestContext,rawTab:unknown="yours",now:Date=new Date(),page=1,scope:"MINE"|"COLLEGE"="MINE",
 ){
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
@@ -42,6 +42,7 @@ export async function listTpoPlacementAnnouncements(
    eq(db10Announcements.receiverType,"COLLEGE"),
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,senderTypeForTpoTab(tab)),
+   ...(tab!=="from-42"&&scope==="MINE"?[eq(db10Announcements.senderUserId,context.user.id)]:[]),
    ...(tab==="deleted"?
     [isNotNull(db10Announcements.deletedAt)]:
     [isNull(db10Announcements.deletedAt)]),

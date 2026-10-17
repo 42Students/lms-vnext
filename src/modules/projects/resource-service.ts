@@ -146,12 +146,14 @@ export async function createProjectResource(
         title:"New project resource",body:"A resource was added to your project.",
         actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
       });
+      if(resource.visibility==="TEAM") {
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         roles:["LEARNER"],exceptUserId:context.user.id,
         title:"New project resource",body:"A resource was added to your project.",
         actionHref:"/learn/projects/"+scope.project.id+"?tab=resources",
       });
+      }
       return resource;
     });
   } catch (error) {
@@ -261,12 +263,14 @@ export async function updateProjectResource(
       title:"Project resource updated",body:"A project resource has changed.",
       actionHref:"/mentor/projects/"+scope.project.id+"?tab=resources",
     });
+    if(updated.visibility==="TEAM") {
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
       roles:["LEARNER"],exceptUserId:context.user.id,
       title:"Project resource updated",body:"A project resource has changed.",
       actionHref:"/learn/projects/"+scope.project.id+"?tab=resources",
     });
+    }
     return updated;
   });
 }

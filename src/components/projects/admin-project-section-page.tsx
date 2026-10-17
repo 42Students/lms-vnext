@@ -20,10 +20,14 @@ export async function AdminProjectSectionPage({
   projectId,
   section,
   basePath,
+  from,
+  reason,
 }: {
   projectId: string;
   section: string;
   basePath: string;
+  from?: string;
+  reason?: string;
 }) {
   if (!isProjectWorkspaceSection(section)) {
     notFound();
@@ -40,11 +44,22 @@ export async function AdminProjectSectionPage({
       projectId,
     );
 
+  const safeFrom = from === "at-risk" || from === "submissions" ? from : "workspaces";
+  const backHref = safeFrom === "workspaces" ? basePath : basePath + "/" + safeFrom;
+  const backLabel = safeFrom === "at-risk" ? "Back to at-risk projects" : safeFrom === "submissions" ? "Back to submissions" : "Projects";
+  const safeReason = reason && /^(STALLED|BLOCKER|REVIEW)$/i.test(reason) ? reason.toUpperCase() : null;
+  const linkParams = new URLSearchParams();
+  if (safeFrom !== "workspaces") linkParams.set("from",safeFrom);
+  if (safeReason) linkParams.set("reason",safeReason);
+  const sectionQuerySuffix = linkParams.size ? "?" + linkParams.toString() : "";
+
   return (
     <ProjectWorkspace
       workspace={workspace}
-      backHref={basePath}
-      backLabel="Projects"
+      backHref={backHref}
+      backLabel={backLabel}
+      riskReason={safeReason}
+      sectionQuerySuffix={sectionQuerySuffix}
       mode="ADMIN"
       currentMembershipId={
         context.membership?.id ?? null

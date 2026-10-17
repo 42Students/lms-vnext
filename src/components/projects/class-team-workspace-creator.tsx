@@ -145,6 +145,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     }
   }
   return <div className="space-y-6">
+    <p className="text-sm text-body">Choose one team, split a class into teams, or give each learner a workspace.</p>
+    {mode==="TEAMS" ? <p className="rounded-md border border-border bg-surface p-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
     {emptyMessages.classes?<p role="status" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="rounded-lg border border-border bg-surface p-4 text-sm text-body">{emptyMessages.templates}</p>:null}
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -166,11 +168,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
-      <label className="block space-y-1 text-sm font-medium">Add students as
+      <label className="block space-y-1 text-sm font-medium">Workspace mode
         <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
-          <option value="TEAMS">Split class into teams</option>
-          <option value="WHOLE_CLASS">Add a whole class</option>
-          <option value="INDIVIDUAL">Cohort · one workspace per student</option>
+          <option value="WHOLE_CLASS">One team</option>
+          <option value="TEAMS">Split a class into teams</option>
+          <option value="INDIVIDUAL">One workspace per student</option>
         </Select>
       </label>
       {mode==="TEAMS"?<>
@@ -195,9 +197,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
-    {mode==="INDIVIDUAL"&&preflight?<p role="status" className="rounded-lg border border-border p-3 text-sm">
-      {preflight.toCreate} to create · {preflight.alreadyCovered} already covered
-    </p>:null}
+    {mode==="INDIVIDUAL"&&preflight?<section aria-label="Before creating: one workspace per student" className="rounded-lg border border-border p-3 text-sm">
+      <h2 className="font-semibold">Before creating: one workspace per student</h2>
+      <p>{preflight.toCreate} to create · {preflight.alreadyCovered} already covered · {preflight.eligible} eligible</p>
+      <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
+    </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 rounded-lg border border-border p-3">
         <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
@@ -234,6 +238,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 rounded-lg border border-border p-4">
       <h3 className="font-semibold">Latest cohort creation outcome</h3>
       <p className="text-sm">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      <p role="status" className="text-sm">{outcome.created.length===0
+        ? "No workspaces were created — the selected class may have no active learners."
+        : outcome.created.length<outcome.requested-outcome.alreadyCovered
+          ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
+          : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
       <button type="button" className="text-sm font-semibold text-primary-text underline"
         onClick={()=>{
           const rows=["Workspace,Student membership,Project ID",
