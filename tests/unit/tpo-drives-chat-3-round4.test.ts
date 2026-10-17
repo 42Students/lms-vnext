@@ -168,4 +168,16 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).toContain("const saveBrowserDraft=useCallback");
   expect(guard).toContain("const markDirty=useCallback");
  });
+ it("TPO-drives-26 cloning requires an accessible confirmation and safe JSON response",()=>{
+  const action=source("src/components/placements/tpo-drive-clone-action.tsx");
+  expect(action).toContain("<ConfirmDialog");
+  expect(action).toContain("await apiFetch<");
+  expect(action).toContain("useGuardedAction");
+  expect(action).toContain("Check your drives before trying again.");
+ });
+ it("GR-35 TPO-drives-26 clone confirmation does not use window.confirm",()=>{
+  const action=source("src/components/placements/tpo-drive-clone-action.tsx");
+  expect(action).not.toContain("window.confirm");
+  expect(action).toContain("<ConfirmDialog");
+ });
 });
