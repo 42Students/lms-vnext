@@ -274,6 +274,15 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - Graceful operation still needs GR-30/34/50/52/60/70/90 adoption in the remaining mutating and data-loading pages when chat-14 shared helpers reach main. Do not treat source-only named tests as complete runtime resilience.
 - Remaining major items: Faculty `FAC-assessments-13/27/R01..R08`; Super Admin People unresolved actions and identity; Super Admin Courses/Content policy and editor parity; College Placements company editor/offer letter and application completeness; Super Admin tracker; Learner private uploads; College Dashboard failure isolation. Existing private storage/scanner blockers in Notes are unchanged.
 
+
+### Chat-6 round 4 source-closure handoff (2026-10-17)
+
+- Branch was fast-forwarded to main at the beginning of this round (no force-push). Main advanced again while changes were authored; the orchestrator should merge the current main into chatgpt/chat-6-b before accepting or merging.
+- DONE (source-authored, unexecuted tests): SA-academics-people-68, SA-academics-people-74, SA-academics-people-79, COL-placements-20, COL-placements-26, SA-placements-projects-104. Cloud CI test repairs also cover SA-academics-people-114, SA-academics-people-63 and SA-tenants-modules-17/GR-30.
+- OPEN (partial parity, not claimed DONE): SA-academics-people-54 (no course image, short title, refresh/page size), -55 (field/editor copy), -62 (private materials counts/preview), SA-placements-projects-112 (dark-mode switch and live Logs parity). Private binary operations SA-academics-people-58 and -72 remain BLOCKED by the storage/scanner provider; supported link-based metadata edits are safer.
+- Cross-page tests authored but NOT RUN: tests/unit/chat6-cross-page-verification-round4.test.ts, chat6-superadmin-course-catalogue-round4.test.ts, chat6-tracker-parity-round4.test.ts. Existing unit tests for recruiter/content labels and tenant memberships were repaired on this branch; none has yet passed orchestrator CI in this round.
+- NO numbered migrations, no writes to main or shell. The requested 25+ fully closed OPEN gaps were NOT reached in this round; continue per-page S1/S2 queue work after merging main and running orchestrator checks.
+
 ## Needs shell (chat-9 only)
 
 - SA-placements-projects-102: chat-9 must mount the existing `src/components/tracker/tracker-quick-report-launcher.tsx` into the shared `src/components/shell/app-shell.tsx` for all authenticated roles, with permission-aware visibility and keyboard focus; chat-6 may not edit shell. Do not mark global-launcher parity DONE until mounted and keyboard-tested.
