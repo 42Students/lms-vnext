@@ -20,6 +20,12 @@ import type { AssignedProjectTemplateChoice } from "./project-create-control";
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
 type Roster = {classId:string;className:string;revision:string;members:Learner[]};
+type CohortCreationOutcome={
+ created:{projectId:string;title:string;learnerMembershipId:string}[];
+ alreadyCovered:number;requested:number;
+ individualResults:{membershipId:string;status:"CREATED"|"ALREADY_COVERED";projectId:string|null;title:string|null}[];
+};
+
 
 export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialTemplateId}:{
  collegeId:string;basePath:string;templates:readonly AssignedProjectTemplateChoice[];initialTemplateId?:string|null;
@@ -45,7 +51,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [notice,setNotice]=useState("");
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
   items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]}|null>(null);
-  const [outcome,setOutcome]=useState<{created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number}|null>(null);
+  const [outcome,setOutcome]=useState<CohortCreationOutcome|null>(null);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
   if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
   useEffect(()=>{
@@ -125,7 +131,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
-      }) as {created:{projectId:string;title:string;learnerMembershipId:string}[];alreadyCovered:number;requested:number};
+      }) as CohortCreationOutcome;
       setOutcome(result);
       created=true;
       setNotice(result.created.length+" Project workspaces created.");
@@ -257,11 +263,22 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."
           : "Created "+outcome.created.length+" workspace(s) for the class roster."}</p>
+      <div className="max-h-72 overflow-auto" role="region" aria-label="Per-learner creation results" tabIndex={0}>
+        <table className="w-full text-left text-sm"><thead><tr><th scope="col">Learner</th><th scope="col">Result</th><th scope="col">Workspace</th></tr></thead>
+         <tbody>{outcome.individualResults.map(row=><tr key={row.membershipId}>
+          <td>{names.get(row.membershipId)?.displayName??row.membershipId}</td>
+          <td>{row.status==="CREATED"?"Created":"Already covered"}</td>
+          <td>{row.title??"Existing workspace"}</td>
+         </tr>)}</tbody>
+        </table>
+      </div>
       <button type="button" className="text-sm font-semibold text-primary-text underline"
         onClick={()=>{
-          const rows=["Workspace,Student membership,Project ID",
-            ...outcome.created.map(item=>[item.title,item.learnerMembershipId,item.projectId]
-             .map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
+          const rows=["Learner,Student membership,Result,Workspace,Project ID",
+            ...outcome.individualResults.map(item=>[
+             names.get(item.membershipId)?.displayName??"",item.membershipId,
+             item.status,item.title??"",item.projectId??"",
+            ].map(value=>'"'+value.replaceAll('"','""')+'"').join(","))];
           const blob=new Blob(["\uFEFF"+rows.join("\r\n")],{type:"text/csv;charset=utf-8"});
           const url=URL.createObjectURL(blob),link=document.createElement("a");
           link.href=url;link.download="cohort-creation-outcome.csv";link.click();URL.revokeObjectURL(url);
