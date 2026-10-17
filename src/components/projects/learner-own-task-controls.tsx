@@ -23,7 +23,8 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
   setBusy(true);setError("");
   try{
    await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/tasks","POST",{
-    sprintId,title:title.trim(),description:description.trim()||null,
+    sprintId:sprintId||null,title:title.trim(),description:description.trim()||null,
+    approach:approach.trim()||null,status,blockerReason:blockerReason.trim()||null,
     acceptanceCriteria:acceptance.trim()||null,priority,
     dueDate:due||null,estimatePoints:estimate?Number(estimate):null,
     taskType:type||null,expectedSprintUpdatedAt:new Date(sprint.updatedAt).toISOString(),
