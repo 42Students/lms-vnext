@@ -96,6 +96,7 @@ export const tpoStudentsQuerySchema = z
     maxCgpa:z.coerce.number().min(0).max(10).optional(),
     maxActiveBacklogs:z.coerce.number().int().min(0).max(100).optional(),
     maxPastBacklogs:z.coerce.number().int().min(0).max(100).optional(),
+    cgpaRecorded:z.enum(["YES","NO"]).transform(value=>value==="YES").optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
