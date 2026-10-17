@@ -29,6 +29,9 @@ export async function getTpoDriveDiscussion(context:RequestContext,jobId:string)
  if(!threadsReady||!messagesReady)return {job,available:false,threads:[]};
  const threads=await getDb().select({
   id:placementTpoMessageThreads.id,recruiterName:users.displayName,
+  lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
+   where m.thread_id=${placementTpoMessageThreads.id}
+   order by m.created_at desc,m.id desc limit 1)`,
   latestAt:sql<Date|null>`max(${placementTpoMessages.createdAt})`,
   unread:sql<number>`count(${placementTpoMessages.id}) filter
    (where ${placementTpoMessages.senderType}='RECRUITER'
