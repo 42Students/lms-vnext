@@ -87,10 +87,11 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   subjectType:"placement_job",subjectId:draft.id,subjectLabel:draft.title,
   summary:"New placement drive draft copied from a historical drive",
   metadata:{sourceJobId:source.id,sourceStatus:source.status,
-   cleared:["dates","rounds","applications","results","offers","batch audiences",
-    "passing years","external portal link"]},
+   cleared:["dates","rounds","applications","results","offers","external portal link"],
+   reviewRequired:["eligible cohorts and passing years","role packages","pay and eligibility rules"]},
   groupKey:"placement-jobs:"+collegeId,
  }));
  return {jobId:draft.id,sourceJobId:source.id,status:draft.status,
-  cleared:["Deadlines","Rounds","Applications","Results","Offers","Batch targets","Passing years","External portal link"]};
+  cleared:["Deadlines","Rounds","Applications","Results","Offers","External portal link"],
+  reviewRequired:["Eligible cohorts and passing years","Role packages","Pay and eligibility rules"]};
 }
