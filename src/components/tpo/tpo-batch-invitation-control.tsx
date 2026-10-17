@@ -124,7 +124,7 @@ export function TpoBatchInvitationControl(props: Props) {
           {TPO_INVITATION_COPY.clear}
         </button>
       </div>
-      {!deadlinePassed&&props.invitable>0?<fieldset className="space-y-2 border-t border-border pt-3">
+      {!deadlinePassed&&props.invitable>0?<fieldset id="batch-reminder" className="space-y-2 border-t border-border pt-3">
         <legend className="text-sm font-semibold">Remind eligible students</legend>
         <p className="text-sm">Eligible students of this batch who have not chosen Placements, Higher studies or Not interested get a reminder with the deadline.</p>
         <label className="flex items-start gap-2 text-sm text-body">

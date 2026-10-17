@@ -8,7 +8,7 @@ import {
 const impact = { submittedApplications: 4, openRounds: 2, issuedOffers: 1, acceptedOffers: 0 };
 
 describe("TPO drive cancellation", () => {
-  it("allows only published active-season drives against an unchanged impact", () => {
+  it("TPO-drives-16 allows only published active-season drives against an unchanged impact", () => {
     expect(evaluateTpoDriveCancellation("PUBLISHED", "ACTIVE", impact, impact)).toBe("ALLOW");
     expect(evaluateTpoDriveCancellation("DRAFT", "ACTIVE", impact, impact)).toBe("READ_ONLY");
     expect(evaluateTpoDriveCancellation("CLOSED", "ACTIVE", impact, impact)).toBe("READ_ONLY");
