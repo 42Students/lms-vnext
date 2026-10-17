@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
+import {collegeActivityActor,collegeActivityItem,collegeActivityAction} from "@/modules/activity/college-activity-presentation";
 
 type RawSearch = Record<string, string | string[] | undefined>;
 
@@ -184,13 +185,13 @@ export default async function CollegeActivityPage({
           <tr key={event.id} className="border-t border-border align-top">
             <td className="px-4 py-4 text-body">{when(event.occurredAt)}</td>
             <td className="px-4 py-4 text-body">
-              <span className="font-semibold text-foreground">{actor?.displayName ?? actor?.email ?? "System"}</span>
-              {actor?.id ? <p className="mt-1 break-all text-xs text-muted-foreground">{actor.id}</p> : null}
+              <span className="font-semibold text-foreground">{collegeActivityActor(actor)}</span>
+
             </td>
             <td className="px-4 py-4">
               <p className="font-semibold text-foreground">{event.summary}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{event.eventType} · {event.subjectType}</p>
-              <p className="mt-1 text-xs text-muted-foreground">{event.subjectLabel ?? "No entity label recorded"}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{collegeActivityAction(event.eventType)} · {event.subjectType}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{collegeActivityItem(event)}</p>
             </td>
             <td className="px-4 py-4">
               <Link href={"/college/activity/" + encodeURIComponent(event.id)}
