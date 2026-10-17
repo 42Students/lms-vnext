@@ -182,6 +182,8 @@ export function ProjectWorkspace({
   currentMembershipId,
   activeSection,
   sectionBaseHref,
+  sectionQuerySuffix = "",
+  riskReason = null,
   readOnlyOverride = false,
 }: {
   workspace: Workspace;
@@ -191,6 +193,8 @@ export function ProjectWorkspace({
   currentMembershipId: string | null;
   activeSection?: ProjectWorkspaceSection;
   sectionBaseHref?: string;
+  sectionQuerySuffix?: string;
+  riskReason?: string | null;
   readOnlyOverride?: boolean;
 }) {
   const { readiness } = workspace;
@@ -276,6 +280,10 @@ export function ProjectWorkspace({
         {backLabel === "Projects" ? "Back to projects" : backLabel}
       </Link>
 
+      {mode === "ADMIN" ? <nav aria-label="Workspace breadcrumb" className="flex flex-wrap gap-2 text-sm text-muted-foreground">
+        <Link href={backHref}>Projects</Link><span aria-hidden="true">/</span>
+        <span aria-current="page">{workspace.project.title}</span>
+      </nav> : null}
       {sectionBaseHref ? (
         <nav
           aria-label="Project workspace sections"
@@ -284,7 +292,7 @@ export function ProjectWorkspace({
           {PROJECT_WORKSPACE_SECTIONS.map((section) => (
             <Link
               key={section}
-              href={sectionBaseHref + "/" + section}
+              href={sectionBaseHref + "/" + section + sectionQuerySuffix}
               aria-current={
                 activeSection === section ? "page" : undefined
               }
@@ -322,6 +330,19 @@ export function ProjectWorkspace({
           </div>
         }
       />
+
+      {mode === "ADMIN" && riskReason ? (
+        <section role="status" className="rounded-xl border border-warning-border bg-surface p-4 text-sm">
+          Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
+        </section>
+      ) : null}
+
+      {mode === "ADMIN" && show("readiness") ? (
+        <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          Manage override
+        </Link>
+      ) : null}
 
       {readOnly ? (
         <section
@@ -1646,6 +1667,8 @@ export function ProjectWorkspace({
             </p>
           </div>
 
+          {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View full project audit</Link> : null}
           <ProjectActivityFilteredList events={workspace.activity}/>
 
 
