@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { driveListHref, driveQueryFromSearch } from "@/modules/placements/college-drive-read-model";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
 import {CollegeDriveBulkActions} from "@/components/placements/college-drive-bulk-actions";
+import {CollegeDriveDeadlineAction} from "@/components/placements/college-drive-deadline-action";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -75,6 +76,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
               className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive</Link>
             <Link href={`/college/placements/jobs/${item.id}/applications`} className="ml-3 text-sm text-primary-text underline">Applications</Link>
             <Link href={`/college/placements/jobs/${item.id}/settings`} className="ml-3 text-sm text-primary-text underline">Edit</Link>
+            {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id} title={item.title}
+             currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
           </article>)}
         </div>
         <table className="hidden w-full min-w-[76rem] text-left text-sm sm:table">
@@ -100,6 +103,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
                 className="font-semibold text-primary-text underline">View applications</Link>
               <Link href={`/college/placements/jobs/${item.id}/settings`}
                 className="ml-3 font-semibold text-primary-text underline">Edit</Link>
+              {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
+               title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
             </td>
           </tr>)}</tbody>
         </table>

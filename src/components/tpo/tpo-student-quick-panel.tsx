@@ -2,14 +2,33 @@
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
+import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
+type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;job:string}[];
+ notes:{id:string;body:string;createdAt:string;job:string}[];truncated:boolean};
 export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  student:TpoStudentRow;rows:readonly TpoStudentRow[];
  onNavigate:(membershipId:string)=>void;onClose:()=>void;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
+ const [detail,setDetail]=useState<PanelDetail|null>(null);
+ const [loading,setLoading]=useState(false);
+ const [error,setError]=useState("");
+ async function chooseTab(next:Tab){
+  setTab(next);setError("");
+  if(next!=="Requests"&&next!=="Notes"||detail)return;
+  setLoading(true);
+  try{
+   const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
+   const body=await response.json().catch(()=>null);
+   if(!response.ok||!body?.student)throw Error("Could not load student records");
+   setDetail(body as PanelDetail);
+  }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
+  finally{setLoading(false);}
+ }
+ const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
   !student.registeredForPlacements?"Placement registration not recorded":null,
@@ -40,7 +59,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
     </button>
    </header>
    <nav aria-label="Student panel pages" className="mt-4 flex flex-wrap gap-2">
-    {tabs.map(t=><button key={t} type="button" onClick={()=>setTab(t)}
+    {tabs.map(t=><button key={t} type="button" onClick={()=>void chooseTab(t)}
       aria-current={tab===t?"page":undefined}
       className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}</button>)}
    </nav>
@@ -74,17 +93,34 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
        </div>)}
       </dl>
       <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Manage placement participation</Link>
+      <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
+       registered:student.registeredForPlacements}]}/>
     </>:null}
+    {loading&&(tab==="Requests"||tab==="Notes")?<p role="status">Loading student records…</p>:null}
+    {error?<p role="alert" className="text-error">{error}</p>:null}
     {tab==="Requests"?<>
-      <p>Student requests are currently reviewed in the college-scoped Requests workspace.
-       Use the search there to locate this learner; this panel does not imply that every request has loaded.</p>
+      <h3 className="font-semibold">Requests</h3>
+      {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
+      {detail?.requests.map(row=><article key={row.id} className="space-y-1 rounded border border-border p-3">
+        <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
+        <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
+        <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
+      </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
-       className="inline-flex min-h-10 items-center text-primary-text underline">Find this student's requests</Link>
+       className="inline-flex min-h-10 items-center text-primary-text underline">Review student's requests</Link>
     </>:null}
     {tab==="Notes"?<>
-      <p>Private notes are not persisted from this panel. Use the audited Placement history for recorded actions.</p>
+      <h3 className="font-semibold">Internal Notes</h3>
+      {detail&&!detail.notes.length?<p>No private application notes recorded for this student.</p>:null}
+      {detail?.notes.map(row=><article key={row.id} className="space-y-1 rounded border border-border p-3">
+        <p>{row.body}</p>
+        <p className="text-xs text-muted-foreground">{row.job} · {when(row.createdAt)}</p>
+      </article>)}
       <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">Open placement history</Link>
     </>:null}
+    {detail?.truncated&&(tab==="Requests"||tab==="Notes")?<p className="text-xs text-warning-text">
+      Most recent records shown; open the full Requests or History page for older entries.
+    </p>:null}
     {tab==="History"?<>
       <p>Open the tenant-authorized historical application, round result, offer and joining timeline.</p>
       <Link href={history} className="inline-flex min-h-10 items-center text-primary-text underline">View full placement history</Link>

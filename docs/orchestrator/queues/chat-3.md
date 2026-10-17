@@ -1,4 +1,4 @@
-> **FAST MODE ACTIVE: read docs/orchestrator/FAST-MODE.md first. Push directly to main, no tests or checks. It overrides any instruction below about branches, tests or CI.**
+> **FAST v2 ACTIVE: read docs/orchestrator/FAST-MODE.md. Push only to `chatgpt/chat-3-b`, never to main or a PR; no tests, lint, typecheck, build, or CI waiting.**
 
 # Queue for lane chat-3
 
@@ -30,11 +30,25 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now exclusively owned by chat-3 per `docs/orchestrator/queues/reassignments.md`.
 
-1. WP-chat-5-02-requests-verification-students-s1 | TODO | 17 gaps (S1 13, S2 4)
+1. WP-chat-5-02-requests-verification-students-s1 | IN-PROGRESS (TPO-students-02/04 addressed; other S1/S2 gaps remain) | 17 gaps (S1 13, S2 4)
 2. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps (S2 20)
 3. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps (S2 12, S3 11)
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
+
+## FAST v2 lane chat-3 continuation (2026-10-17)
+
+- Branch created from main: `chatgpt/chat-3-b`; main merged into it with a two-parent Git commit. All new source commits use `[chat-3]` and gap IDs. Never push this lane to main.
+- COL-placements-17: College Analytics now has department/program/batch/date selection; persisted 0112 stage counts, company-wise report, average observed shortlist interval, funnel disclosure and CSV export. Acceptance not run, so WP-02 remains IN-PROGRESS.
+- COL-placements-04/20: Global College Interviews switched away from staged college interview storage to 0116 candidate slots; Complete / No Show outcomes use the shared audited interview writer and require a reason.
+- COL-placements-08/13: Drives list bulk Open/Close with impact preview and per-item partial receipt; Settings archive/delete-impact preview retains historical evidence rather than hard-deleting.
+- COL-placements-09: College Admin can extend a published drive deadline from the drives list, with guard, audit and confirmation.
+- COL-placements-10: College landing shows persisted stale Applied, interview unscheduled and closing-low-conversion attention categories, plus active drive cards. Offer-letter missing evidence is explicitly unavailable pending an approved document/evidence store, not invented.
+- TPO-students-02: TPO student drawer now loads scoped Requests and application Notes, with selected-student navigation state reset; generalized editable student-only notes still need a storage decision.
+- TPO-students-04: Student drawer exposes the existing audited, in-app Send a message workflow and registration-aware selection copy.
+- TPO-students-05 and -33: Existing After-college and CSV academic import screens present; full legacy outcome details and XLSX parsing are not proven.
+- College Admin WP-01 and WP-02 remain IN-PROGRESS; moved WP-chat-5-02 is IN-PROGRESS, remaining moved WPs TODO. No WP has all required gaps closed.
+- No tests, typecheck, lint, build or CI run by the builder under FAST v2.
 
 ## 2026-10-17 02:00 IST continuation — source implementations only
 
