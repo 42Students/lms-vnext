@@ -138,6 +138,9 @@ export function MentorTaskCreate({
           <Textarea value={blockerReason} maxLength={4000}
             onChange={e=>setBlockerReason(e.target.value)}/>
         </label>
+        {status==="BLOCKED"&&!blockerReason.trim()?<p role="alert" className="text-sm text-error">
+          Explain what is blocking this task before creating it.
+        </p>:null}
       </div>
     </Dialog>
   </>;
