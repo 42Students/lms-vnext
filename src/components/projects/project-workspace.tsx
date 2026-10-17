@@ -1417,7 +1417,12 @@ export function ProjectWorkspace({
                   <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}</li>)}</ul>
               </details>:null}
               <details className="mt-3 text-sm">
-                <summary className="cursor-pointer font-semibold text-primary-text">Past meetings / Meeting history</summary>
+                <summary className="cursor-pointer font-semibold text-primary-text">
+                  Past meetings / Meeting history ({
+                    workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
+                      (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).length
+                  })
+                </summary>
                 <ul className="mt-2 space-y-1">
                   {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                     (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
