@@ -22,6 +22,12 @@ const adminB: RequestContext = {
   membership: { id: SEED_IDS.facultyCollegeBMembership, collegeId: SEED_IDS.collegeB, organizationId: SEED_IDS.organization, status: "ACTIVE", roles: ["COLLEGE_ADMIN"] },
 };
 const learner: RequestContext = { ...adminA, membership: { ...adminA.membership!, roles: ["LEARNER"] } };
+const actingSuperAdmin: RequestContext = {
+  user: {id:SEED_IDS.superAdminUser,identityUid:"super-admin-attendance-departments",
+    platformStatus:"ACTIVE",systemRoles:["SUPER_ADMIN"]},
+  membership:null,
+  adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA},
+};
 
 const ids = {
   user: randomUUID(), membership: randomUUID(), role: randomUUID(),
@@ -122,6 +128,19 @@ describe.skipIf(!enabled)("College Admin department evidence scoped PostgreSQL",
     expect(r?.preferenceProfiles).toBeGreaterThanOrEqual(1);
   });
 
+  it("COL-attendance-R03 supports acting-college Super Admin only for attendance departments",async()=>{
+    const scoped=await listCollegeDepartmentInsights(actingSuperAdmin,"ATTENDANCE",{});
+    expect(scoped.items.some(row=>row.id===SEED_IDS.departmentA)).toBe(true);
+    expect(scoped.items.some(row=>row.id===SEED_IDS.departmentB)).toBe(false);
+    await expect(listCollegeDepartmentInsights(actingSuperAdmin,"PLACEMENT_READINESS",{}))
+      .rejects.toBeInstanceOf(AuthorizationError);
+    await expect(listCollegeDepartmentInsights({...actingSuperAdmin,adminScope:null},
+      "ATTENDANCE",{})).rejects.toBeInstanceOf(AuthorizationError);
+    const other=await listCollegeDepartmentInsights({...actingSuperAdmin,
+      adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}},
+      "ATTENDANCE",{});
+    expect(other.items.some(row=>row.id===SEED_IDS.departmentA)).toBe(false);
+  });
   it("cannot see another college department or use a forged college filter", async () => {
     for (const kind of ["ATTENDANCE", "PLACEMENT_READINESS"] as const) {
       const foreign = await listCollegeDepartmentInsights(adminB, kind, {});

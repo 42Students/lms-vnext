@@ -26,6 +26,6 @@ export function adminContentPages(total:number) {
  return Math.max(1,Math.ceil(total/ADMIN_CONTENT_PAGE_SIZE));
 }
 export function adminContentTypeLabel(type:string) {
- return type==="YOUTUBE"?"YouTube":type==="VIDEO"?"Video (Upload)":
+ return type==="YOUTUBE"?"YouTube Video":type==="VIDEO"?"Video (Upload)":
   type==="RESOURCE"?"Resource":type==="LIVE_CLASS"?"Live class":"Unknown content";
 }

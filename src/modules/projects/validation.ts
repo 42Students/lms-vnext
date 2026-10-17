@@ -685,6 +685,12 @@ export const createProjectResourceInputSchema = z
       .optional(),
     required: z.boolean().optional(),
     visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
+    resourceType: z.enum(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"]).optional(),
+    status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).optional(),
+    pinned: z.boolean().optional(),
+    accessNotes: z.string().trim().max(4000).nullable().optional(),
+    sprintId: z.string().uuid().nullable().optional(),
+    taskId: z.string().uuid().nullable().optional(),
   })
   .strict()
   .refine(
@@ -711,6 +717,12 @@ export const updateProjectResourceInputSchema = z
       .optional(),
     required: z.boolean().optional(),
     visibility: z.enum(["TEAM","MENTOR_ONLY"]).optional(),
+    resourceType: z.enum(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"]).optional(),
+    status: z.enum(["ACTIVE","DRAFT","ARCHIVED"]).optional(),
+    pinned: z.boolean().optional(),
+    accessNotes: z.string().trim().max(4000).nullable().optional(),
+    sprintId: z.string().uuid().nullable().optional(),
+    taskId: z.string().uuid().nullable().optional(),
   })
   .strict()
   .refine(

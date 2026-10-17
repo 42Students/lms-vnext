@@ -23,3 +23,7 @@
 | TPO-recruiters-R06 | DONE (source, not run) | Unsubscribed/Not Now invite panel shows the exact legacy warning and disables inviting opted-out people, named test in same file. |
 
 | TPO-recruiters-R02 | DONE (source verified, unrun) | Companies rendered independently of empty lead view, grouped and filtered against actual companies. Named regression in `tests/unit/chat2-tpo-engage-companies-independent.test.ts`. |
+
+| TPO-recruiters-07 | DONE (source; not run) | Exact nonzero Needs doing chips (follow-ups due, no next step, gone quiet, unassigned), collapse toggle, empty sentence, working filter and recruiter-access count; `tests/unit/chat2-tpo-recruiters-needs-toggle.test.ts`. |
+
+| TPO-recruiters-R01 | DONE (source; tests unrun) | Companies tab has inline persisted communication selector, legacy defaults derived from drive/recruiter evidence, search/filter, alias tooltip, Add contact shortcut and CSV. `tests/unit/chat2-engage-company-communication.test.ts`. |

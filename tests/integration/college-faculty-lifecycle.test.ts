@@ -93,6 +93,18 @@ describe.skipIf(!enabled)("Faculty lifecycle, real PG tenant and active-duty gua
     });
     expect(noLeak.items).toHaveLength(0);
   });
+  it("COL-people-R02 rejects deactivation of faculty accounts with protected TPO roles",async()=>{
+    const protectedRole=randomUUID();
+    await pool!.query("INSERT INTO membership_roles(id,membership_id,role) VALUES($1,$2,'TPO')",
+      [protectedRole,id.member]);
+    try{
+      await expect(transitionCollegeFaculty(admin,id.member,{
+        action:"DEACTIVATE",expectedStatus:"ACTIVE",reason:"Protected account",confirm:true,
+      })).rejects.toMatchObject({code:"MEMBERSHIP_PROTECTED"});
+    }finally{
+      await pool!.query("DELETE FROM membership_roles WHERE id=$1",[protectedRole]);
+    }
+  });
   it("denies foreign college, non-admin and extra caller scope fields", async () => {
     // Another college's admin must not learn the faculty member exists.
     await expect(transitionCollegeFaculty(foreign, id.member, {

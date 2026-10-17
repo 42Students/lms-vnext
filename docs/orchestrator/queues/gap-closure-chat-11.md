@@ -196,7 +196,7 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | FAC-attendance-grades-19 | S4 | COPY | DONE |
 | FAC-attendance-grades-21 | S4 | MISSING-PAGE | NOT-A-GAP |
 
-## learner/course-detail (18: DONE 9, OPEN 5, FIXED-ON-MAIN 2, UNCONFIRMED 2)
+## learner/course-detail (18: DONE 10, OPEN 4, FIXED-ON-MAIN 2, UNCONFIRMED 2)
 
 Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/learner-course-detail-verification.md`.
 
@@ -214,7 +214,7 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-14 | S3 | MISSING-FIELD / COPY | DONE |
 | LEARNER-course-detail-15 | S3 | COPY | DONE |
 | LEARNER-course-detail-16 | S3 | MISSING-PAGE | DONE |
-| LEARNER-course-detail-17 | S3 | MISSING-ACTION | OPEN |
+| LEARNER-course-detail-17 | S3 | MISSING-ACTION | DONE |
 | LEARNER-course-detail-19 | S3 | STATE | OPEN |
 | LEARNER-course-detail-12 | S4 | MISSING-FIELD | OPEN |
 | LEARNER-course-detail-13 | S4 | COPY | DONE |

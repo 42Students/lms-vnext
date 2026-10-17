@@ -1,10 +1,11 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {createHash} from "node:crypto";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages} from "@/db/schema/tpo-internal";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {internalMessageSchema} from "./tpo-team-internal-model";
@@ -15,7 +16,7 @@ import {placementTableExists} from "./staged-tables";
 export async function postTpoInternalMessage(context:RequestContext,raw:unknown){
  const input=internalMessageSchema.parse(raw);
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_messages"))
   throw new Error("TEAM_TABLES_PENDING");
@@ -39,7 +40,7 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(
     eq(membershipRoles.membershipId,collegeMemberships.id),
-    eq(membershipRoles.role,"TPO"),
+    inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"]),
    )).where(and(
     inArray(collegeMemberships.id,memberIds),
     eq(collegeMemberships.collegeId,college.id),

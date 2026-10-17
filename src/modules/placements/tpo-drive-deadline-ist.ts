@@ -11,3 +11,9 @@ export function driveDeadlineIstToIso(value:string):string{
   throw new Error("Enter a valid application deadline in IST.");
  return new Date(wall-330*60_000).toISOString();
 }
+
+/** TPO-drives-45: explicit 11:59 PM IST end-of-day choice, never browser-local. */
+export function driveDeadlineIstEndOfDay(value:string):string{
+ driveDeadlineIstToIso(value);
+ return value.slice(0,10)+"T23:59";
+}

@@ -1,8 +1,9 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {and,desc,eq,isNull,or,like,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
@@ -14,7 +15,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
  const search=rawSearch.trim().slice(0,120);
  const q=search.length>=2?search:"";
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ if(!membership||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_threads"))
   return {status:"NOT_REGISTERED" as const,items:[]};

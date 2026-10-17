@@ -133,3 +133,19 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 | LEARNER-placements-09 | DONE (source, not executed) | `src/app/(authenticated)/learn/my-placements/page.tsx`; `tests/unit/learner-placements-chat7-notices-final-r7.test.ts` — `LEARNER-placements-09 preserves persisted truth and legacy controls`. |
 
 | LEARNER-placements-54 | DONE (source, not executed) | `src/components/placements/learner-placement-requests.tsx`; `tests/unit/learner-placements-chat7-notices-final-r7.test.ts` — `LEARNER-placements-54 preserves persisted truth and legacy controls`. |
+
+## Chat-15 group A — tests authored, not executed
+
+| LEARNER-placements-03 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-03` test; existing implementation reviewed. |
+| LEARNER-placements-05 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-placements-05` test; existing implementation reviewed. |
+
+| LEARNER-placements-09 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, latest audience-filtered notice body and relative day. |
+| LEARNER-placements-33 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, removed misleading count tiles/disclaimer. |
+
+| LEARNER-placements-R03 | DONE source, unexecuted | tests/unit/chat15-placement-policy-and-escalation.test.ts: policy-aware internship, Dream, uplift, held offers. |
+| LEARNER-placements-30 | PARTIAL | Same test: staff-sourced application banner; opt-out workflow not registered. |
+| LEARNER-placements-52 | PARTIAL | Same test: absence shortcut to placement cell, not a persisted dispute. |
+| LEARNER-placements-41 | PARTIAL | Same test: safe assessment vendor link, due-at not confirmed. |
+| LEARNER-placements-28 | PARTIAL | Same test: privacy notice, full company-preview projection not implemented. |
+
+| LEARNER-placements-01 | DONE (source authored; not run) | `tests/unit/chat15-personal-placement-alert-read.test.ts`; recipient-scoped POST, mark read before navigation, friendly retry. |

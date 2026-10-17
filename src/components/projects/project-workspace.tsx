@@ -1383,11 +1383,15 @@ export function ProjectWorkspace({
               <CreateProjectResourceControl
                 projectId={workspace.project.id}
                 isLearner={mode === "LEARNER"}
+                sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
+                tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}
               />
             ) : null}
           </div>
           <ProjectResourceList projectId={workspace.project.id} rows={workspace.resources}
-            mode={mode} readOnly={readOnly}/>
+            mode={mode} readOnly={readOnly}
+            sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
+            tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
             mode={mode}

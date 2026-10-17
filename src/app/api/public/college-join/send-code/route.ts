@@ -14,14 +14,16 @@ export async function POST(request: Request) {
   const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
   const network = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
-    await requestPublicJoinCode("COLLEGE", input, network, deliverPublicRecruiterJoinCode);
-    return NextResponse.json({ sent: true }, { headers: { "Cache-Control": "no-store" } });
+    const result=await requestPublicJoinCode("COLLEGE", input, network, deliverPublicRecruiterJoinCode);
+    return NextResponse.json({ sent: true,companyName:result.companyName }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PublicJoinCodeError) {
       const unavailable = error.code === "NETWORK_GUARD_NOT_READY";
       const limited = error.code === "RATE_LIMITED";
-      return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : limited ? "TOO_MANY_CODES" : "COULD_NOT_SEND_CODE" },
-        { status: unavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
+      const noMx=error.code==="EMAIL_NO_MX";
+      const dnsUnavailable=error.code==="EMAIL_MX_UNAVAILABLE";
+      return NextResponse.json({ error: unavailable ? "SERVICE_NOT_READY" : limited ? "TOO_MANY_CODES" : noMx?"EMAIL_NO_MX":dnsUnavailable?"EMAIL_MX_UNAVAILABLE":"COULD_NOT_SEND_CODE" },
+        { status: unavailable||dnsUnavailable ? 503 : limited ? 429 : 400, headers: { "Cache-Control": "no-store" } });
     }
     throw error;
   }

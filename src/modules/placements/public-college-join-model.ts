@@ -1,17 +1,10 @@
 import { z } from "zod";
+import {publicWorkEmailIssue} from "./public-work-email-policy";
 
 /** Syntax validation only. Never use raw tokens as database IDs or log values. */
 export const publicCollegeJoinTokenSchema = z.string().regex(/^[A-Za-z0-9_-]{32,256}$/);
 export const publicRecruiterWorkEmailSchema = z.string().trim().toLowerCase().email().max(254)
-  .refine((email) => {
-    const domain = email.split("@")[1];
-    return Boolean(domain && domain.includes(".") && ![
-      "gmail.com", "yahoo.com", "outlook.com", "hotmail.com", "icloud.com",
-      "proton.me", "protonmail.com", "aol.com", "live.com",
-      "msn.com", "me.com", "mac.com", "ymail.com", "rocketmail.com",
-      "rediffmail.com", "mail.com", "gmx.com", "yandex.com", "yandex.ru",
-    ].includes(domain));
-  }, "Enter a company work email address.");
+  .refine((email) => publicWorkEmailIssue(email)===null, "Enter a company work email address.");
 export const publicCollegeJoinCodeSchema = z.string().regex(/^[0-9]{6}$/);
 
 export type CollegeJoinViewState = "INVALID_LINK" | "UNAVAILABLE" | "READY" | "ALREADY_JOINED";

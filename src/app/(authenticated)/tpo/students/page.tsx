@@ -15,6 +15,7 @@ import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-colleg
 import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS} from "@/modules/placements/tpo-after-college-model";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
+import {normalizeTpoStudentLegacyFilters} from "@/modules/placements/tpo-students-filter-aliases";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -197,8 +198,9 @@ export default async function TpoStudentsPage({
     redirect("/dashboard");
   }
 
-  const raw = await searchParams;
-  const urlError = tpoStudentUrlError(raw);
+  const incoming=await searchParams;
+  const urlError=tpoStudentUrlError(incoming);
+  const raw=urlError?incoming:normalizeTpoStudentLegacyFilters(incoming);
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
     journeyState:first(raw.journeyState)||undefined,
@@ -923,7 +925,11 @@ export default async function TpoStudentsPage({
             </div>
           </div>
         ) : null}
-        <TpoStudentsSelectionProvider key={"selection:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState+":"+JSON.stringify(currentFilters)}>
+        <TpoStudentsSelectionProvider
+         key={"selection:"+context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
+         scopeKey={context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
+         allowedIds={roster.total<=5000?(data.exportRows??[]).map(item=>item.membershipId):roster.items.map(item=>item.membershipId)}
+         totalCount={roster.total}>
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>

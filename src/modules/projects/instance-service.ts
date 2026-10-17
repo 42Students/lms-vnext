@@ -643,7 +643,7 @@ export async function getProjectInstanceWorkspace(
               projectResources.projectId,
               projectId,
             ),
-            eq(projectResources.status, "ACTIVE"),
+            scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.status, "ACTIVE"),
             scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
           ),
         )

@@ -1,10 +1,11 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
 import {and,eq,inArray,isNull,or,like} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalReads} from "@/db/schema/tpo-internal";
 import {placementTableExists} from "./staged-tables";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
@@ -13,7 +14,7 @@ import {tpoThreadIdSchema} from "./tpo-team-conversation-service";
 export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:unknown){
  const id=tpoThreadIdSchema.parse(rawId);
  const membership=context.membership;
- if(!membership||!hasMembershipRole(context,"TPO"))
+ if(!membership||!hasPlacementTeamMembership(context))
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  const readsReady=await placementTableExists("placement_tpo_internal_reads");

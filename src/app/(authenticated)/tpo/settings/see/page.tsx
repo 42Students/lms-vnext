@@ -159,7 +159,7 @@ export default async function TpoWhatCompaniesSeePage() {
 
               <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-border pt-3">
                 <span className="text-xs font-semibold text-muted-foreground">
-                  Value source:
+                  Sharing policy:
                 </span>
 
                 <StatusBadge
@@ -171,7 +171,7 @@ export default async function TpoWhatCompaniesSeePage() {
                 >
                   {field.source === "PERSISTED"
                     ? "Persisted"
-                    : "Source default"}
+                    : "Standard college settings"}
                 </StatusBadge>
               </div>
             </article>
@@ -186,23 +186,6 @@ export default async function TpoWhatCompaniesSeePage() {
         <h3 className="m-0 text-sm font-semibold text-foreground">
           How these settings work
         </h3>
-
-        <p className="mt-2">
-          The persisted source is{" "}
-          <code className="font-mono text-xs">
-            placement_company_visibility_settings
-          </code>
-          . When your college has no saved row, the
-          values come from{" "}
-          <code className="font-mono text-xs">
-            DEFAULT_VISIBILITY
-          </code>
-          {" "}in{" "}
-          <code className="font-mono text-xs">
-            src/modules/placements/tpo-policy-service.ts
-          </code>
-          .
-        </p>
 
         <p className="mt-2">
           An allowed flag is permission to include
@@ -222,12 +205,6 @@ export default async function TpoWhatCompaniesSeePage() {
         </p>
       </section>
 
-      <p className="text-xs leading-5 text-muted-foreground">
-        Verification that every recruiter
-        preview, export, and company-sharing path
-        consistently enforces these flags remains
-        a separate integration and browser-parity task.
-      </p>
     </div>
   );
 }

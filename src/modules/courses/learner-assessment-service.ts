@@ -1,4 +1,8 @@
 import type { RequestContext } from "@/modules/identity/context";
+import {and,eq} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {learnerProgramEnrollments,sectionEnrollments} from "@/db/schema";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
 import {
   getLearnerCourseWorkspace,
@@ -31,6 +35,24 @@ export async function getLearnerAssessmentOverview(
   const snapshotNowMs = Date.now();
   const deliveries =
     await listLearnerCourseDeliveries(context);
+  // An empty published course list does not prove the learner has no class.
+  // Probe persisted ACTIVE learner-section enrollment instead.
+  let classScope:"NONE"|"PRESENT"|"UNAVAILABLE"="NONE";
+  try{
+    if(!context.membership)throw new AuthorizationError("courses.read");
+    const classes=await getDb().select({id:sectionEnrollments.id})
+      .from(sectionEnrollments)
+      .innerJoin(learnerProgramEnrollments,
+        eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+      .where(and(eq(learnerProgramEnrollments.membershipId,context.membership.id),
+        eq(learnerProgramEnrollments.status,"ACTIVE"),
+        eq(sectionEnrollments.status,"ACTIVE")))
+      .limit(1);
+    classScope=classes.length>0?"PRESENT":"NONE";
+  }catch(error){
+    if(error instanceof AuthorizationError)throw error;
+    classScope="UNAVAILABLE";
+  }
   const rows = await Promise.all(
     deliveries.map(async (delivery) => ({
       delivery,
@@ -100,6 +122,7 @@ export async function getLearnerAssessmentOverview(
 
   return {
     snapshotNowMs,
+    classScope,
     courses,
     assignments,
     quizzes,

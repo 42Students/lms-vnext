@@ -8,7 +8,7 @@ describe("TPO-calendar-reports-06 complete follow-up from calendar",()=>{
   expect(page).toContain("<TpoCalendarMoveFollowup");
   expect(actions).toContain("/complete");
   expect(actions).toContain("Done");
-  expect(actions).toContain("Follow-up marked done.");
+  expect(actions).toContain('tpoCalendarFollowupSuccess("DONE")');
  });
  it("uses same-origin, actor-college scope and CRM writer, not client-submitted collegeId",()=>{
   const api=readFileSync("src/app/api/placements/tpo/calendar/follow-ups/[followupId]/done/route.ts","utf8");
