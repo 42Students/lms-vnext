@@ -370,7 +370,7 @@ export function RecruiterLeadDetailWorkspace({
                 formatDateTimeIst(lead.recruiterLastLoginAt):"Never signed in"}</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {!lead.recruiterUserId&&!lead.unsubscribedAt?<a className={button}
+              {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?<a className={button}
                  href="#recruiter-invite">{lead.inviteSentAt?"Resend invite":"Invite"}</a>:null}
                <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
                {lead.recruiterUserId?<Link className={button} href="/tpo/messages">Team talk</Link>:null}
