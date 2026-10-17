@@ -548,7 +548,7 @@ export function RecruiterLeadDetailWorkspace({
                         <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           {activityDayIst(a.createdAt)}
                         </h4>:null}
-                      <div className="border-l-2 border-border pl-3">
+                      <div className={a.isSystem?"rounded-md border border-border bg-surface-secondary px-3 py-2 text-muted-foreground":"border-l-2 border-border pl-3"}>
                       <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
