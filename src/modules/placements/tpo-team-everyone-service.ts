@@ -46,7 +46,7 @@ export async function readTpoTeamEveryone(context:RequestContext,page=1){
  const {college,membershipId}=await scope(context);
  if(!await tpoEveryoneStorageReady())
   return {status:"NOT_REGISTERED" as const,rows:[],muted:false,page:1,pages:1};
- const safePage=Math.max(1,Math.min(10000,Math.trunc(page)));
+ const safePage=Number.isFinite(page)?Math.max(1,Math.min(10000,Math.trunc(page))):1;
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
