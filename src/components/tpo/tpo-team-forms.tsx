@@ -2,25 +2,26 @@
 import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string>){
- const controller=new AbortController();
- const timeout=window.setTimeout(()=>controller.abort(),30000);
- try {
  const body=new FormData();
  for(const [key,value] of Object.entries(values))body.set(key,value);
- const response=await fetch(url,{method:"POST",credentials:"same-origin",body,
-  headers:{Accept:"application/json"},redirect:"follow",signal:controller.signal});
- if(response.redirected)return {ok:false,code:"SESSION_EXPIRED"};
- if(!response.ok){
-  const payload=await response.json().catch(()=>null) as {error?:string}|null;
-  return {ok:false,code:payload?.error??"UNKNOWN"};
+ try{
+  const reply=await apiFetch<{id?:string;href?:string}>(url,{
+   method:"POST",credentials:"same-origin",
+   headers:{Accept:"application/json"},body,timeoutMs:30000,
+  });
+  if(!reply||typeof reply.id!=="string")
+   return {ok:false,code:"INVALID_RESPONSE",message:friendlyApiError({status:502})};
+  return {ok:true,href:reply.href};
+ }catch(reason){
+  if(reason instanceof FriendlyFetchError)
+   return {ok:false,code:reason.code??"UNKNOWN",message:reason.message};
+  return {ok:false,code:"UNKNOWN",message:friendlyApiError({network:true})};
  }
- const payload=await response.json().catch(()=>null) as {id?:string;href?:string}|null;
- if(!payload||typeof payload.id!=="string")return {ok:false,code:"INVALID_RESPONSE"};
- return {ok:true,href:payload.href};
- }finally{window.clearTimeout(timeout);}
 }
 export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];actorUserId:string}){
  const router=useRouter();
@@ -55,7 +56,9 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     recipientMembershipId:recipient,topic:topic.trim(),idempotencyKey:createKey.current,
    });
    if(!result.ok||!result.href){
-    setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","CREATE"));return;
+    setError(result.code==="RECIPIENT_NOT_FOUND"||result.code==="SESSION_EXPIRED"||result.code==="STALE_MESSAGE"?
+     tpoTeamFormErrorMessage(result.code,"CREATE"):
+     result.message??tpoTeamFormErrorMessage(result.code??"UNKNOWN","CREATE"));return;
    }
    try{sessionStorage.removeItem(draftKey);
     sessionStorage.removeItem(draftKey+":createKey");}catch{/* Optional. */}
@@ -117,7 +120,9 @@ export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;act
    const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{
     body:body.trim(),idempotencyKey:sendKey.current,
    });
-   if(!result.ok){setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
+   if(!result.ok){setError(result.code==="TEAM_PARTICIPANT_INACTIVE"||result.code==="STALE_MESSAGE"||result.code==="SESSION_EXPIRED"?
+    tpoTeamFormErrorMessage(result.code,"REPLY"):
+    result.message??tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
    changeBody("");setSuccess("Sent");router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","REPLY"));}
   finally{pending.current=false;setBusy(false);}

@@ -9,7 +9,9 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const form=await request.formData().catch(()=>null);
  try{
-  await postTpoTeamEveryoneMessage(await getCurrentRequestContext(),{body:form?.get("body")});
+  const result=await postTpoTeamEveryoneMessage(await getCurrentRequestContext(),{body:form?.get("body")});
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
   return NextResponse.redirect(new URL("/tpo/team/everyone",request.url),303);
  }catch(error){
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:422});
