@@ -19,7 +19,7 @@ export async function duplicateCollegeDrive(ctx:RequestContext,rawId:unknown,raw
  if(!old)throw Error("Drive not found in this college");
  const job=await createPlacementJob(ctx,{
   collegeId,companyRelationshipId:old.companyRelationshipId,
-  title:old.title,description:old.description,
+  title:old.title.slice(0,93)+" (Copy)",description:old.description,
   employmentType:old.employmentType as "FULL_TIME"|"INTERNSHIP"|"CONTRACT",
   workMode:old.workMode as "ONSITE"|"REMOTE"|"HYBRID",
   locations:old.locations,openings:old.openings,
@@ -31,7 +31,7 @@ export async function duplicateCollegeDrive(ctx:RequestContext,rawId:unknown,raw
  await getDb().transaction(tx=>recordActivityEventInTransaction(tx,ctx,{
   eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_CREATED,
   collegeId,subjectType:"placement_job",subjectId:job.id,subjectLabel:job.title,
-  summary:"College Admin duplicated a drive as a fresh draft",
+  summary:"Duplicated a placement drive as a fresh draft",
   metadata:{sourceJobId:old.id,cleared:["dates","rounds","applicants","offers","external links","audience overrides"]},
  }));
  return {jobId:job.id,status:job.status};

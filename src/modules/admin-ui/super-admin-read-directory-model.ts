@@ -8,7 +8,6 @@ export const superAdminReadQuerySchema = z.strictObject({
  jobId: z.string().uuid().optional(),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
- source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  pipelineStage:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"]).default("ALL"),
  departmentId:z.uuid().optional(),
  programId:z.uuid().optional(),

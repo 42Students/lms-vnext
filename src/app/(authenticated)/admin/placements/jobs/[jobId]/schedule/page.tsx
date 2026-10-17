@@ -1,3 +1,4 @@
+import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tabs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -26,6 +27,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     getCollegeRoundSlotAppointments(context,jobId),
   ]);
   return <div className="space-y-6">
+    <SuperAdminDriveTabs jobId={jobId} active="Schedule"/>
     <PageHeader eyebrow="Super Admin · Placements" title={"Interviews · "+data.job.title}
       description="Schedule candidate interviews, track completed and no-show outcomes, and review interview rounds."
       actions={<Link href={`/admin/placements/jobs/${jobId}`} className="text-primary-text underline">Drive overview</Link>} />
