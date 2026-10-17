@@ -505,6 +505,8 @@ export function RecruiterLeadsWorkspace({
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(checking||saving)return;
+    const sequence=++contactCheckSeq.current;
     if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
       setSaveError("Enter a name and at least one contact method.");
       return;
