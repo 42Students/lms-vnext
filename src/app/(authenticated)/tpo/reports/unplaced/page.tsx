@@ -72,7 +72,7 @@ export default async function TpoUnplacedReportPage({
         actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
       />
 
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
