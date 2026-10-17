@@ -26,7 +26,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    const data=await response.json().catch(()=>null);
    if(!response.ok||!Array.isArray(data?.attempts))
     throw Error(typeof data?.error==="string"?data.error:"Could not load quiz attempts.");
-   setAttempts(data.attempts);
+   setAttempts(data.attempts);setPage(requestedPage);setHasMore(Boolean(data.hasMore));
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not load quiz attempts.");}
   finally{setLoading(false);}
  }
