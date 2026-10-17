@@ -2,7 +2,8 @@ import {TPO_STUDENT_VISIBLE_KEYS,validTpoColumnPreference} from "./tpo-grid-mode
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
-  const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","page","pageSize","columns","student"]);
+  const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student"]);
+  if(typeof raw.q==="string"&&raw.search!==undefined) return "Use one Students search field at a time.";
   if(Object.keys(raw).some(key=>!supported.has(key))) return "Unsupported Students filter. No student data was loaded.";
   if(typeof raw.student==="string"&&!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(raw.student))
     return "The selected student is invalid. No student data was loaded.";
@@ -24,7 +25,7 @@ export function tpoStudentFilterMessage(raw:Record<string,string|string[]|undefi
   return "Student page must be a positive whole number. No student data was loaded.";
  if(typeof raw.pageSize==="string"&&!/^[1-9][0-9]*$/.test(raw.pageSize))
   return "Page size must be a positive whole number. No student data was loaded.";
- if(typeof raw.search==="string"&&raw.search.length>150)
+ if(typeof (raw.search??raw.q)==="string"&&String(raw.search??raw.q).length>150)
   return "Student search is too long. No student data was loaded.";
  for(const key of ["maxActiveBacklogs","maxPastBacklogs"]){
   const value=raw[key];

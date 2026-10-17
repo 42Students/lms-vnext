@@ -32,11 +32,12 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(parsed.data),
    });
-   const data=await response.json() as {sent?:number;skipped?:number;error?:string};
+   const data=await response.json().catch(()=>null) as {sent?:number;skipped?:number}|null;
    if(!response.ok)throw new Error(
     response.status===403?"Your TPO access is no longer active.":
-    "Could not send the message. "+(data.error??"Review your selection."));
-   setNotice(String(data.sent??0)+" sent; "+String(data.skipped??0)+" already delivered today.");
+    response.status===409?"This changed while you were working. Your message is kept below. Review the recipients and try again.":
+    "Could not send the message. Review the recipients and try again.");
+   setNotice(String(data?.sent??0)+" sent; "+String(data?.skipped??0)+" already delivered today.");
    setSelected([]);
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not send follow-up.");}
   finally{setPending(false);}
