@@ -357,7 +357,7 @@ export function LearnerCourseDiscussion({
         <p className="m-0 text-sm text-body">
           {moderate
             ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
-            : "Ask questions, share context, and keep course conversations visible to your class and faculty."}
+            : "Keep course conversations in one place and follow along easily."}
         </p>
       </div>
 
