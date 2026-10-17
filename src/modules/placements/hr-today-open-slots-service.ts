@@ -21,10 +21,12 @@ export async function listRecruiterTodayRoundsNeedingSlots(
   gt(placementJobRounds.scheduledAt,now)))
  .orderBy(asc(placementJobRounds.scheduledAt)).limit(100);
  if(!rounds.length)return [];
- const covered=await getDb().select({roundId:hrInterviewSlots.roundId})
+ const covered=await getDb().select({roundId:hrInterviewSlots.roundId,status:hrInterviewSlots.status})
   .from(hrInterviewSlots)
   .where(and(inArray(hrInterviewSlots.roundId,rounds.map(r=>r.id)),
    eq(hrInterviewSlots.collegeId,collegeId),ne(hrInterviewSlots.status,"CANCELLED")));
- const existing=new Set(covered.map(row=>row.roundId));
- return rounds.filter(round=>!existing.has(round.id)).slice(0,8);
+ const offered=new Set(covered.filter(row=>row.status==="OFFERED"||row.status==="BOOKED").map(row=>row.roundId));
+ const prepared=new Set(covered.filter(row=>row.status==="PROPOSED").map(row=>row.roundId));
+ return rounds.filter(round=>!offered.has(round.id)).slice(0,8)
+  .map(round=>({...round,needsOffer:prepared.has(round.id)}));
 }
