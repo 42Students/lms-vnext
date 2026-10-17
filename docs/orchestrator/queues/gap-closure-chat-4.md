@@ -323,3 +323,11 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 
 
 - COL-placements-R01: source-verified new scoped list filters and both CSV endpoints; contact/interviewer fields absent in registered schema remain blank by design. Requires integration acceptance, not a claim of executed tests.
+
+### Typecheck and unit-failure triage — 2026-10-18
+
+- Source check of the stale `docs/orchestrator/typecheck-errors.md` report: six `courses-c2-learning` and the two `courses-ui2a-faculty` lesson-content fixture points, plus the faculty live-class fixture, already have `points` in the latest branch; those must not be patched twice.
+- Repaired **11 remaining missing-points fixture call sites** in `tests/integration/courses-c3-progress.test.ts` (4), `courses-c4c-assessment-progress.test.ts` (1), `sa-courses-content-authoring.test.ts` (5), and `storage-files-courses-db.test.ts` (1). Existing test names continue to cite course and authoring gap IDs. The `points` column is still required: no runtime validation was weakened.
+- Previously reported `SA-placements-projects-58` / `-63` source assertions and the `FAC-assessments-R08` zero-point participation validator were already repaired in the branch; the current test names and source expectations were rechecked, not rerun.
+- Do not infer global green from this stale report. Compiler/test execution and remaining other-lane failures belong to orchestrator; no local `tsc`, Vitest, lint, browser or PostgreSQL execution was possible in this lane.
+- Remaining queue items include `SA-placements-projects-56` (standalone creator), `SA-placements-projects-77` (audit taxonomy), `SA-tenants-modules-46/47/48` (independent findings), `COL-people-R03` (atomic dry-run CSV), `COL-attendance-R02` (approved SMS credentials/side effects), `LEARNER-home-courses-02/18/22` (semester/attendance/polling). `TPO-home-40/44` require chat-9 shell ownership. The UX playbook freeze remains absolute.
