@@ -1,3 +1,24 @@
+## FAST v2 continuation — College Admin + reassigned TPO requests and verification
+
+- **COL-academic-setup-16 (source):** Class and batch edit discard confirmation, batch graduate/archive actions, and semester-mapping navigation no longer use native browser confirms; safeguards remain inline and drafts remain retained.
+- **COL-courses-content-12 (partial):** Reassignment impact shown within existing modal instead of browser confirm; full faculty/course/class/semester/year/role assignment edit requires a new scoped service mutation and remains open.
+- **COL-courses-content-14 (partial):** College Admin faculty assignment filter now selects scoped class names and codes from available deliveries, preserving an out-of-range selected code. More than 200 delivery options remain truncated by existing service.
+- **COL-verification-misc-02 (partial):** College Admin profile server-read retry state and supplied HTTPS photo preview; direct photo upload blocked by private storage integration.
+- **COL-verification-misc-08 (partial):** College verification filter added Waiting since Today / This week / Over a week using IST submitted timestamps; saved server views and column chooser remain open.
+- **COL-verification-misc-14 (source):** College activity export now writes Time, Who, What, Item, Action key, IP legacy headers, safely escaping cells; unavailable IP stays blank rather than fabricated or exposed.
+- **TPO-requests-verification-09 (partial):** TPO request cards now display recorded student roll number and tenant-scoped active enrollment branch; after-college context not included where no authoritative source joined.
+- **TPO-requests-verification-11/12 (partial):** Pending requests support authoritative older-than-two-days server filter and a linked Needs doing first shortcut; urgent/proof filters remain open.
+- **TPO-requests-verification-15 (source):** Filtered authorized request CSV spans pages up to an explicit 5,000-row cap, with request reason, decision note, decision actor/time, roll number and branch; response announces truncation.
+- **TPO-requests-verification-22 (partial):** TPO profile-verification cards read persisted document completeness and scoped current batch/branch, replacing hardcoded placeholders.
+- **TPO-requests-verification-24 (partial):** TPO verification page added First check / Update, marksheet, missing-document, and waiting-over-week filters against its already authorized loaded rows; server-side unbounded filters remain open.
+- **TPO-requests-verification-25 (source):** Pending TPO learner request queue offers sequential review, saved-decision next advancement, Next and Stop/Finish; limited to visible pending page and existing 3 request kinds.
+- **Blocked — COL-people-02/07:** Primary email/phone identity edits require account verification and cannot be implemented as unsafe direct mutations.
+- **Blocked — COL-placements-02/03/10:** Private resume, marksheets and offer-letter previews require verified private document service; do not synthesize public URLs.
+- **Blocked — TPO-requests-verification-01/33–36:** Missing institutional request kinds and recruiter drive REQUEST state need explicit versioned schema/domain lifecycle implementation; retain existing safe actions.
+- **Blocked — COL-attendance-14:** Department attendance percentages require authoritative enrolled learner/session denominator; current persisted status counts must not be mislabeled as percentages.
+- **No runtime verification performed:** FAST v2 explicitly disables tests, typecheck, lint, builds and CI waits; all statuses above represent pushed source changes only.
+- **Queue:** WP-chat-3-02/03/04 remain IN-PROGRESS for incomplete legacy parity. Reassigned WP-chat-5-02/-09/-14 were progressed as noted; other reassigned WPs remain open.
+
 > **FAST v2 ACTIVE: read docs/orchestrator/FAST-MODE.md. Push only to `chatgpt/chat-3-b`, never to main or a PR; no tests, lint, typecheck, build, or CI waiting.**
 
 # Queue for lane chat-3
