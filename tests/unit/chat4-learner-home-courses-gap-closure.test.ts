@@ -7,6 +7,15 @@ import {learnerCourseFilteredEmptyTitle} from "@/modules/courses/learner-course-
 import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
 const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat-4 learner Home and Courses gap closure",()=>{
+ it("LEARNER-home-courses-03 explains unconfigured program, batch, class and semester states",async()=>{
+  const {learnerCourseSetupCopy}=await import("@/modules/courses/learner-course-setup-copy");
+  expect(learnerCourseSetupCopy.NO_CLASS).toBe("Your class is not configured. Please contact your administrator.");
+  for(const code of ["NO_PROGRAM","PROGRAM_NOT_FOUND","NO_BATCH","BATCH_NOT_FOUND","NO_SEMESTER"] as const)
+    expect(learnerCourseSetupCopy[code]).toContain("Please contact your administrator.");
+  const page=source("src/app/(authenticated)/learn/courses/page.tsx");
+  expect(page).toContain("getLearnerCourseSetupStatus(context)");
+  expect(source("src/components/courses/learner-course-list.tsx")).toContain("learnerCourseSetupCopy[setupStatus]");
+ });
  it("LEARNER-course-detail-R04 resolves one authorized resource and returns a 15-minute signed storage URL",()=>{
   const service=source("src/modules/courses/learner-course-file-reference-service.ts");
   const route=source("src/app/api/courses/deliveries/[deliveryId]/contents/[contentId]/file/route.ts");

@@ -32,3 +32,5 @@ orchestrator test execution before full acceptance.
 - Verification here is source-level only; no tests, typecheck, lint, build or database acceptance executed by this builder.
 
 | LEARNER-course-detail-R04 | DONE | `learner-course-file-reference-service.ts` resolves exactly one authorized learner-owned visible content reference; route signs 15-minute R2 GET and redirects rather than hydrating workspace or proxying download/range bytes; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts` test `LEARNER-course-detail-R04`. |
+
+| LEARNER-home-courses-03 | DONE | `learner-course-setup-service.ts` diagnoses current enrollment/program/batch/class/term before showing `learnerCourseSetupCopy` administrator recovery instructions, instead of generic missing-courses state; `tests/unit/chat4-learner-home-courses-gap-closure.test.ts` test `LEARNER-home-courses-03`. |
