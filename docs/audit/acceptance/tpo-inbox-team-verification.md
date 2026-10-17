@@ -56,3 +56,13 @@ Other queued gaps remain outstanding until individually inspected and recorded.
 - `TPO-inbox-team-R04`: **PARTIAL, not closed** — 100-row pagination and next cursor exists but author-only filtering needs review; named unit test `TPO-inbox-team-R04`.
 
 No tests were executed by chat-2; orchestrator owns execution and migration registration.
+
+### Round 3: verified-closure source additions
+- `TPO-inbox-team-17`: PARTIAL — retried creation is idempotent via per-actor persisted audit key, but multiple participants, rename, visibility and leave remain open. Evidence `src/modules/placements/tpo-team-internal-create-service.ts`, `src/components/tpo/tpo-team-forms.tsx`; test **TPO-inbox-team-17 GR-34 prevents duplicate private conversation creation on retry** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-19`: DONE source-level Team search and failure fallback — failed search retains query and exposes Retry without false empty. Test **TPO-inbox-team-19 GR-71/72/73/76 preserves Team search…** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`.
+- `TPO-inbox-team-45`: PARTIAL — live preview and zero-target send guard existed; now preview failures keep the notice list and the selected target with an explicit Retry. Test **TPO-inbox-team-45 GR-71/72/73 preserves audience preview filters…** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`. Complete legacy reach wording and picker parity remains open.
+- `TPO-inbox-team-54`: PARTIAL — college-scoped From 42 read receipts are now projected and genuinely unread cards display **New**, only when receipt storage is registered. Test **TPO-inbox-team-54 GR-90 marks From 42 announcements New only with verified college-scoped reads** in `tests/unit/tpo-inbox-team-graceful-round3.test.ts`. Tab/sidebar/bell unread parity remains open.
+- `TPO-inbox-team-21`: PARTIAL — message send idempotency is backed by `activity_events.dedupe_key` and the author's session draft. `tests/unit/tpo-inbox-team-graceful-round3.test.ts` tests **TPO-inbox-team-21 GR-34…** and `tests/integration/db09-tpo-team-read-receipts.test.ts` **TPO-inbox-team-21 GR-34 PostgreSQL enforces…**. Mentions and object links remain open.
+- `TPO-inbox-team-39`: DONE source-level friendly JSON create/reply success and failure preserving drafts, evidenced by **TPO-inbox-team-39 GR-32 treats login redirects…**.
+- Sections GR-31/32/34/35/60/61/62/71/72/73/76/90/91 are **page-scoped adoptions only**, not platform-wide closures. Shared chat-14 helpers were not on `main` when this batch was authored.
+- All mentioned tests are authored but **not run**; orchestrator owns verification and any migration registration.
