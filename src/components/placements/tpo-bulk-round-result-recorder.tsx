@@ -116,7 +116,7 @@ export function TpoBulkRoundResultRecorder({
       }
       const body = (await response.json()) as { results: Result[] };
       setResults(body.results);
-      setSelected([]);
+      setSelected([]);setFailUnselected(false);
       router.refresh();
     } catch {
       setError(
