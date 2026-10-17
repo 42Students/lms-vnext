@@ -8,7 +8,7 @@ describe("TPO-requests-verification-19",()=>{
   expect(workspace).toContain('legacyTpoCopy?"Verification":"Profile verification"');
   expect(workspace).toContain("Verified marks are what eligibility uses.");
   expect(panel).toContain('apiBase="/api/tpo/verification"');
-  expect(panel).toContain("onReview={row=>setSelected(row)}");
+  expect(panel).toContain("onReview={row=>{setSequenceIndex(null);setSelected(row);}}");
  });
  it("authorizes each read and decision on the server, not via caller-supplied role",()=>{
   for(const path of [
