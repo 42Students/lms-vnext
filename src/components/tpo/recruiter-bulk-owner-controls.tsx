@@ -48,6 +48,7 @@ export function RecruiterBulkOwnerControls({
       id: lead.id,
       expectedOwnerMembershipId: lead.ownerMembershipId,
     }));
+  const currentSignature=[ownerId,...selections.map(row=>row.id+":"+(row.expectedOwnerMembershipId??"UNASSIGNED")).sort()].join("|");
   const canSubmit = !busy && ownersState === "ready" &&
     Boolean(ownerId) && selections.length > 0 && selections.length <= 100;
 
