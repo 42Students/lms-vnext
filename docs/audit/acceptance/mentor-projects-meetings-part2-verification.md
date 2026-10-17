@@ -38,3 +38,16 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 
 ## Remaining
 MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+
+## Chat-16 reassignment verification (source-inspected; tests NOT executed)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| MEN-projects-meetings-60 | DONE (authored; unrun) | `src/components/projects/project-activity-filtered-list.tsx` cursor/duplicate-safe Load more; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-60 pages beyond 100 without dropping or duplicating activity` |
+| MEN-projects-meetings-61 | DONE (authored; unrun) | `src/modules/projects/mentor-activity-display-model.ts` labels/category and `project-activity-filtered-list.tsx` empty states; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-61 shows human-readable labels, category, and legacy empty states` |
+| MEN-projects-meetings-67 | DONE (authored; unrun) | `mentor/calendar/page.tsx`, `mentor-meetings-calendar.tsx` legacy heading, action and removal of nonlegacy requested-meeting helper; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-67 retains legacy Meetings text and action wording` |
+| MEN-projects-meetings-70 | DONE (authored; unrun) | `src/modules/projects/mentor-attention.ts`, `mentor/notifications/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-70 renders legacy notification heading and persisted attention labels` |
+| MEN-projects-meetings-74 | DONE (authored; unrun) | Legacy redirect-only routes under `src/app/(authenticated)/mentor/{profile,allQuizzes,fileExplorer,contacts,courses}/`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-74 preserves redirect-only legacy Mentor URLs` |
+| MEN-projects-meetings-69 | PARTIAL | `mentor-calendar-load-failure.tsx` inline retry + `mentor/calendar/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action`. No persisted RESCHEDULED/DRAFT statuses in vNext; do not misreport full parity. |
+
+Remaining reassigned mentor OPEN items require data-model or full UI workflows: MEN-53,55,56,57,58,65,69(status),72,73,75,76. These have not been relabeled DONE merely for partial code. Tests are authored, not run by this lane.
