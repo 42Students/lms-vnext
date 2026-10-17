@@ -426,7 +426,7 @@ export default async function TpoCompanyDetailPage({
                               : "neutral"
                         }
                       >
-                        {offer.status}
+                        {({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}
                       </StatusBadge>
                     </td>
                     <td className="px-4 py-3">
