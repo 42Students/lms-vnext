@@ -248,7 +248,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 | COL-attendance-R02 | S3 | SIDE-EFFECT | OPEN |
 | COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | DONE |
-| COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
+| COL-placements-R01 | S3 | MISSING-EXPORT | DONE |
 | COL-projects-R02 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R02 | S4 | MISSING-FIELD | DONE |
 
@@ -321,3 +321,5 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Reconciled 34 stale `FIXED-ON-MAIN` entries to `DONE`: their existing page acceptance files already say DONE, and each has an ID-named regression contract in the corresponding chat-4 unit test. Source/evidence checked only; tests were NOT RUN by this lane. Orchestrator acceptance is still required.
 - New work is limited to functional gaps and test/type repairs, not a design pass. Other incomplete OPEN/UNCONFIRMED entries remain open.
 
+
+- COL-placements-R01: source-verified new scoped list filters and both CSV endpoints; contact/interviewer fields absent in registered schema remain blank by design. Requires integration acceptance, not a claim of executed tests.
