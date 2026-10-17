@@ -169,6 +169,7 @@ export async function stageTpoRoundImport(
   }
   const current=candidates.get(match)!;
   if(current.currentStatus==="APPLIED"){
+   used.add(match);
    rejected.push({applicationId:match,line:row.line,status:"skipped",reason:"Applied result cannot be overwritten"});
    continue;
   }
