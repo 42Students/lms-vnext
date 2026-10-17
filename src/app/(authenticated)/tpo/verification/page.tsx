@@ -8,7 +8,15 @@ export const dynamic="force-dynamic";
 export default async function TpoVerificationPage(){
  const queue=await getTpoVerificationQueue(await getCurrentRequestContext());
  return <main className="min-w-0 space-y-4">
-  <Link href="/tpo/students" className="text-sm text-primary-text underline">Back to students</Link>
+  <nav className="flex flex-wrap items-center gap-3">
+    <Link href="/tpo/students" className="text-sm text-primary-text underline">Back to students</Link>
+    {queue.available&&queue.enabled&&queue.permitted?
+     <div className="flex flex-wrap gap-2">
+       {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
+        <a key={tab} href={"/api/tpo/verification/export?tab="+tab}
+          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label} CSV</a>)}
+     </div>:null}
+  </nav>
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
    <p>Could not check your verification access</p>

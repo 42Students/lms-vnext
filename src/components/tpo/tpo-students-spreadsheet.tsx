@@ -105,6 +105,8 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
   </label>
   <TpoGridFilterPanel fields={filters}/>
   <TpoSpreadsheetGrid rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+   openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
+     ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
     <button type="button" className="min-h-10 text-primary-text underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
@@ -121,6 +123,7 @@ export function TpoStudentsSpreadsheet({rows,branches,afterCollege,afterCollegeA
       aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
    </div>}/>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
+    recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
