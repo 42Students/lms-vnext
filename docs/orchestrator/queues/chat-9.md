@@ -52,3 +52,21 @@ All nine scheduled WPs were already marked **DONE for a source pass**, not accep
 - BLOCKED: Security-sensitive owner decisions, deployment secrets, production DNS/TLS and live browser parity remain excluded by FAST v2 and are not claimed closed.
 
 No runtime/acceptance checks were executed or implied by these source commits.
+
+
+## FAST v2 continuation 2 — chat-9 branch after new main merge (2026-10-17)
+
+Merge parent: `origin/main@e324194c5805e124cbbfcc3b650569e03ea713c9`. Preserved the registered 0128 nine-outcome schema and restrictive manual outcome policy while restoring all nine read-only settings labels. All listed changes are **source pass only**, with no tests/lint/typecheck/CI; do not count as acceptance-certified or delete the original deferred lines.
+
+- WP-04 / WP-07: TPO-settings-audit-14 audit events for rules/visibility writers; -31 persisted custom after-college labels with bounds, duplicates, fixed-choice restriction, scoped write API and editor; -52 four supported future grant expiry choices; -56 audited 3/6/12-month extension for active recruiter grants; -92 actor search and About category controls; -93 all-source filtered CSV with explicit 2,000-row cap; -97 allowlisted audit grid with current-page copy/filter/column controls.
+- WP-07 / WP-08: Legacy after-college text and model were reconciled with the main 0128 producer; never allow a manual Placed/Debarred outcome without offer/debarment evidence.
+- BLOCKED TPO-settings-audit-31/33: outcome labels now save, but syncing the selected custom label to learner records and displaying it in student roster requires a consumer field/data integration.
+- BLOCKED TPO-settings-audit-50/51: recruiter autoapproval and applicant visibility settings need security policy enforcement in recruiter request/application readers before toggles can safely take effect.
+- BLOCKED TPO-settings-audit-52: "No end date" cannot be offered while current grant authorization requires a non-null future expiry and fails closed.
+- BLOCKED TPO-settings-audit-56: "No end date" extension requires expiry authorization redesign; existing active 3/6/12-month grants only are supported.
+- BLOCKED TPO-settings-audit-57: masked phone / Joined through need verified, access-controlled data producers; designation and expiry status may be extended separately.
+- BLOCKED TPO-settings-audit-93: true Excel workbook export requires an approved dependency; CSV is exported safely and capped with a truncation flag.
+- BLOCKED TPO-settings-audit-97: full server-side multi-column grid filtering/reusable saved views require explicit privacy scope; current-page grid uses already authorized audit fields.
+- BLOCKED TPO-settings-audit-31: historic student display/rename propagation cannot be inferred from the raw stored JSON; existing student outcome codes are intentionally untouched.
+- BLOCKED All remaining security-sensitive decisions, unregistered schema, mail provider delivery, production/live browser checks remain open under FAST v2.
+
