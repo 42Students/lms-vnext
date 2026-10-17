@@ -268,7 +268,7 @@ export function TpoBulkRoundResultRecorder({
             const lines=[["Application ID","Learner","Outcome","Status","Reason"].join(","),
              ...results.map(row=>[row.applicationId,
               rows.find(item=>item.applicationId===row.applicationId)?.displayName??"Learner",
-              outcome,row.status,row.reason??""].map(cell).join(","))];
+              reportedOutcomeByApplicant[row.applicationId]??outcome,row.status,row.reason??""].map(cell).join(","))];
             const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
             const link=document.createElement("a");link.href=url;
             link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
