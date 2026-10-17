@@ -5,6 +5,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getCollegeDriveOverview} from "@/modules/placements/college-drive-overview-service";
 import {CollegeLegacyDriveSettings} from "@/components/placements/college-legacy-drive-settings";
+import {CollegeDriveArchiveAction} from "@/components/placements/college-drive-archive-action";
 import type {CollegeLegacyDriveStatus} from "@/modules/placements/college-legacy-drive-settings-model";
 
 export default async function CollegeDriveSettingsPage({
@@ -21,5 +22,6 @@ export default async function CollegeDriveSettingsPage({
       actions={<Link className="font-semibold text-primary-text underline"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     <CollegeLegacyDriveSettings jobId={jobId} status={drive.status as CollegeLegacyDriveStatus}/>
+    {drive.status!=="ARCHIVED"?<CollegeDriveArchiveAction jobId={jobId}/>:null}
   </div>;
 }
