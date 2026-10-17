@@ -9,9 +9,9 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-drive-workspace-17 | S1 | SIDE-EFFECT | DONE |
-| TPO-drive-workspace-18 | S1 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-drive-workspace-28 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-drive-workspace-40 | S1 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-drive-workspace-18 | S1 | SIDE-EFFECT | DONE |
+| TPO-drive-workspace-28 | S1 | MISSING-ACTION | DONE |
+| TPO-drive-workspace-40 | S1 | MISSING-EXPORT | DONE |
 | TPO-drive-workspace-42 | S1 | MISSING-MODAL | DONE |
 | TPO-drive-workspace-44 | S1 | MISSING-MODAL | DONE |
 | TPO-drive-workspace-47 | S1 | MISSING-ACTION | DONE |
@@ -21,8 +21,8 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-62 | S1 | MISSING-TAB | DONE |
 | TPO-drive-workspace-65 | S1 | MISSING-FIELD | OPEN |
 | TPO-drive-workspace-R01 | S1 | PERMISSION | DONE |
-| TPO-drive-workspace-01 | S2 | MISSING-TAB | FIXED-ON-MAIN |
-| TPO-drive-workspace-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-01 | S2 | MISSING-TAB | DONE |
+| TPO-drive-workspace-04 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-05 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-10 | S2 | VALIDATION | NOT-A-GAP |
 | TPO-drive-workspace-11 | S2 | PERMISSION | OPEN |
@@ -38,11 +38,11 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-29 | S2 | MISSING-COLUMN | DONE |
 | TPO-drive-workspace-38 | S2 | MISSING-FIELD | UNCONFIRMED |
 | TPO-drive-workspace-41 | S2 | MISSING-ACTION | DONE |
-| TPO-drive-workspace-45 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-drive-workspace-45 | S2 | MISSING-FIELD | DONE |
 | TPO-drive-workspace-49 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drive-workspace-50 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drive-workspace-51 | S2 | MISSING-ACTION | UNCONFIRMED |
-| TPO-drive-workspace-52 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-52 | S2 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-54 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-55 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-59 | S2 | MISSING-TAB | OPEN |
@@ -78,7 +78,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-R05 | S3 | COPY | DONE |
 | TPO-drive-workspace-R06 | S3 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-66 | S4 | MISSING-FIELD | OPEN |
-| TPO-drive-workspace-71 | S4 | A11Y | OPEN |
+| TPO-drive-workspace-71 | S4 | A11Y | DONE |
 | TPO-drive-workspace-74 | S4 | STATE | UNCONFIRMED |
 
 ## tpo/batches (63: FIXED-ON-MAIN 27, OPEN 34, UNCONFIRMED 2)
