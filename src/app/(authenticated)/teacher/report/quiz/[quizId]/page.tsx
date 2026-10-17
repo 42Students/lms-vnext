@@ -45,7 +45,7 @@ export default async function FacultyQuizReportPage({
   return (
     <div className="space-y-6">
       <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
-        ← My Quizzes
+        Back
       </Link>
       <PageHeader title={quiz.title} />
       <div className="flex flex-wrap justify-end gap-3">

@@ -59,7 +59,7 @@ describe("chat-14 recruiter reassigned batch 3",()=>{
   expect(ui).toContain("Only you can read or change this rating and note.");
   expect(ui).toContain("Clear rating and note");
   expect(job()).toContain("<RecruiterPrivateRatingEditor");
-  expect(read("docs/proposed-migrations/recruiter-private-candidate-ratings.sql"))
+  expect(read("drizzle/0134_lanes_round_2.sql"))
    .toContain("CREATE TABLE IF NOT EXISTS placement_recruiter_private_reviews");
  });
  it("REC-home-drives-38 discloses recruiter roll number only under explicit college relationship share defaults",()=>{

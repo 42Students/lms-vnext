@@ -35,8 +35,10 @@ describe("chat-15 learner general placement requests",()=>{
   expect(writer).toContain('kind:input.kind');
   expect(writer).toContain("verifyLearnerTx");
   expect(writer).toContain('throw new TpoGeneralRequestError("EFFECT_UNSUPPORTED")');
-  expect(source("docs/proposed-migrations/learner-general-placement-requests.sql"))
-    .toContain("placement_learner_general_request_events");
+  const registered=source("drizzle/0134_lanes_round_2.sql");
+  expect(registered).toContain("create table if not exists placement_learner_general_request_events (");
+  expect(writer).toContain("eq(placementApplications.membershipId,member.id)");
+  expect(writer).toContain("eq(placementJobRounds.jobId,placementJobs.id)");
  });
  it("LEARNER-placements-51 rejects non-confirmed or stale TPO decisions",()=>{
   expect(tpoGeneralRequestDecisionSchema.safeParse({confirmed:true,version:uuid,action:"REJECT",note:"Policy requires more proof"}).success).toBe(true);
@@ -70,9 +72,10 @@ describe("chat-15 learner general placement requests",()=>{
   const registered=source("drizzle/0134_lanes_round_2.sql");
   const firstCheck=registered.slice(0,registered.indexOf("-- from learner-general-placement-requests.sql"));
   expect(firstCheck).not.toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
-  const proposal=source("docs/proposed-migrations/chat15-general-request-acceptance-kind.sql");
-  expect(proposal).toContain("DROP CONSTRAINT IF EXISTS placement_general_request_kind_ck");
-  expect(proposal).toContain("'OFFER_ACCEPTANCE_DISPUTE'");
+  // 0135 is registered: its corrective ALTER (not 0134 IF NOT EXISTS) widens the CHECK.
+  const corrected=source("drizzle/0135_lanes_round_3.sql");
+  expect(corrected).toContain("DROP CONSTRAINT IF EXISTS placement_general_request_kind_ck");
+  expect(corrected).toContain("'OFFER_ACCEPTANCE_DISPUTE'");
   expect(source("src/db/schema/placement-general-requests.ts")).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
  });
 });
