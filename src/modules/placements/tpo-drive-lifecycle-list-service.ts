@@ -106,7 +106,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       company:row.company,createdAt:row.createdAt.toISOString(),
       approvedJobId:row.approvedJobId,
     }));
-    return {...pagination,counts,rows:[],requestRows,requestsAvailable:true as const,...common};
+    return {...pagination,counts:{...counts,total:tally?.total??0},rows:[],requestRows,requestsAvailable:true as const,...common};
   }
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
