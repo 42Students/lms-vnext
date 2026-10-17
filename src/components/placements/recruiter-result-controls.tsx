@@ -320,11 +320,6 @@ export function RecruiterResultControls({
         description:"Give every selected waitlisted candidate a distinct rank."});
       return;
     }
-    const summary=participants.slice(0,12).map((person,index)=>{
-      const decision=drafts[round.id+":"+person.applicationId]!;
-      return (index+1)+". "+(person.displayName||"Applicant")+" — "+
-        decision.outcome+(decision.outcome==="HOLD"?" (rank "+decision.waitlistRank+")":"");
-    }).join("\n");
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId]!;
       const raw=draft.scorePercent.trim();
