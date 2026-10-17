@@ -1,3 +1,4 @@
+import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {LEGACY_TPO_BRANCH_COLUMNS,legacyTpoBranchReportRow} from "@/modules/placements/tpo-branch-report-view-model";
 import {Suspense} from "react";
@@ -51,7 +52,7 @@ export default async function TpoByBranchReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="By branch"
-        description="Department-wise registered pool, applicants, offers, placed learners and accepted full-time packages."
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-branch"].description}
         actions={
           <ReportCsvLink workspace={workspace} kind="by-branch" />
         }

@@ -54,3 +54,7 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 | TPO-settings-audit-96 | OPEN | Settings view and `tests/unit/chat9-tpo-settings-legacy-graceful.test.ts` — `TPO-settings-audit-96 keeps the TPO audit heading customer-facing`; partial source evidence only, remaining legacy parity must be verified. |
 | TPO-settings-audit-03 | OPEN | Settings view and `tests/unit/chat9-tpo-settings-legacy-graceful.test.ts` — `TPO-settings-audit-03 uses the original placement settings section names`; partial source evidence only, remaining legacy parity must be verified. |
 | TPO-settings-audit-06 | OPEN | Settings view and `tests/unit/chat9-tpo-settings-legacy-graceful.test.ts` — `TPO-settings-audit-06 protects edited readiness choices against accidental navigation`; partial source evidence only, remaining legacy parity must be verified. |
+
+## Round 6 rules validation and draft warning
+| TPO-settings-audit-11 | DONE source | `src/components/placements/tpo-college-rules-control.tsx` limits count-as-placed to released/accepted options; `tests/unit/chat9-round6-calendar-settings.test.ts` — `TPO-settings-audit-11 only offers released and accepted triggers; never Selected`. |
+| TPO-settings-audit-06 | DONE source | College rules editor now warns when dirty, guards unload and route-click navigation, and clears dirty state on save; `tests/unit/chat9-round6-calendar-settings.test.ts` — `TPO-settings-audit-06 guards edited rules from unload and navigation and resets dirtiness after save`. Readiness editor previously had unload protection. |

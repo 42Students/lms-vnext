@@ -4,7 +4,8 @@ import {useRouter} from "next/navigation";
 import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
-import type {TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
+import {TpoCalendarMoveFollowup,type TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
+import {calendarDueAtToIstLocal} from "@/modules/placements/tpo-calendar-followup-model";
 
 /** Wall-clock read kept out of render bodies (React purity rule). */
 function currentTimeMs(){return Date.now();}
@@ -24,6 +25,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const router=useRouter();
  const blocked=new Set(blockedDates);
  const [slot,setSlot]=useState<string|null>(null);
+ const [move,setMove]=useState<{id:string;currentIst:string}|null>(null);
  const triggerRef=useRef<HTMLButtonElement|null>(null);
  const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
  const [loadingLeads,setLoadingLeads]=useState(false);
@@ -160,7 +162,12 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
        const inner=<><strong className="block truncate">{event.title}</strong>
         <span className="block truncate">{event.companyName}</span>
         <span className="block text-[10px]">{kinds[event.kind]??event.kind}</span></>;
-       return event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
+       return canCreate&&event.followupId&&event.status==="OPEN"?
+        <button key={event.id} type="button"
+         aria-label={"Move follow-up: "+event.title}
+         onClick={()=>setMove({id:event.followupId!,currentIst:calendarDueAtToIstLocal(new Date(event.startsAt))})}
+         style={position} className={"absolute z-10 overflow-hidden rounded border border-border px-1 py-0.5 text-left text-[11px] leading-tight "+tone(event.kind)}>{inner}</button>:
+       event.href?<Link key={event.id} href={event.href} title={event.companyName+" · "+event.title}
         draggable={canCreate&&Boolean(event.followupId)}
         onDragStart={dragEvent=>{
          if(!event.followupId)return;
@@ -177,6 +184,16 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     })}
    </div>
   </div>
+  {move?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+    onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();setMove(null);}}}>
+    <section role="dialog" aria-modal="true" aria-label="Move recruiter follow-up"
+      className="w-full max-w-lg rounded-xl border border-border bg-surface p-5">
+      <h2 className="text-lg font-semibold">Move follow-up</h2>
+      <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
+      <button type="button" onClick={()=>setMove(null)}
+        className="mt-3 min-h-10 rounded-md border border-border px-4 text-sm">Close</button>
+    </section>
+   </div>:null}
   {!slot&&message?<p role="alert" className="rounded border border-border p-3 text-sm text-warning-text">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>

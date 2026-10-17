@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {TPO_RULE_LIMITS,tpoRuleBoundsValid} from "@/modules/placements/tpo-rule-limits";
 
@@ -18,6 +18,21 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
     upliftPct: String(rules.upliftPct),
     minResponseHours: String(rules.minResponseHours),
   });
+  const [saved, setSaved] = useState(form);
+  const dirty = (Object.keys(form) as (keyof typeof form)[]).some(key=>form[key]!==saved[key]);
+  useEffect(()=>{
+    if(!dirty)return;
+    const onUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    const onLink=(event:MouseEvent)=>{
+      const target=event.target;
+      if(target instanceof Element && target.closest("a[href]") && !window.confirm("Leave without saving placement rules?")){
+        event.preventDefault();event.stopPropagation();
+      }
+    };
+    window.addEventListener("beforeunload",onUnload);
+    document.addEventListener("click",onLink,true);
+    return ()=>{window.removeEventListener("beforeunload",onUnload);document.removeEventListener("click",onLink,true);};
+  },[dirty]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   async function save() {
@@ -43,6 +58,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         body: JSON.stringify({ ...values, expectedVersion: rules.version, confirmed: true }),
       });
       if (!response.ok) throw new Error("Rules were changed elsewhere or could not be saved. Refresh and review.");
+      setSaved({...form});
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save rules.");
@@ -56,12 +72,12 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         deadlines and learner consent are not modified.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        {dirty?<p role="status" className="sm:col-span-2 text-sm text-warning-text">Unsaved changes</p>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">
           Count as placed when
           <select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => setForm((current) => ({ ...current, countsAsPlacedAt: event.target.value }))}
             className="min-h-10 rounded-md border border-border bg-surface px-3">
-            <option value="SELECTED">Selected</option>
             <option value="OFFER_RELEASED">Offer released</option>
             <option value="OFFER_ACCEPTED">Offer accepted</option>
           </select>

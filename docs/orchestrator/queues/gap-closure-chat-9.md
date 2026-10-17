@@ -17,7 +17,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-32 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
 | TPO-calendar-reports-35 | S2 | VALIDATION | FIXED-ON-MAIN |
 | TPO-calendar-reports-36 | S2 | COPY | DONE-BRANCH |
-| TPO-calendar-reports-38 | S2 | COPY | OPEN |
+| TPO-calendar-reports-38 | S2 | COPY | DONE-BRANCH |
 | TPO-calendar-reports-43 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-calendar-reports-44 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-48 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/calendar-reports.md` (and `calendar-reports-review.
 | TPO-calendar-reports-21 | S4 | STATE | DONE-BRANCH |
 | TPO-calendar-reports-22 | S4 | STATE | OPEN |
 | TPO-calendar-reports-24 | S4 | SIDE-EFFECT | DONE-BRANCH |
-| TPO-calendar-reports-25 | S4 | A11Y | OPEN |
+| TPO-calendar-reports-25 | S4 | A11Y | DONE-BRANCH |
 | TPO-calendar-reports-50 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-51 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-calendar-reports-53 | S4 | STATE | OPEN |
@@ -102,8 +102,8 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-96 | S2 | COPY | OPEN |
 | TPO-settings-audit-R03 | S2 | STATE | UNCONFIRMED |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-06 | S3 | STATE | OPEN |
-| TPO-settings-audit-11 | S3 | VALIDATION | OPEN |
+| TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
+| TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-13 | S3 | COPY | OPEN |
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
@@ -344,3 +344,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 ## Round 6 CI failure triage
 - `public-auth-login-gap-verification.test.ts` PUB-auth-public-04 and PUB-auth-public-12: assertions updated to the retained legacy-approved OTP expired phrase and the `sessionExpiredHref` safe redirect helper; guard still requires 401/session revoked/expired checks. Tests written, not executed by builder.
 - Other chat-9 test fixture fixes from previous merged round retained; scanner and provider checks continue to be audited.
+
+- Round 6 source close TPO-calendar-reports-25/-38 and TPO-settings-audit-06/-11; proof in tests/unit/chat9-round6-calendar-settings.test.ts; tests NOT RUN.
