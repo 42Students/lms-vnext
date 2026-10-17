@@ -11,7 +11,7 @@ type Sprint={id:string;status:string;title:string};
 const statuses=["TODO","IN_PROGRESS","BLOCKED"] as const;
 type EditableStatus=typeof statuses[number];
 
-export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,membershipId}:{
+export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,membershipId,readOnly=false}:{
  projectId:string;initialTasks:Task[];filters:LearnerTaskBoardUrlFilters;
  sprints:Sprint[];membershipId:string|null;
 }){
