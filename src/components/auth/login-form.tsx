@@ -3,6 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {safeReturnTo} from "@/lib/return-to";
 
 type Channel = "PHONE" | "EMAIL";
 
@@ -264,8 +268,9 @@ export function LoginForm({
       const result = await runGuarded(() => post<{ maskedEmail?: string }>(
         "/api/auth/login/email",
         { attemptId: attempt.attemptId },
-      );
-      if (!result.ok) return fail((result.data as { error?: string }).error);
+      ));
+      if (!result) return;
+      if (!result.ok) return fail(result.data.error);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
       setCooldown(RESEND_SECONDS);
