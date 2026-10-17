@@ -42,3 +42,7 @@ the selection and return plain retry guidance.
 | COL-course-tabs-R01 | DONE | `src/modules/courses/college-learner-progress-service.ts` uses video completion, unique assignment submissions and unique quiz attempts by learner/item, not resource clicks; `college-learner-progress-report.tsx` states exact measured-work rules and retake semantics; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-R01`. |
 
 | COL-course-tabs-14 | DONE | `college-lesson-drag-order.tsx` drag/drop and keyboard Move up/down, optimistic rollback; transactional `reorderCollegeCourseLessons` compares entire active order under lock, parks sequences to respect unique index, one audit event; route validates same origin; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-14`. |
+
+### Owner decision and functional source evidence (2026-10-18)
+
+| COL-course-tabs-25 | NOT-A-GAP | Intentional safer permission boundary: the watched-threshold setting is validated (1–100%) and read from centrally persisted global or college-scoped platform overrides, not a College Admin video tab mutation. A college-scoped override does not grant the college administrator permission to author it. `src/modules/courses/learner-playback-settings.ts`, `src/app/(authenticated)/college/videos/page.tsx`; `tests/unit/chat4-gap-ux-freeze-product-decisions.test.ts` test `COL-course-tabs-25`. This is not a claim that thresholds are universally identical across colleges. |
