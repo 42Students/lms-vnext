@@ -78,6 +78,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   if(id)void move(id,status);
  }
  const learnerChoices=members.filter(member=>member.role==="LEARNER");
+ const creationSprints=sprints.filter(item=>item.status!=="COMPLETED"&&
+   releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED"));
+ const creationDefault=creationSprints.find(item=>item.status==="ACTIVE")??
+   creationSprints.find(item=>item.status==="PLANNED");
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-primary-text underline">Back to project</Link>
