@@ -203,6 +203,7 @@ export function RecruiterLeadsWorkspace({
   const [saving, setSaving] = useState(false);
   const [duplicate, setDuplicate] = useState<Lead | null>(null);
   const [checking, setChecking] = useState(false);
+  const contactCheckSeq=useRef(0);
 
   const load = useCallback(async (signal?: AbortSignal) => {
     setPhase("loading");
@@ -368,9 +369,9 @@ export function RecruiterLeadsWorkspace({
   function exportRows(selection:"shown"|"selected",format:"csv"|"xlsx"){
     const chosen=selection==="selected"?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(chosen.length===0){setExportFeedback("Select recruiters first.");return;}
-    const grid=recruiterTableExportGrid(chosen);
+    const grid=recruiterTableExportGrid(chosen,visibleColumns);
     const blob=format==="xlsx"?recruiterLeadsXlsx(grid.headers,grid.values):
-      new Blob([recruiterTableExportCsv(chosen)],{type:"text/csv;charset=utf-8"});
+      new Blob([recruiterTableExportCsv(chosen,visibleColumns)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
     link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
@@ -381,7 +382,7 @@ export function RecruiterLeadsWorkspace({
   async function copyRows(){
     const chosen=selectedIds.length?visible.filter(row=>selectedIds.includes(row.id)):visible;
     if(!chosen.length){setExportFeedback("No recruiters to copy.");return;}
-    try{await navigator.clipboard.writeText(recruiterTableExportTsv(chosen));
+    try{await navigator.clipboard.writeText(recruiterTableExportTsv(chosen,visibleColumns));
       setExportFeedback(chosen.length+" recruiter leads copied");
     }catch{setExportFeedback("Couldn't copy rows. Use Export CSV.");}
   }
@@ -457,6 +458,8 @@ export function RecruiterLeadsWorkspace({
     catch{setActionToast("Couldn't copy. Select the link and copy it.");}
   }
   function field(name: keyof NewLead, value: string) {
+    contactCheckSeq.current++;
+    setChecking(false);
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
     setSaveError("");setReviewingCreate(false);
@@ -465,6 +468,7 @@ export function RecruiterLeadsWorkspace({
   async function checkContact() {
     const contact = form.email.trim() || form.phone.trim();
     if (!contact) return;
+    const sequence=++contactCheckSeq.current;
     setChecking(true);
     setSaveError("");
     try {
@@ -473,17 +477,19 @@ export function RecruiterLeadsWorkspace({
           encodeURIComponent(collegeId) + "&contact=" + encodeURIComponent(contact),
         { credentials: "same-origin", cache: "no-store" },
       );
+      if(sequence!==contactCheckSeq.current)return;
       if (response.status === 204) {
         setDuplicate(null);
       } else {
         const data = await response.json() as { lead?: Lead; error?: string };
+        if(sequence!==contactCheckSeq.current)return;
         if (!response.ok) throw new Error(friendlyError(response.status, data));
         setDuplicate(data.lead ?? null);
       }
     } catch (cause) {
-      setSaveError(cause instanceof Error ? cause.message : "Could not check contact.");
+      if(sequence===contactCheckSeq.current)setSaveError(cause instanceof Error ? cause.message : "Could not check contact.");
     } finally {
-      setChecking(false);
+      if(sequence===contactCheckSeq.current)setChecking(false);
     }
   }
 
@@ -491,12 +497,16 @@ export function RecruiterLeadsWorkspace({
     if(saving)return;
     const dirty=Object.values(form).some(value=>value.trim());
     if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
+    contactCheckSeq.current++;
+    setChecking(false);
     setAdding(false);setDuplicate(null);setSaveError("");setReviewingCreate(false);
     createLaunchRef.current?.focus();
   }
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if(checking||saving)return;
+    const sequence=++contactCheckSeq.current;
     if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
       setSaveError("Enter a name and at least one contact method.");
       return;
@@ -514,8 +524,10 @@ export function RecruiterLeadsWorkspace({
           encodeURIComponent(collegeId)+"&contact="+encodeURIComponent(contact),{
           credentials:"same-origin",cache:"no-store",
         });
+        if(sequence!==contactCheckSeq.current)return;
         if(result.status===204)continue;
         const data=await result.json() as {lead?:Lead;error?:string};
+        if(sequence!==contactCheckSeq.current)return;
         if(!result.ok)throw new Error(friendlyError(result.status,data));
         if(data.lead){
           setDuplicate(data.lead);
@@ -524,13 +536,15 @@ export function RecruiterLeadsWorkspace({
         }
       }
     }catch(cause){
-      setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
+      if(sequence===contactCheckSeq.current)setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
       return;
-    }finally{setChecking(false);}
+    }finally{if(sequence===contactCheckSeq.current)setChecking(false);}
+    if(sequence!==contactCheckSeq.current)return;
     if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
       setSaveError("Choose a future follow-up date (IST).");return;
     }
     if(!reviewingCreate){setReviewingCreate(true);return;}
+    if(sequence!==contactCheckSeq.current)return;
 
     setSaving(true);
     setSaveError("");
