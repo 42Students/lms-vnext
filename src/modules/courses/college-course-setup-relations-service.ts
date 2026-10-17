@@ -1,6 +1,7 @@
 import "server-only";
 
-import {and,asc,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,isNull,ne} from "drizzle-orm";
+import {alias} from "drizzle-orm/pg-core";
 import {getDb} from "@/db/client";
 import {
  academicPeriods,cohorts,collegeMemberships,courseOfferings,courses,
@@ -17,6 +18,7 @@ import {loadAcademicCollegeScope} from "@/modules/academics/scope";
  * Every join that can surface another college's course or Faculty is explicitly
  * rooted at the authorized college.
  */
+const programDepartment=alias(departments,"college_courses_program_department");
 export async function listCollegeCourseSetupRelations(
  context:RequestContext,collegeId:string,includeArchivedOfferings=false,
 ){
@@ -44,11 +46,13 @@ export async function listCollegeCourseSetupRelations(
   eq(departments.collegeId,college.id)))
  .innerJoin(cohorts,eq(cohorts.id,courseOfferings.cohortId))
  .innerJoin(programs,eq(programs.id,cohorts.programId))
+ .innerJoin(programDepartment,and(
+  eq(programDepartment.id,programs.departmentId),eq(programDepartment.collegeId,college.id)))
  .innerJoin(academicPeriods,and(
   eq(academicPeriods.id,courseOfferings.academicPeriodId),
   eq(academicPeriods.collegeId,college.id)))
  .where(and(
-  eq(programs.departmentId,departments.id),
+  ne(cohorts.status,"ARCHIVED"),
   includeArchivedOfferings?undefined:eq(courseOfferings.status,"ACTIVE"),
  ))
  .orderBy(asc(courseOfferings.displayOrder),asc(courses.name),asc(courseOfferings.id));
