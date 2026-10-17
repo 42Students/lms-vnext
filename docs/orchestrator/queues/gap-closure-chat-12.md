@@ -203,3 +203,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 53 TPO-requests-verification-37: shared transaction-bound recruiter request -> DRAFT builder extracted, preserving TPO manual review semantics; verified policy auto-approval wiring follows; no design restyling.
 
 - Round 54 TPO-requests-verification-37/38: persisted same-college trusted-company/domain and college approval-setting policy with verified grant, real draft conversion and autoapproval event/TPO + recruiter bells added; public-link-only bypass and email delivery still require separate proof, integration unrun.
+
+- Round 55 TPO-requests-verification-13: add idempotent server-verified bulk audit for 10-request run, no duplicate learner notices and truthful partial outcomes; proof-aware skip, all-filtered selection remain OPEN and DB acceptance unrun.
