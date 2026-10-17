@@ -40,11 +40,8 @@ export default async function PublicPlacementsPage() {
     <main className="mx-auto min-h-screen w-full max-w-4xl px-4 py-10 sm:px-8">
       <header className="space-y-3">
         <h1 className="break-words text-3xl font-semibold text-foreground sm:text-4xl">
-          {"Placements at "+(college?.collegeName??"your college")}
+          {college?.collegeName??"College placements"}
         </h1>
-        <p className="max-w-2xl text-sm leading-6 text-body">
-          Recruit from us. See the placements this college has chosen to share.
-        </p>
       </header>
       {published && metrics.some(metric=>!metric.suppressed) ? (
         <p className="mt-5 text-xs text-muted-foreground">
