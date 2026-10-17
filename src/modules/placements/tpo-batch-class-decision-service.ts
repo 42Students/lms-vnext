@@ -8,11 +8,11 @@ import {getTpoBatch} from "./tpo-batch-workspace-read-service";
 
 /** Exact batch ancestry before returning a class-level decision or count. */
 export async function listTpoBatchClassesForDecisions(context:RequestContext,batchId:string){
- const {batch,collegeId,decision,lifecycle}=await getTpoBatch(context,batchId);
+ const {batch,collegeId,decision,lifecycle,ready}=await getTpoBatch(context,batchId);
  const db=getDb();
  const rows=await db.select({
   id:sections.id,name:sections.name,code:sections.code,status:sections.status,
-  students:countDistinct(collegeMemberships.id),
+  students:countDistinct(users.id),
  }).from(sections)
  .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
  .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
@@ -31,7 +31,7 @@ export async function listTpoBatchClassesForDecisions(context:RequestContext,bat
     eq(placementEligibilityDecisions.scopeType,"SECTION"),
     inArray(placementEligibilityDecisions.scopeId,rows.map(row=>row.id)))):[];
  const keyed=new Map(overrides.map(row=>[row.scopeId,row]));
- return {batch,finished:Boolean(lifecycle?.finishedAt),ready:true,
+ return {batch,finished:Boolean(lifecycle?.finishedAt),ready,
   inherited:decision.status,classes:rows.map(row=>({
    ...row,decision:keyed.get(row.id)?.status??"NOT_DECIDED",
    effectiveDecision:keyed.get(row.id)?.status??decision.status,
