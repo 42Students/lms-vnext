@@ -522,7 +522,9 @@ export function ProjectWorkspace({
             <div className="mt-3 space-y-2 text-sm text-body">
               {workspace.project.phase ? <p>Phase: <strong>{workspace.project.phase}</strong></p> : null}
               {workspace.project.dueLabel || workspace.project.endDate ?
-                <p>Due date: <strong>{workspace.project.dueLabel ||
+                <p>Due date: <strong>{workspace.project.endDate?
+                  (projectTaskDueState(workspace.project.endDate,workspace.project.status==="COMPLETED"?"DONE":"TODO",renderTime)
+                    ??"Due")+" · ":""}{workspace.project.dueLabel ||
                   workspace.project.endDate}</strong></p> : <p>No due date</p>}
               {workspace.project.nextAction ?
                 <p>Next step: {workspace.project.nextAction}</p> : null}
