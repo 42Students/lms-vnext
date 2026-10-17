@@ -1,7 +1,7 @@
 import {NextResponse} from "next/server";
 import {cookies} from "next/headers";
 import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share/public-service";
-import {tpoShareableShortlistCsv} from "@/modules/placements/tpo-shareable-shortlist-model";
+import {companyShareSelectedCsv} from "@/modules/placements/company-share/column-model";
 import {companyShareCsvResponseHeaders} from "@/modules/placements/company-share/export-headers-model";
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
@@ -12,7 +12,7 @@ export async function GET(request:Request,{params}:{params:Promise<{token:string
  if(result.kind!=="READY")return NextResponse.json({error:"SHARE_UNAVAILABLE"},{
   status:404,headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"},
  });
- return new Response("\uFEFF"+tpoShareableShortlistCsv(result.rows,result.truncated),{
+ return new Response("\uFEFF"+companyShareSelectedCsv(result.rows,result.selectedColumns,result.truncated),{
   status:200,headers:companyShareCsvResponseHeaders(),
  });
 }
