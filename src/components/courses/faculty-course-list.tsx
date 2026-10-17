@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {FacultyCourseFilterAutoSubmit} from "./faculty-course-filter-auto-submit";
 import { facultyCourseListHref, type FacultyCourseListQuery } from "@/modules/courses/faculty-course-list-model";
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -75,10 +76,11 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
         className="space-y-3 rounded-xl border border-border bg-surface p-4">
+        <FacultyCourseFilterAutoSubmit />
         <div className="grid gap-3 md:grid-cols-4">
           <label className="grid gap-1 text-sm font-semibold text-body">Search courses
             <input name="q" type="search" defaultValue={query.q} maxLength={120}
-              placeholder="Search courses…"
+              placeholder="Course, code, Section or academic period"
               className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-body">Academic period

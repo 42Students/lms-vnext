@@ -72,3 +72,9 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 ## Chat-6 follow-up: incremental OPEN-gap behavior
 
 | SA-academics-people-101 | OPEN (partial: in-tab create implemented; edit still missing) | `src/components/admin/super-admin-faculty-assignment-create.tsx` and `src/app/(authenticated)/admin/faculty-assignment/page.tsx` invoke audited `createCourseTeachingAssignment` through same-origin `/api/courses/teaching-assignments`, using active selected-college delivery and faculty pickers. `tests/unit/chat6-superadmin-faculty-assignment-create-101.test.ts` → `SA-academics-people-101 validates a typed delivery/faculty/role and rejects malformed assignments` and `SA-academics-people-101 creates only active faculty teaching assignments in the selected college`. In-place teaching role editing is not yet implemented, so the full gap remains OPEN. |
+
+### Chat-6 incremental teaching-role update — SA-academics-people-101
+
+| ID | Status | Evidence and remaining acceptance |
+|---|---|---|
+| SA-academics-people-101 | OPEN (in-tab create, role edit, confirmed end; academic assignment-matrix editor still pending) | `src/modules/courses/teaching-assignment-service.ts` has transaction-scoped `changeCourseTeachingAssignmentRole` (active delivery + same-college ancestry locks, faculty membership/role recheck, primary/duplicate conflict protection, activity event). `src/app/api/courses/teaching-assignments/[assignmentId]/route.ts` has same-origin PATCH. `src/components/admin/super-admin-faculty-assignment-create.tsx` and tab page expose role editing. `tests/unit/chat6-superadmin-teaching-role-edit-101.test.ts` names SA-academics-people-101 and checks validation, authorization, audit and guarded UI. Full legacy class/semester multi-course edit remains OPEN; tests not executed. |

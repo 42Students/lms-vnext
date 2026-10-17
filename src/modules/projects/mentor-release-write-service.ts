@@ -65,11 +65,14 @@ export async function writeMentorProjectRelease(
   }
   if(!result)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
   await recordActivityEventInTransaction(tx,context,{
-   eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
+   eventType:change==="CREATED"?ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_CREATED:
+    change==="UPDATED"?ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_UPDATED:
+    ACTIVITY_EVENT_TYPES.PROJECTS_RELEASE_DELETED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_release",subjectId:result.id,subjectLabel:result.title,
    summary:"Project release "+change.toLowerCase(),
-   metadata:{projectId,releaseId:result.id,change},
+   metadata:{projectId,releaseId:result.id,change,
+    previousStatus:existing?.status??null,updatedStatus:change==="DELETED"?null:result.status},
    groupKey:"project:"+projectId,
   });
   return {release:result,change};

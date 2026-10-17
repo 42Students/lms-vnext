@@ -5,7 +5,6 @@ import {
 } from "@/components/activity/activity-center";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
-import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   listActivityEvents,
@@ -57,28 +56,9 @@ export async function ProjectAdminAuditPage({
   const context =
     await getCurrentRequestContext();
 
-  if (
-    isSuperAdmin(context) &&
-    !context.adminScope?.collegeId
-  ) {
-    return (
-      <div className="space-y-6">
-        <ProjectAdminNav
-          basePath={basePath}
-          active="audit"
-        />
-        <PageHeader
-          eyebrow="Projects"
-          title="Project audit"
-          description="Who changed what, and when — check daily for anything unexpected."
-        />
-        <EmptyState
-          title="Select a college to continue"
-          description="Project audit is college-scoped. Choose a college in the Super Admin scope control before reviewing project activity."
-        />
-      </div>
-    );
-  }
+  // A global Super Admin must be able to inspect template events that have no
+  // college scope. The activity service itself enforces platform permissions.
+  const globalTemplateAudit=isSuperAdmin(context)&&!context.adminScope?.collegeId;
 
   const eventType =
     one(searchParams.action) ||
@@ -195,7 +175,7 @@ export async function ProjectAdminAuditPage({
       <PageHeader
         eyebrow="Projects"
         title="Project audit"
-        description="Who changed what, and when — check daily for anything unexpected."
+        description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
       />
 
       <div className="flex flex-wrap gap-2">
