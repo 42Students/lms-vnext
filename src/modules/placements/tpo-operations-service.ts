@@ -514,6 +514,11 @@ export async function getPlacementTpoOperations(
       "RESULTS_AWAITING_APPLY",
       stagedResults,
     );
+    if(job.status==="PUBLISHED"){
+      const withoutLetter=jobOffers.filter(({offer})=>
+        (offer.status==="ISSUED"||offer.status==="ACCEPTED") && !offer.offerLetterUrl).length;
+      pushQueue("HIGH","OFFERED_NO_LETTER",withoutLetter);
+    }
     pushQueue(
       "MEDIUM",
       "OFFERS_AWAITING_RESPONSE",

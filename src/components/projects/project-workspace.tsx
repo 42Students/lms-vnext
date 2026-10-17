@@ -453,7 +453,7 @@ export function ProjectWorkspace({
               <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.personas.map((v,i)=><li key={i}>{v}</li>)}</ul>
             </div>
           </div>:null}
-          {mode==="LEARNER"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {mode!=="ADMIN"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <section className="rounded-lg border border-border p-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
               <p className="mt-1 text-sm text-body">
@@ -473,6 +473,12 @@ export function ProjectWorkspace({
               </ul>
             </section>
           </div>:null}
+          {mode==="MENTOR"?<section aria-label="Final submission" className="mt-4 rounded-lg border border-border p-3 text-sm text-body">
+            <h3 className="font-semibold text-foreground">Final submission</h3>
+            <p className="mt-1">Status: {readiness.finalSubmission.latest?label(readiness.finalSubmission.latest.status):"Not submitted"}</p>
+            <Link href={mentorReviewHref??("/mentor/projects/"+workspace.project.id+"?tab=delivery")}
+              className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Review submission</Link>
+          </section>:null}
           {mode==="MENTOR"?<section aria-label="Mentor task progress" className="mt-4 rounded-lg border border-border p-3">
             <h3 className="font-semibold">Task progress</h3>
             <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
@@ -852,8 +858,8 @@ export function ProjectWorkspace({
                         {mode==="MENTOR" ? (() => {
                           const facts=workspace.mentorEvidence.tasksBySprint[sprint.id]??mentorSprintTaskFacts([]);
                           return <p className="mt-2 text-xs text-body">
-                            Recorded tasks: {facts.done}/{facts.total} Done · {facts.inReview} In review · {facts.blocked} Blocked
-                            {" · "}Completion: {facts.completionPercent===null?"Unknown (no tasks)":facts.completionPercent+"%"}
+                            Tasks: {facts.done}/{facts.total} done · {facts.inReview} In review · {facts.blocked} Blocked
+                            {" · "}Completion: {facts.completionPercent===null?"No tasks yet":facts.completionPercent+"%"}
                           </p>;
                         })() : null}
                       </div>

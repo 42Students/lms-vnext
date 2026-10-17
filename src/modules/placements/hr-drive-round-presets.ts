@@ -1,11 +1,10 @@
 import type {HrDriveDraft} from "./hr-drive-draft-model";
 export const HR_DRIVE_ROUND_PRESETS=[
- {id:"INTERVIEW_ONLY",label:"Interview only",rounds:[{kind:"INTERVIEW",name:"Interview"}]},
- {id:"TEST_INTERVIEW",label:"Test + interview",rounds:[
-  {kind:"TEST",name:"Aptitude test"},{kind:"INTERVIEW",name:"Technical interview"}]},
- {id:"FULL_PROCESS",label:"Full process",rounds:[
-  {kind:"TALK",name:"Pre-placement talk"},{kind:"TEST",name:"Assessment"},
-  {kind:"GD",name:"Group discussion"},{kind:"INTERVIEW",name:"Final interview"}]},
+ {id:"INTERVIEW_ONLY",label:"Test, Technical, HR",rounds:[{kind:"TEST",name:"Aptitude test"},{kind:"INTERVIEW",name:"Technical interview"},{kind:"INTERVIEW",name:"HR interview"}]},
+ {id:"TEST_INTERVIEW",label:"Talk, Test, Interview",rounds:[
+  {kind:"TALK",name:"Company talk"},{kind:"TEST",name:"Online test"},{kind:"INTERVIEW",name:"Interview"}]},
+ {id:"FULL_PROCESS",label:"Test, Group discussion, Interview",rounds:[
+  {kind:"TEST",name:"Online test"},{kind:"GD",name:"Group discussion"},{kind:"INTERVIEW",name:"Interview"}]},
 ] as const;
 export type HrRoundPresetId=(typeof HR_DRIVE_ROUND_PRESETS)[number]["id"];
 export function applyHrRoundPreset(draft:HrDriveDraft,id:HrRoundPresetId):HrDriveDraft {

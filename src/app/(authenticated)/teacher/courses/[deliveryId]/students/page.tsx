@@ -43,24 +43,6 @@ export default async function FacultyCourseStudentsPage({
         title="Students"
         description={`${delivery.courseName} · ${delivery.sectionName} · ${delivery.academicPeriodName}`}
       />
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/reports"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Section reports hub
-        </Link>
-      </div>
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/gradebook"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Published gradebook
-        </Link>
-      </div>
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/attendanceDetail"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          View class attendance
-        </Link>
-      </div>
       <FacultyCourseRoster
         learners={roster}
         sectionName={delivery.sectionName}

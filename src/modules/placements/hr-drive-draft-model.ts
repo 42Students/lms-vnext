@@ -16,8 +16,8 @@ const round = z.strictObject({
 });
 export const hrDriveDraftSchema = z.strictObject({
   title: z.string().trim().min(3).max(200),
-  description: z.string().trim().min(20).max(5000),
-  location: z.string().trim().min(2).max(180),
+  description: z.string().trim().max(5000),
+  location: z.string().trim().max(180),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
@@ -40,7 +40,7 @@ export const hrDriveDraftSchema = z.strictObject({
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
   branches: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
   passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
-  rounds: z.array(round).min(1).max(12),
+  rounds: z.array(round).max(12),
 }).superRefine((data, ctx) => {
   if(data.driveMode==="OFF_CAMPUS"&&!data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],

@@ -67,3 +67,15 @@ The cloud report `docs/orchestrator/unit-failures-r1.md` lists seven chat-14 ass
 - GR-19, GR-20: eight new route boundaries under admin placements student lookup and TPO discussion, overview, team; `tests/unit/graceful-route-coverage.test.ts` enforces both IDs across the entire app.
 - GR-09, GR-31: `tests/unit/graceful-raw-error-scan.test.ts` adds ID-named regressions for safe local Zod issue trees and telemetry exemptions. **Known global failing conditions in account-lane components remain; not represented as passing or as BLOCKED under the strict protocol.** Account lanes must address real raw-code sinks and unguarded writes, not widen the baseline.
 - No new OPEN GR item was found in `graceful-chat-14.md`; GR-51 continues to need verified provider-side acceptance and idempotency. Existing DONE labels describe authored implementations, not executed acceptance. Tests were not run by this lane.
+
+
+## Refreshed test list: chat-14 round 3
+
+`unit-failures-r1.md` refreshed at 18:50 still reports **GR-09 and GR-31**. This branch has no executed proof yet.
+
+| ID | Current evidence and limitation |
+| --- | --- |
+| GR-09 | `tests/unit/graceful-raw-error-scan.test.ts` now explicitly tests both direct raw-code JSX expressions and local Zod issue tree exemptions; every changed component at baseline comparison snapshot was inspected. The code is authored, but the cloud test must be rerun. |
+| GR-31 | `src/components/auth/membership-chooser.tsx` + `tests/unit/graceful-login-guards.test.ts` demonstrate actual guarded, friendly membership switching (GR-04/GR-30/GR-31 named). Static scan inventory in `docs/audit/graceful/gr31-outstanding-mutations-r1.md` identifies 27 **unfixed** account-lane business-write components. The global GR-31 scanner remains expected to fail until owners adopt the guard. |
+
+This audit does **not** mark the remaining 27 violations DONE, NOT-A-GAP or BLOCKED. The initial DONE row for GR-31 denotes the shared regression gate, not application-wide adoption. GR-51 is still provider-blocked.

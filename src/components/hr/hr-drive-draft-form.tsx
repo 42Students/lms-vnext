@@ -56,6 +56,7 @@ export function HrDriveDraftForm({
   const [branchInput,setBranchInput]=useState((initial.branches??[]).join(", "));
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
+  const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
@@ -81,6 +82,32 @@ export function HrDriveDraftForm({
       queueMicrotask(()=>{setDraft(saved);setBranchInput((saved.branches??[]).join(", "));setNotice("We restored your unsent draft");});
     }catch{/* Browser storage unavailable */ }
   },[storageKey,fixRequestId,sourceJobId]);
+
+  // REC-home-drives-32: the browser cannot quietly throw away an active
+  // edit or Hire Again draft. Unsubmitted data stays on this device.
+  useEffect(()=>{
+    if((!fixRequestId&&!sourceJobId)||submittedRef.current||
+       !hrDraftContainsWork(draft)||JSON.stringify(draft)===JSON.stringify(initial))return;
+    const beforeUnload=(event:BeforeUnloadEvent)=>{
+      event.preventDefault();
+      event.returnValue="";
+    };
+    const linkGuard=(event:MouseEvent)=>{
+      const target=event.target instanceof Element?event.target.closest("a[href]"):null;
+      if(!target||event.defaultPrevented||event.ctrlKey||event.metaKey||event.altKey||event.shiftKey)return;
+      const href=target.getAttribute("href");
+      if(!href||href.startsWith("#"))return;
+      try{
+        const destination=new URL(href,window.location.href);
+        if(destination.origin!==window.location.origin)return;
+        if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
+        if(!window.confirm("Leave without these changes?"))event.preventDefault();
+      }catch{/* Malformed navigation is handled by the browser. */}
+    };
+    window.addEventListener("beforeunload",beforeUnload);
+    document.addEventListener("click",linkGuard,true);
+    return ()=>{window.removeEventListener("beforeunload",beforeUnload);document.removeEventListener("click",linkGuard,true);};
+  },[draft,initial,fixRequestId,sourceJobId]);
 
   // REC-home-drives-29: scope the draft to this signed-in user and college.
   useEffect(()=>{
@@ -173,7 +200,7 @@ export function HrDriveDraftForm({
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
-      window.location.assign("/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING");
+      setSavedRequestId((raw as {request:{id:string}}).request.id);
     }catch(error){
       if(error instanceof FriendlyFetchError && (error.code==="STALE"||error.code==="INVALID_STATE")){
         setNotice("This request has changed. Refresh Drives before trying again.");
@@ -188,6 +215,19 @@ export function HrDriveDraftForm({
       setSubmitting(false);
     }
   }
+
+  if(savedRequestId) return <section role="status" className="space-y-4 rounded-xl border border-border bg-surface p-6">
+    <h2 className="text-lg font-semibold text-foreground">Sent to the placement cell for review</h2>
+    <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
+    <div className="flex flex-wrap gap-3">
+      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Open the request</a>
+      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Go to Drives</a>
+      <a href={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-primary-text underline">Request another</a>
+    </div>
+  </section>;
 
   return (
     <div className="space-y-6">

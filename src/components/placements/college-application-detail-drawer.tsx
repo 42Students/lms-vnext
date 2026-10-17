@@ -11,7 +11,7 @@ export type CollegeApplicationDetail={
  stage:string|null;stageHistory:Event[];screeningHistory:Event[];history:Event[];
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
- offers:{id:string;status:string;issuedAt:string}[];
+ offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
  scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string};
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
@@ -24,17 +24,19 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [loading,setLoading]=useState(false);
  const [error,setError]=useState("");
  const [note,setNote]=useState("");
+ const [letterInput,setLetterInput]=useState<Record<string,string>>({});
  const [saving,setSaving]=useState(false);
+ const [savingLetter,setSavingLetter]=useState(false);
  const [success,setSuccess]=useState("");
  const [linkNotice,setLinkNotice]=useState("");
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
- const url="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
+ const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
   setLoading(true);setError("");
   try{
-   const body=await apiFetch<CollegeApplicationDetail>(url,{cache:"no-store"});
+   const body=await apiFetch<CollegeApplicationDetail>(endpoint,{cache:"no-store"});
    if(!body?.application)throw Error("Could not load this application. Please try again.");
    setDetail(body);
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to load application");}
@@ -44,11 +46,23 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   if(!note.trim()||saving)return;
   setSaving(true);setError("");setSuccess("");
   try{
-   await apiFetch(url,{method:"POST",headers:{"content-type":"application/json"},
+   await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim()})});
    setNote("");await reload();setSuccess("Internal note saved to application history.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
   finally{setSaving(false);}
+ }
+ async function attachLetter(offerId:string){
+  if(savingLetter)return;
+  const url=letterInput[offerId]?.trim()??"";
+  if(!url.startsWith("https://")){setError("Enter a secure HTTPS offer-letter URL.");return;}
+  setSavingLetter(true);setError("");setSuccess("");
+  try{
+   await apiFetch(endpoint,{method:"PATCH",headers:{"content-type":"application/json"},
+    body:JSON.stringify({offerId,url,confirmed:true})});
+   await reload();setSuccess("Offer letter attached");
+  }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
+  finally{setSavingLetter(false);}
  }
  const sections=[
   {label:"Pipeline history",rows:detail?.stageHistory??[]},
@@ -117,8 +131,22 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Offer history</h3>
-       {detail.offers.length?<ul className="mt-2 text-sm">{detail.offers.map(o=>
-        <li key={o.id}>{o.status} · {when(o.issuedAt)}</li>)}</ul>:
+       {detail.offers.length?<ul className="mt-2 space-y-3 text-sm">{detail.offers.map(o=>
+        <li key={o.id} className="space-y-2 rounded border border-border p-2">
+         <p>{o.status} · {when(o.issuedAt)}</p>
+         {o.offerLetterUrl?<a href={o.offerLetterUrl} target="_blank" rel="noreferrer noopener"
+           className="font-semibold text-primary-text underline">View offer letter</a>:null}
+         {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
+          <label className="grid gap-1">Offer-letter HTTPS link
+           <input type="url" placeholder="https://..." value={letterInput[o.id]??""}
+            onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
+            className="min-h-10 rounded border border-border bg-surface p-2"/>
+          </label>
+          <button type="button" disabled={savingLetter} onClick={()=>void attachLetter(o.id)}
+           className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
+           {savingLetter?"Saving…":"Attach Offer Letter"}</button>
+         </div>:null}
+        </li>)}</ul>:
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
       </section>
       <section className="rounded-lg border border-border p-4">
