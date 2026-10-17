@@ -198,7 +198,7 @@ export function RecruiterBulkOwnerControls({
               ))}
             </div>
           )}
-          {reviewOpen?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
             <button type="button" className="ml-2 text-primary-text underline" onClick={()=>setReviewOpen(false)}>Edit</button>
