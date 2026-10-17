@@ -5,6 +5,6 @@
 export function mentorMeetingDisplayStatus(
   status: string, endsAt: Date, now: Date,
 ): string {
-  return status === "SCHEDULED" && endsAt.getTime() < now.getTime()
+  return (status === "SCHEDULED" || status === "RESCHEDULED") && endsAt.getTime() < now.getTime()
     ? "MISSED" : status;
 }
