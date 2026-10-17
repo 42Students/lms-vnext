@@ -280,3 +280,8 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 
 | TPO-inbox-team-23 | PARTIAL — OPEN | Real per-conversation decision event projection (ignores later unmark/delete) and Decisions-count chip added in `src/modules/placements/tpo-team-internal-read-service.ts`, `src/modules/placements/tpo-team-conversation-filter-model.ts`, and Team page. `tests/unit/tpo-team-filter-round4.test.ts` has a named **TPO-inbox-team-23** regression. Mark-on-send still outstanding. |
 | TPO-inbox-team-18 | PARTIAL — OPEN | Decisions chip added alongside previous Following/Unread/Topics, preserving scoped SQL and pagination; object/asks filters still absent. |
+
+## Round 6 — author-list correctness
+
+| TPO-inbox-team-R04 | DONE (source, tests not run) | `listTpoPlacementAnnouncements` defaults to authored notices, while an explicit **All team notices** switch preserves college colleague access and pagination scope. Named `TPO-inbox-team-R04` test in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. |
+| TPO-inbox-team-57 | DONE (source, tests not run) | Colleague-managed notices remain accessible by the separate scoped view, with server-side persisted permission and version checks retained. Named `TPO-inbox-team-57` tests. |
