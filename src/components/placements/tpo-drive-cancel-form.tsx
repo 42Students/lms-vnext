@@ -2,6 +2,8 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { TpoDriveCancelImpact } from "@/modules/placements/tpo-drive-cancel-model";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 
 const CANCEL_REASONS = [
   "Company withdrew",
@@ -40,7 +42,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
     setPending(true);
     setError(null);
     try {
-      const response = await fetch("/api/placements/tpo/jobs/" + preview.id + "/cancel-preview", {
+      await apiFetch("/api/placements/tpo/jobs/" + encodeURIComponent(preview.id) + "/cancel-preview", {
         method: "POST",
         credentials: "same-origin",
         headers: { "content-type": "application/json" },
@@ -52,16 +54,10 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           reason,
         }),
       });
-      if (!response.ok) {
-        const body = (await response.json().catch(() => null)) as { error?: string } | null;
-        throw new Error(
-          body?.error ?? "The preview is stale or the drive changed. Refresh and review again.",
-        );
-      }
       router.push("/tpo/placements/jobs/" + preview.id);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Cancellation failed");
+      setError(e instanceof Error ? e.message : friendlyApiError({}));
     } finally {
       setPending(false);
     }
