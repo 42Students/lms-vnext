@@ -36,6 +36,23 @@ describe("Telegram alert fundamentals", () => {
     expect(normaliseErrorForSignature(withIst)).toEqual(normaliseErrorForSignature(withUtc));
   });
 
+  it("GR-112 GR-125 coalesces distinct eight-hex request references without merging different failures", () => {
+    const first = {
+      environment: "PRODUCTION",
+      path: "/api/jobs/1234",
+      message: "TypeError: Job 42 failed (Request ID: af02b19c)",
+    };
+    const repeated = {
+      ...first,
+      path: "/api/jobs/9876",
+      message: "TypeError: Job 99 failed (Request ID: 9bed006a)",
+    };
+    expect(errorSignatureHash(first)).toBe(errorSignatureHash(repeated));
+    expect(normaliseErrorForSignature(first.message)).not.toContain("af02b19c");
+    expect(errorSignatureHash({ ...repeated, message: "RangeError: Job 99 failed (Request ID: 9bed006a)" }))
+      .not.toBe(errorSignatureHash(first));
+  });
+
   it("GR-113 removes credentials, personal data, SQL parameters, stack frames and route identifiers", () => {
     const raw = "Error for jane@example.com +91 9876543210 bearer ABcd1112 at postgres://admin:password@internal/db params=[42, 'secret']\n at node_modules/secret";
     const safe = redactAlertText(raw);
