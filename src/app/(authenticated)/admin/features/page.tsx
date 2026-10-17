@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -71,7 +72,7 @@ export default async function SuperAdminFeaturesPage({
         <PageHeader
           eyebrow="Super Admin · Tenant Controls"
           title="Feature Controls"
-          description="Read-only college module access."
+          description="College module access, policy inheritance and guarded inline changes."
         />
         <ErrorState
           title="Invalid feature filters"
@@ -225,7 +226,17 @@ export default async function SuperAdminFeaturesPage({
                   {college.modules.map(decision => (
                     <div key={decision.module} className="flex flex-wrap items-start justify-between gap-2 border-t border-border pt-3">
                       <dt className="text-sm font-semibold text-foreground">{decision.label}</dt>
-                      <dd className="m-0 text-right"><ModuleState decision={decision}/></dd>
+                      <dd className="m-0 min-w-44 text-right">
+                        <ModuleState decision={decision}/>
+                        <details className="mt-2 text-left">
+                         <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                          Change {decision.label} →
+                         </summary>
+                         <CollegeFeatureRuleEditor collegeId={college.id}
+                          module={decision.module} stored={decision.stored}
+                          ancestorLocked={decision.ancestorLocked}/>
+                        </details>
+                       </dd>
                     </div>
                   ))}
                 </dl>
@@ -291,9 +302,15 @@ export default async function SuperAdminFeaturesPage({
                             key={decision.module}
                             className="px-4 py-4 align-top"
                           >
-                            <ModuleState
-                              decision={decision}
-                            />
+                            <ModuleState decision={decision}/>
+                            <details className="mt-2 min-w-44">
+                             <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                              Change {decision.label} →
+                             </summary>
+                             <CollegeFeatureRuleEditor collegeId={college.id}
+                              module={decision.module} stored={decision.stored}
+                              ancestorLocked={decision.ancestorLocked}/>
+                            </details>
                           </td>
                         ),
                       )}
@@ -372,8 +389,7 @@ export default async function SuperAdminFeaturesPage({
         Lower-level Projects/Electives overrides,
         placement participation decisions, and other
         authorization gates may affect a learner&apos;s
-        actual experience. No toggles or policy writes
-        are available here.
+        actual experience. Guarded inline college-policy editors are available from each cell. Every change still requires fresh impact review and server-side authorization.
       </p>
     </div>
   );

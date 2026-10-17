@@ -5,6 +5,8 @@ import {TpoSettingsNav} from "@/components/placements/tpo-settings-nav";
 import {TpoPublicPlacementToggle} from "@/components/placements/tpo-public-placement-toggle";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getTpoPublicPlacementPublication} from "@/modules/placements/public-page/publication-service";
+import {getPublicPlacementStatistics} from "@/modules/placements/public-page/read-service";
+import {readOptionalPublicPlacementData} from "@/modules/placements/public-page/optional-read-model";
 import {publicPlacementSettingState} from "@/modules/placements/public-page/publication-view-model";
 export const dynamic="force-dynamic";
 
@@ -15,6 +17,8 @@ export default async function PublicPlacementSettingsPage({
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const value=await getTpoPublicPlacementPublication(context);
  const view=publicPlacementSettingState(value);
+ const preview=view.enabled?await readOptionalPublicPlacementData(()=>getPublicPlacementStatistics(context.membership!.collegeId)):null;
+ const published=preview?.available?preview.value:null;
  const raw=await searchParams;
  const updated=Array.isArray(raw.updated)?raw.updated[0]:raw.updated;
  return <div className="space-y-6">
@@ -37,6 +41,31 @@ export default async function PublicPlacementSettingsPage({
    {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
+   <section aria-label="Published placement preview" className="mt-5 space-y-3 rounded-xl border border-border bg-surface-subtle p-4">
+    <h2 className="font-semibold">How your public placements look</h2>
+    <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
+    {!view.enabled?<p role="status" className="text-sm text-body">Publication is off; this preview does not make any statistics public.</p>:null}
+    {view.enabled&&!published?<p role="status" className="text-sm text-warning-text">There is no current published snapshot to preview. Figures remain withheld.</p>:null}
+    {published?<p className="text-xs text-muted-foreground">Published as of {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(published.publishedAt))}.</p>:null}
+    <div className="grid gap-3 sm:grid-cols-2">
+     {([
+      ["Students placed",published?.placed??null],
+      ["Offers received",published?.offers??null],
+      ["Recruiting employers",published?.employers??null],
+     ] as const).map(([label,number])=><div key={label} className="rounded-lg border border-border bg-surface p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 font-semibold">{number===null?"Not enough data yet":number.toLocaleString("en-IN")}</p>
+     </div>)}
+     {([
+      ["Median package",published?.medianCtcInr??null],
+      ["Highest package",published?.highestCtcInr??null],
+     ] as const).map(([label,number])=><div key={label} className="rounded-lg border border-border bg-surface p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 font-semibold">{number===null?"Not enough data yet":
+       new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(number)}</p>
+     </div>)}
+    </div>
+   </section>
    <Link href="/placements" className="mt-4 inline-block text-sm text-primary-text underline">
      Open public placements page
    </Link>
