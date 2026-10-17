@@ -71,7 +71,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   // eslint-disable-next-line react-hooks/purity -- request-time server dashboard needs a current clock for deadlines.
   const now = new Date();
   const week = recruiterTodayEightDayWindow(now);
-  const jobs=await listOwnRecruiterPlacementJobs(context);
+  const jobs=await listOwnRecruiterPlacementJobs(context,selectedId);
   const [calendarResult,inboxResult,conversationResult]=await Promise.allSettled([
     listRecruiterCalendarEvents(context,week),
     listHrNotifications(context,{collegeId:selectedId,unreadOnly:"true"}),

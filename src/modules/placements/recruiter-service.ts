@@ -385,6 +385,7 @@ export async function revokePlacementRecruiterGrant(
 
 export async function listOwnRecruiterPlacementJobs(
   context: RequestContext,
+  collegeId?: string,
 ) {
   if (!hasActiveRecruiter(context)) {
     throw new AuthorizationError(
@@ -393,6 +394,9 @@ export async function listOwnRecruiterPlacementJobs(
   }
 
   const grants = context.recruiter?.grants ?? [];
+  if (collegeId && !grants.some(grant => grant.collegeId === collegeId)) {
+    throw new AuthorizationError("placements.recruiter.read");
+  }
   if (grants.length === 0) {
     return [];
   }
@@ -439,6 +443,7 @@ export async function listOwnRecruiterPlacementJobs(
           placementJobs.companyRelationshipId,
           relationshipIds,
         ),
+        ...(collegeId ? [eq(placementJobs.collegeId, collegeId)] : []),
         eq(
           placementCompanyRelationships.collegeId,
           placementJobs.collegeId,
