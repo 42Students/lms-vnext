@@ -391,7 +391,7 @@ export function HrDriveDraftForm({
           </div>
         ) : null}
         { /* Live, locally held student-facing draft preview; never imply publication. */ }
-        {(
+        {true ? (
           <div className="mt-4 space-y-2 rounded-md bg-surface-secondary p-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
