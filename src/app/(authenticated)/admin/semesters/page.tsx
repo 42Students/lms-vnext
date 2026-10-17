@@ -88,6 +88,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
       <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
     </form>
+    <a href={"/api/admin/semesters/export?"+new URLSearchParams({
+      ...(data.query.q?{q:data.query.q}:{}),
+      ...(data.query.programId?{programId:data.query.programId}:{}),
+      ...(data.query.status!=="ALL"?{status:data.query.status}:{})
+    }).toString()} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+      Export semesters.csv
+    </a>
     <section aria-label="Semesters" className="overflow-x-auto rounded-xl border border-border bg-surface">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">{data.total} matching semesters</p>
       {data.items.length === 0 ? <p className="p-5 text-sm text-body">No semesters found. Create a program first, then add semesters.</p> :
