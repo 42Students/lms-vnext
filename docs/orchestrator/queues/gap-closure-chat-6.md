@@ -43,7 +43,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-28 | S4 | COPY | WRONG |
 | FAC-assessments-30 | S4 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-R05 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| FAC-assessments-R06 | S4 | COPY | OPEN |
+| FAC-assessments-R06 | S4 | COPY | DONE |
 | FAC-assessments-R07 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-assessments-R08 | S4 | VALIDATION | OPEN |
 | FAC-attendance-grades-R01 | S4 | VALIDATION | OPEN |
@@ -306,3 +306,5 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - Provider-only blockers: SA-academics-people-60/-72 and LEARNER-profile-misc-01/-02/-03/-04 need private scanned object storage; SA-placements-projects-103 needs same for screenshots; -113 needs Cloud Logging provider integration; -120 needs GitHub findings-import credentials. All have acceptance notes; do not fake uploads or provider responses.
 
 - LEARNER-profile-misc-08: OD-38 retains safety-enhancing academic/verification separation and the privacy-aware career checklist. Named test `chat6-learner-safe-profile-enhancements.test.ts`; acceptance updated, not run.
+
+- FAC-assessments-R06: report page now shows legacy Back, Submitted, Average score, Questions, Due date; named contract `tests/unit/chat6-faculty-quiz-report-header-r06.test.ts` and acceptance added (tests not run).
