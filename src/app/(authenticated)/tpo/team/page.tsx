@@ -94,7 +94,7 @@ export default async function TpoTeamPage({searchParams}:{
        </p>:null}
        {member.membershipId===context.membership?.id&&awayState?.ready?
         <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>:null}
-       <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
+       <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN"||role==="COLLEGE_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {workload?.ready?<p className="mt-2 text-xs text-muted-foreground">
         {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
        </p>:null}
