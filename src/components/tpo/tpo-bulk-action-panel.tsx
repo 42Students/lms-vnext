@@ -15,6 +15,7 @@ import {TPO_INELIGIBLE_REASONS} from "@/modules/placements/tpo-ineligible-reason
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import {tpoReviewOneByOneHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
+import {groupTpoBulkExceptions} from "@/modules/placements/tpo-bulk-exception-groups";
 import {selectTpoBulkPage,toggleTpoBulkRow,canSelectTpoBulkRow,isTpoBulkPageSelected,isTpoBulkPreviewCurrent,canActOnEntireTpoView,TPO_BULK_UI_LIMIT,TPO_BULK_VIEW_LIMIT,
   type TpoBulkUiRow,matchTpoBulkRollNumbers} from "@/modules/placements/tpo-bulk-ui-model";
 
@@ -50,6 +51,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
  const [error,setError]=useState("");
  const availableRows=allRows??rows;
  const labelsById=new Map(availableRows.map(row=>[row.id,row.label]));
+ const exceptionGroups=groupTpoBulkExceptions(outcomes,labelsById);
  const previewWithNames=preview?.rows.map((row,index)=>({...row,
    label:labelsById.get(row.id)??"Selected row "+(index+1),
  }))??[];
@@ -335,6 +337,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      {outcomes.filter(item=>item.status==="updated").length} updated ·
      {" "}{outcomes.filter(item=>item.status!=="updated").length} not applied
     </p>
+    {exceptionGroups.length>0?<div aria-label="Not applied by reason" className="space-y-2 rounded-md border border-border p-3">
+     <h3 className="text-sm font-semibold">Not applied by reason</h3>
+     <ul className="space-y-2 text-sm">{exceptionGroups.map(group=><li key={group.reason}>
+      <p className="font-semibold">{group.reason} ({group.count})</p>
+      <p className="break-words text-body">{group.names.join(", ")}{group.count>group.names.length?", and "+(group.count-group.names.length)+" more":""}</p>
+     </li>)}</ul>
+    </div>:null}
     {safeSelected.length>0?<button type="button" disabled={busy} onClick={()=>void startPreview(plan?.action??action)}
      className="min-h-11 rounded-md bg-primary px-3 font-semibold text-on-primary">
      Preview next batch ({Math.min(TPO_BULK_UI_LIMIT,safeSelected.length)} of {safeSelected.length} remaining)

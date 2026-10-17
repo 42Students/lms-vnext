@@ -85,7 +85,7 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(create()).toContain("Skills the employer requires are not configured on this form yet.");
  });
  it("TPO-drives-47 recruiter lead invite is not misrepresented as a drive-level email",()=>{
-  expect(create()).toContain("recruiter lead invitations are managed separately under Engage.");
+  expect(create()).toMatch(/recruiter lead invitations are managed separately under Engage\./i);
   expect(source("src/modules/placements/tpo-recruiter-invite-service.ts")).toContain("lead");
  });
  it("TPO-drives-50 TPO edit access still requires a scoped TPO actor",()=>{

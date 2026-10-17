@@ -50,15 +50,23 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
     {available.length===0?emptyText:targets.length+" chosen. Use Ctrl or Cmd to choose more."}
    </span>
   </div>:null}
-  {targetKind==="drives"&&options?<label className="grid min-w-0 gap-1 text-sm">Choose a drive
-   <select name="targetId" required value={target}
-    onChange={event=>setTarget(event.target.value)}
-    className="min-h-11 max-w-full rounded-md border border-border bg-surface px-3">
-    <option value="">{available.length?"Choose an option":emptyText}</option>
-    {available.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
-   </select>
+  {targetKind==="drives"&&options?<div className="grid min-w-48 gap-2 text-sm">
+   <label className="grid gap-1">Find a drive
+    <input type="search" value={search}
+     onChange={event=>{setSearch(event.target.value);setTarget("");}}
+     placeholder="Search published drives"
+     className="min-h-11 max-w-full rounded-md border border-border bg-surface px-3"/>
+   </label>
+   <label className="grid gap-1">Choose a drive
+    <select name="targetId" required value={target}
+     onChange={event=>setTarget(event.target.value)}
+     className="min-h-11 max-w-full rounded-md border border-border bg-surface px-3">
+     <option value="">{!available.length?emptyText:!filtered.length?"Nothing matches this search":"Choose an option"}</option>
+     {filtered.map(item=><option key={item.id} value={item.id}>{item.label}</option>)}
+    </select>
+   </label>
    {!available.length?<span role="status" className="text-xs text-muted-foreground">{emptyText}</span>:null}
-  </label>:null}
+  </div>:null}
   {targetKind&&!options?<p role="alert" className="text-xs">
    Options could not load. Refresh to try again. Targeted sending is unavailable.
   </p>:null}

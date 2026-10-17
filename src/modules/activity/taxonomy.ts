@@ -107,6 +107,8 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.teaching_assignment.assigned",
   COURSES_TEACHING_ENDED:
     "courses.teaching_assignment.ended",
+  COURSES_FACULTY_SCHEDULE_REASSIGNED:
+    "courses.faculty_schedule.reassigned",
   COURSES_LEARNER_CONTENT_COMPLETED:
     "courses.learner_content.completed",
   COURSES_ASSIGNMENT_CREATED:"courses.assignment.created",

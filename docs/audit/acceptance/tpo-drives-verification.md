@@ -115,3 +115,9 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | TPO-drives-42 | OPEN | Legacy future deadline/pay/HTTPS/company checks are performed before company creation; source regression assertions match current form, but full server publication parity remains. |
 
 | TPO-drives-11 | DONE (source verified; tests not executed) | Five persisted Needs doing categories on lifecycle list with SQL-scoped counts (pending review Requests, no applicants, no deadline, due soon, overdue), URL-filtered category links and active state. `tpo-drive-lifecycle-list-service.ts`, `lifecycle/page.tsx`, `tests/unit/tpo-drives-gap-closure.test.ts` named TPO-drives-11. |
+
+## Round 11 — complete employer-history duplicate warnings
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-25 | DONE (source-level; tests not run) | `placement-job-create-workspace.tsx` aggregates **all** non-archived college-scoped prior drive titles/status/IDs for the selected employer, independently of three recent-role highlights; `placement-job-create-form.tsx` warns of an existing drive with its status and a direct drive link; ID-named `tests/unit/tpo-drives-chat-3-round4.test.ts` test `TPO-drives-25 Company Memory uses scoped historical drive facts`. |
