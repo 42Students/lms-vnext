@@ -230,7 +230,7 @@ Audit: `docs/audit/pages/college/academic-people.md` (and `academic-people-revie
 |---|---|---|---|
 | COL-academic-setup-R02 | S2 | STATE | OPEN |
 | COL-academic-setup-R03 | S2 | MISSING-ACTION | DONE |
-| COL-academic-setup-R04 | S2 | VALIDATION | OPEN |
+| COL-academic-setup-R04 | S2 | VALIDATION | DONE |
 | COL-people-R01 | S2 | VALIDATION | OPEN |
 | COL-people-R02 | S2 | PERMISSION | OPEN |
 | COL-academic-setup-R01 | S3 | STATE | OPEN |
