@@ -1,6 +1,7 @@
 "use client";
 
 import { ADMIN_ATTENDANCE_COPY } from "@/modules/attendance/admin-attendance-copy";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {
   useMemo,
   useState,
@@ -244,46 +245,27 @@ export function AdminAttendanceWorkspace({
     setError(null);
     setCorrecting(true);
     try {
-      const response = await fetch(
-        `/api/attendance/admin/sessions/${encodeURIComponent(
-          target.session.id,
-        )}`,
+      await apiFetch<void>(
+        `/api/attendance/admin/sessions/${encodeURIComponent(target.session.id)}`,
         {
           method: "PATCH",
-          headers: {
-            "Content-Type":
-              "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             collegeId: data.collegeId,
-            deliveryId:
-              data.selectedDeliveryId,
-            membershipId:
-              target.learner.membershipId,
+            deliveryId: data.selectedDeliveryId,
+            membershipId: target.learner.membershipId,
             status,
           }),
         },
       );
-      if (!response.ok) {
-        // Do not echo provider, SQL or framework messages from the API body.
-        setError(
-          response.status===409
-            ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
-            :response.status===403
-            ? "You do not have access to correct this attendance. Ask a college administrator."
-            :response.status===429
-            ? "Too many changes were requested. Try again shortly."
-            : "Attendance could not be corrected. Check the record and retry.",
-        );
-        return;
-      }
       setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
       setTarget(null);
       router.refresh();
-    } catch {
-      setError(
-        "Attendance correction failed. Check your connection and retry.",
-      );
+    } catch (cause) {
+      setError(cause instanceof FriendlyFetchError && cause.status===409
+        ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
+        :cause instanceof Error ? cause.message
+        : "Attendance correction failed. Check your connection and retry.");
     } finally {
       setCorrecting(false);
     }
