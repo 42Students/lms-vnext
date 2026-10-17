@@ -46,7 +46,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
   :null;
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
-   description="What you tell your students, to whom, and who has read it. They read it under Placements."/>
+   description={tab.data==="from-42"?"What 42 tells placement cells.":
+    "What you tell your students, to whom, and who has read it. They read it under Placements."}/>
   {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
