@@ -92,9 +92,13 @@ export function tpoDriveWhereItIs(job:{
  if(job.status==="CANCELLED")return "Cancelled";
  if(job.status==="CLOSED")return "Closed";
  if(job.status!=="PUBLISHED")return job.status;
- if(!job.applicationDeadline&&job.offersMade>0&&job.roundsCompleted>=job.roundCount)
-  return "Offers · "+job.offersMade+" issued/accepted";
- if(!job.applicationDeadline)return "Taking applications · no deadline";
+ if(!job.applicationDeadline){
+  if(job.offersMade>0&&job.roundsCompleted>=job.roundCount)
+   return "Offers · "+job.offersMade+" issued/accepted";
+  if(job.roundCount>0&&job.roundsCompleted>0)
+   return "Rounds "+job.roundsCompleted+" of "+job.roundCount+" done · deadline not set";
+  return "Taking applications · no deadline";
+ }
  if(job.applicationDeadline>nowIso)
   return "Taking applications";
  if(job.offersMade>0&&job.roundsCompleted>=job.roundCount)
