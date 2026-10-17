@@ -111,4 +111,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-34 |");
  });
 
+ it("REC-calendar-messages-profile-35 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/company/reports/page.tsx")).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
+  expect(src("src/app/(authenticated)/hr/company/reports/page.tsx")).toContain("Reports appear once you have a drive with applicants.");
+  expect(src("src/modules/placements/hr-company-report-export-model.ts")).toContain("\"Issued\",\"Accepted\"");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-35 |");
+ });
+
 });
