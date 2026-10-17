@@ -302,9 +302,15 @@ export default async function SuperAdminFeaturesPage({
                             key={decision.module}
                             className="px-4 py-4 align-top"
                           >
-                            <ModuleState
-                              decision={decision}
-                            />
+                            <ModuleState decision={decision}/>
+                            <details className="mt-2 min-w-44">
+                             <summary className="inline-flex min-h-10 cursor-pointer items-center text-sm font-semibold text-primary-text">
+                              Change {decision.label} →
+                             </summary>
+                             <CollegeFeatureRuleEditor collegeId={college.id}
+                              module={decision.module} stored={decision.stored}
+                              ancestorLocked={decision.ancestorLocked}/>
+                            </details>
                           </td>
                         ),
                       )}
