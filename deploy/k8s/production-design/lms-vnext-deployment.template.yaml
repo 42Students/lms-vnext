@@ -1,0 +1,111 @@
+# DESIGN TEMPLATE for the production vNext web deployment (graceful operation, GR-101).
+# NOT applied anywhere. Never apply it from a development session: production
+# namespaces are changed only by the owner-approved cutover plan. It documents the
+# settings the production deployment must have so a deploy or a crashed pod never
+# reaches customers.
+#
+# Properties:
+#  - at least 2 replicas spread across nodes, so one node or pod loss is invisible
+#  - rolling update with maxUnavailable 0: a new pod must pass /ready before an old one stops
+#  - startup, readiness and liveness probes (readiness depends on the database)
+#  - preStop sleep + termination grace so in-flight requests finish and the load balancer drains
+#  - PodDisruptionBudget so node maintenance never takes both replicas
+#  - resource requests/limits sized for the first colleges, with a HorizontalPodAutoscaler
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lms-vnext
+  namespace: PROD_NAMESPACE
+  labels: { app: lms-vnext }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: lms-vnext }
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: { maxSurge: 1, maxUnavailable: 0 }
+  template:
+    metadata:
+      labels: { app: lms-vnext }
+    spec:
+      terminationGracePeriodSeconds: 40
+      automountServiceAccountToken: false
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels: { app: lms-vnext }
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        runAsGroup: 1001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: web
+          image: REGISTRY/lms-vnext/web:IMAGE_TAG
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef: { name: vnext-db }
+            - secretRef: { name: vnext-integrations }
+            - secretRef: { name: vnext-auth }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: ["ALL"] }
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+            - { name: next-cache, mountPath: /app/.next/cache }
+          startupProbe:
+            httpGet: { path: /health, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 30
+            timeoutSeconds: 2
+          lifecycle:
+            preStop:
+              exec: { command: ["sleep", "10"] }
+          readinessProbe:
+            httpGet: { path: /ready, port: 8080 }
+            periodSeconds: 10
+            timeoutSeconds: 2
+            failureThreshold: 3
+          livenessProbe:
+            httpGet: { path: /health, port: 8080 }
+            periodSeconds: 20
+            timeoutSeconds: 2
+            failureThreshold: 3
+          resources:
+            requests: { cpu: 250m, memory: 512Mi }
+            limits: { cpu: "1", memory: 1Gi }
+      volumes:
+        - { name: tmp, emptyDir: {} }
+        - { name: next-cache, emptyDir: {} }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: lms-vnext
+  namespace: PROD_NAMESPACE
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: { app: lms-vnext }
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: lms-vnext
+  namespace: PROD_NAMESPACE
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: lms-vnext
+  minReplicas: 2
+  maxReplicas: 6
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: { type: Utilization, averageUtilization: 70 }
