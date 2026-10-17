@@ -295,11 +295,12 @@ export async function scheduleProjectMeeting(
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
     // the check safe even when two different projects schedule concurrently.
-    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 17))`);
+    const organiserId=existing?.scheduledByUserId??context.user.id;
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${organiserId}, 17))`);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(or(
           eq(projectMeetings.projectId,scope.project.id),
-          eq(projectMeetings.scheduledByUserId,context.user.id),
+          eq(projectMeetings.scheduledByUserId,organiserId),
         ),
         inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
@@ -312,8 +313,8 @@ export async function scheduleProjectMeeting(
       title: input.title, agenda: input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
       meetingUrl: targetStatus==="DRAFT"?null:input.meetingUrl,
-      scheduledByUserId: targetStatus==="DRAFT"?null:context.user.id,
-      scheduledByMembershipId:targetStatus==="DRAFT"?null:context.membership?.id ?? null,
+      scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,
+      scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
       linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
       facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
@@ -349,6 +350,19 @@ export async function scheduleProjectMeeting(
       });
       return created;
     }
+    // MEN-projects-meetings-27: editing only facilitator notes is private.
+    // Do not send a misleading second "meeting scheduled" invitation.
+    const facilitatorOnlyChange=existing.status===targetStatus &&
+      existing.meetingType===values.meetingType &&
+      existing.title===values.title &&
+      (existing.agenda??null)===(values.agenda??null) &&
+      existing.startsAt.getTime()===startsAt.getTime() &&
+      existing.endsAt.getTime()===endsAt.getTime() &&
+      existing.timeZone===values.timeZone &&
+      (existing.meetingUrl??null)===(values.meetingUrl??null) &&
+      (existing.linkedSprintId??null)===(values.linkedSprintId??null) &&
+      (existing.linkedTaskId??null)===(values.linkedTaskId??null) &&
+      (existing.outcome??null)===(values.outcome??null);
     const [updated] = await tx.update(projectMeetings).set(values)
       .where(and(eq(projectMeetings.id,existing.id),
         eq(projectMeetings.projectId,scope.project.id),
@@ -357,7 +371,7 @@ export async function scheduleProjectMeeting(
     if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
       .where(eq(projectInstances.id,scope.project.id));
-    if(targetStatus==="DRAFT")return updated;
+    if(targetStatus==="DRAFT" || facilitatorOnlyChange)return updated;
     const event=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
