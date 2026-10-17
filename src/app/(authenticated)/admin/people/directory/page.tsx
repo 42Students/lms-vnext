@@ -21,7 +21,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  </div>;
  const context=await getCurrentRequestContext();
  const data=await listSuperAdminUsers(context,query.data);
- const tabs=[{id:"ALL",label:"All"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
+ const tabs=[{id:"ALL",label:"All contacts"},{id:"FACULTY",label:"Faculty"},{id:"STUDENT",label:"Students"}] as const;
  const roleOptions = ["ALL", ...MEMBERSHIP_ROLES] as const;
  const membershipOptions = ["ALL", ...MEMBERSHIP_STATUSES] as const;
  const platformOptions = ["ALL", ...USER_PLATFORM_STATUSES] as const;
@@ -37,6 +37,11 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     aria-current={data.query.tab===tab.id?"page":undefined}
     className={"inline-flex min-h-11 items-center rounded-md border px-4 font-semibold "+
      (data.query.tab===tab.id?"border-primary bg-primary-subtle text-primary-text":"border-border text-body")}>{tab.label}</Link>)}
+  </nav>
+  <nav aria-label="Related people views" className="flex flex-wrap items-center gap-3 text-sm">
+   <Link href="/admin/students" className="font-semibold text-primary-text underline">Student accounts</Link>
+   <Link href="/admin/faculty" className="font-semibold text-primary-text underline">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="font-semibold text-primary-text underline">Teaching assignments</Link>
   </nav>
   <p className="text-xs text-muted-foreground">
    {data.query.tab==="STUDENT"?"Learner memberships":data.query.tab==="FACULTY"?"Faculty memberships":"All permitted memberships"} ·

@@ -61,6 +61,11 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
       </select>
     </label>
+    <label className="grid gap-1 text-sm font-semibold text-body">Source
+      <select name="channel" defaultValue={data.query.channel} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+        <option value="ALL">All sources</option><option value="INTERNAL">Internal</option><option value="EXTERNAL">External</option>
+      </select>
+    </label>
     <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
      <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
        {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
@@ -107,12 +112,23 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="status" value={data.query.status} />
     {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
+    {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
     {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
   </form>
+  {applicationFilters?<p role="status" className="text-sm text-body">
+    {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
+    ? "Active filters: "+[
+       data.query.jobId?"Job":null,data.query.departmentId?"Department":null,
+       data.query.programId?"Program":null,data.query.cohortId?"Batch":null,
+       data.query.channel!=="ALL"?data.query.channel:null,
+       data.query.pipelineStage!=="ALL"?data.query.pipelineStage:null,
+      ].filter(Boolean).join(" · ")
+    : "Showing all application sources and stages for the selected college."}
+  </p>:null}
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
   {data.items.length?<div className="grid min-w-0 gap-3 md:grid-cols-2">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">

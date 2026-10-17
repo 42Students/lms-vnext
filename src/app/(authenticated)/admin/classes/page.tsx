@@ -45,12 +45,18 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             <input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
+          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Status
+            <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
+            </select>
+          </label>
           <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
             <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
             </select>
           </label>
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+          <button type="submit" className="min-h-11 rounded-md border border-border px-4 font-semibold text-primary-text">Refresh</button>
           <Link href="/admin/classes" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
@@ -74,7 +80,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             </tr>)}</tbody>
           </table></div>}
         <nav aria-label="Class pages" className="flex items-center justify-between gap-3 text-sm">
-          <span>{data.total} classes · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex gap-3">
             {data.query.page>1?<Link href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
             {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
