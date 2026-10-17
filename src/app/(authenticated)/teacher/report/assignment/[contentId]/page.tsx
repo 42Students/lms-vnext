@@ -101,6 +101,9 @@ export default async function FacultyAssignmentReportPage({
         <h2 className="text-lg font-semibold text-foreground">
           Score distribution
         </h2>
+        {metrics.graded===0?<p role="status" className="mt-3 text-sm text-muted-foreground">
+          No grades yet. Grade a submission to populate this score distribution.
+        </p>:null}
         <div
           className="mt-4 space-y-3"
           role="group"
