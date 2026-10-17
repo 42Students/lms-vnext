@@ -53,7 +53,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
  return <section className="rounded-lg border border-border bg-surface p-4" aria-label="Invite selected recruiters">
   <button type="button" className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold"
-   disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setOpen(value=>!value);}}>
+   disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setNotice("");setOpen(value=>!value);}}>
    Invite selected recruiters ({rows.length})
   </button>
   {open?<div className="mt-3 space-y-3">
