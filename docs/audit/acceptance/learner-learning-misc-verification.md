@@ -75,3 +75,11 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-03 | DONE (source) | Faculty allowed-submission methods are fetched, rendered and enforced at the learner form and authorized server boundary, instead of permitting every TEXT/LINK/FILE for all assignments. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-03; server `assignment-method-policy.ts`. |
 | LEARNER-learning-misc-04 | DONE (source) | Faculty-allowed multipart TEXT/LINK/FILE pieces use one submission, with a no-file text/link case supported without forged upload receipts. `tests/unit/chat15-multipart-no-file.test.ts` named LEARNER-learning-misc-04; production bucket safety remains a separate storage dependency. |
 | LEARNER-learning-misc-22 | NOT-A-GAP | Preserve explicit unanswered confirmation and zero credit, plus jump-to-unanswered, rather than legacy's contradictory "can submit" UI + server rejection. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-22. |
+
+## Chat-3 round 13 — inherited learner decisions independently reconciled
+
+| ID | Status | Evidence / delegated safer decision |
+| --- | --- | --- |
+| LEARNER-learning-misc-25 | NOT-A-GAP | Do not render arbitrary rich HTML in quiz prompts or fabricate short-answer grading when the authored schema only validates choice questions. `tests/unit/chat15-unconfirmed-decisions.test.ts` has ID-named test; acceptance decision by chat-15 retained. |
+| LEARNER-learning-misc-34 | DONE (source) | `src/app/(authenticated)/learn/attendance/page.tsx` bounds the query by a validated IST month; calendar and schedule use bounded windows, avoiding whole-history reads. `tests/unit/chat15-calendar-window-bounds.test.ts` named test. |
+| LEARNER-learning-misc-41 | NOT-A-GAP | Preserve authorized delivery-ID URLs, not legacy arbitrary slug redirects that might resolve to someone else's course. `tests/unit/chat15-unconfirmed-decisions.test.ts` ID-named test. |
