@@ -33,15 +33,20 @@ export const superAdminHrListQuerySchema = z
 
 export const createSuperAdminHrInputSchema = z
   .object({
-    companyRelationshipId:
-      superAdminHrRelationshipIdSchema,
+    companyRelationshipId: superAdminHrRelationshipIdSchema.optional(),
+    newCompany:z.strictObject({
+      name:z.string().trim().min(2).max(150),collegeId:z.uuid(),
+      primaryDomain:z.string().trim().min(4).max(253).optional(),
+    }).optional(),
     companyRelationshipIds:z.array(superAdminHrRelationshipIdSchema).max(20).optional(),
     displayName: personDisplayNameSchema,
     phoneE164: phoneE164Schema,
     email: personEmailSchema.optional(),
     title: hrTitleSchema.nullable().optional(),
   })
-  .strict();
+  .strict()
+  .refine(value=>Boolean(value.companyRelationshipId)!==Boolean(value.newCompany),
+    "Select an existing company or create one.");
 
 export const updateSuperAdminHrInputSchema = z
   .object({
