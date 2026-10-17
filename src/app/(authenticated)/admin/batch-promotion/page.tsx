@@ -68,6 +68,27 @@ export default async function SuperAdminBatchPromotionPage({
       </label>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Preview</button>
     </form>
+    <section aria-label="Batch promotion queue" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Batches</h2>
+        <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
+      </div>
+      {visibleCohorts.length ? <div className="overflow-x-auto"><table className="min-w-[44rem] w-full text-left text-sm">
+        <thead><tr className="border-b border-border"><th className="p-2">Batch</th><th className="p-2">Semester</th>
+          <th className="p-2">Academic Year</th><th className="p-2">Students</th><th className="p-2">Status</th><th className="p-2">Action</th></tr></thead>
+        <tbody>{visibleCohorts.map(batch=><tr key={batch.id} className="border-b border-border">
+          <td className="p-2">{batch.programName} · {batch.name}</td>
+          <td className="p-2">{batch.currentTermNumber ?? "—"}</td>
+          <td className="p-2">{batch.currentAcademicYearStart ? `${batch.currentAcademicYearStart}–${batch.currentAcademicYearStart+1}` : "—"}</td>
+          <td className="p-2 tabular-nums">{batch.activeLearners}</td>
+          <td className="p-2">{batch.status}</td>
+          <td className="p-2"><Link href={"/admin/batch-promotion?"+new URLSearchParams({
+             ...(input.data.programId?{programId:input.data.programId}:{}),cohortId:batch.id,
+             ...(showCompleted?{showCompleted:"1"}:{}),
+           })} className="font-semibold text-primary-text underline">Preview →</Link></td>
+        </tr>)}</tbody>
+      </table></div>:<p role="status" className="text-sm text-muted-foreground">No batches match the selected program and status.</p>}
+    </section>
     {invalidCohort ? <ErrorState title="Batch unavailable" description="The selected batch is not available within this college and program."
       action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Reset selection</Link>} /> :
     !preview || !summary ? <EmptyState title="Choose a batch" description="No learner data is fetched until you select a college-owned batch." /> :

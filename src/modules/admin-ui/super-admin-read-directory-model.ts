@@ -6,6 +6,11 @@ export const superAdminReadQuerySchema = z.strictObject({
  page: z.coerce.number().int().min(1).max(1000).default(1),
  pageSize: z.coerce.number().int().refine(n=>[10,25,50,100].includes(n)).default(25),
  jobId: z.string().uuid().optional(),
+ departmentId:z.uuid().optional(),
+ programId:z.uuid().optional(),
+ cohortId:z.uuid().optional(),
+ sectionId:z.uuid().optional(),
+ employmentType:z.string().trim().max(128).optional(),
 });
 export type SuperAdminReadQuery = z.infer<typeof superAdminReadQuerySchema>;
 export type SuperAdminReadRow = {
@@ -22,13 +27,14 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
  if(query.jobId)params.set("jobId",query.jobId);
+ for(const key of ["departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  if(query.status!=="ALL")params.set("status",query.status);
  if(query.page>1)params.set("page",String(query.page));
  if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
  return path+(params.size?"?"+params:"");
 }
 export function readAdminQuery(raw:Record<string,string|string[]|undefined>) {
- return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId});
+ return superAdminReadQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,pageSize:raw.pageSize,jobId:raw.jobId,departmentId:raw.departmentId,programId:raw.programId,cohortId:raw.cohortId,sectionId:raw.sectionId,employmentType:raw.employmentType});
 }
 export function scopedSearchLike(q:string) {
  return "%"+q.replace(/[\\%_]/g,"\\$&")+"%";
