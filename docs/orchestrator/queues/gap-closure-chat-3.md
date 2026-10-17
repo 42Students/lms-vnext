@@ -53,7 +53,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-41 | S3 | STATE | OPEN |
 | TPO-drives-44 | S3 | COPY | OPEN |
 | TPO-drives-45 | S3 | VALIDATION | OPEN |
-| TPO-drives-49 | S3 | STATE | OPEN |
+| TPO-drives-49 | S3 | STATE | DONE |
 | TPO-drives-50 | S3 | PERMISSION | OPEN |
 | TPO-drives-51 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-drives-R03 | S3 | VALIDATION | OPEN |
@@ -119,7 +119,7 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-people-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-people-17 | S2 | MISSING-TAB | FIXED-ON-MAIN |
-| COL-people-20 | S2 | PERMISSION | UNCONFIRMED |
+| COL-people-20 | S2 | PERMISSION | DONE |
 | COL-people-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-people-22 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-people-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
@@ -131,10 +131,10 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-15 | S3 | COPY | OPEN |
 | COL-people-16 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | COL-people-18 | S3 | PERMISSION | FIXED-ON-MAIN |
-| COL-people-19 | S3 | COPY | OPEN |
-| COL-people-24 | S3 | COPY | OPEN |
+| COL-people-19 | S3 | COPY | DONE |
+| COL-people-24 | S3 | COPY | DONE |
 | COL-people-25 | S3 | VALIDATION | FIXED-ON-MAIN |
-| COL-people-09 | S4 | MISSING-ACTION | OPEN |
+| COL-people-09 | S4 | MISSING-ACTION | NOT-A-GAP |
 | COL-people-12 | S4 | MISSING-ACTION | UNCONFIRMED |
 | COL-people-26 | S4 | A11Y | FIXED-ON-MAIN |
 | COL-people-27 | S4 | RESPONSIVE | UNCONFIRMED |
@@ -233,7 +233,7 @@ Audit: `docs/audit/pages/college/attendance.md` (and `attendance-review.md` if p
 | COL-attendance-07 | S3 | VALIDATION | UNCONFIRMED |
 | COL-attendance-09 | S3 | COPY | UNCONFIRMED |
 | COL-attendance-11 | S3 | STATE | OPEN |
-| COL-attendance-16 | S3 | PERMISSION | OPEN |
+| COL-attendance-16 | S3 | PERMISSION | DONE |
 | COL-attendance-10 | S4 | COPY | OPEN |
 | COL-attendance-12 | S4 | MISSING-EXPORT | OPEN |
 | COL-attendance-14 | S4 | MISSING-FIELD | OPEN |
@@ -287,3 +287,12 @@ Merged current `origin/main` into `chatgpt/chat-3-b` before work and checked aga
 - LEARNER-profile-misc-R01: chat-9 owns `src/components/shell/learner-topbar-tools.tsx`; replace plain Notifications link with a guarded, accessible eight-item drawer, refresh/read/error/stale states and View all link; no chat-3 edits in shell.
 
 
+
+## Round 5 — 2026-10-17 (current source disposition; tests authored, not run)
+
+Updated queue statuses above are authoritative for this round. The previous "Round 2" and "Verified acceptance progress" paragraphs are historical snapshots. Fast-forwarded the lane branch from the earlier main head, then merged the newer upstream main changes into `chatgpt/chat-3-b` with two parents and preserved concurrent `membership-protection.ts` integration; push only to this branch.
+
+- **DONE**: `TPO-drives-49` frozen drive has exact closed-state recovery copy and a safe read-error boundary with Retry; test `tests/unit/tpo-drives-chat-3-round4.test.ts`. `COL-attendance-16` has guarded, confirmed Reset to default (75%, 24h) over the existing audited, tenant-scoped policy transaction; test `tests/unit/college-attendance-gap-closure.test.ts`. `COL-people-24` uses a guarded accessible reassign confirmation and exact outcome wording, preserves failed-only selection, and suppresses codes; test `tests/unit/college-people-gap-closure.test.ts`. `COL-people-19` now prioritizes search + category tabs with advanced filters available on demand. `COL-people-20` enforces Super Admin-only COLLEGE_ADMIN role grants **and** revocations via central permission policy while retaining upstream protected-membership safeguards; both IDs have tests in `tests/unit/college-people-gap-closure.test.ts`.
+- **NOT-A-GAP**: `COL-people-09` permanent delete is intentionally replaced by suspend/end membership per approved OD-23; existing attendance and membership history are not deleted. Unit test named `COL-people-09`.
+- **Remains OPEN after partial improvement**: `TPO-drives-39` (round presets need actual creation), `-42` (publish preflight still needs whole server/field parity), `-44` (not every domain error mapped), `-45` (end-of-day action exists but automatic default remains), `COL-courses-content-17` (offerings blocked; nested content dependencies uncounted). These are not counted as closed. Other OPEN rows remain assigned; no invented integration success.
+- **Evidence**: `docs/audit/acceptance/tpo-drives-verification.md`, `college-attendance-verification.md`, `college-people-verification.md`. Changed pages and services are covered by ID-named source/unit tests. **No tests, typecheck, lint, build, database migrations or runtime checks were executed** in the lane.
