@@ -114,6 +114,7 @@ export type TpoMessagesQuery =
  */
 async function loadRecruiterThreads(
   collegeId: string,
+  searchText: string,
 ): Promise<TpoInboxRecord[]> {
   const db = getDb();
 
@@ -131,6 +132,40 @@ async function loadRecruiterThreads(
       lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_messages m
          where m.thread_id=placement_tpo_message_threads.id
          order by m.created_at desc,m.id desc limit 1)`,
+      searchSnippet: searchText ? sql<string|null>`(
+        select left(search_message.body,160)
+        from placement_tpo_messages search_message
+        where search_message.thread_id = placement_tpo_message_threads.id
+          and position(lower(${searchText}) in lower(search_message.body)) > 0
+        order by search_message.created_at desc, search_message.id desc
+        limit 1
+      )` : sql<string|null>`null`,
+      bodySearchMatch: searchText ? sql<boolean>`exists (
+        select 1 from placement_tpo_messages search_message
+        where search_message.thread_id = placement_tpo_message_threads.id
+          and position(lower(${searchText}) in lower(search_message.body)) > 0
+      )` : sql<boolean>`false`,
+      accessEnded: sql<boolean>`not exists (
+        select 1 from placement_recruiter_college_grants grant_row
+        inner join placement_company_relationships relation
+          on relation.id = grant_row.company_relationship_id
+        inner join placement_recruiter_profiles recruiter_profile
+          on recruiter_profile.user_id = grant_row.recruiter_user_id
+          and recruiter_profile.company_id = relation.company_id
+        where relation.college_id = ${collegeId}::uuid
+          and relation.status = 'ACTIVE'
+          and recruiter_profile.status = 'ACTIVE'
+          and grant_row.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
+          and grant_row.status = 'ACTIVE'
+          and grant_row.verification_status = 'VERIFIED'
+          and grant_row.valid_until > now()
+      )`,
+      companyName: sql<string|null>`(
+        select lead.company_name from placement_tpo_leads lead
+        where lead.college_id = ${collegeId}::uuid
+          and lead.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
+        order by lead.updated_at desc, lead.id desc limit 1
+      )`,
       lastSender:sql<string|null>`(select m.sender_type from placement_tpo_messages m
          where m.thread_id=placement_tpo_message_threads.id
          order by m.created_at desc,m.id desc limit 1)`,
@@ -205,6 +240,10 @@ async function loadRecruiterThreads(
       unreadCount: unreadRecruiterMessages,
       lastPreview:row.lastPreview,
       waitingForYou:row.lastSender==="RECRUITER",
+      companyName:row.companyName,
+      bodySearchMatch:row.bodySearchMatch,
+      searchSnippet:row.searchSnippet,
+      accessEnded:row.accessEnded,
     };
   });
 }
@@ -354,7 +393,7 @@ export async function getTpoMessagesInbox(
     : "PLACEMENT_NOTIFICATIONS" as const;
 
   const records = recruiterConversationsAvailable
-    ? await loadRecruiterThreads(collegeId)
+    ? await loadRecruiterThreads(collegeId, query.q.trim().length >= 2 ? query.q.trim() : "")
     : await loadTpoPlacementNotifications(collegeId);
 
   const from = query.from
