@@ -10,7 +10,8 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {threadId}=await params;
  const form=await request.formData().catch(()=>null);
- const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body")});
+ const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body"),
+  idempotencyKey:form?.get("idempotencyKey")||undefined});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
