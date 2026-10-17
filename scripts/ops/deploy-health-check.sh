@@ -8,7 +8,7 @@ notify() {
   [ -n "${TELEGRAM_ALERT_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_ALERT_CHAT_ID:-}" ] || return 0
   local message="$1"
   [ "${APP_ENV:-development}" = production ] || message="[vnext dev] $message"
-  curl -s --max-time 5 -o /dev/null \
+  curl -fsS --max-time 5 -o /dev/null \
     --data-urlencode "chat_id=$TELEGRAM_ALERT_CHAT_ID" \
     --data-urlencode "text=$message" \
     "https://api.telegram.org/bot$TELEGRAM_ALERT_BOT_TOKEN/sendMessage" >/dev/null 2>&1 || true
