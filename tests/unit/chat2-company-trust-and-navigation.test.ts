@@ -26,6 +26,14 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
   expect(route).toContain("TpoCompanyMemoryWorkspace");
   expect(engage).toContain('requested === "board" || requested === "companies"');
  });
+ it("TPO-companies-29 offers a non-scrolling mobile directory with per-company data and create-drive action",()=>{
+  const page=source("src/app/(authenticated)/tpo/companies/page.tsx");
+  expect(page).toContain('aria-label="Companies on this page"');
+  expect(page).toContain("md:hidden");
+  expect(page).toContain('className="hidden w-full min-w-[58rem] text-left text-sm md:table"');
+  expect(page).toContain('["Confirmed joins",company.confirmedJoinedLearners]');
+  expect(page).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
+ });
  it("TPO-companies-22 retains verified company numbers and no-activity label",()=>{
   const workspace=source("src/components/tpo/tpo-company-memory-workspace.tsx");
   expect(workspace).toContain('aria-label="Company numbers"');
