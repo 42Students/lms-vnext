@@ -60,6 +60,6 @@ describe.skipIf(!enabled)("College archived company recovery PostgreSQL",()=>{
   const after=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ACTIVE"});
   expect(after.items.map(x=>x.relationshipId)).toContain(created.relationship.id);
   const stillArchived=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ARCHIVED"});
-  expect(stillArchived.items.find(x=>x.relationshipId===created.relationship.id)?.relationshipStatus).toBe("ACTIVE");
+  expect(stillArchived.items.some(x=>x.relationshipId===created.relationship.id)).toBe(false);
  });
 });
