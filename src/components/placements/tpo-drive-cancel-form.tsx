@@ -22,6 +22,7 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reason, setReason] = useState("");
+  const [reviewed,setReviewed]=useState(false);
   const rows = [
     ["Submitted applications (reviewed for closure)", preview.impact.submittedApplications],
     ["Open rounds that will be cancelled", preview.impact.openRounds],
@@ -31,12 +32,11 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending || !reviewed) return;
     if (reason.trim().length < 10) {
       setError("Please explain the cancellation in at least 10 characters.");
       return;
     }
-    if (!window.confirm("Cancel this drive? Open applicants will be marked Not selected and informed; pending rounds will be cancelled, issued offers withdrawn, and pending withdrawal requests settled. Accepted offers remain valid.")) return;
     setPending(true);
     setError(null);
     try {
@@ -117,7 +117,13 @@ export function TpoDriveCancelForm({ preview }: { preview: Preview }) {
           </div>
           <p className="text-xs text-body">If the drive or counts change after this preview, the cancellation is rejected.</p>
           {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-          <button type="submit" disabled={pending} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
+          <label className="flex items-start gap-2 text-sm text-body">
+            <input type="checkbox" checked={reviewed} onChange={event=>setReviewed(event.target.checked)}
+              disabled={pending} className="mt-1 h-4 w-4 accent-primary"/>
+            I reviewed the affected applications, rounds and offers. I understand cancellation
+            will notify affected learners and cannot be silently undone.
+          </label>
+          <button type="submit" disabled={pending || !reviewed} className="min-h-11 rounded-md bg-primary px-5 font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Cancelling…" : "Review and cancel drive"}
           </button>
     </form>
