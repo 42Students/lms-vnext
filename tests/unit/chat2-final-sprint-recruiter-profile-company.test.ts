@@ -48,7 +48,8 @@ describe("Final sprint recruiter profile/company verification",()=>{
  it("REC-calendar-messages-profile-35 distinguishes verified report status buckets and never counts withdrawals as offers",()=>{
   const page=src("src/app/(authenticated)/hr/company/reports/page.tsx");
   expect(page).toContain('["Applied",job.applications]');
-  expect(page).toContain('"Offered (issued)"');
+  expect(page).toContain('"Offered"');
+  expect(page).toContain("job.outstandingOffers+job.acceptedOffers+job.declinedOffers");
   expect(page).toContain("job.acceptedOffers");
   expect(page).toContain("job.declinedOffers");
   expect(page).toContain("job.joinedOffers");
