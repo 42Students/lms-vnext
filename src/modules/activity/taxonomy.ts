@@ -149,6 +149,9 @@ export const ACTIVITY_EVENT_TYPES = {
   PROJECTS_TEMPLATE_ARCHIVED: "projects.template.archived",
   PROJECTS_TEMPLATE_COLLEGE_ASSIGNED: "projects.template.college_assigned",
   PROJECTS_TEMPLATE_COLLEGE_REVOKED: "projects.template.college_revoked",
+  PROJECTS_RELEASE_CREATED: "projects.release.created",
+  PROJECTS_RELEASE_UPDATED: "projects.release.updated",
+  PROJECTS_RELEASE_DELETED: "projects.release.deleted",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
   PROJECTS_PROJECT_COMPLETED: "projects.project.completed",
