@@ -24,3 +24,8 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-R02 | DONE | tpo/students/page.tsx: bulk-add query-key resets selection; `tests/unit/chat12-tpo-students-contract.test.ts` — `TPO-students-R02` |
 | TPO-students-R08 | DONE | tpo-students-spreadsheet.tsx: student-specific action names; `tests/unit/chat12-tpo-students-contract.test.ts` — `TPO-students-R08` |
 | TPO-students-R07 | DONE | tpo-students-service.ts: summary from filter-matched rows; `tests/unit/chat12-tpo-students-contract.test.ts` — `TPO-students-R07` |
+
+| TPO-students-25 | DONE | Legacy ?q= alias validates duplicates and length; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-25` |
+| TPO-students-R04 | DONE | Single Journey and Branch controls retained in roster form; duplicate selects removed from spreadsheet filters; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-R04` |
+| TPO-students-43 | DONE | Student panel needs-attention for ineligible, pending verification and waiting offers, with Team and Placement eligibility links; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-43` |
+| TPO-students-54 | DONE | Roster outcome pill shows final after-college choice and hover detail; `tests/unit/chat12-students-round2.test.ts` test `TPO-students-54` |

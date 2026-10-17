@@ -46,6 +46,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
   !student.registeredForPlacements?"Placement registration not recorded":null,
+   student.participationStatus==="INELIGIBLE"?"Not eligible for placements":null,
+   student.verification.status==="WAITING"?"Profile verification waiting: "+student.verification.waitingSections.join(", "):null,
+   student.verification.status==="SENT_BACK"?"Profile correction needed":null,
+   student.offersAwaitingAnswer>0?student.offersAwaitingAnswer+" offer(s) waiting on an answer":null,
   student.ambiguousSection?"Conflicting active class membership requires review":null,
   student.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence is incomplete":null,
   student.journeyState==="READY_NOT_APPLYING"?"No active applications recorded":null,
@@ -99,6 +103,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Needs attention</h3>
       {attention.length?<ul className="list-disc space-y-1 pl-5">{attention.map(item=><li key={item}>{item}</li>)}</ul>
        :<p>No attention flags derived from the current roster evidence.</p>}
+      <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Placement eligibility</Link>
+      <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
+        className="ml-3 inline-flex min-h-10 items-center text-primary-text underline">Discuss with team</Link>
     </>:null}
     {tab==="Placement"?<>
       <h3 className="font-semibold">Placement journey</h3>

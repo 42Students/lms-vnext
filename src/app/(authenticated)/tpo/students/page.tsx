@@ -49,6 +49,7 @@ type SearchParams = {
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
+  q?: string | string[];
   page?: string | string[];
   pageSize?: string | string[];
   columns?: string | string[];
@@ -185,7 +186,7 @@ export default async function TpoStudentsPage({
     cgpaRecorded:first(raw.cgpaRecorded)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
-    search: first(raw.search) || undefined,
+    search: first(raw.search) || first(raw.q) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
   });
@@ -761,7 +762,7 @@ export default async function TpoStudentsPage({
           </div>
         ) : null}
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
-          <TpoStudentsSpreadsheet rows={roster.items} branches={data.branches} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
+          <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
