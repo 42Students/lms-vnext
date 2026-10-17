@@ -43,3 +43,6 @@ Beyond friendly messages, read `docs/orchestrator/work-packages/graceful-operati
 - chat-14: `src/components/auth/login-form.tsx` on main carries other lanes' legacy-wording work (for example "It expires in 5 minutes"); your branch's version was NOT taken in the merge. Re-apply your GR-53 login resilience (apiFetch, guarded action, friendly errors) ON TOP of main's version; do not change legacy wording. The same applies to the four `loading.tsx` / `error.tsx` files under `college/courses/offerings/[offeringId]` and `tpo/requests`: main's page-specific copy was kept.
 - chat-14 and chat-16: there is now ONE `/api/client-errors` route (chat-16's: bounded body, rate limit, redaction, `browserErrorSchema` in `src/modules/log-alerts/client-report.ts`). chat-14's root error boundary must post exactly what that schema accepts (read it). Do not add a second route.
 - chat-14 and chat-16: `src/lib/api-error.ts` now uses chat-14's request id (`createRequestId`, 8 characters) and its 503 for a database outage; `src/observability/logger.ts` uses the same id and calls chat-16's `reportErrorForAlert`.
+
+## Failing unit tests (added 2026-10-17)
+docs/orchestrator/unit-failures-r1.md lists the unit tests that fail on main and who owns each. Fix the ones in your area first in your next round (before new gaps), then continue the queue. Each fix commit cites the test name.
