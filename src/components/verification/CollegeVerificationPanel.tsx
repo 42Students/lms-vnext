@@ -95,6 +95,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
    setReviewFeedback(action==="VERIFY"
     ? `${data.summary.succeeded} verified. The students have been told.`
     : `${data.summary.succeeded} sent back. The students see your reason.`);
+   if(data.summary.failed)setBulkError(`${data.summary.failed} item(s) could not be completed; review the row outcomes.`);
    setSelection(new Set());setBulkAction(null);setBulkReason("");router.refresh();
   }catch(error){setBulkError(safeCollegeBulkReviewFailure(error));}
   finally{setBulkBusy(false);}
@@ -216,7 +217,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     onFinish={sequential?()=>{setSelected(null);setSequential(null);
       setReviewFeedback(verificationSessionStopped(sequential.index,sequential.keys.length));}:undefined}
     onClose={()=>{if(sequential)setReviewFeedback(
-      `Stopped at ${sequential.index+1} of ${sequential.keys.length}.`);
+      verificationSessionStopped(sequential.index,sequential.keys.length));
       setSelected(null);setSequential(null);}}
     onSaved={savedReview}/>}
 
