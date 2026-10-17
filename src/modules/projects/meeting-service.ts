@@ -293,6 +293,12 @@ export async function scheduleProjectMeeting(
         title:"Project meeting",body:"A project meeting has been scheduled.",
         actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
       });
+      await notifyActiveProjectMembers(tx,event.id,{
+        projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+        exceptUserId:context.user.id,
+        title:"Project meeting",body:"A project meeting has been scheduled.",
+        actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+      });
       return created;
     }
     const [updated] = await tx.update(projectMeetings).set(values)
