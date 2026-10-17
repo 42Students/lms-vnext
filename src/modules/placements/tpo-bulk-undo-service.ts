@@ -17,6 +17,7 @@ const stageSnapshot=z.strictObject({
  leadId:z.string().uuid(),beforeStage:stage,afterStage:stage,
  beforeReason:z.string().nullable(),afterReason:z.string().nullable(),
  beforeUntil:z.string().nullable(),afterUntil:z.string().nullable(),
+ afterUpdatedAt:z.iso.datetime({offset:true}),
 });
 const ownerSnapshot=z.strictObject({
  leadId:z.string().uuid(),beforeOwnerId:z.string().uuid().nullable(),
