@@ -33,3 +33,5 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-54 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-54 (central error handler only) |
 | GR-19 | DONE | `src/components/ui/graceful-page-loading.tsx`, ${missingLoading.length} new loading boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-19 |
 | GR-20 | DONE | ${missingError.length} new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
+| GR-09 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-09; immutable existing-file SHA allowlist in `docs/audit/graceful/raw-error-allowlist.json` |
+| GR-31 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-31 (new violations gate; existing component adoption remains with account lanes) |
