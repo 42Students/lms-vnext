@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
+import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -275,6 +276,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                       Review and close drive
                     </Link>:null}
                     {job.status==="PUBLISHED"?<TpoRemindNonApplicants jobId={job.id}/>:null}
+                    {["CLOSED","CANCELLED"].includes(job.status)?<TpoDriveCloneAction jobId={job.id}/>:null}
                   </nav>
                 </details>
               </div>
