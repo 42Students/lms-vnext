@@ -52,6 +52,15 @@ function formatCtc(
   }).format(value);
 }
 
+function recruiterOfferStatusLabel(status:string){
+ const labels:Record<string,string>={
+  SELECTED:"With the placement cell",PENDING_VERIFICATION:"Being verified",
+  ISSUED:"Awaiting reply",ACCEPTED:"Accepted",DECLINED:"Declined",
+  EXPIRED:"Expired",WITHDRAWN:"Withdrawn",REVOKED:"Withdrawn",
+ };
+ return labels[status]??status.replaceAll("_"," ");
+}
+
 export default async function HrPlacementJobPage({
   params,
   searchParams,
@@ -235,13 +244,14 @@ export default async function HrPlacementJobPage({
         ← Back to Drives
       </Link>
       <PageHeader
-        eyebrow="Employer Recruiter"
         title={workspace.job.title}
-        description={
-          workspace.company.name +
-          " · " +
-          workspace.college.name
-        }
+        description={workspace.job.employmentType.replaceAll("_"," ")+
+          " · "+(workspace.job.locations.join(", ")||"Location to be decided")+
+          " · "+applicants.counts.all+" applied · "+offersTotal+" offers · "+
+          workspace.rounds.length+" rounds · Apply by "+
+          (workspace.job.applicationDeadline?
+            new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(workspace.job.applicationDeadline):
+            "Date to be decided")}
       />
 
       <section className="rounded-xl border border-border bg-surface p-5">
@@ -254,7 +264,7 @@ export default async function HrPlacementJobPage({
                 : "neutral"
             }
           >
-            {workspace.job.status}
+            {workspace.job.status==="PUBLISHED"?"Live":workspace.job.status==="CLOSED"?"Completed":workspace.job.status==="CANCELLED"?"Cancelled":workspace.job.status==="DRAFT"?"Sent for review":workspace.job.status.replaceAll("_"," ")}
           </StatusBadge>
           <StatusBadge>
             {workspace.job.employmentType
@@ -404,11 +414,11 @@ export default async function HrPlacementJobPage({
       <div className="flex flex-wrap gap-3">
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Hire Again · draft preview
+          Hire again
         </Link>
         <Link href={recruiterDriveDraftHref({collegeId:workspace.college.id})}
           className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          New drive preview
+          Request another drive
         </Link>
       </div>
       <nav aria-label="Hiring workspace tabs" className="flex flex-wrap gap-2">
@@ -624,7 +634,7 @@ export default async function HrPlacementJobPage({
                 className={status===filters.offerState ?
                   "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
                   "rounded-full border border-border px-3 py-2 text-xs text-body"}>
-                {status==="ALL" ? "All statuses" : status}
+                {status==="ALL" ? "All statuses" : recruiterOfferStatusLabel(status)}
               </Link>
             ))}
           </nav>
@@ -632,13 +642,13 @@ export default async function HrPlacementJobPage({
             <article key={offer.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
               <p className="m-0 font-semibold text-foreground">{offer.name || "Unnamed applicant"}</p>
               <p className="mt-1 text-sm text-body">{offer.role}</p>
-              <div className="mt-2 flex flex-wrap items-center gap-2">{offer.kind === "LOI" ? <StatusBadge tone="info">Letter of intent</StatusBadge> : null}<StatusBadge>{offer.status}</StatusBadge>
+              <div className="mt-2 flex flex-wrap items-center gap-2">{offer.kind === "LOI" ? <StatusBadge tone="info">Letter of intent</StatusBadge> : null}<StatusBadge>{recruiterOfferStatusLabel(offer.status)}</StatusBadge>
                 {offer.annualCtcInr != null ? <span className="text-sm text-body">{formatCtc(offer.annualCtcInr)}</span> : null}
               </div>
               <p className="mt-2 text-xs text-muted-foreground">Issued {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(offer.issuedAt)} · Joining {offer.joiningDate ?? "Not set"}</p>
               <p className="mt-1 text-xs text-muted-foreground">Reply by {offer.expiresAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(offer.expiresAt) : "Not set"} · Joining outcome {offer.joiningStatus ?? "Not recorded"}</p>
             </article>
-          ))}</div> : <p className="text-sm text-muted-foreground">No offers recorded for shared applicants.</p>}
+          ))}</div> : <p className="text-sm text-muted-foreground">No offers yet. Send a selection list below when the candidates are ready.</p>}
           <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
