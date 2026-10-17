@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { learnerQuizReviewQuestionNotice } from "@/modules/courses/learner-quiz-review-question-availability-model";
 import { selectLearnerLatestQuizAttempt } from "@/modules/courses/learner-latest-quiz-attempt-model";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { PageLoading } from "@/components/ui/page-loading";
 import { parseLearnerQuizDraft } from "@/modules/courses/learner-quiz-draft";
 import { learnerQuizAnswerProgress } from "@/modules/courses/learner-quiz-answer-progress-model";
 import { learnerQuizRequestCurrent } from "@/modules/courses/learner-quiz-request-race-model";
@@ -104,6 +106,8 @@ export function LearnerQuizAttempt() {
   const [review, setReview] = useState(reviewRequested);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [leaveOpen, setLeaveOpen] = useState(false);
+  const [submitOpen, setSubmitOpen] = useState(false);
   const [confirmedSubmissionQuizId,setConfirmedSubmissionQuizId]=useState<string|null>(null);
   const submittingRef = useRef(false);
   const cancelPendingReturn = useRef<(() => void) | null>(null);
@@ -239,27 +243,18 @@ export function LearnerQuizAttempt() {
   }
 
   function leaveQuiz() {
-    if(attemptable && !window.confirm("Are you sure you want to cancel this quiz? Your unsent answers will remain in this browser, but this attempt has not been submitted."))return;
-    if (
-      typeof window !== "undefined" &&
-      window.history.length > 1
-    ) {
-      router.back();
-      return;
-    }
-    router.push("/learn/allQuizzes");
+    if (attemptable && !review) { setLeaveOpen(true); return; }
+    router.replace("/learn/allQuizzes");
+  }
+
+  function requestSubmit() {
+    if (!quiz || submittingRef.current || submitting || !attemptable) return;
+    setSubmitOpen(true);
   }
 
   async function submit() {
+    setSubmitOpen(false);
     if (!quiz || submittingRef.current || submitting || !attemptable) return;
-
-    const unanswered = answerProgress.total-answerProgress.answered;
-    const confirmation =
-      unanswered > 0
-        ? `You have ${unanswered} unanswered question${unanswered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
-        : "Submit this quiz attempt? You cannot edit this attempt after submission.";
-
-    if (!window.confirm(confirmation)) return;
     // Confirm dialogs may stay open past the server-enforced deadline.
     const confirmedAtMs = Date.now();
     if (!learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, confirmedAtMs)) {
@@ -337,7 +332,7 @@ export function LearnerQuizAttempt() {
   }
 
   if (loading || !learnerQuizRouteScopeCurrent(storageKey,loadedScopeKey)) {
-    return <div role="status" className="rounded-xl border border-border bg-surface p-8 text-sm text-body">Loading quiz…</div>;
+    return <PageLoading label="Loading quiz…" variant="form" count={4} />;
   }
 
   if (error && !quiz) {
@@ -347,7 +342,7 @@ export function LearnerQuizAttempt() {
         <p className="mt-2 text-sm text-body">{error}</p>
         <div className="mt-4 flex gap-2">
           <Button onClick={() => void load()}>Try Again</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text">All Quizzes</Link>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)]">All Quizzes</Link>
         </div>
       </div>
     );
@@ -374,7 +369,7 @@ export function LearnerQuizAttempt() {
                   : "No attempt is available to review."}
             </p>
           </div>
-          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">← Back</button>
+          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-[var(--lms-link-text)]">← Back</button>
         </div>
         {deadlineMissing && !latestAttempt ? (
           <p role="status" className="mt-4 rounded-lg border border-warning p-3 text-sm text-body">
@@ -392,7 +387,7 @@ export function LearnerQuizAttempt() {
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
           <div role="status" className="mt-6 rounded-xl border border-border bg-surface-subtle p-5">
             <p className="text-sm text-body">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
-            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+            <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
               Return to All Quizzes
             </Link>
           </div>
@@ -431,6 +426,18 @@ export function LearnerQuizAttempt() {
 
   return (
     <section className="rounded-xl border border-border bg-surface">
+      <ConfirmDialog open={leaveOpen} onOpenChange={setLeaveOpen}
+        title="Cancel quiz?" description="Are you sure you want to cancel this quiz? Your unsent answers will remain in this browser, but this attempt has not been submitted."
+        confirmVariant="danger" confirmLabel="Leave quiz" onConfirm={() => {
+          setLeaveOpen(false);
+          try { window.sessionStorage.setItem(storageKey, JSON.stringify({ answers, step })); } catch { /* browser storage unavailable */ }
+          router.replace("/learn/allQuizzes");
+        }} />
+      <ConfirmDialog open={submitOpen} onOpenChange={setSubmitOpen} pending={submitting || !attemptable}
+        title="Submit quiz attempt?" description={answerProgress.total > answerProgress.answered
+          ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
+          : "Submit this quiz attempt? You cannot edit this attempt after submission."}
+        confirmLabel="Submit" onConfirm={() => void submit()} />
       <header className="border-b border-border p-4 sm:p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
@@ -443,13 +450,13 @@ export function LearnerQuizAttempt() {
               <p role="status" className="mt-2 rounded-md border border-warning p-2 text-sm font-semibold text-body">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</p>
             ) : null}
           </div>
-          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-primary-text">Back</button>
+          <button type="button" onClick={leaveQuiz} className="text-sm font-semibold text-[var(--lms-link-text)]">Back</button>
         </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 text-sm text-body" aria-live="polite">
           <span>{answerProgress.answered} answered · {answerProgress.total-answerProgress.answered} unanswered</span>
           {answerProgress.firstUnanswered!==null ? (
             <button type="button" onClick={() => setStep(answerProgress.firstUnanswered!)}
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-primary-text hover:bg-primary-subtle">
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-3 font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
               Go to first unanswered
             </button>
           ) : <span className="font-semibold text-success">All questions answered</span>}
@@ -512,7 +519,7 @@ export function LearnerQuizAttempt() {
               {(answers[current.id] ?? []).length > 0 ? (
                 <button type="button"
                   onClick={() => setAnswers(currentAnswers => clearLearnerQuizAnswer(currentAnswers,current.id))}
-                  className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle">
+                  className="mt-4 inline-flex min-h-11 items-center rounded-lg border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle">
                   Clear this answer
                 </button>
               ) : null}
@@ -521,7 +528,7 @@ export function LearnerQuizAttempt() {
           <div className="mt-6">
             <button type="button" aria-expanded={showReview}
               onClick={()=>setShowReview(value=>!value)}
-              className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-lg border border-border px-4 text-sm font-semibold text-[var(--lms-link-text)]">
               {showReview ? "Hide answer review" : "Review answers before submitting"}
             </button>
             {showReview ? (
@@ -531,14 +538,14 @@ export function LearnerQuizAttempt() {
                   {reviewRows.map((item,index)=>(
                     <li key={item.questionId}>
                       <button type="button" onClick={()=>{setStep(index);setShowReview(false);}}
-                        className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 text-left text-sm text-primary-text">
+                        className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-border bg-surface px-3 text-left text-sm text-[var(--lms-link-text)]">
                         <span>Question {index+1}</span>
                         <span>{item.answered ? item.selectedCount+" selected" : "Unanswered"}</span>
                       </button>
                     </li>
                   ))}
                 </ol>
-                <Button disabled={submitting} onClick={()=>void submit()}>
+                <Button disabled={submitting} onClick={requestSubmit}>
                   {submitting?"Submitting…":"Submit reviewed attempt"}
                 </Button>
               </section>
@@ -552,7 +559,7 @@ export function LearnerQuizAttempt() {
                 title={!current || (answers[current.id]??[]).length===0?"Answer this question or use the question numbers to skip.":undefined}
                 onClick={() => setStep((value) => Math.min(questions.length - 1, value + 1))}>Next</Button>
             ) : (
-              <Button disabled={submitting} onClick={() => void submit()}>{submitting ? "Submitting…" : "Submit"}</Button>
+              <Button disabled={submitting} onClick={requestSubmit}>{submitting ? "Submitting…" : "Submit"}</Button>
             )}
           </div>
         </div>

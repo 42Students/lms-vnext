@@ -27,11 +27,11 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   const resolution = resolveLearnerOfferingDelivery(overview.assignments, path.assignmentId, query.deliveryId);
   if (resolution.kind === "none") notFound();
   if (resolution.kind === "choose") return <div className="space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
     <PageHeader title="Choose a course" description="This assignment is in more than one of your courses." />
     <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
       {resolution.options.map(option => <li key={option.deliveryId} className="p-4">
-        <Link className="font-semibold text-primary-text underline"
+        <Link className="font-semibold text-[var(--lms-link-text)] underline"
           href={"/learn/allAssignments/" + encodeURIComponent(path.assignmentId) + "?deliveryId=" + encodeURIComponent(option.deliveryId)}>
           {option.courseName}
         </Link>
@@ -44,7 +44,7 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
   if (!item) notFound();
   const materials=await listOwnLearnerAssignmentMaterialLinks(await getCurrentRequestContext(),item.id,item.deliveryId);
   return <div className="space-y-6">
-    <Link href="/learn/allAssignments" className="inline-flex min-h-10 items-center font-semibold text-primary-text">← All Assignments</Link>
+    <Link href="/learn/allAssignments" className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)]">← All Assignments</Link>
     <PageHeader title={item.title} />
     <div className="grid gap-4 sm:grid-cols-2">
       <section className="rounded-xl border border-border bg-surface p-4">
@@ -81,8 +81,8 @@ export default async function LearnerAssignmentDetail({ params, searchParams }: 
           <p className="whitespace-pre-wrap break-words rounded-lg bg-surface-subtle p-4">{item.submissionText}</p>
         ) : item.submissionType === "LINK" && item.submissionUrl ? (
           learnerAssessmentSubmittedLinkHref(item.submissionUrl) ? (
-            <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} target="_blank" rel="noopener noreferrer"
-              className="block break-all text-primary-text underline">{item.submissionUrl}</a>
+            <a href={learnerAssessmentSubmittedLinkHref(item.submissionUrl)!} 
+              className="block break-all text-[var(--lms-link-text)] underline">{item.submissionUrl}</a>
           ) : (
             <p role="status" className="break-all text-body">Saved link unavailable. Open the original submission from a trusted HTTPS source.</p>
           )
