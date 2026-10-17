@@ -1,5 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
+import {useToast} from "@/components/ui/toast";
 import {useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationFilterPanel} from "./VerificationFilterPanel";
@@ -16,6 +17,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  page:number;total:number;hasMore:boolean;query:Record<string,string>;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const [selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [sequence,setSequence]=useState<VerificationQueueCard[]>([]);
  const [sequenceIndex,setSequenceIndex]=useState(0);
@@ -128,7 +130,8 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    sequenceProgress={inSequence?(sequenceIndex+1)+" of "+sequence.length:undefined}
    onNext={inSequence?nextInSequence:undefined}
    onFinish={inSequence?stopSequence:undefined}
-   onSaved={()=>{
+   onSaved={(action)=>{
+    showToast({tone:"success",title:action==="VERIFY"?(selected.section==="EDUCATION"?"Education":"Identity")+" verified. The student has been told.":"Sent back. The student sees your reason."});
     if(inSequence)nextInSequence();else setSelected(null);
     router.refresh();
    }}/>:null}

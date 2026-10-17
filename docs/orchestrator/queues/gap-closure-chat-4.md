@@ -123,7 +123,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 | SA-tenants-modules-62 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | SA-tenants-modules-64 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-tenants-modules-66 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-67 | S3 | COPY | OPEN |
+| SA-tenants-modules-67 | S3 | COPY | DONE |
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-45 | S4 | STATE | OPEN |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
