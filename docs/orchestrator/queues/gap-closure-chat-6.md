@@ -46,7 +46,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-R06 | S4 | COPY | DONE |
 | FAC-assessments-R07 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | FAC-assessments-R08 | S4 | VALIDATION | OPEN |
-| FAC-attendance-grades-R01 | S4 | VALIDATION | OPEN |
+| FAC-attendance-grades-R01 | S4 | VALIDATION | NOT-A-GAP |
 | FAC-attendance-grades-R02 | S4 | VALIDATION | FIXED-ON-MAIN |
 
 ## superadmin/academics-people-3-people-recruiters (39: OPEN 18, FIXED-ON-MAIN 20, UNCONFIRMED 1)
@@ -159,7 +159,7 @@ Audit: `docs/audit/pages/college/placements.md` (and `placements-review.md` if p
 | COL-placements-16 | S3 | COPY | DONE |
 | COL-placements-18 | S3 | PERMISSION | FIXED-ON-MAIN |
 | COL-placements-21 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-placements-22 | S3 | STATE | OPEN |
+| COL-placements-22 | S3 | STATE | NOT-A-GAP |
 | COL-placements-23 | S3 | PERMISSION | NOT-A-GAP |
 | COL-placements-24 | S3 | COPY | DONE |
 | COL-placements-26 | S3 | MISSING-FIELD | DONE |
