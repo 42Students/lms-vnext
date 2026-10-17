@@ -253,6 +253,7 @@ export function HrDriveDraftForm({
             <input className={inputClass} inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
+          <p className="text-xs text-muted-foreground sm:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
           {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid gap-1 text-sm text-body">
             Stipend per month (₹)
             <input className={inputClass} inputMode="numeric" value={draft.stipendMonthlyInr??""}
