@@ -1,5 +1,6 @@
 import { cloudLoggingAccessToken, isCloudLogNamespace, isCloudLogProject, readCloudLogErrorPage } from "./cloud-log-reader";
 import { reportErrorForAlert } from "./reporter";
+import { reopenRegressedSignature } from "./policy";
 import { randomUUID } from "node:crypto";
 import { and, desc, eq, isNull, lt, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -139,7 +140,7 @@ export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
         );
         if (!ok) return; // Delivery-gated transition, retry next tick.
         await tx.update(signatures)
-          .set({ fixStatus: "OPEN", regressedAt: now })
+          .set(reopenRegressedSignature(now))
           .where(eq(signatures.id, current.id));
         await tx.update(states).set({
           burstMinuteAt: minute, burstCount: spent + 1,
