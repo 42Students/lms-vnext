@@ -42,6 +42,10 @@ export const hrDriveDraftSchema = z.strictObject({
   passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
+  if(data.driveMode==="OFF_CAMPUS"&&!data.externalApplicationUrl){
+    ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
+      message:"Application website is required for off-campus drives"});
+  }
   if(data.driveMode==="ON_CAMPUS"&&data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"An application website is only valid for off-campus drives"});
