@@ -61,7 +61,8 @@ export function getTpoMessagesPage(
   records: readonly TpoInboxRecord[],
   filters: TpoInboxFilters,
 ) {
-  const q = filters.q.trim().toLocaleLowerCase("en-IN");
+  const text = filters.q.trim();
+  const q = text.length >= 2 ? text.toLocaleLowerCase("en-IN") : "";
 
   const filtered = records
     .filter((record) => {
