@@ -205,3 +205,5 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | TPO-drives-17 | DONE (source) | Authorized, scope-respecting CSV exports of all matching, current page and user-selected drives, with a disclosed CSV format. Do not claim native XLSX export; portable CSV is the supported structured format. `src/app/api/placements/tpo/drives/export/route.ts`, same named test. |
 
 | TPO-drives-03 (chat-14 final sprint) | WRONG | Closed view includes persisted CLOSED/CANCELLED jobs; REJECTED is a recruiter *request*, not a job status. `src/modules/placements/tpo-drive-lifecycle-list-model.ts`; `tests/unit/chat14-final-tpo-drives-03.test.ts`. |
+
+| TPO-drives-13 (chat-14 final sprint) | FIXED-ON-MAIN — verified existing partial paths | The page has page-scoped selection and selected CSV export; the reminder component previews eligibility tokens per drive before a POST, guards duplicate daily notifications and reports skipped/failed drives. This verifies those real features, **not** the complete legacy Act on modal/multi-action workflow; its remainder is tracked as residual scope. `tests/unit/chat14-final-tpo-drives-13.test.ts`. |
