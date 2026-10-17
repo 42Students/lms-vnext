@@ -28,6 +28,9 @@ describe("Super Admin Academic Setup legacy copy and defaults",()=>{
   const rows=read("src/app/(authenticated)/admin/batches/page.tsx");
   expect(rows).toContain("legacyAcademicStatus(row.status, true)");
   expect(read("src/app/(authenticated)/admin/electives/page.tsx")).toContain("legacyAcademicStatus(item.status)");
+  const overview=read("src/components/academics/academics-overview.tsx");
+  expect(overview).toContain("legacyAcademicStatus(cohort.status, true)");
+  expect(overview).toContain("legacyAcademicStatus(period.status)");
  });
  it("SA-academics-people-37 restores legacy department and lecture-hall empty list copy",()=>{
   expect(read("src/components/admin/department-directory.tsx")).toContain("No departments found. Create a college first, then add departments.");
