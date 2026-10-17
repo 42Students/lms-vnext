@@ -43,7 +43,7 @@ export function FacultyAssignmentMaterialLinks({deliveryId,assignmentId,disabled
    if(!payload.available)throw new Error("Instructor resources are unavailable.");
    setLinks(payload.links);
    if(input.action==="ADD"){setTitle("");setExternalUrl("");}
-  }catch(error){setError(error instanceof Error?friendlyApiError({message:error.message}):"Could not save instructor resources.");}
+  }catch(error){setError(error instanceof Error?friendlyApiError({}):"Could not save instructor resources.");}
   finally{lock.current=false;setPending(false);}
  }
  const parsed=facultyAssignmentMaterialLinkSchema.safeParse({title,externalUrl});
