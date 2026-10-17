@@ -49,7 +49,18 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    </Button>
    {open?<div className="space-y-2 rounded border border-border p-3" aria-label="Task comments">
      <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
+     <label className="block text-xs font-semibold text-body">Filter comments
+       <select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
+         className="mt-1 min-h-10 rounded border border-border bg-background px-2">
+         <option value="ALL">All comments</option>
+         {PROJECT_TASK_COMMENT_KINDS.map(value=><option key={value} value={value}>
+           {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
+         </option>)}
+       </select>
+     </label>
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
+     {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
+       <p role="status" className="text-sm text-muted-foreground">No comments match this filter.</p>:null}
      {rows.map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
       <p className="mb-1 text-xs font-semibold text-muted-foreground">
         {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
