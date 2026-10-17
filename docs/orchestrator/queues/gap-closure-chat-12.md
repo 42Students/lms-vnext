@@ -209,3 +209,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 56: verified 14 previously FIXED-ON-MAIN Students IDs at the source-contract level using tests/unit/chat12-fixed-main-students-audit-r1.test.ts; no claim of runtime acceptance. Failed candidate assertions were not added.
 
 - Round 57: checked 15 additional FIXED-ON-MAIN source contracts in tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts; runtime and browser acceptance still required.
+
+- Round 58: verified 11 further FIXED-ON-MAIN request IDs against actual source with named tests in tests/unit/chat12-fixed-main-requests-audit-r3.test.ts; runtime effects remain independently unverified.
