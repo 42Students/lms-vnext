@@ -39,7 +39,7 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
   workEmail:users.email,
   relationshipStatus:placementCompanyRelationships.status,grant:placementRecruiterCollegeGrants,
   collegeStatus:colleges.status,organizationId:colleges.organizationId,
-  userStatus:users.platformStatus})
+  userStatus:users.platformStatus,userEmail:users.email})
  .from(placementRecruiterCollegeGrants)
  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
  .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
@@ -66,7 +66,7 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
    action==="NEW"?"placements.recruiter.drive.requested":
     action==="UPDATED"?"placements.recruiter.drive.updated":"placements.recruiter.drive.cancelled",
   subjectType:"placement_recruiter_drive_request",subjectId:id,subjectLabel:title,
-  summary:headline,metadata:{requestId:id,action,
+  summary:headline,metadata:{requestId:id,action,autoReason:autoReason??null,approvedJobId:approvedJobId??null,
    ...(previousDraft&&currentDraft?{previousDraft:tpoComparableDriveSnapshot(previousDraft),
     currentDraft:tpoComparableDriveSnapshot(currentDraft)}:{})},
  }).returning({id:activityEvents.id});
@@ -137,7 +137,8 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
   const [created]=await tx.insert(placementRecruiterDriveRequests).values({
    collegeId:input.collegeId,companyRelationshipId:scope.relationshipId,
    recruiterUserId:context.user.id,submissionId:input.submissionId,
-   sourceJobId:input.sourceJobId??null,status:"REQUEST",draft:input.draft,
+   sourceJobId:input.sourceJobId??null,status:approvedJobId?"DRAFT":"REQUEST",draft:input.draft,
+   approvedJobId,decisionNote:autoReason??null,
   }).onConflictDoNothing().returning();
   if(!created)throw new RecruiterDriveRequestError("IDEMPOTENCY_CONFLICT");
   let finalRequest=created;

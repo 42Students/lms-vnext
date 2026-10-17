@@ -24,10 +24,37 @@ const DRIVE_ERRORS: Readonly<Record<string,string>> = {
 
 const FALLBACK = "We could not save this drive. Check your drafts and try again.";
 
+/** TPO-drives-R05: never echo validation payload text or internal Zod paths. */
+const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
+  companyRelationshipId:"the company",
+  companyName:"the company name",
+  title:"the job title",
+  description:"the job description",
+  openings:"the number of openings",
+  minimumAnnualCtcInr:"minimum CTC",
+  maximumAnnualCtcInr:"maximum CTC",
+  fixedCtcLpa:"fixed CTC",
+  variableCtcLpa:"variable CTC",
+  stipendPerMonthInr:"monthly stipend",
+  applicationDeadline:"the application deadline",
+  externalApplicationUrl:"the employer application link",
+  minCgpa:"minimum CGPA",
+  minPctThroughout:"percentage throughout",
+  allowedPassingYears:"passing years",
+};
+
+
 /** TPO-drives-44: translate known server codes without exposing machine details. */
 export function tpoDriveFormErrorMessage(reason:unknown):string{
   if(reason instanceof FriendlyFetchError){
-    return (reason.code&&DRIVE_ERRORS[reason.code])||reason.message;
+    if(reason.code&&DRIVE_ERRORS[reason.code])return DRIVE_ERRORS[reason.code];
+    if(reason.code==="INVALID_REQUEST"||reason.status===400){
+      const field=Object.keys(reason.fieldErrors).find(key=>Object.hasOwn(DRIVE_FIELD_LABELS,key));
+      if(field)return "Check "+DRIVE_FIELD_LABELS[field]+" and try again.";
+    }
+    const summary=reason.message.trim();
+    return !summary||summary.length>240||/^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/.test(summary)
+      ?FALLBACK:summary;
   }
   const message=reason instanceof Error?reason.message:"";
   const safe=message.trim();

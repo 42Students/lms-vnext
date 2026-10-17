@@ -92,3 +92,31 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | TPO-students-44 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-44` contract; see earlier code evidence in this file. |
 | TPO-students-R02 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R02` contract; see earlier code evidence in this file. |
 | TPO-students-R08 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-students-R08` contract; see earlier code evidence in this file. |
+
+## Round 56: current FIXED-ON-MAIN source checks (runtime unverified)
+
+- TPO-students-33: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-33 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-08: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-08 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-09: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-09 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-11: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-11 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-18: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-18 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-19: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-19 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-20: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-20 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-21: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-21 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-23: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-23 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-26: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-26 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-30: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-30 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-35: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-35 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-54: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-54 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+- TPO-students-27: `tests/unit/chat12-fixed-main-students-audit-r1.test.ts` named `TPO-students-27 preserves its audited source contract`; source evidence only, no PostgreSQL/browser confirmation.
+
+
+## Round 57 FIXED-ON-MAIN source verification (runtime not certified)
+- TPO-students-37: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-38: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-40: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-41: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-42: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-44: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-45: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.
+- TPO-students-52: named test `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` verifies cited source literals; browser/DB evidence pending.

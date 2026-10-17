@@ -71,3 +71,10 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-93 | DONE | `src/components/projects/college-project-student-roster-dialog.tsx`, `src/components/projects/college-project-mentor-dialog.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-93`: searchable multi-select roster with role label; expected version and single transactional API mutation; removal-count confirmation with exact Replace roster label; in-tab mentor reassignment dialog |
 
 | SA-placements-projects-72 | DONE | `src/components/projects/project-admin-submission-review.tsx`, `src/components/projects/project-admin-submissions-page.tsx`; `tests/unit/chat4-super-admin-projects-gap-closure.test.ts` test `SA-placements-projects-72`: scoped review dialog, feedback, request changes, accept and confirmed lock, draft-safe API mutation |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-placements-projects-58 | DONE (source) | Mentor workload, fromMentorId and per-workspace report; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-58` |
+| SA-placements-projects-68 | DONE (source) | Readiness route shows shared workspace section tabs; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-68` |
+| SA-placements-projects-72 | OPEN (partial) | Confirmed accept and request changes restored; distinct durable lock action still absent; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-72` |
+| SA-placements-projects-77 | OPEN | Template, mentor, review and release mutation audits need complete database-backed coverage; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-77` |

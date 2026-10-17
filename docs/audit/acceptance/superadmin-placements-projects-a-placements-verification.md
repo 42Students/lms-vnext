@@ -80,3 +80,9 @@ Status DONE below indicates the implementation is present on main and a named so
 | SA-placements-projects-18 | DONE | Code: `src/components/placements/` and `src/components/admin/`, scoped Super Admin route/services; `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` — named `SA-placements-projects-18` verification. Tests not executed in lane. |
 | SA-placements-projects-46 | DONE | Code: `src/components/placements/` and `src/components/admin/`, scoped Super Admin route/services; `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` — named `SA-placements-projects-46` verification. Tests not executed in lane. |
 | SA-placements-projects-47 | DONE | Code: `src/components/placements/` and `src/components/admin/`, scoped Super Admin route/services; `tests/unit/chat9-super-admin-placement-remaining-gap-verification.test.ts` — named `SA-placements-projects-47` verification. Tests not executed in lane. |
+
+## Chat-6 UNCONFIRMED decisions, 2026-10-18
+
+| SA-placements-projects-14 | OPEN (partial intentional difference) | Cross-college visibility is intentionally forbidden; remaining drive fields still missing; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-14` |
+| SA-placements-projects-37 | DONE (source) | Recruiter company and mobile reuse preserve a single identity; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-37` |
+| SA-placements-projects-39 | DONE (source) | Recruiter lifecycle, grants and session revocation emit distinct activity events; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-39` |

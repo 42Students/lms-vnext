@@ -142,3 +142,59 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-44 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-create.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-44 task builder supports backlog, assignee and approach`. |
 | MEN-projects-meetings-45 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-details-edit.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-45 task editor supports approach and acceptance criteria`. |
 | MEN-projects-meetings-47 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-status-transition.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-47 blocker reason is collected when blocking a task`. |
+
+## Chat-7 round 3 — MEN-projects-meetings-27 draft lifecycle
+
+| Gap ID | Status | Evidence and remaining gate |
+|---|---|---|
+| MEN-projects-meetings-27 | OPEN — implementation extended, database gate pending | `src/modules/projects/mentor-meeting-decision-model.ts`, `mentor-meeting-decision-service.ts`, `meeting-service.ts`, `src/components/projects/project-meeting-controls.tsx`; `tests/unit/chat7-mentor-meeting-draft-lifecycle.test.ts` — `MEN-projects-meetings-27 lets a mentor discard only mutable draft, requested or scheduled meetings`, `MEN-projects-meetings-27 requires a confirmed versioned mentor draft cancellation`, `MEN-projects-meetings-27 makes draft private and never notifies learners when cancelled`. Decision: mentors/admins may cancel their unsent meeting drafts and retain an internal cancelled record; no learner notifications or activity event for a previously private draft. Complete/cancel remain explicit actions; REQUESTED remains learner-originated. Register and replay `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql` (not in numbered migration journal), then execute DB lifecycle integration tests. Unit tests authored but not run. |
+
+## Chat-7 round 3 — five mentor access and loading contracts
+
+| Gap ID | Review | Gap-named evidence |
+|---|---|---|
+| MEN-projects-meetings-01 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-projects-unavailable.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-01 module lookup failure does not assert disabled state`. |
+| MEN-projects-meetings-02 | SOURCE VERIFIED; CI pending | `src/app/(authenticated)/mentor/loading.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-02 mentor workspace advertises pending loading`. |
+| MEN-projects-meetings-08 | SOURCE VERIFIED; CI pending | `src/app/(authenticated)/mentor/projects/error.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-08 error boundary offers retry without false feature-disable copy`. |
+| MEN-projects-meetings-11 | SOURCE VERIFIED; CI pending | `src/modules/projects/access.ts`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-11 review-only memberships are not granted write access`. |
+| MEN-projects-meetings-16 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-16 mentor readiness and final-delivery states derive from workspace facts`. |
+
+## Chat-7 round 3 — authored brief, final review and schedule safety
+
+| Gap ID | Review | Evidence |
+|---|---|---|
+| MEN-projects-meetings-17 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-22 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-25 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-28 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-29 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+
+## Chat-7 round 3 — release, board and task safeguards
+
+| Gap ID | Review | Gap-named evidence |
+|---|---|---|
+| MEN-projects-meetings-33 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-33 release roadmap and shipping readiness`. |
+| MEN-projects-meetings-38 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-38 mentor-visible release/sprint vocabulary and empty state`. |
+| MEN-projects-meetings-41 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-41 board task evidence includes owner blocker estimate and due`. |
+| MEN-projects-meetings-46 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-delete-control.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-46 task deletion prompts and requires a version token`. |
+| MEN-projects-meetings-49 | SOURCE VERIFIED; CI pending | `src/modules/projects/project-notification-service.ts`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-49 project-scoped member notifications`. |
+
+## Chat-7 round 3 — allocation and role-safe meeting policy
+
+| Gap ID | Review | Regression evidence |
+|---|---|---|
+| MEN-projects-meetings-51 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-51 auto-assignment acts on all eligible project tasks`. |
+| MEN-projects-meetings-52 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-52 per-member workload uses done blocked and point counts`. |
+| MEN-projects-meetings-R03 | SOURCE VERIFIED; CI pending | `src/components/projects/project-meeting-controls.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R03 meeting form fixes the user-visible wall-time zone to IST`. |
+| MEN-projects-meetings-R04 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R04 join action does not appear on cancelled, completed or missed meetings`. |
+| MEN-projects-meetings-R05 | SOURCE VERIFIED; CI pending | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round3-mentor-policy.test.ts` — `MEN-projects-meetings-R05 completed and archived workspaces reject meeting writes`. |
+
+## Chat-7 round 3 — legacy URLs, version tokens and estimation
+
+| Gap ID | Review | Evidence |
+|---|---|---|
+| MEN-projects-meetings-R06 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R07 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R08 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R09 | MODEL / SOURCE VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |
+| MEN-projects-meetings-R10 | FIXED / MODEL TEST AUTHOR, CI pending | `tests/unit/chat7-round3-mentor-legacy-urls.test.ts` — gap-named regression; R10 also updates `src/modules/projects/mentor-project-list-query.ts` to ignore unknown legacy-only URL fields. |

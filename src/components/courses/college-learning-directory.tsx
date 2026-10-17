@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -560,8 +561,10 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
              </Link>
              <p className="text-xs text-body">{item.cohortName} · {item.periodName} · Lesson #{item.sequence+1}</p>
              <p className="text-xs">{collegeLessonVisibilityLabel(item)}</p>
-             <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
-              visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>
+             {item.status==="ARCHIVED"?
+              <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
+              <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
+               visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
              <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">View recorded course activity</Link>
             </article>)}
             </>
@@ -609,8 +612,10 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
                     </td>
                     <td className="px-4 py-4 tabular-nums text-body">{item.sequence + 1}</td>
                     <td className="px-4 py-4 text-body">{collegeLessonVisibilityLabel(item)}
-                      <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
-                        visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>
+                      {item.status==="ARCHIVED"?
+                        <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
+                        <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
+                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
                       <Link href={collegeOfferingProgressHref(item.offeringId)}
                         className="mt-2 inline-block font-semibold text-primary-text hover:underline">
                         View recorded course activity

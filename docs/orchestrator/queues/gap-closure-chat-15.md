@@ -167,3 +167,55 @@ Registered on origin/main: `drizzle/0133_*`, `drizzle/0134_lanes_round_2.sql`. D
 - LEARNER-course-detail-05: remaining Google Drive/assignment resource gaps noted above. LEARNER-learning-misc-01 remains BLOCKED on private bucket+malware scanner.
 
 Gap-register additional learner OPEN rows not assigned to chat-15 are `LEARNER-home-courses-02/03/18/22`, `LEARNER-course-detail-R03/R04` under learner/home-courses, and `LEARNER-profile-misc-02/08` (chat-7 owns those pages; do not duplicate). The current gap register shows 47 OPEN learner IDs: 39 are on this lane's three reassigned pages and eight are on chat-7's home-courses/profile-misc pages. The historical chat-15 queue lists 41 assigned IDs, two of which no longer have OPEN status in the register.
+
+## Chat-15 2026-10-18 current-branch reconciliation (supersedes earlier counts)
+
+Origin/main was fast-forwarded into this branch before edits (prior branch had no unique commits). The 41 assigned IDs below were re-triaged against the existing ID-named test/acceptance evidence, including this round's test fixes. **SOURCE-DONE only means source and named tests exist, not tests passed.** All updated commits were pushed to `chatgpt/chat-15-b`. No UI/UX restyling was done.
+
+| Gap ID | Current source disposition | Specific evidence or remaining work |
+|---|---|---|
+| LEARNER-course-detail-03 | OPEN | Instructor-authorized assignment resource read and persistence not present |
+| LEARNER-course-detail-05 | PARTIAL | Formatted draft/discard guard built; legacy rich authoring and scanned Drive import absent |
+| LEARNER-course-detail-08 | SOURCE-DONE | Confirmed manual Resource and Live completion; corrected learner interaction test |
+| LEARNER-course-detail-09 | SOURCE-DONE | Live time/countdown, join and copy links |
+| LEARNER-course-detail-12 | SOURCE-DONE | Video rate, persisted save cadence and completion thresholds |
+| LEARNER-course-detail-13 | SOURCE-DONE | Recorded watched-time status |
+| LEARNER-course-detail-14 | SOURCE-DONE | Path kinds, due details, and corrected `Live Sessions` label |
+| LEARNER-course-detail-15 | SOURCE-DONE | Resume next unfinished and lesson numbering |
+| LEARNER-course-detail-16 | SOURCE-DONE | Focus, next/previous and return |
+| LEARNER-course-detail-17 | SOURCE-DONE | Missed quiz read-only review after result release |
+| LEARNER-course-detail-19 | SOURCE-DONE | Lessons survive optional course-state read failures, Retry state |
+| LEARNER-course-detail-20 | SOURCE-DONE | Distinct student-safe unpublished/empty-lesson path copy; contradictory tests aligned |
+| LEARNER-learning-misc-01 | BLOCKED | Real scanned private upload bucket required |
+| LEARNER-learning-misc-02 | OPEN | Faculty-authored assignment attachment relation/read grants absent |
+| LEARNER-learning-misc-04 | SOURCE-DONE | One-shot multipart text/link/file transaction, no fabricated file |
+| LEARNER-learning-misc-07 | BLOCKED | Source/notebook/archive safe upload requires storage owner's policy and scanner |
+| LEARNER-learning-misc-11 | PARTIAL | Safe bold/italic/lists, but not authored HTML-parity WYSIWYG |
+| LEARNER-learning-misc-12 | BLOCKED | Google Drive OAuth/import and private scanner provider not configured |
+| LEARNER-learning-misc-13 | SOURCE-DONE | Exact assignment Due/Created: labels, corrected aggregate test |
+| LEARNER-learning-misc-15 | OPEN | SQL-backed course filter and server pagination not yet implemented |
+| LEARNER-learning-misc-16 | SOURCE-DONE | Quiz list desktop columns, mobile cards, grade gating |
+| LEARNER-learning-misc-19 | SOURCE-DONE | Class enrollment versus no courses/error distinguished |
+| LEARNER-learning-misc-24 | SOURCE-DONE | Missed unattempted quiz read-only key after published release |
+| LEARNER-learning-misc-27 | SOURCE-DONE | Release timing policy and no early key disclosure |
+| LEARNER-learning-misc-28 | SOURCE-DONE | Mobile questions drawer and desktop question progress |
+| LEARNER-learning-misc-29 | SOURCE-DONE | Quiz submitted pill and legacy copy |
+| LEARNER-learning-misc-34 | SOURCE-DONE | Calendar/attendance bounded to chosen IST month |
+| LEARNER-placements-01 | SOURCE-DONE | Recipient-scoped notification mark-read mutation |
+| LEARNER-placements-03 | SOURCE-DONE | Legacy learner placement headings without duplicate shell header |
+| LEARNER-placements-05 | SOURCE-DONE | Hero reflects recorded registration and persisted offer |
+| LEARNER-placements-09 | SOURCE-DONE | Official notice body and relative day |
+| LEARNER-placements-28 | SOURCE-DONE | Employer-visible selected-applicant scope, not directory |
+| LEARNER-placements-30 | SOURCE-DONE | Verified staff attribution; 48-hour CAS cutoff and safe opt-out |
+| LEARNER-placements-33 | NOT-A-GAP | Owner OD-38 retains deliberate vNext application metrics |
+| LEARNER-placements-41 | PARTIAL | HTTPS Open test and true due field model; SQL proposal awaits migration and authoring |
+| LEARNER-placements-43 | PARTIAL | Acceptance dispute path uses sixth kind, but first registered 0134 CHECK rejects it until corrective migration |
+| LEARNER-placements-51 | PARTIAL | Learner general request creation scoped; correction approval effect unsupported |
+| LEARNER-placements-52 | PARTIAL | Absent round request persisted; approved absence correction effect unsupported |
+| LEARNER-placements-R03 | SOURCE-DONE | Internship/Dream cascade exceptions in preview and transaction |
+| LEARNER-placements-R04 | OPEN | 27 durable recipient-scoped placement notification families still not all produced |
+| LEARNER-placements-R08 | NOT-A-GAP | Owner OD-38 keeps out-of-audience company drives private |
+
+Totals in this 41-ID assigned queue: **4 OPEN; 6 PARTIAL; 26 SOURCE-DONE; 3 BLOCKED; 2 NOT-A-GAP**. These totals are not runtime VERIFICATION. Most SOURCE-DONE IDs are backed by `tests/unit/chat15-*.test.ts` previously listed above; new work includes `chat15-offer-letter-and-placement.test.ts` and `chat15-assessment-submission-deadline.test.ts`. For the nine additional UNCONFIRMED IDs outside this 41, see `tests/unit/chat15-unconfirmed-decisions.test.ts` and the appended page acceptance decisions. The corrected sixth general-request kind and vendor-test due field have **unregistered** SQL proposals under `docs/proposed-migrations/chat15-*.sql`; they are not live database changes. The orchestrator must register/replay those migrations, then run Vitest, TypeScript, integration and browser acceptance before marking VERIFIED.
+
+Needs other owners: `LEARNER-learning-misc-07` storage allowed MIME families and malware scanning; `LEARNER-learning-misc-01/12` scan-backed file/provider integrations. Never claim upload/import succeeded. Do not edit `src/modules/storage` here.

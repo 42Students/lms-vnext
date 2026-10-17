@@ -13,15 +13,21 @@ describe("chat12 remaining Students scope and safety",()=>{
   expect(code).toContain("liftPlacementDebarment");
   expect(code).toContain("The DB trigger creates an immutable LIFTED action.");
  });
- it("TPO-students-10 links to the authorized preparation support view; assigning courses remains OPEN",()=>{
+ it("TPO-students-10 keeps the authorized support view and connects the registered 0134 prep assignment flow",()=>{
   const page=s("src/app/(authenticated)/tpo/students/preparation-prep/page.tsx");
   expect(page).toContain("requireTpoBatchActor");
   expect(page).toContain("Review recorded placement history");
+  const service=s("src/modules/placements/tpo-prep-assignment-service.ts");
+  expect(service).toContain("placementTpoPrepAssignments");
+  expect(service).toContain("dueAt:due");
+  expect(s("src/app/(authenticated)/tpo/students/page.tsx")).toContain("<TpoStudentsAssignPrep");
  });
- it("TPO-students-12 cannot silently use bulk Add-to-Drive as a visibility override",()=>{
+ it("TPO-students-12 separates bulk Add-to-Drive from the scoped visibility override and undo controls",()=>{
   const service=s("src/modules/placements/bulk-drive-service.ts");
   expect(service).toContain("requireLearnerPlacementAccess");
   expect(service).toContain("evaluatePlacementEligibility");
+  const controls=s("src/components/tpo/tpo-students-drive-visibility.tsx");
+  expect(controls).toContain("expectedOverrideId:row.overrideId");
  });
  it("TPO-students-14 prevents silent addition of ineligible students",()=>{
   const service=s("src/modules/placements/bulk-drive-service.ts");

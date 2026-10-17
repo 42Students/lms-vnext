@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
+import {learnerApplicationViewCounts} from "@/modules/placements/learner-applications-browse-model";
 
 function source(path: string): string {
   return readFileSync(new URL("../../" + path, import.meta.url), "utf8");
@@ -29,9 +30,17 @@ describe("Chat-7 learner placements follow-up", () => {
 
   it("LEARNER-placements-33 retains vNext application summary as intentional design", () => {
     const page = source("src/app/(authenticated)/learn/my-placements/applications/page.tsx");
-    expect(page).toContain("recorded applications");
-    expect(page).toContain("still submitted");
-    expect(page).toContain("withdrawn");
+    const browse=source("src/components/placements/learner-applications-browse.tsx");
+    expect(page).toContain("<LearnerApplicationsBrowse");
+    expect(browse).toContain("learnerApplicationViewCounts(items)");
+    expect(browse).toContain("viewCounts[option.key]");
+    const fixture=(id:string,status:string)=>({
+      applicationId:id,jobTitle:"Role",companyName:"Company",applicationStatus:status,
+      submittedAt:new Date("2026-09-01T00:00:00Z"),withdrawnAt:status==="WITHDRAWN"?new Date("2026-09-02T00:00:00Z"):null,
+      screening:{status:"PENDING",decidedAt:null},offerStatus:null,results:[],
+    });
+    expect(learnerApplicationViewCounts([fixture("1","SUBMITTED"),fixture("2","WITHDRAWN")]))
+      .toEqual({all:2,progress:1,completed:1});
     const decisions = source("docs/audit/owner-decisions-resolved.md");
     expect(decisions).toContain('All "intentional differences" lists approved');
   });

@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 import type { listKnownErrorsForAdmin } from "@/modules/log-alerts/admin-service";
+import Link from "next/link";
+import {knownErrorSafeSummary} from "@/modules/log-alerts/known-error-safe-summary";
 
 type KnownError = Awaited<ReturnType<typeof listKnownErrorsForAdmin>>[number];
 
@@ -107,6 +109,25 @@ function KnownErrorCard({ item }: { item: KnownError }) {
         </label>
       </div>
       <div className="flex flex-wrap gap-2">
+        <Button size="sm" variant="secondary" disabled={pending}
+          onClick={()=>void navigator.clipboard.writeText(knownErrorSafeSummary({
+            signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
+            occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
+            firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
+            issuePublicId:item.issuePublicId,
+          })).then(()=>showToast({tone:"success",title:"Sanitized diagnostic summary copied"}))
+            .catch(()=>showToast({tone:"error",title:"Could not copy diagnostic summary"}))}>
+          Copy for Claude
+        </Button>
+        <Link href={"/tracker?context="+encodeURIComponent(knownErrorSafeSummary({
+          signatureHash:item.signatureHash,environment:item.environment,fixStatus:item.fixStatus,
+          occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
+          firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
+          issuePublicId:item.issuePublicId,
+        }).slice(0,450))}
+          className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          Create tracker issue
+        </Link>
         <Button size="sm" variant="secondary" disabled={pending || Boolean(item.acknowledgedAt)}
           onClick={() => update({ action: "ACKNOWLEDGE" })}>
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
