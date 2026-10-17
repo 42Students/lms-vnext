@@ -30,7 +30,7 @@ export default async function FacultyContactDetailPage({
     <PageHeader eyebrow="Faculty · Contacts" title={name}
       description="Active college directory contact · Read-only"
       actions={<Link href={back}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         Back to Contacts
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
