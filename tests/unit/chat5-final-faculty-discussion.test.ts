@@ -23,7 +23,7 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
   expect(page).toContain("Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.");
   expect(page).toContain("Retry discussion refresh");
   expect(page).toContain("onClick={() => void load(true)}");
-  expect(page.indexOf('loadError && loadedOnce.current && messages.length > 0')).toBeLessThan(page.indexOf('{pinned ? ('));
+  expect(page.indexOf(staleBannerGate)).toBeLessThan(page.indexOf("{pinned ? ("));
   expect(page).toContain('reconcileLatestDiscussionPage(previous, incoming, received.length)');
   expect(page).toContain('if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current))');
  });
