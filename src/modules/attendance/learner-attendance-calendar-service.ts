@@ -7,7 +7,7 @@ import { hasActiveMembership, hasMembershipRole, type RequestContext } from "@/m
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import {
-  attendanceCalendarSummary, parseAttendanceCalendarQuery,
+  attendanceCalendarSummary, learnerAttendanceMonthWindow, parseAttendanceCalendarQuery,
   selectAttendanceCalendarRecords,
 } from "./learner-attendance-calendar-model";
 
@@ -43,7 +43,9 @@ export async function getOwnLearnerAttendanceCalendar(
     )).limit(1);
   if(!persisted) throw new AuthorizationError("academics.read");
 
-  const workspace = await getLearnerAttendanceWorkspace(context);
+  const workspace = await getLearnerAttendanceWorkspace(context, {
+    window: learnerAttendanceMonthWindow(query.month),
+  });
   const courses = workspace.courses.map(row => ({
     deliveryId:row.deliveryId,courseName:row.courseName,courseCode:row.courseCode,
   }));
@@ -56,7 +58,7 @@ export async function getOwnLearnerAttendanceCalendar(
   const matching = selectAttendanceCalendarRecords(workspace.records,query);
   return {
     query,courses,rows:matching,summary:attendanceCalendarSummary(matching),
-    // No leakage from other months or cohorts, even when the view is empty.
+    // Calendar read is scoped to the selected IST month, never full history.
     hasAnyRecords:workspace.records.length > 0,
   };
 }
