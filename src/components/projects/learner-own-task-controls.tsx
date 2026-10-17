@@ -57,6 +57,9 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
    <label className="text-sm font-semibold sm:col-span-2">Description
     <textarea maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
+   <label className="text-sm font-semibold sm:col-span-2">Approach (optional)
+    <textarea maxLength={4000} value={approach} onChange={e=>setApproach(e.target.value)}
+      className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
    <label className="text-sm font-semibold sm:col-span-2">Done when
     <textarea maxLength={4000} value={acceptance} onChange={e=>setAcceptance(e.target.value)}
       className="mt-1 min-h-20 w-full rounded-md border border-border bg-background p-2"/></label>
