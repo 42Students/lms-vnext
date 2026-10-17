@@ -9,6 +9,7 @@ import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
 import {z} from "zod";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
@@ -37,7 +38,8 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    ))
-   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
+   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED"),
+    recruiterOwnJobPredicate(context.user.id)))
    .for("update").limit(1);
   if(!job||!can(context,"placements.recruiter.round.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
