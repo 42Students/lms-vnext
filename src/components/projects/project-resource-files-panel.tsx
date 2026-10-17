@@ -72,7 +72,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     setFiles(next.files);
   }
   function problem(error:unknown){
-    setFeedback(error instanceof Error?error.message:storageErrorMessage(null));
+    setFeedback(error instanceof FileApiError?error.message:storageErrorMessage(null));
   }
   async function upload(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
