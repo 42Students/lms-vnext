@@ -191,3 +191,9 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 |---|---|---|
 | TPO-batches-R04 | DONE (source verified; CI pending) | `src/modules/placements/tpo-eligibility-sheet-model.ts` uses legacy unusable-row reasons, `src/components/tpo/tpo-batch-eligibility-import.tsx` blocks unresolved rows and requires explicit acknowledgement, and `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` rechecks the source server-side. `tests/unit/chat5-batches-r04-import-contract.test.ts` contains three `TPO-batches-R04` cases. |
 | TPO-batches-39 | OPEN (remaining preview parity) | File picker now exposes `Download a template`; `Discard review` requires an explicit accessible consequence confirmation rather than silently dropping included rows. `tests/unit/chat5-batches-39-discard-template.test.ts` — two `TPO-batches-39` tests. Full imported column/preview grid parity still OPEN. |
+
+## Chat-15 final sprint (2026-10-18)
+
+| Gap ID | Disposition | Evidence |
+|---|---|---|
+| TPO-batches-44 | DONE at source level | `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` supplies only the visible, authorized cohort rows to `TpoStudentNudgePanel` (five ready templates, explicit recipient choice, confirmation, transactional notification and activity log via `tpo-student-nudge-send-service.ts`) and `TpoBatchStudentBulkNotes` (up to 100 selected learners, persisted staff-only notes via `TpoStudentNoteEditor`). `tests/unit/chat15-final-sprint-tpo-batches-44.test.ts`: `TPO-batches-44 provides all five named ready-message templates on the scoped batch page`, `TPO-batches-44 restricts recipients to the currently displayed batch and requires preview/confirmation`, `TPO-batches-44 notes use persisted selected-membership editor and cap visible selection`. Message transport is in-app, not SMS; don't claim outside-provider delivery. Tests not executed. |
