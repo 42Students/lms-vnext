@@ -29,7 +29,7 @@ Audit: `docs/audit/pages/faculty/assessments.md` (and `assessments-review.md` if
 | FAC-assessments-23 | S3 | COPY | FIXED-ON-MAIN |
 | FAC-assessments-27 | S3 | STATE | FIXED-ON-MAIN |
 | FAC-assessments-29 | S3 | RESPONSIVE | FIXED-ON-MAIN |
-| FAC-assessments-R03 | S3 | STATE | OPEN |
+| FAC-assessments-R03 | S3 | STATE | DONE |
 | FAC-assessments-R04 | S3 | PERFORMANCE | OPEN |
 | FAC-assessments-14 | S4 | STATE | DONE |
 | FAC-assessments-18 | S4 | VALIDATION | FIXED-ON-MAIN |
@@ -56,10 +56,10 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | SA-academics-people-101 | S2 | MISSING-ACTION | OPEN |
-| SA-academics-people-106 | S2 | PERMISSION | OPEN |
-| SA-academics-people-108 | S2 | MISSING-FIELD | OPEN |
+| SA-academics-people-106 | S2 | PERMISSION | DONE |
+| SA-academics-people-108 | S2 | MISSING-FIELD | DONE |
 | SA-academics-people-109 | S2 | MISSING-ACTION | DONE |
-| SA-academics-people-110 | S2 | MISSING-FIELD | OPEN |
+| SA-academics-people-110 | S2 | MISSING-FIELD | DONE |
 | SA-academics-people-116 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-80 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-81 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -77,7 +77,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-3-people-recruiters.md` (an
 | SA-academics-people-104 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-academics-people-105 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-107 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-academics-people-111 | S3 | VALIDATION | UNCONFIRMED |
+| SA-academics-people-111 | S3 | VALIDATION | DONE |
 | SA-academics-people-112 | S3 | STATE | DONE |
 | SA-academics-people-113 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-114 | S3 | COPY | DONE |
@@ -119,9 +119,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-55 | S3 | COPY | OPEN |
 | SA-academics-people-57 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-60 | S3 | MISSING-ACTION | BLOCKED |
-| SA-academics-people-61 | S3 | MISSING-FILTER | OPEN |
+| SA-academics-people-61 | S3 | MISSING-FILTER | DONE |
 | SA-academics-people-62 | S3 | MISSING-COLUMN | OPEN |
-| SA-academics-people-66 | S3 | MISSING-FILTER | OPEN |
+| SA-academics-people-66 | S3 | MISSING-FILTER | DONE |
 | SA-academics-people-68 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-69 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-academics-people-73 | S3 | STATE | DONE |
@@ -129,8 +129,8 @@ Audit: `docs/audit/pages/superadmin/academics-people-2-courses-content.md` (and 
 | SA-academics-people-63 | S4 | COPY | DONE |
 | SA-academics-people-70 | S4 | STATE | NOT-A-GAP |
 | SA-academics-people-71 | S4 | COPY | DONE |
-| SA-academics-people-75 | S4 | RESPONSIVE | UNCONFIRMED |
-| SA-academics-people-76 | S4 | A11Y | NOT-A-GAP$3
+| SA-academics-people-75 | S4 | RESPONSIVE | DONE |
+| SA-academics-people-76 | S4 | A11Y | NOT-A-GAP |
 
 ## college/placements (26: FIXED-ON-MAIN 16, UNCONFIRMED 3, OPEN 7)
 
@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/superadmin/placements-projects-c-tracker.md` (and `plac
 | SA-placements-projects-108 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-111 | S4 | MISSING-ACTION | DONE |
 | SA-placements-projects-118 | S4 | PERMISSION | NOT-A-GAP |
-| SA-placements-projects-123 | S4 | COPY | DONE$3
+| SA-placements-projects-123 | S4 | COPY | DONE |
 
 ## learner/profile-misc (19: OPEN 6, FIXED-ON-MAIN 13)
 
@@ -238,7 +238,7 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 | COL-dashboard-14 | S3 | COPY | DONE |
 | COL-dashboard-15 | S3 | STATE | DONE |
 | COL-dashboard-16 | S4 | A11Y | DONE |
-| COL-dashboard-17 | S4 | RESPONSIVE | UNCONFIRMED |
+| COL-dashboard-17 | S4 | RESPONSIVE | DONE |
 
 ## Notes (blockers, one line each)
 

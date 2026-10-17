@@ -5,6 +5,10 @@ export type AdminContentKind = z.infer<typeof adminContentKindSchema>;
 export const adminContentQuerySchema = z.strictObject({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","DRAFT","PUBLISHED","ARCHIVED"]).default("ALL"),
+ offeringId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+ lessonId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+ deliveryId:z.preprocess(value=>value===""?undefined:value,z.string().uuid().optional()),
+ scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
  page:z.coerce.number().int().min(1).max(1000).default(1),
 });
 export function contentTypesForKind(kind:AdminContentKind) {
@@ -18,6 +22,10 @@ export function adminContentHref(kind:AdminContentKind,raw:unknown) {
  const query=adminContentQuerySchema.parse(raw),p=new URLSearchParams();
  if(query.q)p.set("q",query.q);
  if(query.status!=="ALL")p.set("status",query.status);
+ if(query.offeringId)p.set("offeringId",query.offeringId);
+ if(query.lessonId)p.set("lessonId",query.lessonId);
+ if(query.deliveryId)p.set("deliveryId",query.deliveryId);
+ if(query.scope!=="ALL")p.set("scope",query.scope);
  if(query.page>1)p.set("page",String(query.page));
  const base=kind==="VIDEOS"?"/admin/videos":kind==="RESOURCES"?"/admin/resources":"/admin/live-classes";
  return base+(p.size?"?"+p:"");

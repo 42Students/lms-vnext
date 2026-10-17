@@ -72,6 +72,7 @@ export function FacultyLessonAuthoring({
   nextQuizSequence,
   initialMode = null,
   availableModes,
+  onSaved,
 }: {
   lessonId: string;
   deliveryId: string | null;
@@ -81,6 +82,7 @@ export function FacultyLessonAuthoring({
   nextQuizSequence: number;
   initialMode?: Mode | null;
   availableModes?: readonly Mode[];
+  onSaved?: () => void;
 }) {
   const router = useRouter();
   const [mode, setMode] =
@@ -427,6 +429,7 @@ export function FacultyLessonAuthoring({
         mode==="QUIZ"?"Quiz draft created.":"Server Notification: Successfully Saved",
       );
       reset();
+      onSaved?.();
       router.refresh();
     } catch (caught) {
       setError(
