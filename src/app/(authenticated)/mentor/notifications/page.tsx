@@ -74,8 +74,8 @@ export default async function MentorNotificationsPage({
   const nextHref = inbox.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
   return <div className="space-y-8">
-    <PageHeader eyebrow="Mentor" title="Notifications"
-      description="Personal notices, college announcements and registered project attention." />
+    <PageHeader title="Notifications"
+      description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
     <AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
@@ -122,7 +122,7 @@ export default async function MentorNotificationsPage({
           </p>
         : visibleAlerts.length === 0
           ? <p className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
-              No project-attention signal matches this filter.
+              Nothing needs your attention right now.
             </p>
           : <div className="grid gap-3">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
@@ -132,7 +132,8 @@ export default async function MentorNotificationsPage({
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :
                     alert.kind === "REVIEW" || alert.kind === "REQUESTED" ? "warning" : "info"}>
                     {alert.kind === "MEETING_SOON" ? "Upcoming meeting" :
-                      alert.kind === "REQUESTED" ? "Requested" : alert.kind}
+                      alert.kind === "REQUESTED" ? "Meeting requested" :
+                      alert.kind === "REVIEW" ? "Needs review" : "Stalled"}
                   </StatusBadge>
                 </div>
                 <p className="mt-2 text-sm text-body">{alert.description}</p>

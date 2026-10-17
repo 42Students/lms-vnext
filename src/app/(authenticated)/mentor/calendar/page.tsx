@@ -31,8 +31,8 @@ export default async function MentorCalendarPage({searchParams}:{
   const now=new Date();
   const displayed=filterMentorCalendar(meetings,parsed.data,now);
   return <div className="space-y-5">
-    <PageHeader eyebrow="Mentor" title="Meetings"
-      description="Registered meetings across your current assigned Projects. Times shown in IST."/>
+    <PageHeader title="Meetings"
+      description="Every scheduled meeting across your assigned projects, in one place."/>
     <form method="get" action="/mentor/calendar"
       className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Search
