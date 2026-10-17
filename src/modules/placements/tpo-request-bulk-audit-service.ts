@@ -26,9 +26,22 @@ export async function recordTpoBulkRequestRun(ctx:RequestContext,raw:unknown){
  const college=await requirePlacementManageScope(ctx,actor.collegeId);
  return getDb().transaction(async tx=>{
   const dedupeKey="tpo-requests-bulk:"+college.id+":"+input.runId;
-  const [prior]=await tx.select({id:activityEvents.id}).from(activityEvents)
+  const [prior]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata}).from(activityEvents)
    .where(and(eq(activityEvents.collegeId,college.id),eq(activityEvents.dedupeKey,dedupeKey))).limit(1);
-  if(prior)return {eventId:prior.id,replayed:true};
+  if(prior){
+   // A caller must not reuse a run ID to mask a different action or set of
+   // learners under an existing audit event.
+   const metadata=prior.metadata;
+   const priorIds=metadata&&typeof metadata==="object"&&!Array.isArray(metadata)?
+    (metadata as Record<string,unknown>).requestIds:null;
+   const priorAction=metadata&&typeof metadata==="object"&&!Array.isArray(metadata)?
+    (metadata as Record<string,unknown>).action:null;
+   if(priorAction!==input.action||!Array.isArray(priorIds)||
+      priorIds.length!==input.requestIds.length||
+      priorIds.some(id=>typeof id!=="string"||!input.requestIds.includes(id)))
+    throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
+   return {eventId:prior.id,replayed:true};
+  }
   const rows=await tx.select({id:placementLearnerRequests.id,status:placementLearnerRequests.status})
    .from(placementLearnerRequests)
    .innerJoin(placementApplications,eq(placementApplications.id,placementLearnerRequests.applicationId))
