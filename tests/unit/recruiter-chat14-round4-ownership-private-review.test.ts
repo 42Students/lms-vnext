@@ -151,6 +151,12 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   const page=source("src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx");
   expect(page).toContain('href="/hr/drives"');
  });
+ it("REC-home-drives-41 never reads or writes a withdrawn applicant's private rating",()=>{
+  const service=source("src/modules/placements/recruiter-private-rating-service.ts");
+  expect(service.split('eq(placementApplications.status,"SUBMITTED")').length-1).toBe(2);
+  expect(service).toContain('eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED")');
+  expect(service).toContain('gt(placementRecruiterCollegeGrants.validUntil,new Date())');
+ });
  it("REC-home-drives-41 stores 1–5 reviews individually by recruiter and applicant",()=>{
   const schema=source("src/db/schema/placement-recruiter-candidate-ratings.ts");
   expect(schema).toContain("prpr_recruiter_application_uq");
