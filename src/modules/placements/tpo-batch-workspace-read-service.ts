@@ -71,7 +71,7 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER"))).where(filter);
  const records=await roster().orderBy(asc(users.displayName),asc(collegeMemberships.id)).limit(26).offset((page-1)*25);
  const visible=records.slice(0,25),enrollmentIds=visible.map(r=>r.enrollmentId);
- const activeSections=enrollmentIds.length?await getDb().select({enrollmentId:sectionEnrollments.learnerEnrollmentId,sectionId:sections.id})
+ const activeSections=enrollmentIds.length?await getDb().select({enrollmentId:sectionEnrollments.learnerEnrollmentId,sectionId:sections.id,sectionName:sections.name})
  .from(sectionEnrollments).innerJoin(sections,and(eq(sections.id,sectionEnrollments.sectionId),eq(sections.cohortId,batch.id),eq(sections.status,"ACTIVE")))
  .where(and(eq(sectionEnrollments.status,"ACTIVE"),inArray(sectionEnrollments.learnerEnrollmentId,enrollmentIds))):[];
  const scopeIds=[batch.id,...visible.map(r=>r.membershipId),...activeSections.map(r=>r.sectionId)];
@@ -82,7 +82,10 @@ export async function getTpoBatchStudents(ctx:RequestContext,rawId:unknown,rawPa
  const sectionsFor=activeSections.filter(s=>s.enrollmentId===r.enrollmentId);
  const section=sectionsFor.length===1?find("SECTION",sectionsFor[0].sectionId):undefined;
  const cohort=find("COHORT",batch.id);const winner=sectionsFor.length>1?undefined:(direct??section??cohort);
- return {membershipId:r.membershipId,name:r.name??"Unnamed learner",rollNumber:r.rollNumber,decision:winner?.status??"NOT_DECIDED",
+ return {membershipId:r.membershipId,name:r.name??"Unnamed learner",rollNumber:r.rollNumber,
+  className:sectionsFor.length===1?sectionsFor[0].sectionName:null,
+  branch:batch.department,program:batch.program,
+  decision:winner?.status??"NOT_DECIDED",
   source:!winner?"NONE":winner===direct?"LEARNER":winner===section?"CLASS":"BATCH",
   reason:winner?.reason??null,ambiguous:sectionsFor.length>1,
   direct:direct&&["ELIGIBLE","INELIGIBLE"].includes(direct.status)
