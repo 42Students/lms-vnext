@@ -59,7 +59,7 @@ export function TpoBulkRoundResultRecorder({
   }
 
   async function stageSelected() {
-    if (busy || selected.length === 0 || selected.length > 25 ||
+    if (busy || selected.length === 0 || pendingTotal > 25 ||
       (outcome !== "PASS" && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
       setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
