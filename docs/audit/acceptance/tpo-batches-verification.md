@@ -43,3 +43,12 @@ Pending graceful-operation dependency: `src/lib/friendly-error.ts`, `src/lib/api
 |---|---|---|
 | TPO-batches-13 | DONE | `src/modules/placements/tpo-batch-deadline-label-model.ts` and `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-chat5-round3.test.ts` — `TPO-batches-13: shows register-by date only while a batch is not finished`. |
 | TPO-batches-14 | DONE | `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-chat5-round3.test.ts` — `TPO-batches-14: uses the exact legacy placement-eligibility subtitle`. |
+
+## Round 4 — working set, retirement, and graceful handling
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-batches-07 | DONE | `src/modules/placements/tpo-batch-working-set-model.ts` and `src/app/(authenticated)/tpo/batches/page.tsx`; `tests/unit/tpo-batches-working-set-chat5.test.ts` — `TPO-batches-07 hides finished and uninvited past batches until Show older is selected`. Explicit filters/search preserve access to older records. |
+| TPO-batches-26 | OPEN | `src/modules/placements/tpo-batch-lifecycle-service.ts`, `tpo-batch-lifecycle-model.ts`, `src/db/schema/placement-batches.ts`, and `src/components/tpo/tpo-batch-lifecycle-control.tsx`; `tests/unit/tpo-batches-lifecycle-chat5-round4.test.ts` — `TPO-batches-26 permits never-invited retirement without forging an invite`. Database registration/replay of `docs/proposed-migrations/tpo-batches-finish-without-invite.sql` still required. |
+| TPO-batches-39 | OPEN | `src/components/tpo/tpo-batch-eligibility-import.tsx` uses shared `apiFetch`, retains CSV and preview on failure, and requires explicit review; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-32 retains user edits after a changed import or failed write`. Full legacy review modal remains open. |
+| TPO-batches-40 | OPEN | The import no longer exposes raw UUIDs or provider errors and no longer uses a native confirmation; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-35 uses an inline consequence acknowledgement rather than native confirm`. Exact legacy button/modal copy still incomplete. |
