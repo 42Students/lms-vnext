@@ -40,7 +40,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const listOfferingId=lessons.find(lesson=>lesson.id===listLessonId)?.offeringId??
    existing.find(item=>item.lessonId===listLessonId)?.offeringId;
  const listSections=deliveries.filter(row=>!listLessonId||listOfferingId===row.offeringId);
- const matching=existing.filter(item=>(!listQuery||[item.title,item.lessonName,item.courseCode].some(value=>
+ const matching=existing.filter(item=>(!listQuery.trim()||[item.title,item.lessonName,item.courseCode].some(value=>
   value.toLocaleLowerCase().includes(listQuery.trim().toLocaleLowerCase())))&&
   (!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
