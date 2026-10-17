@@ -61,7 +61,7 @@ export function SuperAdminFacultyScheduleReassignAction({
       description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked."}
       footer={<>
         <Button variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
-        <Button disabled={pending||!target} onClick={()=>setConfirmOpen(true)}>Review transfer</Button>
+        <Button disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
       </>}>
       <label htmlFor={id} className="mb-2 block text-sm font-semibold text-body">Replacement faculty</label>
       <select id={id} className="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"
