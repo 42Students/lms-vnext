@@ -58,7 +58,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
               registrationNumber:person.registrationNumber??"",
             }),
           })});
-        setSuccess(kind==="FACULTY"?"Faculty details saved.":"Student details saved.");
+        setSuccess(kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!");
         router.refresh();setOpen(false);
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     });

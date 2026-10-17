@@ -38,8 +38,16 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(create()).toContain("allowedProgramIds:");
   expect(create()).toContain("allowedCohortIds:");
  });
- it("TPO-drives-39 round templates are disclosed as after-save work, not pretended to exist",()=>{
-  expect(create()).toContain("Interview round templates and recruiter invitations are configured from the saved drive workspace");
+ it("TPO-drives-39 round presets persist pending rounds after the draft with server readback before retry",()=>{
+  const form=create(),presets=source("src/modules/placements/tpo-drive-round-presets.ts");
+  for(const name of ["Talk, Test, Interview","Test, Technical, HR","Test, GD, Interview"])
+    expect(presets).toContain(name);
+  expect(form).toContain('name="roundPreset"');
+  expect(form).toContain("plannedTpoRoundRows(roundPreset)");
+  expect(form).toContain("saved.rounds.some");
+  expect(form).toContain("planned.slice(saved.rounds.length)");
+  expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
+  expect(form).toContain("venues and dates in the drive workspace");
  });
  it("TPO-drives-40 learner reach is deferred until persisted evidence can be counted",()=>{
   expect(create()).toContain('aria-label="Who this reaches"');

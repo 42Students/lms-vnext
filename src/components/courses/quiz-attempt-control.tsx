@@ -301,8 +301,8 @@ export function QuizAttemptControl({
           <p className="mt-1 text-xs text-body">{question.points} pts</p>
           <ul className="mt-2 space-y-1">{question.options.map(option=>
             <li key={option.id} className="flex gap-2 text-sm text-body">
-              <span aria-hidden="true">{option.correct?"✓":"–"}</span>{option.text}
-              {option.correct?<span className="font-semibold text-success">Correct answer</span>:null}
+              <span aria-hidden="true">{(option as {correct?:boolean}).correct?"✓":"–"}</span>{option.text}
+              {(option as {correct?:boolean}).correct?<span className="font-semibold text-success">Correct answer</span>:null}
             </li>)}</ul>
         </li>)}
       </ol>

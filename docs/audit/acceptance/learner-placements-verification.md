@@ -141,11 +141,3 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 
 | LEARNER-placements-09 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, latest audience-filtered notice body and relative day. |
 | LEARNER-placements-33 | DONE (authored; not run) | `tests/unit/chat15-player-and-placement-copy.test.ts`, removed misleading count tiles/disclaimer. |
-
-| LEARNER-placements-R03 | DONE source, unexecuted | tests/unit/chat15-placement-policy-and-escalation.test.ts: policy-aware internship, Dream, uplift, held offers. |
-| LEARNER-placements-30 | PARTIAL | Same test: staff-sourced application banner; opt-out workflow not registered. |
-| LEARNER-placements-52 | PARTIAL | Same test: absence shortcut to placement cell, not a persisted dispute. |
-| LEARNER-placements-41 | PARTIAL | Same test: safe assessment vendor link, due-at not confirmed. |
-| LEARNER-placements-28 | PARTIAL | Same test: privacy notice, full company-preview projection not implemented. |
-
-| LEARNER-placements-01 | DONE (source authored; not run) | `tests/unit/chat15-personal-placement-alert-read.test.ts`; recipient-scoped POST, mark read before navigation, friendly retry. |

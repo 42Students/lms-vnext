@@ -33,7 +33,7 @@ export default async function TpoDriveDiscussion({params}:{
      new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(thread.latestAt)+" IST":
      "No messages yet"}</p>
     <Link href={"/tpo/messages/"+encodeURIComponent(thread.id)}
-      className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Discuss</Link>
+      className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open conversation</Link>
    </li>)}</ul>
    </section>}
   <p className="text-xs text-muted-foreground">Recruiter messages and internal team notes are separate. Only recorded messages appear here.</p>

@@ -7,7 +7,7 @@ import { getDb } from "@/db/client";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { lessonMoveSchema, planLessonMove } from "./college-lesson-order-model";
+import { lessonMoveSchema, planLessonMove, collegeLessonBulkOrderSchema } from "./college-lesson-order-model";
 import { courseLessons } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -333,4 +333,51 @@ export async function moveCollegeCourseLesson(context: RequestContext, raw: unkn
     });
     return { lessonId: input.lessonId, sequence: second.previousSequence };
   });
+}
+
+// COL-course-tabs-14: one atomic replacement of the active shared Lesson order.
+// Rows are locked and compared against the last visible order before mutation.
+export async function reorderCollegeCourseLessons(context:RequestContext,raw:unknown){
+ const input=collegeLessonBulkOrderSchema.parse(raw);
+ const path=await loadLearningPathScope(input.learningPathId);
+ requirePermission(context,"courses.manage",{
+  collegeId:path.collegeId,organizationId:path.organizationId,
+ });
+ return getDb().transaction(async tx=>{
+  await lockLiveLessonWriteAncestry(tx,path);
+  const live=await tx.select({id:courseLessons.id,sequence:courseLessons.sequence})
+   .from(courseLessons).where(and(eq(courseLessons.learningPathId,path.id),
+    eq(courseLessons.status,"ACTIVE")))
+   .orderBy(asc(courseLessons.sequence),asc(courseLessons.id))
+   .for("update");
+  if(live.length!==input.expected.length||
+     live.some((item,index)=>item.id!==input.expected[index]?.id||
+      item.sequence!==input.expected[index]?.sequence))
+   throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
+  const liveIds=new Set(live.map(item=>item.id));
+  if(input.orderedIds.some(id=>!liveIds.has(id)))
+   throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
+  if(input.orderedIds.every((id,index)=>id===live[index]?.id))return {changed:false};
+  // Parking every row above the current maximum avoids the unique
+  // (learning_path_id, sequence) index during any arbitrary reorder.
+  const firstTemporary=Math.max(...live.map(item=>item.sequence))+1;
+  for(const [index,item] of live.entries()){
+   await tx.update(courseLessons).set({
+    sequence:firstTemporary+index,updatedAt:new Date(),
+   }).where(and(eq(courseLessons.id,item.id),eq(courseLessons.learningPathId,path.id)));
+  }
+  for(const [index,id] of input.orderedIds.entries()){
+   await tx.update(courseLessons).set({
+    sequence:live[index]!.sequence,updatedAt:new Date(),
+   }).where(and(eq(courseLessons.id,id),eq(courseLessons.learningPathId,path.id)));
+  }
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.COURSES_LESSON_REORDERED,
+   collegeId:path.collegeId,organizationId:path.organizationId,
+   subjectType:"course_learning_path",subjectId:path.id,
+   summary:"Reordered shared lessons",
+   metadata:{before:live.map(row=>row.id),after:input.orderedIds},
+  });
+  return {changed:true};
+ });
 }

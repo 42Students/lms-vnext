@@ -5,6 +5,7 @@ import type {
 } from "@/modules/courses/admin-offering-learning-workspace";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { CollegeLessonReorderActions } from "./college-lesson-reorder-actions";
+import {CollegeLessonDragOrder} from "./college-lesson-drag-order";
 import {CollegeLessonVisibilityControl} from "./college-lesson-visibility-controls";
 import { FacultyItemActions } from "./faculty-item-actions";
 import {
@@ -419,6 +420,8 @@ export function AdminOfferingLearningOverview({
         </section>
       ) : (
         <div className="space-y-5">
+          <CollegeLessonDragOrder learningPathId={learningPath.id}
+            lessons={workspace.lessons.map(row=>({id:row.id,name:row.name,sequence:row.sequence}))}/>
           {workspace.lessons.map(
             (lesson, lessonIndex) => {
               const itemCount =

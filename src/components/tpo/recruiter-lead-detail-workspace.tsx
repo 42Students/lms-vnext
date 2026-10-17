@@ -648,7 +648,7 @@ export function RecruiterLeadDetailWorkspace({
                 {actionError ? <p role="alert" className="text-destructive">{actionError}</p> : null}
                 <div className="flex justify-end gap-2">
                   <button className={button} type="button" disabled={saving} onClick={() => setEditing(false)}>Cancel</button>
-                  <button className={primary} type="submit" disabled={saving}>{saving ? "Saving…" : "Save details"}</button>
+                  <button className={primary} type="submit" disabled={saving}>Save</button>
                 </div>
               </form>
             </div>

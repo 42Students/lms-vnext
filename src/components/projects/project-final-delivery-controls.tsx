@@ -10,12 +10,12 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
-import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {ProjectDeliveryFileUploader} from "./project-delivery-file-uploader";
 
@@ -436,6 +436,8 @@ export function FinalReviewControl({
   const router = useRouter();
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [confirmReview,setConfirmReview]=useState(false);
+  const [staleReview,setStaleReview]=useState(false);
   const [decision, setDecision] = useState<
     "APPROVED" | "CHANGES_REQUESTED"
   >("APPROVED");
@@ -443,14 +445,13 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
-  const [staleReview, setStaleReview] = useState(false);
+
   function discardDraft(){
-    setOpen(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
+    setOpen(false);setConfirmReview(false);setFeedback("");setDecision("APPROVED");setStaleReview(false);
   }
-  const guard=useProjectEditorDiscardGuard(open,
+  const guard=useProjectEditorDiscardGuard(open||confirmReview,
     Boolean(feedback.trim())||(mode!=="MENTOR"&&decision!=="APPROVED"),
     pending,discardDraft);
-
   async function review() {
     if (
       decision === "CHANGES_REQUESTED" &&
@@ -472,6 +473,7 @@ export function FinalReviewControl({
         },
       );
       setOpen(false);
+      setConfirmReview(false);
       setStaleReview(false);
       setFeedback("");
       showToast({
@@ -483,16 +485,14 @@ export function FinalReviewControl({
       });
       router.refresh();
     } catch (caught) {
-      if (caught instanceof Error && caught.message.includes("This changed while you were working")) {
+      if(caught instanceof Error && "status" in caught && caught.status===409){
         setStaleReview(true);
       }
+      setConfirmReview(false);
       showToast({
         tone: "error",
         title: "Submission review could not be saved",
-        description:
-          caught instanceof Error
-            ? caught.message
-            : undefined,
+        description: caught instanceof Error?caught.message:"Refresh the review and try again.",
       });
     } finally {
       setPending(false);
@@ -527,61 +527,22 @@ export function FinalReviewControl({
           : "Confirm your decision and feedback. The review will be saved in this project's history."}
         footer={
           <>
-            <Button
-              variant="secondary"
-              disabled={pending}
-              onClick={guard.requestClose}
-            >
-              Cancel
+            <Button variant="secondary" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
+            <Button disabled={pending} onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}>
+              Accept submission
             </Button>
-            <Button
-              disabled={
-                pending ||
-                (decision ===
-                  "CHANGES_REQUESTED" &&
-                  !feedback.trim())
-              }
-              onClick={review}
-            >
-              {pending
-                ? "Saving…"
-                : decision === "APPROVED"
-                  ? "Accept submission"
-                  : "Request changes"}
+            <Button variant="secondary" disabled={pending||!feedback.trim()}
+              onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}>
+              Request changes
             </Button>
           </>
         }
       >
         <div className="grid gap-4">
-          {staleReview ? <div role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
-            <p className="font-semibold">This submission may have changed since you opened this review</p>
-            <p>Refresh the page to load the latest version before accepting, requesting changes, or locking.</p>
-            <Button size="sm" variant="secondary" onClick={() => {setOpen(false);router.refresh();}}>
-              Refresh latest submission
-            </Button>
-          </div> : null}
-          {mode!=="MENTOR" ? <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Decision
-            </span>
-            <Select
-              value={decision}
-              onChange={(event) =>
-                setDecision(
-                  event.target.value as
-                    | "APPROVED"
-                    | "CHANGES_REQUESTED",
-                )
-              }
-            >
-              <option value="APPROVED">
-                Accept submission
-              </option>
-              <option value="CHANGES_REQUESTED">
-                Request changes
-              </option>
-            </Select>
-          </label> : null}
+          {staleReview?<p role="alert" className="rounded-md border border-border p-3 text-sm text-body">
+            This submission may have changed since you opened this review.
+            Refresh the page to load the latest version before accepting, requesting changes, or locking.
+          </p>:null}
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Feedback
@@ -601,6 +562,15 @@ export function FinalReviewControl({
           </label>
         </div>
       </Dialog>
+      <ConfirmDialog open={confirmReview} onOpenChange={setConfirmReview}
+        title={decision==="APPROVED"?"Accept this submission?":"Request changes?"}
+        description={decision==="APPROVED"
+          ?"The learner will be notified their submission was accepted."
+          :"The learner will see your feedback and can revise the submission."}
+        confirmLabel={decision==="APPROVED"?"Accept submission":"Request changes"}
+        pending={pending}
+        confirmDisabled={decision==="CHANGES_REQUESTED"&&!feedback.trim()}
+        onConfirm={()=>{void review();}}/>
       <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
         title="Discard final review feedback?"
         description="You have unsaved project changes. Leave this page and discard them?"
