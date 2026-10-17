@@ -32,13 +32,20 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
  const where=and(...predicates);
  const db=getDb();
- const [total,items]=await Promise.all([
+ const [total,items,facets]=await Promise.all([
   db.select({n:count()}).from(db10AuditFindings).where(where),
   db.select().from(db10AuditFindings).where(where)
    .orderBy(desc(db10AuditFindings.foundAt),desc(db10AuditFindings.importedAt),asc(db10AuditFindings.id))
    .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
+  db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
+   .from(db10AuditFindings).where(where)
+   .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
  ]);
- return {total:total[0]?.n??0,items,page:query.page,
+ const statusCounts:Record<string,number>={};
+ for(const row of facets)statusCounts[row.status]=(statusCounts[row.status]??0)+row.n;
+ const criticalOpen=facets.reduce((sum,row)=>
+   row.severity==="CRITICAL"&&(ACTIVE_FINDING_STATUSES as readonly string[]).includes(row.status)?sum+row.n:sum,0);
+ return {total:total[0]?.n??0,items,page:query.page,statusCounts,criticalOpen,
   pages:Math.max(1,Math.ceil((total[0]?.n??0)/INDEPENDENT_AUDIT_PAGE_SIZE))};
 }
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
