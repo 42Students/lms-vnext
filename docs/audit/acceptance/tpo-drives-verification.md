@@ -39,3 +39,52 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 
 | TPO-drives-35 | OPEN | Create now sends `minPctThroughout` and `requireVerifiedEvidence` and validates percentage bounds; PG/gender/branch parity remains. Test TPO-drives-35 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
 | TPO-drives-36 | OPEN | Five legacy eligibility presets populate actual policy values with a college conversion caution. Dynamic CGPA-to-percentage hint remains. Test TPO-drives-36. |
+
+| TPO-drives-R02 | DONE | Publish action creates a reviewed draft and navigates to workspace `?publish=1`, never publishes directly from form; named TPO-drives-R02 test. Existing flow independently verified in source. |
+| TPO-drives-R03 | DONE | Preflight now shows warning for absent rounds and warns when all targeting/evidence fields are empty, nonblocking; named TPO-drives-R03 test. |
+| TPO-drives-R05 | OPEN | Create fields enforce annual CTC upper bounds and numeric/percentage caps; complete Zod field error mapping, description parity and role creation remain. Named TPO-drives-R05 test. |
+| TPO-drives-44 | OPEN | Internal create response failures now tell the operator to inspect saved drafts/employers instead of echoing implementation detail; exact legacy copy per error remains unverified; named TPO-drives-44 test. |
+
+| TPO-drives-25 | OPEN | `placement-job-create-workspace.tsx` now computes college-scoped company memory (past drives, joined hires, latest date, recent roles); create form shows recent-title duplicate warning; full employer-level duplicate detection beyond recent three titles remains. Test TPO-drives-25 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+| TPO-drives-R03 | DONE | Revised warning suppresses false unrestricted-audience copy when an explicit eligibility preset is selected; second test TPO-drives-R03 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+
+| TPO-drives-43 | OPEN | Client keeps server-returned draft ID and relationship in a ref; a failed eligibility write can retry without a second job/company create, and changing fields after partial save redirects to existing draft instead. Missing true atomic server transaction / idempotency key and persistence across browser restarts. Named test TPO-drives-43, `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+
+| TPO-drives-15 | OPEN | First published-drive deadline already supported by DB service; now form validates strict IST date and uses accessible confirmation, guarded `apiFetch`, preserving draft on failure. Multi-drive deadline bulk action remains open. Tests TPO-drives-15 and TPO-drives-45 in round-4. |
+
+| TPO-drives-46 | OPEN | Direct publish now creates eligible learner in-app notifications in the same transaction, after immutable publication event and before first-drive debarment advance, matching TPO lifecycle publish. Email provider is explicitly unavailable and still needs owner/provider integration. Test TPO-drives-46. |
+| TPO-drives-R01 | OPEN | Independently inspected direct `publishPlacementJob`: server enforces future application deadline and a CTC/stipend presence. Still differs from TPO lifecycle round/policy blockers; test TPO-drives-R01 records partial server preflight. |
+| TPO-drives-51 | NOT-A-GAP (role alternative) | College Admin has a permission-gated separate `/college/placements/new` with the same `PlacementJobCreateWorkspace`; TPO URL does not need to grant College Admin role. Test TPO-drives-51. Broader college-admin action feature parity not asserted. |
+
+| TPO-drives-26 | DONE (create-picker route) | `placement-job-create-workspace.tsx` now offers a college-scoped last-20 closed/cancelled drive picker with `TpoDriveCloneAction`; existing API creates a fresh draft, drops dates/outcomes/offer history and stores `sourceJobId` audit. Full legacy clone UX still subject to browser acceptance; named test TPO-drives-26. |
+
+| TPO-drives-41 | OPEN | Create form now stores a per-user/college browser draft, restores field/selection values and clears backup after success, with a discard option and existing unload/double-submit guard. Server-side autosave + last-saved-by/time and route-change interception remain incomplete. Named test TPO-drives-41. |
+
+| GR-60 | PARTIAL (TPO Drive Create) | Form backup uses a scoped browser key with stable hooks and no lint suppressions; named GR-60 TPO-drives-41 test. Server saved-state parity still open. |
+
+## Round 4 — additional open-gap evidence (not closure; tests written, not run)
+
+| Gap | Status | Evidence and next action |
+| --- | --- | --- |
+| TPO-drives-27 | BLOCKED | Private JD file bucket, scanner and owner storage protocol must be wired before upload. No fake file input or public URL added. Test TPO-drives-27 in `tests/unit/tpo-drives-chat-3-open-verification.test.ts`. |
+| TPO-drives-28 | OPEN | Employment type remains the fixed enum. UI now explains custom job types and placed-counting rules are separate; full configured type and placement accounting integration requires schema/UI work. Test TPO-drives-28. |
+| TPO-drives-29 | OPEN | On-site/hybrid/remote no longer imply pool logistics; work-mode helper clarifies travel and scheduling, but host/reporting/travel data not persisted. Test TPO-drives-29. |
+| TPO-drives-30 | OPEN | External portal URL is labelled accurately. Portal name is not stored, and UI explicitly says so; schema/API needed. Test TPO-drives-30. |
+| TPO-drives-31 | OPEN | Historical outside-platform record remains separate from published opportunities, still cannot attach participants or offers. Source and test TPO-drives-31 confirm no invented job. |
+| TPO-drives-32 | OPEN | Fixed, variable and stipend values are persisted on create. Repeatable packages, bonuses, stipend duration and per-role details still require workspace changes. Test TPO-drives-32. |
+| TPO-drives-34 | OPEN | Program/cohort targeting exists with tenant-scoped choices, but placement-batch counts/defaults and finished-batch semantics require further work. Test TPO-drives-34. |
+| TPO-drives-39 | OPEN | Create explicitly directs round templates and recruiter invites to after-save workspace; legacy preset chooser still missing. Test TPO-drives-39. |
+| TPO-drives-40 | OPEN | Setup review exists; a truthful "Who this reaches" panel now explains that reach can only be verified after save. Live eligibility preview on the form remains unavailable. Test TPO-drives-40. |
+| TPO-drives-42 | OPEN | Create-side publish preflight and server lifecycle deadline/pay blockers verified; direct publish and TPO lifecycle still have different mandatory round/policy rules. Test TPO-drives-42. |
+| TPO-drives-48 | OPEN | Persisted edit state explicitly refuses LIVE edits. No pretend notification choices; live-edit domain contract and audit side effects remain. Test TPO-drives-48. |
+| TPO-drives-52 | OPEN | Quick draft and full create routes remain separate. Test TPO-drives-52 locks their current exposure until workflows can be safely consolidated. |
+
+| TPO-drives-26 | DONE (safe create-picker action) | Clone action now uses guarded `apiFetch` and keyboard-accessible `ConfirmDialog` instead of browser confirmation/raw response errors. Named tests TPO-drives-26 and GR-35; server remains responsible for ownership, source copying and auditing. |
+
+| TPO-drives-01 | DONE | Verified sidebar route `/tpo/placements` redirects to actual lifecycle list. Test TPO-drives-01; sidebar component remains owned by chat-9. |
+| TPO-drives-09 | DONE (available statuses) | Lifecycle list uses labelled and color-toned status badges for jobs and recruiter requests, including Cancelled / Declined; test TPO-drives-09. Persisted CANCELLED-vs-CLOSED distinction remains TPO-drives-R04. |
+| TPO-drives-38 | OPEN | UI explicitly states employer skill requirements cannot be configured here. No persisted skill tags or applicant match setup; needs server/domain support, no fake UI. Test TPO-drives-38. |
+| TPO-drives-47 | OPEN | UI directs lead invitations to Engage instead of claiming this form emails recruiters; drive-specific invitation, public review link, email/clipboard UX remain. Test TPO-drives-47. |
+| TPO-drives-50 | OPEN | Edit checks TPO actor and college scope, but recruiter-originated approved drive fields are not yet protected by a company-owned-field policy and last-saved attribution. Test TPO-drives-50. |
+
+| TPO-drives-22 | DONE (visible wording) | Create and Edit use `Create drive`, `Create draft`, `Publish`, `Save changes`, `Back to drives` and `Open drive page`. Edit now uses accessible confirmation and guarded friendly API. Named test TPO-drives-22. Full legacy wizard semantics still tracked in other IDs. |
