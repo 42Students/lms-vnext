@@ -64,6 +64,9 @@ export async function sendTelegramAlert(
     };
   }
 
+  // Do not route this non-idempotent provider call through outboundFetch:
+  // that helper logs provider failures with logError, which invokes this notifier
+  // recursively during an alerting outage. A single bounded attempt is safer.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 5_000);
   try {

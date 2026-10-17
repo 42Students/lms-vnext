@@ -18,6 +18,12 @@ describe("GR-117 browser reporting endpoint security", () => {
     }));
     expect(response.status).toBe(413);
   });
+  it("GR-117 accepts the exact chat-14 root boundary payload schema", async () => {
+    const { browserErrorSchema } = await import("@/modules/log-alerts/client-report");
+    const rootPayload = { requestId: "0123abcd", kind: "render" };
+    expect(browserErrorSchema.safeParse(rootPayload).success).toBe(true);
+    expect(browserErrorSchema.safeParse({ ...rootPayload, error: "raw stack" }).success).toBe(false);
+  });
   it("GR-117 responds gently to invalid JSON before authentication", async () => {
     const response = await POST(new Request("https://lms.test/api/client-errors", {
       method: "POST",
