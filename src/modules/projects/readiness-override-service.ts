@@ -2,7 +2,7 @@ import "server-only";
 import {randomUUID} from "node:crypto";
 import {and,desc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,projectInstances} from "@/db/schema";
+import {activityEvents,projectInstances,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
@@ -13,15 +13,16 @@ import {readinessOverrideInputSchema,type ReadinessOverrideState} from "./readin
 
 type ReadableDb=Pick<ReturnType<typeof getDb>,"select">;
 export async function readProjectReadinessOverride(db:ReadableDb,projectId:string,collegeId:string) {
-  const [row]=await db.select({metadata:activityEvents.metadata,occurredAt:activityEvents.occurredAt})
-    .from(activityEvents).where(and(eq(activityEvents.subjectType,"project_instance"),
+  const [row]=await db.select({metadata:activityEvents.metadata,occurredAt:activityEvents.occurredAt,
+    overriddenBy:users.displayName})
+    .from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId)).where(and(eq(activityEvents.subjectType,"project_instance"),
       eq(activityEvents.subjectId,projectId),eq(activityEvents.collegeId,collegeId),
       eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_READINESS_OVERRIDDEN)))
     .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(1);
   const value=row?.metadata?.state;
   const state:ReadinessOverrideState|null=value==="FORCE_UNLOCK"||value==="FORCE_BLOCK"||value==="CLEAR"?value:null;
   return {state, note:state==="CLEAR"?null:typeof row?.metadata?.note==="string"?row.metadata.note:null,
-    occurredAt:row?.occurredAt??null};
+    occurredAt:row?.occurredAt??null,overriddenBy:row?.overriddenBy??null};
 }
 
 export async function overrideProjectReadiness(context:RequestContext,projectIdInput:string,raw:unknown){
