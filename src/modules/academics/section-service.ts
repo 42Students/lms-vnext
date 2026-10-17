@@ -8,6 +8,8 @@ import { getDb } from "@/db/client";
 import {
   sections,
 } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
@@ -246,7 +248,8 @@ export async function createSection(
   const db = getDb();
 
   try {
-    const [created] = await db
+    return await db.transaction(async (tx)=>{
+    const [created] = await tx
       .insert(sections)
       .values({
         cohortId: input.cohortId,
@@ -258,7 +261,16 @@ export async function createSection(
       })
       .returning();
 
+    if(!created)throw new Error("Unable to persist section mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_SECTION_CREATED,
+      organizationId:cohort.organizationId,collegeId:cohort.collegeId,
+      subjectType:"section",subjectId:created.id,subjectLabel:created.name,
+      summary:"Section created",
+      metadata:{code:created.code,status:created.status},
+    });
     return created;
+   });
   } catch (error) {
     throw mapSectionConstraint(error);
   }
@@ -298,7 +310,8 @@ export async function updateSection(
   const db = getDb();
 
   try {
-    const [updated] = await db
+    return await db.transaction(async (tx)=>{
+    const [updated] = await tx
       .update(sections)
       .set({
         ...input,
@@ -318,7 +331,16 @@ export async function updateSection(
       );
     }
 
+    if(!updated)throw new Error("Unable to persist section mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_SECTION_UPDATED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"section",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"Section updated",
+      metadata:{previousStatus:current.status,code:updated.code},
+    });
     return updated;
+   });
   } catch (error) {
     if (error instanceof AcademicsServiceError) {
       throw error;
@@ -343,7 +365,8 @@ export async function archiveSection(
   });
 
   const db = getDb();
-  const [archived] = await db
+  return await db.transaction(async (tx)=>{
+    const [archived] = await tx
     .update(sections)
     .set({
       status: "ARCHIVED",
@@ -363,5 +386,14 @@ export async function archiveSection(
     );
   }
 
-  return archived;
+  if(!archived)throw new Error("Unable to persist section mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_SECTION_ARCHIVED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"section",subjectId:archived.id,subjectLabel:archived.name,
+      summary:"Section archived",
+      metadata:{previousStatus:current.status,nextStatus:archived.status},
+    });
+    return archived;
+   });
 }

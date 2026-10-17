@@ -44,6 +44,7 @@ export type HrListFilters = {
   pageSize: number;
 };
 
+export type HrCollegeOption = {collegeId:string;collegeName:string;organizationId:string};
 export type HrRelationshipOption = {
   companyRelationshipId: string;
   companyId: string;
@@ -55,6 +56,8 @@ export type HrRelationshipOption = {
 
 export type HrAccountFormValues = {
   companyRelationshipId: string;
+  companyRelationshipIds?: string[];
+  newCompany?: {name:string;collegeId:string;primaryDomain?:string};
   displayName: string;
   phoneE164: string;
   email: string;

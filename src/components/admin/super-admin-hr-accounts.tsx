@@ -24,6 +24,7 @@ import { SuperAdminHrDetailDrawer } from "./super-admin-hr-detail-drawer";
 import type {
   HrAccount,
   HrAccountFormValues,
+  HrCollegeOption,
   HrAccountsPageData,
   HrGrant,
   HrListFilters,
@@ -168,6 +169,7 @@ export function SuperAdminHrAccounts({
 
   const [relationships, setRelationships] =
     useState<HrRelationshipOption[]>([]);
+  const [colleges,setColleges]=useState<HrCollegeOption[]>([]);
   const [optionsLoading, setOptionsLoading] =
     useState(false);
   const [optionsError, setOptionsError] =
@@ -183,10 +185,12 @@ export function SuperAdminHrAccounts({
     setOptionsLoading(true);
     setOptionsError(null);
     setRelationships([]);
+    setColleges([]);
 
     try {
       const payload = await requestJson<{
         relationships: HrRelationshipOption[];
+        colleges: HrCollegeOption[];
       }>("/api/admin/hr/options");
 
       if (
@@ -202,6 +206,7 @@ export function SuperAdminHrAccounts({
       }
 
       setRelationships(payload.relationships);
+      setColleges(Array.isArray(payload.colleges)?payload.colleges:[]);
     } catch (error) {
       if (
         version !== optionsRequestVersion.current
@@ -318,8 +323,9 @@ export function SuperAdminHrAccounts({
           "/api/admin/hr",
           "POST",
           {
-            companyRelationshipId:
-              values.companyRelationshipId,
+            ...(values.newCompany?{newCompany:values.newCompany}:
+              {companyRelationshipId:values.companyRelationshipId,
+               companyRelationshipIds:values.companyRelationshipIds}),
             displayName: values.displayName.trim(),
             phoneE164: values.phoneE164.trim(),
             ...(values.email.trim()
@@ -419,7 +425,7 @@ export function SuperAdminHrAccounts({
           description:
             values.status === "ARCHIVED" &&
             existing.status !== "ARCHIVED"
-              ? "The recruiter was archived and active college grants were revoked."
+              ? "The recruiter was suspended, signed out everywhere and retains existing college access."
               : "Account changes were saved.",
         });
       }
@@ -437,8 +443,8 @@ export function SuperAdminHrAccounts({
     if(!account.accountManageable||pending||account.status==="DISABLED")return;
     const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
     const question=next==="ARCHIVED"
-      ? "Suspend "+hrDisplayName(account)+"? Their college access will be revoked."
-      : "Reactivate "+hrDisplayName(account)+"? College access is not automatically restored.";
+      ? "Suspend "+hrDisplayName(account)+"? They are signed out everywhere and cannot sign in until reactivated. College access is kept."
+      : "Reactivate "+hrDisplayName(account)+"? Their existing college access is kept.";
     if(!window.confirm(question))return;
     setPending(true);setActionError(null);
     try{
@@ -869,6 +875,7 @@ export function SuperAdminHrAccounts({
               : null
           }
           relationships={relationships}
+          colleges={colleges}
           optionsLoading={optionsLoading}
           optionsError={optionsError}
           pending={saving}
