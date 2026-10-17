@@ -7,12 +7,14 @@ import type { getTpoDriveLifecycleReadiness } from "@/modules/placements/tpo-dri
 import { tpoDriveReadinessMessage } from "@/modules/placements/tpo-drive-lifecycle-model";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
 
 export function TpoDriveLifecycleControls({ readiness, initialPublish = false }: { readiness: Readiness; initialPublish?: boolean }) {
   const router = useRouter();
+  const {run}=useGuardedAction({timeoutMs:35000});
   const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
   const [pending, setPending] = useState(false);
@@ -29,6 +31,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
 
   async function submit() {
     if (!selected?.decision.allowed || reason.trim().length < 10 || pending || !acknowledged) return;
+    await run(async()=>{
     setPending(true);
     setError(null);
     setSuccess("");
@@ -63,6 +66,7 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
     } finally {
       setPending(false);
     }
+    });
   }
 
   return (
