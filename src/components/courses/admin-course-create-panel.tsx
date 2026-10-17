@@ -6,7 +6,6 @@ import {
   type FormEvent,
   useMemo,
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -15,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch } from "@/lib/api-fetch";
 import {collegeCourseDuplicatePrefill} from "@/modules/courses/college-course-duplicate-model";
 
@@ -97,7 +97,7 @@ export function AdminCourseCreatePanel({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
   const [offeringConfirmOpen, setOfferingConfirmOpen] = useState(false);
   const [nextSetupStep,setNextSetupStep]=useState<"COURSE"|"OFFERING"|"DELIVERY"|"FACULTY"|"DONE">("COURSE");
 
@@ -163,7 +163,7 @@ export function AdminCourseCreatePanel({
   }, [sections, selectedDeliveryOffering]);
 
   function run(task: () => Promise<unknown>, successTitle: string, reset: (result:unknown) => void, failureTitle = "Course update failed") {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const result=await task();
         reset(result);
