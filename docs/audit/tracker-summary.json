@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-10-17T00:42:31.514Z",
+ "generatedAt": "2026-10-17T01:19:05.433Z",
  "since": "2026-10-15",
  "mainRef": "origin/main",
  "statuses": [
@@ -13,21 +13,21 @@
  ],
  "total": 1843,
  "byStatus": {
-  "OPEN": 911,
+  "OPEN": 853,
   "IN-BRANCH": 2,
-  "FIXED-ON-MAIN": 600,
+  "FIXED-ON-MAIN": 666,
   "VERIFIED": 195,
-  "UNCONFIRMED": 116,
+  "UNCONFIRMED": 108,
   "WRONG": 9,
   "CLOSED-SINCE": 10,
   "total": 1843
  },
- "closedPercent": "43.9%",
+ "closedPercent": "47.5%",
  "byAccount": {
   "tpo": {
-   "OPEN": 376,
+   "OPEN": 361,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 181,
+   "FIXED-ON-MAIN": 196,
    "VERIFIED": 97,
    "UNCONFIRMED": 33,
    "WRONG": 1,
@@ -35,29 +35,29 @@
    "total": 694
   },
   "recruiter": {
-   "OPEN": 40,
+   "OPEN": 36,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 45,
+   "FIXED-ON-MAIN": 51,
    "VERIFIED": 20,
-   "UNCONFIRMED": 7,
+   "UNCONFIRMED": 5,
    "WRONG": 0,
    "CLOSED-SINCE": 2,
    "total": 116
   },
   "learner": {
-   "OPEN": 109,
+   "OPEN": 95,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 79,
+   "FIXED-ON-MAIN": 95,
    "VERIFIED": 21,
-   "UNCONFIRMED": 20,
+   "UNCONFIRMED": 18,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
    "total": 231
   },
   "faculty": {
-   "OPEN": 26,
+   "OPEN": 25,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 73,
+   "FIXED-ON-MAIN": 74,
    "VERIFIED": 0,
    "UNCONFIRMED": 0,
    "WRONG": 6,
@@ -65,21 +65,21 @@
    "total": 105
   },
   "college": {
-   "OPEN": 106,
+   "OPEN": 99,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 74,
+   "FIXED-ON-MAIN": 84,
    "VERIFIED": 28,
-   "UNCONFIRMED": 22,
+   "UNCONFIRMED": 19,
    "WRONG": 1,
    "CLOSED-SINCE": 1,
    "total": 232
   },
   "superadmin": {
-   "OPEN": 170,
+   "OPEN": 153,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 93,
+   "FIXED-ON-MAIN": 111,
    "VERIFIED": 20,
-   "UNCONFIRMED": 26,
+   "UNCONFIRMED": 25,
    "WRONG": 0,
    "CLOSED-SINCE": 0,
    "total": 309
@@ -109,39 +109,39 @@
   "S1": {
    "OPEN": 7,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 28,
+   "FIXED-ON-MAIN": 29,
    "VERIFIED": 76,
-   "UNCONFIRMED": 1,
+   "UNCONFIRMED": 0,
    "WRONG": 0,
    "CLOSED-SINCE": 1,
    "total": 113
   },
   "S2": {
-   "OPEN": 241,
+   "OPEN": 234,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 253,
+   "FIXED-ON-MAIN": 262,
    "VERIFIED": 86,
-   "UNCONFIRMED": 39,
+   "UNCONFIRMED": 37,
    "WRONG": 2,
    "CLOSED-SINCE": 3,
    "total": 624
   },
   "S3": {
-   "OPEN": 471,
+   "OPEN": 436,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 253,
+   "FIXED-ON-MAIN": 291,
    "VERIFIED": 31,
-   "UNCONFIRMED": 47,
+   "UNCONFIRMED": 44,
    "WRONG": 0,
    "CLOSED-SINCE": 3,
    "total": 807
   },
   "S4": {
-   "OPEN": 192,
+   "OPEN": 176,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 66,
+   "FIXED-ON-MAIN": 84,
    "VERIFIED": 2,
-   "UNCONFIRMED": 29,
+   "UNCONFIRMED": 27,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
    "total": 299
@@ -149,9 +149,9 @@
  },
  "byLane": {
   "chat-2": {
-   "OPEN": 99,
+   "OPEN": 94,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 53,
+   "FIXED-ON-MAIN": 58,
    "VERIFIED": 42,
    "UNCONFIRMED": 10,
    "WRONG": 0,
@@ -159,9 +159,9 @@
    "total": 206
   },
   "chat-5": {
-   "OPEN": 182,
+   "OPEN": 181,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 80,
+   "FIXED-ON-MAIN": 81,
    "VERIFIED": 33,
    "UNCONFIRMED": 15,
    "WRONG": 1,
@@ -169,31 +169,31 @@
    "total": 312
   },
   "chat-7": {
-   "OPEN": 259,
+   "OPEN": 240,
    "IN-BRANCH": 2,
-   "FIXED-ON-MAIN": 252,
+   "FIXED-ON-MAIN": 275,
    "VERIFIED": 50,
-   "UNCONFIRMED": 35,
+   "UNCONFIRMED": 31,
    "WRONG": 7,
    "CLOSED-SINCE": 3,
    "total": 608
   },
   "chat-9": {
-   "OPEN": 371,
+   "OPEN": 338,
    "IN-BRANCH": 0,
-   "FIXED-ON-MAIN": 215,
+   "FIXED-ON-MAIN": 252,
    "VERIFIED": 70,
-   "UNCONFIRMED": 56,
+   "UNCONFIRMED": 52,
    "WRONG": 1,
    "CLOSED-SINCE": 4,
    "total": 717
   }
  },
  "fixedLast24h": {
-  "chat-2": 95,
-  "chat-5": 113,
-  "chat-7": 304,
-  "chat-9": 285
+  "chat-2": 100,
+  "chat-5": 114,
+  "chat-7": 327,
+  "chat-9": 322
  },
  "parseProblems": 0
 }
