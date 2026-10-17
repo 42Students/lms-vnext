@@ -144,12 +144,13 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
  // issue another offer when the application already holds one.
  const active=await getDb().select({
   id:placementOffers.id,kind:placementOffers.kind,roleTitle:placementOffers.roleTitle,
-  annualCtcInr:placementOffers.annualCtcInr,
+  annualCtcInr:placementOffers.annualCtcInr,issuedAt:placementOffers.issuedAt,
  }).from(placementOffers).where(and(
   eq(placementOffers.applicationId,next.applicationId),
   inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(2);
  if(active.length){
-  const found=active.length===1&&active[0]!.kind==="OFFER"&&
+  const found=active.length===1&&active[0]!.issuedAt>=existing.createdAt&&
+   active[0]!.kind==="OFFER"&&
    active[0]!.roleTitle===next.roleTitle&&active[0]!.annualCtcInr===next.annualCtcInr
    ?active[0]:null;
   if(!found)throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
