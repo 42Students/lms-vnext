@@ -23,3 +23,6 @@
 | TPO-campaigns-public-R10 | DONE (source; unrun) | Engagement audience count by segment is now one tenant-scoped aggregate SQL query instead of unbounded JS roster, and selected preview uses SQL IN with <=100 IDs; named `tests/unit/chat2-engage-sql-audience-preview.test.ts`. |
 
 | TPO-campaigns-public-22 | DONE (source; unrun) | Shared business-email policy now blocks personal/disposable/academic/IP hosts, adds distinct client hints and bounded server-side MX validation with retryable unavailable state before sending OTP. Named `tests/unit/chat2-business-email-safety.test.ts`. |
+
+| TPO-campaigns-public-33 | DONE (source; migration pending) | About placements is a bounded 4000-char, persisted, actor-scoped, audited college page section, editor with Save, public pre-wrap; `docs/proposed-migrations/tpo-public-page-content.sql`; `tests/unit/chat2-public-content-metrics.test.ts`. |
+| TPO-campaigns-public-34 | DONE (source; migration pending) | Seven real metric choices and ordered selection, preview, LPA/percentage formatting and suppression hints from live aggregates, no identity exposure. Same migration/test. |
