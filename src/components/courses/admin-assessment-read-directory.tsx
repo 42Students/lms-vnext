@@ -19,7 +19,7 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`Read-only ${title.toLowerCase()} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} />
-    <form action={base} className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+    <form action={base} className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment title
         <input name="q" type="search" maxLength={100} defaultValue={data.query.q}
           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
@@ -32,6 +32,19 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
           <option value="ARCHIVED">Archived</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Course code
+        <input name="courseCode" maxLength={64} defaultValue={data.query.courseCode??""} placeholder="All courses" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Audience
+        <select name="scope" defaultValue={data.query.scope} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">All audiences</option><option value="SHARED">Shared offering</option><option value="SECTION">Section-specific</option>
+        </select>
+      </label>
+      {!assignment?<label className="grid gap-1 text-sm font-semibold text-body">Results
+        <select name="results" defaultValue={data.query.results} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+         <option value="ALL">All results</option><option value="PUBLISHED">Released</option><option value="HIDDEN">Withheld</option>
+        </select>
+      </label>:null}
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching records · on this page: {stats.published} published, {stats.activity} {assignment ? "submissions" : "attempts"}</p>

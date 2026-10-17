@@ -11,7 +11,7 @@ import {
  ADMIN_CONTENT_LABELS,adminContentHref,adminContentQuerySchema,
  adminContentTypeLabel,type AdminContentKind,
 } from "@/modules/courses/super-admin-content-directory-model";
-import { listSuperAdminContentDirectory } from "@/modules/courses/super-admin-content-directory-service";
+import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
 
 function publicHttpsHref(value:string|null){
  if(!value)return null;
@@ -31,7 +31,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }) {
  const raw=await searchParams;
- const parsed=adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page});
+ const parsed=adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
+  offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
  if(!parsed.success)return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
@@ -43,13 +44,14 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
   <PageHeader eyebrow="Super Admin · Courses" title={title}/>
   <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
  </div>;
- const [data, lessons]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context)]);
+ const [data, lessons, sections]=await Promise.all([listSuperAdminContentDirectory(context,kind,parsed.data),listSuperAdminContentAuthoringLessons(context),listSuperAdminContentSectionOptions(context)]);
+ const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
    description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."}/>
   <SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false} />
-  <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
+  <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 xl:grid-cols-3">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      placeholder="Content, lesson or course" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground"/>
@@ -58,6 +60,26 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <select name="status" defaultValue={data.query.status}
      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
      {statuses.map(status=><option key={status}>{status}</option>)}
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Course / offering
+    <select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Lesson
+    <select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Section
+    <select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+     <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">Audience
+    <select name="scope" defaultValue={data.query.scope} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+      <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
     </select>
    </label>
    <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
