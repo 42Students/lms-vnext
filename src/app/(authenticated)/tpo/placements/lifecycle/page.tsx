@@ -206,10 +206,18 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
               "No non-archived jobs match the selected season and filters."} />
           <Link href="/tpo/placements/new" className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Create drive</Link>
         </div> :
-        <section className="grid gap-3" aria-label="Drives">
+        <form action="/api/placements/tpo/drives/export" method="get" aria-label="Selected drive export" className="grid gap-3">
+          {Array.from(exportParams.entries()).map(([key,value])=><input type="hidden" key={key} name={key} value={value}/>)}
+          <input type="hidden" name="scope" value="SELECTED"/>
+          <p className="text-sm text-body">Select up to 25 drives shown on this page to export just those rows.</p>
           {data.rows.map((job) => <article key={job.id} className="rounded-xl border border-border bg-surface p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <div className="min-w-0"><h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
+              <div className="min-w-0">
+                <label className="mb-2 flex items-center gap-2 text-sm">
+                 <input name="ids" type="checkbox" value={job.id} aria-label={"Select "+job.company+" "+job.title}/>
+                 Select for export
+                </label>
+                <h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
                 <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
                 <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
@@ -263,7 +271,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 </details>
               </div>
             </div></article>)}
-        </section>}
+          <button type="submit" className="min-h-11 justify-self-start rounded border border-primary px-4 text-sm font-semibold text-primary-text">
+            Export selected drives (CSV)
+          </button>
+        </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
        {data.page>1?<Link href={pageHref(data.page-1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Previous</Link>:<span/>}
        {data.page<data.totalPages?<Link href={pageHref(data.page+1)} className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Next</Link>:null}
