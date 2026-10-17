@@ -34,6 +34,7 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     const ui = read("src/components/projects/project-meeting-controls.tsx");
     expect(service).toContain('inArray(projectMeetings.status, ["DRAFT", "REQUESTED", "SCHEDULED","RESCHEDULED"])');
     expect(service).toContain('if (meeting.status === "DRAFT") return cancelled;');
+    expect(service).toContain('scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")]');
     expect(ui).toContain('meeting.status === "DRAFT" || meeting.status === "REQUESTED"');
     expect(ui).toContain('draftDiscard?"Discard draft":"Cancel meeting"');
     expect(ui).toContain('Drafts are visible to mentors only; no invitations are sent.');
