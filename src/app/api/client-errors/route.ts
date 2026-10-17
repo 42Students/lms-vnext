@@ -9,6 +9,30 @@ import { redactAlertText, safeAlertLabel, safeAlertPath } from "@/modules/log-al
 export const runtime = "nodejs";
 const MAX_BYTES = 4096;
 
+async function readBoundedBody(request: Request): Promise<string | null> {
+  const reader = request.body?.getReader();
+  if (!reader) return "";
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > MAX_BYTES) {
+      await reader.cancel().catch(() => undefined);
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return new TextDecoder().decode(bytes);
+}
+
 export async function POST(request: Request) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ message: "This request could not be verified." }, { status: 403 });
@@ -17,10 +41,10 @@ export async function POST(request: Request) {
   if (!Number.isFinite(length) || length > MAX_BYTES) {
     return NextResponse.json({ message: "This report is too large." }, { status: 413 });
   }
-  let raw: string;
-  try { raw = await request.text(); }
+  let raw: string | null;
+  try { raw = await readBoundedBody(request); }
   catch { return NextResponse.json({ message: "Could not read this report." }, { status: 400 }); }
-  if (new TextEncoder().encode(raw).length > MAX_BYTES) {
+  if (raw === null) {
     return NextResponse.json({ message: "This report is too large." }, { status: 413 });
   }
   let body: unknown;
