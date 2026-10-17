@@ -244,7 +244,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-attendance-R01 | S2 | VALIDATION | OPEN |
+| COL-attendance-R01 | S2 | VALIDATION | DONE |
 | COL-attendance-R02 | S3 | SIDE-EFFECT | OPEN |
 | COL-attendance-R03 | S3 | PERMISSION | OPEN |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | OPEN |

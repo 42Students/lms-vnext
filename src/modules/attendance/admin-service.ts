@@ -601,49 +601,10 @@ export async function correctAdminAttendance(
         }
       }
 
-      const [session] = await tx
-        .select({
-          scheduleEventId:
-            attendanceSessions.scheduleEventId,
-        })
-        .from(attendanceSessions)
-        .where(
-          eq(
-            attendanceSessions.scheduleEventId,
-            scheduleEventId,
-          ),
-        )
-        .for("update")
-        .limit(1);
-
-      if (session) {
-        await tx
-          .update(attendanceSessions)
-          .set({
-            status: "MARKED",
-            markedByUserId:
-              context.user.id,
-            markedAt: now,
-            updatedAt: now,
-          })
-          .where(
-            eq(
-              attendanceSessions.scheduleEventId,
-              scheduleEventId,
-            ),
-          );
-      } else {
-        await tx
-          .insert(attendanceSessions)
-          .values({
-            scheduleEventId,
-            status: "MARKED",
-            markedByUserId:
-              context.user.id,
-            markedAt: now,
-            updatedAt: now,
-          });
-      }
+      // COL-attendance-R01: a College Admin corrects one learner's
+      // absence exception. Only Faculty can mark the entire session.
+      // Never create or mark attendance_sessions here: doing so would
+      // silently count all other learners as present.
 
       // COL-attendance-02: persist audit in the same transaction. It also
       // records corrections to PRESENT, which delete the absence exception row.
