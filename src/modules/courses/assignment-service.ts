@@ -321,6 +321,9 @@ export async function updateCourseAssignment(
       const [locked] = await tx.select().from(courseAssignments)
         .where(eq(courseAssignments.id,assignmentId)).for("update").limit(1);
       if(!locked||locked.status==="ARCHIVED")throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+      const [submission]=await tx.select({id:assignmentSubmissions.id})
+        .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId)).limit(1);
+      if(submission)throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
       return tx.update(courseAssignments)
       .set({
         ...(input.title !== undefined
