@@ -56,7 +56,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-51 | S3 | RESPONSIVE | OPEN |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-students-R03 | S3 | STATE | OPEN |
+| TPO-students-R03 | S3 | STATE | DONE |
 | TPO-students-R04 | S3 | STATE | OPEN |
 | TPO-students-R05 | S3 | COPY | DONE |
 | TPO-students-R06 | S3 | COPY | DONE |
@@ -152,3 +152,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Added resume/coding-profile filters, shared page selection, scoped Debar/Lift learner notifications, in-app confirmation for bulk outcome Save/Undo, legacy Students header and empty-filter recovery.
 - `TPO-students-10/12/34/36`, `TPO-requests-verification-01/37/38/R02` are substantial service/migration workflows and remain OPEN. Do not describe schema proposals or source tests as completed effects.
 - Shell-only `TPO-requests-verification-06/21` still belongs to chat-9. Unit tests were authored but not run.
+
+- TPO-students-R03 DONE (authored, runtime pending): table/mobile grid row checkboxes now use the shared selection context with bulk actions, Add to Drive and notes. TPO-students-17 still OPEN for cross-page Shift/selection behavior.
