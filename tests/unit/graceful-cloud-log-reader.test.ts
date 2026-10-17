@@ -34,7 +34,7 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
       insertId: "stack-one",
       logName: "projects/test/logs/stderr",
       timestamp: "2099-04-01T00:00:02Z",
-      jsonPayload: { message: "TypeError: connection refused\\n  at node_modules/example.js" },
+      jsonPayload: { message: "TypeError: connection refused\n  at node_modules/example.js" },
     });
     expect(e?.message).toBe("connection refused");
   });
