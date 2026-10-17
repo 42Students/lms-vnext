@@ -13,7 +13,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-05 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-inbox-team-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-inbox-team-07 | S2 | MISSING-TAB | OPEN |
-| TPO-inbox-team-08 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-inbox-team-08 | S2 | SIDE-EFFECT | BLOCKED |
 | TPO-inbox-team-10 | S2 | COPY | IN-BRANCH |
 | TPO-inbox-team-16 | S2 | MISSING-TAB | OPEN |
 | TPO-inbox-team-17 | S2 | MISSING-FIELD | OPEN |
@@ -26,7 +26,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-28 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-inbox-team-31 | S2 | MISSING-COLUMN | OPEN |
 | TPO-inbox-team-33 | S2 | MISSING-ACTION | IN-BRANCH |
-| TPO-inbox-team-35 | S2 | MISSING-ACTION | UNCONFIRMED |
+| TPO-inbox-team-35 | S2 | MISSING-ACTION | NOT-A-GAP |
 | TPO-inbox-team-36 | S2 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-39 | S2 | STATE | IN-BRANCH |
 | TPO-inbox-team-44 | S2 | MISSING-FIELD | IN-BRANCH |
@@ -39,7 +39,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-60 | S2 | SIDE-EFFECT | OPEN |
 | TPO-inbox-team-63 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-inbox-team-09 | S3 | STATE | IN-BRANCH |
-| TPO-inbox-team-11 | S3 | STATE | UNCONFIRMED |
+| TPO-inbox-team-11 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-13 | S3 | RESPONSIVE | IN-BRANCH |
 | TPO-inbox-team-14 | S3 | STATE | IN-BRANCH |
 | TPO-inbox-team-23 | S3 | MISSING-ACTION | IN-BRANCH |
@@ -150,7 +150,7 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-30 | S3 | VALIDATION | OPEN |
 | TPO-recruiters-31 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-recruiters-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-recruiters-34 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-recruiters-34 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-recruiters-36 | S3 | RESPONSIVE | OPEN |
 | TPO-recruiters-37 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-recruiters-38 | S3 | VALIDATION | IN-BRANCH |
@@ -168,7 +168,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-companies-04 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-companies-04 | S2 | SIDE-EFFECT | NOT-A-GAP |
 | TPO-companies-05 | S2 | MISSING-TAB | OPEN |
 | TPO-companies-06 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-companies-08 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -180,7 +180,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-companies-17 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-companies-19 | S2 | STATE | IN-BRANCH |
-| TPO-companies-25 | S2 | STATE | UNCONFIRMED |
+| TPO-companies-25 | S2 | STATE | IN-BRANCH |
 | TPO-companies-03 | S3 | COPY | IN-BRANCH |
 | TPO-companies-07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-companies-09 | S3 | COPY | IN-BRANCH |
@@ -192,7 +192,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-26 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-companies-27 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-companies-R02 | S3 | COPY | FIXED-ON-MAIN |
-| TPO-companies-R03 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-companies-R03 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-companies-R05 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-companies-14 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-companies-23 | S4 | COPY | IN-BRANCH |
@@ -212,18 +212,18 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 | TPO-campaigns-public-07 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-campaigns-public-14 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-campaigns-public-16 | S2 | STATE | IN-BRANCH |
-| TPO-campaigns-public-17 | S2 | VALIDATION | UNCONFIRMED |
+| TPO-campaigns-public-17 | S2 | VALIDATION | IN-BRANCH |
 | TPO-campaigns-public-22 | S2 | VALIDATION | IN-BRANCH |
 | TPO-campaigns-public-23 | S2 | SIDE-EFFECT | OPEN |
 | TPO-campaigns-public-33 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-34 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-campaigns-public-35 | S2 | STATE | IN-BRANCH |
-| TPO-campaigns-public-R08 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-campaigns-public-R08 | S2 | SIDE-EFFECT | IN-BRANCH |
 | TPO-campaigns-public-08 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-campaigns-public-09 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-10 | S3 | COPY | IN-BRANCH |
 | TPO-campaigns-public-24 | S3 | COPY | IN-BRANCH |
-| TPO-campaigns-public-25 | S3 | STATE | UNCONFIRMED |
+| TPO-campaigns-public-25 | S3 | STATE | IN-BRANCH |
 | TPO-campaigns-public-27 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-campaigns-public-28 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-campaigns-public-30 | S3 | COPY | IN-BRANCH |
@@ -293,3 +293,16 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - `TPO-inbox-team-33`: unowned assignment now requires explicit confirm/cancel before guarded scoped DB mutation; named tests in `tests/unit/chat2-tpo-unowned-confirm-33.test.ts`. The owner-column proposal `docs/proposed-migrations/tpo-team-drive-owner.sql` is not present in 0133/0134, so registration is still needed before the assignment can work in production.
 - `TPO-companies-06`: Companies list now computes distinct placed members using college policy and recorded offers (never invents the SELECTED ledger); named existing unit test `tests/unit/chat2-company-placed-policy.test.ts`.
 - `TPO-inbox-team-51`: restored the opt-in edit checkbox, but unsent audience-change parity is still outstanding; keep OPEN. No numbered migrations were added. Builder could not run tests or typecheck; orchestrator must validate.
+
+## Chat-2 delegated UNCONFIRMED decisions — October 17, 2026
+- TPO-inbox-team-08: BLOCKED real email relay until outbound/inbound provider credentials exist; never claim unverified send.
+- TPO-inbox-team-11: safer distinct unavailable recruiter inbox instead of notification-as-chat fallback; implemented and named test.
+- TPO-inbox-team-35: NOT-A-GAP for TPO self-grant; only audited College Admin may grant placement-team permissions.
+- TPO-recruiters-34 and TPO-companies-R03: NOT-A-GAP intentional TPO role + persisted placement permission on sensitive writes; prevent implicit admin/faculty role expansion.
+- TPO-companies-04: NOT-A-GAP trust is not approval for a drive; require registered TPO policy.
+- TPO-companies-25: replace DB09 env gate with dynamic CRM table-readiness checks, preserving 503 when tables are absent.
+- TPO-campaigns-public-17: use signed, scoped, long-lived TPO unsubscribe claims even for historic email; separate global optout remains expiring.
+- TPO-campaigns-public-25: audited enabled/on/off/replacement on effectively perpetual link, revocable and college/domain scoped.
+- TPO-campaigns-public-R08: record verified public/company-link provenance in immutable join event, never assume approval or broaden grants.
+- REC-calendar-messages-profile-46 is reassigned to chat-14 in `docs/orchestrator/queues/reassignments.md`; do not edit recruiter-area code.
+- Decision evidence and one named test per ID in the corresponding acceptance docs. No tests executed by this GitHub-only builder.
