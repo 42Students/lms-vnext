@@ -104,6 +104,7 @@ export function emptyHrDriveDraft(): HrDriveDraft {
 export function hrDraftFromAuthorizedJob(job: {
   title: string; description: string; locations: readonly string[];
   employmentType: string; workMode: string;
+  recruiterDriveMode?: string; externalApplicationUrl?:string|null;
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
@@ -122,6 +123,8 @@ export function hrDraftFromAuthorizedJob(job: {
     location: job.locations[0] ?? "",
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
+    driveMode:job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
+    externalApplicationUrl:job.externalApplicationUrl?.startsWith("https://")?job.externalApplicationUrl:"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
     rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,
