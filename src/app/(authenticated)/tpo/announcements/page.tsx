@@ -85,10 +85,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
     {query.success&&query.data.targetId?<input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     <label className="grid gap-1 text-sm font-semibold">Title
-     <input name="title" required maxLength={255} className="min-h-11 rounded-md border border-border bg-surface px-3" />
+     <input name="title" required maxLength={200} className="min-h-11 rounded-md border border-border bg-surface px-3" />
     </label>
     <label className="grid gap-1 text-sm font-semibold">Message
-     <textarea name="message" required maxLength={10000} rows={5} className="rounded-md border border-border bg-surface p-3" />
+     <textarea name="message" required maxLength={8000} rows={5} className="rounded-md border border-border bg-surface p-3" />
     </label>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
       <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
@@ -130,11 +130,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
        <input type="hidden" name="expectedVersion" value={row.version}/>
        <label className="grid gap-1 text-sm text-body">Title
-        <input name="title" required maxLength={255} defaultValue={row.title}
+        <input name="title" required maxLength={200} defaultValue={row.title}
          className="min-h-11 rounded-md border border-border bg-surface px-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Message
-        <textarea name="message" rows={5} required maxLength={10000} defaultValue={row.message}
+        <textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
          className="rounded-md border border-border bg-surface p-3"/>
        </label>
        <label className="grid gap-1 text-sm text-body">Send at (IST)
