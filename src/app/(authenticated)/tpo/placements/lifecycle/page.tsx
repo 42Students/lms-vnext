@@ -167,8 +167,16 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
         <input name="minApplied" type="number" min={0} max={100000} defaultValue={data.minApplied??""}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
       </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. applied
+        <input name="maxApplied" type="number" min={0} max={100000} defaultValue={data.maxApplied??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
       <label className="min-w-32 flex-1 text-sm font-semibold text-body">Min. offers
         <input name="minOffers" type="number" min={0} max={100000} defaultValue={data.minOffers??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+      </label>
+      <label className="min-w-32 flex-1 text-sm font-semibold text-body">Max. offers
+        <input name="maxOffers" type="number" min={0} max={100000} defaultValue={data.maxOffers??""}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Pay category
