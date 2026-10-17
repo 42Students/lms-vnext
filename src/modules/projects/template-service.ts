@@ -769,33 +769,23 @@ export async function revokeProjectTemplateFromCollege(
     },
   );
 
-  const [revoked] = await getDb()
-    .update(projectTemplateCollegeAssignments)
-    .set({ revokedAt: new Date() })
-    .where(
-      and(
-        eq(
-          projectTemplateCollegeAssignments.templateId,
-          templateId,
-        ),
-        eq(
-          projectTemplateCollegeAssignments.collegeId,
-          collegeId,
-        ),
-        isNull(
-          projectTemplateCollegeAssignments.revokedAt,
-        ),
-      ),
-    )
-    .returning();
-
-  if (!revoked) {
-    throw new ProjectsServiceError(
-      "PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND",
-    );
-  }
-
-  return revoked;
+  return getDb().transaction(async tx=>{
+    const [revoked]=await tx.update(projectTemplateCollegeAssignments)
+      .set({revokedAt:new Date()})
+      .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+        eq(projectTemplateCollegeAssignments.collegeId,collegeId),
+        isNull(projectTemplateCollegeAssignments.revokedAt)))
+      .returning();
+    if(!revoked)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_UNASSIGNED,
+      organizationId:college.organizationId,collegeId:college.id,
+      subjectType:"project_template",subjectId:templateId,
+      summary:"Super Admin revoked college project template assignment",
+      importance:"HIGH",metadata:{assignmentId:revoked.id},
+    });
+    return revoked;
+  });
 }
 
 export async function listAssignedProjectTemplates(
