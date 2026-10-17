@@ -159,7 +159,7 @@ export async function getAdminAttendanceOptions(
           courseName: courses.name,
           courseCode: courses.code,
           offeringType:courseOfferings.type,
-          isPast:sql<boolean>`${courseSectionDeliveries.endedAt} is not null`,
+          isPast:sql<boolean>`(${courseSectionDeliveries.endedAt} is not null or ${academicPeriods.endDate} < (now() at time zone 'Asia/Kolkata')::date)`,
           academicPeriodId:
             academicPeriods.id,
           academicPeriodName:
@@ -219,7 +219,7 @@ export async function getAdminAttendanceOptions(
         .orderBy(
           asc(sections.name),
           asc(courses.name),
-          sql`case when ${courseSectionDeliveries.endedAt} is null then 0 else 1 end`,
+          sql`case when ${courseSectionDeliveries.endedAt} is null and ${academicPeriods.endDate} >= (now() at time zone 'Asia/Kolkata')::date then 0 else 1 end`,
           asc(courseSectionDeliveries.id),
         ),
       getDb()
