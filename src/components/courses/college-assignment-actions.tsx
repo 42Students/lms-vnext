@@ -16,6 +16,7 @@ function istInput(value:Date|string|null){
 export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const router=useRouter();
  const [editing,setEditing]=useState(false);
+ const [expectedUpdatedAt,setExpectedUpdatedAt]=useState<string|null>(null);
  const [methods,setMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsLoaded,setMethodsLoaded]=useState(false);
  const [methodsDirty,setMethodsDirty]=useState(false);
