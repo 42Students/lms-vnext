@@ -1,15 +1,19 @@
+import {publicWorkEmailIssue,publicWorkEmailIssueCopy} from "@/modules/placements/public-work-email-policy";
 import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 /** REC-calendar-messages-profile-R04/39/45: identify recoverable public join errors
  * without leaking email existence, verifying the user client-side, or claiming success. */
 export function validatePublicJoinClient(input:{
  email:string;name:string;phone:string;companyName:string;
+ stage?:"SEND"|"JOIN";
  companyDomain:string;scope:"COLLEGE"|"COMPANY";
 }):string|null{
  const email=input.email.trim().toLowerCase();
  if(!email)return "Enter your work email";
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return "Enter a valid email";
+ const emailIssue=publicWorkEmailIssue(email);
+ if(emailIssue)return publicWorkEmailIssueCopy(emailIssue);
  if(!publicRecruiterWorkEmailSchema.safeParse(email).success)
-  return "Enter a company work email address. Personal emails such as Gmail cannot be used.";
+  return "Enter a valid company work email address.";
  const domain=email.split("@")[1];
  const approvedDomain=input.companyDomain.trim().toLowerCase().replace(/^@/,"");
  // Keep browser preflight in sync with the server: subdomains of the exact
@@ -18,7 +22,7 @@ export function validatePublicJoinClient(input:{
     !domain.endsWith("."+approvedDomain))
   return "Use your "+input.companyDomain+" email address for this link.";
  if(!input.name.trim())return "Enter your name";
- if(input.scope==="COLLEGE"&&input.companyName.trim().length<2)
+ if(input.scope==="COLLEGE"&&input.stage!=="SEND"&&input.companyName.trim().length<2)
   return "Enter your company name";
  const digits=input.phone.replace(/[^0-9]/g,"");
  if(input.phone.trim()&&(!/^[+0-9() .-]+$/.test(input.phone)||!(digits.length===10||(digits.length===12&&digits.startsWith("91")))))return "Enter a valid 10-digit mobile number, or leave it blank.";
