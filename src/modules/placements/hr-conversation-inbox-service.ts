@@ -32,7 +32,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   ?await getDb().selectDistinct({threadId:placementTpoMessages.threadId})
     .from(placementTpoMessages)
     .where(and(inArray(placementTpoMessages.threadId,accessibleIds),
-      ilike(placementTpoMessages.body,"%"+query.q.trim().replaceAll("%","\\%").replaceAll("_","\\_")+"%")))
+      ilike(placementTpoMessages.body,"%"+query.q.trim().replaceAll("\\","\\\\").replaceAll("%","\\%").replaceAll("_","\\_")+"%")))
     .limit(1000)
   :[];
  const accessible=filterRecruiterConversations(recruiterOwned,knownJobIds,query.q,titles,
