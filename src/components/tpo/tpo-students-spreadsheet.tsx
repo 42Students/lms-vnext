@@ -13,7 +13,7 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
-import type {AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
@@ -64,6 +64,7 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,afterCollege,afte
   {key:"journeyState",urlKey:"journeyState",label:"Student journey",options:journeys},
   {key:"branchId",urlKey:"branchId",label:"Academic branch",options:branches.map(b=>({value:b.branchId,label:b.branchName}))},
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
+  {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
  ];
  return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
   onKeyDown={event=>{
