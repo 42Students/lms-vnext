@@ -92,7 +92,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   setQuestions(old=>old.map((q,n)=>n===i?fn(q):q));setConfirmed(false);setDirtyDraft(true);
  }
  async function submit(action:"CREATE"|"EDIT"|"PUBLISH"|"CLOSE"|"ARCHIVE"){
-  if(!confirmed){setError("Confirm the action before saving.");return;}
+  // Routine quiz save relies on the command response and server validation; only destructive actions prompt.
   if(pending)return;
   if(action==="EDIT" && !facultyQuizCanSaveChanges(chosen?.status,dirtyDraft,detailsFailed,pending)){
     setError("Nothing to save. Change a Quiz field before saving.");return;
@@ -342,10 +342,6 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    {reviewIssues.overLimit?<p role="alert" className="text-error">Total points exceed the 10,000-point limit.</p>:null}
    <p className="text-xs text-muted-foreground">Review these draft values before saving or publishing.</p>
   </div>
-  <label className="flex gap-2 text-sm"><input type="checkbox" checked={confirmed}
-   onChange={e=>setConfirmed(e.target.checked)}/>
-   I confirm these choices, point totals and the current draft state.
-  </label>
   {chosen?.status==="DRAFT"&&dirtyDraft?
     <p role="status" className="text-sm text-body">You have unsaved changes. Save the draft before publishing.</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
@@ -360,21 +356,21 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   <div className="flex flex-wrap gap-3">
    {facultyQuizMayResetDraft(dirtyDraft,pending)?<button type="button" onClick={resetDraft}
     className="rounded border border-border px-4 py-2 text-sm">Discard unsaved edits</button>:null}
-   {!chosen?<button type="button" disabled={!confirmed||pending||!lessonId}
+   {!chosen?<button type="button" disabled={pending||!lessonId}
     onClick={()=>void submit("CREATE")} className="rounded bg-primary px-4 py-2 text-on-primary">Create draft</button>:
     <>
-    <button type="button" disabled={!confirmed||!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
+    <button type="button" disabled={!facultyQuizCanSaveChanges(chosen.status,dirtyDraft,detailsFailed,pending)}
      onClick={()=>void submit("EDIT")} className="rounded border border-border px-4 py-2">{chosen.status==="DRAFT"?"Save draft":"Save metadata"}</button>
-    <button type="button" disabled={!confirmed||pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
+    <button type="button" disabled={pending||!facultyQuizReadyToPublish(chosen.status,dirtyDraft,detailsFailed,questions)}
      onClick={()=>void submit("PUBLISH")} className="rounded bg-primary px-4 py-2 text-on-primary">Publish</button>
     {chosen.status==="PUBLISHED"&&
-     <button type="button" disabled={!confirmed||pending}
+     <button type="button" disabled={pending}
       onClick={()=>void submit("CLOSE")}
       className="rounded border border-border px-4 py-2">
       Close quiz
      </button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
-     <button type="button" disabled={!confirmed||pending}
+     <button type="button" disabled={pending}
       onClick={()=>void submit("ARCHIVE")}
       className="rounded border border-error px-4 py-2 text-error">
       Archive quiz
