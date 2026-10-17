@@ -120,9 +120,9 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-08 | S2 | MISSING-ACTION | DONE |
 | COL-people-17 | S2 | MISSING-TAB | DONE |
 | COL-people-20 | S2 | PERMISSION | DONE |
-| COL-people-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-people-22 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-people-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| COL-people-21 | S2 | MISSING-FIELD | DONE |
+| COL-people-22 | S2 | MISSING-FILTER | DONE |
+| COL-people-23 | S2 | SIDE-EFFECT | DONE |
 | COL-people-06 | S3 | MISSING-ACTION | DONE |
 | COL-people-10 | S3 | MISSING-ACTION | DONE |
 | COL-people-11 | S3 | MISSING-ACTION | DONE |
@@ -315,3 +315,7 @@ Prior batches and fixed-on-main reconciliation are historical. This batch resolv
 Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pending rounds now persist through a server readback-safe preset workflow); `TPO-drives-42/-43` server publication/idempotency; `COL-attendance-10` elective slot labels; `COL-people-13` private metric/contact columns; `SA-tenants-modules-06/-19` complete embedded tab/detail parity; `PUB-auth-public-47` review-drive invite title. Nothing here claims an unexecuted runtime test passed.
 
 **Failing-unit report reconciliation**: the listed chat-3 source assertions `COL-courses-content-17`, `TPO-drives-39`, `TPO-drives-51`, `TPO-drives-42` now have corresponding source on this branch, including the real round workflow and exact preflight copy. Unit tests were authored/updated, **not run**; the orchestrator must refresh the failure report after running Vitest. No edits to other lane files or shared shell.
+
+## Round 8 — verified mentor workspaces, tests unexecuted
+
+`COL-people-21`, `COL-people-22`, and `COL-people-23` source-closed based on the real persisted workload query, cross-page mentor filter/selection, and tenant-scoped reassignment transaction which clears former-mentor task ownership and writes notifications for both mentors and learners. Added 3 gap-ID tests in `tests/unit/college-people-gap-closure.test.ts` and corresponding evidence in `docs/audit/acceptance/college-people-verification.md`. Tests/PG not executed; integration acceptance remains with orchestrator.
