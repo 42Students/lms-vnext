@@ -41,6 +41,15 @@ describe("chat-2 Team membership, context and event notifications",()=>{
   expect(page).toContain("message.edited&&!message.removed");
   expect(page).toContain('<TpoTeamMessageActions');
  });
+ it("TPO-inbox-team-37 shows permanent placement Team roles, not temporary drive-day coordinator labels",()=>{
+  const page=source("src/app/(authenticated)/tpo/team/page.tsx");
+  expect(page).toContain('member.roles.includes("TPO_ADMIN")');
+  expect(page).toContain('member.roles.includes("COLLEGE_ADMIN")');
+  expect(page).toContain('role==="TPO"||role==="TPO_ADMIN"||role==="COLLEGE_ADMIN"');
+  expect(page).toContain("Everyone in it can do everything in placements.");
+  expect(page).not.toContain('role==="FACULTY_COORDINATOR"');
+  expect(page).not.toContain('role==="STUDENT_COORDINATOR"');
+ });
  it("TPO-inbox-team-34 retains Away until and back-now updates on Team People",()=>{
   const page=source("src/app/(authenticated)/tpo/team/page.tsx");
   const model=source("src/components/tpo/tpo-team-away-form.tsx");
