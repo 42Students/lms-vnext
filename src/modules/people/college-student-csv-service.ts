@@ -102,6 +102,13 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     return { preview: true, structuralErrors: [], results: initial,
       valid: valid.length, invalid };
   }
+  // COL-people-R03: import is never a permissive "skip bad rows" action.
+  // Revalidate the complete submitted roster on the server and refuse the
+  // whole request when any parsed row or ownership check fails.
+  if (invalid > 0) {
+    return { preview: true, structuralErrors: ["RESOLVE_INVALID_ROWS_BEFORE_IMPORT"],
+      results: initial, valid: valid.length, invalid };
+  }
 
   // No cross-system ACID transaction exists between identity provisioning and
   // PostgreSQL enrollments; report each completed stage truthfully.
