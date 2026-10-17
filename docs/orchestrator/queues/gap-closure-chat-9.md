@@ -99,7 +99,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-76 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-settings-audit-92 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-93 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-settings-audit-96 | S2 | COPY | OPEN |
+| TPO-settings-audit-96 | S2 | COPY | DONE-BRANCH |
 | TPO-settings-audit-R03 | S2 | STATE | NOT-A-GAP |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
