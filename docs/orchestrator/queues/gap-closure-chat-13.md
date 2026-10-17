@@ -109,7 +109,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-43 | S4 | VALIDATION | FIXED-ON-MAIN |
 | SA-academics-people-44 | S4 | VALIDATION | FIXED-ON-MAIN |
 | SA-academics-people-45 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-R05 | S4 | A11Y | OPEN |
+| SA-academics-people-R05 | S4 | A11Y | FIXED-ON-MAIN |
 
 ## Notes (blockers, one line each)
 - SA-placements-projects-21: scoped offer-letter link attachment, history and internal notes exist; resume preview, editing older notes and score-backed re-screen remain unverified, so do not mark complete.
