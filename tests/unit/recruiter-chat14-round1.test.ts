@@ -17,7 +17,8 @@ describe("chat-14 recruiter reassigned exact-parity round 1",()=>{
   expect(code).toContain('document.addEventListener("click",intercept,true)');
   expect(code).toContain('event.preventDefault();event.stopPropagation()');
   expect(code).toContain('confirmLabel="Discard"');
-  expect(code).toContain('router.push(destination)');
+  expect(code).toContain('if(href)router.push(href)');
+  expect(code).toContain('setPendingLeave(destination.pathname+destination.search+destination.hash)');
   expect(code).toContain('window.addEventListener("beforeunload",warn)');
  });
  it("REC-calendar-messages-profile-16 surfaces the exact ended-access response to a failed recruiter reply",()=>{

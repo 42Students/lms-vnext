@@ -106,6 +106,7 @@ function normalizedContentValues(
     deliveryId: input.deliveryId ?? null,
     contentType: input.contentType,
     title: input.title,
+    points: input.points,
     notes: input.notes ?? null,
     externalUrl: null as string | null,
     storageKey: null as string | null,
@@ -168,6 +169,7 @@ function mergedContentInput(
     lessonId: current.lessonId,
     deliveryId: current.deliveryId,
     title: input.title ?? current.title,
+    points: input.points ?? current.points,
     sequence:
       input.sequence ?? current.sequence,
     notes:
@@ -496,6 +498,7 @@ export async function updateLessonContent(
     .update(lessonContents)
     .set({
       title: normalized.title,
+      points: normalized.points,
       notes: normalized.notes,
       externalUrl: normalized.externalUrl,
       storageKey: normalized.storageKey,

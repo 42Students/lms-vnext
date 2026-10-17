@@ -16,6 +16,7 @@ describe("Drive Target Audience Department Program Batch Class",()=>{
   expect(form).toContain("selectedCohortIds.includes(section.cohortId)");
   expect(form).toContain("selectedSectionIds.length>=100");
   expect(form).toContain("effectiveProgramIds");
-  expect(form).toContain("selectedSectionIds:[...selectedSectionIds]");
+  expect(form).toContain("selectedSectionIds:[...effectiveSectionIds]");
+  expect(form).toContain("selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id))");
  });
 });

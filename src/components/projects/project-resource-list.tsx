@@ -207,6 +207,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
            ?resource.resourceType:"LINK") as "FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT",
          status:resource.status==="DRAFT"?"DRAFT":resource.status==="ARCHIVED"?"ARCHIVED":"ACTIVE",
          pinned:resource.pinned,accessNotes:resource.accessNotes,
+         updatedAt:resource.updatedAt,
          sprintId:resource.sprintId,taskId:resource.taskId}}
         sprints={sprints} tasks={tasks}/>:null}
     </article>;

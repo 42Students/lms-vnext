@@ -725,7 +725,31 @@ export function ProjectWorkspace({
           </p>
         ) : null}
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {workspace.members.map((member) => (
+          {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
+            const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
+              member.accountStatus==="ACTIVE";
+            const linkedIn=member.role==="MENTOR"?safeProjectExternalHref(member.linkedIn):null;
+            return <article key={member.id} className="rounded-xl border border-border bg-surface p-4">
+              <div className="flex flex-wrap items-start justify-between gap-2">
+                <div>
+                  <p className="font-semibold text-foreground">{member.displayName??"Unnamed member"}</p>
+                  <p className="mt-1 text-xs text-body">{member.roleLabel?.trim()||label(member.role)}</p>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  <StatusBadge tone={active?"success":"neutral"}>{active?"Active":"Inactive"}</StatusBadge>
+                  {member.role==="MENTOR"?<StatusBadge tone="info">{member.isPrimary?"Primary mentor":"Mentor"}</StatusBadge>:null}
+                </div>
+              </div>
+              {member.role==="MENTOR"?<div className="mt-3 space-y-2 text-sm text-body">
+                <p className="font-semibold text-foreground">{member.academicTitle?.trim()||"Project mentor"}</p>
+                {member.bio?<p className="whitespace-pre-wrap break-words">{member.bio}</p>:
+                  <p className="text-xs">No mentor bio yet. Update your faculty profile to introduce your role.</p>}
+                {linkedIn?<a href={linkedIn} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex min-h-10 items-center text-primary-text underline">LinkedIn profile ↗</a>:null}
+              </div>:null}
+            </article>;
+          }):null}
+          {mode!=="MENTOR"?workspace.members.map((member) => (
             <article
               key={member.id}
               className="rounded-xl border border-border bg-surface p-4"
@@ -766,7 +790,7 @@ export function ProjectWorkspace({
                 />
               ) : null}
             </article>
-          ))}
+          )):null}
         </div>
       </section> : null}
 

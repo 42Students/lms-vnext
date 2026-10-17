@@ -131,6 +131,7 @@ function ContentItem({
           <h3 className="mt-2 text-base font-semibold text-foreground">
             {item.title}
           </h3>
+          <p className="mt-1 text-xs text-muted-foreground">{item.points} points</p>
         </div>
         <span className="text-xs font-semibold text-muted-foreground">
           #{item.sequence + 1}
@@ -165,6 +166,7 @@ function ContentItem({
                 externalUrl: item.externalUrl,
                 storageKey: item.storageKey,
                 durationSeconds: item.durationSeconds,
+                points: item.points,
                 startsAt: item.startsAt,
                 endsAt: item.endsAt,
               }}

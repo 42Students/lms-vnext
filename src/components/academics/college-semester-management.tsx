@@ -3,6 +3,8 @@
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   createCollegeSemesterSchema,
   updateCollegeSemesterSchema,
@@ -109,10 +111,20 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
   const [name, setName] = useState(row.name);
   const [isActive, setIsActive] = useState(row.isActive);
   const [notice, setNotice] = useState("");
   const url = "/api/academics/semesters/" + encodeURIComponent(row.id);
+  const changed=name!==row.name||isActive!==row.isActive;
+  function closeEditor(){
+    if(pending)return;
+    if(changed){setDiscardOpen(true);return;}
+    setEditing(false);
+  }
+  function discardEditor(){
+    setName(row.name);setIsActive(row.isActive);setDiscardOpen(false);setEditing(false);
+  }
 
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -156,7 +168,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     <div className="min-w-52 space-y-2">
       {!editing && !confirming ? (
         <div className="flex gap-2">
-          <button type="button" disabled={pending} onClick={() => { setNotice(""); setEditing(true); }}
+          <button type="button" disabled={pending} onClick={() => { setNotice(""); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
             className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
             Edit
           </button>
@@ -167,6 +179,9 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         </div>
       ) : null}
       {editing ? (
+        <Dialog open={editing} onOpenChange={next=>{if(!next)closeEditor();}}
+          title={SEMESTER_COPY.editTitle}
+          description={SEMESTER_COPY.promotionNote}>
         <form onSubmit={save} className="space-y-2">
           <h3 className="m-0 text-sm font-semibold text-foreground">{SEMESTER_COPY.editTitle}</h3>
           <p className="text-xs text-muted-foreground">{SEMESTER_COPY.promotionNote}</p>
@@ -185,29 +200,23 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
             <button type="submit" disabled={pending} className="min-h-10 rounded-md bg-primary px-3 text-xs font-semibold text-on-primary disabled:opacity-50">
               {pending ? "Saving…" : SEMESTER_COPY.saveButton}
             </button>
-            <button type="button" disabled={pending} onClick={() => setEditing(false)}
+            <button type="button" disabled={pending} onClick={closeEditor}
               className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
               Cancel
             </button>
           </div>
         </form>
+        </Dialog>
       ) : null}
-      {confirming ? (
-        <div role="group" aria-label={"Confirm delete semester " + row.name} className="space-y-2 rounded-md border border-border p-2">
-          <p className="text-xs font-semibold text-foreground">{SEMESTER_COPY.deleteTitle}</p>
-          <p className="text-xs text-body">{SEMESTER_COPY.deleteBlocked}</p>
-          <div className="flex flex-wrap gap-2">
-            <button type="button" disabled={pending || row.mappedCourses > 0} onClick={remove}
-              className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-foreground disabled:opacity-50">
-              {pending ? "Deleting…" : "Confirm delete"}
-            </button>
-            <button type="button" disabled={pending} onClick={() => setConfirming(false)}
-              className="min-h-10 rounded-md border border-border px-3 text-xs font-semibold text-primary-text">
-              Cancel
-            </button>
-          </div>
-        </div>
-      ) : null}
+      <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+        title={SEMESTER_COPY.deleteTitle}
+        description={SEMESTER_COPY.deleteBlocked}
+        confirmLabel="Confirm delete" pending={pending}
+        confirmDisabled={row.mappedCourses>0} onConfirm={remove}/>
+      <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+        title="Discard semester changes?"
+        description="Unsaved semester name and status changes will be lost."
+        confirmLabel="Discard changes" pending={pending} onConfirm={discardEditor}/>
       {notice ? <p role="status" className="text-xs text-body">{notice}</p> : null}
     </div>
   );

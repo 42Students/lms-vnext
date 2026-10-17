@@ -17,11 +17,32 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
  const [baseline,setBaseline]=useState<TpoBatchRuleOverrides>(initialOverride);
  const changed=JSON.stringify(draft)!==JSON.stringify(baseline);
  useEffect(()=>{
-  if(!changed)return;
+  if(!changed||busy)return;
+  const currentUrl=window.location.href;
   const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  const confirmDiscard=()=>window.confirm("Discard your unsaved batch-rule changes?");
+  const onClick=(event:MouseEvent)=>{
+   if(event.defaultPrevented||event.button!==0||event.ctrlKey||event.metaKey||event.shiftKey||event.altKey)return;
+   const element=event.target;
+   const anchor=element instanceof Element?element.closest("a[href]"):null;
+   if(!(anchor instanceof HTMLAnchorElement)||anchor.target==="_blank"||anchor.hasAttribute("download"))return;
+   const destination=new URL(anchor.href,window.location.href);
+   if(destination.origin!==window.location.origin)return;
+   if(destination.pathname===window.location.pathname&&destination.search===window.location.search)return;
+   if(!confirmDiscard()){event.preventDefault();event.stopPropagation();}
+  };
+  const onPopState=()=>{
+   if(!confirmDiscard())window.history.pushState(null,"",currentUrl);
+  };
   window.addEventListener("beforeunload",warn);
-  return ()=>window.removeEventListener("beforeunload",warn);
- },[changed]);
+  document.addEventListener("click",onClick,true);
+  window.addEventListener("popstate",onPopState);
+  return ()=>{
+   window.removeEventListener("beforeunload",warn);
+   document.removeEventListener("click",onClick,true);
+   window.removeEventListener("popstate",onPopState);
+  };
+ },[changed,busy]);
  function setRule<K extends keyof TpoBatchRuleFields>(key:K,value:TpoBatchRuleFields[K]){
   setDraft(current=>{
    const next={...current};

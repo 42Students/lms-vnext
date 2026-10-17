@@ -33,6 +33,13 @@ describe("Chat-2 Company relationship and legacy Companies navigation",()=>{
   expect(page).toContain('className="hidden w-full min-w-[58rem] text-left text-sm md:table"');
   expect(page).toContain('["Confirmed joins",company.confirmedJoinedLearners]');
   expect(page).toContain('href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}');
+  const canonical=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
+  expect(canonical).toContain('aria-label="Company drive cards"');
+  expect(canonical).toContain('aria-label="Company hiring cards"');
+  expect(canonical).toContain('className="hidden w-full min-w-[65rem] text-left text-sm md:table"');
+  expect(canonical).toContain('"Live",CLOSED:"Completed"');
+  expect(canonical).toContain('href={"/tpo/placements/jobs/"+encodeURIComponent(offer.jobId)}');
+
  });
  it("TPO-companies-22 retains verified company numbers and no-activity label",()=>{
   const workspace=source("src/components/tpo/tpo-company-memory-workspace.tsx");

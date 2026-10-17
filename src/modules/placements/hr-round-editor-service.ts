@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementCompanyRelationships,placementRecruiterProfiles,
  placementRecruiterCollegeGrants,placementJobRounds,placementJobRoundEvents,
@@ -9,6 +9,7 @@ import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
 import {hrRoundFormSchema,canRecruiterEditRound,duplicateRecruiterRoundName} from "./hr-round-editor-model";
 import {z} from "zod";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
@@ -37,7 +38,8 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    ))
-   .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,"PUBLISHED")))
+   .where(and(eq(placementJobs.id,jobId),inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
+    recruiterOwnJobPredicate(context.user.id)))
    .for("update").limit(1);
   if(!job||!can(context,"placements.recruiter.round.manage",{
    collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
@@ -106,8 +108,29 @@ export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw
 /** The recruiter sees round metadata only, never internal candidate results. */
 export async function listHrRoundEditorRows(context:RequestContext,jobIdInput:unknown){
  const jobId=z.string().uuid().parse(jobIdInput);
- const {getRecruiterPlacementWorkspace}=await import("./recruiter-workspace-service");
- await getRecruiterPlacementWorkspace(context,jobId);
+ if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
+  throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const [job]=await getDb().select({id:placementJobs.id,collegeId:placementJobs.collegeId,
+  companyRelationshipId:placementJobs.companyRelationshipId})
+  .from(placementJobs)
+  .innerJoin(placementCompanyRelationships,and(
+   eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+   eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+   eq(placementCompanyRelationships.status,"ACTIVE")))
+  .innerJoin(placementRecruiterProfiles,and(
+   eq(placementRecruiterProfiles.userId,context.user.id),
+   eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
+   eq(placementRecruiterProfiles.status,"ACTIVE")))
+  .innerJoin(placementRecruiterCollegeGrants,and(
+   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+   eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE")))
+  .where(and(eq(placementJobs.id,jobId),
+   inArray(placementJobs.status,["DRAFT","PUBLISHED"]),
+   recruiterOwnJobPredicate(context.user.id))).limit(1);
+ if(!job||!can(context,"placements.recruiter.round.manage",{
+  collegeId:job.collegeId,placementCompanyRelationshipId:job.companyRelationshipId,
+ }))throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
  const [rounds,used,slots]=await Promise.all([
   getDb().select({
    id:placementJobRounds.id,kind:placementJobRounds.kind,name:placementJobRounds.name,

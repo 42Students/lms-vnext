@@ -16,6 +16,7 @@ import {
 } from "@/db/schema";
 import { hasActiveRecruiter, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import { PlacementsServiceError } from "./errors";
 import {
   APPLICANT_NOTE_VISIBLE_LIMIT,
@@ -115,6 +116,7 @@ async function resolveRecruiterScope(
       and(
         eq(placementApplications.id, applicationId),
         eq(placementJobs.id, jobId),
+        recruiterOwnJobPredicate(context.user.id),
         eq(placementApplications.status, "SUBMITTED"),
         eq(placementApplicationScreenings.status, "SHORTLISTED"),
         eq(collegeMemberships.status, "ACTIVE"),
