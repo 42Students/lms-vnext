@@ -373,7 +373,7 @@ export function LearnerCourseDiscussion({
             ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
             : "Keep course conversations in one place and follow along easily."}
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">Students can post questions here anytime. The placement of a pinned message can be changed later.</p>
+        <p className="mt-1 text-xs text-muted-foreground">Students can post questions here anytime.</p>
       </div>
 
       {loadError && loadedOnce.current && messages.length > 0 ? (
