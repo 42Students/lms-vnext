@@ -4,7 +4,7 @@ import Link from "next/link";
 import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 type Task={
- id:string;title:string;status:string;description:string|null;acceptanceCriteria:string|null;
+ id:string;title:string;status:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
  priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
  sprintId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null;
 };
