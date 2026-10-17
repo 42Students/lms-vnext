@@ -57,7 +57,8 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  {visible.length===0?<p role="status">{result.students.length===0?"No active learners found on this page.":"No learners match the selected page filters."}</p>:<ul className="space-y-2">
  {visible.map(s=><li className="min-w-0 rounded-lg border border-border bg-surface p-3 text-sm" key={s.membershipId}>
   <div className="flex flex-wrap justify-between gap-2"><strong className="break-words">{s.name}</strong><span>{s.ambiguous?"Needs review":s.decision.replaceAll("_"," ")}</span></div>
-  <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"}</p>
+  <p className="text-xs text-muted-foreground">Roll number: {s.rollNumber??"Not recorded"} · Class: {s.ambiguous?"Multiple active classes":s.className??"Not assigned"}</p>
+  <p className="text-xs text-muted-foreground">Branch: {s.branch} · Program: {s.program}</p>
   <p className="text-xs text-muted-foreground">Registration: {s.registration?s.registration.choice?.replaceAll("_"," ")??"Not recorded":"Unavailable"}{s.registration?.source?" · via "+s.registration.source.toLowerCase():""}</p>
   <p className="text-xs text-muted-foreground">Source: {s.source.toLowerCase()}{s.reason?" · "+s.reason:""}</p>
   {!finished&&!s.ambiguous?<TpoBatchInlineDecision key={s.membershipId+":"+(s.direct.updatedAt??"none")} membershipId={s.membershipId} expected={s.direct}/>:null}
