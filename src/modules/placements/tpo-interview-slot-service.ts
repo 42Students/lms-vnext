@@ -281,6 +281,11 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    await tx.update(placementRoundCandidateSlots).set({
     room:input.room,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,id));
+   if(slot.applicationId&&slot.status==="BOOKED"&&info.round.mode!=="VIRTUAL")
+    await tx.update(placementApplicationRoundExceptions).set({
+     venue:input.room,updatedAt:new Date(),
+    }).where(and(eq(placementApplicationRoundExceptions.applicationId,slot.applicationId),
+     eq(placementApplicationRoundExceptions.roundId,info.round.id)));
    if(slot.applicationId&&slot.status==="BOOKED")await notice(tx,context,job,slot.applicationId,
     "PLACEMENTS_TPO_INTERVIEW_ROOM_CHANGED","Your interview for "+job.title+" has moved to room "+input.room+".");
    return {changed:1};
