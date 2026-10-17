@@ -2,6 +2,8 @@
 
 import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {apiFetch} from "@/lib/api-fetch";
 import { ProgramActions } from "@/components/academics/academics-actions";
 import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { Button } from "@/components/ui/button";
@@ -105,18 +107,15 @@ export function AdminProgramDirectory({
     }
     startTransition(async () => {
       try {
-        const response = await fetch("/api/academics/programs", {
+        await apiFetch("/api/academics/programs", {
           method: "POST",
           headers: { "content-type": "application/json" },
           body: JSON.stringify(parsed.data),
         });
-        if (!response.ok) {
-          const payload = await response.json().catch(() => null);
-          throw new Error(payload?.error || "Unable to create program");
-        }
         setName("");
         setCode("");
-        showToast({ tone: "success", title: "Program created" });
+        showToast({ tone: "success", title: "Program created",
+          description: "Next, add semesters or map courses to this program." });
         router.refresh();
       } catch (error) {
         showToast({
@@ -136,7 +135,10 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            Create a department before adding programs.
+            Create a department before adding programs.{" "}
+            <Link href="/college/departments" className="font-semibold text-primary-text underline">
+              Go to Departments
+            </Link>
           </p>
         ) : null}
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -168,7 +170,7 @@ export function AdminProgramDirectory({
             <label htmlFor="admin-program-duration" className="mb-1 block text-xs font-semibold text-body">Duration (years)</label>
             <Input id="admin-program-duration" type="number" value={durationYears}
               onChange={(event) => setDurationYears(event.target.value)}
-              min={0.5} max={12} step={0.5} required />
+              min={1} max={10} step={1} required />
           </div>
         </div>
         <div className="mt-4">
