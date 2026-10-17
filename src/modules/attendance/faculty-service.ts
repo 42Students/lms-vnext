@@ -11,6 +11,7 @@ import {
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   attendancePolicies,
@@ -34,7 +35,8 @@ import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import { facultyAttendanceMarkingWindow } from "./faculty-marking-window";
 import {facultyAttendanceCorrectionTokenMatches,facultyAttendanceNextMarkedAt}
  from "./faculty-correction-token-model";
-import {facultyCorrectionDelta,facultyCorrectionReasonValid} from "./faculty-correction-audit-model";
+import {facultyCorrectionDelta,facultyCorrectionReasonValid,
+ facultyAttendanceChangedMemberships} from "./faculty-correction-audit-model";
 
 const uuid = z.string().uuid();
 const sessionInputSchema = z
@@ -557,6 +559,8 @@ export async function markFacultyAttendance(
         eq(attendanceRecords.status,"ABSENT"),
       )):[];
     const delta=facultyCorrectionDelta(oldAbsent.map(row=>row.membershipId),input.absentMembershipIds);
+    const notificationChanges=facultyAttendanceChangedMemberships(
+      oldAbsent.map(row=>row.membershipId),input.absentMembershipIds);
     if(isCorrection&&!delta.changed)throw new CoursesServiceError("ATTENDANCE_CORRECTION_NO_CHANGE");
     const writtenAt=facultyAttendanceNextMarkedAt(now,existingSession?.markedAt??null);
 
@@ -636,7 +640,7 @@ export async function markFacultyAttendance(
     // A correction may remove the last absence row; retain the history
     // independently of the current absence-only record representation.
     // Counts and scope are safe audit metadata; omit private learner identities.
-    await recordActivityEventInTransaction(tx, context, {
+    const activity=await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ATTENDANCE_MARKED,
       collegeId: context.membership!.collegeId,
       organizationId: context.membership!.organizationId,
@@ -657,6 +661,36 @@ export async function markFacultyAttendance(
       },
       groupKey: `attendance-session:${scheduleEventId}`,
     });
+
+    // FAC-attendance-grades-01: only learners whose status changed get a notice.
+    // Resolve recipients from current, active membership rows inside this write
+    // transaction. Do not put names, roll numbers or parent numbers in the event.
+    const changedIds=[...notificationChanges.newlyAbsent,...notificationChanges.correctedPresent];
+    if(changedIds.length){
+      const targets=await tx.select({
+        membershipId:collegeMemberships.id,userId:collegeMemberships.userId,
+      }).from(collegeMemberships)
+        .innerJoin(users,eq(users.id,collegeMemberships.userId))
+        .where(and(
+          inArray(collegeMemberships.id,changedIds),
+          eq(collegeMemberships.collegeId,context.membership!.collegeId),
+          eq(collegeMemberships.status,"ACTIVE"),
+          eq(users.platformStatus,"ACTIVE"),
+        ));
+      const idToUser=new Map(targets.map(row=>[row.membershipId,row.userId]));
+      const notify=async (ids:readonly string[],title:string,body:string)=>{
+        const userIds=ids.flatMap(id=>idToUser.get(id)?[idToUser.get(id)!]:[]);
+        if(userIds.length)await deliverInAppNotificationInTransaction(tx,activity.id,userIds,{
+          title,body,actionHref:"/learn/courses",
+        });
+      };
+      await notify(notificationChanges.newlyAbsent,
+        "Class attendance marked absent",
+        "You were marked absent for a scheduled class. Open Courses to review your attendance.");
+      await notify(notificationChanges.correctedPresent,
+        "Class attendance corrected",
+        "A previous absence was corrected to present. Open Courses to review your attendance.");
+    }
 
     return {
       scheduleEventId,

@@ -282,3 +282,5 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 ## Needs shell (chat-9 only)
 - PUB-auth-public-20/21/22/24/29/31: chat-9 owns shell membership switching, cross-tab signout, forbidden notices and global connectivity banners; chat-11 cannot modify src/components/shell.
 
+
+- FAC-attendance-grades-01: learner notices built on active same-college recipient scope; parent absence/correction SMS cannot be sent until the real registered attendance DLT sender/template/provider credentials and approved parent contact mappings exist (do not send OTP template for attendance).
