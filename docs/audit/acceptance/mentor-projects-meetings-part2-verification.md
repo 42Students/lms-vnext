@@ -67,3 +67,5 @@ Remaining reassigned mentor OPEN items require data-model or full UI workflows: 
 | MEN-projects-meetings-75 | PARTIAL — meeting editor guards | project-meeting-controls.tsx; tests/unit/chat11-mentor-meeting-draft-round8.test.ts — `it("MEN-projects-meetings-75 protects meeting requests, scheduling and decision notes")`. Task edit and delivery feedback remain to reconcile. |
 
 | MEN-projects-meetings-75 | PARTIAL — task edit and delivery reopen drafts | src/components/projects/mentor-task-details-edit.tsx and project-delivery-reopen-control.tsx; tests/unit/chat11-mentor-edit-draft-round8.test.ts — `it("MEN-projects-meetings-75 keeps task edit and delivery reopen drafts until confirmed")`. Final delivery feedback editors still to reconcile. |
+
+| MEN-projects-meetings-75 | PARTIAL — final delivery review + rubric guards | project-final-delivery-controls.tsx; tests/unit/chat11-mentor-final-feedback-guard-round8.test.ts — `it("MEN-projects-meetings-75 protects final delivery and evaluation feedback on discard")`. Additional mentor editors and route change guard remain subject to audit. |
