@@ -2,6 +2,8 @@ import Link from "next/link";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
 import {TpoNoticeDeleteConfirm} from "@/components/tpo/tpo-notice-delete-confirm";
 import {TpoNoticeComposerDialog} from "@/components/tpo/tpo-notice-composer-dialog";
+import {TpoNoticeAudiencePicker} from "@/components/tpo/tpo-notice-audience-picker";
+import {listTpoNoticeTargetOptions} from "@/modules/announcements/tpo-notice-target-options-service";
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
@@ -43,6 +45,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
   targetId:first(raw.targetId)||undefined,
  });
  const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
+ const targetOptions=result.status==="READY"&&tab.data==="yours"?
+  await listTpoNoticeTargetOptions(context).catch(()=>null):null;
  const isPreview=result.status==="READY"&&tab.data==="yours";
  const selected=query.success?announcementPreviewScope(query.data):null;
  const previewRequest=isPreview&&query.success?
@@ -72,20 +76,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
      className="mt-3 flex flex-wrap items-end gap-3 rounded-lg border border-border p-3"
      aria-label="Announcement audience preview">
      <input type="hidden" name="tab" value="yours"/>
-     <label className="grid gap-1 text-sm">Audience
-       <select name="audience" defaultValue={query.success?query.data.audience:"COLLEGE"}
-         className="min-h-11 rounded-md border border-border bg-surface px-3">
-         <option value="COLLEGE">COLLEGE</option>
-         <option value="PLACEMENTS">PLACEMENTS</option>
-         <option value="BATCHES">BATCHES</option>
-         <option value="BRANCHES">BRANCHES</option>
-         <option value="DRIVE">DRIVE</option>
-       </select>
-     </label>
-     <label className="grid gap-1 text-sm">Target ID (batch, branch or drive)
-       <input name="targetId" defaultValue={first(raw.targetId)??""}
-         className="min-h-11 rounded-md border border-border bg-surface px-3"/>
-     </label>
+     <TpoNoticeAudiencePicker
+      initialAudience={query.success?query.data.audience:"COLLEGE"}
+      initialTarget={first(raw.targetId)??""} options={targetOptions}/>
      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Preview audience</button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
