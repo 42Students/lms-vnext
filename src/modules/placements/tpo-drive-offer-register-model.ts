@@ -39,7 +39,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
  }))};
 }
 
-export const TPO_DRIVE_OFFERS_CSV_LIMIT=500;
+export const TPO_DRIVE_OFFERS_CSV_LIMIT=5000;
 /** Same persisted fact selector as the TPO register; all untrusted cells formula-neutralized. */
 export function tpoDriveOfferRegisterCsv(
  facts:readonly OfferRegisterFact[],
