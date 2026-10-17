@@ -374,3 +374,8 @@ The following previously `FIXED-ON-MAIN` assertions remain **OPEN**, not DONE, b
 - `COL-verification-misc-11`: complete readable day-grouped activity coverage incomplete.
 
 - These 23 items were audited and corrected to OPEN, **not claimed closed**. Functional fixes this round are separately recorded above. No UI restyling until UX-PLAYBOOK sign-off, and no tests were executed in this connector-only session.
+
+### Latest typecheck follow-up (2026-10-18 01:15 report)
+
+- The latest compiler report narrowed to an interview CSV export type mismatch in chat-4 plus files owned by chat-11, chat-14, and chat-17. Fixed `COL-placements-R01` export input type to accept persisted nullable `users.displayName` (`student:string|null`) without fabricating a candidate name; added a null-case named regression assertion. No source settings or unrelated lane-owned types were modified.
+- Tests/typecheck cannot be executed via the connected GitHub source editor, so the patch remains unverified until CI. The UX page freeze remains in force.
