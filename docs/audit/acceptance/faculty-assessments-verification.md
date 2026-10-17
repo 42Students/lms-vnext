@@ -4,6 +4,7 @@ Source evidence cross-checked against `docs/audit/pages/faculty/assessments.md`.
 
 | ID | Status | Evidence (implementation, test name) |
 |---|---|---|
+| FAC-assessments-12 | DONE | `src/components/courses/faculty-assessment-create.tsx`; `tests/unit/chat6-faculty-assessments-create-legacy.test.ts` → `FAC-assessments-12 requires course and lesson before Continue and exposes exact selection copy` |
 | FAC-assessments-02 | DONE | `src/modules/courses/assignment-submission-methods.ts`; `tests/unit/chat6-faculty-assessments-gap-closure.test.ts` → `FAC-assessments-02 allowed legacy submission methods` |
 | FAC-assessments-03 | DONE | `src/components/courses/faculty-choice-quiz-builder.tsx`; `tests/unit/chat6-faculty-assessments-gap-closure.test.ts` → `FAC-assessments-03 quiz shuffle controls and persisted options` |
 | FAC-assessments-04 | DONE | `src/components/courses/faculty-choice-quiz-builder.tsx`; `tests/unit/chat6-faculty-assessments-gap-closure.test.ts` → `FAC-assessments-04 due dates required for publishing` |
@@ -25,4 +26,4 @@ Source evidence cross-checked against `docs/audit/pages/faculty/assessments.md`.
 | FAC-assessments-26 | NOT-A-GAP | `src/components/courses/faculty-assignment-review.tsx`; `tests/unit/chat6-faculty-assessments-gap-closure.test.ts` → `FAC-assessments-26 NOT-A-GAP zero-submission draft review supported` |
 | FAC-assessments-28 | NOT-A-GAP | `src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx`; `tests/unit/chat6-faculty-assessments-gap-closure.test.ts` → `FAC-assessments-28 NOT-A-GAP report headings and download exist` |
 
-Remaining unverified / still open: FAC-assessments-01, FAC-assessments-11, FAC-assessments-12, FAC-assessments-13, FAC-assessments-14, FAC-assessments-15, FAC-assessments-20, FAC-assessments-22, FAC-assessments-24, FAC-assessments-27, FAC-assessments-R01/R02/R03/R04/R05/R06/R07/R08, FAC-attendance-grades-R01/R02. Storage-backed assignment resources / inline file previews require private storage and scanner support; do not claim closure based on UI copy alone.
+Remaining unverified / still open: FAC-assessments-01, FAC-assessments-11, FAC-assessments-13, FAC-assessments-14, FAC-assessments-15, FAC-assessments-20, FAC-assessments-22, FAC-assessments-24, FAC-assessments-27, FAC-assessments-R01/R02/R03/R04/R05/R06/R07/R08, FAC-attendance-grades-R01/R02. Storage-backed assignment resources / inline file previews require private storage and scanner support; do not claim closure based on UI copy alone.
