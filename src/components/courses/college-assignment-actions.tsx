@@ -75,6 +75,10 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        setTitle(data.assignment.title);setPoints(String(data.assignment.maxPoints));
        setDueAt(istInput(data.assignment.dueAt));
        setExpectedUpdatedAt(data.assignment.updatedAt);
+       if(data.assignment.hasSubmissions){
+        setError("This assignment already has submissions. Editing its published instructions, due date or points is disabled.");
+        return;
+       }
        setDescription(data.assignment.description??"");
        setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
