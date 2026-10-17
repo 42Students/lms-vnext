@@ -12,6 +12,38 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   return <div className="space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <PageHeader title={copy.title} eyebrow="Projects" description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side." />
+    <section className="rounded-xl border border-border bg-surface p-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold">Current readiness</h2>
+        <span className={readiness.finalSubmission.canSubmitDraft?"font-semibold text-success":"font-semibold text-warning-text"}>
+          {readiness.finalSubmission.canSubmitDraft?"Ready":"Not ready"}
+        </span>
+      </div>
+      <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-3">
+        <div><dt className="font-semibold">State</dt><dd>{readiness.readinessOverride.state??"Automatic"}</dd></div>
+        <div><dt className="font-semibold">Reason</dt><dd className="whitespace-pre-wrap">{readiness.readinessOverride.note??
+          (readiness.execution.complete?"All execution items completed":"Incomplete tasks, sprints or releases")}</dd></div>
+        <div><dt className="font-semibold">Submission status</dt>
+          <dd>{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
+      </dl>
+      {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
+        Override recorded {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
+          .format(readiness.readinessOverride.occurredAt)}
+      </p>:null}
+      {([
+        {name:"Tasks",done:readiness.execution.tasks.done,total:readiness.execution.tasks.total},
+        {name:"Sprints",done:readiness.execution.sprints.completed,total:readiness.execution.sprints.total},
+        {name:"Releases",done:readiness.execution.releases.shipped,total:readiness.execution.releases.total},
+      ]).map(item=><div key={item.name} className="mt-3 space-y-1">
+       <div className="flex justify-between text-xs font-semibold">
+        <span>{item.name}</span><span>{item.done}/{item.total}</span>
+       </div>
+       <div role="progressbar" aria-label={item.name+" completed"} aria-valuemin={0} aria-valuemax={item.total||1}
+         aria-valuenow={item.done} className="h-2 overflow-hidden rounded bg-muted">
+        <div className="h-full bg-primary" style={{width:(item.total?100*item.done/item.total:0)+"%"}}/>
+       </div>
+      </div>)}
+    </section>
     <div className="grid gap-3 sm:grid-cols-3">
       <p>Tasks completed: {readiness.execution.tasks.done}/{readiness.execution.tasks.total}</p>
       <p>Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
