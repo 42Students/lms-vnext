@@ -198,10 +198,10 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
      .where(selectionWhere),
     selectionJoin().where(selectionWhere).orderBy(desc(placementDriveSelections.recordedAt),
      desc(placementDriveSelections.id)).limit(HR_OFFER_PAGE_SIZE)
-     .offset((filters.offerState==="ALL"?0:filters.offerPage-1)*HR_OFFER_PAGE_SIZE),
+     .offset((filters.offerPage-1)*HR_OFFER_PAGE_SIZE),
    ]):[[],[]];
   const selectionTotal=Number(selectionCountRows[0]?.total??0);
-  const selectionPage=hrOfferPageBounds(filters.offerState==="ALL"?1:filters.offerPage,selectionTotal);
+  const selectionPage=hrOfferPageBounds(filters.offerPage,selectionTotal);
   const totals = counts[0];
   const applicantCounts = {
     all: Number(totals?.total ?? 0),
