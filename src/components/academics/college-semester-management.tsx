@@ -79,7 +79,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
           </label>
           <label className="grid gap-1 text-sm font-medium text-body">
             {SEMESTER_COPY.numberLabel}
-            <input required type="number" min={1} max={24} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
+            <input required type="number" min={1} max={12} step={1} value={termNumber} placeholder={SEMESTER_COPY.numberPlaceholder}
               onChange={e => setTermNumber(e.target.value)}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
