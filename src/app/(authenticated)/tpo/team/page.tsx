@@ -84,7 +84,7 @@ export default async function TpoTeamPage({searchParams}:{
         </h2>
        {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
         Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
-         .format(awayByMember.get(member.membershipId))} IST
+         .format(awayByMember.get(member.membershipId)!)} IST
        </p>:null}
        {member.membershipId===context.membership?.id&&awayState?.ready?
         <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>:null}
