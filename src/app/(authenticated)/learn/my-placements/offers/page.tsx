@@ -3,7 +3,6 @@ import {learnerOfferStatusTabLabel} from "@/modules/placements/learner-offer-sta
 import {learnerExpiredIssuedOffers} from "@/modules/placements/learner-offer-issued-expired-model";
 import { learnerOffersEmptyState } from "@/modules/placements/learner-offers-empty-state-model";
 import Link from "next/link";
-import { LEARNER_LEGACY_OFFERS_TITLE } from "@/modules/placements/learner-placement-copy-model";
 import {learnerOfferPageSchema,paginateOwnOffers} from "@/modules/placements/learner-offers-pagination-model";
 import {learnerOfferSortSchema,sortOwnOfferRows} from "@/modules/placements/learner-offers-sort-model";
 import {learnerOfferStatusHref,learnerOfferClearFiltersHref,learnerOfferHasActiveFacets} from "@/modules/placements/learner-offers-navigation-model";
@@ -16,7 +15,6 @@ import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
-import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
 import {listOwnPlacementRequests} from "@/modules/placements/request-service";
 import {readOptionalLearnerAlertSource} from "@/modules/placements/learner-optional-alert-source-model";
@@ -101,11 +99,7 @@ export default async function LearnerOffersPage({
       >
         ← Applications
       </Link>
-      <PageHeader
-        eyebrow="My Placements"
-        title={LEARNER_LEGACY_OFFERS_TITLE}
-        description="Official persisted offers, current response status and recorded joining outcomes."
-      />
+
       {conflictingDeadlines ? <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
         The due-soon and historical expiry filters cannot be combined. Showing the selected expiry state instead.
       </p> : null}

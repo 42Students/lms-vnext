@@ -3,7 +3,6 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerJobsBrowse } from "@/components/placements/learner-jobs-browse";
 import { Suspense } from "react";
-import { PageHeader } from "@/components/ui/page-header";
 import { getOwnLearnerDriveBrowse } from "@/modules/placements/learner-closing-drives-service";
 import { listLearnerPlacementJobs } from "@/modules/placements/learner-job-service";
 import {listOwnPlacementSavedJobs} from "@/modules/placements/saved-job-service";
@@ -63,11 +62,7 @@ export default async function LearnerPlacementJobsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        eyebrow="My Placements"
-        title="Drives"
-        description="Placement drives and roles available to you."
-      />
+
       <Link href="/learn/my-placements/rules?from=drives"
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
         Review placement rules and preparation →

@@ -1,6 +1,1 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
-
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <GracefulPageLoading />;
-}
+export default function MentorLoading(){return <section role="status" aria-busy="true" className="rounded-xl border border-border bg-surface p-6"><p className="font-semibold text-foreground">Opening your mentor workspace…</p></section>}
