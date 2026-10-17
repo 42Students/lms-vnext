@@ -37,6 +37,7 @@ test.describe("GR-80 GR-82 production sign-in fault recovery", () => {
   }
 
   test("GR-82 production denies source maps for every initial application chunk", async ({ page, request }) => {
+    test.setTimeout(90_000); // A production page can reference many chunks; probe every one.
     await page.goto(new URL("/", productionBase!).toString());
     const scripts = await page.locator("script[src]").evaluateAll((elements) =>
       elements.map((node) => (node as HTMLScriptElement).src)
