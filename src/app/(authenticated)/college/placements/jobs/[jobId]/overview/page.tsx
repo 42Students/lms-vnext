@@ -7,6 +7,7 @@ import { getCollegeDriveOverview } from "@/modules/placements/college-drive-over
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import {CollegeDrivePipelineOverview} from "@/components/placements/college-drive-pipeline-overview";
+import {CollegeDriveDuplicateAction} from "@/components/placements/college-drive-duplicate-action";
 
 export default async function CollegeDriveOverviewPage({ params }: {
   params: Promise<{ jobId: string }>;
@@ -22,7 +23,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Placements" title={drive.title}
       description={drive.companyName + " · " + drive.seasonName}
-      actions={<Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link>} />
+      actions={<div className="flex flex-wrap items-center gap-3"><Link href="/college/placements/drives" className="text-primary-text underline">All drives</Link><CollegeDriveDuplicateAction jobId={jobId}/></div>} />
     <div className="flex flex-wrap gap-3 text-sm text-body">
       <span>Status: {drive.status}</span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>
