@@ -158,10 +158,8 @@ export async function listProjectMeetings(
     .select()
     .from(projectMeetings)
     .where(
-      eq(
-        projectMeetings.projectId,
-        scope.project.id,
-      ),
+      and(eq(projectMeetings.projectId,scope.project.id),
+        ...(scope.access==="LEARNER" ? [ne(projectMeetings.status,"DRAFT")] : [])),
     )
     .orderBy(
       asc(projectMeetings.startsAt),
@@ -194,7 +192,7 @@ export async function requestProjectMeeting(
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(eq(projectMeetings.projectId,scope.project.id),
         eq(projectMeetings.requestedByMembershipId,context.membership!.id),
-        inArray(projectMeetings.status,["REQUESTED","SCHEDULED"]),
+        inArray(projectMeetings.status,["REQUESTED","SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt)))
       .limit(1);
     if (conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
@@ -268,9 +266,19 @@ export async function scheduleProjectMeeting(
     if (!existing && input.expectedProjectUpdatedAt &&
       project.updatedAt.getTime()!==new Date(input.expectedProjectUpdatedAt).getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-    if (existing && !["REQUESTED","SCHEDULED"].includes(existing.status)) {
+    if (existing && !["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED"].includes(existing.status)) {
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     }
+    // Drafts have no learner-facing invitations and cannot silently replace
+    // a requested or previously announced scheduled meeting.
+    const targetStatus=input.status??(existing?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
+    if ((!existing && targetStatus==="RESCHEDULED") ||
+      (existing?.status!=="DRAFT" && existing && targetStatus==="DRAFT") ||
+      (targetStatus==="RESCHEDULED" && existing &&
+        existing.startsAt.getTime()===startsAt.getTime() &&
+        existing.endsAt.getTime()===endsAt.getTime()) ||
+      (targetStatus!=="DRAFT" && !input.meetingUrl))
+      throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
     // the check safe even when two different projects schedule concurrently.
@@ -280,19 +288,19 @@ export async function scheduleProjectMeeting(
           eq(projectMeetings.projectId,scope.project.id),
           eq(projectMeetings.scheduledByUserId,context.user.id),
         ),
-        eq(projectMeetings.status,"SCHEDULED"),
+        inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
         ...(existing ? [ne(projectMeetings.id,existing.id)] : [])))
       .limit(1);
-    if (conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
+    if (targetStatus!=="DRAFT" && conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     const values = {
-      status: "SCHEDULED" as const,
+      status: targetStatus,
       meetingType: input.meetingType ?? "GENERAL" as const,
       title: input.title, agenda: input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
-      meetingUrl: input.meetingUrl,
-      scheduledByUserId: context.user.id,
-      scheduledByMembershipId: context.membership?.id ?? null,
+      meetingUrl: targetStatus==="DRAFT"?null:input.meetingUrl,
+      scheduledByUserId: targetStatus==="DRAFT"?null:context.user.id,
+      scheduledByMembershipId:targetStatus==="DRAFT"?null:context.membership?.id ?? null,
       linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
       facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
@@ -305,12 +313,13 @@ export async function scheduleProjectMeeting(
       if(!created)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
       await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
         .where(eq(projectInstances.id,scope.project.id));
+      if(targetStatus==="DRAFT")return created;
       const event=await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
         subjectType:"project_meeting",subjectId:created.id,subjectLabel:created.title,
         summary:"Project meeting scheduled",
-        metadata:{projectId:scope.project.id,meetingId:created.id,status:"SCHEDULED"},
+        metadata:{projectId:scope.project.id,meetingId:created.id,status:targetStatus},
         groupKey:"project:"+scope.project.id+":meetings",
       });
       await notifyActiveProjectMembers(tx,event.id,{
@@ -330,17 +339,18 @@ export async function scheduleProjectMeeting(
     const [updated] = await tx.update(projectMeetings).set(values)
       .where(and(eq(projectMeetings.id,existing.id),
         eq(projectMeetings.projectId,scope.project.id),
-        inArray(projectMeetings.status,["REQUESTED","SCHEDULED"])))
+        inArray(projectMeetings.status,["DRAFT","REQUESTED","SCHEDULED","RESCHEDULED"])))
       .returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
       .where(eq(projectInstances.id,scope.project.id));
+    if(targetStatus==="DRAFT")return updated;
     const event=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_meeting",subjectId:updated.id,subjectLabel:updated.title,
       summary:"Project meeting scheduled",
-      metadata:{projectId:scope.project.id,meetingId:updated.id,status:"SCHEDULED"},
+      metadata:{projectId:scope.project.id,meetingId:updated.id,status:targetStatus},
       groupKey:"project:"+scope.project.id+":meetings",
     });
     await notifyActiveProjectMembers(tx,event.id,{
