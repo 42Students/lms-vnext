@@ -17,7 +17,7 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   const [project]=await tx.select().from(projectInstances)
     .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
     .for("update").limit(1);
-  if(!project||project.status==="ARCHIVED"||
+  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED"||
      project.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
    throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   const [updated]=await tx.update(projectInstances).set({
