@@ -1,27 +1,47 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
 
 type Member={membershipId:string;displayName:string};
 async function postForm(url:string,values:Record<string,string>){
+ const controller=new AbortController();
+ const timeout=window.setTimeout(()=>controller.abort(),30000);
+ try {
  const body=new FormData();
  for(const [key,value] of Object.entries(values))body.set(key,value);
- const response=await fetch(url,{method:"POST",credentials:"same-origin",body,redirect:"manual"});
+ const response=await fetch(url,{method:"POST",credentials:"same-origin",body,redirect:"manual",signal:controller.signal});
  if(response.type==="opaqueredirect"||response.status===303)return {ok:true};
  if(!response.ok){
   const payload=await response.json().catch(()=>null) as {error?:string}|null;
   return {ok:false,code:payload?.error??"UNKNOWN"};
  }
  return {ok:true};
+ }finally{window.clearTimeout(timeout);}
 }
-export function TpoTeamThreadCreate({members}:{members:Member[]}){
+export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];actorUserId:string}){
  const router=useRouter();
+ const draftKey="tpo-team-start:"+actorUserId;
+ const pending=useRef(false);
  const [recipient,setRecipient]=useState(""),[topic,setTopic]=useState("");
+ useEffect(()=>{
+  const handle=window.setTimeout(()=>{
+   try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
+    const parsed=JSON.parse(raw) as {recipient?:string;topic?:string};
+    if(parsed.topic&&parsed.topic.length<=160)setTopic(parsed.topic);
+    if(parsed.recipient&&members.some(member=>member.membershipId===parsed.recipient))setRecipient(parsed.recipient);
+   }catch{/* Storage is optional. */}
+  },0);
+  return ()=>window.clearTimeout(handle);
+ },[draftKey,members]);
+ function updateDraft(nextRecipient:string,nextTopic:string){
+  setRecipient(nextRecipient);setTopic(nextTopic);
+  try{sessionStorage.setItem(draftKey,JSON.stringify({recipient:nextRecipient,topic:nextTopic}));}catch{/* Optional. */}
+ }
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function create(event:React.FormEvent<HTMLFormElement>){
-  event.preventDefault();if(busy||!recipient||!topic.trim())return;
-  setBusy(true);setError("");
+  event.preventDefault();if(pending.current||busy||!recipient||!topic.trim())return;
+  pending.current=true;setBusy(true);setError("");
   try{
    const response=await fetch("/api/placements/tpo/team/threads",{
     method:"POST",credentials:"same-origin",redirect:"follow",
@@ -31,21 +51,22 @@ export function TpoTeamThreadCreate({members}:{members:Member[]}){
     const payload=await response.json().catch(()=>null) as {error?:string}|null;
     setError(tpoTeamFormErrorMessage(payload?.error??"UNKNOWN","CREATE"));return;
    }
+   try{sessionStorage.removeItem(draftKey);}catch{/* Optional. */}
    router.push(new URL(response.url).pathname);router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","CREATE"));}
-  finally{setBusy(false);}
+  finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 rounded-lg border border-border p-4">
   <h3 className="font-semibold text-foreground">Start a private TPO conversation</h3>
   <label className="grid gap-1 text-sm text-body">Team member
-   <select required value={recipient} onChange={event=>setRecipient(event.target.value)} disabled={busy}
+   <select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3">
     <option value="">Choose an active TPO colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </select>
   </label>
   <label className="grid gap-1 text-sm text-body">Topic
-   <input required value={topic} onChange={event=>setTopic(event.target.value)} maxLength={160} disabled={busy}
+   <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={160} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3" placeholder="Drive coordination"/>
   </label>
   <p className="text-xs text-muted-foreground">Only named active TPO members can take part.</p>
@@ -56,26 +77,43 @@ export function TpoTeamThreadCreate({members}:{members:Member[]}){
   </button>
  </form>;
 }
-export function TpoTeamReplyComposer({threadId}:{threadId:string}){
+export function TpoTeamReplyComposer({threadId,actorUserId}:{threadId:string;actorUserId:string}){
  const router=useRouter();
+ const pending=useRef(false);
+ const draftKey="tpo-team-reply:"+actorUserId+":"+threadId;
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false),[error,setError]=useState("");
+ useEffect(()=>{
+  const task=window.setTimeout(()=>{
+   try{const saved=sessionStorage.getItem(draftKey);if(saved&&saved.length<=4000)setBody(saved);}catch{/* Optional. */}
+  },0);
+  return ()=>window.clearTimeout(task);
+ },[draftKey]);
+ useEffect(()=>{
+  if(!body.trim())return;
+  const protect=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",protect);
+  return ()=>window.removeEventListener("beforeunload",protect);
+ },[body]);
+ function changeBody(next:string){setBody(next);
+  try{if(next)sessionStorage.setItem(draftKey,next);else sessionStorage.removeItem(draftKey);}catch{/* Optional. */}
+ }
  const [success,setSuccess]=useState("");
  async function send(){
-  if(busy||!body.trim())return;
-  setBusy(true);setError("");setSuccess("");
+  if(pending.current||busy||!body.trim())return;
+  pending.current=true;setBusy(true);setError("");setSuccess("");
   try{
    const result=await postForm("/api/placements/tpo/team/threads/"+encodeURIComponent(threadId)+"/messages",{body:body.trim()});
    if(!result.ok){setError(tpoTeamFormErrorMessage(result.code??"UNKNOWN","REPLY"));return;}
-   setBody("");setSuccess("Sent");router.refresh();
+   changeBody("");setSuccess("Sent");router.refresh();
   }catch{setError(tpoTeamFormErrorMessage("UNKNOWN","REPLY"));}
-  finally{setBusy(false);}
+  finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>{event.preventDefault();void send();}}
    className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold text-foreground">Reply privately</h2>
   <label className="grid gap-1 text-sm text-body">Message
    <textarea required value={body} maxLength={4000} rows={4} disabled={busy}
-    onChange={event=>setBody(event.target.value)}
+    onChange={event=>changeBody(event.target.value)}
     onKeyDown={event=>{
      if(event.key==="Enter"&&!event.shiftKey&&!event.nativeEvent.isComposing){
       event.preventDefault();void send();
