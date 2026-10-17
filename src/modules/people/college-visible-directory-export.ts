@@ -37,7 +37,7 @@ export async function exportVisibleCollegePeople(
   return kind==="FACULTY"
    ?[item.name,person?.phone??"",item.email??"",person?.facultyType??"",
       gender(person?.facultyDocument??null),item.membershipStatus]
-   :[item.name,person?.learnerRoll??"",person?.phone??"",item.email??"",item.program??"",
+   :[item.name,person?.learnerRoll??"","",item.email??"",item.program??"",
       item.cohort??"",item.sections.join("; "),item.membershipStatus];
  });
  return {csv:"\uFEFF"+[columns,...rows].map(row=>row.map(value=>
