@@ -251,6 +251,21 @@ export default async function TpoMessagesPage({
         ))}
       </section>
 
+      {isRecruiterInbox ? <nav aria-label="Recruiter inbox filters" className="flex flex-wrap gap-2">
+        {([
+          ["ALL","All",summary.total],
+          ["REPLY","Reply",summary.reply],
+          ["UNREAD","Unread",summary.unread],
+        ] as const).map(([status,label,count])=><Link
+          key={status}
+          href={tpoMessagesHref({...commonFilters,status,page:1})}
+          aria-current={query.status===status?"page":undefined}
+          className={"inline-flex min-h-10 items-center rounded-md border px-4 text-sm font-semibold "+
+            (query.status===status?"border-primary bg-primary-subtle text-primary-text":
+              "border-border bg-surface text-foreground")}>
+            {label} ({count})
+          </Link>)}
+      </nav> : null}
       <section className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-base font-semibold text-foreground">
           Communication filters
