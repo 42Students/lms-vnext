@@ -44,6 +44,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   finally{setImpactBusy(false);setConfirm(true);}
  }
  async function save(){
+  if(students===null||(students>=100&&!acknowledgedPopulation))return;
   setBusy(true);setFeedback("");
   try{
    const response=await fetch(endpoint,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(collegeRulePayload(module,choice,locked,observed))});
@@ -72,7 +73,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
   <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Confirm college feature policy"
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
-   confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled} onConfirm={()=>{void save();}}>
+   confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled||students===null||(students>=100&&!acknowledgedPopulation)} onConfirm={()=>{void save();}}>
    <p className="text-sm text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
    {students!==null?<p className="mt-2 text-sm font-semibold text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
     <p role="alert" className="mt-2 text-sm text-warning-text">Student population could not be confirmed. The change will not be saved.</p>}
