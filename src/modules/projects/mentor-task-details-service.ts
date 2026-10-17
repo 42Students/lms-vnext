@@ -19,12 +19,7 @@ export async function updateMentorTaskDetails(
 ) {
   const params=mentorTaskDetailsParamsSchema.parse(rawParams);
   const input=mentorTaskDetailsInputSchema.parse(rawInput);
-  const scope=await requireProjectLifecycleAccess(context,params.projectId);
-  if(!can(context,"projects.read",{
-    collegeId:scope.collegeId,organizationId:scope.organizationId,
-  })) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const modules=await resolveOptionalModuleAccess(context);
-  if(!modules.projects.enabled) throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const scope=await requireProjectLifecycleMutationAccess(context,params.projectId);
   const expected=new Date(input.expectedUpdatedAt);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status})
