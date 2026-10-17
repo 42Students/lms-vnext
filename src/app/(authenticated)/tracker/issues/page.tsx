@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved-views";
+import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -141,6 +142,8 @@ export default async function TrackerIssuesPage({
           </Link>
         </div>
       </form>
+
+      <TrackerIssueBulkActions rows={page.items.map(issue=>({publicId:issue.publicId,version:issue.version,status:issue.status}))} />
 
       {page.items.length === 0 ? (
         <div className="rounded-xl border border-border bg-surface p-8 text-center">
