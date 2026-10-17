@@ -89,3 +89,5 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 
 | LEARNER-placements-40 | DONE (source, not executed) | Rescheduled state appears for recorded schedule exceptions only; updated effective time/venue/join URL are already used. src/app/(authenticated)/learn/my-placements/schedule/page.tsx; test LEARNER-placements-40 shows persisted rescheduled state. |
 | LEARNER-placements-41 | DONE (source, not executed) | Schedule includes online assessments from learner-scoped rounds, with gated HTTPS Open test link, mode, duration, venue, and real results; test LEARNER-placements-41 exposes online assessments without pretending schedule is attendance. |
+
+| LEARNER-placements-15 | DONE (source, not executed) | src/components/placements/learner-jobs-browse.tsx separates saved and already-applied cards from a collapsible Not open to you section with only the current page's count and actual blockers supplied by learner-job-service; tests/unit/learner-placements-chat7-not-open-groups.test.ts test LEARNER-placements-15 groups unavailable cards without hiding recorded applications. |
