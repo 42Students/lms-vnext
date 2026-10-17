@@ -86,6 +86,8 @@ export function LearnerJobsBrowse({
   const pagination=learnerDrivePageState(visible.length,parsedPage,PAGE_SIZE);
   const {page,totalPages}=pagination;
   const paged=visible.slice(pagination.startIndex,pagination.endIndex);
+  const savedExpired=paged.filter(item=>item.deadlinePassed);
+  const savedOpen=paged.filter(item=>!item.deadlinePassed);
   const empty=learnerDrivesEmptyState(matchingItems.length,visible.length,filters);
 
   const selectClass = "mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]";
@@ -258,8 +260,17 @@ export function LearnerJobsBrowse({
           </button>:null}
         </div>
       ) : (
-        <LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso} returnQuery={params.toString()}
-          savedJobIds={savedJobIds} />
+        savedOnly?<div className="space-y-5">
+          {savedOpen.length?<LearnerPlacementJobs items={savedOpen} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>:null}
+          {savedExpired.length?<section aria-label="Expired saved jobs" className="space-y-3">
+            <h2 className="text-lg font-semibold text-foreground">Expired saved jobs</h2>
+            <p className="text-sm text-body">These saved drives no longer accept applications, but you can review their details or remove the bookmark.</p>
+            <LearnerPlacementJobs items={savedExpired} snapshotNowIso={snapshotNowIso}
+             returnQuery={params.toString()} savedJobIds={savedJobIds}/>
+          </section>:null}
+        </div>:<LearnerPlacementJobs items={paged} snapshotNowIso={snapshotNowIso}
+          returnQuery={params.toString()} savedJobIds={savedJobIds} />
       )}
 
       {totalPages > 1 ? (
