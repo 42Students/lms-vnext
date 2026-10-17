@@ -960,6 +960,7 @@ export function RecruiterLeadsWorkspace({
                        <td style={{display:visibleColumns.includes("Owner")?undefined:"none"}} className="px-4 py-3"><RecruiterInlineOwner lead={lead} onUpdated={()=>void load()}/></td>
                        <td style={{display:visibleColumns.includes("Last activity")?undefined:"none"}} className="px-4 py-3">{lead.lastActivityAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.lastActivityAt)):"—"}</td>
                        <td style={{display:visibleColumns.includes("Next follow-up")?undefined:"none"}} className="px-4 py-3">{lead.nextFollowupAt?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.nextFollowupAt)):"—"}</td>
+                       <td style={{display:visibleColumns.includes("Company drives")?undefined:"none"}} className="px-4 py-3">{lead.drivesRan??"—"}</td>
                        <td style={{display:visibleColumns.includes("Invite")?undefined:"none"}} className="px-4 py-3">{lead.inviteStatus.replaceAll("_"," ")}</td>
                        <td style={{display:visibleColumns.includes("Added")?undefined:"none"}} className="px-4 py-3">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(lead.createdAt))}</td>
                       <td style={{display:visibleColumns.includes("Flags")?undefined:"none"}} className="px-4 py-3">
