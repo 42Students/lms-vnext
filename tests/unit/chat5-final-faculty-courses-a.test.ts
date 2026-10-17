@@ -29,18 +29,24 @@ describe("chat-5 final sprint faculty course list and core lesson contracts",()=
   expect(course).toContain('open={selectedLessonId?true:lessonIndex===0?true:undefined}');
   expect(course).toContain('Expand or collapse lesson');
  });
- it("FAC-courses-17 is NOT-A-GAP: lesson live editor gives an explicit IST timezone contract",()=>{
+ it("FAC-courses-17 enforces a real 12-hour IST picker and 15-minute schedule rules",()=>{
   const editor=src("src/components/courses/faculty-live-class-editor.tsx");
+  const lesson=src("src/components/courses/faculty-lesson-authoring.tsx");
+  const picker=src("src/components/courses/faculty-ist-quarter-hour-picker.tsx");
   expect(editor).toContain("Enter meeting times in IST (Asia/Kolkata)");
-  expect(editor).toContain('type="datetime-local"');
-  expect(src("docs/audit/pages/faculty/courses-review.md")).toContain("WRONG (mostly)");
+  expect(editor).toContain("<FacultyIstQuarterHourPicker");
+  expect(lesson).toContain("<FacultyIstQuarterHourPicker");
+  expect(picker).toContain('value="AM"');
+  expect(picker).toContain('value="PM"');
+  expect(picker).toContain("FACULTY_IST_QUARTER_MINUTES");
  });
- it("FAC-courses-28 is NOT-A-GAP for a missing contacts metric: actual authorized roster computes contact availability and uses safe initials instead of leaking a private photo",()=>{
+ it("FAC-courses-28 renders contacts and missing-roll copy, sorted roster, and an authorized avatar preview fallback",()=>{
   const roster=src("src/components/courses/faculty-course-roster.tsx");
-  expect(roster).toContain("const contacts = learners.filter(");
-  expect(roster).toContain('"Contact available"');
-  expect(roster).toContain("function initials(value: string)");
-  expect(roster).toContain("rollNumber");
+  expect(roster).toContain('const contacts = learners.filter(');
+  expect(roster).toContain("sortFacultyRosterByRollThenName");
+  expect(roster).toContain("facultyRosterMetrics");
+  expect(roster).toContain('aria-label={"Preview avatar for "+name}');
+  expect(roster).toContain("No photo is available for this student.");
   expect(src("docs/audit/pages/faculty/courses-review.md")).toContain("WRONG (partly)");
  });
 });
