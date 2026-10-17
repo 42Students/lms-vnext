@@ -218,6 +218,17 @@ export default async function TpoCompanyMemoryPage({
           </button>
         </form>
 
+        <div className="flex flex-wrap items-center gap-3">
+          {page.total<=2000?<Link
+            href={"/api/placements/tpo/companies/export?"+new URLSearchParams({
+              ...(query.search?{search:query.search}:{}),sort:query.sort,
+            }).toString()}
+            className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+            Export companies CSV ({page.total})
+          </Link>:<p role="status" className="text-xs text-muted-foreground">
+            Narrow your search to 2,000 companies to export all matching rows.
+          </p>}
+        </div>
         <div className="flex flex-wrap justify-between gap-3">
           <p className="text-sm text-body">
             {page.total} matching company
