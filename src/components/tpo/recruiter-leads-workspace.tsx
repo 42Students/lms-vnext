@@ -70,10 +70,12 @@ type NewLead = {
   companyName: string;
   designation: string;
   source: string;
+  followupDate: string;
+  followupNote: string;
 };
 const EMPTY: NewLead = {
   name: "", email: "", phone: "", companyName: "",
-  designation: "", source: "",
+  designation: "", source: "", followupDate: "", followupNote: "",
 };
 const SOURCE_CHOICES = [
   ["ALUMNI", "Alumni"], ["REFERRAL", "Referral"],
@@ -485,6 +487,9 @@ export function RecruiterLeadsWorkspace({
       setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
       return;
     }finally{setChecking(false);}
+    if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
+      setSaveError("Choose a future follow-up date (IST).");return;
+    }
     if (!window.confirm(
       "Create recruiter lead for " + form.name.trim() +
       (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
@@ -507,6 +512,7 @@ export function RecruiterLeadsWorkspace({
             ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
             ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
             ...(form.source ? { source: form.source } : {}),
+            ...(form.followupDate ? {followup:{dueAt:new Date(form.followupDate+"T09:00:00+05:30").toISOString(),note:form.followupNote.trim()}} : {}),
           },
         }),
       });
@@ -1036,6 +1042,16 @@ export function RecruiterLeadsWorkspace({
                 <option value="">Added by hand</option>
                 {SOURCE_CHOICES.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </select>
+            </label>
+            <label className="block text-sm">First follow-up (optional, IST)
+              <input type="date" className={inputStyle+" mt-1"} value={form.followupDate}
+                onChange={e=>field("followupDate",e.target.value)}/>
+            </label>
+            <label className="block text-sm">Follow-up note (optional)
+              <textarea className={inputStyle+" mt-1"} maxLength={500} value={form.followupNote}
+                onChange={e=>field("followupNote",e.target.value)}
+                disabled={!form.followupDate}
+                placeholder="What should the placement cell do next?"/>
             </label>
             {saveError && <p role="alert" className="text-sm text-destructive">{saveError}</p>}
             <div className="flex justify-end">
