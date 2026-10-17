@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,colleges} from "@/db/schema";
@@ -7,28 +7,45 @@ import {placementTpoBlockedDates} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
 import {placementTableExists} from "./staged-tables";
-const inputSchema=z.object({day:z.iso.date(),reason:z.string().trim().min(3).max(500)}).strict();
+const inputSchema=z.object({
+ day:z.iso.date().optional(),startDay:z.iso.date().optional(),endDay:z.iso.date().optional(),
+ reason:z.string().trim().min(3).max(500).optional(),
+}).strict();
+function todayInIndia(){
+ return new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+}
+function rangeDays(start:string,end:string):string[]{
+ const first=Date.parse(start+"T00:00:00Z"),last=Date.parse(end+"T00:00:00Z");
+ const count=Math.round((last-first)/86400000)+1;
+ if(!Number.isFinite(count)||count<1||count>90)throw new BlockedDateError("DATE_RANGE_INVALID");
+ return Array.from({length:count},(_,index)=>new Date(first+index*86400000).toISOString().slice(0,10));
+}
 export class BlockedDateError extends Error {
- constructor(public readonly code:"DATE_PENDING"|"DATE_EXISTS"|"DATE_NOT_FOUND"|"DATE_STALE"){super(code);}
+ constructor(public readonly code:"DATE_PENDING"|"DATE_EXISTS"|"DATE_NOT_FOUND"|"DATE_STALE"|"DATE_RANGE_INVALID"|"DATE_IN_PAST"){super(code);}
 }
 export async function createBlockedDate(ctx:RequestContext,raw:unknown){
  const input=inputSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ const start=input.startDay??input.day,end=input.endDay??input.day;
+ if(!start||!end||(input.day&&input.startDay))throw new BlockedDateError("DATE_RANGE_INVALID");
+ const days=rangeDays(start,end);
+ if(start<todayInIndia())throw new BlockedDateError("DATE_IN_PAST");
+ const reason=input.reason??"Blocked";
  if(!await placementTableExists("placement_tpo_blocked_dates"))throw new BlockedDateError("DATE_PENDING");
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
   if(!college)throw new BlockedDateError("DATE_NOT_FOUND");
-  const [found]=await tx.select({id:placementTpoBlockedDates.id}).from(placementTpoBlockedDates)
-   .where(and(eq(placementTpoBlockedDates.collegeId,collegeId),eq(placementTpoBlockedDates.day,input.day))).limit(1);
-  if(found)throw new BlockedDateError("DATE_EXISTS");
-  const [row]=await tx.insert(placementTpoBlockedDates).values({...input,collegeId})
+  const existing=await tx.select({day:placementTpoBlockedDates.day}).from(placementTpoBlockedDates)
+   .where(and(eq(placementTpoBlockedDates.collegeId,collegeId),inArray(placementTpoBlockedDates.day,days)));
+  if(existing.length)throw new BlockedDateError("DATE_EXISTS");
+  const rows=await tx.insert(placementTpoBlockedDates).values(days.map(day=>({day,reason,collegeId})))
    .returning({id:placementTpoBlockedDates.id,day:placementTpoBlockedDates.day});
-  if(!row)throw new BlockedDateError("DATE_NOT_FOUND");
+  if(rows.length!==days.length)throw new BlockedDateError("DATE_NOT_FOUND");
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
-   eventType:"placements.tpo_blocked_date.created",subjectType:"BLOCKED_DATE",subjectId:row.id,
-   summary:"TPO blocked a placement scheduling date",metadata:{day:row.day}});
-  return row;
+   eventType:"placements.tpo_blocked_date.created",subjectType:"BLOCKED_DATE",subjectId:rows[0].id,
+   summary:"TPO blocked placement scheduling dates",metadata:{startDay:start,endDay:end,days:days.length,reason}});
+  return {rows,created:rows.length};
  });
 }
 
