@@ -309,7 +309,7 @@ export function LearnerCourseList({
           <button type="button" onClick={() => window.location.reload()} className="ml-2 font-semibold text-primary-text underline">Retry</button>
         </p>
       ) : null}
-      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length)}</p>
+      <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">
