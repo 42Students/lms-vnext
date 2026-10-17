@@ -135,7 +135,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           occurrences:item.occurrenceCount,affectedAccounts:item.affectedAccounts,
           firstSeen:formatInstant(item.firstSeenAt),lastSeen:formatInstant(item.lastSeenAt),
           issuePublicId:item.issuePublicId,
-        }).slice(0,450))}
+        }).slice(0,450))+"&knownErrorId="+encodeURIComponent(item.id)}
           className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
           Create tracker issue
         </Link>

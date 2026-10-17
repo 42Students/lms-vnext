@@ -421,3 +421,12 @@ The following entries supersede earlier PARTIAL/OPEN rows for these IDs. **Sourc
 | TPO-inbox-team-51 / 54 / 59 / 60 | **PARTIAL / OPEN.** Audience edits, shell-side From 42 badge, learner-facing source labels, and additional event producers still missing; existing versioned edits/read tracking/bell history are not full parity. |
 
 No local TypeScript, Vitest or database suite execution was possible in this GitHub-only round. Do not promote PARTIAL to DONE solely for source assertions.
+
+
+## 2026-10-18 backend closure tranche
+| ID | Verdict | Implementation / test |
+| --- | --- | --- |
+| TPO-inbox-team-51 | **DONE (in branch; CI pending)** — future scheduled, undelivered notices can explicitly replace an audience; validated COLLEGE, PLACEMENTS, BATCHES, BRANCHES and DRIVE targets, freeze recipient UUIDs, and update the original notice under college/version row lock. Cannot silently retarget after publication; friendly audience-locked/empty-recipient errors. `src/modules/announcements/tpo-notice-audience-change-model.ts`, `tpo-placement-edit-service.ts`, edit route and form; named unit test `tests/unit/chat2-notice-retarget-before-send.test.ts`. |
+| TPO-inbox-team-60 | **PARTIAL — OPEN** — real active-college TPO bells for company relationship changes (`tpo-company-lifecycle-service.ts`), CSV import (`tpo-lead-csv-import-service.ts`) and recruiter lead create/stage updates (`tpo-crm-service.ts`). Recipient authorization is rechecked at emission; distinct scoped audit events, batch-size limits and dedupe. `tests/unit/chat2-company-lifecycle-bell-60.test.ts`, `chat2-recruiter-import-audit.test.ts`. Other legacy event sources remain OPEN. |
+| TPO-inbox-team-16 | **PARTIAL — OPEN** — proposed company object thread with college relationship and author FKs, idempotent posting and TPO-only recipient permissions, without falsely equating this with full DRIVE/COMPANY/STUDENT conversation kinds. Proposal `docs/proposed-migrations/tpo-company-team-conversations.sql` is not registered; tests in `chat2-company-team-model.test.ts` and `chat2-company-team-source-contract.test.ts`. |
+| TPO-inbox-team-29 | **PARTIAL — OPEN** — company discussion activity sends message-specific scoped TPO bell notifications, once per idempotent insert; test `chat2-company-team-draft-route.test.ts`. Multi-person mentions and ask events remain incomplete. |

@@ -65,6 +65,7 @@ export function buildLearnerProgressView(
     "id" | "durationSeconds"
   >,
   progress: ProgressRow,
+  minInProgressPercent = 5,
 ): LearnerProgressView {
   const durationSeconds =
     content.durationSeconds ?? 0;
@@ -91,7 +92,8 @@ export function buildLearnerProgressView(
     contentId: content.id,
     status: completedAt
       ? "COMPLETED"
-      : lastPositionSeconds > 0
+      : lastPositionSeconds > 0 &&
+        (durationSeconds <= 0 || percentComplete >= minInProgressPercent)
         ? "IN_PROGRESS"
         : "NOT_STARTED",
     lastPositionSeconds,
@@ -217,9 +219,11 @@ export async function getLearnerContentProgress(
     contentId,
   );
 
+  const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
   return buildLearnerProgressView(
     content,
     row,
+    settings.minInProgressPercent,
   );
 }
 
@@ -420,6 +424,7 @@ export async function saveLearnerContentProgress(
       return buildLearnerProgressView(
         content,
         inserted,
+        settings.minInProgressPercent,
       );
     } catch (error) {
       if (
@@ -447,5 +452,6 @@ export async function saveLearnerContentProgress(
   return buildLearnerProgressView(
     content,
     updated,
+    settings.minInProgressPercent,
   );
 }

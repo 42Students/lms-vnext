@@ -35,7 +35,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const match=/^r-([a-f0-9]{32})@(.+)$/.exec(input.to);
  if(!match||match[2]!==domain)return {accepted:false,replayed:false};
  const tokenHash=createHash("sha256").update(match[1]).digest("hex");
- const msgHash=createHash("sha256").update(input.providerMessageId).digest("hex");
+ // Idempotency belongs to the authorized thread, not a provider-global identifier.
+ // The same upstream message id in a different college must not claim replay.
+
  const db=getDb();
  const [ready]=await db.execute<{ok:boolean}>(sql`
   select to_regclass('public.placement_recruiter_message_mail_state') is not null
@@ -45,7 +47,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  `).then(result=>result.rows);
  if(!ready?.ok)return {accepted:false,replayed:false};
  return db.transaction(async tx=>{
-  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.providerMessageId}), 140117)`);
+  // The indexed reply-token row lock serializes writes for this thread.
+  // Never use a provider-global message id as a cross-tenant advisory lock.
   const [state]=await tx.select().from(placementRecruiterMessageMailState)
    .where(eq(placementRecruiterMessageMailState.replyTokenHash,tokenHash))
    .for("update").limit(1);
@@ -72,6 +75,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    limit 1
   `);
   if(!auth.rows[0])return {accepted:false,replayed:false};
+  const msgHash=createHash("sha256").update(state.threadId+"\u0000"+input.providerMessageId).digest("hex");
   const [duplicate]=await tx.select({id:placementRecruiterInboundEmailEvents.id,
     threadId:placementRecruiterInboundEmailEvents.threadId})
     .from(placementRecruiterInboundEmailEvents)

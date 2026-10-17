@@ -1379,7 +1379,7 @@ Review notes (`*` after a severity marks a review severity change):
 | REC-home-drives-R04 | home-drives | Closed drives dead-end on the tools. Legacy keeps Rounds and Offers readable and replaces the write panels with "This drive is finished, so... | STATE | S3 | FIXED-ON-MAIN | chat-7 | recruiter/home-drives-review.md | 1080cbe51 |
 | REC-home-drives-R05 | home-drives | Applicant drawer / focused review accessibility and keyboard handling. Legacy full-screen review is a modal dialog with focus trap, Esc to... | A11Y | S3 | FIXED-ON-MAIN | chat-7 | recruiter/home-drives-review.md | c6b32f9cd |
 | REC-home-drives-R06 | home-drives | Legacy list URL contract is not honoured. Legacy `/recruiter/drives?tab=all \| live \| waiting \| closed&q=` (bookmarks, notification and emai... | STATE | S3 | FIXED-ON-MAIN | chat-7 | recruiter/home-drives-review.md | e6011b7e4 |
-| REC-home-drives-R07 | home-drives | Date and time display zone. Legacy API sends UTC instants and the browser shows the viewer's own zone (`moment(...).format`, `momentFromApi... | COPY | S4 | OPEN | chat-7 | recruiter/home-drives-review.md |  |
+| REC-home-drives-R07 | home-drives | Date and time display zone. Legacy API sends UTC instants and the browser shows the viewer's own zone (`moment(...).format`, `momentFromApi... | COPY | S4 | NOT-A-GAP | chat-7 | recruiter/home-drives-review.md |  |
 | REC-home-drives-R08 | home-drives | Unbounded reads on the two busiest pages. `listOwnRecruiterPlacementJobs` loads every job of every grant (no limit or paging), then Today a... | PERFORMANCE | S4 | VERIFIED | chat-7 | recruiter/home-drives-review.md | ddd700529 |
 
 Review notes (`*` after a severity marks a review severity change):

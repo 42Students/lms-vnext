@@ -95,3 +95,55 @@ export function SuperAdminFacultyAssignmentCreate({
    </form>:null}
  </section>;
 }
+
+
+/** Edit retains the persisted assignment ID and declines to create a second
+ * primary teacher. The database unique index resolves concurrent editors. */
+export function SuperAdminTeachingRoleEdit({
+ assignmentId,role:initialRole,
+}:{assignmentId:string;role:CourseTeachingRole}){
+ const router=useRouter();
+ const [open,setOpen]=useState(false);
+ const [role,setRole]=useState<CourseTeachingRole>(initialRole);
+ const [notice,setNotice]=useState("");
+ const {run,pending}=useGuardedAction({busyLabel:"Updating role…"});
+ async function save(){
+  if(pending)return;
+  await run(async()=>{
+   setNotice("");
+   try{
+    await apiFetch("/api/courses/teaching-assignments/"+encodeURIComponent(assignmentId),{
+      method:"PATCH",headers:{"content-type":"application/json"},
+      body:JSON.stringify({role}),
+    });
+    setOpen(false);router.refresh();
+   }catch(cause){
+    setNotice(cause instanceof FriendlyFetchError?cause.message:
+      "Could not change this teaching role. Refresh and try again.");
+   }
+  });
+ }
+ return <div className="min-w-0 space-y-2">
+   <button type="button" className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold"
+     aria-expanded={open} disabled={pending}
+     onClick={()=>{setRole(initialRole);setNotice("");setOpen(v=>!v);}}>
+      Edit role
+   </button>
+   {open?<div className="grid gap-2">
+      <label className="grid gap-1 text-xs font-semibold">Teaching role
+       <select value={role} disabled={pending}
+        onChange={e=>setRole(e.target.value as CourseTeachingRole)}
+        className="min-h-10 rounded border border-border bg-surface px-2">
+        {COURSE_TEACHING_ROLES.map(value=><option key={value} value={value}>
+          {facultyAssignmentRoleLabel(value)}</option>)}
+       </select>
+      </label>
+      <button type="button" disabled={pending||role===initialRole}
+       onClick={()=>void save()}
+       className="min-h-10 rounded border border-border px-3 text-sm font-semibold">
+       {pending?"Saving…":"Save role"}
+      </button>
+    </div>:null}
+   {notice?<p role="alert" className="text-xs text-body">{notice}</p>:null}
+ </div>;
+}
