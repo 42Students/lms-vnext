@@ -37,6 +37,9 @@ export function RecruiterBulkOwnerControls({
   const [results, setResults] = useState<Result[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
+  const [undoRunId,setUndoRunId]=useState("");
+  const [undoReview,setUndoReview]=useState(false);
+  const [undoBusy,setUndoBusy]=useState(false);
   const [reviewOpen,setReviewOpen]=useState(false);
   const [reviewSignature,setReviewSignature]=useState("");
 
