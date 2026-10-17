@@ -11,7 +11,7 @@ describe("SA-placements-projects-77 project template audit integrity",()=>{
   ["UNPUBLISHED","unpublished"],["DUPLICATED","duplicated"],["ARCHIVED","archived"],
   ["ASSIGNED","assigned"],["UNASSIGNED","unassigned"],
  ] as const)("SA-placements-projects-77 registers template %s events", (name,suffix)=>{
-  const key="PROJECTS_TEMPLATE_"+name;
+  const key=("PROJECTS_TEMPLATE_"+name) as keyof typeof ACTIVITY_EVENT_TYPES;
   const event=ACTIVITY_EVENT_TYPES[key];
   expect(event).toBe("projects.template."+suffix);
   expect(template).toContain("ACTIVITY_EVENT_TYPES."+key);
@@ -30,6 +30,11 @@ describe("SA-placements-projects-77 project template audit integrity",()=>{
   expect(archive).toContain('.for("update")');
   expect(archive).toContain("PROJECT_TEMPLATE_HAS_ACTIVE_ASSIGNMENTS");
   expect(archive).toContain("PROJECTS_TEMPLATE_ARCHIVED");
+ });
+ it("SA-placements-projects-77 prevents archived template revival and duplicate no-op events",()=>{
+  expect(template).toContain('if (template.status==="ARCHIVED")');
+  expect(template).toContain('template.publishedVersion===template.currentVersion');
+  expect(template).toContain('if(template.status==="DRAFT")return template;');
  });
  it("SA-placements-projects-77 audit scope is tenant-specific for assignments and global for templates",()=>{
   expect(template).toContain("organizationId:college.organizationId,collegeId:college.id");
