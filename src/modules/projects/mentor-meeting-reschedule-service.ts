@@ -78,6 +78,12 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
       actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
       exceptUserId:context.user.id,
     });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,roles:["MENTOR"],
+      title:"Project meeting",body:"The time of "+updated.title+" has changed.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+      exceptUserId:context.user.id,
+    });
     return updated;
   });
 }
