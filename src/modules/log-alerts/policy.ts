@@ -1,3 +1,8 @@
+/** A new incident must never inherit the acknowledgment of a prior fixed one. */
+export function reopenRegressedSignature(now: Date) {
+  return { fixStatus: "OPEN" as const, regressedAt: now, acknowledgedAt: null };
+}
+
 export type AlertDecision = "NEW" | "REGRESSION" | "SPIKE" | "NONE";
 
 export function decideAlert(input: {
@@ -17,6 +22,11 @@ export function decideAlert(input: {
     return "SPIKE";
   }
   return "NONE";
+}
+
+/** Never charge a repeat delivery attempt for an unsaved new signature. */
+export function countSuppressedOccurrence(knownSignature: boolean): boolean {
+  return knownSignature;
 }
 
 /** Global quota: four individual alerts plus at most one burst summary per minute. */

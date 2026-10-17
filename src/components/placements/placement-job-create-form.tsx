@@ -2,6 +2,9 @@
 
 import {
   useState,
+  useRef,
+  useEffect,
+  useCallback,
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -45,6 +48,7 @@ export type PlacementCompanyChoice = {
   otherNames?: readonly string[];
   domains?: readonly string[];
   isTrusted: boolean;
+  memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[]} | null;
 };
 
 const inputClass =
@@ -84,6 +88,7 @@ function nullableInteger(
 }
 
 export function PlacementJobCreateForm({
+  userId,
   collegeId,
   activeSeason,
   companies,
@@ -91,6 +96,7 @@ export function PlacementJobCreateForm({
   basePath,
   initialCompanyName = "",
 }: {
+  userId: string;
   collegeId: string;
   activeSeason: PlacementSeasonChoice | null;
   companies: readonly PlacementCompanyChoice[];
@@ -101,6 +107,10 @@ export function PlacementJobCreateForm({
   const router = useRouter();
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
+  const formRef=useRef<HTMLFormElement>(null);
+  const clearedBackup=useRef(false);
+  const [restoredBackup,setRestoredBackup]=useState(false);
+  const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const [companyMode, setCompanyMode] =
     useState<"EXISTING" | "NEW">(
       companies.length > 0
@@ -111,16 +121,25 @@ export function PlacementJobCreateForm({
     companyRelationshipId,
     setCompanyRelationshipId,
   ] = useState(
-    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase() || company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
+    companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase()||company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
+  const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
+  const [hasEnteredEligibilityRule,setHasEnteredEligibilityRule]=useState(false);
   const [newEmployerName,setNewEmployerName]=useState("");
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
-  const matchingEmployer=companies.find(company=>Boolean(newEmployerName.trim()) && (company.name.toLowerCase()===newEmployerName.trim().toLowerCase() || company.otherNames?.some(alias=>alias.toLowerCase()===newEmployerName.trim().toLowerCase())) ||
-    Boolean(newEmployerDomain.trim())&&(company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,"")
-      ||company.domains?.some(domain=>domain.toLowerCase()===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""))));
+  const matchingEmployer=companies.find(company=>Boolean(newEmployerName.trim())&&
+    (company.name.toLowerCase()===newEmployerName.trim().toLowerCase()||
+      company.otherNames?.some(alias=>alias.toLowerCase()===newEmployerName.trim().toLowerCase()))||
+    Boolean(newEmployerDomain.trim())&&
+    (company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,"")||
+      company.domains?.some(domain=>domain.toLowerCase()===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""))));
   const {pending,run}=useGuardedAction({timeoutMs:45000});
+  // TPO-drives-43: never POST a second draft on retry after a partial create.
+  const createdJobRef=useRef<{jobId:string;relationshipId:string;fingerprint:string}|null>(null);
+  const [partialJobId,setPartialJobId]=useState<string|null>(null);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -129,6 +148,61 @@ export function PlacementJobCreateForm({
     selectedCohortIds,
     setSelectedCohortIds,
   ] = useState<string[]>([]);
+
+  // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
+  // No passwords, tokens, email invitations or learner records are present here.
+  const saveBrowserDraft=useCallback((form:HTMLFormElement)=>{
+    if(clearedBackup.current)return;
+    try{
+      const values:Record<string,string>={};
+      const checked:string[]=[];
+      for(const field of Array.from(form.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+        if(field instanceof HTMLInputElement&&field.type==="checkbox"){
+          if(field.checked)checked.push(field.name);
+        }else values[field.name]=field.value;
+      }
+      localStorage.setItem(backupKey,JSON.stringify({values,checked,
+        companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset}));
+    }catch{/* Storage may be unavailable in private mode; form still works. */}
+  },[backupKey,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset]);
+  useEffect(()=>{
+    // Defer restoration until the uncontrolled form fields have mounted.
+    const task=window.setTimeout(()=>{
+      try{
+        const raw=localStorage.getItem(backupKey);
+        if(!raw||!formRef.current)return;
+        const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
+          companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
+          selectedProgramIds?:string[];selectedCohortIds?:string[];
+          eligibilityPreset?:DriveEligibilityPreset};
+        if(!saved||!saved.values||typeof saved.values!=="object")return;
+        if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
+        if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
+          setCompanyRelationshipId(saved.companyRelationshipId);
+        setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
+        setSelectedCohortIds((saved.selectedCohortIds??[]).filter(id=>academicOptions.cohorts.some(c=>c.id===id)));
+        if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
+          setEligibilityPreset(saved.eligibilityPreset!);
+        setEnteredDriveTitle(String(saved.values.title??""));
+        setNewEmployerName(String(saved.values.companyName??""));
+        setNewEmployerDomain(String(saved.values.companyDomain??""));
+        for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
+          if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
+          else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
+        }
+        markDirty();
+        setRestoredBackup(true);
+      }catch{/* Corrupt or disabled browser storage must not break creation. */}
+    },0);
+    return ()=>window.clearTimeout(task);
+    // One-time restore scoped to this actor and college only.
+  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,markDirty]);
+  useEffect(()=>{
+    if(!dirty||!formRef.current||clearedBackup.current)return;
+    const task=window.setTimeout(()=>{if(formRef.current)saveBrowserDraft(formRef.current);},400);
+    return ()=>window.clearTimeout(task);
+    // Form state changes refresh the backup; uncontrolled fields also save onChange.
+  },[dirty,saveBrowserDraft,enteredDriveTitle,newEmployerName,newEmployerDomain]);
 
   function toggleId(
     value: string,
@@ -221,10 +295,18 @@ export function PlacementJobCreateForm({
           throw new Error(label + " must be between 0 and " + max + ".");
         }
       }
+      const fingerprint=JSON.stringify({
+        fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
+        selectedProgramIds:[...selectedProgramIds].sort(),
+        selectedCohortIds:[...selectedCohortIds].sort(),
+        companyMode,companyRelationshipId,
+      });
+      if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
+        throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
       let relationshipId =
-        companyRelationshipId;
+        createdJobRef.current?.relationshipId??companyRelationshipId;
 
-      if (companyMode === "NEW") {
+      if (companyMode === "NEW" && !createdJobRef.current) {
         const newName=String(data.get("companyName")??"").trim().toLowerCase();
         const newDomain=String(data.get("companyDomain")??"").trim().toLowerCase().replace(/^www\./,"");
         const existing=companies.find(company=>company.name.trim().toLowerCase()===newName||
@@ -262,7 +344,7 @@ export function PlacementJobCreateForm({
             | undefined;
         if (!relationship?.id) {
           throw new Error(
-            "Company relationship was not returned",
+            "We could not finish setting up the employer. Please check your companies before trying again.",
           );
         }
         relationshipId = relationship.id;
@@ -279,7 +361,8 @@ export function PlacementJobCreateForm({
           "INTERNAL",
       );
       
-      const jobResult = await requestJson(
+      const jobResult = createdJobRef.current?{id:createdJobRef.current.jobId}:
+       await requestJson(
         "/api/placements/jobs",
         "POST",
         {
@@ -350,8 +433,12 @@ export function PlacementJobCreateForm({
           : null;
       if (!jobId) {
         throw new Error(
-          "Created job id was not returned",
+          "The drive may have been saved but could not be opened. Check your drafts before trying again.",
         );
+      }
+      if(!createdJobRef.current){
+        createdJobRef.current={jobId,relationshipId,fingerprint};
+        setPartialJobId(jobId);
       }
 
       await requestJson(
@@ -427,6 +514,10 @@ export function PlacementJobCreateForm({
         `${basePath}/jobs/${jobId}${reviewPublish ? "?publish=1#drive-lifecycle-publish" : ""}`,
       );
       clearDirty();
+      clearedBackup.current=true;
+      try{localStorage.removeItem(backupKey);}catch{}
+      createdJobRef.current=null;
+      setPartialJobId(null);
       router.refresh();
     } catch (error) {
       showToast({
@@ -443,8 +534,20 @@ export function PlacementJobCreateForm({
 
   return (
     <form
+      ref={formRef}
       onSubmit={submit}
-      onChange={markDirty}
+      onChange={event=>{
+        clearedBackup.current=false;
+        saveBrowserDraft(event.currentTarget);
+        markDirty();
+        const fields=new FormData(event.currentTarget);
+        setHasEnteredEligibilityRule([
+          "minCgpa","minTenthPercentage","minTwelfthPercentage","minDiplomaPercentage",
+          "minUndergraduatePercentage","minPctThroughout","passingYears"
+        ].some(name=>String(fields.get(name)??"").trim().length>0)
+          ||fields.get("requireVerifiedEvidence")==="on"
+          ||fields.get("missingEvidencePolicy")==="REQUIRE_COMPLETE");
+      }}
       className="space-y-6"
     >
       <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
@@ -458,6 +561,12 @@ export function PlacementJobCreateForm({
           ))}
         </ol>
         <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
+        <div aria-label="Publish preflight warnings" className="mt-3 space-y-1 text-xs text-body">
+          <p role="status">No interview rounds added yet</p>
+          {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"&&selectedProgramIds.length===0&&selectedCohortIds.length===0?
+            <p role="status">No eligibility rules set - every registered student will see this drive</p>:null}
+          <p>These are warnings, not publication blockers. Review the drive and invite the recruiter before confirming publication.</p>
+        </div>
       </nav>
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
@@ -561,7 +670,7 @@ export function PlacementJobCreateForm({
                 }
               >
                 {companies.filter(company=>company.relationshipId===companyRelationshipId||
-                  (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))
+                  (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))
                   .map((company) => (
                   <option
                     key={
@@ -580,8 +689,18 @@ export function PlacementJobCreateForm({
               </select>
             </label>
             {companySearch.trim()&&!companies.some(company=>
-              (company.name+" "+(company.primaryDomain??"")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
+              (company.name+" "+(company.primaryDomain??"")+" "+(company.otherNames??[]).join(" ")+" "+(company.domains??[]).join(" ")).toLowerCase().includes(companySearch.trim().toLowerCase()))?
               <p role="status" className="text-xs text-body">No matching college employer. Check spelling or choose New employer.</p>:null}
+              {selectedEmployer?.memory?<section aria-label="Company Memory" className="rounded-lg border border-border bg-muted p-4 text-sm">
+                <h3 className="font-semibold text-foreground">Company Memory</h3>
+                <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
+                <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
+                <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
+                {enteredDriveTitle.trim()&&selectedEmployer.memory.recentRoles.some(role=>role.toLowerCase()===enteredDriveTitle.trim().toLowerCase())?
+                  <p role="alert" className="mt-2 font-semibold text-amber-900">
+                    A drive for {selectedEmployer.name} · {enteredDriveTitle.trim()} already exists. Check the previous drive before creating another.
+                  </p>:null}
+              </section>:null}
             </div>
           ) : (
             <div className="grid gap-4 lg:grid-cols-2">
@@ -658,6 +777,8 @@ export function PlacementJobCreateForm({
             <input
               className={inputClass}
               name="title"
+              value={enteredDriveTitle}
+              onChange={event=>setEnteredDriveTitle(event.target.value)}
               required
               minLength={3}
               maxLength={100}
@@ -694,6 +815,7 @@ export function PlacementJobCreateForm({
                 Contract
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list. Skills the employer requires are not configured on this form yet.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -714,6 +836,7 @@ export function PlacementJobCreateForm({
                 Remote
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -747,6 +870,7 @@ export function PlacementJobCreateForm({
               name="minimumLpa"
               type="number"
               min={0}
+              max={1000}
               step="0.1"
             />
           </label>
@@ -759,6 +883,7 @@ export function PlacementJobCreateForm({
               name="maximumLpa"
               type="number"
               min={0}
+              max={1000}
               step="0.1"
             />
           </label>
@@ -794,6 +919,7 @@ export function PlacementJobCreateForm({
                 Employer form only
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -805,6 +931,7 @@ export function PlacementJobCreateForm({
               type="url"
               placeholder="Required for hybrid/external-only"
             />
+            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -1021,6 +1148,12 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
+      <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
+        <h2 className="font-semibold text-foreground">Who this reaches</h2>
+        <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview rounds are configured in the saved drive workspace; recruiter lead invitations are managed separately under Engage.</p>
+      </section>
+
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Review the drive and confirm who is told before publishing.</p>
         <div className="flex flex-wrap gap-3">
@@ -1038,6 +1171,16 @@ export function PlacementJobCreateForm({
           </button>
         </div>
       </section>
+      {restoredBackup?<p role="status" className="text-sm text-body">A saved drive draft was restored from this browser. Review the values before submitting.</p>:null}
+      {dirty?<button type="button" onClick={()=>{
+        clearedBackup.current=true;
+        try{localStorage.removeItem(backupKey);}catch{}
+        setRestoredBackup(false);
+      }} className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">Discard saved browser backup</button>:null}
+      {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
+        <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
+        Do not submit a second drive.
+      </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
     </form>
   );

@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 import { errorSignatureHash, normaliseErrorForSignature } from "@/modules/log-alerts/signature";
-import { sendTelegramAlert, limitTelegramAlert } from "@/modules/log-alerts/telegram-notifier";
+import { sendTelegramAlert, limitTelegramAlert, sanitizeTelegramLine } from "@/modules/log-alerts/telegram-notifier";
 
 const oldEnv = {
   bot: process.env.TELEGRAM_ALERT_BOT_TOKEN,
@@ -30,6 +30,10 @@ describe("Telegram alert fundamentals", () => {
     expect(normaliseErrorForSignature(first)).toEqual(normaliseErrorForSignature(second));
     expect(normaliseErrorForSignature(first)).not.toContain("abc@example.com");
     expect(normaliseErrorForSignature(first)).not.toContain("2099-10-17");
+    // The legacy notifier groups the same exception across UTC and offset stamps.
+    const withIst = "Job 123 failed at 2099-10-17T01:00:00.432+05:30 for jane@example.com";
+    const withUtc = "Job 987 failed at 2099-10-18T23:42:11.432Z for john@example.com";
+    expect(normaliseErrorForSignature(withIst)).toEqual(normaliseErrorForSignature(withUtc));
   });
 
   it("GR-113 removes credentials, personal data, SQL parameters, stack frames and route identifiers", () => {
@@ -56,6 +60,18 @@ describe("Telegram alert fundamentals", () => {
         return new Response(JSON.stringify({ ok: true }));
       }) as typeof fetch,
     })).toBe(true);
+  });
+  it("GR-113 GR-119 preserves generated digest date and commit without allowing free-form personal data", () => {
+    expect(sanitizeTelegramLine("vNext daily error digest (2099-10-17, IST)"))
+      .toBe("vNext daily error digest (2099-10-17, IST)");
+    expect(sanitizeTelegramLine("Deploy: " + "a".repeat(40)))
+      .toBe("Deploy: " + "a".repeat(40));
+    expect(sanitizeTelegramLine("123456789abc: 90 occurrences"))
+      .toBe("123456789abc: 90 occurrences");
+    expect(sanitizeTelegramLine("Error jane@example.com"))
+      .not.toContain("jane@example.com");
+    expect(sanitizeTelegramLine("Deploy: jane@example.com"))
+      .not.toContain("jane@example.com");
   });
   it("GR-111 never throws when unconfigured and sends no request", async () => {
     delete process.env.TELEGRAM_ALERT_BOT_TOKEN;

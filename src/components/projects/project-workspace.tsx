@@ -1431,10 +1431,7 @@ export function ProjectWorkspace({
                       </p>
                     ) : null}
                     {mode==="LEARNER"?<ProjectResourceOpenLink url={resource.url}/>:
-                      href?<a href={href} target="_blank" rel="noopener noreferrer"
-                      className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover">
-                        Open resource ↗
-                      </a>:null}
+                      resource.url?<ProjectResourceOpenLink url={resource.url} linkText="Open link"/>:null}
                     {mode !== "LEARNER" && !readOnly ? (
                       <ProjectResourceActions
                         projectId={workspace.project.id}

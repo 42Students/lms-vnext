@@ -82,11 +82,14 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
   }).returning({id:activityEvents.id});
   const other=active.find(member=>member.id!==membership.id);
   if(!event||!other)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  const [actor]=await tx.select({displayName:users.displayName})
+   .from(users).where(eq(users.id,context.user.id)).limit(1);
+  const actorName=actor?.displayName?.trim()||"TPO colleague";
   await tx.insert(inAppNotifications).values({
    eventId:event.id,userId:other.userId,
-   title:"New private team message",
-   body:"A TPO colleague replied to your private conversation.",
-   actionHref:"/tpo/team/"+thread.id,
+   title:"New message from "+actorName,
+   body:input.body.slice(0,120)+(input.body.length>120?"…":""),
+   actionHref:"/tpo/team/"+thread.id+"?m="+message.id,
   });
   return {id:message.id,threadId:thread.id};
  });

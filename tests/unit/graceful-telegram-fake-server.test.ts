@@ -49,4 +49,43 @@ describe("GR-125 fake Telegram HTTP endpoint", () => {
       await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
     }
   });
+  it("GR-111 GR-122 GR-125 confirms production buttons and error replies using a fake HTTP server", async () => {
+    process.env.TELEGRAM_ALERT_BOT_TOKEN = "fake-production-bot";
+    process.env.TELEGRAM_ALERT_CHAT_ID = "-100123456";
+    process.env.APP_ENV = "production";
+    const received: Record<string, unknown>[] = [];
+    const server = createServer((req, res) => {
+      const chunks: Buffer[] = [];
+      req.on("data", (chunk: Buffer) => chunks.push(chunk));
+      req.on("end", () => {
+        received.push(JSON.parse(Buffer.concat(chunks).toString("utf8")) as Record<string, unknown>);
+        const attempt = received.length;
+        res.writeHead(attempt === 3 ? 429 : 200, { "content-type": "application/json" });
+        res.end(attempt === 4 ? "bad json" :
+          JSON.stringify({ ok: attempt === 1 }));
+      });
+    });
+    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    try {
+      const address = server.address();
+      if (!address || typeof address === "string") throw new Error("No fake server port");
+      const provider = "http://127.0.0.1:" + address.port;
+      const options = {
+        botApiUrl: provider,
+        acknowledgeSignatureId: "12345678-1234-1234-1234-123456789012",
+      };
+      expect(await sendTelegramAlert("Production error", options)).toBe(true);
+      expect(await sendTelegramAlert("Production error", options)).toBe(false);
+      expect(await sendTelegramAlert("Production error", options)).toBe(false);
+      expect(await sendTelegramAlert("Production error", options)).toBe(false);
+      expect(received).toHaveLength(4);
+      expect(received[0]).not.toHaveProperty("parse_mode");
+      expect(received[0]).toHaveProperty("reply_markup");
+      expect(String(received[0]?.text)).not.toContain("[vnext dev]");
+    } finally {
+      await new Promise<void>((resolve, reject) =>
+        server.close((error) => error ? reject(error) : resolve()));
+    }
+  });
+
 });

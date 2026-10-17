@@ -133,3 +133,76 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | TPO-inbox-team-65 | DONE (source; unrun) | TPO-only optional `allLabel` in shared `NotificationToolbar`: Latest n/All (n), exact subtitle and empty strings on `src/app/(authenticated)/tpo/notifications/page.tsx`; named **TPO-inbox-team-65** in `tests/unit/tpo-notifications-history-chat2.test.ts`. |
 | TPO-inbox-team-67 | DONE (source; unrun) | `tpo-notifications-service.ts` applies 30-day cutoff to unread count and view. First page now explains older unread items, with cursor history replacing legacy 200 ceiling as a documented enhancement. Named **TPO-inbox-team-67** same unit suite. |
 | TPO-inbox-team-68 | DONE (source; unrun) | `src/components/tpo/tpo-notification-refresh.tsx` probes bounded same-origin data before refreshing cards, keeps stale cards on transient failure and exposes exact legacy stale and refresh messages with Retry; existing loading skeleton and route Retry remain. Named **TPO-inbox-team-68** same unit suite. |
+
+## Builder chat-2 continuation — thread counterpart and mobile context
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-18 | PARTIAL — OPEN | `readTpoInternalConversation` projects counterpart name with a same-college user join and displays it in the detail header; existing Team list has preview, 100-row search and partial filters. Named **TPO-inbox-team-18** in `tests/unit/tpo-team-person-context-chat2.test.ts`. Object thread kinds, Asks/Decisions/@Me filters still absent. |
+| TPO-inbox-team-31 | PARTIAL — OPEN | People now marks the current membership **You** in `tpo/team/page.tsx`; named **TPO-inbox-team-31** in the same test file. Five workload counts and away status require actual persisted data. |
+| TPO-inbox-team-42 | PARTIAL — OPEN | Team detail provides native keyboard-operable **All conversations** back action for single-pane navigation; named **TPO-inbox-team-42** in same suite. Legacy split-master desktop layout and detail context not built. |
+
+## Chat-2 continuation: first 25 originally OPEN gaps reviewed in severity/queue order
+
+This is a **truthful disposition**, not a claim of 25 completed builds. Earlier source work predates this continuation; tests are written but not executed. Partial items remain OPEN until their complete legacy workflow and PostgreSQL acceptance exist.
+
+| ID | Disposition | Evidence or remaining work |
+| --- | --- | --- |
+| TPO-inbox-team-15 | DONE | Everyone channel source and proposed persistence; named unit and DB09 tests; migration registration pending |
+| TPO-inbox-team-07 | OPEN | Drive Discussion/Discuss handoff and request history need first-class route |
+| TPO-inbox-team-10 | DONE | Legacy Messages subtitle; tpo-inbox-team-copy.test.ts |
+| TPO-inbox-team-16 | OPEN | Typed object conversations for drives, companies and students absent |
+| TPO-inbox-team-17 | PARTIAL — OPEN | 200-character topic schema/form and test; richer participant control absent |
+| TPO-inbox-team-18 | PARTIAL — OPEN | Counterpart, preview, search and some filters; @Me/asks/decisions/object inbox absent |
+| TPO-inbox-team-20 | PARTIAL — OPEN | Persistent follow/mute in proposed read receipts; object mention semantics absent |
+| TPO-inbox-team-22 | OPEN | Assignable asks, lifecycle, due dates and Home integration absent |
+| TPO-inbox-team-24 | OPEN | Edit-within-15-minutes and delete-message lifecycle absent |
+| TPO-inbox-team-31 | PARTIAL — OPEN | You chip added; drives/companies/asks workload and away counts absent |
+| TPO-inbox-team-33 | OPEN | Unowned assignments banner, safe reassign workflow and notification absent |
+| TPO-inbox-team-36 | OPEN | Impact-aware teammate removal and work handover absent |
+| TPO-inbox-team-39 | DONE | Preserved Team drafts, bounded friendly post, retry; named round2/round3 tests |
+| TPO-inbox-team-44 | PARTIAL — OPEN | Scoped picker source and options test; batch/branch multi-select and searchable drive target missing |
+| TPO-inbox-team-54 | PARTIAL — OPEN | From 42 scoped read state on page; cross-page unread badge/bell parity missing; shell note for chat-9 |
+| TPO-inbox-team-60 | PARTIAL — OPEN | Bell read path improved but legacy informational event producers largely absent |
+| TPO-inbox-team-09 | DONE | 4-second recruiter inbox focus refresh; named round2 test |
+| TPO-inbox-team-13 | DONE | Phone cards and All conversations control; named round2 test |
+| TPO-inbox-team-14 | DONE | Duplicate notifications screen canonical redirect; named round2 test |
+| TPO-inbox-team-23 | OPEN | First-class decisions tagging, pin and filter absent |
+| TPO-inbox-team-26 | OPEN | Object facts/asks/decisions context panel absent |
+| TPO-inbox-team-27 | DONE | 30-second Team focus refresh; named round2 test |
+| TPO-inbox-team-29 | OPEN | Rich targeted Team mentions/asks/assignments alert variants absent |
+| TPO-inbox-team-30 | PARTIAL — OPEN | ?c/?m, ?filter, ?tab=members accepted; ?about and ?ask depend on unsupported object/ask records |
+| TPO-inbox-team-34 | OPEN | Away interval and warnings missing |
+
+Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64, -65, -67, -68; partial improvements -32, -37, -42, -49; TPO-inbox-team-52 Delete confirmation and TPO-inbox-team-R04 paged listing reviewed but complete legacy acceptance still requires check.
+
+## Chat-2 unit-failures-r1 repair (round 5)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-R05 | DONE (source; tests unrun) | `tests/unit/tpo-inbox-team-round2.test.ts` now asserts per-member `read_through`, excluding own authored messages, and **followed and unmuted** unread count rather than the obsolete unqualified expression. `src/modules/placements/tpo-team-internal-read-service.ts` provides the actual behavior. |
+| TPO-inbox-team-07 | PARTIAL — OPEN | `tests/unit/tpo-drive-tabs.test.ts` now asserts the actual seventh primary **Discussion** route; the Discussion feature remains scoped to the full conversation audit. |
+
+## Chat-2 round 5 — Team read on open
+
+| TPO-inbox-team-R05 | DONE (source; tests not run) | Explicit same-origin POST on Team detail open via `TpoTeamOpenRead`, JSON success support on acknowledgement route, and graceful manual Retry; named `TPO-inbox-team-R05` in `tests/unit/tpo-team-read-on-open-chat2.test.ts`. The read pointer remains separate from personal bell read state. |
+| TPO-inbox-team-20 | PARTIAL — OPEN | Opening conversation clears per-thread unread through authorized POST (existing follow/mute survives), guarded failure shows manual retry. `tests/unit/tpo-team-read-on-open-chat2.test.ts` names `TPO-inbox-team-20`. Mentions/object subscription remains open. |
+
+## Chat-2 round 5 — activity ordering and Team notices
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Sorted limited Team inbox by latest actual message activity (college-scoped) and displayed IST timestamp, with existing search/preview; `tests/unit/tpo-team-activity-notices-chat2.test.ts` named `TPO-inbox-team-18`. Object/ask/decision filters remain. |
+| TPO-inbox-team-29 | PARTIAL — OPEN | Private thread invitations and replies now include actor name and 120-character recipient-only preview; reply uses deep link to message; same named `TPO-inbox-team-29` test. Full TEAM_MENTION, TEAM_ASK, TEAM_ASK_DONE, TEAM_ASSIGNED require those first-class workflows. |
+| TPO-inbox-team-R05 | DONE (source; tests unrun) | Old and `?m=` deep-linked Team alerts count and acknowledge with independently persisted read pointer. Named `TPO-inbox-team-R05` regression test in same suite. |
+
+## Chat-2 round 5 — From 42 badge
+
+| TPO-inbox-team-54 | PARTIAL — OPEN | `countUnreadTpo42Announcements` counts college-scoped visible unread notices beyond the first 100 and tabs show true global count only when read-receipt storage is registered; named `TPO-inbox-team-54` in `tests/unit/tpo-from42-unread-chat2.test.ts`. Shell sidebar and informational bell producer remain open (chat-9 shell owner). |
+| TPO-inbox-team-R04 | PARTIAL — OPEN | Announcements continue paginated, and first-page unread badge now uses a separate authorized full count, not a per-page guess; same named test. Remaining author filtering and full-list acceptance pending. |
+
+## Chat-2 round 5 — Team conversation rename
+
+| TPO-inbox-team-17 | PARTIAL — OPEN | Existing 200-character create flow now supplemented by scoped, two-participant optimistic rename with guarded UI, explicit POST and named `TPO-inbox-team-17` tests in `tests/unit/tpo-team-rename-chat2.test.ts`. Multi-person participants, leave action and visibility policy remain open. |
+
+## Chat-2 round 5 — Team inbox pagination
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Team list now paginates beyond the old 100-row cap, preserves search/filter URL, selects latest activity descending with stable ID tie-break, and labels page-scoped filter counts truthfully; `tests/unit/tpo-team-inbox-paging-chat2.test.ts` (two `TPO-inbox-team-18` named tests). Other legacy thread-kind filters not built. |

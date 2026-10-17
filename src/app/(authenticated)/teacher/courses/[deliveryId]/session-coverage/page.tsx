@@ -11,7 +11,7 @@ export default async function FacultySessionCoveragePage({
   const base="/teacher/courses/"+encodeURIComponent(deliveryId)+"/attendanceDetail";
   return <div className="space-y-5">
     <Link href={base} className="text-sm font-semibold text-primary-text underline">← Attendance</Link>
-    <PageHeader eyebrow="Faculty · Section" title="Attendance session coverage"
+    <PageHeader title="Attendance session coverage"
       description={data.course.courseName+" · "+data.course.sectionName}/>
     <section aria-label="Session state counts" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {([["Scheduled sessions",data.total],["Marked",data.marked],

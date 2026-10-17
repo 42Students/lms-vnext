@@ -22,8 +22,8 @@ function settingSourceLabel(
   source: "PERSISTED" | "SOURCE_DEFAULT",
 ) {
   return source === "PERSISTED"
-    ? "Persisted"
-    : "Source default";
+    ? "Saved for your college"
+    : "Standard college settings";
 }
 
 function placedTriggerLabel(value: string) {
@@ -99,7 +99,7 @@ export default async function TpoPlacementRulesSettingsPage({
 
       <section className="space-y-2">
         <h2 className="m-0 text-xl font-semibold text-foreground">
-          Placement Rules
+          Placement rules
         </h2>
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and

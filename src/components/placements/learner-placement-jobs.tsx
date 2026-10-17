@@ -80,6 +80,7 @@ export type LearnerPlacementJobItem = {
   };
   deadlinePassed: boolean;
   canApply: boolean;
+  applicationBlockers?: string[];
 };
 
 function humanize(value: string) {
@@ -114,7 +115,7 @@ function formatCtc(
   maximum: number | null,
 ) {
   if (minimum === null && maximum === null) {
-    return "Compensation not published";
+    return "Not disclosed";
   }
   const lakh = (value: number) =>
     `₹${(value / 100_000).toLocaleString("en-IN", {
@@ -483,6 +484,15 @@ function JobActions({
   );
 }
 
+function postedAtLabel(value: string | null | undefined): string {
+  if (!value) return "Posted date not specified";
+  const date = new Date(value);
+  if (!Number.isFinite(date.getTime())) return "Posted date not specified";
+  return "Posted " + new Intl.DateTimeFormat("en-IN", {
+    dateStyle: "medium", timeZone: "Asia/Kolkata",
+  }).format(date);
+}
+
 export function LearnerPlacementJobs({
   items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
 }: {
@@ -537,12 +547,17 @@ export function LearnerPlacementJobs({
                     Drive · {item.job.title}
                   </p>
                 ) : null}
-                <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
+                <p className="mt-2 line-clamp-3 max-w-3xl text-sm leading-6 text-body">
                   {item.job.description}
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
+               {item.application ? (
+                 <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
+                   {item.application.status==="SUBMITTED"?"Applied":humanize(item.application.status)}
+                 </StatusBadge>
+               ) : null}
               <StatusBadge
                 tone={eligibilityTone(
                   item.eligibility.status,
@@ -607,6 +622,17 @@ export function LearnerPlacementJobs({
               </div>
             </div>
 
+            <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt)}</p>
+            {!item.canApply && !item.application ? (
+              <div className="mt-3 rounded-md border border-border bg-surface-subtle p-3 text-sm text-body"
+                aria-label="Why this role is not open to you">
+                <p className="font-semibold text-foreground">Not open to you</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {(item.applicationBlockers??["Your placement cell has not opened this role for your application."])
+                    .map(reason=><li key={reason}>{reason}</li>)}
+                </ul>
+              </div>
+            ) : null}
             {failedChecks.length > 0 ||
             missingChecks.length > 0 ? (
               <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3">

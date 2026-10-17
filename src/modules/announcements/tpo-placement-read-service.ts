@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,isNotNull,or,lte,gt,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements,placementCellAnnouncementReads} from "@/db/schema/db10-announcements";
 import {placementTpoNoticeAudiences} from "@/db/schema/placement-tpo-notice-audiences";
@@ -70,5 +70,36 @@ export async function listTpoPlacementAnnouncements(
    ...row,audienceKind:audienceById.get(row.id)??"COLLEGE",
    readAt:cellReadsReady?readById.get(row.id)??null:undefined,
   })),page:safePage,hasMore:rows.length>100,readStateReady:cellReadsReady};
+ });
+}
+
+/** TPO-inbox-team-54: total unacknowledged From 42 notices, not a first-page estimate. */
+export async function countUnreadTpo42Announcements(context:RequestContext,now:Date=new Date()){
+ const membership=context.membership;
+ if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+ const college=await requirePlacementManageScope(context,membership.collegeId);
+ if(!await placementTableExists("announcements")||
+    !await placementTableExists("placement_cell_announcement_reads"))return null;
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const [row]=await tx.select({total:sql<number>`count(*)::integer`})
+   .from(db10Announcements)
+   .leftJoin(placementCellAnnouncementReads,and(
+    eq(placementCellAnnouncementReads.announcementId,db10Announcements.id),
+    eq(placementCellAnnouncementReads.collegeId,college.id),
+   )).where(and(
+    eq(db10Announcements.organizationId,college.organizationId),
+    eq(db10Announcements.collegeId,college.id),
+    eq(db10Announcements.receiverType,"COLLEGE"),
+    eq(db10Announcements.receiverId,college.id),
+    eq(db10Announcements.senderType,"SUPER_ADMIN"),
+    isNull(db10Announcements.deletedAt),
+    or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
+    or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
+    isNull(placementCellAnnouncementReads.announcementId),
+   ));
+  return Number(row?.total??0);
  });
 }

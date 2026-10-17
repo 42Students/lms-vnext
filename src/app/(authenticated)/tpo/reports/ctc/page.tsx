@@ -1,3 +1,4 @@
+import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -64,7 +65,7 @@ export default async function TpoCtcReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Packages"
-        description="Annual package statistics use each learner’s single highest accepted full-time offer. The separate distribution counts accepted offer records."
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/ctc"].description}
         actions={<ReportCsvLink workspace={workspace} kind="ctc" />}
       />
 

@@ -70,6 +70,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         {join&&/^https:\/\//i.test(join)?<a href={join} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Join online round</a>:null}
         {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<a href={row.testUrl} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline">Open test</a>:null}
       </div>
+      {row.exception ? (
+        <p role="status" className="text-xs font-semibold text-primary-text">
+          Rescheduled · The time, venue and links shown above are the latest recorded booking.
+        </p>
+      ) : null}
       <p className="text-xs font-semibold text-body">
         {row.booked ? "Booked for this round" : "Round scheduled · Individual booking not yet recorded"}
       </p>

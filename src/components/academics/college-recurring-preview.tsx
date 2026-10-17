@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 
 type Option = { id: string; name: string };
@@ -35,6 +36,7 @@ export function CollegeRecurringPreview({
   const [result, setResult] = useState<Result | null>(null);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
+  const [confirming, setConfirming] = useState(false);
   const selected = classes.find((item) => item.id === sectionId);
   function onClass(id: string) {
     setSectionId(id);
@@ -68,13 +70,21 @@ export function CollegeRecurringPreview({
     });
   }
   function execute() {
+    if (!selected?.updatedAt || !result || result.ready===0) return;
+    if (lastPreviewKey !== previewKey()) {
+      setError("Schedule fields changed since the preview. Preview this pattern again before saving.");
+      return;
+    }
+    setConfirming(true);
+  }
+  function confirmExecute() {
+    setConfirming(false);
     const version = selected?.updatedAt;
     if (!version || !result || result.ready===0) return;
     if (lastPreviewKey !== previewKey()) {
       setError("Schedule fields changed since the preview. Preview this pattern again before saving.");
       return;
     }
-    if (!window.confirm("Create "+result.ready+" clear sessions? Conflicting dates are skipped and listed after saving.")) return;
     setError("");
     setCreated(null);
     setSkipped([]);
@@ -217,6 +227,10 @@ export function CollegeRecurringPreview({
           </div>
         )}
       </section> : null}
+      <ConfirmDialog open={confirming} onOpenChange={setConfirming}
+        title="Create recurring sessions?"
+        description={`Create ${result?.ready ?? 0} clear sessions? Conflicting dates will be skipped and listed after saving.`}
+        confirmLabel="Create sessions" pending={pending} onConfirm={confirmExecute}/>
     </section>
   );
 }
