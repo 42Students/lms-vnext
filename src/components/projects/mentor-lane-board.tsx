@@ -88,7 +88,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
        sprintId={(sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.id??""}
        updatedAt={new Date((sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.updatedAt??0).toISOString()}
        sprints={sprints.filter(item=>item.status!=="COMPLETED"&&
-         releases.some(release=>release.id===item.releaseId)).map(item=>({
+         releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED")).map(item=>({
            id:item.id,title:item.title,status:item.status,updatedAt:new Date(item.updatedAt).toISOString(),
          }))}
        learners={members.filter(member=>member.role==="LEARNER").map(member=>({
