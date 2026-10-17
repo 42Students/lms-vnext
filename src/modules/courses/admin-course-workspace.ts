@@ -12,42 +12,6 @@ import {
   listCourseTeachingAssignments,
 } from "./teaching-assignment-service";
 
-async function listAllCollegePeople(
-  context: RequestContext,
-  collegeId: string,
-) {
-  const items: Awaited<
-    ReturnType<
-      typeof listCollegePeopleWithRuntime
-    >
-  >["items"] = [];
-  let offset = 0;
-
-  while (true) {
-    const page =
-      await listCollegePeopleWithRuntime(
-        context,
-        {
-          collegeId,
-          limit: 100,
-          offset,
-        },
-      );
-
-    items.push(...page.items);
-    offset += page.items.length;
-
-    if (
-      page.items.length === 0 ||
-      offset >= page.pagination.total
-    ) {
-      break;
-    }
-  }
-
-  return items;
-}
-
 export async function getAdminCourseWorkspace(
   context: RequestContext,
   collegeId: string,
