@@ -29,6 +29,15 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     expect(e?.path).toBe("/api/users/[id]");
     expect(e?.requestId).toBeUndefined();
   });
+  it("GR-112 GR-114 aligns structured stack headers with in-process error signatures", () => {
+    const e = parseCloudErrorEntry({
+      insertId: "stack-one",
+      logName: "projects/test/logs/stderr",
+      timestamp: "2099-04-01T00:00:02Z",
+      jsonPayload: { message: "TypeError: connection refused\\n  at node_modules/example.js" },
+    });
+    expect(e?.message).toBe("connection refused");
+  });
   it("GR-125 uses metadata ADC without leaking the access token on failures", async () => {
     const access = await cloudLoggingAccessToken(vi.fn(async () =>
       new Response(JSON.stringify({ access_token: "synthetic-access-value" }), { status: 200 })) as typeof fetch);

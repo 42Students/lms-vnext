@@ -43,7 +43,7 @@ describe("Telegram alert fundamentals", () => {
     process.env.TELEGRAM_ALERT_BOT_TOKEN = "fixture";
     process.env.TELEGRAM_ALERT_CHAT_ID = "fixture";
     const requestId = "af02b19c";
-    expect(await sendTelegramAlert("Time: 2099-01-01T01:02:03.000Z\\nRequest ID: " + requestId, {
+    expect(await sendTelegramAlert("Time: 2099-01-01T01:02:03.000Z\nRequest ID: " + requestId, {
       transport: (async (_url, init) => {
         const payload = JSON.parse(String(init?.body)) as { text: string };
         expect(payload.text).toContain("Request ID: " + requestId);
