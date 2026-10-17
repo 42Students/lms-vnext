@@ -15,6 +15,7 @@ describe("mentor resource list parity",()=>{
   expect(code).toContain('"Open link"');
   expect(code).toContain("ProjectResourceOpenLink");
   expect(code).toContain("Last updated:");
-  expect(source("src/components/projects/project-resource-open-link.tsx")).toContain("This resource\'s link is not a valid web address, so it can\'t be opened.");
+  expect(source("src/components/projects/project-resource-open-link.tsx")).toContain("This resource has an invalid address.");
+  expect(source("src/components/projects/project-resource-open-link.tsx")).toContain("Your browser blocked the resource window.");
  });
 });
