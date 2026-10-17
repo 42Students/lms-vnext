@@ -36,7 +36,7 @@ describe("Chat13 drive create/edit resilience",()=>{
  it("GR-62 long drive forms warn before losing unsaved changes and clear after confirmed save",()=>{
   const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
   expect(guard).toContain('window.addEventListener("beforeunload"');
-  for(const file of files){const code=source(file);expect(code).toContain("onChange={markDirty}");
+  for(const file of files){const code=source(file);expect(code).toMatch(/onChange=\{(?:markDirty|event\s*=>\s*\{[\s\S]*?markDirty\(\))/);
    expect(code).toContain("clearDirty();");}
  });
  it("GR-90 drive forms use shared toast feedback on failure and never print an API error code",()=>{

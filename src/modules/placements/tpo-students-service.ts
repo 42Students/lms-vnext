@@ -106,6 +106,8 @@ export const tpoStudentsQuerySchema = z
     minCertifications:z.coerce.number().int().min(0).max(50).optional(),
     minExperiences:z.coerce.number().int().min(0).max(30).optional(),
     hasProfileLinks:yesNo.optional(),
+    hasResume:yesNo.optional(),
+    hasCodingProfiles:yesNo.optional(),
     minApplications:z.coerce.number().int().min(0).max(10000).optional(),
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
