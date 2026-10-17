@@ -62,7 +62,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      <p className="text-sm">Row {row.line}: {row.identity||"No ID"} · {row.reason}</p>
      <div className="flex flex-wrap gap-2">
       <select aria-label={"Match row "+row.line} className="min-h-10 flex-1 rounded border border-border bg-surface p-2 text-sm"
-       value={overrides[row.line]??""} disabled={busy} onChange={e=>setOverrides(p=>({...p,[row.line]:e.target.value}))}>
+       value={overrides[row.line]??""} disabled={busy} onChange={e=>{setOverrides(p=>({...p,[row.line]:e.target.value}));if(e.target.value)setSkips(p=>p.filter(n=>n!==row.line));}}>
        <option value="">Do not match this row</option>
        {row.suggestions.map(s=><option key={s.applicationId} value={s.applicationId}>{s.name}{s.roll?" · "+s.roll:""}</option>)}
       </select>
