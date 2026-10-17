@@ -19,6 +19,7 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
  if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
  return getDb().select({
    id:projectTaskComments.id,body:projectTaskComments.body,
+   commentKind:projectTaskComments.commentKind,
    authorMembershipId:projectTaskComments.authorMembershipId,
    createdAt:projectTaskComments.createdAt,authorName:users.displayName,
  }).from(projectTaskComments)
