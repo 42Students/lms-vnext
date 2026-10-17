@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { placementTableExists } from "@/modules/placements/staged-tables";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-service";
@@ -6,8 +7,8 @@ import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-ser
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  if (process.env.DB09_TPO_API_READY !== "DB09_VERIFIED") {
-    return NextResponse.json({ error: "DB09_MIGRATIONS_PENDING" }, { status: 503 });
+  if (!await placementTableExists("placement_tpo_leads") || !await placementTableExists("placement_tpo_lead_activities")) {
+    return NextResponse.json({ error: "DATABASE_NOT_READY" }, { status: 503 });
   }
   try {
     const context = await getCurrentRequestContext();

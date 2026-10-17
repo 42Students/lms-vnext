@@ -4,7 +4,7 @@ import {createHash} from "node:crypto";
 import {and,eq,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents} from "@/db/schema";
+import {activityEvents,collegeMemberships,inAppNotifications,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages} from "@/db/schema/tpo-internal";
 import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -37,7 +37,11 @@ export async function changeTpoTeamMessage(context:RequestContext,raw:unknown){
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    collegeId:college.id,organizationId:college.organizationId,
   });
-  const [thread]=await tx.select({id:placementTpoInternalThreads.id})
+  const [thread]=await tx.select({
+   id:placementTpoInternalThreads.id,
+   startedByMembershipId:placementTpoInternalThreads.startedByMembershipId,
+   invitedMembershipId:placementTpoInternalThreads.invitedMembershipId,
+  })
    .from(placementTpoInternalThreads).where(and(
     eq(placementTpoInternalThreads.id,input.threadId),
     eq(placementTpoInternalThreads.collegeId,college.id),
@@ -77,7 +81,7 @@ export async function changeTpoTeamMessage(context:RequestContext,raw:unknown){
     eq(placementTpoInternalMessages.body,message.body),
    )).returning({id:placementTpoInternalMessages.id});
   if(!updated)throw new Error("TEAM_STALE_MESSAGE");
-  await tx.insert(activityEvents).values({
+  const [event]=await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId:college.id,
    actorUserId:context.user.id,actorMembershipId:membership.id,
    module:"PLACEMENTS",
@@ -86,7 +90,29 @@ export async function changeTpoTeamMessage(context:RequestContext,raw:unknown){
    subjectType:"team_thread",subjectId:thread.id,
    summary:input.action==="EDIT"?"TPO team message edited":"TPO team message removed",
    metadata:{messageId:message.id},
-  });
+  }).returning({id:activityEvents.id});
+  // Keep the recipient informed about edits/removals without exposing a
+  // departed teammate's history. Never email or claim delivery to nonmembers.
+  const otherId=thread.startedByMembershipId===membership.id?
+   thread.invitedMembershipId:thread.startedByMembershipId;
+  const [recipient]=await tx.select({userId:collegeMemberships.userId})
+   .from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(eq(collegeMemberships.id,otherId),
+    eq(collegeMemberships.collegeId,college.id),
+    eq(collegeMemberships.status,"ACTIVE"),
+    eq(users.platformStatus,"ACTIVE"))).limit(1);
+  if(event&&recipient){
+   const [actor]=await tx.select({name:users.displayName}).from(users)
+    .where(eq(users.id,context.user.id)).limit(1);
+   const who=actor?.name?.trim()||"A teammate";
+   await tx.insert(inAppNotifications).values({
+    eventId:event.id,userId:recipient.userId,
+    title:who+(input.action==="EDIT"?" edited a Team message":" removed a Team message"),
+    body:input.action==="EDIT"?"A Team message has been updated.":"Message removed",
+    actionHref:"/tpo/team/"+thread.id+"?m="+message.id,
+   }).onConflictDoNothing();
+  }
   return {id:message.id,action:input.action};
  });
 }
