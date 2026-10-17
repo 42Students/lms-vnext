@@ -9,7 +9,7 @@ export const hrApplicantFilterSchema = z.strictObject({
     };
     return aliases[value.toLowerCase()]??value;
   },z.enum(["overview","applicants","offers","rounds"]).default("overview")),
-  stage: z.enum(["ALL", "SHORTLISTED", "WITHDRAWN"]).default("ALL"),
+  stage: z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ALL"),
   applicant: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   offerPage: z.coerce.number().int().min(1).max(10000).default(1),
@@ -25,7 +25,14 @@ export type SharedApplicant = {
   ugPercentage?: string | null; tenthPercentage?: string | null;
   twelfthOrDiplomaPercentage?: string | null;
 };
-export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: "ALL" | "SHORTLISTED" | "WITHDRAWN") {
+export type HrApplicantStage="ALL"|"APPLIED"|"SHORTLISTED"|"ASSESSMENT"|"INTERVIEW"|"OFFERED"|"HIRED"|"REJECTED"|"WITHDRAWN";
+export const HR_RECRUITER_STAGES:readonly {value:HrApplicantStage;label:string}[]=[
+ {value:"ALL",label:"All shared"},{value:"APPLIED",label:"Applied"},{value:"SHORTLISTED",label:"Shortlisted"},
+ {value:"ASSESSMENT",label:"Assessment"},{value:"INTERVIEW",label:"Interview"},
+ {value:"OFFERED",label:"Offered"},{value:"HIRED",label:"Hired"},{value:"REJECTED",label:"Rejected"},
+ {value:"WITHDRAWN",label:"Withdrawn"},
+];
+export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: HrApplicantStage) {
   const counts = {
     all: rows.length,
     shortlisted: rows.filter(row => row.status === "SUBMITTED").length,
@@ -33,7 +40,9 @@ export function projectSharedApplicants(rows: readonly SharedApplicant[], stage:
   };
   return { counts, rows: rows.filter(row => stage === "ALL" ||
     (stage === "SHORTLISTED" && row.status === "SUBMITTED") ||
-    (stage === "WITHDRAWN" && row.status === "WITHDRAWN")) };
+    (stage === "APPLIED" && row.status === "SUBMITTED") ||
+    (stage === "WITHDRAWN" && row.status === "WITHDRAWN") ||
+    ["ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED"].includes(stage)) };
 }
 
 export const HR_APPLICANT_PAGE_SIZE = 25;
