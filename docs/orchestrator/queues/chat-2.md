@@ -138,3 +138,12 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - `TPO-campaigns-public-27`: multi-domain company grants require a collision-safe registered relationship domain table, beyond current singular `primaryDomain`.
 
 **Status:** WP-01 through WP-08 stay **IN-PROGRESS**; the above source changes are not live acceptance or full WP closure. FAST v2 deliberately omits tests, typecheck, lint, build and CI waiting.
+
+### Additional source-only WP-05/06 changes on chat-2-b
+
+- `TPO-recruiters-05`: board drag from a NEW manual lead to Contacted uses the existing audited stage-change endpoint with the expected manual-stage precondition; other columns stay locked because derived stages cannot be forged and Not now requires a reason. The inline Move to… control remains keyboard accessible.
+- `TPO-companies-07`: confirmed JOINED offers are now grouped by distinct learner and *recorded joining year in IST*, with a year chart, hiring-year KPI, and clear exclusion count for missing joining dates; issued offers are not counted as hires.
+- `REC-calendar-messages-profile-45`: public join client rejects consumer email domains before OTP request. Both company/college invitation preview pages now distinguish a transient preview fetch failure (Retry) from an actually invalid link.
+- `REC-calendar-messages-profile-41`: recruiter invite clarifies controlled candidate visibility without fabricating a drive name that the current invite token does not contain.
+- `TPO-recruiters-23`: importer requires CSV/XLSX, uses a truthful 10 MB byte-size guard, traps keyboard focus in the import modal, handles Escape and restores launch-button focus.
+- **Still open**: WP-05 complete drag/drop semantics, CRM import duplicates discovered *before* commit, WP-06 multi-domain company identity and actual invite-drive context, company provider/worker confirmation, and every owner-blocked item above. No WP marked DONE. No checks run (FAST v2).
