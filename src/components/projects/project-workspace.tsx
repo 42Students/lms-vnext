@@ -18,6 +18,7 @@ import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
+import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -677,9 +678,11 @@ export function ProjectWorkspace({
             <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
           ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
-            <AddProjectMemberControl
-              projectId={workspace.project.id}
-            />
+            <>
+              <CollegeProjectStudentRosterDialog projectId={workspace.project.id}
+                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
+              <AddProjectMemberControl projectId={workspace.project.id}/>
+            </>
           ) : null}
         </div>
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
