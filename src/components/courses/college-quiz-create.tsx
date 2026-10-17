@@ -23,6 +23,15 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
+ function moveQuestion(index:number,delta:-1|1){
+  setQuestions(rows=>{
+   const next=index+delta;
+   if(next<0||next>=rows.length)return rows;
+   const copy=[...rows];
+   [copy[index],copy[next]]=[copy[next],copy[index]];
+   return copy;
+  });
+ }
  function replaceQuestion(i:number,updated:Question){
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
  }
