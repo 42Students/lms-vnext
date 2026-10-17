@@ -79,7 +79,7 @@ export async function reassignSuperAdminFacultySchedules(context:RequestContext,
       if(changed.length!==1)throw new SuperAdminFacultyScheduleReassignError("SCHEDULE_CHANGED");
     }
     await recordActivityEventInTransaction(tx,context,{
-      eventType:ACTIVITY_EVENT_TYPES.COURSES_CLASS_SCHEDULED,
+      eventType:ACTIVITY_EVENT_TYPES.COURSES_FACULTY_SCHEDULE_REASSIGNED,
       collegeId:selected.collegeId,organizationId:selected.organizationId,
       subjectType:"faculty_schedule_reassignment",
       subjectId:input.sourceMembershipId,
