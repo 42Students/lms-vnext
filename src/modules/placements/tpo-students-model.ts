@@ -351,14 +351,17 @@ export function deriveTpoStudent(
     bestSoFar,
     profileFacts:tpoStudentProfileFacts(source.profileDocument),
     hiddenSearchMatched:source.hiddenSearchMatched??false,
-    bestDriveResults:[...source.appliedResults]
-      .sort((a,b)=>b.sequence-a.sequence||a.applicationId.localeCompare(b.applicationId))
-      .slice(0,20).map(result=>{
-        const company=source.applications.find(a=>a.id===result.applicationId)?.companyName??"Company not recorded";
-        const kind=result.kind.toLowerCase().replaceAll("_"," ");
-        const outcome=result.outcome.toLowerCase().replaceAll("_"," ");
-        return company+": "+outcome+" at "+kind+" (round "+result.sequence+")";
-      }),
+    bestDriveResults:[...source.applications].sort((a,b)=>{
+      const depth=(id:string)=>Math.max(0,...source.appliedResults.filter(result=>result.applicationId===id).map(result=>result.sequence));
+      return depth(b.id)-depth(a.id)||a.id.localeCompare(b.id);
+    }).slice(0,20).map(application=>{
+      const latest=[...source.appliedResults].filter(result=>result.applicationId===application.id)
+        .sort((a,b)=>b.sequence-a.sequence)[0];
+      const progress=latest?
+       latest.outcome.toLowerCase().replaceAll("_"," ")+" at "+latest.kind.toLowerCase().replaceAll("_"," ")+" (round "+latest.sequence+")":
+       (application.screeningStatus??application.status).toLowerCase().replaceAll("_"," ");
+      return (application.companyName??"Company not recorded")+": "+progress;
+    }),
     bestCompany:latestDepth&&!placed&&offerCount===0
       ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
     interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{

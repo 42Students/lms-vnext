@@ -6,8 +6,8 @@ describe("Students best so far detail",()=>{
   const model=read("src/modules/placements/tpo-students-model.ts");
   const sheet=read("src/components/tpo/tpo-students-spreadsheet.tsx");
   const grid=read("src/components/tpo/tpo-spreadsheet-grid.tsx");
-  expect(model).toContain("bestDriveResults:[...source.appliedResults]");
-  expect(model).toContain(".slice(0,20).map(result=>{");
+  expect(model).toContain("bestDriveResults:[...source.applications]");
+  expect(model).toContain(".slice(0,20).map(application=>{");
   expect(sheet).toContain('tooltip:row=>row.bestDriveResults?.join("\\n")');
   expect(grid).toContain("title={col.tooltip?.(row)}");
  });
