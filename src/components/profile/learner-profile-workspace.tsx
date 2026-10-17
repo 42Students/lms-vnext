@@ -189,6 +189,7 @@ export function LearnerProfileWorkspace(props: {
   const [educationError,setEducationError] = useState<string|null>(null);
   const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
   const [showcaseError,setShowcaseError]=useState<string|null>(null);
+  const [showcaseBaseline,setShowcaseBaseline]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
   const [pending, startTransition] = useTransition();
@@ -238,13 +239,14 @@ export function LearnerProfileWorkspace(props: {
     const dirty=(detailsOpen&&JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline))||
       (contactOpen&&JSON.stringify(contactDraft)!==JSON.stringify(document.contacts))||
       (collection!==null&&JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline))||
-      (jobPrefsEditing&&JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences));
+      (jobPrefsEditing&&JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences))||
+      (showcaseDraft!==null&&JSON.stringify(showcaseDraft)!==showcaseBaseline);
     if(!dirty)return;
     const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
     window.addEventListener("beforeunload",warn);
     return ()=>window.removeEventListener("beforeunload",warn);
   },[detailsOpen,detailsDraft,detailsBaseline,contactOpen,contactDraft,
-    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,document.contacts,document.jobPreferences]);
+    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,document.contacts,document.jobPreferences,showcaseDraft,showcaseBaseline]);
 
   useEffect(() => {
     if (!props.initialSection) return;
@@ -397,11 +399,20 @@ export function LearnerProfileWorkspace(props: {
   function openShowcase(kind: LearnerShowcaseKind, entry?: LearnerShowcaseDetails & {id:string}) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     setShowcaseError(null);
-    setShowcaseDraft({
+    const initial={
       kind, id:entry?.id??null, title:entry?.title??"",
       organization:entry?.organization??"", date:entry?.date??"",
       url:entry?.url??"", description:entry?.description??"",
-    });
+    };
+    setShowcaseDraft(initial);
+    setShowcaseBaseline(JSON.stringify(initial));
+  }
+
+  function closeShowcase(){
+    if(pending)return;
+    if(showcaseDraft&&JSON.stringify(showcaseDraft)!==showcaseBaseline&&
+       !window.confirm("Discard your award or publication edits?"))return;
+    setShowcaseDraft(null);setShowcaseError(null);setShowcaseBaseline(null);
   }
 
   function saveShowcase() {
@@ -864,12 +875,12 @@ export function LearnerProfileWorkspace(props: {
       </Dialog>
 
       <Dialog open={showcaseDraft!==null}
-        onOpenChange={open=>{if(!open&&!pending){setShowcaseDraft(null);setShowcaseError(null);}}}
+        onOpenChange={open=>{if(!open)closeShowcase();}}
         title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
         description="Save a learner-entered record. This does not verify the award or publication."
         footer={<>
           <Button variant="secondary" disabled={pending}
-            onClick={()=>{setShowcaseDraft(null);setShowcaseError(null);}}>Cancel</Button>
+            onClick={closeShowcase}>Cancel</Button>
           <Button disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
         </>}>
         {showcaseDraft?<div className="grid gap-4">
