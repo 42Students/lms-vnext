@@ -87,6 +87,7 @@ export function LearnerCourseOverview({
   readOnly?: boolean;
   courseUpdates?: Array<{
     id: string;
+    title: string;
     senderName: string;
     messageText: string;
     pinned: boolean;
@@ -213,12 +214,12 @@ export function LearnerCourseOverview({
 
   const unifiedUpdates = [
     ...courseUpdates.slice(0,2).map((update) => ({
-      key: `discussion-${update.id}`,
-      title: update.pinned ? "Pinned update" : "Course update",
+      key: `announcement-${update.id}`,
+      title: update.title,
       detail: `${update.senderName} · ${formatWhen(update.createdAt) ?? ""}`,
       body: update.messageText,
-      href: `/learn/courses/${deliveryId}/discussions`,
-      priority: update.pinned ? 0 : 1,
+      href: "/learn/notifications",
+      priority: 0,
       time: update.createdAt.getTime(),
     })),
     ...recentLearnerActivity.map((item) => ({
@@ -479,7 +480,7 @@ export function LearnerCourseOverview({
                 Recent updates
               </h3>
               <p className="mt-1 text-xs text-body">
-                Course-team messages, saved completions, upcoming assessments, and live sessions.
+                Official class announcements, saved completions, upcoming assessments, and live sessions.
               </p>
             </div>
             <Link
