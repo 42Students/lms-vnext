@@ -148,4 +148,19 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(announcements()).toContain('defaultValue={row.buttonUrl??""}');
  });
 
+ it("TPO-inbox-team-41 loads the latest five hundred messages and scrolls to the selected one",()=>{
+  expect(src("src/modules/placements/tpo-team-conversation-service.ts")).toContain("const PAGE_SIZE = 500");
+  const page=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
+  expect(page).toContain("<TpoTeamMessageScroll");
+  expect(page).toContain('id={"team-message-"+message.id}');
+  expect(page).toContain('role="log"');
+  expect(src("src/components/tpo/tpo-team-message-scroll.tsx")).toContain("scrollIntoView");
+ });
+ it("TPO-inbox-team-30 accepts legacy ?c= and ?m= links and members tab without changing user scope",()=>{
+  const page=team();
+  expect(page).toContain("z.string().uuid().safeParse(threadId)");
+  expect(page).toContain('redirect("/tpo/team/"+encodeURIComponent(threadId)+target)');
+  expect(page).toContain('tabInput==="members"?"people":tabInput');
+ });
+
 });
