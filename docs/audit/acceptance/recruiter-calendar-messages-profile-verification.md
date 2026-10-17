@@ -26,3 +26,17 @@
 | Gap | Status | Evidence |
 | --- | --- | --- |
 | REC-calendar-messages-profile-23 | DONE | `src/components/hr/hr-recruiter-bell.tsx` opens notification bell and acknowledges only when all unread are on visible preview; `tests/unit/recruiter-chat14-round2.test.ts` GR ID test; no hidden-older unread silently cleared |
+
+## Chat-14 reassignment — combined final evidence (tests not run)
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-16 | OPEN | 403 reply copy now exactly explains ended access (`hr-conversation-send-feedback-model.ts`). Conversation detail still uses indistinguishable notFound, and full expired-grant recovery is unfinished; test `recruiter-chat14-round1`. |
+| REC-calendar-messages-profile-23 | DONE | Bell opens and acknowledges only when all unread items are visible; `hr-recruiter-bell-service.ts` restricts the bulk write to the selected college and current recruiter. Tests `recruiter-chat14-round2` and `round3`. |
+| REC-calendar-messages-profile-24 | OPEN | Shell-owned global recruiter topbar college branding/mobile footer. Handoff recorded in `docs/orchestrator/queues/graceful-needs-shell.md`; no prohibited chat-14 shell changes. |
+| REC-calendar-messages-profile-25 | DONE | Existing current-main `recruiter-profile-details-service.ts` saves separate contact-only `placementRecruiterPublicContacts.phoneDigits`, never `users.phoneE164`; `recruiter-profile-details-editor.tsx` and named round1 test. Proposed contact storage migration belongs to original author. |
+| REC-calendar-messages-profile-27 | DONE | Single name, designation and contact mobile Save changes, dirty submit, legacy profile saved text, now in-app confirmation and unload guard. `recruiter-profile-details-editor.tsx` round1 test. |
+| REC-calendar-messages-profile-28 | DONE | Profile titles `Your details`, `College access`, `Account`, read-only Work email, Mobile help; main's contact-ready UI retained and named test. |
+| REC-calendar-messages-profile-48 | DONE | No-college address guidance preserved at recruiter home and calendar; `recruiter-chat14-round3.test.ts`. |
+| REC-calendar-messages-profile-R01 | BLOCKED | Real email provider acceptance, inbound provider reply-to routing, authenticated sender mapping, and idempotent unread reminder delivery unavailable; not safe to label read-state mail bridging DONE. |
+| REC-calendar-messages-profile-R03 | DONE | Notifications page links to working `/hr/messages` and no longer contradicts conversation availability; round1 test. |
