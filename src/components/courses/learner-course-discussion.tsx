@@ -8,7 +8,7 @@ import { learnerDiscussionMayPost } from "@/modules/courses/learner-discussion-s
 import { createLearnerDiscussionHistoryFlight } from "@/modules/courses/learner-discussion-history-flight-model";
 import { learnerDiscussionRefreshIsCurrent } from "@/modules/courses/learner-discussion-refresh-order-model";
 import { learnerDiscussionDraftValid, LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH } from "@/modules/courses/learner-discussion-message-limit-model";
-import { learnerDiscussionTimeLabel } from "@/modules/courses/learner-discussion-time-model";
+import { learnerDiscussionTimeLabel,learnerDiscussionRelativeTimeLabel } from "@/modules/courses/learner-discussion-time-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {shouldSendLearnerDiscussionOnEnter,learnerDiscussionMobileJumpVisible} from "./learner-discussion-mobile-model";
@@ -35,7 +35,7 @@ type DiscussionMessage = {
 };
 
 function formatTime(value: string) {
-  return learnerDiscussionTimeLabel(value);
+  return learnerDiscussionRelativeTimeLabel(value,Date.now());
 }
 
 
@@ -61,6 +61,7 @@ export function LearnerCourseDiscussion({
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [draft, setDraft] = useState("");
+  const [posting, setPosting] = useState(false);
   useEffect(()=>{
     if(!draft.trim()&&!posting)return;
     const guard=(event:BeforeUnloadEvent)=>{
@@ -71,7 +72,6 @@ export function LearnerCourseDiscussion({
     return ()=>window.removeEventListener("beforeunload",guard);
   },[draft,posting]);
   const [replyTo, setReplyTo] = useState<{id:string;text:string;updatedAt:string}|null>(null);
-  const [posting, setPosting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [moderationError, setModerationError] = useState<string | null>(null);
   const [pinningId, setPinningId] = useState<string | null>(null);
@@ -357,7 +357,7 @@ export function LearnerCourseDiscussion({
         <p className="m-0 text-sm text-body">
           {moderate
             ? "Guide the class conversation, answer questions, pin important context, and moderate messages."
-            : "Ask questions, share context, and keep course conversations visible to your class and faculty."}
+            : "Keep course conversations in one place and follow along easily."}
         </p>
       </div>
 
@@ -371,7 +371,7 @@ export function LearnerCourseDiscussion({
           <p className="mt-2 break-words text-sm font-semibold text-foreground">
             {pinned.messageText}
           </p>
-          <p className="mt-1 text-xs text-muted-foreground">
+          <p title={learnerDiscussionTimeLabel(pinned.createdAt)} className="mt-1 text-xs text-muted-foreground">
             {pinned.senderName} · {formatTime(pinned.createdAt)}
           </p>
           {moderate && canPost ? (
@@ -475,13 +475,19 @@ export function LearnerCourseDiscussion({
                   >
                     {!row.grouped ? (
                       <div className="flex flex-wrap items-center gap-2">
+                        <span aria-hidden="true" title={row.item.senderRole}
+                          className={"inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold "+
+                            (row.item.senderRole==="FACULTY"?"bg-primary-subtle text-primary-text":
+                              row.item.isMine?"bg-success-subtle text-success":"bg-muted text-foreground")}>
+                          {(row.item.isMine?"You":row.item.senderName).trim().charAt(0).toUpperCase()||"?"}
+                        </span>
                         <strong className="text-sm text-foreground">
                           {row.item.isMine ? "You" : row.item.senderName}
                         </strong>
                         {row.item.senderRole === "FACULTY" ? (
                           <StatusBadge tone="info">Faculty</StatusBadge>
                         ) : null}
-                        <span className="text-xs text-muted-foreground">
+                        <span title={learnerDiscussionTimeLabel(row.item.createdAt)} className="text-xs text-muted-foreground">
                           {formatTime(row.item.createdAt)}
                         </span>
                         {row.item.pinned ? (
