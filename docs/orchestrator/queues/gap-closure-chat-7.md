@@ -104,7 +104,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-23 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-26 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-27 | S3 | MISSING-FIELD | OPEN |
-| MEN-projects-meetings-28 | S3 | COPY | OPEN |
+| MEN-projects-meetings-28 | S3 | COPY | DONE |
 | MEN-projects-meetings-30 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | MEN-projects-meetings-33 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-35 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -124,7 +124,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-R03 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R05 | S3 | STATE | FIXED-ON-MAIN |
-| MEN-projects-meetings-R06 | S3 | STATE | OPEN |
+| MEN-projects-meetings-R06 | S3 | STATE | DONE |
 | MEN-projects-meetings-R07 | S3 | VALIDATION | OPEN |
 | MEN-projects-meetings-R08 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-02 | S4 | COPY | FIXED-ON-MAIN |
@@ -134,7 +134,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-13 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-24 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-25 | S4 | MISSING-FIELD | OPEN |
-| MEN-projects-meetings-29 | S4 | VALIDATION | OPEN |
+| MEN-projects-meetings-29 | S4 | VALIDATION | DONE |
 | MEN-projects-meetings-R09 | S4 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-R10 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R11 | S4 | STATE | FIXED-ON-MAIN |
