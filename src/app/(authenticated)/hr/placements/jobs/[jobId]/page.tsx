@@ -22,6 +22,7 @@ import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-note
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import {getOwnRecruiterCandidateRating} from "@/modules/placements/recruiter-private-rating-service";
+import {placementTableExists} from "@/modules/placements/staged-tables";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
@@ -145,7 +146,9 @@ export default async function HrPlacementJobPage({
       if (!(error instanceof PlacementsServiceError && error.code === "PLACEMENT_APPLICATION_NOT_FOUND")) throw error;
     }
   }
-  const privateRating=selectedApplicant?.status==="SUBMITTED"
+  const privateRatingReady=selectedApplicant?.status==="SUBMITTED"
+    ? await placementTableExists("placement_recruiter_private_reviews") : false;
+  const privateRating=selectedApplicant?.status==="SUBMITTED"&&privateRatingReady
     ? await getOwnRecruiterCandidateRating(context,workspace.job.id,selectedApplicant.id)
     : null;
   const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
@@ -572,6 +575,11 @@ export default async function HrPlacementJobPage({
                   />
                 </div>
               ) : null}
+              {selectedApplicant.status==="SUBMITTED"&&!privateRatingReady?
+                <p role="status" className="mt-5 rounded-lg border border-warning p-3 text-sm text-body">
+                  Your private rating is temporarily unavailable until the database setup is complete.
+                  Existing shared applicant information is still visible.
+                </p>:null}
               {privateRating?<RecruiterPrivateRatingEditor
                 jobId={workspace.job.id} applicationId={selectedApplicant.id}
                 initial={privateRating}/>:null}
