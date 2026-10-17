@@ -36,3 +36,6 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 
 | TPO-drives-37 | OPEN | Legacy retired backlog/gap-year filters are now absent from Create and its submitted policy. Other policy APIs can still set them; `tests/unit/tpo-drives-chat-3-round4.test.ts` test TPO-drives-37. |
 | TPO-drives-49 | OPEN | Non-editable edit page points operators to Clone a past drive; complete frozen detail/hydration behavior remains; test TPO-drives-49. |
+
+| TPO-drives-35 | OPEN | Create now sends `minPctThroughout` and `requireVerifiedEvidence` and validates percentage bounds; PG/gender/branch parity remains. Test TPO-drives-35 in `tests/unit/tpo-drives-chat-3-round4.test.ts`. |
+| TPO-drives-36 | OPEN | Five legacy eligibility presets populate actual policy values with a college conversion caution. Dynamic CGPA-to-percentage hint remains. Test TPO-drives-36. |
