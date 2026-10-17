@@ -341,3 +341,4 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 | TPO-inbox-team-60 | PARTIAL — OPEN | Bell renders optimistic-read-filtered twenty most recent items, uses guarded read actions; `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` **TPO-inbox-team-60…** covers actual display array. Legacy producer coverage still missing. |
 
 No tests were run here; orchestrator CI and database verification remain necessary.
+| TPO-inbox-team-37 | DONE (source; tests unrun) | `src/app/(authenticated)/tpo/team/page.tsx` now renders TPO, TPO-admin and college-admin labels while excluding date-scoped coordinators from the permanent roster; `tests/unit/chat2-team-member-and-alert-parity.test.ts` **TPO-inbox-team-37 shows permanent placement Team roles…** and `tests/unit/tpo-team-legacy-people-chat2.test.ts` **TPO-inbox-team-37…**. |
