@@ -401,6 +401,7 @@ export async function listOwnRecruiterPlacementJobs(
   if (grants.length === 0) {
     return [];
   }
+  if (options.jobIds?.length === 0) return [];
 
   const relationshipIds = grants.map(
     (grant) => grant.companyRelationshipId,
