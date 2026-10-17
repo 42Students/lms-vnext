@@ -20,6 +20,7 @@ export function CollegeAssignmentReview({
  const [bulkBusy,setBulkBusy]=useState(false);
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
+ const [failedIds,setFailedIds]=useState<string[]>([]);
  const [progress,setProgress]=useState("");
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string){
