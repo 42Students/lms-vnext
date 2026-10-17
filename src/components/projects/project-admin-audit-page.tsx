@@ -29,6 +29,13 @@ function one(
     : value;
 }
 
+function istDate(date:Date){
+ const parts=Intl.DateTimeFormat("en-US",{
+  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+ }).formatToParts(date);
+ const part=(type:string)=>parts.find(p=>p.type===type)?.value??"";
+ return part("year")+"-"+part("month")+"-"+part("day");
+}
 const inputClass =
   "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
@@ -181,6 +188,19 @@ export async function ProjectAdminAuditPage({
         description="Who changed what, and when — project activity only, inside the current college scope."
       />
 
+      <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">
+        {([{label:"Today",days:0},{label:"7 days",days:6},
+           {label:"30 days",days:29},{label:"All time",days:null}]).map(item=>{
+          const params=new URLSearchParams();
+          if(eventType)params.set("action",eventType);
+          if(importance)params.set("importance",importance);
+          if(subjectType)params.set("subjectType",subjectType);
+          if(item.days!==null)params.set("from",istDate(new Date(Date.now()-item.days*86400000)));
+          return <a key={item.label} href={basePath+"/audit?"+params.toString()}
+           className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
+             {item.label}</a>;
+        })}
+      </nav>
       <form
         className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-5"
         action={basePath + "/audit"}
