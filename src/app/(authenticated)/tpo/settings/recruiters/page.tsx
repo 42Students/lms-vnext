@@ -1,4 +1,6 @@
 import Link from "next/link";
+import {TpoRecruiterDurationEditor} from "@/components/tpo/tpo-communication-settings-editors";
+import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import { redirect } from "next/navigation";
 
 import { TpoRecruiterGrantForm, TpoRecruiterRevoke } from "@/components/placements/tpo-recruiter-grant-controls";
@@ -104,10 +106,11 @@ export default async function TpoRecruiterAccessPage({
     );
   }
 
-  const [data, linkedCompanies, publicLink] = await Promise.all([
+  const [data, linkedCompanies, publicLink,communication] = await Promise.all([
     listTpoRecruiterAccess(context, parsed.data),
     getTpoTrustedCompanies(context, context.membership.collegeId),
     getTpoPublicJoinLinkStatus(context, "COLLEGE"),
+    getTpoCommunicationSettings(context),
   ]);
 
   const {
@@ -143,6 +146,8 @@ export default async function TpoRecruiterAccessPage({
         description="Review active and revoked recruiter college-access grants for your current college. This is historical grant data, not a live recruiter-session or login-status check."
       />
 
+      {communication.ready?<TpoRecruiterDurationEditor initial={communication.recruiterAccessMonths} version={communication.version}/>:
+       <p role="status" className="rounded border border-border p-4 text-sm">Recruiter access duration settings are not available yet.</p>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
 
       <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
