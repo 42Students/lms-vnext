@@ -597,7 +597,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">{Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
+        <span className="text-muted-foreground">{data.total===0?0:Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <div className="flex gap-2">
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
