@@ -464,6 +464,18 @@ export function PlacementJobCreateForm({
       onSubmit={submit}
       className="space-y-6"
     >
+      <nav aria-label="Drive setup review" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="text-base font-semibold text-foreground">Setup review</h2>
+        <ol className="mt-3 grid gap-3 sm:grid-cols-4">
+          {["Company","Drive details","Eligibility","Publish review"].map((label,index)=>(
+            <li key={label} className="rounded-lg border border-border p-3 text-sm">
+              <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
+              <span className="mt-1 block font-semibold text-foreground">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-3 text-xs text-body">Eligibility reach is checked from current learner records after the draft is saved. No students are notified until you confirm publication.</p>
+      </nav>
       <section className="rounded-xl border border-border bg-surface">
         <div className="border-b border-border px-5 py-4">
           <h2 className="m-0 text-base font-semibold text-foreground">
