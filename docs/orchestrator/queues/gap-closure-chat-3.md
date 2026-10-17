@@ -341,10 +341,10 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 
 After fast-forwarding `origin/main`, **30 distinct queued IDs** changed disposition following source inspection and named regression coverage. **20 moved to DONE (source-level), 10 to NOT-A-GAP (safer vNext contract)**. None is claimed end-to-end verified; browser, disposable PostgreSQL, Vitest and `tsc` execution remain with the orchestrator.
 
-- TPO Drives (7 IDs): TPO-drives-03 NOT-A-GAP, -34 NOT-A-GAP, -36 DONE, -42 DONE (core publish validation), -50 NOT-A-GAP, -05 DONE, -08 DONE, -17 DONE (8 IDs including all displayed).
-- Learner learning (10 IDs): LEARNER-learning-misc-03 DONE, -04 DONE, -22 NOT-A-GAP, -25 NOT-A-GAP, -34 DONE, -41 NOT-A-GAP, -09 DONE, -33 DONE, -38 DONE (9 IDs). Other learner source copy remains tracked separately.
+- TPO Drives (8 IDs): TPO-drives-03 NOT-A-GAP, -34 NOT-A-GAP, -36 DONE, -42 DONE (core publish validation), -50 NOT-A-GAP, -05 DONE, -08 DONE, -17 DONE.
+- Learner learning (9 IDs): LEARNER-learning-misc-03 DONE, -04 DONE, -22 NOT-A-GAP, -25 NOT-A-GAP, -34 DONE, -41 NOT-A-GAP, -09 DONE, -33 DONE, -38 DONE . Other learner source copy remains tracked separately.
 - Public (4 IDs): PUB-auth-public-45 NOT-A-GAP, -49 DONE, -60 NOT-A-GAP, -61 NOT-A-GAP.
-- Super Admin Tenant Setup (9 IDs): SA-tenants-modules-05 DONE, -08 DONE, -13 DONE, -16 DONE, -06 DONE, -17 DONE, -18 DONE, -19 NOT-A-GAP (8 IDs).
+- Super Admin Tenant Setup (8 IDs): SA-tenants-modules-05 DONE, -08 DONE, -13 DONE, -16 DONE, -06 DONE, -17 DONE, -18 DONE, -19 NOT-A-GAP .
 - College People (1 ID): COL-people-26 DONE.
 - The *canonical count is the actual queue status diff*: DONE 89→109 (+20), NOT-A-GAP 9→19 (+10). The group descriptions above are explanatory; the individual table rows are authoritative.
 
