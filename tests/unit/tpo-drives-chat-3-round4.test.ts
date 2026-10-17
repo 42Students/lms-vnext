@@ -75,6 +75,16 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).not.toContain("Company relationship was not returned");
   expect(body).toContain("Check your drafts before trying again.");
  });
+ it("TPO-drives-43 confirmed partial draft survives reload without duplicate POST",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("partialDraft:createdJobRef.current");
+  expect(form).toContain("const resume=saved.partialDraft");
+  expect(form).toContain("createdJobRef.current=resume");
+  expect(form).toContain("setPartialJobId(resume.jobId)");
+  expect(form).toContain("if(formRef.current)saveBrowserDraft(formRef.current)");
+  expect(form).toContain('if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)');
+  expect(form).toContain('createdJobRef.current?{id:createdJobRef.current.jobId}');
+ });
  it("TPO-drives-25 Company Memory uses scoped historical drive facts",()=>{
   const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
   const form=source("src/components/placements/placement-job-create-form.tsx");
@@ -236,6 +246,14 @@ describe("chat-3 Drives round 4",()=>{
   expect(loading).toContain('aria-busy="true"');
  });
 
+ it("TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("const deadlineTimeChosen=useRef(false)");
+  expect(form).toContain("if(event.currentTarget.value)deadlineTimeChosen.current=true");
+  expect(form).toContain("field.value=driveDeadlineIstEndOfDay(field.value);deadlineTimeChosen.current=true");
+  expect(form).toContain("A newly selected date defaults to 11:59 PM; you can change the time.");
+  expect(form).toContain("deadlineTimeChosen.current=true;\n                  clearedBackup.current=false;");
+ });
  it("TPO-drives-45 choosing end-of-day in IST stores 23:59 and preserves drafts",()=>{
   expect(driveDeadlineIstEndOfDay("2099-11-05T00:00")).toBe("2099-11-05T23:59");
   expect(driveDeadlineIstToIso(driveDeadlineIstEndOfDay("2099-11-05T08:15"))).toBe("2099-11-05T18:29:00.000Z");

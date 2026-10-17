@@ -90,8 +90,8 @@ export default async function FacultyContactsPage({
                 }
                 className={
                   active
-                    ? "inline-flex min-h-10 items-center rounded-full border border-primary bg-primary px-4 text-sm font-semibold text-on-primary"
-                    : "inline-flex min-h-10 items-center rounded-full border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
+                    ? "inline-flex min-h-11 items-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] border border-primary bg-primary px-4 text-sm font-semibold text-on-primary"
+                    : "inline-flex min-h-11 items-center rounded-full focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text"
                 }
               >
                 {tab.label}
@@ -107,7 +107,7 @@ export default async function FacultyContactsPage({
             <h2 className="m-0 text-lg font-semibold text-foreground">
               {selected.label}
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body" role="status" aria-live="polite">
               {result.total}{" "}
               {result.total === 1
                 ? "contact"
