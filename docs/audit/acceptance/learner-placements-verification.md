@@ -51,3 +51,13 @@ Grouped source test: `tests/unit/learner-placements-chat7-round5-contracts.test.
 - `LEARNER-placements-54`: the request form now uses legacy-facing "New request", "What do you need?" and "Tell the placement cell why", and submits with a friendly, guarded JSON transport. The legacy multi-type modal and full request taxonomy are **not** yet present, so this gap remains OPEN rather than falsely being marked DONE. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-54 request error safety and legacy-facing labels`.
 - `LEARNER-placements-04`: the waiting-on-you panel is already present, but still lacks some evidence-based CTAs (for example sent-back profile fixes); retain OPEN until they are added. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-04 never masks missing actionable tasks`.
 - `LEARNER-placements-33`: intentional vNext counts are preserved under owner decision OD-38 rather than removed merely to mimic legacy. `tests/unit/learner-placements-chat7-followup.test.ts` — `LEARNER-placements-33 retains vNext application summary as intentional design`.
+
+## Chat-7 notice delivery and intentional differences
+| ID | Status | Evidence (source and gap-named test) |
+|---|---|---|
+| LEARNER-placements-33 | NOT-A-GAP | Owner OD-38 approves the enhanced application summary, retained in src/app/(authenticated)/learn/my-placements/applications/page.tsx; tests/unit/learner-placements-chat7-followup.test.ts test LEARNER-placements-33 retains vNext application summary as intentional design. |
+| LEARNER-placements-R08 | NOT-A-GAP | Cohort and section targeting stays private (avoid disclosing out-of-audience drives); src/modules/placements/learner-job-service.ts; tests/unit/learner-placements-chat7-notice-actions.test.ts test LEARNER-placements-R08 prevents discovery outside assigned cohort or section. |
+
+LEARNER-placements-47 is PARTIAL (still OPEN): stored TPO HTTPS action links now appear on learner notice cards, with a safe URL allowlist and named test LEARNER-placements-47 renders only safe persisted TPO action links (tests/unit/learner-placements-chat7-notice-actions.test.ts). Notice read tracking is not implemented.
+
+LEARNER-placements-49 is PARTIAL (still OPEN): removed outdated disclaimer; TPO publisher and targeted reader code connect, covered by named test LEARNER-placements-49 preserves scoped TPO producer to learner reader wiring (tests/unit/learner-placements-chat7-notice-actions.test.ts). Real database producer-to-consumer test not executed or certified.
