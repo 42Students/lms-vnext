@@ -166,9 +166,9 @@ export default async function LearnerProjectsPage({
             dueState: dueByProject.get(row.project.id)?.state,
             dueDate: dueByProject.get(row.project.id)?.date,
             progressDetail: progressByProject.has(row.project.id)
-              ? String(progressByProject.get(row.project.id)!.completedTasks) +
-                " of " + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks done"
-              : undefined,
+              ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
+                "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
+              : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
             actionLine: projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open project",
