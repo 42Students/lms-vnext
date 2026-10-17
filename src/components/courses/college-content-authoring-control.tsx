@@ -35,6 +35,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
  const listSections=deliveries.filter(row=>!listLessonId||
   lessons.find(lesson=>lesson.id===listLessonId)?.offeringId===row.offeringId);
+ const matching=existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
+  (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
+  (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
+   lesson.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId)));
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
@@ -213,11 +217,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Showing shared offering items and content specific to the selected Section.
     The Order field below is the authored default order, not a Section-specific override.
    </p>:null}
-   <ul className="space-y-1">{existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
-    (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
-    (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
-      lesson.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId)))
-    .map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
+   <p className="text-xs text-muted-foreground">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
+   {matching.length===0?<p className="text-xs text-muted-foreground">No saved items match this Lesson and Section.</p>:null}
+   <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
