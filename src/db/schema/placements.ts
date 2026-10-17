@@ -29,6 +29,9 @@ export const placementCompanies = pgTable(
       length: 255,
     }),
     logoObjectPath: text("logo_object_path"),
+    logoPublicUrl: text("logo_public_url"),
+    industry: varchar("industry", {length: 160}),
+    about: text("about"),
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
     verifiedByUserId: uuid("verified_by_user_id").references(() => users.id, {onDelete: "restrict"}),
     status: varchar("status", { length: 32 })
