@@ -28,3 +28,13 @@
 | TPO-campaigns-public-34 | DONE (source; migration pending) | Seven real metric choices and ordered selection, preview, LPA/percentage formatting and suppression hints from live aggregates, no identity exposure. Same migration/test. |
 
 | TPO-campaigns-public-R04 | DONE (source, tests unrun) | Recruiter first requests an email code without company-name guess; upon successful mailbox delivery response reveals an existing matching active company, displays You are joining as X, or asks Company name on the Join form when unknown. Named `tests/unit/chat2-public-join-known-company.test.ts`. |
+
+## Chat-2 follow-up — invitation form and preview regressions
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-campaigns-public-24 | DONE (source; tests unrun) | Exact college transient preview error and **Retry** link, distinct from expired invitation; `src/components/placements/public-join-preview-retry.tsx`; `tests/unit/chat2-public-join-states.test.ts` **TPO-campaigns-public-24 shows the college-link loading error and exact retry**. |
+| TPO-campaigns-public-30 | DONE (source; tests unrun) | Same preview retry model for company join with scope-specific path; `tests/unit/chat2-public-join-states.test.ts` **TPO-campaigns-public-30…**. |
+| TPO-campaigns-public-R06 | PARTIAL — OPEN | Join form retains one-time-code autocomplete, keyboard Enter submit and now visibly names the verification step **One more step**; `src/components/placements/public-recruiter-join-form.tsx`, `tests/unit/chat2-join-form-state.test.ts` **supports Enter submit, editable details and one-time-code autocomplete**. Provider-dependent delivery remains outside unit verification. |
+
+Tests have not been run.

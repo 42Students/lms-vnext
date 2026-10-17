@@ -130,7 +130,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class parent batch lifecycle
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch status
               <select name="cohortStatus" defaultValue={data.query.cohortStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All batches</option>
                 <option value="PLANNED">Planned</option>
@@ -141,7 +141,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class parent program lifecycle
+            <label className="grid gap-1 text-sm font-semibold text-body">Program status
               <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active</option>
@@ -150,7 +150,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective slot academic period linkage
+            <label className="grid gap-1 text-sm font-semibold text-body">Academic period
               <select name="periodState" defaultValue={data.query.periodState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="LINKED">Linked to a period</option>
@@ -159,7 +159,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Parent program lifecycle
+            <label className="grid gap-1 text-sm font-semibold text-body">Program status
               <select name="programStatus" defaultValue={data.query.programStatus ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All programs</option>
                 <option value="ACTIVE">Active programs</option>
@@ -174,13 +174,13 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Class exact section code
+            <label className="grid gap-1 text-sm font-semibold text-body">Class code
               <input name="classCode" type="search" maxLength={64} defaultValue={data.query.classCode ?? ""}
                 placeholder="Exact registered code" className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective selection choice constraints
+            <label className="grid gap-1 text-sm font-semibold text-body">Number of choices
               <select name="choiceMode" defaultValue={data.query.choiceMode ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="FLEXIBLE">Minimum and maximum differ</option>
@@ -189,7 +189,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective active offering presence
+            <label className="grid gap-1 text-sm font-semibold text-body">Course offerings
               <select name="offeringState" defaultValue={data.query.offeringState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="HAS_ACTIVE">Has active course offerings</option>
@@ -198,7 +198,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Academic year evidence
+            <label className="grid gap-1 text-sm font-semibold text-body">Academic year
               <select name="academicYearState" defaultValue={data.query.academicYearState ?? "ALL"} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All slots</option>
                 <option value="RECORDED">Academic year recorded</option>
@@ -228,12 +228,12 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact class name
+            <label className="grid gap-1 text-sm font-semibold text-body">Class name
               <input name="className" type="search" maxLength={255} defaultValue={data.query.className ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact cohort name
+            <label className="grid gap-1 text-sm font-semibold text-body">Batch name
               <input name="cohortName" type="search" maxLength={255} defaultValue={data.query.cohortName ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
@@ -247,7 +247,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Current section Faculty assignments
+            <label className="grid gap-1 text-sm font-semibold text-body">Faculty assignments
               <select name="facultyCoverage" defaultValue={data.query.facultyCoverage} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_FACULTY">Has active Faculty assignments</option>
@@ -256,7 +256,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Authored section course deliveries
+            <label className="grid gap-1 text-sm font-semibold text-body">Courses
               <select name="deliveryPresence" defaultValue={data.query.deliveryPresence} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
                 <option value="ALL">All classes</option>
                 <option value="HAS_DELIVERIES">Has course deliveries</option>
@@ -275,22 +275,22 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact department code
+            <label className="grid gap-1 text-sm font-semibold text-body">Department code
               <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact elective slot name
+            <label className="grid gap-1 text-sm font-semibold text-body">Elective name
               <input name="slotName" type="search" maxLength={150} defaultValue={data.query.slotName ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Exact elective program code
+            <label className="grid gap-1 text-sm font-semibold text-body">Program code
               <input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-1 text-sm font-semibold text-body">Elective owning department code
+            <label className="grid gap-1 text-sm font-semibold text-body">Department code
               <input name="departmentCode" type="search" maxLength={64} defaultValue={data.query.departmentCode ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
             </label>
           ) : null}

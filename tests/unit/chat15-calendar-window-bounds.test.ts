@@ -1,6 +1,7 @@
 import {describe,expect,it} from "vitest";
 import {learnerCalendarVisibleWindow} from "@/modules/academics/learner-calendar-window-model";
 import {readFileSync} from "node:fs";
+import {learnerAttendanceMonthWindow} from "@/modules/attendance/learner-attendance-calendar-model";
 import {join} from "node:path";
 describe("chat-15 bounded calendar retrieval",()=>{
  it("LEARNER-learning-misc-34 bounds academic schedule to IST visible month and week spillover",()=>{

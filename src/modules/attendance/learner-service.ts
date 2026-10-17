@@ -5,6 +5,8 @@ import {
   asc,
   eq,
   inArray,
+  gte,
+  lt,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -58,6 +60,8 @@ export async function getLearnerAttendanceWorkspace(
   context: RequestContext,
   options: {
     includeHistorical?: boolean;
+    /** Trusted server-side half-open IST calendar window. */
+    window?: { from: Date; to: Date };
   } = {},
 ) {
   const membership = requireLearner(context);
@@ -223,9 +227,12 @@ export async function getLearnerAttendanceWorkspace(
       ),
     )
     .where(
-      inArray(
-        sectionScheduleEventCourses.deliveryId,
-        deliveryIds,
+      and(
+        inArray(sectionScheduleEventCourses.deliveryId, deliveryIds),
+        ...(options.window ? [
+          lt(sectionScheduleEvents.startsAt, options.window.to),
+          gte(sectionScheduleEvents.endsAt, options.window.from),
+        ] : []),
       ),
     )
     .orderBy(

@@ -4,16 +4,18 @@ import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {tpoGeneralRequestInputSchema} from "@/modules/placements/tpo-general-request-model";
 type History={id:string;kind:string;status:string;reason:string;requestedAt:string;decisionNote:string|null};
-type Kind="OFF_CAMPUS_OFFER"|"REGISTRATION_CHANGE"|"ABSENCE_DISPUTE"|"CORRECTION_WITH_PROOF"|"PLACEMENT_AFTER_PLACEMENT";
+type Kind="OFF_CAMPUS_OFFER"|"REGISTRATION_CHANGE"|"ABSENCE_DISPUTE"|"CORRECTION_WITH_PROOF"|"PLACEMENT_AFTER_PLACEMENT"|"OFFER_ACCEPTANCE_DISPUTE";
 const kinds:readonly [Kind,string][]=[
  ["OFF_CAMPUS_OFFER","Off-campus offer"],["REGISTRATION_CHANGE","Registration change"],
- ["ABSENCE_DISPUTE","Absence dispute"],["CORRECTION_WITH_PROOF","Correction with proof"],
+ ["ABSENCE_DISPUTE","Absence dispute"],["OFFER_ACCEPTANCE_DISPUTE","Externally reported acceptance"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
 const box="min-h-11 rounded border border-border bg-surface p-2";
-export function LearnerGeneralRequests(){
+export function LearnerGeneralRequests({
+ initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",initialOfferId="",
+}:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string;initialOfferId?:string}){
  const [rows,setRows]=useState<History[]>([]),[cohortId,setCohortId]=useState("");
- const [kind,setKind]=useState<Kind>("OFF_CAMPUS_OFFER"),[reason,setReason]=useState("");
- const [target,setTarget]=useState(""),[aux,setAux]=useState(""),[proofUrl,setProofUrl]=useState("");
+ const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState("");
+ const [target,setTarget]=useState(initialKind==="OFFER_ACCEPTANCE_DISPUTE"?initialOfferId:initialApplicationId),[aux,setAux]=useState(initialRoundId),[proofUrl,setProofUrl]=useState("");
  const [consent,setConsent]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  const {run,pending}=useGuardedAction();
  async function refresh(){
@@ -29,6 +31,7 @@ export function LearnerGeneralRequests(){
    case "REGISTRATION_CHANGE":return {kind,reason,cohortId,choice:target||"HIGHER_STUDIES",consentConfirmed:consent};
    case "ABSENCE_DISPUTE":return {kind,reason,applicationId:target,roundId:aux,proofUrl};
    case "CORRECTION_WITH_PROOF":return {kind,reason,section:"EDUCATION" as const,field:target,proposedValue:aux,proofUrl};
+   case "OFFER_ACCEPTANCE_DISPUTE":return {kind,reason,offerId:target};
    case "PLACEMENT_AFTER_PLACEMENT":return {kind,reason,requestedJobId:target,justification:aux};
   }
  };
@@ -60,10 +63,10 @@ export function LearnerGeneralRequests(){
    </select>
   </label>:
    <label className="grid gap-1 text-sm">{kind==="OFF_CAMPUS_OFFER"?"Company name":
-    kind==="ABSENCE_DISPUTE"?"Application ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
+    kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
     <input className={box} maxLength={200} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
-  {kind!=="REGISTRATION_CHANGE"?<label className="grid gap-1 text-sm">
+  {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-1 text-sm">
    {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
    <input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
@@ -81,7 +84,7 @@ export function LearnerGeneralRequests(){
    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{pending?"Sending…":"Send request"}</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <h3 className="font-semibold">Your requests</h3>
+  <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
    <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}
