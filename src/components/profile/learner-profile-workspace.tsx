@@ -222,7 +222,7 @@ export function LearnerProfileWorkspace(props: {
     const onVisible=()=>{
       if(!learnerProfileCanRefresh({
         visible:window.document.visibilityState==="visible",
-        editing:detailsOpen||contactOpen||collection!==null,
+        editing:detailsOpen||contactOpen||collection!==null||jobPrefsEditing||showcaseDraft!==null,
         saving:pending||contactPending,
         nowMs:Date.now(),lastRefreshMs:lastRefreshAt.current,
       }))return;
@@ -231,7 +231,7 @@ export function LearnerProfileWorkspace(props: {
     };
     window.document.addEventListener("visibilitychange",onVisible);
     return ()=>window.document.removeEventListener("visibilitychange",onVisible);
-  },[router,detailsOpen,contactOpen,collection,pending,contactPending]);
+  },[router,detailsOpen,contactOpen,collection,pending,contactPending,jobPrefsEditing,showcaseDraft]);
 
   // Guard the whole page as well as dialog Cancel. A browser reload cannot
   // safely preserve edits that exist only in local component state.
