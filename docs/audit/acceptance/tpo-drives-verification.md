@@ -78,3 +78,5 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-42 | OPEN | Create-side publish preflight and server lifecycle deadline/pay blockers verified; direct publish and TPO lifecycle still have different mandatory round/policy rules. Test TPO-drives-42. |
 | TPO-drives-48 | OPEN | Persisted edit state explicitly refuses LIVE edits. No pretend notification choices; live-edit domain contract and audit side effects remain. Test TPO-drives-48. |
 | TPO-drives-52 | OPEN | Quick draft and full create routes remain separate. Test TPO-drives-52 locks their current exposure until workflows can be safely consolidated. |
+
+| TPO-drives-26 | DONE (safe create-picker action) | Clone action now uses guarded `apiFetch` and keyboard-accessible `ConfirmDialog` instead of browser confirmation/raw response errors. Named tests TPO-drives-26 and GR-35; server remains responsible for ownership, source copying and auditing. |
