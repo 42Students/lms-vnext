@@ -1,7 +1,7 @@
 import "server-only";
-import {and,asc,eq,ne,inArray,max} from "drizzle-orm";
+import {and,asc,eq,ne,inArray,max,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
+import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courseSectionDeliveries,sections,courses,departments,lessonContents} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
@@ -27,6 +27,14 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .where(and(eq(courseLessons.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
    eq(courseOfferings.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")))
  .orderBy(asc(courses.name),asc(courseLessons.name)).limit(250);
+ const deliveries=await db.select({deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
+  sectionName:sections.name,sectionCode:sections.code}).from(courseSectionDeliveries)
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,and(eq(departments.id,courses.departmentId),eq(departments.collegeId,collegeId)))
+  .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),eq(sections.cohortId,courseOfferings.cohortId),eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
+  .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
+  .orderBy(asc(sections.name)).limit(2000);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
   notes:lessonContents.notes,
@@ -47,7 +55,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
- return {lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existing:existing.map(row=>({...row,
+ return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existing:existing.map(row=>({...row,
   // Published playback and meeting links remain private to their authorized flows.
   // The editor can update metadata without replacing a hidden URL.
   externalUrl:row.status==="DRAFT"?row.externalUrl:null,
