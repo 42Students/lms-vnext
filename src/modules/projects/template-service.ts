@@ -706,36 +706,43 @@ export async function assignProjectTemplateToCollege(
 
   const now = new Date();
   if (existing) {
-    const [updated] = await db
-      .update(projectTemplateCollegeAssignments)
-      .set({
-        templateVersionId: version.id,
-        assignedByUserId: context.user.id,
-        assignedAt: now,
-      })
-      .where(
-        eq(
-          projectTemplateCollegeAssignments.id,
-          existing.id,
-        ),
-      )
-      .returning();
-
-    return updated;
+    return db.transaction(async tx=>{
+      const [updated] = await tx
+        .update(projectTemplateCollegeAssignments)
+        .set({
+          templateVersionId: version.id,
+          assignedByUserId: context.user.id,
+          assignedAt: now,
+        })
+        .where(eq(projectTemplateCollegeAssignments.id,existing.id))
+        .returning();
+      if(!updated)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ASSIGNED,
+        organizationId:college.organizationId,collegeId:college.id,
+        subjectType:"project_template",subjectId:templateId,
+        subjectLabel:template.title,summary:"Super Admin updated college project template assignment",
+        metadata:{assignmentId:updated.id,templateVersionId:version.id},
+      });
+      return updated;
+    });
   }
 
   try {
-    const [created] = await db
-      .insert(projectTemplateCollegeAssignments)
-      .values({
-        templateId,
-        templateVersionId: version.id,
-        collegeId,
-        assignedByUserId: context.user.id,
-      })
-      .returning();
-
-    return created;
+    return await db.transaction(async tx=>{
+      const [created]=await tx.insert(projectTemplateCollegeAssignments)
+        .values({templateId,templateVersionId:version.id,collegeId,assignedByUserId:context.user.id})
+        .returning();
+      if(!created)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_NOT_FOUND");
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ASSIGNED,
+        organizationId:college.organizationId,collegeId:college.id,
+        subjectType:"project_template",subjectId:templateId,
+        subjectLabel:template.title,summary:"Super Admin assigned project template to college",
+        metadata:{assignmentId:created.id,templateVersionId:version.id},
+      });
+      return created;
+    });
   } catch (error) {
     throw mapTemplateConstraint(error);
   }
