@@ -1,5 +1,7 @@
 import Link from "next/link";
 import {PageHeader} from "@/components/ui/page-header";
+import {CollegeContentCsvExport} from "./college-content-csv-export";
+import {CollegeContentPreview} from "./college-content-preview";
 import {collegeLiveClassHref} from "@/modules/courses/college-live-classes-model";
 import {liveClassIstSchedule} from "@/modules/courses/college-live-classes-model";
 import type {listCollegeContentAggregate} from "@/modules/courses/college-content-aggregate-service";
@@ -63,12 +65,19 @@ export function CollegeLiveClassesDirectory({data}:{data:Data}){
     <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
     <Link href="/college/live-classes" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Clear</Link>
   </form>
+  <CollegeContentCsvExport filename={"live-classes-page-"+data.query.page+".csv"}
+   rows={data.items.map(item=>({title:item.title,course:item.courseName+" ("+item.courseCode+")",
+    lesson:item.lessonName,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
+    visible:item.visibleToStudents?"Visible":"Hidden",details:liveClassIstSchedule(item.startsAt,item.endsAt)}))}/>
   <section aria-label="Persisted live classes" className="rounded-xl border border-border bg-surface">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
     {data.items.length===0?<p className="p-5 text-sm text-body">No saved sessions match these filters.</p>:
       <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 p-4">
         <div className="flex flex-wrap justify-between gap-2">
           <h2 className="min-w-0 break-words font-semibold text-foreground">{item.title}</h2>
+          <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+           type:item.contentType,status:item.status,scope:item.deliveryId?"Section-specific":"Shared",
+           visible:item.visibleToStudents,details:liveClassIstSchedule(item.startsAt,item.endsAt)}}/>
           <span className="text-xs text-muted-foreground">{item.status}</span>
         </div>
         <p className="text-sm text-body">{liveClassIstSchedule(item.startsAt,item.endsAt)}</p>
