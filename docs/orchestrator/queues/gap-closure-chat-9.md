@@ -202,9 +202,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-38 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-academics-people-R02 | S2 | PERMISSION | FIXED-ON-MAIN |
 | SA-academics-people-01 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-02 | S3 | COPY | OPEN |
-| SA-academics-people-03 | S3 | COPY | OPEN |
-| SA-academics-people-04 | S3 | COPY | OPEN |
+| SA-academics-people-02 | S3 | COPY | FIXED-ON-MAIN |
+| SA-academics-people-03 | S3 | COPY | FIXED-ON-MAIN |
+| SA-academics-people-04 | S3 | COPY | FIXED-ON-MAIN |
 | SA-academics-people-06 | S3 | COPY | DONE-BRANCH |
 | SA-academics-people-07 | S3 | VALIDATION | DONE-BRANCH |
 | SA-academics-people-08 | S3 | STATE | DONE-BRANCH |
@@ -218,14 +218,14 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-25 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-academics-people-28 | S3 | COPY | DONE-BRANCH |
 | SA-academics-people-30 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-32 | S3 | COPY | OPEN |
+| SA-academics-people-32 | S3 | COPY | FIXED-ON-MAIN |
 | SA-academics-people-33 | S3 | STATE | DONE-BRANCH |
 | SA-academics-people-41 | S3 | STATE | DONE-BRANCH |
 | SA-academics-people-46 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-academics-people-R03 | S3 | STATE | OPEN |
+| SA-academics-people-R03 | S3 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-R04 | S3 | SIDE-EFFECT | UNCONFIRMED |
 | SA-academics-people-10 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-34 | S4 | STATE | OPEN |
+| SA-academics-people-34 | S4 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-35 | S4 | PERFORMANCE | FIXED-ON-MAIN |
 | SA-academics-people-36 | S4 | COPY | DONE-BRANCH |
 | SA-academics-people-37 | S4 | COPY | DONE-BRANCH |
@@ -235,7 +235,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-43 | S4 | VALIDATION | DONE-BRANCH |
 | SA-academics-people-44 | S4 | VALIDATION | DONE-BRANCH |
 | SA-academics-people-45 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-R05 | S4 | A11Y | OPEN |
+| SA-academics-people-R05 | S4 | A11Y | FIXED-ON-MAIN |
 
 ## college/projects (18: FIXED-ON-MAIN 7, DONE-BRANCH 5, OPEN 5, NOT-A-GAP 1)
 
