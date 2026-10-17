@@ -1,6 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 type Decision="ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
 export function TpoBatchDecisionControl({batchId,current}:{batchId:string;current:{
  status:string;reason:string|null;expectedVersion:string;
@@ -10,20 +11,22 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
   current.status==="ELIGIBLE"?"ELIGIBLE":current.status==="INELIGIBLE"?"INELIGIBLE":"NOT_DECIDED");
  const [reason,setReason]=useState(current.reason??"");
  const [pending,setPending]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
+ const [actionId,setActionId]=useState<string|null>(null);
  const valid=decision!=="INELIGIBLE"||reason.trim().length>=3;
  async function submit(){
   if(pending||!valid)return;
   if(!window.confirm("Apply this eligibility decision to the entire batch? Learner and class overrides take precedence."))return;
-  setPending(true);setError("");setMessage("");
+  setPending(true);setError("");setMessage("");setActionId(null);
   try{
    const response=await fetch("/api/placements/tpo/batches/"+batchId+"/decisions",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({membershipId:batchId,decision,expectedVersion:current.expectedVersion,
       ...(decision==="INELIGIBLE"?{reason:reason.trim()}:{})}),
    });
-   const body=await response.json() as {error?:string;changedCount?:number};
+   const body=await response.json() as {error?:string;changedCount?:number;actionId?:string|null};
    if(!response.ok)throw new Error(response.status===409?"Decision changed since opening this page. Refresh before trying again.":body.error??"Unable to save decision.");
-   setMessage((body.changedCount??0)>0?"Batch decision saved.":"No decision change was necessary.");
+   setMessage((body.changedCount??0)>0?"Saved "+body.changedCount+" decision(s) for whole batch. Undo":"No decision change was necessary.");
+   setActionId((body.changedCount??0)>0?body.actionId??null:null);
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to confirm the change.");}
   finally{setPending(false);}
@@ -45,5 +48,6 @@ export function TpoBatchDecisionControl({batchId,current}:{batchId:string;curren
    className="min-h-11 rounded bg-primary px-4 text-on-primary disabled:opacity-50">{pending?"Saving…":"Review and save batch decision"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm">{message}</p>:null}
+  {actionId?<TpoBatchUndoControl batchId={batchId} actionId={actionId}/>:null}
  </section>;
 }
