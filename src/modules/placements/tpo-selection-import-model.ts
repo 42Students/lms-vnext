@@ -23,6 +23,13 @@ export type SelectionImportCandidate={applicationId:string;name:string;email?:st
 export type SelectionImportEntry={line:number;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null};
 export function prepareSelectionImport(text:string,candidates:readonly SelectionImportCandidate[],roleFallback:string){
  const rows=parseSelectionCsv(text);const columns=rows.shift()?.map(s=>s.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""))??[];
+ const groups=[["applicationid","applicantid"],["email","studentemail"],
+  ["student","studentname","name"],["role","roletitle","jobtitle"],
+  ["package","packagelpa","ctclpa","annualctc","ctc"]];
+ for(const aliases of groups)if(columns.filter(column=>aliases.includes(column)).length>1)
+  throw Error("The selection file contains conflicting duplicate columns. Keep only one column for each field.");
+ if(new Set(columns.filter(Boolean)).size!==columns.filter(Boolean).length)
+  throw Error("Duplicate column headings are not permitted.");
  const locate=(...labels:string[])=>columns.findIndex(name=>labels.includes(name));
  const idColumn=locate("applicationid","applicantid"),emailColumn=locate("email","studentemail");
  const nameColumn=locate("student","studentname","name");
