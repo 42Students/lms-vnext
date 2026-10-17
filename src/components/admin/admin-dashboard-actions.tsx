@@ -101,15 +101,15 @@ export function SuperAdminGlobalDashboardActions() {
   return (
     <section aria-label="Platform quick links" className="space-y-3">
       <h2 className="m-0 text-lg font-semibold text-foreground">
-        Platform quick links
+        Choose the level you need to operate at.
       </h2>
       <p className="text-sm text-body">
         Select a college in the top bar for detailed metrics,
         or use a supported platform-wide workspace.
       </p>
-      <div className="grid gap-3 sm:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {SUPER_ADMIN_GLOBAL_LINKS.map((item) => (
-          <ActionLink key={item.label} label={item.label} href={item.href} />
+          <ActionLink key={item.label} label={item.label} href={item.href} subtitle={item.subtitle} />
         ))}
       </div>
     </section>
