@@ -146,9 +146,11 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
    decisionNote:null,decidedAt:null,decidedByUserId:null,updatedAt:new Date(),
   }).where(eq(placementRecruiterDriveRequests.id,original.id)).returning();
   if(!updated)throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT"||input.action==="EDIT")await informPlacementCell(tx,context,{
+  // A cancelled request must leave an audit/bell trail as well as an updated row.
+  await informPlacementCell(tx,context,{
    collegeId:input.collegeId,organizationId:scope.organizationId},updated.id,
-   String(input.draft?.title??"Updated drive request"));
+   String(input.draft?.title??(original.draft as {title?:string})?.title??"Drive request"),
+   input.action==="CANCEL"?"CANCELLED":"UPDATED");
   return updated;
  });
 }
