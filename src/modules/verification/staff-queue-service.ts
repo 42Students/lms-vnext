@@ -13,6 +13,7 @@ import {verificationLearnerNamePattern} from "./queue-name-pattern";
 import {effectiveTpoVerifierSetting} from "./switch-state";
 import {verificationTab,verificationTabCounts} from "./queue-tabs";
 import {submittedMarksheets} from "./queue-mark-sheets";
+import {verificationDocumentManifest} from "./document-manifest";
 import {verificationAttentionFlags} from "./attention-flags";
 import {matchesWaitingSince,matchesSubmittedFrom,verificationSubmissionWindowValid,verificationSubmittedSqlBounds} from "./queue-waiting-since";
 import {requireCollegeVerificationActor,requireVerificationTables} from "./staff-auth";
