@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learner-offer-deep-link-model";
@@ -20,6 +20,11 @@ import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-displa
 import {learnerOfferActionErrorMessage} from "@/modules/placements/learner-offer-action-error-model";
 import { useToast } from "@/components/ui/toast";
 
+type OfferAcceptImpact={
+ offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
+ withdrawn:Array<{id:string;title:string}>;declined:Array<{id:string;title:string}>;
+ stayed:Array<{id:string;title:string}>;previewOnly:boolean;
+};
 export type LearnerPlacementOfferItem = {
   offerId: string;
   applicationId: string;
@@ -87,6 +92,10 @@ export function LearnerPlacementOffers({
   const [pendingId, setPendingId] =
     useState<string | null>(null);
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
+  const [acceptImpact,setAcceptImpact]=useState<OfferAcceptImpact|null>(null);
+  const [acceptImpactBusy,setAcceptImpactBusy]=useState(false);
+  const [acceptImpactError,setAcceptImpactError]=useState<string|null>(null);
+  const impactRequest=useRef(0);
   const [declineOffer, setDeclineOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineReason, setDeclineReason] = useState("");
   const [extensionOffer,setExtensionOffer]=useState<LearnerPlacementOfferItem|null>(null);
@@ -107,6 +116,29 @@ export function LearnerPlacementOffers({
         status: confirmOffer.status,
       },new Date(snapshotNowIso))
     : null;
+
+  async function reviewAccept(item:LearnerPlacementOfferItem){
+    const request=++impactRequest.current;
+    setConfirmOffer(item);setAcceptImpact(null);setAcceptImpactError(null);
+    setAcceptImpactBusy(true);
+    try{
+      const response=await fetch("/api/placements/offers/"+encodeURIComponent(item.offerId)+"/accept-preview",
+        {method:"GET",credentials:"same-origin",cache:"no-store"});
+      const payload=await response.json().catch(()=>null) as (OfferAcceptImpact&{error?:string})|null;
+      if(!response.ok||!payload||payload.offerId!==item.offerId)
+        throw Error(payload?.error??"Could not load the acceptance impact. Please retry.");
+      if(request===impactRequest.current)setAcceptImpact(payload);
+    }catch(error){
+      if(request===impactRequest.current)setAcceptImpactError(error instanceof Error?error.message:"Impact preview is unavailable.");
+    }finally{
+      if(request===impactRequest.current)setAcceptImpactBusy(false);
+    }
+  }
+  function dismissAccept(){
+    impactRequest.current++;
+    setConfirmOffer(null);setAcceptImpact(null);setAcceptImpactError(null);
+    setAcceptImpactBusy(false);
+  }
 
   async function respond(
     offerId: string,
@@ -360,7 +392,7 @@ export function LearnerPlacementOffers({
                   disabled={
                     pendingId !== null
                   }
-                  onClick={() => setConfirmOffer(item)}
+                  onClick={() => void reviewAccept(item)}
                 >
                   {pendingId ===
                   item.offerId
@@ -489,14 +521,14 @@ export function LearnerPlacementOffers({
       </Dialog>
       <Dialog
         open={confirmOffer !== null}
-        onOpenChange={(open) => { if (!open && pendingId === null) setConfirmOffer(null); }}
+        onOpenChange={(open) => { if (!open && pendingId === null) dismissAccept(); }}
         title="Review offer before accepting"
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
           <>
             <Button variant="secondary" disabled={pendingId !== null}
-              onClick={() => setConfirmOffer(null)}>Keep offer pending</Button>
-            <Button disabled={!preview?.canConfirm || pendingId !== null}
+              onClick={dismissAccept}>Keep offer pending</Button>
+            <Button disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Confirm acceptance"}
             </Button>
@@ -510,6 +542,26 @@ export function LearnerPlacementOffers({
             <p>Annual CTC: {formatMoney(preview.annualCtcInr) ?? "Not specified"}</p>
             <p>Planned joining: {preview.joiningDate ?? "Not specified"}</p>
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
+            {acceptImpactBusy?<p role="status" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
+            {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
+              <button type="button" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}} className="ml-2 font-semibold underline">Retry impact preview</button>
+            </p>:null}
+            {acceptImpact?<div className="space-y-2 rounded-lg border border-border bg-surface-subtle p-3">
+              <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
+              {([
+                ["Withdrawn",acceptImpact.withdrawn],
+                ["Other offers declined",acceptImpact.declined],
+                ["You stay in",acceptImpact.stayed],
+              ] as const).map(([label,rows])=><div key={label}>
+                <p className="font-semibold">{label} ({rows.length})</p>
+                {rows.length?<ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>:
+                <p className="text-xs text-muted-foreground">None</p>}
+              </div>)}
+              {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
+                Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.
+              </p>:null}
+              <p className="text-xs text-muted-foreground">These are current records only. The final transaction rechecks the impacts before changing anything.</p>
+            </div>:null}
             {preview.expired ? (
               <p role="alert" className="font-semibold text-error">This offer has expired. Acceptance is disabled.</p>
             ) : null}

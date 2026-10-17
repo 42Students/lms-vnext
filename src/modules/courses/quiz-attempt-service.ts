@@ -577,7 +577,9 @@ export async function listQuizAttempts(
   context: RequestContext,
   quizIdInput: string,
   deliveryIdInput: string,
+  page = 1,
 ) {
+  if(!Number.isInteger(page)||page<1||page>1000)throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
   const deliveryId =
@@ -635,9 +637,9 @@ export async function listQuizAttempts(
     .from(quizAttempts)
     .innerJoin(
       collegeMemberships,
-      eq(
-        collegeMemberships.id,
-        quizAttempts.membershipId,
+      and(
+       eq(collegeMemberships.id,quizAttempts.membershipId),
+       eq(collegeMemberships.collegeId,quiz.collegeId),
       ),
     )
     .innerJoin(
@@ -659,7 +661,9 @@ export async function listQuizAttempts(
     .orderBy(
       asc(quizAttempts.submittedAt),
       asc(quizAttempts.id),
-    );
+    )
+    .limit(26)
+    .offset((page-1)*25);
 
   const answerRows =
     attempts.length > 0

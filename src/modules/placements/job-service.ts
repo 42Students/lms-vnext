@@ -210,6 +210,10 @@ export async function createPlacementJob(
           input.minimumAnnualCtcInr ?? null,
         maximumAnnualCtcInr:
           input.maximumAnnualCtcInr ?? null,
+        isDream: input.isDream,
+        fixedCtcLpa:input.fixedCtcLpa==null?null:input.fixedCtcLpa.toFixed(2),
+        variableCtcLpa:input.variableCtcLpa==null?null:input.variableCtcLpa.toFixed(2),
+        stipendPerMonthInr:input.stipendPerMonthInr??null,
         applicationMode:
           input.applicationMode,
         externalApplicationUrl:
@@ -343,6 +347,10 @@ export async function updatePlacementJob(
       .update(placementJobs)
       .set({
         ...input,
+        fixedCtcLpa:input.fixedCtcLpa===undefined?undefined:
+          input.fixedCtcLpa===null?null:input.fixedCtcLpa.toFixed(2),
+        variableCtcLpa:input.variableCtcLpa===undefined?undefined:
+          input.variableCtcLpa===null?null:input.variableCtcLpa.toFixed(2),
         updatedAt: new Date(),
       })
       .where(eq(placementJobs.id, jobId))
@@ -422,6 +430,8 @@ export async function publishPlacementJob(
   const [activeRole] = await getDb()
     .select({
       id: placementJobRoleOptions.id,
+      minCtc:placementJobRoleOptions.minimumAnnualCtcInr,
+      maxCtc:placementJobRoleOptions.maximumAnnualCtcInr,
     })
     .from(placementJobRoleOptions)
     .where(
@@ -439,9 +449,12 @@ export async function publishPlacementJob(
     .limit(1);
 
   if (!activeRole) {
-    throw new PlacementsServiceError(
-      "PLACEMENT_ROLE_OPTION_REQUIRED",
-    );
+    throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_REQUIRED");
+  }
+  if(!current.applicationDeadline||current.applicationDeadline<=new Date()||
+    (current.minimumAnnualCtcInr===null&&current.maximumAnnualCtcInr===null&&
+      current.stipendPerMonthInr===null&&activeRole.minCtc===null&&activeRole.maxCtc===null)){
+    throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
   }
 
   const db = getDb();

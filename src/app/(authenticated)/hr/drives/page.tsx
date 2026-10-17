@@ -14,6 +14,8 @@ import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
 import {filterOwnRecruiterRequests,requestStageLabel} from "@/modules/placements/recruiter-request-list-model";
 import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {RecruiterRequestCancelButton} from "@/components/hr/recruiter-request-cancel-button";
+import {RecruiterRequestFeedback} from "@/components/hr/recruiter-request-feedback";
 import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 type Params = { collegeId?: string | string[]; view?: string | string[]; tab?:string|string[]; q?: string | string[];
@@ -96,6 +98,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
        Proposals are private messages, not approved or published drives.
       </span>
     </nav>
+    <RecruiterRequestFeedback storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)+":feedback"}/>
     <HrUnsentDriveAlert collegeId={selectedCollege}
       storageKey={hrDriveSessionStorageKey(context.user.id,selectedCollege,null)}/>
     {grants.length > 1 ? <nav aria-label="College" className="flex flex-wrap gap-2">{grants.map(grant =>
@@ -175,14 +178,17 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             {req.status==="SENT_BACK"?"Fix and Resend":"Edit your request"}
           </Link>:null}
+          {editable?<RecruiterRequestCancelButton requestId={req.id} collegeId={selectedCollege} updatedAt={req.updatedAt.toISOString()}/>:null}
           {["REJECTED","CANCELLED"].includes(req.status)?<Link
             href={"/hr/drives/new?collegeId="+encodeURIComponent(selectedCollege)+"&copy="+encodeURIComponent(req.id)}
             className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
             Hire again with changes
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
-          {req.approvedJobId?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
-            className="mt-2 block text-sm text-primary-text underline">Open approved drive</Link>:null}
+          {req.approvedJobId && req.status==="DRAFT"?
+            <p role="status" className="mt-2 text-sm text-body">Approved · draft. The placement cell will publish this drive before students can apply.</p>:null}
+          {req.approvedJobId && req.status!=="DRAFT"?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
+            className="mt-2 block text-sm text-primary-text underline">Open published drive</Link>:null}
         </li>;
       })}</ul>
     </section>:null}

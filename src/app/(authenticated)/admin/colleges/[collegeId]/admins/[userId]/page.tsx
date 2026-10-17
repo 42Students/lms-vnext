@@ -17,6 +17,8 @@ export default async function AdminDeviceSessionsPage({params}:{
   <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} className="text-primary-text underline">← Admins</Link>
   <PageHeader eyebrow="Super Admin · Tenant" title={data.target.name+" · Active sessions"}
    description="Current device sessions for the selected administrator. Times are in IST. An unknown or out-of-scope person cannot be inspected."/>
+  <Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"}
+   className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Administrator activity history →</Link>
   <p className="text-sm text-body">{data.devices.length} active session(s), up to 100 shown.</p>
   {data.devices.length?<div className="overflow-x-auto rounded-xl border border-border">
    <table className="w-full min-w-[46rem] text-left text-sm">

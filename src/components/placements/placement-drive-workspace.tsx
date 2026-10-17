@@ -229,6 +229,7 @@ export async function PlacementDriveWorkspace({
     minimumAnnualCtcInr:job.minimumAnnualCtcInr,
     maximumAnnualCtcInr:job.maximumAnnualCtcInr,
     applicationDeadline:job.applicationDeadline,
+    isDream:job.isDream,stipendPerMonthInr:job.stipendPerMonthInr,
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
@@ -380,6 +381,7 @@ export async function PlacementDriveWorkspace({
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>
+          <strong className="rounded border border-border px-2 py-1">{headerFacts.category}</strong>
           {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
         </div>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-sm text-body">

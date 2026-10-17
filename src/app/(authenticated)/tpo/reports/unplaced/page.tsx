@@ -13,6 +13,8 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import {getTpoUnplacedAcademicEvidence} from "@/modules/placements/tpo-unplaced-academic-evidence-service";
+import {formatUnplacedPercentage} from "@/modules/placements/tpo-unplaced-academic-evidence-model";
 import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -62,6 +64,7 @@ export default async function TpoUnplacedReportPage({
    }):new Map<string,Date>();
   const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
+  const academic=await getTpoUnplacedAcademicEvidence(context,context.membership.collegeId,unplaced.map(item=>item.membershipId));
   const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
   const exportParams=new URLSearchParams({
    ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
@@ -144,7 +147,10 @@ export default async function TpoUnplacedReportPage({
         rows={unplaced.map(learner=>{
          const row=rowsById.get(learner.membershipId);
          return [learner.displayName,row?.rollNumber??"—",row?.cohortName??"—",
-          learner.departmentName,"—","—","Not verified","Not confirmed",
+          learner.departmentName,
+          formatUnplacedPercentage(academic.get(learner.membershipId)?.lowestRecordedPercent??null),
+          formatUnplacedPercentage(academic.get(learner.membershipId)?.undergraduatePercent??null),
+          academic.get(learner.membershipId)?.verification??"Not recorded","Not confirmed",
           lastApplications.get(learner.membershipId)?.applications??0,
           lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
           lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Not recorded"];

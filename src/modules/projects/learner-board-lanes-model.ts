@@ -15,7 +15,7 @@ export function learnerTaskLane(task:{status:string;sprintId:string|null},sprint
     task.status==="BLOCKED"||task.status==="DONE")return task.status;
  return "BACKLOG";
 }
-export function groupLearnerBoardLanes<T extends {status:string;sprintId:string}>(
+export function groupLearnerBoardLanes<T extends {status:string;sprintId:string|null}>(
  tasks:readonly T[],sprints:readonly {id:string;status:string}[]){
  const bySprint=new Map(sprints.map(item=>[item.id,item.status]));
  return LEARNER_BOARD_LANES.map(lane=>({...lane,tasks:tasks.filter(task=>

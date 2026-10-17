@@ -334,3 +334,23 @@ FAST v2: No tests, lint, typecheck, build, CI waiting, deployment or live email 
 - `TPO-companies-R03/TPO-inbox-team-R02`: OD-07 new cross-role permissions require owner approval.
 
 No tests, typecheck, lint, build, CI waiting or live delivery performed (FAST v2). Source changes not runtime-verified.
+
+## FAST v2 continuation — S1/S2 functional gaps, integrated main
+
+- Fast-forwarded `chatgpt/chat-2-b` to latest integrated `main` before implementation; all resulting commits tagged `[chat-2]` and pushed to this branch only.
+- **WP-01 S1 `TPO-recruiters-19`:** CSV/XLSX and copy-as-TSV now project the **actually visible Engage columns**, so private Email/Phone columns hidden by default are no longer exported accidentally. Column ordering and spreadsheet formula neutralization are retained.
+- **WP-02 S2 `TPO-campaigns-public-07`:** added a same-origin, permission-scoped count-only selected-audience preview endpoint that reuses the canonical candidate suppression policy. The composer shows eligible, left-out, missing email, opted out, bounced, Not now, duplicate-email and no-longer-college-scoped counts, with retry. A selected draft cannot be saved while its review is unavailable, has invalid IDs, or has zero eligible recipients. Draft save still revalidates in the transaction. No emails are sent.
+- **WP-05 S2 `TPO-recruiters-21`:** add-recruiter duplicate preflight now rejects obsolete asynchronous results after form edits or dialog closure; submit-time preflight stops if contact identity changes mid-request and cannot advance stale review.
+- **All WP-01..WP-08 statuses remain IN-PROGRESS:** source changes above are not final legacy acceptance or release verification.
+
+### Blocked items (one line per dependency)
+- `PUB-auth-public-50/52/53/54/55`: OD-09 sensitive candidate-share OTP/ZIP disclosure requires approved consent/storage policy.
+- `TPO-campaigns-public-01/02/05`: real provider templates/credentials, dispatch receipts and durable worker are not configured.
+- `TPO-recruiters-13/14/17`: bulk email delivery, audited durable undo and delayed reminder worker require registered provider/worker.
+- `TPO-settings-audit-52`: indefinite recruiter grant needs explicit security policy approval.
+- `TPO-companies-05/TPO-inbox-team-23/26/34`: shared Team-object thread/ask/away persistence requires coordinated schema.
+- `REC-calendar-messages-profile-R01`: email-reply relay requires verified inbound webhook routing and consent.
+- `TPO-companies-06`: counts-as-placed policy remains undecided; offers are not asserted as verified placements.
+- `TPO-companies-R03/TPO-inbox-team-R02`: OD-07 cross-role permission expansion requires owner approval.
+
+FAST v2: no tests, typecheck, lint, build, CI waits, deployment or live sending. Source changes remain runtime-unverified.
