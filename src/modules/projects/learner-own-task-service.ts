@@ -18,6 +18,8 @@ const create=z.strictObject({
  approach:z.string().trim().max(4000).nullable().default(null),
  acceptanceCriteria:z.string().trim().max(4000).nullable().default(null),
  priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
+ status:z.enum(["TODO","IN_PROGRESS","BLOCKED"]).default("TODO"),
+ blockerReason:z.string().trim().max(4000).nullable().default(null),
  dueDate:z.iso.date().nullable().default(null),
  estimatePoints:z.number().int().min(0).max(1000).nullable().default(null),
  taskType:z.enum(["STORY","BUG","CHORE","SPIKE"]).nullable().default(null),
