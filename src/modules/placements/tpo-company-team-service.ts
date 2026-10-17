@@ -29,17 +29,17 @@ export class TpoCompanyTeamError extends Error {
   super(code);this.name="TpoCompanyTeamError";
  }
 }
-async function companyScope(context:RequestContext,companyId:string){
+async function companyScope(context:RequestContext,companyId:string,allowArchivedRead=false){
  const membership=context.membership;
  if(!membership||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
- const [company]=await getDb().select({id:placementCompanies.id,name:placementCompanies.name})
+ const [company]=await getDb().select({id:placementCompanies.id,name:placementCompanies.name,relationshipStatus:placementCompanyRelationships.status})
   .from(placementCompanyRelationships)
   .innerJoin(placementCompanies,and(eq(placementCompanies.id,placementCompanyRelationships.companyId),
     eq(placementCompanies.status,"ACTIVE")))
   .where(and(eq(placementCompanyRelationships.collegeId,college.id),
     eq(placementCompanyRelationships.companyId,companyId),
-    eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1);
+    ...(allowArchivedRead?[]:[eq(placementCompanyRelationships.status,"ACTIVE")]))).limit(1);
  if(!company)throw new TpoCompanyTeamError("NOT_FOUND");
  return {college,membership,company};
 }
@@ -50,9 +50,9 @@ async function tablesReady(){
 /** TPO-companies-05: only same-college active placement-team members get company discussion. */
 export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown){
  const companyId=companyTeamCompanyIdSchema.parse(rawCompanyId);
- const {college,membership,company}=await companyScope(context,companyId);
+ const {college,membership,company}=await companyScope(context,companyId,true);
  if(!await tablesReady())return {status:"NOT_REGISTERED" as const,companyName:company.name,
-  messages:[],members:[],following:false,truncated:false};
+  messages:[],members:[],following:false,truncated:false,canPost:false};
  const [latest,followers,team]=await Promise.all([
   getDb().select({id:messages.id,body:messages.body,decision:messages.decision,
     askAssigneeMembershipId:messages.askAssigneeMembershipId,askStatus:messages.askStatus,
@@ -86,7 +86,7 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
     dayLabel:dayFormatter.format(row.createdAt),dayKey:dayKeyFormatter.format(row.createdAt),
     askOverdue:row.askStatus==="OPEN"&&Boolean(row.askDueAt&&row.askDueAt.getTime()<Date.now()),
     dueLabel:row.askDueAt?formatter.format(row.askDueAt)+" IST":null})),
-  members:team,following:followers.length>0,truncated:latest.length>100};
+  members:team,following:followers.length>0,truncated:latest.length>100,canPost:company.relationshipStatus==="ACTIVE"};
 }
 export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown,raw:unknown){
  const companyId=companyTeamCompanyIdSchema.parse(rawCompanyId);
@@ -175,7 +175,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
       eventId:event.id,userId:member.userId,
       title:input.assigneeId===member.id?"A teammate asked you":"Company Team update",
       body:input.body.slice(0,120),
-      actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+      actionHref:"/tpo/companies/"+companyId+"/team#team-message-"+message.id,
     })));
    }
    if(!message)throw new TpoCompanyTeamError("STALE");
@@ -230,7 +230,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
        userId:recipient.userId,eventId:event.id,
        title:input.action==="ASK_DONE"?"Company Team ask completed":"Company Team ask cancelled",
        body:message.body.slice(0,120),
-       actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+       actionHref:"/tpo/companies/"+companyId+"/team#team-message-"+message.id,
       });
     }
   }
