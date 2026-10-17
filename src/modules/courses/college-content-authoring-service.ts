@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,ne,inArray} from "drizzle-orm";
+import {and,asc,eq,ne,inArray,max} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courses,departments,lessonContents} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -43,7 +43,11 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .where(and(eq(lessonContents.contentType,kind),
   ne(lessonContents.status,"ARCHIVED")))
  .orderBy(asc(lessonContents.title)).limit(250);
- return {lessons,existing:existing.map(row=>({...row,
+ const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
+  .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
+  .groupBy(lessonContents.lessonId):[];
+ const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
+ return {lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existing:existing.map(row=>({...row,
   // Published playback and meeting links remain private to their authorized flows.
   // The editor can update metadata without replacing a hidden URL.
   externalUrl:row.status==="DRAFT"?row.externalUrl:null,
