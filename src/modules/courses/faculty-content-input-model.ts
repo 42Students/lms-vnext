@@ -24,6 +24,9 @@ export function facultyLiveClassIssue(urlValue:string,startValue:string,endValue
  const start=new Date(startValue),end=new Date(endValue);
  if(!Number.isFinite(start.getTime())||!Number.isFinite(end.getTime()))
   return "Choose valid start and end times.";
+ if(start.getUTCMinutes()%15!==0||start.getUTCSeconds()!==0||
+    end.getUTCMinutes()%15!==0||end.getUTCSeconds()!==0)
+  return "Choose 15-minute start and end times in IST.";
  if(end<=start)return "End time must be after start time";
  if(end.getTime()-start.getTime()>12*60*60*1000)
   return "A live class can be at most 12 hours. Check the end date and AM/PM.";
