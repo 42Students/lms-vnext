@@ -163,17 +163,19 @@ No page UI/UX restyling was introduced.
 
 ## chat-12 (11)
 
-- LEARNER-home-courses-01 [UNCONFIRMED] learner/home-courses
-- LEARNER-home-courses-02 [OPEN] learner/home-courses
-- LEARNER-home-courses-14 [UNCONFIRMED] learner/home-courses
-- LEARNER-course-detail-R02 [FIXED-ON-MAIN] learner/home-courses
-- LEARNER-course-detail-R03 [OPEN] learner/home-courses
-- FAC-attendance-grades-18 [OPEN] faculty/attendance-grades
-- FAC-attendance-grades-19 [OPEN] faculty/attendance-grades
-- FAC-attendance-grades-22 [OPEN] faculty/attendance-grades
-- MEN-projects-meetings-20 [FIXED-ON-MAIN] mentor/projects-meetings
-- MEN-projects-meetings-48 [FIXED-ON-MAIN] mentor/projects-meetings
-- TPO-drive-workspace-66 [OPEN] tpo/drive-workspace
+- LEARNER-home-courses-01 [NOT-A-GAP] learner/home-courses
+- LEARNER-home-courses-02 [DONE] learner/home-courses
+- LEARNER-home-courses-14 [DONE] learner/home-courses
+- LEARNER-course-detail-R02 [DONE] learner/home-courses
+- LEARNER-course-detail-R03 [DONE] learner/home-courses
+- FAC-attendance-grades-18 [NOT-A-GAP] faculty/attendance-grades
+- FAC-attendance-grades-19 [DONE] faculty/attendance-grades
+- FAC-attendance-grades-22 [DONE] faculty/attendance-grades
+- MEN-projects-meetings-20 [DONE] mentor/projects-meetings
+- MEN-projects-meetings-48 [DONE] mentor/projects-meetings
+- TPO-drive-workspace-66 [DONE] tpo/drive-workspace
+
+> chat-12 verified-closure evidence: named final-sprint tests under `tests/unit/chat12-final-*` and per-page acceptance documents for learner/home-courses, faculty/attendance-grades, mentor/projects-meetings and tpo/drive-workspace. Tests authored, not executed; orchestrator runtime verification pending.
 
 ## chat-13 (11)
 
