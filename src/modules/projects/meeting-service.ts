@@ -396,6 +396,12 @@ export async function transitionProjectMeeting(
       title:"Project meeting completed",body:"The meeting "+completed.title+" has been completed.",
       actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
     });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["MENTOR"],exceptUserId:context.user.id,
+      title:"Project meeting completed",body:"The meeting "+completed.title+" has been completed.",
+      actionHref:"/mentor/projects/"+scope.project.id+"?tab=meetings",
+    });
     return completed;
     });
   }
