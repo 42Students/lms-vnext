@@ -202,3 +202,7 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 ## Chat-2 round 5 — Team conversation rename
 
 | TPO-inbox-team-17 | PARTIAL — OPEN | Existing 200-character create flow now supplemented by scoped, two-participant optimistic rename with guarded UI, explicit POST and named `TPO-inbox-team-17` tests in `tests/unit/tpo-team-rename-chat2.test.ts`. Multi-person participants, leave action and visibility policy remain open. |
+
+## Chat-2 round 5 — Team inbox pagination
+
+| TPO-inbox-team-18 | PARTIAL — OPEN | Team list now paginates beyond the old 100-row cap, preserves search/filter URL, selects latest activity descending with stable ID tie-break, and labels page-scoped filter counts truthfully; `tests/unit/tpo-team-inbox-paging-chat2.test.ts` (two `TPO-inbox-team-18` named tests). Other legacy thread-kind filters not built. |

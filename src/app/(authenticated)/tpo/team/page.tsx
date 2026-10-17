@@ -16,9 +16,9 @@ import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model
 import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
 import {filterTpoTeamConversations,tpoTeamConversationCounts,tpoTeamConversationFilterSchema} from "@/modules/placements/tpo-team-conversation-filter-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional(),filter:tpoTeamConversationFilterSchema.optional()}).strict();
+const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","NAME"]).optional(),q:z.string().max(120).optional(),filter:tpoTeamConversationFilterSchema.optional(),page:z.coerce.number().int().min(1).max(1000).optional()}).strict();
 export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];filter?:string|string[];c?:string|string[];m?:string|string[]}>}) {
+ searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];filter?:string|string[];page?:string|string[];c?:string|string[];m?:string|string[]}>}) {
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=await searchParams;
@@ -33,7 +33,8 @@ export default async function TpoTeamPage({searchParams}:{
  const parsed=tabSchema.safeParse({tab:tabInput==="members"?"people":tabInput,
   sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
   q:Array.isArray(raw.q)?raw.q[0]:raw.q,
-  filter:Array.isArray(raw.filter)?raw.filter[0]:raw.filter});
+  filter:Array.isArray(raw.filter)?raw.filter[0]:raw.filter,
+  page:Array.isArray(raw.page)?raw.page[0]:raw.page});
  const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
  const team=await getTpoPlacementTeam(context,context.membership.collegeId);
  const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
@@ -42,7 +43,8 @@ export default async function TpoTeamPage({searchParams}:{
   member.roles.includes("TPO_ADMIN"));
  const people=sortTpoPeople(activeTeam,peopleSort);
  const search=parsed.success?(parsed.data.q??""):"";
- const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search)
+ const conversationPage=parsed.success?(parsed.data.page??1):1;
+ const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search,conversationPage)
   .catch(()=>({status:"FAILED" as const,items:[]})):null;
  const filter=parsed.success?(parsed.data.filter??"ALL"):"ALL";
  const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
@@ -85,7 +87,7 @@ export default async function TpoTeamPage({searchParams}:{
   </section>:<section className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
-    {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the first 100 conversations currently loaded.</p>:null}
+    {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
     {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
      {(["ALL","FOLLOWING","UNREAD","TOPICS"] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
@@ -119,6 +121,16 @@ export default async function TpoTeamPage({searchParams}:{
         <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
        <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:null}</div>}
+    {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
+     <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
+      <span className="text-sm text-body">Page {conversations.page}</span>
+      {conversations.page>1?<Link className="min-h-11 rounded border border-border px-4 py-3 text-primary-text"
+       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
+        ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
+      {conversations.hasMore?<Link className="min-h-11 rounded border border-border px-4 py-3 text-primary-text"
+       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
+        ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
+     </nav>:null}
     <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-primary-text">
       Open existing recruiter communications
     </Link>
