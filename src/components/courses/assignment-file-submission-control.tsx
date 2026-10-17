@@ -17,9 +17,9 @@ import {
 } from "./assignment-staged-file-transfer";
 
 export function AssignmentFileSubmissionControl({
-  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,
+  assignmentId, deliveryId, onBusyChange, onSubmitted, multipartEnabled=false,pdfOnly=false,uploadsAllowed=true,
 }: { assignmentId: string; deliveryId: string; onBusyChange: (busy: boolean) => void; onSubmitted: () => void;
- multipartEnabled?:boolean;pdfOnly?:boolean }) {
+ multipartEnabled?:boolean;pdfOnly?:boolean;uploadsAllowed?:boolean }) {
   const [selected, setSelected] = useState<File[]>([]);
   const [files, setFiles] = useState<SubmissionFile[]>([]);
   const [loading, setLoading] = useState(true);
@@ -134,7 +134,9 @@ export function AssignmentFileSubmissionControl({
     });
   }
   function submit() {
-    if (!confirmed || !canSubmitStagedFiles(files)) return;
+    const hasWrittenOrLinkParts=multipartEnabled&&(Boolean(responseText.trim())||links.length>0);
+    if (!confirmed || (files.length===0&&!hasWrittenOrLinkParts) ||
+      (files.length>0&&!canSubmitStagedFiles(files))) return;
     if(multipartEnabled){
       const seen=new Set<string>();
       for(const part of links){
@@ -164,19 +166,21 @@ export function AssignmentFileSubmissionControl({
   }
   const staged = files.filter(file => file.submissionId === null);
   const hasPending = staged.some(file => file.status !== "READY");
+  const hasWrittenOrLinkParts=multipartEnabled&&(Boolean(responseText.trim())||links.length>0);
+  const maySubmit=staged.length>0?canSubmitStagedFiles(files):hasWrittenOrLinkParts;
 
   return <section aria-label="Assignment file submission" className="mt-4 space-y-3">
-    <h3 className="text-sm font-semibold text-foreground">File Upload</h3>
-    <p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>
-    <label className="block text-sm font-semibold text-body">Choose a file to upload
+    <h3 className="text-sm font-semibold text-foreground">{multipartEnabled?"Combined assignment submission":"File Upload"}</h3>
+    {uploadsAllowed?<p className="text-xs text-muted-foreground">{limitsSummary("assignment-submission")} Up to {MAX_ASSIGNMENT_FILES_PER_SUBMISSION} files.</p>:null}
+    {uploadsAllowed?<label className="block text-sm font-semibold text-body">Choose a file to upload
       <input type="file" multiple accept={pdfOnly?".pdf":acceptAttributeFor("assignment-submission")}
         disabled={loading || busy || staged.length >= MAX_ASSIGNMENT_FILES_PER_SUBMISSION}
         className="mt-2 block min-h-11 w-full max-w-full text-sm"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
-    </label>
-    <Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload}>
+    </label>:null}
+    {uploadsAllowed?<Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload}>
       {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
-    </Button>
+    </Button>:null}
     {busy && activeName ? <div className="space-y-2" role="status">
       <p className="break-words text-sm text-body">{activeName}: {progress}%</p>
       <progress aria-label="File upload progress" className="h-2 w-full" value={progress} max={100} />
@@ -199,14 +203,14 @@ export function AssignmentFileSubmissionControl({
       onTextChange={value=>{setResponseText(value);setConfirmed(false);}}
       links={links} onLinksChange={value=>{setLinks(value);setConfirmed(false);}}
       disabled={busy||loading}/>:null}
-    {staged.length ? <div className="space-y-3 rounded-lg border border-border bg-surface p-3">
+    {staged.length||hasWrittenOrLinkParts ? <div className="space-y-3 rounded-lg border border-border bg-surface p-3">
       {hasPending ? <p role="status" className="text-sm text-muted-foreground">Files must pass security checks before final submission.</p> : null}
       <label className="flex min-h-11 items-start gap-2 text-sm text-body">
         <input type="checkbox" checked={confirmed} disabled={busy || hasPending} className="mt-1"
           onChange={event => setConfirmed(event.target.checked)} />
         <span>I confirm this is my final assignment submission and cannot be replaced after it is recorded.</span>
       </label>
-      <Button type="button" disabled={busy || loading || !confirmed || !canSubmitStagedFiles(files)} onClick={submit}>
+      <Button type="button" disabled={busy || loading || !confirmed || !maySubmit} onClick={submit}>
         {busy && !activeName ? "Submitting…" : "Submit Your Work"}
       </Button>
     </div> : null}
