@@ -58,7 +58,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
     Newer messages
    </Link> : null}
   </nav>
-  <TpoTeamReplyComposer threadId={result.thread.id}/>
+  <TpoTeamReplyComposer threadId={result.thread.id} actorUserId={context.user.id}/>
   {!result.messages.length?<p role="status" className="rounded-xl border border-border p-5 text-sm text-body">No messages in this thread yet.</p>:null}
 
  </main>;
