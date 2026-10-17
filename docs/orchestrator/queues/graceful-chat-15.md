@@ -43,3 +43,5 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80: `graceful-recovery-cycle.spec.ts` adds 18 two-attempt email/phone sign-in recovery checks with both OTP POSTs intercepted, and 16 offline/reconnect checks spanning the public shell and seven seeded roles at desktop/mobile sizes.
 - GR-80/81: Every case asserts the content remains nonblank and scans for raw implementation errors; role cases require development seeds. Runtime evidence remains pending.
 - GR-82/83: Production-build auth states and fake-provider outbox certification remain orchestrator dependencies; no case is counted as executed.
+
+- GR-81: `graceful-dom-surfaces.spec.ts` checks 26 accessibility/live-region leakage vectors and two safe controls. Shared DOM helper now detects hidden live-region text, tooltip/accessibility/placeholder details, and Vite overlays.
