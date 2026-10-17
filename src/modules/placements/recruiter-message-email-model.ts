@@ -19,6 +19,14 @@ export function isRecruiterUnreadReminderDue(value:RecruiterReminderWindow){
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
  return messages.slice(-3).map(row=>row.body.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,4000));
 }
+/** Stable, opaque per-thread address: older unread digest emails remain replyable.
+ * The secret lives only in worker config; we persist only the derived token hash.
+ */
+export function recruiterReplyTokenForThread(secret:string,threadId:string):string|null{
+ if(Buffer.byteLength(secret,"utf8")<32||!/^([0-9a-f]{8}-){1}[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(threadId))
+  return null;
+ return createHmac("sha256",secret).update("recruiter-reply:v1:"+threadId.toLowerCase()).digest("hex").slice(0,32);
+}
 export function makeRecruiterReplyAddress(token:string,domain:string):string|null{
  if(!/^[a-f0-9]{32}$/.test(token)||!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))return null;
  return "r-"+token+"@"+domain.toLowerCase();
