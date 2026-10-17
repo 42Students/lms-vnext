@@ -1,6 +1,6 @@
 "use client";
 
-import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
+import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
@@ -957,6 +957,31 @@ export function LearnerProfileWorkspace(props: {
               if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
+            {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
+              <fieldset className="grid gap-3 rounded-md border border-border p-3 sm:col-span-2 sm:grid-cols-2">
+                <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
+                <p className="text-xs text-body sm:col-span-2">
+                  Record details from your exam result. These fields are learner-entered and are not an official verification.
+                </p>
+                {LEARNER_QUALIFYING_EXAM_DETAILS.map(field=>{
+                  const details=(itemDraft.examDetails && typeof itemDraft.examDetails==="object" &&
+                    !Array.isArray(itemDraft.examDetails))?
+                    itemDraft.examDetails as Record<string,string|number|boolean>:{};
+                  const value=String(details[field.key]??"");
+                  return <label key={field.key} className="text-xs font-semibold text-body">
+                    {field.label}
+                    <Input type="text" className="mt-1" maxLength={field.maxLength}
+                      value={value}
+                      onChange={event=>setItemDraft(current=>({
+                        ...current,examDetails:{
+                          ...((current.examDetails && typeof current.examDetails==="object" &&
+                            !Array.isArray(current.examDetails))?current.examDetails as Record<string,unknown>:{}),
+                          [field.key]:event.target.value,
+                        },
+                      }))}/>
+                  </label>;
+                })}
+              </fieldset>:null}
             {collection==="education"&&educationError?<p role="alert" className="sm:col-span-2 text-sm text-error">{educationError}</p>:null}
             {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>

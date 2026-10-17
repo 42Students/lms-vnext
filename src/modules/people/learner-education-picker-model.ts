@@ -1,3 +1,11 @@
+export const LEARNER_QUALIFYING_EXAM_DETAILS=[
+ {key:"board",label:"Board or issuing authority",maxLength:120},
+ {key:"rollNumber",label:"Roll / hall ticket number",maxLength:120},
+ {key:"passingYear",label:"Exam passing year",maxLength:4},
+ {key:"score",label:"Marks, rank or score",maxLength:120},
+] as const;
+/** Generic optional details until a college's configured exam fields are
+ * registered in this platform. Unknown imported keys remain intact. */
 export const LEARNER_EDUCATION_TYPES=["10th","12th","Diploma","UG","PG"] as const;
 export const LEARNER_QUALIFYING_EXAMS=[
  "SSC","CBSE 10th","ICSE","Intermediate","CBSE 12th","Diploma",
