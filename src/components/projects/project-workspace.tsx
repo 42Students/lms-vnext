@@ -888,6 +888,7 @@ export function ProjectWorkspace({
                       projectId={workspace.project.id}
                       releaseId={release.id}
                       status={release.status}
+                      expectedUpdatedAt={release.updatedAt.toISOString()}
                     />
                   ) : null}
                 </div>
