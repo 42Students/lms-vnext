@@ -9,3 +9,5 @@ Source evidence only; unit, database and browser execution remain with the orche
 ## Runtime checks outstanding
 - Verify add/remove and stale-version conflict against PostgreSQL on migration 0119.
 - Verify global vs college role and scope, mobile and accessibility in browser.
+
+| SA-tenants-modules-32 | DONE | src/modules/module-access/admin-college-rule-history-service.ts; src/modules/module-access/admin-college-rule-history-model.ts; src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx; tests/unit/chat13-module-access-history-gap32.test.ts — SA-tenants-modules-32 all-scope paginated activity (source tests authored, not run) |
