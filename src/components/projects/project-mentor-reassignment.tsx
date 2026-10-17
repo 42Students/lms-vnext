@@ -164,9 +164,7 @@ export function ProjectMentorReassignment({
         tone: "error",
         title: "Mentor reassignment failed",
         description:
-          error instanceof Error
-            ? error.message
-            : "The request could not be completed.",
+          "The request could not be completed. Your selection is still available; please retry.",
       });
     } finally {
       sendingRef.current=false;
