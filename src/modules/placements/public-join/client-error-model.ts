@@ -4,6 +4,7 @@ import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-colleg
  * without leaking email existence, verifying the user client-side, or claiming success. */
 export function validatePublicJoinClient(input:{
  email:string;name:string;phone:string;companyName:string;
+ stage?:"SEND"|"JOIN";
  companyDomain:string;scope:"COLLEGE"|"COMPANY";
 }):string|null{
  const email=input.email.trim().toLowerCase();
@@ -21,7 +22,7 @@ export function validatePublicJoinClient(input:{
     !domain.endsWith("."+approvedDomain))
   return "Use your "+input.companyDomain+" email address for this link.";
  if(!input.name.trim())return "Enter your name";
- if(input.scope==="COLLEGE"&&input.companyName.trim().length<2)
+ if(input.scope==="COLLEGE"&&input.stage!=="SEND"&&input.companyName.trim().length<2)
   return "Enter your company name";
  const digits=input.phone.replace(/[^0-9]/g,"");
  if(input.phone.trim()&&(!/^[+0-9() .-]+$/.test(input.phone)||!(digits.length===10||(digits.length===12&&digits.startsWith("91")))))return "Enter a valid 10-digit mobile number, or leave it blank.";

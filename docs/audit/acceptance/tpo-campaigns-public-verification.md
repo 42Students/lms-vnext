@@ -26,3 +26,5 @@
 
 | TPO-campaigns-public-33 | DONE (source; migration pending) | About placements is a bounded 4000-char, persisted, actor-scoped, audited college page section, editor with Save, public pre-wrap; `docs/proposed-migrations/tpo-public-page-content.sql`; `tests/unit/chat2-public-content-metrics.test.ts`. |
 | TPO-campaigns-public-34 | DONE (source; migration pending) | Seven real metric choices and ordered selection, preview, LPA/percentage formatting and suppression hints from live aggregates, no identity exposure. Same migration/test. |
+
+| TPO-campaigns-public-R04 | DONE (source, tests unrun) | Recruiter first requests an email code without company-name guess; upon successful mailbox delivery response reveals an existing matching active company, displays You are joining as X, or asks Company name on the Join form when unknown. Named `tests/unit/chat2-public-join-known-company.test.ts`. |

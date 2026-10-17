@@ -14,8 +14,8 @@ export async function POST(request: Request) {
   const trusted = process.env.PUBLIC_JOIN_TRUSTED_PROXY_READY === "VERIFIED";
   const network = trusted ? request.headers.get("x-public-verified-client-ip") : null;
   try {
-    await requestPublicJoinCode("COMPANY", input, network, deliverPublicRecruiterJoinCode);
-    return NextResponse.json({ sent: true }, { headers: { "Cache-Control": "no-store" } });
+    const result=await requestPublicJoinCode("COMPANY", input, network, deliverPublicRecruiterJoinCode);
+    return NextResponse.json({ sent: true,companyName:result.companyName }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     if (error instanceof PublicJoinCodeError) {
       const unavailable = error.code === "NETWORK_GUARD_NOT_READY";
