@@ -23,16 +23,17 @@ export default async function MentorProjectPage({
   if (available?.projects.enabled !== true) return <MentorProjectsUnavailable />;
   const { projectId } = await params;
   const { tab } = await searchParams;
+  const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
   const activeSection =
-    tab === "board" || tab === "performance"
+    selectedTab === "board" || selectedTab === "performance"
       ? "tasks"
-      : tab === "activity"
+      : selectedTab === "activity"
         ? "audit"
-        : tab === "delivery"
+        : selectedTab === "delivery"
           ? "delivery"
-          : tab === "team" ||
-              tab === "sprints" ||
-              tab === "resources"
+          : selectedTab === "team" ||
+              selectedTab === "sprints" ||
+              selectedTab === "resources"
             ? tab
             : "overview";
   const access = await requireProjectReadAccess(
@@ -109,7 +110,7 @@ export default async function MentorProjectPage({
           Recorded project activity →
         </Link>
       </div> : null}
-      {tab==="board"?<div className="space-y-5">
+      {selectedTab==="board"?<div className="space-y-5">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}
           sprints={workspace.sprints}
           readOnly={access.access==="OBSERVER"}/>
@@ -119,7 +120,7 @@ export default async function MentorProjectPage({
           taskActivity={workspace.activity} readOnly={access.access==="OBSERVER"||
             workspace.project.status==="COMPLETED"||workspace.project.status==="ARCHIVED"}/>
       </div>:
-      tab==="performance"?<MentorTaskAllocation
+      selectedTab==="performance"?<MentorTaskAllocation
         projectId={projectId} initialTasks={workspace.tasks}
         members={workspace.members} sprints={workspace.sprints} releases={workspace.releases}
         readOnly={access.access==="OBSERVER"}/>:

@@ -56,10 +56,12 @@ export function ProjectAdminFilters({
   query,
   includeSubmissionStatus = false,
   includeRiskSort = false,
+  legacyWorkspaces = false,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
   includeRiskSort?: boolean;
+  legacyWorkspaces?: boolean;
 }) {
   return (
     <form
@@ -69,10 +71,10 @@ export function ProjectAdminFilters({
       <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
         Search
         <input
-          name="q"
+          name={legacyWorkspaces ? "search" : "q"}
           type="search"
           defaultValue={query.q ?? ""}
-          placeholder="Workspace title or slug"
+          placeholder={legacyWorkspaces ? "Search title or slug" : "Workspace title or slug"}
           className="min-w-56 rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         />
       </label>
@@ -129,11 +131,11 @@ export function ProjectAdminFilters({
         <select
           name="pageSize"
           defaultValue={String(
-            query.pageSize ?? 25,
+            query.pageSize ?? (legacyWorkspaces ? 20 : 25),
           )}
           className="rounded-lg border border-border bg-background px-3 py-2 text-sm font-normal text-foreground"
         >
-          {[10, 20, 25, 50, 100].map((size) => (
+          {[10, 20, 25, 50, 100].filter((size) => !legacyWorkspaces || size !== 25).map((size) => (
             <option key={size} value={size}>
               {size}
             </option>
@@ -171,7 +173,7 @@ export function ProjectAdminPagination({
 }) {
   const href = (targetPage: number) => {
     const params = new URLSearchParams();
-    if (query.q) params.set("q", query.q);
+    if (query.q) params.set(basePath === "/admin/projects" ? "search" : "q", query.q);
     if (query.view) params.set("view", query.view);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
     if (query.riskBucket) params.set("riskBucket", query.riskBucket);
@@ -185,7 +187,7 @@ export function ProjectAdminPagination({
         query.submissionStatus,
       );
     }
-    if (query.pageSize) {
+    if (query.pageSize && !(basePath === "/admin/projects" && query.pageSize === 20)) {
       params.set(
         "pageSize",
         String(query.pageSize),

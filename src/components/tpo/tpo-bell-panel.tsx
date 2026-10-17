@@ -2,7 +2,7 @@
 import Link from "next/link";
 import {Drawer} from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -14,12 +14,14 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
  const [readIds,setReadIds]=useState<string[]>([]);
  const [latest,setLatest]=useState<{items:BellItem[];unread:number}|null>(null);
  const [refreshing,setRefreshing]=useState(false);
+ const refreshInFlight=useRef(false);
  const displayedItems=latest?.items??items;
  const unread=allReadRevision===revision?0:Math.max(0,(latest?.unread??initialUnread)-
   readIds.filter(id=>displayedItems.some(item=>item.id===id&&!item.readAt)).length);
  const router=useRouter();
- async function refresh(){
-  if(refreshing)return;
+ const refresh=useCallback(async()=>{
+  if(refreshInFlight.current)return;
+  refreshInFlight.current=true;
   setRefreshing(true);setError("");
   try{
    const payload=await apiFetch<unknown>("/api/tpo/header-snapshot",{
@@ -31,8 +33,16 @@ export function TpoBellPanel({initialUnread,items,revision=0}:{initialUnread:num
    // A newer server snapshot supersedes local mark-all, even without a parent rerender.
    setAllReadRevision(null);
   }catch{setError("Couldn\u0027t refresh notifications. Showing the last messages we loaded.");}
-  finally{setRefreshing(false);}
- }
+  finally{refreshInFlight.current=false;setRefreshing(false);}
+ },[]);
+ useEffect(()=>{
+  const check=()=>{if(document.visibilityState==="visible")void refresh();};
+  const interval=window.setInterval(check,30000);
+  window.addEventListener("focus",check);
+  document.addEventListener("visibilitychange",check);
+  return ()=>{window.clearInterval(interval);window.removeEventListener("focus",check);
+   document.removeEventListener("visibilitychange",check);};
+ },[refresh]);
  function changeOpen(next:boolean){setOpen(next);if(next)void refresh();}
  async function openItem(item:BellItem){
   if(pending)return;

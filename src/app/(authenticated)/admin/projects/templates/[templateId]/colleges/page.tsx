@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ProjectTemplateActions } from "@/components/projects/project-template-controls";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
+import {SuperAdminTemplateCollegeBulk} from "@/components/projects/super-admin-template-college-bulk";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { can } from "@/modules/permissions/policy";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
@@ -44,6 +45,9 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <button className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary" type="submit">Filter</button>
     </form>
     <p className="text-xs text-muted-foreground">{data.total} matching active colleges · page {data.query.page} of {data.totalPages}</p>
+    <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}
+      colleges={data.items.map(row=>({id:row.id,name:row.name,assigned:Boolean(row.assignment),
+        canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(row => <article key={row.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
         <h2 className="break-words text-base font-semibold text-foreground">{row.name}</h2>

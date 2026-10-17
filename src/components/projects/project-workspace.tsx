@@ -210,7 +210,7 @@ export function ProjectWorkspace({
       section === "meetings");
   const renderTime = new Date();
   const archived = workspace.project.status === "ARCHIVED";
-  const readOnly = archived || readOnlyOverride;
+  const readOnly = archived || workspace.project.status === "COMPLETED" || readOnlyOverride;
   const tasksBySprint = new Map<
     string | null,
     Workspace["tasks"]
@@ -326,10 +326,10 @@ export function ProjectWorkspace({
           className="rounded-xl border border-border bg-muted p-4"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":"Read-only project access"}
+            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
-            Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled.
+            {archived && mode==="MENTOR"?"This workspace is archived. You can read everything here, but tasks, resources, meetings and the submission can no longer be changed.":workspace.project.status==="COMPLETED"?"This project is complete. Existing work and meetings remain available to read; editing is disabled.":"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
           </p>
         </section>
       ) : null}
@@ -435,7 +435,7 @@ export function ProjectWorkspace({
       {show("overview") ? (
         <section className="rounded-xl border border-border bg-surface p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="LEARNER"?"About this project":"Overview"}</h2>
+            <h2 className="m-0 text-lg font-semibold text-foreground">{mode==="ADMIN"?"Overview":"About this project"}</h2>
             {mentorReviewHref ? <Link href={mentorReviewHref}
               className="inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
               Review submission
@@ -651,9 +651,9 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              {mode==="LEARNER"?"Project team":"Project people"}
+              {mode==="ADMIN"?"Project people":"Project team"}
             </h2>
-            {mode==="LEARNER"?<p className="mt-1 text-sm text-body">
+            {mode!=="ADMIN"?<p className="mt-1 text-sm text-body">
               See who is assigned, what role they play, and how the project is staffed.
               {" "}{workspace.members.length} member(s)
             </p>:null}
@@ -738,16 +738,15 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            {mode==="LEARNER"?"Releases and Sprints":"Execution"}
+            {mode==="ADMIN"?"Execution":"Releases and Sprints"}
           </h2>
           {mentorReviewHref ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-10 items-center rounded-md border border-primary px-3 text-sm font-semibold text-primary-text">
             Review submission
           </Link> : null}
-          {mode!=="LEARNER"?<p className="mt-1 text-sm text-body">
-            Release and sprint execution records.
-          </p>:null}
+          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
+          {mode==="MENTOR"&&workspace.releases.length===0?<p role="status" className="mt-2 rounded-md border border-border p-4 text-sm text-body">No sprints yet. Add a release to organise the first sprint, then choose the tasks this project should be measured against.</p>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-lg border border-border p-3 text-sm text-body">
           {(()=>{
@@ -1504,7 +1503,7 @@ export function ProjectWorkspace({
                         {meeting.outcome?"View notes":"Add notes"}
                       </Link>
                     ) : null}
-                    {href ? (
+                    {href && meeting.status!=="CANCELLED" && meeting.status!=="COMPLETED" && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <a
                         href={href}
                         target="_blank"
@@ -1517,7 +1516,7 @@ export function ProjectWorkspace({
                     {mode !== "LEARNER" &&
                     !readOnly &&
                     (meeting.status === "REQUESTED" ||
-                      meeting.status === "SCHEDULED") ? (
+                      meeting.status === "SCHEDULED") && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <div className="mt-3">
                         <ScheduleProjectMeetingControl
                           projectId={workspace.project.id}
@@ -1538,7 +1537,7 @@ export function ProjectWorkspace({
                         />
                       </div>
                     ) : null}
-                    {!readOnly ? (
+                    {!readOnly && mentorMeetingDisplayStatus(meeting.status,meeting.endsAt,renderTime)!=="MISSED" ? (
                       <ProjectMeetingTransitionActions
                         projectId={workspace.project.id}
                         meeting={meeting}

@@ -1,6 +1,7 @@
 import {readFileSync} from "node:fs";
 import {describe,it,expect} from "vitest";
 import {isDebarmentActive} from "@/modules/placements/batch-registration-policy";
+import {tpoStudentsQuerySchema} from "@/modules/placements/tpo-students-service";
 const src=(p:string)=>readFileSync(new URL("../../src/"+p,import.meta.url),"utf8");
 describe("Chat-12 debarred roster integration",()=>{
  it("TPO-students-06 uses actual timed/drive DB08 rows, not a tagged participation string",()=>{
@@ -15,7 +16,10 @@ describe("Chat-12 debarred roster integration",()=>{
   expect(src("app/(authenticated)/tpo/students/page.tsx")).toContain("Debarred · {data.debarredCount}");
  });
  it("TPO-students-20 supports a validated debarred filter",()=>{
-  expect(src("modules/placements/tpo-students-service.ts")).toContain('debarred:z.enum(["YES","NO"])');
+  const query={collegeId:"123e4567-e89b-42d3-a456-426614174000",debarred:"YES"};
+  expect(tpoStudentsQuerySchema.parse(query).debarred).toBe(true);
+  expect(tpoStudentsQuerySchema.parse({...query,debarred:"NO"}).debarred).toBe(false);
+  expect(tpoStudentsQuerySchema.safeParse({...query,debarred:"MAYBE"}).success).toBe(false);
  });
  it("TPO-students-24 retains debarred selection in URLs",()=>{
   expect(src("app/(authenticated)/tpo/students/page.tsx")).toContain('params.set("debarred"');

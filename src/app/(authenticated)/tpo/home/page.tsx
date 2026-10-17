@@ -16,6 +16,7 @@ import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-reque
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {countTpoUnreadRecruiterMessages} from "@/modules/placements/tpo-recruiter-unread-count-service";
 import {getTpoHomeCrmCounts} from "@/modules/placements/tpo-home-quick-counts-service";
@@ -33,6 +34,11 @@ export default async function TpoHome(){
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">
    {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-10 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
   </ul>
+ </main>;
+ const moduleAccess=await resolveOptionalModuleAccess(ctx);
+ if(!moduleAccess.placements.enabled)return <main role="status" className="min-w-0 rounded-xl border border-border bg-surface p-6">
+  <h1 className="text-lg font-semibold">Placements is switched off for this college</h1>
+  <p className="mt-2 text-sm text-body">Placement work is not available until your college enables the Placements module.</p>
  </main>;
  const collegeId=ctx.membership!.collegeId;
  const calendarNow=new Date();
@@ -80,10 +86,18 @@ export default async function TpoHome(){
   }
  }
  const inviteReady=!!inviteCandidate;
+ // TPO-home-04: the visible batch must show its own persisted eligible and
+ // registered totals, even when an invitation has already been sent.
+ const [shownEligibility,shownRegistrations]=firstBatch?await Promise.all([
+  getTpoBatchEligibilitySummary(ctx,firstBatch.id),
+  getTpoBatchRegistrationSummary(ctx,firstBatch.id),
+ ]):[null,null];
+ const shownEligible=shownEligibility?.summary.complete?shownEligibility.summary.eligible:null;
+ const shownRegistered=shownRegistrations?.available?shownRegistrations.registered:null;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
-   eligible:firstBatch.id===inviteCandidate?.id?candidateEligible:null,
-   registered:firstBatch.id===inviteCandidate?.id?candidateRegistered:null,placed:null}:null,
+   eligible:shownEligible,
+   registered:shownRegistered,placed:null}:null,
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
@@ -102,7 +116,7 @@ export default async function TpoHome(){
    ?"/tpo/placements?tab=requests":"/tpo/placements",
   registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats.summary.placed,recruiterLeads:crmCounts?.leads??null,
-  followUps:crmCounts?.dueFollowups??null,recruiterAccess:null,
+  followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
   pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
   teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
