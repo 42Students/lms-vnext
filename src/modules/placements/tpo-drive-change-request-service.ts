@@ -29,6 +29,7 @@ async function scoped(context:RequestContext,rawJobId:unknown){
  const existing=await getRecruiterPlacementWorkspace(context,jobId);
  const [job]=await getDb().select({
   id:placementJobs.id,collegeId:placementJobs.collegeId,title:placementJobs.title,
+  organizationId:colleges.organizationId,
   status:placementJobs.status,companyRelationshipId:placementJobs.companyRelationshipId,
  }).from(placementJobs).innerJoin(colleges,eq(colleges.id,placementJobs.collegeId)).where(and(eq(placementJobs.id,existing.job.id),
   eq(placementJobs.collegeId,existing.college.id))).limit(1);

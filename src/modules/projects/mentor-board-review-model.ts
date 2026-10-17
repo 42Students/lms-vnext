@@ -9,7 +9,7 @@ export const mentorBoardReviewQuerySchema=z.object({
   page:z.coerce.number().int().min(1).max(10000).default(1),
 }).strict();
 export type MentorBoardReviewQuery=z.infer<typeof mentorBoardReviewQuerySchema>;
-type Task={id:string;sprintId:string;title:string;priority:string;status:string;sequence:number};
+type Task={id:string;sprintId:string|null;title:string;priority:string;status:string;sequence:number};
 type Sprint={id:string;title:string;sequence:number};
 
 export function mentorBoardReview(tasks:readonly Task[],sprints:readonly Sprint[],
@@ -26,22 +26,22 @@ export function mentorBoardReview(tasks:readonly Task[],sprints:readonly Sprint[
     (!query.priority||query.priority==="ALL"||task.priority===query.priority)&&
     (!query.sprintId||query.sprintId==="ALL"||task.sprintId===query.sprintId)&&
     (!term||task.title.toLowerCase().includes(term)||
-      (nameBySprint.get(task.sprintId)??"").toLowerCase().includes(term)))
-    .sort((a,b)=>(positionBySprint.get(a.sprintId)??Number.MAX_SAFE_INTEGER)-
-      (positionBySprint.get(b.sprintId)??Number.MAX_SAFE_INTEGER)||
+      (nameBySprint.get(task.sprintId??"")??"").toLowerCase().includes(term)))
+    .sort((a,b)=>(positionBySprint.get(a.sprintId??"")??Number.MAX_SAFE_INTEGER)-
+      (positionBySprint.get(b.sprintId??"")??Number.MAX_SAFE_INTEGER)||
       a.sequence-b.sequence||a.id.localeCompare(b.id));
   const registeredBySprint=new Map<string,number>();
   const selectedBySprint=new Map<string,{count:number;done:number;blocked:number;review:number}>();
   for(const task of tasks){
-    registeredBySprint.set(task.sprintId,(registeredBySprint.get(task.sprintId)??0)+1);
+    registeredBySprint.set(task.sprintId??"",(registeredBySprint.get(task.sprintId??"")??0)+1);
   }
   for(const task of matching){
-    const tally=selectedBySprint.get(task.sprintId)??{count:0,done:0,blocked:0,review:0};
+    const tally=selectedBySprint.get(task.sprintId??"")??{count:0,done:0,blocked:0,review:0};
     tally.count++;
     if(task.status==="DONE")tally.done++;
     if(task.status==="BLOCKED")tally.blocked++;
     if(task.status==="IN_REVIEW")tally.review++;
-    selectedBySprint.set(task.sprintId,tally);
+    selectedBySprint.set(task.sprintId??"",tally);
   }
   const sprintSummaries=sprints
     .filter(s=>!query.sprintId||query.sprintId==="ALL"||s.id===query.sprintId)
@@ -57,7 +57,7 @@ export function mentorBoardReview(tasks:readonly Task[],sprints:readonly Sprint[
   const page=Math.min(query.page,totalPages);
   const projectRow=(task:Task)=>({
     id:task.id,title:task.title,priority:task.priority,status:task.status,
-    sprintTitle:nameBySprint.get(task.sprintId)??"Sprint unavailable",
+    sprintTitle:nameBySprint.get(task.sprintId??"")??"Sprint unavailable",
   });
   return {
     count:tasks.length,totals,

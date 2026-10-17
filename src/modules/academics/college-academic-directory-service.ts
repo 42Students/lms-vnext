@@ -109,7 +109,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     ? await db.select({
       id: programTermCourses.programTermId,
       total: count(),
-      creditSum: sql<number>`sum(coalesce(${programTermCourses.credits},${courses.credits},0))::integer`.mapWith(Number),
+      creditSum: sql<number>`sum(coalesce(${programTermCourses.credits},0))::integer`.mapWith(Number),
     }).from(programTermCourses)
       .innerJoin(courses, eq(courses.id, programTermCourses.courseId))
       .innerJoin(departments, and(

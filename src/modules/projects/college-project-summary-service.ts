@@ -11,7 +11,6 @@ import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed} from "./co
 import {notifyActiveProjectMembers} from "./project-notification-service";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
  const scope=await requireProjectManageAccess(context,projectId);
- if(scope.access!=="ADMIN")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const input=collegeProjectSummaryPatch.parse(raw);
  return getDb().transaction(async tx=>{
   const [row]=await tx.select().from(projectInstances)

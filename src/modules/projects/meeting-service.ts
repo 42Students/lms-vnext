@@ -79,7 +79,7 @@ async function validateMeetingLinks(
     | { id: string }
     | null = null;
   let task:
-    | { id: string; sprintId: string }
+    | { id: string; sprintId: string | null }
     | null = null;
 
   if (sprintId) {

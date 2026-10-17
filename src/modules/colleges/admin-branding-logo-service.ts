@@ -59,7 +59,7 @@ export async function uploadCollegeLogo(ctx:RequestContext,rawId:unknown,file:Fi
  if(!proof||proof.sizeBytes!==bytes.length||proof.contentType!=="image/png"||
     proof.metadata["college-id"]!==college.id||proof.metadata["asset-type"]!=="college-logo")
   throw new CollegeLogoError("LOGO_UPLOAD_FAILED");
- let previous:string|null=null;
+ let previous=null as string|null;
  try{
   await getDb().transaction(async tx=>{
    await assertPersistedPlatformPermission(tx,ctx,"college.manage",{

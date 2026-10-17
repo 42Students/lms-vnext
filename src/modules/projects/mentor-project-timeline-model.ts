@@ -9,7 +9,7 @@ export type MentorTimelineQuery=z.infer<typeof mentorTimelineQuerySchema>;
 
 type Release={id:string;title:string;sequence:number;status:string;};
 type Sprint={id:string;releaseId:string;title:string;sequence:number;status:string;};
-type Task={sprintId:string;status:string;};
+type Task={sprintId:string|null;status:string;};
 export function mentorProjectTimeline(
   releases:readonly Release[],sprints:readonly Sprint[],tasks:readonly Task[],
   query:Pick<MentorTimelineQuery,"projectId"|"releaseStatus"|"page"> &

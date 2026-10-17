@@ -15,6 +15,7 @@ export async function lockMentorFinalDelivery(context:RequestContext,projectIdIn
  const projectId=z.string().uuid().parse(projectIdInput),submissionId=z.string().uuid().parse(submissionIdInput);
  const input=body.parse(raw),scope=await requireProjectLifecycleMutationAccess(context,projectId);
  if(scope.access!=="MENTOR"||!context.membership)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const membership=context.membership;
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
    .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
@@ -31,7 +32,7 @@ export async function lockMentorFinalDelivery(context:RequestContext,projectIdIn
       isNull(projectSubmissions.lockedAt))).returning();
   if(!saved)throw new ProjectsServiceError("PROJECT_SUBMISSION_CONFLICT");
   await tx.insert(projectDeliveryEvents).values({
-    projectId:scope.project.id,submissionId,actorMembershipId:context.membership.id,
+    projectId:scope.project.id,submissionId,actorMembershipId:membership.id,
     eventType:"LOCKED",reason:input.reason,occurredAt:now,
   });
   const event=await recordActivityEventInTransaction(tx,context,projectDeliveryActivity({

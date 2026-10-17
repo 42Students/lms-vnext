@@ -545,6 +545,7 @@ export async function updateProjectTaskStatus(
       .where(and(eq(projectTasks.id, taskId), eq(projectTasks.projectId, scope.project.id)))
       .limit(1);
     if (!candidate) throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
+    if (candidate.sprintId === null) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
     const [sprint] = await tx.select({ status: projectSprints.status })
       .from(projectSprints)

@@ -41,7 +41,7 @@ function textPattern(value: string) {
 
 type AssessmentRow = Omit<
   CollegeAssessmentAggregateItem,
-  "deliverySpecific" | "activityCount" | "resultsPublished"
+  "deliverySpecific" | "activityCount" | "resultsPublished" | "eligibleLearners" | "submittedLearners" | "gradedLearners" | "resultsReleaseReady"
 > & { deliveryId: string | null; resultsPublished?: boolean | null };
 
 export async function listCollegeAssessmentAggregate(
@@ -283,7 +283,7 @@ export async function listCollegeAssessmentAggregate(
         .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
         .innerJoin(sectionEnrollments,and(
           eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
-          eq(sectionEnrollments.academicPeriodId,courseSectionDeliveries.academicPeriodId),
+          eq(sectionEnrollments.academicPeriodId,courseOfferings.academicPeriodId),
           eq(sectionEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(learnerProgramEnrollments,and(
@@ -316,7 +316,7 @@ export async function listCollegeAssessmentAggregate(
         .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
         .innerJoin(sectionEnrollments,and(
           eq(sectionEnrollments.sectionId,courseSectionDeliveries.sectionId),
-          eq(sectionEnrollments.academicPeriodId,courseSectionDeliveries.academicPeriodId),
+          eq(sectionEnrollments.academicPeriodId,courseOfferings.academicPeriodId),
           eq(sectionEnrollments.status,"ACTIVE"),
         ))
         .innerJoin(learnerProgramEnrollments,and(

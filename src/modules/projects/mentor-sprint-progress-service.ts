@@ -119,6 +119,7 @@ export async function getMentorSprintProgress(
       .groupBy(projectTasks.sprintId, projectTasks.status);
   const bySprint = new Map<string, {status: string; total: number}[]>();
   for (const row of counts) {
+    if (row.sprintId === null) continue;
     const list = bySprint.get(row.sprintId) ?? [];
     list.push({ status: row.status, total: Number(row.total) });
     bySprint.set(row.sprintId, list);

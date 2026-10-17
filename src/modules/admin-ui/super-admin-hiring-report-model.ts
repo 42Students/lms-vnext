@@ -16,7 +16,7 @@ export const COMPANY_HIRING_COLUMNS=["Company","Drive","Total Applications","App
 export type SuperAdminHiringRow={companyId:string;companyName:string;jobId:string;jobTitle:string;
  totalApplications:number;applied:number;shortlisted:number;assessment:number;interview:number;offered:number;hired:number;rejected:number;withdrawn:number;waitlisted:number};
 export function hiringCompanyRollups(rows:readonly SuperAdminHiringRow[]){
- const groups=new Map<string,{companyName:string;applied:number;shortlisted:number;assessment:number;interview:number;offered:number;hired:number;rejected:number}>();
+ const groups=new Map<string,Omit<SuperAdminHiringRow,"companyId"|"jobId"|"jobTitle">>();
  for(const row of rows){
   let total=groups.get(row.companyId);
   if(!total){total={companyName:row.companyName,totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0};groups.set(row.companyId,total);}

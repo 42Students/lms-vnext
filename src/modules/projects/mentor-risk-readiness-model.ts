@@ -9,7 +9,7 @@ export const mentorRiskReadinessQuerySchema=z.object({
 export type MentorRiskReadinessQuery=z.infer<typeof mentorRiskReadinessQuerySchema>;
 
 type Fact={id:string;title:string;status:string};
-type Task=Fact & {sprintId:string;priority:string};
+type Task=Fact & {sprintId:string|null;priority:string};
 type Meeting=Fact & {startsAt:Date};
 export type MentorRiskReadinessFacts={
   projectId:string;projectStatus:string;
@@ -52,7 +52,7 @@ export function mentorRiskReadiness(facts:MentorRiskReadinessFacts,
   if(active){
     for(const task of blockedTasks.filter(task=>priorityTasks.includes(task)))add("RISK","blocked:"+task.id,
       task.title,"Blocked task · "+task.priority+" priority · "+
-      (sprintTitle.get(task.sprintId)??"Unknown Sprint"),
+      (sprintTitle.get(task.sprintId??"")??"Unknown Sprint"),
       base+"?tab=board#mentor-task-"+encodeURIComponent(task.id));
     for(const task of reviewTasks.filter(task=>priorityTasks.includes(task)))add("RISK","review:"+task.id,
       task.title,"Task submission awaits recorded review",
