@@ -17,3 +17,10 @@ These are source-level checks and ID-named tests; orchestration must execute uni
 
 ## Remaining
 LEARNER-course-detail-03/04/05/10/11/12/17/18 and other audit entries are not claimed by this batch.
+
+
+## Chat-11 deadline, submitted-work and empty-state source verification
+
+| LEARNER-course-detail-01 | DONE | src/modules/courses/assignment-submission-service.ts, assignment-submission-deadline-policy.ts, learner-course-workspace.tsx; tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-01 rejects missing and elapsed deadlines on the server and closes the learner card")` |
+| LEARNER-course-detail-06 | DONE | src/components/courses/learner-course-workspace.tsx; tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-06 shows both written and link submissions and safe read-only links")` |
+| LEARNER-course-detail-20 | DONE | src/modules/courses/learner-roadmap-empty-state-model.ts, learner-course-workspace.tsx; tests/unit/learner-roadmap-empty-state-model.test.ts and tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-20 restores no-roadmap, no-content and filtered lesson copy")` |

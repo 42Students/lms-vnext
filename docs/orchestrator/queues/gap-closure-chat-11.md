@@ -196,16 +196,16 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | FAC-attendance-grades-19 | S4 | COPY | DONE |
 | FAC-attendance-grades-21 | S4 | MISSING-PAGE | NOT-A-GAP |
 
-## learner/course-detail (18: DONE 6, OPEN 6, FIXED-ON-MAIN 4, UNCONFIRMED 2)
+## learner/course-detail (18: DONE 9, OPEN 5, FIXED-ON-MAIN 2, UNCONFIRMED 2)
 
 Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/learner-course-detail-verification.md`.
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| LEARNER-course-detail-01 | S2 | VALIDATION / PERMISSION | FIXED-ON-MAIN |
+| LEARNER-course-detail-01 | S2 | VALIDATION / PERMISSION | DONE |
 | LEARNER-course-detail-03 | S2 | MISSING-FIELD | OPEN |
 | LEARNER-course-detail-04 | S2 | MISSING-FIELD / VALIDATION | FIXED-ON-MAIN |
-| LEARNER-course-detail-06 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| LEARNER-course-detail-06 | S2 | MISSING-ACTION | DONE |
 | LEARNER-course-detail-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-course-detail-10 | S2 | MISSING-ACTION / STATE | UNCONFIRMED |
 | LEARNER-course-detail-05 | S3 | MISSING-FIELD / COPY | OPEN |
@@ -219,7 +219,7 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-12 | S4 | MISSING-FIELD | OPEN |
 | LEARNER-course-detail-13 | S4 | COPY | DONE |
 | LEARNER-course-detail-18 | S4 | STATE | UNCONFIRMED |
-| LEARNER-course-detail-20 | S4 | COPY | OPEN |
+| LEARNER-course-detail-20 | S4 | COPY | DONE |
 
 ## superadmin/tenants-modules-2 (12: OPEN 5, FIXED-ON-MAIN 4, UNCONFIRMED 3)
 

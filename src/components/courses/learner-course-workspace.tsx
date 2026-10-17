@@ -709,8 +709,8 @@ export function LearnerCourseWorkspace({
   if (!workspace.learningPath) {
     return (
       <EmptyState
-        title="Learning path is being prepared"
-        description="This course is active, but its learning path has not been published yet."
+        title="No roadmap items yet"
+        description="Create lessons and add content to show the learner roadmap."
       />
     );
   }
@@ -846,7 +846,7 @@ export function LearnerCourseWorkspace({
         {workspace.lessons.map((lesson, lessonIndex) => {
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
           if (focusLessonId && focusLessonId !== lesson.id) return null;
-          if (activeFilter !== "all" && visibleItems.length === 0) return null;
+          // Keep empty lessons visible so learners understand what is absent in each filter.
 
           const lessonProgress = lessonProgressState(
             lesson.items.map((item) => item.progress.status),
@@ -956,7 +956,8 @@ export function LearnerCourseWorkspace({
                 </nav>:null}
                 {visibleItems.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">
-                    No published learning items in this lesson yet.
+                    {activeFilter==="lectures"?"No lectures in this lesson.":
+                      activeFilter==="all"?"No content in this lesson yet.":"No lesson content yet"}
                   </div>
                 ) : (
                   <div className="space-y-3">
