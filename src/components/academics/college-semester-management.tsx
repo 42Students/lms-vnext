@@ -36,19 +36,12 @@ async function mutate(method: "POST" | "PATCH" | "DELETE", url: string, body: un
   return result;
 }
 
-function inputNumber(value: string): number | null {
-  if (value.trim() === "") return null;
-  const number = Number(value);
-  return Number.isFinite(number) ? number : NaN;
-}
-
 export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOption[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [programId, setProgramId] = useState(programs[0]?.id ?? "");
   const [termNumber, setTermNumber] = useState("1");
   const [name, setName] = useState("");
-  const [totalCredits, setTotalCredits] = useState("");
   const [notice, setNotice] = useState("");
 
   function submit(event: FormEvent<HTMLFormElement>) {
@@ -56,7 +49,7 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
     setNotice("");
     const parsed = createCollegeSemesterSchema.safeParse({
       programId, termNumber: Number(termNumber), name,
-      totalCredits: inputNumber(totalCredits),
+      totalCredits: null,
     });
     if (!parsed.success) {
       setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
@@ -66,7 +59,6 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       try {
         await mutate("POST", "/api/academics/semesters", parsed.data);
         setName("");
-        setTotalCredits("");
         setNotice(SEMESTER_COPY.createdMessage(parsed.data.name));
         router.refresh();
       } catch (error) {
@@ -102,12 +94,9 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
             <input required maxLength={255} value={name} onChange={e => setName(e.target.value)} placeholder={SEMESTER_COPY.namePlaceholder}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
-          <label className="grid gap-1 text-sm font-medium text-body">
-            Total credits (optional)
-            <input type="number" min={0} max={1000} step={1} value={totalCredits}
-              onChange={e => setTotalCredits(e.target.value)}
-              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
-          </label>
+          <p className="self-center text-xs text-body">
+            Total credits are calculated from courses mapped to this semester.
+          </p>
           <div className="flex items-end">
             <button type="submit" disabled={pending}
               className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
@@ -127,7 +116,6 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [name, setName] = useState(row.name);
-  const [credits, setCredits] = useState(row.totalCredits === null ? "" : String(row.totalCredits));
   const [isActive, setIsActive] = useState(row.isActive);
   const [notice, setNotice] = useState("");
   const url = "/api/academics/semesters/" + encodeURIComponent(row.id);
@@ -136,7 +124,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     event.preventDefault();
     setNotice("");
     const parsed = updateCollegeSemesterSchema.safeParse({
-      name, totalCredits: inputNumber(credits), isActive,
+      name, totalCredits: null, isActive,
       expectedUpdatedAt:row.updatedAt.toISOString(),confirm:true,
     });
     if (!parsed.success) {
@@ -193,12 +181,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
             <input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
               className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground" />
           </label>
-          <label className="grid gap-1 text-xs font-semibold text-body">
-            Total credits
-            <input type="number" min={0} max={1000} step={1} value={credits}
-              onChange={e => setCredits(e.target.value)}
-              className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground" />
-          </label>
+          <p className="text-xs text-body">Credits come from mapped courses and cannot be edited here.</p>
           <label className="flex items-center gap-2 text-xs text-body">
             {SEMESTER_COPY.statusLabel}
             <input type="checkbox" role="switch" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
