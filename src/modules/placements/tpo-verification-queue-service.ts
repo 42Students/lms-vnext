@@ -1,8 +1,8 @@
 import "server-only";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, users, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
+import { collegeMemberships, membershipRoles, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
 import { profileVerifications, profileVerificationSettings, profileVerificationTpoGrants } from "@/db/schema/profile-verification";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
@@ -45,6 +45,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
  }).from(profileVerifications)
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,profileVerifications.learnerMembershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
@@ -52,6 +53,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
    ...(query?[
     inArray(profileVerifications.status,tpoVerificationStatuses(query)),
     ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
+    ...(query.search?[or(ilike(users.displayName,"%"+query.search+"%"),ilike(learnerProfiles.rollNumber,"%"+query.search+"%"))]:[]),
    ]:[])))
   .orderBy(desc(profileVerifications.submittedAt))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
