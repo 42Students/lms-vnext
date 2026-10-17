@@ -175,3 +175,10 @@ This is a **truthful disposition**, not a claim of 25 completed builds. Earlier 
 | TPO-inbox-team-34 | OPEN | Away interval and warnings missing |
 
 Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64, -65, -67, -68; partial improvements -32, -37, -42, -49; TPO-inbox-team-52 Delete confirmation and TPO-inbox-team-R04 paged listing reviewed but complete legacy acceptance still requires check.
+
+## Chat-2 unit-failures-r1 repair (round 5)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-R05 | DONE (source; tests unrun) | `tests/unit/tpo-inbox-team-round2.test.ts` now asserts per-member `read_through`, excluding own authored messages, and **followed and unmuted** unread count rather than the obsolete unqualified expression. `src/modules/placements/tpo-team-internal-read-service.ts` provides the actual behavior. |
+| TPO-inbox-team-07 | PARTIAL — OPEN | `tests/unit/tpo-drive-tabs.test.ts` now asserts the actual seventh primary **Discussion** route; the Discussion feature remains scoped to the full conversation audit. |
