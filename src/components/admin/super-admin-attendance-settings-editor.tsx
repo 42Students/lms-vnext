@@ -61,3 +61,4 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <p className="text-sm text-body">Late marking: {hours} hours · Minimum attendance: {threshold}%</p>
   </ConfirmDialog>
  </section>;
+}

@@ -20,7 +20,7 @@ steps:
   - id: lint
     name: node:22
     entrypoint: bash
-    args: ["-c", "npx eslint . -f compact 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-LINT-PASS || (echo CI-LINT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
+    args: ["-c", "npx eslint . 2>&1 | tail -150; test $${PIPESTATUS[0]} -eq 0 && echo CI-LINT-PASS || (echo CI-LINT-FAIL; [ \"$_KEEP_GOING\" = 1 ])"]
   - id: unit
     name: node:22
     entrypoint: bash

@@ -56,7 +56,7 @@ export default async function TpoReportsPage({
   const groups = [
     {
       heading: "Overview and performance",
-      description: "Start with the college-wide picture, then compare branches, companies and compensation."
+      description: "Start with the college-wide picture, then compare branches, companies and compensation.",
       cards: [
         {
           title: "Placement summary",
