@@ -1,0 +1,24 @@
+# Mentor Projects & Meetings — chat-7 verification
+
+> Source-level evidence with tests authored but NOT run. Full runtime approval and DB semantics require orchestrator checks.
+
+| ID | Status | Evidence (file + gap-named test) |
+|---|---|---|
+| MEN-projects-meetings-03 | DONE | `src/components/projects/project-list.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-03 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-04 | DONE | `src/components/projects/project-list.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-04 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-12 | DONE | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-12 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-26 | DONE | `src/components/projects/mentor-meeting-history.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-26 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-32 | DONE | `src/components/projects/mentor-release-editor.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-32 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-34 | DONE | `src/components/projects/mentor-sprint-write.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-34 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-36 | DONE | `src/components/projects/mentor-product-backlog.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-36 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-39 | DONE | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-39 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-40 | DONE | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-40 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-42 | DONE | `src/components/projects/mentor-board-task-detail-dialog.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-42 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-43 | DONE | `src/components/projects/project-task-comments.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-43 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-46 | DONE | `src/components/projects/mentor-task-delete-control.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-46 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-47 | DONE | `src/components/projects/mentor-task-status-transition.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-47 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-50 | DONE | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-50 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-51 | DONE | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-51 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+| MEN-projects-meetings-52 | DONE | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-52 preserves the reviewed mentor surface`. Source contract authored, not executed. |
+
+Remaining queue entries are OPEN until the behavior described in the legacy audit is verified end-to-end; no source-only proof is claimed for unlisted gaps.
