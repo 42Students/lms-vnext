@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -15,6 +15,7 @@ import {
 import { type RequestContext } from "@/modules/identity/context";
 import { isDebarmentActive } from "./batch-registration-policy";
 import { requirePlacementManageScope } from "./scope";
+import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 
 const uuid = z.string().uuid();
 const dateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
@@ -46,7 +47,8 @@ export class PlacementDebarmentError extends Error {
     | "DB08_DEBARMENT_NO_APPLICATION"
     | "DB08_DEBARMENT_JOB_COLLEGE_MISMATCH"
     | "DB08_DEBARMENT_INACTIVE"
-    | "DB08_DEBARMENT_INVALID_DURATION") {
+    | "DB08_DEBARMENT_INVALID_DURATION"
+    | "DB08_DEBARMENT_ALREADY_ACTIVE") {
     super(code);
     this.name = "PlacementDebarmentError";
   }
@@ -123,6 +125,15 @@ export async function createPlacementDebarment(
   return getDb().transaction(async tx => {
     await lockCollege(tx, input.collegeId);
     await requireLearner(tx, input.collegeId, input.membershipId);
+    const existing=await tx.select({
+      liftedAt:placementDebarments.liftedAt,untilDate:placementDebarments.untilDate,
+      untilDrives:placementDebarments.untilDrives,drivesCounted:placementDebarments.drivesCounted,
+    }).from(placementDebarments).where(and(
+      eq(placementDebarments.collegeId,input.collegeId),
+      eq(placementDebarments.membershipId,input.membershipId),
+    )).for("update");
+    if(existing.some(value=>isDebarmentActive(value,collegeLocalDate())))
+      throw new PlacementDebarmentError("DB08_DEBARMENT_ALREADY_ACTIVE");
     const [row] = await tx.insert(placementDebarments).values({
       collegeId: input.collegeId,
       membershipId: input.membershipId,
@@ -231,4 +242,26 @@ export async function countDebarredPlacementDrive(
       reason: inserted ? "COUNTED" as const : "ALREADY_COUNTED" as const,
     };
   });
+}
+
+/** Tenant-authorized TPO-only history for the learner's timed/drive-based bans. */
+export async function listTpoMemberDebarments(context:RequestContext,rawMembershipId:unknown){
+ const collegeId=await requireTpoBatchActor(context);
+ const membershipId=uuid.parse(rawMembershipId);
+ const records=await getDb().select({
+  id:placementDebarments.id,reason:placementDebarments.reason,
+  untilDate:placementDebarments.untilDate,untilDrives:placementDebarments.untilDrives,
+  drivesCounted:placementDebarments.drivesCounted,
+  createdAt:placementDebarments.createdAt,liftedAt:placementDebarments.liftedAt,
+  liftedReason:placementDebarments.liftedReason,
+ }).from(placementDebarments).where(and(
+  eq(placementDebarments.collegeId,collegeId),
+  eq(placementDebarments.membershipId,membershipId),
+ )).orderBy(desc(placementDebarments.createdAt)).limit(500);
+ return records.map(row=>({
+  ...row,
+  createdAt:row.createdAt.toISOString(),
+  liftedAt:row.liftedAt?.toISOString()??null,
+  active:isDebarmentActive(row,collegeLocalDate()),
+ }));
 }

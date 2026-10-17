@@ -1,8 +1,9 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useEffect,useRef,useState} from "react";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
-import {VERIFICATION_SEND_BACK_REASONS} from "@/modules/verification/review-reasons";
+import {VERIFICATION_SEND_BACK_REASONS,tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
 import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
@@ -27,7 +28,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [retryKey,setRetryKey]=useState(0);
  const [saving,setSaving]=useState(false);
  const [pendingAction,setPendingAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
- const [reason,setReason]=useState<string>(VERIFICATION_SEND_BACK_REASONS[0]);
+ const isTpo=apiBase==="/api/tpo/verification";
+ const reasonChoices:readonly string[]=isTpo?tpoVerificationSectionReasons(row.section):VERIFICATION_SEND_BACK_REASONS;
+ const [reason,setReason]=useState<string>(reasonChoices[0]??"");
  const [additional,setAdditional]=useState("");
  const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
  useEffect(()=>{
@@ -55,10 +58,8 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  },[onClose,saving]);
  useEffect(()=>{
   let active=true;
-  fetch(url,{cache:"no-store"}).then(async response=>{
-   if(!response.ok)throw Error(response.status===404?"Review is no longer available":"Unable to load review");
-   return response.json() as Promise<Detail>;
-  }).then(data=>{if(active)setDetail(data);}).catch(e=>{if(active)setError(e instanceof Error?e.message:"Unable to load review");})
+  apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
+   .catch(e=>{if(active)setError(e instanceof Error?e.message:"Could not load review. Please try again.");})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
  },[url,retryKey]);
@@ -68,27 +69,24 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  }
  async function decide(action:"VERIFY"|"SEND_BACK"){
   if(!detail||saving||pendingAction!==action)return;
+  if(action==="SEND_BACK"&&[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3){
+   setError("Write what needs to change before sending this back.");return;
+  }
   setSaving(true);setError("");
   try{
-   const response=await fetch(`${apiBase}/review`,{
+   await apiFetch(`${apiBase}/review`,{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({... (collegeId?{collegeId}:{}),learnerMembershipId:row.learnerMembershipId,section:row.section,
       expectedVersion:detail.review.version,action,...(action==="SEND_BACK"?
       {reason:[reason,additional.trim()].filter(Boolean).join(": ")}:{})}),
    });
-   if(!response.ok){
-    const payload=await response.json().catch(()=>({error:"UNAVAILABLE"})) as {error?:string};
-    if(payload.error==="STALE_VERSION"){
-     setDetail(null);
-     setPendingAction(null);
-     throw Error("The request changed since it was opened. Reload the current details before deciding again.");
-    }
-    throw Error(apiBase==="/api/tpo/verification"
-     ?(action==="VERIFY"?"Could not verify":"Could not send it back")
-     :(payload.error??"Decision failed"));
-   }
    setPendingAction(null);onSaved(action);
-  }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
+  }catch(e){
+   if(e instanceof FriendlyFetchError&&e.status===409){
+     setDetail(null);setPendingAction(null);
+     setError("This changed while you were working. Refresh the details and re-apply your decision.");
+   }else setError(e instanceof Error?e.message:"Could not save the decision. Please try again.");
+  }
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
@@ -182,18 +180,19 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      <section className="space-y-2"><h3 className="font-semibold">Send back for correction</h3>
       <label className="block text-sm">Reason
        <select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
-        {VERIFICATION_SEND_BACK_REASONS.map(item=><option key={item} value={item}>{item}</option>)}
+        {reasonChoices.map(item=><option key={item} value={item}>{item}</option>)}
+        {isTpo?<option value="">Or write what needs to change</option>:null}
        </select></label>
-      <label className="block text-sm">Additional details
+      <label className="block text-sm">{isTpo?"Or write what needs to change":"Additional details"}
        <textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
       <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("VERIFY")} className="rounded-md border px-4 py-2 disabled:opacity-50">Verify</button>
-      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
+      <button type="button" disabled={!canEditVerificationDecision(saving,pendingAction)||[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3} onClick={()=>setPendingAction("SEND_BACK")} className="rounded-md border px-4 py-2 disabled:opacity-50">Send back</button>
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
-      <h3 className="font-semibold">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
-      <p className="break-words text-sm">{verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
+      <h3 className="font-semibold">{isTpo&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"education":"identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
+      <p className="break-words text-sm">{isTpo&&pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
        <button type="button" disabled={saving} onClick={()=>void decide(pendingAction)} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
        <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>

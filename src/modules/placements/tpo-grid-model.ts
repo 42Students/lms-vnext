@@ -13,7 +13,10 @@ export type TpoGridColumn<Row> = {
 };
 export function chosenTpoGridColumns<Row>(columns: readonly TpoGridColumn<Row>[], selected: readonly string[]) {
   const chosen = new Set(selected);
-  return columns.filter((column) => !column.exportOnly && (chosen.size === 0 || chosen.has(column.key)));
+  const visible=columns.filter(column=>!column.exportOnly&&(chosen.size===0||chosen.has(column.key)));
+  if(chosen.size===0)return visible;
+  const order=new Map(selected.map((key,index)=>[key,index]));
+  return visible.sort((left,right)=>(order.get(left.key)??999)-(order.get(right.key)??999));
 }
 export function tpoGridExportColumns<Row>(columns: readonly TpoGridColumn<Row>[]) {
   return columns;

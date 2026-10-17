@@ -241,6 +241,7 @@ export async function getTpoStudentsIntelligence(
       enrollmentStatus: learnerProgramEnrollments.status,
       cohortId: cohorts.id,
       cohortName: cohorts.name,
+      batchInvitedAt:placementBatchLifecycles.invitedAt,
       programId: programs.id,
       programName: programs.name,
       branchId: departments.id,
@@ -830,6 +831,7 @@ export async function getTpoStudentsIntelligence(
       cohortName: learner.cohortName,
       classIds:sectionIds,
       fromFinishedBatch:learner.enrollmentStatus==="COMPLETED",
+      registrationOpen:learner.batchInvitedAt!==null,
       registrationChoice:
         registrationChoiceByLearner.get(
           `${learner.membershipId}:${learner.cohortId}`,
@@ -881,6 +883,7 @@ export async function getTpoStudentsIntelligence(
     collegeId: college.id,
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(scopedRows),
+    uninvitedCount:scopedRows.filter(row=>row.registrationOpen===false&&!row.registeredForPlacements&&!row.fromFinishedBatch).length,
     branches: summarizeTpoStudentBranches(workingRows),
     classChoices:[...new Map(activeSections.filter(section=>
       cohortByEnrollment.get(section.enrollmentId)===section.cohortId)
