@@ -246,7 +246,8 @@ export function TpoBulkRoundResultRecorder({
             type="button"
             onClick={() => void stageSelected()}
             disabled={busy || selected.length === 0 ||
-              (outcome !== "PASS" && !message.trim()) ||
+              ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
+              pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
             className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
           >
