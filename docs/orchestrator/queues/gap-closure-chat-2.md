@@ -240,4 +240,6 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 
 
 ## Needs shell (chat-9 only)
+- TPO-inbox-team-28 / TPO-inbox-team-63: chat-9 owns `src/components/shell`; add scoped Team, Messages and Announcements unread counters to TPO navigation (chat-2 cannot edit shell).
+
 
