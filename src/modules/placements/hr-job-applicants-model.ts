@@ -20,6 +20,7 @@ export const hrApplicantFilterSchema = z.strictObject({
 export type SharedApplicant = {
   id: string; name: string | null; role: string; status: string;
   screening: string; submittedAt: Date; email: string | null;
+  rollNumber?: string | null;
 };
 export function projectSharedApplicants(rows: readonly SharedApplicant[], stage: "ALL" | "SHORTLISTED" | "WITHDRAWN") {
   const counts = {
