@@ -16,8 +16,8 @@ export const COLLEGE_COURSE_TAB_COPY = {
 } as const;
 
 /** Students see a lesson only when both its learning path and the lesson are published. */
-export function collegeLessonVisibilityLabel(item: { pathStatus: string; status: string }) {
-  return item.pathStatus === "PUBLISHED" && item.status === "PUBLISHED"
+export function collegeLessonVisibilityLabel(item: { pathStatus: string; status: string; visibleToStudents: boolean }) {
+  return item.pathStatus === "PUBLISHED" && item.status === "ACTIVE" && item.visibleToStudents
     ? COLLEGE_COURSE_TAB_COPY.visible : COLLEGE_COURSE_TAB_COPY.hidden;
 }
 
