@@ -100,7 +100,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   <div className="grid gap-3 sm:grid-cols-2">
    {backlog.map(task=><article key={task.id} className="rounded-lg border border-border p-3">
     <p className="font-semibold">{task.title}</p>
-    <p className="mt-1 text-xs text-body">{task.priority} · {task.estimatePoints??0} points</p>
+    <p className="mt-1 text-xs text-body">
+      {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
+    </p>
     {task.carriedFromSprintId?<span className="mt-1 inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Carried over</span>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
      <select disabled={busy} defaultValue="" onChange={e=>{const id=e.target.value;if(id)void move(task,id);}}
