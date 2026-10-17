@@ -15,13 +15,13 @@ export function recruiterVisibleDriveFunnel(input:RecruiterVisibleFunnelInput){
   .flatMap(r=>r.participants)
   .filter(p=>p.result?.status==="APPLIED")
   .map(p=>p.applicationId));
- const assessments=input.rounds.some(r=>r.kind==="ASSESSMENT"||r.kind==="TEST");
+ const assessments=input.rounds.some(r=>["ASSESSMENT","TEST","VENDOR_TEST","GD"].includes(r.kind));
  const interviews=input.rounds.some(r=>r.kind==="INTERVIEW");
  const counts=[
   {label:"Shared applicants",count:Math.max(0,input.shared)},
   {label:"Shortlisted",count:Math.max(0,input.shortlisted)},
   {label:"Assessment",count:assessments?
-    new Set([...outcomeIds("ASSESSMENT"),...outcomeIds("TEST")]).size:null},
+    new Set(["ASSESSMENT","TEST","VENDOR_TEST","GD"].flatMap(kind=>[...outcomeIds(kind)])).size:null},
   {label:"Interview",count:interviews?outcomeIds("INTERVIEW").size:null},
   {label:"Offered",count:Math.max(0,input.offered)},
   {label:"Hired",count:Math.max(0,input.hired)},
@@ -32,6 +32,7 @@ export function recruiterVisibleDriveFunnel(input:RecruiterVisibleFunnelInput){
   const percent=row.count===null||denominator<=0?null:
    Math.min(100,Math.round(100*row.count/denominator));
   if(row.count!==null)previous=row.count;
-  return {...row,ofPrevious:percent};
+  return {...row,ofPrevious:percent,ofApplied:row.count===null||input.shared<=0?null:
+    Math.max(0,Math.min(100,Math.round(100*row.count/input.shared)))};
  });
 }
