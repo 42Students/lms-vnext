@@ -670,3 +670,15 @@ Target: the vNext **dev** database `lms_vnext` (Cloud SQL `forty-two-prod-1`, na
 9. **Stop conditions.** Preflight failure (missing migration or stage), `BondAmountPresentError`, `UnsupportedLegacyRowsError`, a failed validation check, a derived-number mismatch outside the documented ones, or any guard error: stop, do not retry with other flags, report.
 10. **Rollback.** `load.ts --snapshot=<dir> --allow-remote-dev --rollback=<batch id>` in reverse order: the 2b-ii batch, then the 2b-i batch, then the 2a batch (organization and college rows are kept). Roll back the batch that last touched the rows (rows updated by a later batch moved to it). Each rollback is one transaction. If the registration trigger statements are refused for lack of privileges, restore from the backup of step 4 instead.
 11. **After the load.** Delete the snapshot and the loader pod, remove the operator IP from the authorized networks, keep the reports (counts, reason codes and legacy ids only) outside the repository, and update this document with the dev batch ids, counts and timings. Browser acceptance of the loaded college is a separate orchestrator step.
+
+## 11. Dev load executed (2026-10-17)
+
+Owner delegated the data work on 2026-10-17 and the load ran against the vNext **dev** database (`lms_vnext`, namespace `lms-dev-2026`; production untouched).
+
+- Code: image tag `584000c7` (migrator, nsrit-loader) and web `5e656f0c`; migrations 0000-0132 applied (133 in the journal) by the migrate Job after an on-demand Cloud SQL backup (id `1792220812044`, taken 2026-10-17 07:06 UTC).
+- Snapshot: `snapshot2bii-b` (sha256 `021ee160caf96e4f...`), delivered by `kubectl cp` into the loader pod, hashes verified by the loader before connecting.
+- Batches: 2a `f88de14d-c8f6-45a4-a321-bc6518d89815`, 2b `a700c2f6-0972-49ec-986d-04eec63e6728`, 2bii `22bab432-08fe-4698-9694-dba8ee4ccf12`. Re-applying every stage left the row counts unchanged (idempotent).
+- Result: college `nsrit42`, 152 memberships (147 learners), 10 drives, 30 applications, 2 projects, 310 notifications. Only the 2 documented project-progress mismatches remain.
+- Verifier on dev: 37 checks OK, 9 empty as expected, 0 errors, 0 mismatches.
+- Sign-in: imported people keep real contacts and cannot receive real codes in dev (allowlist only). `scripts/migrate/nsrit/qa-personas.ts` adds the college address `nsrit.development.42lms.com`, fictitious admin / TPO / recruiter accounts, and swaps the contacts of five representative real people for fictitious test contacts (originals kept in a private mapping outside the repo; `--restore` puts them back and removes the QA users; run it before cutover). `scripts/verify/nsrit-qa-login.mjs` signs every persona in against the live host (8 of 8 pass).
+- Rollback: `load.ts --rollback=<batch id>` in reverse order (2bii, 2b, 2a), or restore the backup above.
