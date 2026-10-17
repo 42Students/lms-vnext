@@ -2,7 +2,7 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {describe,it,expect} from "vitest";
 import {defaultTpoDriveView} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
 import {driveEligibilityPresetValue} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {FriendlyFetchError} from "@/lib/api-fetch";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
@@ -229,6 +229,17 @@ describe("chat-3 Drives round 4",()=>{
   expect(boundary).toContain("Some drive setup data could not be loaded");
   expect(boundary).toContain("<Button onClick={reset}>Retry</Button>");
   expect(loading).toContain('aria-busy="true"');
+ });
+
+ it("TPO-drives-45 choosing end-of-day in IST stores 23:59 and preserves drafts",()=>{
+  expect(driveDeadlineIstEndOfDay("2099-11-05T00:00")).toBe("2099-11-05T23:59");
+  expect(driveDeadlineIstToIso(driveDeadlineIstEndOfDay("2099-11-05T08:15"))).toBe("2099-11-05T18:29:00.000Z");
+  expect(()=>driveDeadlineIstEndOfDay("2099-02-29T10:00")).toThrow("Enter a valid application deadline in IST.");
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("Use 11:59 PM IST");
+  expect(form).toContain("field.value=driveDeadlineIstEndOfDay(field.value)");
+  expect(form).toContain("saveBrowserDraft(form)");
+  expect(form).toContain("markDirty()");
  });
 
 });
