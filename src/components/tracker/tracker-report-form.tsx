@@ -180,7 +180,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
       <label className={label}>Evidence link
         <input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          Optional — add a shareable HTTPS evidence link. Private screenshots must stay in access-controlled storage; direct clipboard paste and unscanned attachments are not accepted.
+          Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
         </span>
       </label>
       {canSearchSimilar ? <>
