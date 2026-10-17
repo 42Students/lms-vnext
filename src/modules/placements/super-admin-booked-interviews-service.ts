@@ -43,7 +43,7 @@ export async function listSuperAdminBookedInterviews(
   title:row.roundTitle,companyName:row.companyName,status:"SCHEDULED",
   kind:row.roundKind,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
   venue:row.room.startsWith("https://")?null:row.room,
-  mode:row.room.startsWith("https://")?"Virtual":"On campus",
+  mode:row.room.startsWith("https://")?("Virtual" as const):("On campus" as const),
   candidateMembershipId:row.candidateMembershipId,candidateName:row.candidateName,
   departmentId:row.departmentId,departmentName:row.departmentName,
   interviewer:row.panel,
