@@ -10,4 +10,5 @@ it("TPO-students-36 creates genuine ZIP-based XLSX with sorted scoped columns, m
  expect(route).toContain("idsList.some");
  expect(route).toContain('filename="tpo-students.xlsx"');
  expect(src("src/modules/placements/tpo-students-xlsx.ts")).toContain("How this list was made: ");
+ expect(src("src/components/tpo/tpo-students-spreadsheet.tsx")).toContain("Export selected XLSX");
 });
