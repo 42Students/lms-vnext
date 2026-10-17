@@ -44,11 +44,11 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    .where(and(eq(projectInstances.id,projectId),eq(projectInstances.collegeId,scope.collegeId)))
    .for("update").limit(1);
   if(project?.status!=="ACTIVE")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  const [sprint]=await tx.select().from(projectSprints)
+  const [sprint]=input.sprintId?await tx.select().from(projectSprints)
    .where(and(eq(projectSprints.id,input.sprintId),eq(projectSprints.projectId,projectId)))
-   .for("update").limit(1);
-  if(!sprint||sprint.status!=="ACTIVE"||
-   sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt))
+   .for("update").limit(1):[null];
+  if(input.sprintId&&(!sprint||sprint.status!=="ACTIVE"||
+   sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,projectId))).limit(1);
