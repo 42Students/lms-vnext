@@ -30,6 +30,7 @@ export function CollegeAssignmentReview({
   ))return;
   setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setProgress("Loading graded submissions…");
   let published=0,failed=0;
+  const failedRows=new Set<string>();
   try{
    const base="/api/courses/college/assignments/"+encodeURIComponent(selectedDeliveryId)+
     "/submissions?assignmentId="+encodeURIComponent(assignmentId);
@@ -43,13 +44,15 @@ export function CollegeAssignmentReview({
     for(const item of result.items){
      if(item.gradingStatus!=="GRADED"||item.gradePublished||
        (retryOnly&&!retryOnly.includes(item.id)))continue;
-     const saved=await fetch(
-      "/api/courses/assignment-submissions/"+encodeURIComponent(item.id)+"/publish",{
-       method:"POST",headers:{"Content-Type":"application/json"},
-       body:JSON.stringify({expectedVersion:item.version}),
-      });
-     if(saved.ok)published++;
-     else failed++;
+     try{
+      const saved=await fetch(
+       "/api/courses/assignment-submissions/"+encodeURIComponent(item.id)+"/publish",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({expectedVersion:item.version}),
+       });
+      if(saved.ok)published++;
+      else{failed++;failedRows.add(item.id);}
+     }catch{failed++;failedRows.add(item.id);}
      setProgress(published+" published, "+failed+" failed");
     }
    }
