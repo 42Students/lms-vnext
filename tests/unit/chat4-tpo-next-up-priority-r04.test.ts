@@ -13,7 +13,8 @@ describe("TPO-home-R04 urgent decision ordering",()=>{
  });
  it("TPO-home-R04 uses persisted queue urgency rather than fixed all-team priority four",()=>{
   const page=readFileSync(join(process.cwd(),"src/app/(authenticated)/tpo/home/page.tsx"),"utf8");
-  expect(page).toContain('{type:"TEAM_ASKS",priority:1');
+  expect(page).toContain('type:"TEAM_ASKS",priority:1');
+  expect(page).toContain('teamAsks+" team asks for you"');
   expect(page).toContain('{type:"REQUESTS",priority:1');
  });
 });

@@ -139,6 +139,14 @@ export const ACTIVITY_EVENT_TYPES = {
     "courses.discussion.pin_changed",
   COURSES_DISCUSSION_DELETED:
     "courses.discussion.deleted",
+  PROJECTS_TEMPLATE_CREATED: "projects.template.created",
+  PROJECTS_TEMPLATE_REVISED: "projects.template.revised",
+  PROJECTS_TEMPLATE_PUBLISHED: "projects.template.published",
+  PROJECTS_TEMPLATE_UNPUBLISHED: "projects.template.unpublished",
+  PROJECTS_TEMPLATE_DUPLICATED: "projects.template.duplicated",
+  PROJECTS_TEMPLATE_ARCHIVED: "projects.template.archived",
+  PROJECTS_TEMPLATE_ASSIGNED: "projects.template.assigned",
+  PROJECTS_TEMPLATE_UNASSIGNED: "projects.template.unassigned",
   PROJECTS_TEMPLATE_METADATA_UPDATED: "projects.template.metadata_updated",
   PROJECTS_PROJECT_CREATED:
     "projects.project.created",
@@ -208,7 +216,6 @@ export const ACTIVITY_EVENT_TYPES = {
   PLACEMENTS_JOB_REOPENED: "placements.job.reopened",
   PLACEMENTS_JOB_CLOSED:
     "placements.job.closed",
-  PLACEMENTS_JOB_CANCELLED: "placements.job.cancelled",
   PLACEMENTS_APPLICATION_SUBMITTED:
     "placements.application.submitted",
   PLACEMENTS_APPLICATION_WITHDRAWN:
