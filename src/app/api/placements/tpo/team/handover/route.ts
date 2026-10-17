@@ -3,7 +3,8 @@ import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {AuthorizationError} from "@/modules/permissions/policy";
-import {handoverTpoTeamWork,tpoTeamHandoverSchema} from "@/modules/placements/tpo-team-handover-service";
+import {handoverTpoTeamWork} from "@/modules/placements/tpo-team-handover-service";
+import {tpoTeamHandoverSchema} from "@/modules/placements/tpo-team-handover-model";
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))
