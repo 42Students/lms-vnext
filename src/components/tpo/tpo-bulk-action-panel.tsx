@@ -8,6 +8,7 @@ import {useRouter} from "next/navigation";
 import {TpoBulkActionPreview} from "@/components/tpo/tpo-bulk-action-preview";
 import {TpoSelectedReviewQueue} from "@/components/tpo/tpo-selected-review-queue";
 import {tpoBulkActionLabel} from "@/modules/placements/tpo-bulk-workflow-model";
+import {TPO_INELIGIBLE_REASONS} from "@/modules/placements/tpo-ineligible-reasons";
 import {suggestTpoBulkAction,type TpoBulkActionCount} from "@/modules/placements/tpo-bulk-action-suggestion-model";
 import {tpoReviewOneByOneHref} from "@/modules/placements/tpo-bulk-follow-up-model";
 import type {BulkOutcome,BulkPreviewRow} from "@/modules/placements/tpo-bulk-action-model";
@@ -67,7 +68,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   setBusy(true);invalidate();
   try{
    const result=await post("preview",next) as PreviewResponse;
-   if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Invalid preview");
+   if(!Array.isArray(result.rows)||!result.previewToken)throw new Error("Could not read the preview. Please try again.");
    setAction(choice);setPreview(result);setPlan(next);
   }catch(cause){setError(cause instanceof Error?cause.message:"Preview unavailable. Refresh the roster and try again.");}
   finally{setBusy(false);}
@@ -116,7 +117,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      ...plan,selections:preview.rows.map(row=>({id:row.id,version:row.version})),
      previewToken:preview.previewToken,confirmed:true,acknowledged,
    }) as {outcomes:BulkOutcome[]};
-   if(!Array.isArray(response.outcomes))throw new Error("Missing outcomes");
+   if(!Array.isArray(response.outcomes))throw new Error("Could not confirm the outcomes. Please refresh and try again.");
    setOutcomes(response.outcomes);
    setSelected(current=>current.filter(id=>!plan.ids.includes(id)));
    router.refresh();
@@ -206,6 +207,13 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     </select>
    </label>
    {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
+    {target==="STUDENTS"?<div className="mb-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
+      {TPO_INELIGIBLE_REASONS.map(preset=><button type="button" key={preset}
+       disabled={busy} onClick={()=>{setNote(preset);invalidate();}}
+       className="min-h-10 rounded border border-border px-2 text-xs">{preset}</button>)}
+      <button type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
+       className="min-h-10 rounded border border-border px-2 text-xs">Other</button>
+    </div>:null}
     <textarea value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       className="mt-1 w-full rounded border border-border bg-background p-3"/>
@@ -305,7 +313,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      <button type="button" disabled={busy} onClick={()=>{
        const lines=outcomes.filter(item=>item.status!=="updated").map(item=>
         (labelsById.get(item.id)??item.id)+" — "+(item.reason??item.status));
-       void navigator.clipboard.writeText(lines.join("\\n")).then(
+       void navigator.clipboard.writeText(lines.join("\n")).then(
         ()=>setError("Failed-row details copied."),
         ()=>setError("Could not copy failed-row details."),
        );
