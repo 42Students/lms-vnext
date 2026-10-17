@@ -98,11 +98,13 @@ export function RecruiterInterviewSlotActions({action,slot}:{
  action:string;slot:{id:string;version:number;status:string;bookedCount:number;capacity:number};
 }){
  const router=useRouter();
+ const actionLock=useRef(false);
  const [busy,setBusy]=useState<string|null>(null);
  const [error,setError]=useState<string|null>(null);
  async function act(kind:"OFFER"|"BOOK"|"CANCEL"){
-  if(busy)return;
+  if(busy||actionLock.current)return;
   if(kind==="CANCEL"&&!window.confirm("Cancel this proposed interview time block?"))return;
+  actionLock.current=true;
   setBusy(kind);setError(null);
   try{
    const form=new FormData();
@@ -122,7 +124,7 @@ export function RecruiterInterviewSlotActions({action,slot}:{
    router.refresh();
   }catch{
    setError("Connection interrupted. Refresh this time block and retry.");
-  }finally{setBusy(null);}
+  }finally{actionLock.current=false;setBusy(null);}
  }
  return <div className="space-y-2">
   <div className="flex flex-wrap gap-2">
