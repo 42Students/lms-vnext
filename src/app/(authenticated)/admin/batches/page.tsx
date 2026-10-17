@@ -83,7 +83,7 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             </tr>)}</tbody>
           </table></div>}
         <nav aria-label="Batch pages" className="flex items-center justify-between gap-3 text-sm">
-          <span>{data.total} batches · Page {data.query.page} of {data.totalPages}</span>
+          <span role="status" aria-live="polite">{data.items.length} of {data.total} results · Page {data.query.page} of {data.totalPages}</span>
           <div className="flex gap-3">
             {data.query.page>1?<Link href={pageUrl({...data.query,page:data.query.page-1})}>Previous</Link>:null}
             {data.query.page<data.totalPages?<Link href={pageUrl({...data.query,page:data.query.page+1})}>Next</Link>:null}
