@@ -299,6 +299,7 @@ export async function listCollegeAssessmentAggregate(
           eq(membershipRoles.membershipId,collegeMemberships.id),
           eq(membershipRoles.role,"LEARNER"),
         ))
+        .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
         .where(inArray(assignmentSubmissions.assignmentId,ids))
         .groupBy(assignmentSubmissions.assignmentId) :
       await db.select({
