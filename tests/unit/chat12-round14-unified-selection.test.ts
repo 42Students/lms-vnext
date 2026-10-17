@@ -18,8 +18,9 @@ describe("chat-12 unified page selection",()=>{
   expect(provider).toContain('window.sessionStorage.setItem(key');
   expect(provider).toContain("Selected students hidden by these filters were unticked.");
   const add=src("src/components/tpo/tpo-students-bulk-add.tsx");
-  expect(add).toContain("pageSelected=selected.filter(id=>names.has(id))");
-  expect(add).toContain("pageSelected.length>100");
+  expect(add).toContain("pageSelected=selected.filter(id=>membersById.has(id))");
+  expect(add).toContain("pageSelected.length>200");
+  expect(add).toContain("reviewedSelection!==selectionFingerprint");
  });
  it("TPO-students-48 announces visible selection and filter count without including hidden students",()=>{
   const grid=src("src/components/tpo/tpo-students-spreadsheet.tsx");

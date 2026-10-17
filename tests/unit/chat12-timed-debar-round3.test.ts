@@ -20,6 +20,7 @@ describe("TPO timed debarments wired to DB08",()=>{
   expect(service).toContain('isDebarmentActive(value,collegeLocalDate())');
   expect(service).toContain('"DB08_DEBARMENT_ALREADY_ACTIVE"');
   expect(service).toContain("The DB trigger creates an immutable LIFTED action.");
+  expect(src("src/db/schema/placement-debarments.ts")).toContain("'CREATED','DRIVE_COUNTED','LIFTED'");
  });
  it("GR-04 / GR-35 guards network/HTML failure and requires confirm dialog before saving debarment",()=>{
   const ui=src("src/components/tpo/tpo-timed-debar-control.tsx");
