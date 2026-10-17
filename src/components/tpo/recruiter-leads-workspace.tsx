@@ -957,7 +957,7 @@ export function RecruiterLeadsWorkspace({
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
                       <div key={lead.id} className="rounded-md border border-border p-3 hover:bg-surface-secondary"
                         draggable={lead.manualStage==="NEW"&&!boardMoving}
-                        onDragStart={()=>{if(lead.manualStage==="NEW")setDraggedBoardId(lead.id);}}
+                        onDragStart={event=>{if(lead.manualStage==="NEW"){event.dataTransfer.setData("text/plain",lead.id);event.dataTransfer.effectAllowed="move";setDraggedBoardId(lead.id);}}}
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
