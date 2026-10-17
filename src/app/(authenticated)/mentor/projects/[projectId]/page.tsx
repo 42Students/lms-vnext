@@ -26,6 +26,11 @@ export default async function MentorProjectPage({
   const { projectId } = await params;
   const { tab } = await searchParams;
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
+  const breadcrumbTab: Record<string, string> = {
+    overview: "Overview", team: "People & Meetings", sprints: "Releases and Sprints",
+    board: "Board", performance: "Task Allocation", resources: "Resources",
+    activity: "Activity",
+  };
   const activeSection =
     selectedTab === "board" || selectedTab === "performance"
       ? "tasks"
@@ -55,7 +60,7 @@ export default async function MentorProjectPage({
 
   return (
     <div className="min-w-0 space-y-6">
-      <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:"Overview"}]} />
+      <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       <MentorProjectTabs
         projectId={projectId}
       />
