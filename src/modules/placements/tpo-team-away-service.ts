@@ -8,6 +8,7 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
+import {tpoEffectiveAwayUntil} from "./tpo-team-away-model";
 export const tpoTeamAwaySchema=z.strictObject({
  until:z.string().datetime({offset:true}).nullable(),
  expectedUntil:z.string().datetime({offset:true}).nullable(),
@@ -52,7 +53,7 @@ export async function setMyTpoTeamAway(context:RequestContext,raw:unknown){
     eq(placementTpoTeamAway.collegeId,college.id),
     eq(placementTpoTeamAway.membershipId,member.id),
    )).for("update").limit(1);
-  const actual=current?.awayUntil.toISOString()??null;
+  const actual=tpoEffectiveAwayUntil(current?.awayUntil??null,now);
   if(actual!==input.expectedUntil)throw new Error("TEAM_AWAY_STALE");
   if(until)await tx.insert(placementTpoTeamAway).values({
    collegeId:college.id,membershipId:member.id,awayUntil:until,updatedAt:now,

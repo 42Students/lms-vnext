@@ -250,7 +250,7 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Other OPEN items with source-level closure on branch are marked IN-BRANCH above. No source-only claim is upgraded to production verified.
 
 ## Chat-2 round 5 review — 27 remaining inbox-team OPEN entries
-- Read and assessed all 27 rows in the acceptance file above (25 requested plus two); 16 have a source-level partial improvement or verified core behavior and 11 still require larger workflows. OPEN statuses are intentionally retained for incomplete legacy parity.
+- Read and assessed all 27 rows in the acceptance file above (25 requested plus two); 19 have a source-level partial improvement or verified core behavior and 8 still require larger workflows. OPEN statuses are intentionally retained for incomplete legacy parity.
 - Authenticated thread correction, optimistic decisions, away-until, From 42 global unread, Team pagination and drive Discussion were pushed with gap-named unit tests, not executed. The orchestrator must register `docs/proposed-migrations/tpo-inbox-team-away-until.sql`.
 - TPO-settings-audit-01/55, T-S2-08, TPO-inbox-team-R05 and TPO-inbox-team-07 unit-failures-r1 regressions were addressed on branch. Verification is pending the orchestrator test run.
 - Next work: object Team conversations and asks, role policy (R02/38), workload assignment/handover, delivery producers and student-facing notice consequences. Do not move any partial item to DONE without full tests.

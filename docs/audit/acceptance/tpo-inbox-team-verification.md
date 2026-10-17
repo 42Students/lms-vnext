@@ -265,3 +265,5 @@ Status is deliberately **PARTIAL** or **OPEN**, not DONE, until the complete leg
 | TPO-inbox-team-R06 | OPEN | Historical college-wide bell feed for newly joined teammates missing |
 
 The existing queue blocker TPO-inbox-team-08 remains provider-credential dependent; no other technical gap is treated as a provider blocker. The named tests in `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` protect seven specific partial workflows without claiming end-to-end parity. Tests were authored, not executed by this lane.
+
+- Round 5 review tally: **19 PARTIAL / 8 OPEN** across the 27 reviewed queue rows. TPO-inbox-team-34 also treats expired away status as absent for optimistic replace, guarded by the new `tpoEffectiveAwayUntil` unit case.
