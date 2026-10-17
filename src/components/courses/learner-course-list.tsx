@@ -19,6 +19,7 @@ import { resolveLearnerCoursePeriod } from "@/modules/courses/learner-course-cur
 import { resolveLearnerCourseTypeFilter } from "@/modules/courses/learner-course-type-availability-model";
 import { learnerCourseMatchesSearch } from "@/modules/courses/learner-course-card-search-model";
 import { learnerCourseSemesterFilterReset } from "@/modules/courses/learner-course-semester-filter-model";
+import {learnerSemesterOptions,type LearnerProgramSemester} from "@/modules/courses/learner-program-semester-options-model";
 import { learnerCourseHasContinueAction } from "@/modules/courses/learner-course-continue-model";
 import { learnerCourseNextItemHref } from "@/modules/courses/learner-course-next-action-model";
 import { learnerCourseMatchesProgress, type LearnerCourseProgressFilter } from "@/modules/courses/learner-course-progress-filter-model";
@@ -74,10 +75,11 @@ export type LearnerCourseListRow = {
 
 
 export function LearnerCourseList({
-  rows,setupStatus=null,
+  rows,setupStatus=null,programSemesters=[],
 }: {
   rows: readonly LearnerCourseListRow[];
   setupStatus?:LearnerCourseSetupStatus|null;
+  programSemesters?:readonly LearnerProgramSemester[];
 }) {
   const periods = useMemo(() => {
     const map = new Map<string, {
@@ -92,11 +94,9 @@ export function LearnerCourseList({
         startDate: row.course.periodStartDate,
       });
     }
-    return [...map.values()].sort(
-      (left, right) =>
-        String(right.startDate).localeCompare(String(left.startDate)),
-    );
-  }, [rows]);
+    const delivered=[...map.values()].sort((left,right)=>String(right.startDate).localeCompare(String(left.startDate)));
+    return learnerSemesterOptions(delivered,programSemesters);
+  }, [rows,programSemesters]);
 
   const preferredPeriodId = learnerCoursePreferredPeriod(rows);
   const [periodId, setPeriodId] = useState(preferredPeriodId);
@@ -139,7 +139,7 @@ export function LearnerCourseList({
       ,sortMode);
   }, [periodRows, query, effectiveTypeFilter, continueOnly,sortMode,progressFilter,termState]);
 
-  if (rows.length === 0) {
+  if (rows.length === 0 && periods.length===0) {
     return (
       <EmptyState
         title="No courses found"
@@ -341,7 +341,7 @@ export function LearnerCourseList({
       {visibleRows.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-surface p-8 text-center">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            {learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
+            {periodRows.length===0&&selectedPeriod?("No courses found for "+selectedPeriod.name+"."):learnerCourseFilteredEmptyTitle({query,continueOnly,typeFilter:effectiveTypeFilter,termState,progressFilter,periodCount:periodRows.length})}
           </h2>
           <p className="mt-2 text-sm text-body">
             Change the semester, course type or search to see other courses.
