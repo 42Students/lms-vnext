@@ -136,7 +136,8 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
   if(result){
    await db.transaction(async tx=>{
     await tx.insert(placementTpoLeadActivities).values({
-     collegeId:college.id,leadId:row.leadId,type:"EMAIL",isSystem:true,
+     collegeId:college.id,leadId:row.leadId,type:"EMAIL",isSystem:false,
+     createdByUserId:context.user.id,
      note:"Campaign: "+draft.subject.slice(0,180),createdAt:new Date(),
     });
     const key=tpoCompanyKey(row.company);
