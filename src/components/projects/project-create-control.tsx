@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -48,6 +48,7 @@ export function CreateProjectControl({
   const [roster,setRoster]=useState<{membershipId:string;displayName:string;rollNumber:string}[]>([]);
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
+  const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -141,6 +142,8 @@ export function CreateProjectControl({
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (submitLock.current) return;
+    submitLock.current = true;
     setPending(true);
     setError(null);
 
@@ -177,6 +180,7 @@ export function CreateProjectControl({
           : "Could not create the Project.",
       );
     } finally {
+      submitLock.current = false;
       setPending(false);
     }
   }
