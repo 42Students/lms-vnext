@@ -29,6 +29,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementCompanyRelationships.companyId,context.recruiter?.companyId??""),
     eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1):[];
   const shareRoll=Boolean(share?.columns?.includes("roll"));
+  const shareEmail=Boolean(share?.columns?.includes("email"));
   const stageCondition=filters.stage === "ALL"
     ? where
     : and(where,eq(placementApplications.status,filters.stage === "SHORTLISTED" ? "SUBMITTED" : "WITHDRAWN"));
@@ -110,6 +111,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   };
   const projected = projectSharedApplicants(applications.map(row=>({...row,
     rollNumber:shareRoll?row.rollNumber:null,
+    email:shareEmail?row.email:null,
   })), filters.stage);
   const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
     : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
