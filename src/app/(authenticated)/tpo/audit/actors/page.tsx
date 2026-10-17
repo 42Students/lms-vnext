@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoActorAudit } from "@/modules/placements/tpo-actor-audit-service";
 import { tpoActorAuditQuerySchema } from "@/modules/placements/tpo-actor-audit-model";
+import {tpoAuditEntityHref} from "@/modules/placements/tpo-audit-entity-link-model";
 
 type SearchParams = {
   actorId?: string | string[];
@@ -130,7 +131,9 @@ export default async function TpoActorAuditPage({
               <td className="p-3 text-sm">{row.actorName?.trim()||"System / unknown"}</td>
               <td className="p-3">{row.eventType}</td>
               <td className="p-3">{row.entityType}</td>
-              <td className="p-3 font-mono text-xs">{row.entityId}</td>
+              <td className="p-3 font-mono text-xs">{tpoAuditEntityHref(row.entityType,row.entityId)?
+                <Link href={tpoAuditEntityHref(row.entityType,row.entityId)!} className="font-semibold text-primary-text underline">Open {row.entityType.replaceAll("_"," ")} →</Link>:
+                <span title="No safe direct page is registered for this entity type">{row.entityId}</span>}</td>
             </tr>)}</tbody>
           </table>
         </div>
