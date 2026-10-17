@@ -36,6 +36,7 @@ import {
   placementBatchRegistrations,
   placementJobRoleOptions,
   placementJobRounds,
+  placementRoundCandidateSlots,
   programs,
   sectionEnrollments,
   sections,
@@ -1165,17 +1166,20 @@ export async function withdrawPlacementApplication(
         .limit(1);
       if (!liveRole) throw new AuthorizationError("placements.read");
 
-      // A shortlisted application with scheduled rounds needs a placement
-      // cell withdrawal request, not a direct learner status update.
+      // LEARNER-placements-29 / R05: a booking is candidate-specific.
+      // A scheduled round elsewhere in the drive is not evidence this
+      // learner was booked. Never infer a booking from a screening label.
       const [liveScreening]=await tx.select({status:placementApplicationScreenings.status})
         .from(placementApplicationScreenings)
         .where(eq(placementApplicationScreenings.applicationId,applicationId))
         .limit(1);
-      const scheduled=liveScreening?.status==="SHORTLISTED"
-        ? await tx.select({id:placementJobRounds.id}).from(placementJobRounds)
-          .where(and(eq(placementJobRounds.jobId,row.job.id),
-            eq(placementJobRounds.status,"SCHEDULED"))).limit(1)
-        : [];
+      const scheduled=await tx.select({id:placementRoundCandidateSlots.id})
+        .from(placementRoundCandidateSlots)
+        .where(and(
+          eq(placementRoundCandidateSlots.jobId,row.job.id),
+          eq(placementRoundCandidateSlots.applicationId,applicationId),
+          eq(placementRoundCandidateSlots.status,"BOOKED"),
+        )).limit(1);
       if(learnerWithdrawalMode({
         applicationStatus:row.application.status,
         screeningStatus:liveScreening?.status??"UNDER_REVIEW",
