@@ -44,6 +44,14 @@ export default async function IndependentFindingsPage({searchParams}:{
       {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
     </Link>)}
   </nav>
+  <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
+   <p className="font-semibold">Critical open: {data.criticalOpen}</p>
+   {FINDING_STATUSES.map(status=><Link key={status}
+    href={independentFindingHref({...parsed,statuses:[status],page:1})}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+    {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
+   </Link>)}
+  </section>
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search
