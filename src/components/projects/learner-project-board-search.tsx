@@ -76,14 +76,14 @@ export function LearnerProjectBoardSearch({
   );
   return (
     <section aria-label="Project Board filters" className="rounded-xl border border-border bg-surface p-4">
-      <details className="sm:hidden">
+      <details>
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 text-sm font-semibold text-foreground">
           <span>Filters</span>
           <span className="text-muted-foreground">{activeCount} active</span>
         </summary>
         {form}
       </details>
-      <div className="hidden sm:block">{form}</div>
+
       <div className="grid grid-cols-2 gap-2 border-t border-border pt-3 sm:grid-cols-3 lg:grid-cols-5" aria-label="Task counts by status">
         {LEARNER_BOARD_STATUS_LABELS.map(item => (
           <Link key={item.value}
