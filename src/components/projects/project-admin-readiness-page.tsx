@@ -73,7 +73,7 @@ export async function ProjectAdminReadinessPage({
     listCollegeActiveReadinessOverrides(context, collegeId),
     listCollegeReadinessWorkspaceChoices(context,collegeId),
   ]);
-  const chosenId=z.string().uuid().safeParse(one(searchParams.workspaceId)).data;
+  const chosenId=z.string().uuid().safeParse(one(searchParams.projectId) ?? one(searchParams.workspaceId)).data;
   const selected=chosenId && workspaceChoices.some(item=>item.id===chosenId)?chosenId:null;
   const releaseContext=selected?await listCollegeReadinessReleases(context,collegeId,selected):[];
   const readinessPath =
