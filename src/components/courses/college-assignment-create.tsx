@@ -4,6 +4,7 @@ import {useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
 import {ALL_ASSIGNMENT_METHODS,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
+import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCode:string};
 
@@ -45,8 +46,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   }
   const delivery=sections.find(x=>x.deliveryId===deliveryId);
   if(deliveryId&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
-  const due=dueAt?new Date(dueAt+":00+05:30"):null;
-  if(due&&(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dueAt)||Number.isNaN(due.getTime()))){
+  const dueIso=dueAt?parseCollegeIstLocal(dueAt):null;
+  if(dueAt&&!dueIso){
    setError("Enter a valid deadline.");return;
   }
   if(!window.confirm("Create assignment as a draft? Learners cannot submit until published."))return;
@@ -56,7 +57,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:chosen.id,deliveryId:delivery?.deliveryId??null,
       title:title.trim(),description:description.trim()||null,
-      dueAt:due?.toISOString()??null,maxPoints,sequence:nextOverride[chosen.id]??chosen.nextSequence,allowedMethods}),
+      dueAt:dueIso,maxPoints,sequence:nextOverride[chosen.id]??chosen.nextSequence,allowedMethods}),
    });
    const payload=await response.json().catch(()=>null);
    if(!response.ok||!payload?.assignment?.id)throw new Error(
