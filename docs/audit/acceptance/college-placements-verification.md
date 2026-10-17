@@ -26,3 +26,6 @@ Real PostgreSQL acceptance names, authored but NOT RUN: `COL-placements-01 persi
 | COL-placements-23 | NOT-A-GAP (source verified; runtime tests pending) | `docs/audit/pages/college/placements.md`, `docs/audit/owner-decisions-resolved.md`; `tests/unit/chat6-college-placements-round2-verified.test.ts` → `COL-placements-23 college placement policy editor omission is intentional legacy permission boundary` |
 
 | COL-placements-16 | DONE | `src/app/(authenticated)/college/companies/page.tsx`, `src/components/placements/placement-employer-relationships.tsx`; `tests/unit/chat6-college-placements-copy-round2.test.ts` → `COL-placements-16 restores company directory legacy title description and empty copy` |
+
+| COL-placements-24 | DONE (source authored; browser pending) | `src/app/(authenticated)/college/placements/page.tsx`; `tests/unit/chat6-college-placements-round3-ui.test.ts` → `COL-placements-24 restores placement drives and new drive copy with missing college state` |
+| COL-placements-25 | DONE (source authored; 375px browser pending) | `src/components/placements/college-application-pipeline-controls.tsx`, `src/app/(authenticated)/college/placements/drives/page.tsx`; `tests/unit/chat6-college-placements-round3-ui.test.ts` → `COL-placements-25 renders selectable action-capable mobile application and drive cards` |
