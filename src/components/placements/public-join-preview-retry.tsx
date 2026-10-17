@@ -11,8 +11,7 @@ export function PublicJoinPreviewRetry({scope,token}:{
    <p className="text-sm text-body">Check your connection and try again. Your invitation was not used.
     If the problem continues, ask the placement cell for help.</p>
    <Link href={root+encodeURIComponent(token)}
-    className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">
-   Retry</Link>
+    className="inline-flex min-h-11 items-center rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Retry</Link>
   </section>
  </main>;
 }
