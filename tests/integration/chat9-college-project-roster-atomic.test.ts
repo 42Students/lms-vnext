@@ -17,7 +17,7 @@ const collegeAdmin:RequestContext={user:{id:SEED_IDS.collegeAdminUser,identityUi
  membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]}};
 const prefix="chat9-roster-";
 async function cleanup(){
- const projects="select id from project_instances where slug like '"+prefix+"%'";
+ const projects="select id::text from project_instances where slug like '"+prefix+"%'";
  await pool.query("delete from in_app_notifications where event_id in (select id from activity_events where metadata->>'projectId' in ("+projects+"))");
  await pool.query("delete from activity_events where metadata->>'projectId' in ("+projects+")");
  await pool.query("delete from project_members where project_id in ("+projects+")");
@@ -66,8 +66,10 @@ describe("COL-projects-15 atomic College Admin roster workflow",()=>{
   const project=await createProject();
   const original=project.updatedAt.toISOString();
   await addProjectMember(collegeAdmin,project.id,{membershipId:SEED_IDS.learnerCollegeAMembership,role:"LEARNER"});
+  const rows=await pool.query<{updated_at:Date}>("select updated_at from project_instances where id=$1",[project.id]);
+  const current=rows.rows[0]?.updated_at.toISOString()??original;
   await expect(replaceCollegeProjectLearners(collegeAdmin,project.id,{
-   learnerMembershipIds:[SEED_IDS.collegeAdminMembership],expectedUpdatedAt:original,
+   learnerMembershipIds:[SEED_IDS.collegeAdminMembership],expectedUpdatedAt:current,
   })).rejects.toMatchObject({code:"PROJECT_MEMBER_ROLE_REQUIRED"});
   expect((await listProjectMembers(collegeAdmin,project.id)).filter(m=>m.role==="LEARNER")).toHaveLength(1);
  });
