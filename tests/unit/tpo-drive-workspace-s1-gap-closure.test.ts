@@ -30,4 +30,13 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE",original,{...original,openRounds:1})).toBe("PREVIEW_STALE");
   expect(evaluateTpoDriveCancellation("DRAFT","ACTIVE",original,original)).toBe("READ_ONLY");
  });
+ it("TPO-drive-workspace-28 dedupes same-day reminders and requires confirmed reviewed recipient token",()=>{
+  const day=placementReminderDay(new Date("2099-04-01T20:00:00Z"));
+  expect(day).toBe("2099-04-02");
+  const token=placementReminderPreviewToken("job",day,["b","a"]);
+  expect(token).toBe(placementReminderPreviewToken("job",day,["a","b"]));
+  expect(token).not.toBe(placementReminderPreviewToken("job","2099-04-03",["a","b"]));
+  expect(tpoRemindNotAppliedSchema.safeParse({action:"REMIND",confirmed:true,expectedPreviewToken:token}).success).toBe(true);
+  expect(tpoRemindNotAppliedSchema.safeParse({action:"REMIND",confirmed:false,expectedPreviewToken:token}).success).toBe(false);
+ });
 });
