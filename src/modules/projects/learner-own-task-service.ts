@@ -68,8 +68,10 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
    status:input.status,blockerReason:input.blockerReason,
   }).returning();
   if(!task)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  await tx.update(projectSprints).set({updatedAt:new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1))})
+  if(sprint){
+   await tx.update(projectSprints).set({updatedAt:new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1))})
     .where(eq(projectSprints.id,sprint.id));
+  }
   const event=await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,collegeId:scope.collegeId,
     organizationId:scope.organizationId,subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
