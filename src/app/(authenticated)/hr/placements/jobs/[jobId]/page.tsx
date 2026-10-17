@@ -558,6 +558,8 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
                 <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
               </dl>
+              <RecruiterPrivateRatingEditor key={selectedApplicant.id}
+                jobId={workspace.job.id} applicationId={selectedApplicant.id}/>
               {applicantNotes ? (
                 <div className="mt-5">
                   <ApplicantNotesPanel
