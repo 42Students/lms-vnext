@@ -46,13 +46,14 @@ export function tpoDriveOfferRegisterCsv(
   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(date)+" IST":"Not recorded";
  const rows:(string|number|null)[][]=matches.slice(0,TPO_DRIVE_OFFERS_CSV_LIMIT).map(f=>[
   f.offer.id,f.candidate.displayName?.trim()||"Unnamed learner",f.offer.roleTitle,
+  f.offer.kind,f.offer.annualCtcInr,f.candidate.email??null,
   f.offer.status,f.offer.status==="ACCEPTED"?(f.joining?.status??"PENDING"):"Not applicable",
   csvDate(f.offer.issuedAt),csvDate(f.offer.respondedAt),csvDate(f.offer.expiresAt),
  ]);
- rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","",""]);
+ rows.push(["Methodology","Every row is a persisted offer version; no final selection or joining evidence inferred.","","","","","","","","",""]);
  const truncated=matches.length>TPO_DRIVE_OFFERS_CSV_LIMIT;
  if(truncated)rows.push(["TRUNCATED",
-  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null]);
- return {csv:placementReportCsv(["Offer ID","Student","Role","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)"],rows),
+  "First "+TPO_DRIVE_OFFERS_CSV_LIMIT+" of "+matches.length+" matching offer versions exported.",null,null,null,null,null,null,null,null,null]);
+ return {csv:placementReportCsv(["Offer ID","Student","Role","Kind","Annual CTC (INR)","Email","Offer status","Joining status","Issued (IST)","Responded (IST)","Expires (IST)"],rows),
   totalMatching:matches.length,truncated};
 }
