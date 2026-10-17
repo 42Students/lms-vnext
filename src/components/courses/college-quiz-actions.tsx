@@ -107,7 +107,8 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      Shuffle answer options per learner</label>
    </div>:null}
    {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
-    Learner attempts lock the deadline; other immutable quiz fields stay unchanged.
+    Quiz deadlines cannot be changed after learner attempts or after the quiz closes.
+    Other immutable quiz fields stay unchanged.
    </p>:null}
    <button type="button" disabled={busy} onClick={()=>void act("EDIT")}
     className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
