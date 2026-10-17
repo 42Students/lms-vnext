@@ -12,7 +12,7 @@ describe("GR-114 request ID correlation and GR-124 config safety", () => {
       process.env.APP_ENV = "development";
       process.env.TELEGRAM_ALERT_BOT_TOKEN = "test-bot";
       process.env.TELEGRAM_ALERT_CHAT_ID = "test-chat";
-      const id = "12345678-1234-1234-1234-123456789012";
+      const id = "abcdef12";
       const time = new Date("2099-09-20T10:00:00.000Z");
       const alert = formatAlert({
         kind: "new error", environment: "DEVELOPMENT", time, event: "api.unhandled_error",
