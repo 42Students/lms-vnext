@@ -117,7 +117,7 @@ export function RecruiterBulkOwnerControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosen([]);
-      setReviewOpen(false);
+      setReviewOpen(false);setReviewSignature("");
       onUpdated();
     } catch {
       setError(
