@@ -157,9 +157,8 @@ export default async function LearnerCourseTabPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow={workspace.course.code}
         title={workspace.course.name}
-        description={readOnly ? "Past semester course · Read only" : "Course workspace"}
+        description="Course workspace"
         actions={
           <div className="flex flex-wrap gap-2">
             <Link
@@ -183,6 +182,9 @@ export default async function LearnerCourseTabPage({
           </div>
         }
       />
+      {readOnly?<p role="status" className="rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+        Past semester course · Read only. Submitted work remains accessible.
+      </p>:null}
       <LearnerCourseTabs
         deliveryId={deliveryId}
         activeTab={activeTab}
