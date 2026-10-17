@@ -1,8 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { sendTelegramAlert } from "@/modules/log-alerts/telegram-notifier";
-import { formatAlert } from "@/modules/log-alerts/reporter";
+import { formatAlert, observedEventHash } from "@/modules/log-alerts/reporter";
 
 describe("GR-114 request ID correlation and GR-124 config safety", () => {
+  it("GR-115 GR-125 hashes only opaque request references for cross-source deduplication", () => {
+    const first = observedEventHash("PRODUCTION", "a".repeat(64), "abcd1234");
+    expect(first).toMatch(/^[0-9a-f]{64}$/);
+    expect(first).toBe(observedEventHash("PRODUCTION", "a".repeat(64), "ABCD1234"));
+    expect(first).not.toBe(observedEventHash("UAT", "a".repeat(64), "abcd1234"));
+    expect(first).not.toBe(observedEventHash("PRODUCTION", "b".repeat(64), "abcd1234"));
+    expect(observedEventHash("PRODUCTION", "a".repeat(64), "jane@example.com")).toBeNull();
+    expect(first).not.toContain("abcd1234");
+  });
   it("GR-114 retains an opaque request ID and timestamp in Telegram alert payloads", async () => {
     const original = {
       app: process.env.APP_ENV, token: process.env.TELEGRAM_ALERT_BOT_TOKEN,
@@ -12,7 +21,7 @@ describe("GR-114 request ID correlation and GR-124 config safety", () => {
       process.env.APP_ENV = "development";
       process.env.TELEGRAM_ALERT_BOT_TOKEN = "test-bot";
       process.env.TELEGRAM_ALERT_CHAT_ID = "test-chat";
-      const id = "12345678-1234-1234-1234-123456789012";
+      const id = "abcdef12";
       const time = new Date("2099-09-20T10:00:00.000Z");
       const alert = formatAlert({
         kind: "new error", environment: "DEVELOPMENT", time, event: "api.unhandled_error",

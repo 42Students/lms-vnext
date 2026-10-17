@@ -294,3 +294,17 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - GR-04/30/31/32/35/38/71/72/90/91: targeted adoption recorded in `docs/audit/acceptance/graceful-chat-5-verification.md`; global app-wide compliance is not claimed.
 - BLOCKED TPO-drive-workspace-54 / -65: private bucket, malware scanner and provider credentials are needed for uploads/emailed share code; do not fabricate delivery.
 - All tests were authored but not run by chat-5. Do not treat these entries as CI certification; orchestrator owns builds, DB migration acceptance and Playwright.
+
+## Chat-5 next round — 2026-10-17 source closure
+
+- Merged latest main into chatgpt/chat-5-b at round start; remained branch-only.
+- 33 OPEN gap IDs reviewed across Drive Workspace and Batches; each is in a named regression file or explicitly updated page verification. Most partial baselines remain OPEN rather than being falsely marked DONE.
+- TPO-drive-workspace-55/70/72: offer lifecycle and offer creation actions now use safe apiFetch; accessible consequence checkbox replaces native confirm, mobile workspace select is available. Full legacy actions/keyboard/mobile parity remain OPEN.
+- TPO-drive-workspace-27/34: guarded, retained applicant-screening draft; candidate-visible reason presets with explicit privacy warning. Internal reason and sequential review remain OPEN.
+- TPO-batches-52/56: readable eligibility/source/registration labels, and IST rules dates; DONE with named tests.
+- TPO-batches-57/60: server reason length corrected, history no longer exposes raw action UUID or UTC date, but remaining cross-layer validation and scope/history parity remain OPEN.
+- TPO-batches-39/40/43/49/50/61: unchanged import hint and legacy confirm wording, safe student decision requests, suggested next step, accessible skeleton, reviewed batch undo; remaining modal, Do it, and detailed legacy parity OPEN.
+- Partial-only evidence tests in tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts are **not closure** and need more implementation.
+- BLOCKED TPO-drive-workspace-54/-65: private uploads require object-storage bucket and malware scanner; one-time emailed share code requires real provider credentials.
+- TPO Students and Requests Verification remain with chat-12; no edits to those pages.
+- Tests, lint, typecheck, build and database replay were NOT run by chat-5. Orchestrator owns checks.

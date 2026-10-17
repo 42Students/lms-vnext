@@ -81,7 +81,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   <Link href={"/tpo/batches/"+batchId+"/students"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm">Open Students</Link>
  </section>
  {undoable?<section className="rounded-lg border border-border bg-surface p-4">
-  <h2 className="font-semibold">Undo last batch decision</h2>
+  <h2 className="font-semibold">Undo last decision</h2>
   <p className="my-2 text-sm text-muted-foreground">Only the latest unreversed cohort action is offered. If any later change occurred, the server will reject the undo.</p>
   <TpoBatchUndoControl batchId={batchId} actionId={undoable.actionId}/>
  </section>:null}

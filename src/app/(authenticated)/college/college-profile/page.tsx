@@ -20,6 +20,9 @@ export default async function CollegeContactProfilePage() {
         Branding workspace
       </Link>}
     />
+      <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        College profile manages operational contact details. Sign-in branding, domains and logos are managed by a Super Admin.
+      </p>
     <CollegeContactProfileForm initial={profile} />
   </div>;
 }

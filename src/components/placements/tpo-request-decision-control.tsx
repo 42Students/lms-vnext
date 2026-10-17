@@ -1,6 +1,7 @@
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useState} from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
@@ -29,13 +30,14 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
   const {showToast}=useToast();
   const [mode,setMode]=useState<"APPROVE"|"REJECT"|null>(null);
   const [pending,setPending]=useState(false);
+  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
   const [reason,setReason]=useState<string>("");
   const [note,setNote]=useState("");
   const [error,setError]=useState<string|null>(null);
   function open(next:"APPROVE"|"REJECT"){
-    if(pending)return;
+    if(pending||guardedPending)return;
     if(next==="APPROVE"&&!tpoRequestNeedsConfirmation(requestType)){
-      void decideWith("APPROVE","");
+      void runGuarded(()=>decideWith("APPROVE",""));
       return;
     }
     setMode(next);setReason("");setNote("");setError(null);
@@ -62,12 +64,12 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
     }
     finally{setPending(false);}
   }
-  function decide(){if(!mode||!valid)return;void decideWith(mode,decisionNote);}
+  function decide(){if(!mode||!valid||guardedPending)return;void runGuarded(()=>decideWith(mode,decisionNote));}
   return <div className="flex flex-col gap-2 text-sm">
     <div className="flex flex-wrap gap-2">
-      <button type="button" disabled={pending} onClick={()=>open("APPROVE")}
+      <button type="button" disabled={pending||guardedPending} onClick={()=>open("APPROVE")}
         className="min-h-10 rounded-md border border-border px-3 font-semibold text-foreground disabled:opacity-50">Approve</button>
-      <button type="button" disabled={pending} onClick={()=>open("REJECT")}
+      <button type="button" disabled={pending||guardedPending} onClick={()=>open("REJECT")}
         className="min-h-10 rounded-md border border-border px-3 font-semibold text-foreground disabled:opacity-50">Reject</button>
     </div>
     {!mode&&error?<p role="alert" className="text-error">{error}</p>:null}
@@ -76,27 +78,27 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
       description={mode==="APPROVE"?impact(requestType):
         "The learner's current application, round or offer remains unchanged when this request is rejected."}
       footer={<>
-        <Button variant="secondary" disabled={pending} onClick={()=>setMode(null)}>Cancel</Button>
-        <Button disabled={pending||!valid} onClick={decide}>
+        <Button variant="secondary" disabled={pending||guardedPending} onClick={()=>setMode(null)}>Cancel</Button>
+        <Button disabled={pending||guardedPending||!valid} onClick={decide}>
           {pending?"Saving…":mode==="APPROVE"?"Approve request":"Reject request"}
         </Button>
       </>}>
       {mode==="REJECT"?<div className="space-y-3">
         <p className="text-sm font-semibold">Reason for rejection</p>
         <div role="group" aria-label="Rejection reasons" className="flex flex-wrap gap-2">
-          {rejectionReasons.map(choice=><button key={choice} type="button" disabled={pending}
+          {rejectionReasons.map(choice=><button key={choice} type="button" disabled={pending||guardedPending}
             aria-pressed={reason===choice} onClick={()=>{setReason(choice);setError(null);}}
             className={reason===choice?"min-h-10 rounded border border-primary bg-primary-subtle px-3 text-sm font-semibold text-primary-text":
               "min-h-10 rounded border border-border px-3 text-sm text-body"}>{choice}</button>)}
         </div>
         {reason==="Other"?<label className="block text-sm font-semibold">Explain the rejection
           <textarea value={note} onChange={e=>setNote(e.target.value)} minLength={3} maxLength={2000}
-            disabled={pending} rows={3} className="mt-2 w-full rounded border border-border bg-surface p-3 text-sm"/>
+            disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded border border-border bg-surface p-3 text-sm"/>
         </label>:null}
         {!valid&&reason?"Enter a rejection reason of at least 3 characters.":null}
       </div>:mode==="APPROVE"?<label className="block text-sm font-semibold">Approval note (optional)
         <textarea value={note} onChange={e=>setNote(e.target.value)} maxLength={2000}
-          disabled={pending} rows={3} className="mt-2 w-full rounded border border-border bg-surface p-3 text-sm"/>
+          disabled={pending||guardedPending} rows={3} className="mt-2 w-full rounded border border-border bg-surface p-3 text-sm"/>
       </label>:null}
       {error?<p role="alert" className="mt-3 text-sm text-error">{error}</p>:null}
     </Dialog>

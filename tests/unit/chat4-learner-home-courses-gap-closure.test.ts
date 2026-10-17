@@ -60,4 +60,64 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(s).toContain("apiFetch");
   expect(s).not.toContain("discussion_post_failed");
  });
+ it("LEARNER-course-detail-R01 persists actual rewind position and restarts completed playback",()=>{
+  const progress=source("src/modules/courses/progress-service.ts");
+  expect(progress).toContain("lastPositionSeconds: positionSeconds,");
+  expect(source("src/components/courses/learner-video-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
+ });
+ it("LEARNER-course-detail-R03 lets learners join and copy future live class meetings",()=>{
+  expect(source("src/modules/courses/learner-course-service.ts")).toContain('row.contentType === "LIVE_CLASS"');
+  expect(source("src/components/courses/learner-course-workspace.tsx")).toContain("<LearnerLiveClassLink");
+  const s=source("src/components/courses/learner-live-class-link.tsx");
+  expect(s).toContain("Join Meeting");
+  expect(s).toContain("Copy meeting link");
+ });
+
+ it("LEARNER-home-courses-04 shows Semester Details, All Courses and Credits Breakdown",()=>{
+  const s=source("src/components/courses/learner-course-list.tsx");
+  for(const title of ["Semester Details","All Courses","Credits Breakdown","Total "])expect(s).toContain(title);
+  expect(s).toContain("Showing first 100; search the full list below.");
+ });
+ it("LEARNER-home-courses-16 shows month summary and Day in Attendance History",()=>{
+  const s=source("src/components/courses/learner-course-attendance.tsx");
+  for(const title of ["Attendance this month","Attendance History","weekdayLabel(row.startsAt)","No classes held yet in this period."])expect(s).toContain(title);
+ });
+ it("LEARNER-home-courses-23 omits empty course About content",()=>{
+  const s=source("src/components/courses/learner-course-overview.tsx");
+  expect(s).toContain("aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0");
+ });
+
+ it("LEARNER-home-courses-10 gives Course unavailable navigation instead of a raw 404",()=>{
+  const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx");
+  expect(s).toContain("Course unavailable");
+  expect(s).toContain("This course may not exist or you may not have access.");
+  expect(s).toContain("Back to Courses");
+ });
+ it("LEARNER-home-courses-12 retains tab context without stale lesson and content",async()=>{
+  const {learnerCourseTabPersistentQuery}=await import("@/modules/courses/learner-course-tab-context-model");
+  const q=new URLSearchParams(learnerCourseTabPersistentQuery({semester:"3",lesson:"id",content:"id",filter:"lectures",view:"list"}));
+  expect(q.get("semester")).toBe("3");
+  expect(q.get("view")).toBe("list");
+  expect(q.has("lesson")).toBe(false);
+  expect(q.has("content")).toBe(false);
+  expect(q.has("filter")).toBe(false);
+  expect(source("src/components/courses/learner-course-document-title.tsx")).toContain('courseName+" · "+tabName');
+  expect(source("src/components/courses/learner-course-tabs.tsx")).toContain("persistentQuery");
+ });
+
+ it("LEARNER-home-courses-19 uses an in-page Delete this message dialog",()=>{
+  const s=source("src/components/courses/learner-course-discussion.tsx");
+  expect(s).toContain('role="dialog" aria-modal="true" aria-label="Delete this message?"');
+  expect(s).toContain("This cannot be undone.");
+  expect(s).toContain("setDeleteTarget");
+  expect(s).not.toContain('window.confirm("Delete this message?")');
+ });
+ it("LEARNER-home-courses-21 preserves an unsent discussion draft during route changes",()=>{
+  const s=source("src/components/courses/learner-course-discussion.tsx");
+  expect(s).toContain("beforeunload");
+  expect(s).toContain('document.addEventListener("click",guard,true)');
+  expect(s).toContain("Discard your unsent discussion message?");
+ });
+
 });
