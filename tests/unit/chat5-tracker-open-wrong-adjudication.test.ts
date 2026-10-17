@@ -20,8 +20,8 @@ describe("chat-5 gap register OPEN/WRONG adjudication against current main",()=>
   const source=src("src/modules/placements/tpo-drive-lifecycle-list-service.ts");
   const schema=src("src/db/schema/placements.ts");
   const page=src("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
-  expect(source).toContain("inArray(placementJobs.status,[\"CLOSED\",\"CANCELLED\"])");
-  expect(source).toContain("status} in ('CLOSED','CANCELLED')");
+  expect(source).toContain("inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES])");
+  expect(source).toContain("sql<number>`count(*) filter(where ${inArray(placementJobs.status,[...TPO_CLOSED_JOB_STATUSES])})::int`");
   expect(page).toContain('["CLOSED","Closed",data.statusCounts.closed]');
   expect(schema).toContain("placement_jobs_status_ck");
   expect(schema).toContain("'DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED', 'CANCELLED'");
