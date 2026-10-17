@@ -1,9 +1,9 @@
 import "server-only";
-import {createHash,randomBytes} from "node:crypto";
+import {createHash} from "node:crypto";
 import {and,desc,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementRecruiterMessageMailState,placementTpoMessages} from "@/db/schema";
-import {isRecruiterUnreadReminderDue,makeRecruiterReplyAddress} from "./recruiter-message-email-model";
+import {isRecruiterUnreadReminderDue,makeRecruiterReplyAddress,recruiterReplyTokenForThread} from "./recruiter-message-email-model";
 import {sendRecruiterMessageDigest} from "./recruiter-message-email-provider";
 
 type Candidate={
@@ -22,6 +22,8 @@ export async function dispatchRecruiterUnreadMessageDigests(
 ):Promise<MailSummary>{
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")return {examined:0,sent:0,enabled:false};
  const replyDomain=(env.RECRUITER_MESSAGE_REPLY_DOMAIN??"").trim().toLowerCase();
+ const replySecret=env.RECRUITER_MESSAGE_REPLY_TOKEN_SECRET??"";
+ if(Buffer.byteLength(replySecret,"utf8")<32)return {examined:0,sent:0,enabled:false};
  if(!makeRecruiterReplyAddress("a".repeat(32),replyDomain))
   return {examined:0,sent:0,enabled:false};
  const db=getDb();
@@ -71,7 +73,8 @@ export async function dispatchRecruiterUnreadMessageDigests(
    const first=new Date(candidate.first_unread_at),last=messages[0].createdAt;
    if(!isRecruiterUnreadReminderDue({firstUnreadAt:first,lastMessageAt:last,
      lastSentAt:state.lastSentAt,now}))return false;
-   const token=randomBytes(16).toString("hex");
+   const token=recruiterReplyTokenForThread(replySecret,candidate.thread_id);
+   if(!token)return false;
    const replyTo=makeRecruiterReplyAddress(token,replyDomain);
    if(!replyTo)return false;
    const accepted=await sendRecruiterMessageDigest({
