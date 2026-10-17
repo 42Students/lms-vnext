@@ -76,7 +76,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-20 | S3 | STATE | DONE |
 | TPO-home-21 | S3 | COPY | DONE |
 | TPO-home-23 | S3 | COPY | DONE |
-| TPO-home-25 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-home-25 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-home-29 | S3 | COPY | DONE |
 | TPO-home-30 | S3 | COPY | DONE |
 | TPO-home-32 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -192,7 +192,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
-| COL-course-tabs-25 | S4 | PERMISSION | UNCONFIRMED |
+| COL-course-tabs-25 | S4 | PERMISSION | NOT-A-GAP |
 | COL-course-tabs-27 | S4 | RESPONSIVE | DONE |
 
 ## college/verification-misc (20: FIXED-ON-MAIN 12, OPEN 8)
@@ -331,3 +331,5 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Previously reported `SA-placements-projects-58` / `-63` source assertions and the `FAC-assessments-R08` zero-point participation validator were already repaired in the branch; the current test names and source expectations were rechecked, not rerun.
 - Do not infer global green from this stale report. Compiler/test execution and remaining other-lane failures belong to orchestrator; no local `tsc`, Vitest, lint, browser or PostgreSQL execution was possible in this lane.
 - Remaining queue items include `SA-placements-projects-56` (standalone creator), `SA-placements-projects-77` (audit taxonomy), `SA-tenants-modules-46/47/48` (independent findings), `COL-people-R03` (atomic dry-run CSV), `COL-attendance-R02` (approved SMS credentials/side effects), `LEARNER-home-courses-02/18/22` (semester/attendance/polling). `TPO-home-40/44` require chat-9 shell ownership. The UX playbook freeze remains absolute.
+
+- Owner-delegated decisions: `TPO-home-25` NOT-A-GAP (college-wide team workload, college scoped) and `COL-course-tabs-25` NOT-A-GAP (central validated global/college policy override; no College Admin mutation). Both documented in acceptance with ID-named source tests, **not executed**.
