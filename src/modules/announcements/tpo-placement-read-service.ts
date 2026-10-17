@@ -1,7 +1,8 @@
 import "server-only";
-import {and,desc,eq,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
+import {placementTpoNoticeAudiences} from "@/db/schema/placement-tpo-notice-audiences";
 import {users} from "@/db/schema/users";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -18,6 +19,7 @@ export async function listTpoPlacementAnnouncements(
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  const tab=tpoAnnouncementTabSchema.parse(rawTab);
+ const targetedReady=await placementTableExists("placement_tpo_notice_audiences");
  if(!await placementTableExists("announcements"))return {status:"NOT_REGISTERED" as const,items:[]};
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
@@ -47,6 +49,14 @@ export async function listTpoPlacementAnnouncements(
    ]),
   )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt))
   .limit(100);
-  return {status:"READY" as const,items:projectTpoAnnouncementRows(rows)};
+  const audiences=targetedReady&&rows.length?await tx.select({
+   id:placementTpoNoticeAudiences.announcementId,kind:placementTpoNoticeAudiences.kind,
+  }).from(placementTpoNoticeAudiences).where(
+   inArray(placementTpoNoticeAudiences.announcementId,rows.map(row=>row.id))
+  ):[];
+  const audienceById=new Map(audiences.map(row=>[row.id,row.kind]));
+  return {status:"READY" as const,items:projectTpoAnnouncementRows(rows).map(row=>({
+   ...row,audienceKind:audienceById.get(row.id)??"COLLEGE",
+  }))};
  });
 }
