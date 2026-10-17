@@ -17,7 +17,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
  const {batchId}=await params;
  const rawTab=(await searchParams).tab;
  const selected=Array.isArray(rawTab)?rawTab[0]:rawTab;
- const aliases:Record<string,string>={classes:"students",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
+ const aliases:Record<string,string>={classes:"classes",registration:"registrations",students:"students",registrations:"registrations",rules:"rules",history:"history"};
  if(selected && aliases[selected])redirect("/tpo/batches/"+encodeURIComponent(batchId)+"/"+aliases[selected]);const context=await getCurrentRequestContext();
  const [{batch,lifecycle,ready,decision},eligibility,history,registrations,invitePreview]=await Promise.all([getTpoBatch(context,batchId),getTpoBatchEligibilitySummary(context,batchId),listTpoBatchHistory(context,batchId),getTpoBatchRegistrationSummary(context,batchId),getTpoBatchInvitationPreview(context,batchId)]);
  const undoable=actionableBatchHistory(history.events).find(event=>event.canRequestUndo);
