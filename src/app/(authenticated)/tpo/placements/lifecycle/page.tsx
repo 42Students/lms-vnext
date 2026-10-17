@@ -8,9 +8,10 @@ import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views"
 import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import {StatusBadge} from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
-import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
+import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveStatusTone,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -276,7 +277,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                  Select for export
                 </label>
                 <h2 className="font-semibold text-foreground">{job.company} · {job.title}</h2>
-                <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {tpoDriveEmploymentLabel(job.employmentType)} · {tpoDriveWorkModeLabel(job.workMode)}</p>
+                <p className="flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={tpoDriveStatusTone(job.status)}>{tpoDriveStatusLabel(job.status)}</StatusBadge><span>{tpoDriveEmploymentLabel(job.employmentType)} · {tpoDriveWorkModeLabel(job.workMode)}</span></p>
                 {data.display==="DETAILED"?<dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
                   <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
