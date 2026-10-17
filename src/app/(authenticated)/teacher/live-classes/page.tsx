@@ -34,23 +34,23 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
    className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
    <label className="grid gap-1 text-sm">When
     <select name="view" defaultValue={data.query.view}
-     className="min-h-10 rounded border border-border p-2">
+     className="min-h-11 rounded border border-border p-2">
      <option value="UPCOMING">Upcoming and in progress</option>
      <option value="PAST">Past</option>
      <option value="ALL">All</option>
     </select></label>
    <label className="grid gap-1 text-sm">Section
     <select name="deliveryId" defaultValue={data.query.deliveryId??""}
-     className="min-h-10 rounded border border-border p-2">
+     className="min-h-11 rounded border border-border p-2">
      <option value="">All assigned Sections</option>
      {data.courses.map(c=><option key={c.deliveryId} value={c.deliveryId}>
       {c.courseName} · {c.sectionName}
      </option>)}
     </select></label>
-   <button type="submit" className="rounded bg-primary px-4 py-2 text-on-primary">Filter</button>
-   <Link href="/teacher/live-classes" className="p-2 text-sm text-primary-text">Clear</Link>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 py-2 text-on-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Filter</button>
+   <Link href="/teacher/live-classes" className="inline-flex min-h-11 items-center p-2 text-sm text-primary-text">Clear</Link>
   </form>
-  <p className="text-sm text-body">{data.total} matching registered live session{data.total===1?"":"s"}</p>
+  <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching registered live session{data.total===1?"":"s"}</p>
   {data.items.length===0?<EmptyState title="No matching live classes"
    description="No published LIVE_CLASS content matches these filters in your current teaching Sections. Unregistered meetings are not invented."/>
    :<ul className="grid gap-3">{data.items.map(s=><li key={s.deliveryId+":"+s.id}
@@ -63,19 +63,19 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
      }).format(s.startsAt)} IST
     </p>
     {s.joinUrl?<a href={s.joinUrl} target="_blank" rel="noopener noreferrer"
-     className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
      Open secure meeting link
     </a>:<p className="text-xs text-muted-foreground">
      Secure meeting link unavailable. Only HTTPS links are exposed.
     </p>}
     <Link href={"/teacher/courses/"+encodeURIComponent(s.deliveryId)}
-     className="block text-sm text-primary-text hover:underline">Open course</Link>
+     className="inline-flex min-h-11 items-center text-sm text-primary-text hover:underline">Open course</Link>
    </li>)}</ul>}
   <nav aria-label="Live-class pages" className="flex items-center justify-between gap-3">
    <p className="text-sm">Page {data.page} of {data.totalPages}</p>
    <div className="flex gap-3">
-    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})}>Previous</Link>:null}
-    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})}>Next</Link>:null}
+    {data.page>1?<Link href={facultyLiveClassesHref({...data.query,page:data.page-1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Previous</Link>:null}
+    {data.page<data.totalPages?<Link href={facultyLiveClassesHref({...data.query,page:data.page+1})} className="inline-flex min-h-11 items-center font-semibold text-primary-text">Next</Link>:null}
    </div>
   </nav>
   <p className="text-xs text-muted-foreground">
