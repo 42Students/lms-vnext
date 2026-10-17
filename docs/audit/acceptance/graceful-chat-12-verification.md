@@ -18,3 +18,6 @@ Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 
 
 | GR-04 | DONE (chat-12 Students controls) | eight client components use `apiFetch`; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-04` |
 | GR-09 | DONE (chat-12 Students controls) | no raw `body.error` or `result.error` used in touched TPO students controls; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-09` |
+
+| GR-04 | DONE (chat-12 Requests & Verification) | decision POST, review GET and review POST use apiFetch; `tests/unit/chat12-round3-requests-api-fetch.test.ts` named test `GR-04` |
+| GR-32 | DONE (chat-12 Requests & Verification) | 409 keeps edits in Requests and resets stale review details for safe retry; named test `GR-32` |

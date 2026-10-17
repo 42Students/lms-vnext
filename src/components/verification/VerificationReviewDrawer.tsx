@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useEffect,useRef,useState} from "react";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
@@ -55,10 +56,8 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  },[onClose,saving]);
  useEffect(()=>{
   let active=true;
-  fetch(url,{cache:"no-store"}).then(async response=>{
-   if(!response.ok)throw Error(response.status===404?"Review is no longer available":"Unable to load review");
-   return response.json() as Promise<Detail>;
-  }).then(data=>{if(active)setDetail(data);}).catch(e=>{if(active)setError(e instanceof Error?e.message:"Unable to load review");})
+  apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
+   .catch(e=>{if(active)setError(e instanceof Error?e.message:"Could not load review. Please try again.");})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
  },[url,retryKey]);
@@ -70,25 +69,19 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   if(!detail||saving||pendingAction!==action)return;
   setSaving(true);setError("");
   try{
-   const response=await fetch(`${apiBase}/review`,{
+   await apiFetch(`${apiBase}/review`,{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({... (collegeId?{collegeId}:{}),learnerMembershipId:row.learnerMembershipId,section:row.section,
       expectedVersion:detail.review.version,action,...(action==="SEND_BACK"?
       {reason:[reason,additional.trim()].filter(Boolean).join(": ")}:{})}),
    });
-   if(!response.ok){
-    const payload=await response.json().catch(()=>({error:"UNAVAILABLE"})) as {error?:string};
-    if(payload.error==="STALE_VERSION"){
-     setDetail(null);
-     setPendingAction(null);
-     throw Error("The request changed since it was opened. Reload the current details before deciding again.");
-    }
-    throw Error(apiBase==="/api/tpo/verification"
-     ?(action==="VERIFY"?"Could not verify":"Could not send it back")
-     :(payload.error??"Decision failed"));
-   }
    setPendingAction(null);onSaved(action);
-  }catch(e){setError(e instanceof Error?e.message:"Decision failed");}
+  }catch(e){
+   if(e instanceof FriendlyFetchError&&e.status===409){
+     setDetail(null);setPendingAction(null);
+     setError("This changed while you were working. Refresh the details and re-apply your decision.");
+   }else setError(e instanceof Error?e.message:"Could not save the decision. Please try again.");
+  }
   finally{setSaving(false);}
  }
  return <div className="fixed inset-0 z-50 flex justify-end bg-black/50">
