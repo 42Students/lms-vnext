@@ -256,7 +256,6 @@ export async function scheduleProjectMeeting(
   if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
-  const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
       .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
@@ -295,6 +294,9 @@ export async function scheduleProjectMeeting(
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
     // the check safe even when two different projects schedule concurrently.
+    const links=await validateMeetingLinks(scope.project.id,
+      input.linkedSprintId===undefined?existing?.linkedSprintId:input.linkedSprintId,
+      input.linkedTaskId===undefined?existing?.linkedTaskId:input.linkedTaskId);
     const organiserId=existing?.scheduledByUserId??context.user.id;
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${organiserId}, 17))`);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
@@ -309,7 +311,7 @@ export async function scheduleProjectMeeting(
     if (targetStatus!=="DRAFT" && conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     const values = {
       status: targetStatus,
-      meetingType: input.meetingType ?? "GENERAL" as const,
+      meetingType: input.meetingType ?? existing?.meetingType ?? "GENERAL" as const,
       title: input.title, agenda: input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
       meetingUrl: targetStatus==="DRAFT"?null:input.meetingUrl,
