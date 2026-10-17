@@ -100,7 +100,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <PageHeader
-          eyebrow="Employer Recruiter"
+          eyebrow="Recruiter"
           title="Company & Team"
           description={"Your work with " + result.grant.collegeName}
         />
