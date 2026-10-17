@@ -26,6 +26,7 @@ export type TpoInboxRecord = {
   lastPreview?:string|null;
   waitingForYou?:boolean;
   companyName?:string|null;
+  accessEnded?:boolean;
   bodySearchMatch?:boolean;
 };
 
