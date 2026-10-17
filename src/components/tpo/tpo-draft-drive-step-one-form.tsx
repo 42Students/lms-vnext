@@ -2,6 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 
 type Company = { relationshipId: string; name: string };
 type Season = { id: string; name: string; startDate: string; endDate: string };
@@ -24,16 +28,19 @@ export function TpoDraftDriveStepOneForm({
   const [deadline, setDeadline] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [unknownCreate,setUnknownCreate] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending || !companyRelationshipId || title.trim().length < 2 || !description.trim()) {
+    if (pending || unknownCreate || !companyRelationshipId || title.trim().length < 3 || !description.trim()) {
       setError("Choose a company and provide a role title and description.");
       return;
     }
     // datetime-local is intentionally interpreted as Asia/Kolkata wall-clock,
     // not the browser's machine zone or an unqualified date string.
-    const deadlineWithOffset = deadline ? deadline + ":00+05:30" : null;
+    let deadlineWithOffset: string | null = null;
+    try{deadlineWithOffset=deadline?driveDeadlineIstToIso(deadline):null;}
+    catch{setError("Enter a valid application deadline in IST.");return;}
     if (deadlineWithOffset && (!Number.isFinite(Date.parse(deadlineWithOffset)) ||
       Date.parse(deadlineWithOffset) <= Date.now())) {
       setError("The application deadline must be a future date and time in IST.");
@@ -47,30 +54,23 @@ export function TpoDraftDriveStepOneForm({
     setPending(true);
     setError("");
     try {
-      const response = await fetch("/api/placements/tpo/drives/draft", {
-        method: "POST", credentials: "same-origin",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          confirmed: true,
-          seasonId: season.id,
-          companyRelationshipId,
-          title: title.trim(),
-          description: description.trim(),
-          employmentType,
-          workMode,
-          applicationDeadline: deadlineWithOffset,
+      const body=await apiFetch<{id:string;status:string}>("/api/placements/tpo/drives/draft",{
+        method:"POST",credentials:"same-origin",timeoutMs:30000,
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({
+          confirmed:true,seasonId:season.id,companyRelationshipId,
+          title:title.trim(),description:description.trim(),
+          employmentType,workMode,applicationDeadline:deadlineWithOffset,
         }),
       });
-      const body = (await response.json().catch(() => null)) as
-        | { id?: string; status?: string; error?: string }
-        | null;
-      if (!response.ok || !body?.id) {
-        throw new Error(body?.error ?? "Could not save this draft drive.");
-      }
+      if(!body?.id)throw new Error("Could not verify that this draft was saved. Check Drives before retrying.");
       router.push("/tpo/placements/jobs/" + encodeURIComponent(body.id));
       router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Draft creation failed.");
+      if(cause instanceof FriendlyFetchError&&[0,499,504].includes(cause.status)){
+        setUnknownCreate(true);
+        setError("The create request may have succeeded. Check Drives before retrying to avoid a duplicate.");
+      }else setError(tpoDriveFormErrorMessage(cause));
     } finally {
       setPending(false);
     }
@@ -94,7 +94,7 @@ export function TpoDraftDriveStepOneForm({
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Initial role / drive title
-        <input className={cls} required minLength={2} maxLength={200}
+        <input className={cls} required minLength={3} maxLength={100}
           value={title} disabled={pending}
           onChange={(event) => setTitle(event.target.value)}/>
       </label>
@@ -130,7 +130,8 @@ export function TpoDraftDriveStepOneForm({
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>
       </label>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
-      <button type="submit" disabled={pending || !companyRelationshipId}
+      {unknownCreate?<p role="alert" className="text-sm text-body">Review <Link href="/tpo/placements/lifecycle" className="text-primary-text underline">Drives</Link> before creating again. <button type="button" className="underline" onClick={()=>setUnknownCreate(false)}>I checked for duplicates</button></p>:null}
+      <button type="submit" disabled={pending || unknownCreate || !companyRelationshipId}
         className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
         {pending ? "Saving draft…" : "Review and save draft"}
       </button>
