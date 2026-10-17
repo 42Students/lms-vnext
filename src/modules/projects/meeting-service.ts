@@ -37,7 +37,7 @@ import {
 function ensureMeetingProjectMutable(
   status: string,
 ) {
-  if (status === "ARCHIVED") {
+  if (status === "ARCHIVED" || status === "COMPLETED") {
     throw new ProjectsServiceError(
       "PROJECT_MEETING_INVALID_STATE",
     );
