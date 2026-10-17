@@ -37,7 +37,8 @@ export function MentorSprintCreate({
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
       showToast({tone:"success",title:"Sprint created"});
-      setOpen(false);setTitle("");setDescription("");
+      setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
+      setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(releaseId);
       router.refresh();
     } catch(error) {
       showToast({tone:"error",title:"Could not create sprint",
