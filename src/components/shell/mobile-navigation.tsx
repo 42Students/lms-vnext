@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import { SidebarNav } from "./sidebar-nav";
+import { useOverlayWebview } from "@/components/ui/use-overlay-webview";
+import type { CSSProperties } from "react";
 import type { ShellNavItem } from "./shell-model";
 
 const FOCUSABLE =
@@ -13,6 +15,7 @@ export function MobileNavigation({
   items: readonly ShellNavItem[];
 }) {
   const [open, setOpen] = useState(false);
+  const { availableHeight } = useOverlayWebview({ open, dismissible: true, onDismiss: () => setOpen(false) });
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const drawerRef = useRef<HTMLElement | null>(null);
   const wasOpenRef = useRef(false);
@@ -72,7 +75,8 @@ export function MobileNavigation({
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 lg:hidden">
+        <div style={{ "--lms-visual-height": availableHeight ?? "100dvh" } as CSSProperties}
+          className="fixed inset-0 z-50 h-[var(--lms-visual-height)] lg:hidden">
           <button
             type="button"
             aria-label="Close navigation"
@@ -84,7 +88,7 @@ export function MobileNavigation({
             role="dialog"
             aria-modal="true"
             aria-label="Navigation menu"
-            className="absolute inset-y-0 left-0 flex w-[min(20rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
+            className="absolute inset-y-0 left-0 flex max-h-[var(--lms-visual-height)] w-[min(20rem,88vw)] flex-col border-r border-[var(--lms-sidebar-border)] bg-surface shadow-xl"
           >
             <div className="flex min-h-20 items-center justify-between gap-4 border-b border-[var(--lms-sidebar-border)] px-5">
               <div>
