@@ -89,6 +89,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
      <button type="submit" className="min-h-11 rounded-md border border-border px-4 text-sm text-primary-text">Preview audience</button>
    </form>
    {!query.success?<p role="alert" className="mt-2 text-sm">Choose a valid audience and target ID.</p>:null}
+   {preview.failed?<p role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
+     Could not check the audience right now. Your selection is unchanged.
+     <Link href={retryPreviewHref} className="ml-2 font-semibold text-primary-text underline">Retry audience preview</Link>
+    </p>:null}
    {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
      <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
