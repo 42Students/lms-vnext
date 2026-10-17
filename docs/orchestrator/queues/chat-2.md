@@ -174,3 +174,13 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - `SA-academics-people-86`: auth-layer OTP-lockout mutation is outside the lane and requires privileged identity workflow verification.
 
 No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct pushes to main or pull requests.
+
+## FAST v2 chat-2-b continuation — 2026-10-17 (import preflight)
+
+- `TPO-recruiters-23`: CSV preview is now case-insensitive for legacy heading aliases, detects normalized email/phone duplicates within the uploaded file, validates normalized phone length before any transaction, and requires an in-dialog import review instead of a browser confirm.
+- `TPO-recruiters-23`: new same-origin, authorized POST import/preview reads existing contacts only from the current college, in batches. The modal distinguishes New / Already recruiter / To fix and excludes already-existing contacts before confirm. Database uniqueness remains authoritative if contacts change after preview. Source-only; not browser/DB accepted.
+- `TPO-recruiters-03`: Engage invite selector matches the roster's legacy NOT_INVITED/OPENED states and now exposes BOUNCED from persisted invite evidence.
+- WP-01 remains IN-PROGRESS: bulk undo/replay, approved sending and full production acceptance remain; continue to WP-02 and subsequent nonblocked gaps.
+- Blocked `TPO-recruiters-13/14/17`: provider receipts, durable bulk undo and worker delivery require verified provider/worker setup.
+- Blocked `PUB-auth-public-50/52/53/54/55`: OD-09 company share OTP/PII/storage consent still owner-gated.
+- No tests, typecheck, lint, build or CI waits under FAST v2; only `chatgpt/chat-2-b` received these commits.
