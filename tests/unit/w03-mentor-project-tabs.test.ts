@@ -33,17 +33,17 @@ describe("W03 mentor project detail legacy tab contract", () => {
   });
 
   it("maps legacy route keys onto normalized vNext workspace sections", () => {
-    expect(page).toContain('tab === "board" || tab === "performance"');
+    expect(page).toContain('selectedTab === "board" || selectedTab === "performance"');
     expect(page).toContain('? "tasks"');
-    expect(page).toContain('tab === "activity"');
+    expect(page).toContain('selectedTab === "activity"');
     expect(page).toContain('? "audit"');
-    expect(page).toContain('tab === "delivery"');
+    expect(page).toContain('selectedTab === "delivery"');
     expect(page).toContain('? "delivery"');
     expect(page).toContain("activeSection={activeSection}");
   });
 
   it("serves real persisted task assignees without the pre-migration placeholder", () => {
-    expect(page).toContain('tab === "performance"');
+    expect(page).toContain('selectedTab==="performance"');
     expect(page).not.toContain("does not yet persist task assignee fields");
     expect(workspace).toContain("<ProjectTaskAssigneeControl");
     expect(workspace).toContain("assigneeMembershipId={task.assigneeMembershipId}");
