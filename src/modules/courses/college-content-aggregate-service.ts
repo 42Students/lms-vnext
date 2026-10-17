@@ -3,6 +3,8 @@ import "server-only";
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lt, or } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
+import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
+import {resourceMaterialsRuntimeEnabled} from "./resource-material-readiness";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
