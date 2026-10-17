@@ -193,17 +193,17 @@ No page UI/UX restyling was introduced.
 
 ## chat-14 (11)
 
-- TPO-drives-03 [WRONG] tpo/drives
-- TPO-drives-13 [FIXED-ON-MAIN] tpo/drives
-- TPO-drives-31 [OPEN] tpo/drives
-- TPO-drives-48 [OPEN] tpo/drives
-- TPO-drives-52 [OPEN] tpo/drives
-- PUB-auth-public-29 [OPEN] public/auth-public-1-login-session
-- PUB-auth-public-31 [OPEN] public/auth-public-1-login-session
-- PUB-auth-public-38 [OPEN] public/auth-public-1-login-session
-- COL-academic-setup-21 [WRONG] college/academic-setup
-- COL-verification-misc-13 [FIXED-ON-MAIN] college/verification-misc
-- TPO-inbox-team-12 [FIXED-ON-MAIN] tpo/inbox-team
+- TPO-drives-03 [NOT-A-GAP] tpo/drives
+- TPO-drives-13 [DONE] tpo/drives
+- TPO-drives-31 [DONE] tpo/drives
+- TPO-drives-48 [DONE] tpo/drives
+- TPO-drives-52 [DONE] tpo/drives
+- PUB-auth-public-29 [DONE] public/auth-public-1-login-session
+- PUB-auth-public-31 [DONE] public/auth-public-1-login-session
+- PUB-auth-public-38 [DONE] public/auth-public-1-login-session
+- COL-academic-setup-21 [NOT-A-GAP] college/academic-setup
+- COL-verification-misc-13 [DONE] college/verification-misc
+- TPO-inbox-team-12 [DONE] tpo/inbox-team
 
 ## chat-15 (10)
 
