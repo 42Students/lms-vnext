@@ -313,3 +313,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - COL-projects-16 DONE source-level: template catalogue now has searchable table, all five section counts and scoped visible-row CSV.
 - COL-projects-08 OPEN: template label displayed; legacy In progress/Ready/Blocked semantics remain unmapped.
 - Tests authored but NOT run; orchestrator executes. Other gaps are not marked DONE by this source patch.
+
+- TPO-calendar-reports-11 DONE source-level: multi-select calendar chips, independent Talks and Rounds, backward-compatible single-kind URLs. Test authored, not run.
