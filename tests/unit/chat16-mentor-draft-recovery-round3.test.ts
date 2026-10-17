@@ -5,6 +5,16 @@ const read=(path:string)=>readFileSync(path,"utf8");
 const draftWarning="You have unsaved project changes. Leave this page and discard them?";
 
 describe("chat-16 mentor editor draft recovery",()=>{
+  it("MEN-projects-meetings-55 displays independent Files, Links, Other resource counts",()=>{
+    const list=read("src/components/projects/project-resource-list.tsx");
+    expect(list).toContain('row.resourceType==="FILE"');
+    expect(list).toContain("const others=rows.length-links-files;");
+    for(const label of ['["Files",files]','["Links",links]','["Other",others]']){
+      expect(list).toContain(label);
+    }
+    expect(list).not.toContain('"Files/other"');
+  });
+
   it("MEN-projects-meetings-75 requires confirmation before discarding task and sprint drafts",()=>{
     for(const file of [
       "src/components/projects/mentor-task-create.tsx",
