@@ -82,6 +82,6 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-primary-text">← Previous</Link>:null}
     {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-primary-text">Next →</Link>:null}</div>
   </nav>
-  <p className="text-xs text-muted-foreground">The CSV includes at most 500 matching offer versions with a truncation row, formula-neutralized cells and no contact details. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <p className="text-xs text-muted-foreground">The CSV includes up to 500 matching offer versions, with a truncation row, formula-neutralized fields, learner email and academic identifiers. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }
