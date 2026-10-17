@@ -26,7 +26,7 @@ async function requireTpo(context: RequestContext) {
 export async function listTpoCalendarRoundChoices(context: RequestContext,raw:unknown={}) {
   const input=z.strictObject({page:z.coerce.number().int().min(1).max(10000).default(1),
    q:z.string().trim().max(100).default("")}).parse(raw);
-  const pattern="%"+input.q.replace(/[\\%_]/g,"\\export async function listTpoCalendarRoundChoices(context: RequestContext) {")+"%";
+  const pattern="%"+input.q.replace(/[\\%_]/g, value=>"\\"+value)+"%";
   const college = await requireTpo(context);
   const rows = await getDb().select({
     id: placementJobRounds.id,
