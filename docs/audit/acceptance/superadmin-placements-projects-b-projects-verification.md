@@ -94,6 +94,8 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 
 ### Chat-4 follow-up acceptance, 2026-10-18
 
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
 | SA-placements-projects-77 | PARTIAL (implemented; test pending) | Shared PROJECTS_TEMPLATE_* taxonomy now has eight global/college-scoped lifecycle event types, emitted atomically by src/modules/projects/template-service.ts for create, revise, publish, unpublish, duplicate, archive, assign and unassign; archive uses a row lock/assignment recheck and repeat publish/unpublish is a no-op. src/components/projects/project-admin-audit-page.tsx allows permission-gated global template audit. tests/unit/chat4-project-template-audit-77.test.ts. Other legacy audit producer types, including review/release variants, still require verification. |
 | SA-placements-projects-91 | PARTIAL (reverified foundation) | src/components/projects/project-workspace.tsx includes MentorSprintCreate, MentorTaskCreate, lifecycle actions and ADMIN gating; tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests SA-placements-projects-91. All administrator mutation paths and exact legacy task review flows remain open until integrated acceptance. |
 | SA-placements-projects-53 | PARTIAL (reverified foundation) | src/components/projects/project-admin-workspace-list.tsx has table columns and missing-template label, but no real Change template action. tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests SA-placements-projects-53. Do not mark DONE. |
