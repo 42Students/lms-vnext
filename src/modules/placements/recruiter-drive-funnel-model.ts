@@ -7,7 +7,7 @@ export type RecruiterVisibleFunnelInput={
  rounds:readonly {kind:string;participants:readonly {
   applicationId:string;result:{status:string;outcome:string}|null;
  }[]}[];
- issued:number;accepted:number;joined:number;
+ offered:number;hired:number;
 };
 export function recruiterVisibleDriveFunnel(input:RecruiterVisibleFunnelInput){
  const outcomeIds=(kind:string)=>new Set(input.rounds
@@ -23,8 +23,8 @@ export function recruiterVisibleDriveFunnel(input:RecruiterVisibleFunnelInput){
   {label:"Assessment",count:assessments?
     new Set([...outcomeIds("ASSESSMENT"),...outcomeIds("TEST")]).size:null},
   {label:"Interview",count:interviews?outcomeIds("INTERVIEW").size:null},
-  {label:"Offered",count:Math.max(0,input.issued+input.accepted+input.joined)},
-  {label:"Hired",count:Math.max(0,input.joined)},
+  {label:"Offered",count:Math.max(0,input.offered)},
+  {label:"Hired",count:Math.max(0,input.hired)},
  ];
  let previous=input.shared;
  return counts.map((row,index)=>{
