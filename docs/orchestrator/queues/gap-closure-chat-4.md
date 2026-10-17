@@ -262,5 +262,16 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 
 ## Notes (blockers, one line each)
 
+## Chat-4 round 2 — verified gap closure and graceful UX (2026-10-17)
+
+- **26 new gap-ID tests and acceptance entries** (12 TPO Home, 14 Super Admin Tenants/Modules), committed to `chatgpt/chat-4-b`, tests **written but NOT run**. Each recorded DONE item names its test in `docs/audit/acceptance/tpo-home-verification.md` or `docs/audit/acceptance/superadmin-tenants-modules-3-verification.md`.
+- TPO Home DONE this round: `TPO-home-10/18/20/21/23/24/29/30/33/34/35/38`. Implemented legacy desktop 5:7 layout, loading skeleton, friendly Retry error boundary, no internal migration text or redundant requests panel, legacy record-finder empty/no-match copy, five-result section cap and hidden mark-all-read action when all notifications are read. Verified week row, New menu order, live header/message refresh and mark-on-open bell.
+- Super Admin Tenants/Modules DONE this round: `SA-tenants-modules-41/42/44/51/52/55/56/58/59/61/62/63/65/66`. Source-backed checks for Activity presets/default date, new scope banner, mail triage/search, broadcast links/receipts/notification and limits, global Super Admin verification switch and bulk/sequential reviews.
+- **Remaining OPEN** TPO Home priority gaps: `TPO-home-04/07/09/25/26/27/28` and remaining S3/S4 differences including `TPO-home-19/22/37`. The recruiter-access and team-ask counts still lack authoritative inputs, so don't mark 07/09 done just because the presenter formats them.
+- **Remaining OPEN** Super Admin Tenants/Modules: `SA-tenants-modules-43/45/46/47/48/49/50/53/54/57/60/64/67/68` and any others without acceptance rows. Audit findings importer and inbound mail receiver need real integration; do not falsely certify through source strings.
+- **Graceful operation:** shared `src/lib/friendly-error.ts` and `src/lib/api-fetch.ts` were absent on origin/main at round start, so the TPO error/loading states were made friendly locally; adopt chat-14 helpers and GR-30/32/70/71/72/73/90/91/92 as applicable after merge. Do not label absent helpers as formal BLOCKED; no private bucket, scanner, real provider credential or old-LMS sign-in blocker was discovered in this round.
+- **Next queue page:** learner/home-courses (S2 first). No test, lint, typecheck, build or CI run by builder; orchestrator owns execution.
+
 ## Needs shell (chat-9 only)
+- TPO-home-40 duplicate global notifications entry and TPO-home-44 global topbar placement belong to chat-9; chat-4 must not edit `src/components/shell`.
 
