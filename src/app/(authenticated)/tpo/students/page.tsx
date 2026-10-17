@@ -371,6 +371,15 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
          </label>)}
+        {([
+          ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
+          ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
+        ] as const).map(([name,label,value])=>
+         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+          <input type="number" name={name} min={0} max={100} step={1}
+           defaultValue={value??""} placeholder="Any"
+           className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+         </label>)}
         <label className="text-sm font-semibold">Offer waiting on answer
           <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
