@@ -54,6 +54,9 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
   expect(attendance()).toContain("Attendance could not be corrected. Check the record and retry.");
   expect(courseError()).toContain('role="alert"');
   expect(courseError()).not.toContain("{error.message}");
+  expect(attendance()).not.toContain("body?.error");
+  expect(attendance()).not.toContain("body?.message");
+  expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("return courseApiError(response)");
  });
  it("GR-91 Retry is keyboard-accessible in all three role error screens",()=>{
   expect(courseError()).toContain("<Button onClick={reset}>Retry</Button>");
