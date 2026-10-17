@@ -24,8 +24,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const formatIst=(iso:string|null)=>iso?new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(iso))+" IST":"Not recorded";
  const root="/tpo/placements/jobs/"+encodeURIComponent(data.job.id);
  const searchQuery=parsed.data.q;
- const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"")+(parsed.data.kind!=="ALL"?"&kind="+parsed.data.kind:"");
- const csvFilters=new URLSearchParams({status:data.status,joining:parsed.data.joining,kind:parsed.data.kind});
+ const searchSuffix=(searchQuery?"&q="+encodeURIComponent(searchQuery):"")+(parsed.data.joining!=="ALL"?"&joining="+parsed.data.joining:"")+(parsed.data.kind!=="ALL"?"&kind="+parsed.data.kind:"")+(parsed.data.expiry!=="ALL"?"&expiry="+parsed.data.expiry:"");
+ const csvFilters=new URLSearchParams({status:data.status,joining:parsed.data.joining,kind:parsed.data.kind,expiry:parsed.data.expiry});
  if(searchQuery)csvFilters.set("q",searchQuery);
  const csvHref="/api/placements/tpo/jobs/"+encodeURIComponent(data.job.id)+"/offers/export?"+csvFilters.toString();
  const tabs=[["ALL","All",data.counts.all],["ISSUED","Issued",data.counts.issued],["ACCEPTED","Accepted",data.counts.accepted],["DECLINED","Declined",data.counts.declined],["WITHDRAWN","Withdrawn",data.counts.withdrawn]] as const;
