@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,gt,isNull} from "drizzle-orm";
+import {and,desc,eq,gt,isNull,or} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
@@ -54,19 +54,11 @@ export async function grantRecruiterSharedResume(
     eq(profilePrivateDocumentReceipts.purpose,"RESUME"),
     eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
     isNull(profilePrivateDocumentReceipts.revokedAt),
-    gt(profilePrivateDocumentReceipts.retentionUntil,now)))
+    or(isNull(profilePrivateDocumentReceipts.retentionUntil),
+      gt(profilePrivateDocumentReceipts.retentionUntil,now))))
   .orderBy(desc(profilePrivateDocumentReceipts.uploadedAt),
    desc(profilePrivateDocumentReceipts.id)).limit(1);
- // Retention NULL means no expiration; it is handled by a separate branch.
- const [unexpiring]=receipt?[]:await db.select().from(profilePrivateDocumentReceipts)
-  .where(and(eq(profilePrivateDocumentReceipts.owningMembershipId,applicant.membershipId),
-    eq(profilePrivateDocumentReceipts.purpose,"RESUME"),
-    eq(profilePrivateDocumentReceipts.scanStatus,"CLEAN"),
-    isNull(profilePrivateDocumentReceipts.revokedAt),
-    isNull(profilePrivateDocumentReceipts.retentionUntil)))
-  .orderBy(desc(profilePrivateDocumentReceipts.uploadedAt),
-   desc(profilePrivateDocumentReceipts.id)).limit(1);
- const selected=receipt??unexpiring;
+ const selected=receipt;
  if(!selected)throw new RecruiterResumeUnavailable();
  const evidence={...selected,scanStatus:"CLEAN" as const,purpose:"RESUME" as const};
  if(!await verifyPrivateDocumentReceipt(evidence))
