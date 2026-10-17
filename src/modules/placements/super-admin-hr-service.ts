@@ -952,29 +952,9 @@ export async function updateSuperAdminHrAccount(
           );
       }
 
-      if (input.status === "ARCHIVED") {
-        await tx
-          .update(placementRecruiterCollegeGrants)
-          .set({
-            status: "REVOKED",
-            revokedByUserId:
-              context.user.id,
-            revokedAt: now,
-            updatedAt: now,
-          })
-          .where(
-            and(
-              eq(
-                placementRecruiterCollegeGrants.recruiterUserId,
-                userId,
-              ),
-              eq(
-                placementRecruiterCollegeGrants.status,
-                "ACTIVE",
-              ),
-            ),
-          );
-      }
+      // Suspend the account, not the college relationships.
+      // Sign-in is disabled by the archived recruiter profile; retained grants
+      // become available immediately after an explicit reactivation.
       const eventType = input.status === "ARCHIVED"
         ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SUSPENDED
         : input.status === "ACTIVE" && current.status === "ARCHIVED"
@@ -1001,18 +981,10 @@ export async function updateSuperAdminHrAccount(
     throw error;
   }
 
-  // The profile is globally archived with its grants
-  // revoked. A selected college scope will no longer
-  // include it; fetch it again after clearing that scope.
-  if (
-    input.status === "ARCHIVED" &&
-    (context.adminScope?.collegeId ||
-      context.adminScope?.organizationId)
-  ) {
-    return {
-      userId,
-      status: "ARCHIVED" as const,
-    };
+  // A suspension signs out existing sessions without deleting the college grants.
+  // The revocation helper also writes the session-audit event.
+  if(input.status==="ARCHIVED") {
+    await terminateSuperAdminHrSessions(context,userId);
   }
 
   return getSuperAdminHrAccount(

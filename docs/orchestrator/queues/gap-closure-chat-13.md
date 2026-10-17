@@ -116,7 +116,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-placements-projects-37: existing-mobile recruiter reuse now works for a matching company, but the full gap remains OPEN: free-text company creation and optional multiple colleges are not yet supported.
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
 - SA-academics-people-R04: queue gives SIDE-EFFECT but no ID-level legacy evidence in page audit; do not claim DONE without a persisted mutation contract.
-- SA-placements-projects-35: unit failure exposes real legacy mismatch — current ARCHIVED revokes recruiter grants while legacy Suspend keeps access; pending a separate lifecycle implementation (not just wording).
+- SA-placements-projects-35: recruiter Suspend now preserves grants, blocks profile access and revokes signed-in sessions; unit test written, runtime sign-in denial to be verified by orchestrator.
 - SA-placements-projects-05: four legacy attention flags and attach-link evidence are implemented on this branch; orchestrator must register the proposed offer-letter migration before runtime verification.
 
 ## Needs shell (chat-9 only)
