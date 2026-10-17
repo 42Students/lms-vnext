@@ -70,6 +70,7 @@ export async function getPlacementFailureReasonsReport(
     return {
       ...workspace,
       failures: summarizePlacementFailureReasons([]),
+      roundFailureShares:[],
     };
   }
 
