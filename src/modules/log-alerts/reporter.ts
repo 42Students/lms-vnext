@@ -5,6 +5,7 @@ import {
   db10LogAlertSignatures as signatures,
   db10LogAlertSignatureAccounts as accounts,
   db10LogAlertStates as states,
+  db10LogAlertDailyCounts as daily,
 } from "@/db/schema/db10-log-alerts.draft";
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { redactAlertText, safeAlertPath, safeAlertLabel } from "./redaction";
@@ -115,6 +116,12 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
           recentWindowCount: recentCount,
           dayKey, dayOccurrences: current.dayKey === dayKey ? current.dayOccurrences + 1 : 1,
         }).where(eq(signatures.id, current.id));
+        await tx.insert(daily).values({
+          signatureId: current.id, dayKey, occurrenceCount: 1,
+        }).onConflictDoUpdate({
+          target: [daily.signatureId, daily.dayKey],
+          set: { occurrenceCount: sql.raw("log_alert_daily_counts.occurrence_count + 1") },
+        });
         if (accountHash) await tx.insert(accounts).values({
           signatureId: current.id, accountKeyHash: accountHash, firstSeenAt: now,
         }).onConflictDoNothing();
@@ -128,7 +135,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
         return;
       }
       if (slot === "SUMMARY") {
-        if (await sendTelegramAlert("vNext alert burst: more errors detected; see the Logs page. Environment: " + environment)) {
+        if (await sendTelegramAlert("vNext alert burst: 1 more new or recurring error; see the Logs page. Environment: " + environment)) {
           await tx.update(states).set({
             burstMinuteAt: minute, burstCount: spent + 1,
             overflowCount: sql.raw("log_alert_states.overflow_count + 1"),
@@ -155,6 +162,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
           occurrenceCount: 1n, recentWindowAt: now, recentWindowCount: 1,
           alertedAt: now, dayKey, dayOccurrences: 1,
         });
+        await tx.insert(daily).values({ signatureId: id, dayKey, occurrenceCount: 1 });
         if (accountHash) await tx.insert(accounts).values({
           signatureId: id, accountKeyHash: accountHash, firstSeenAt: now,
         }).onConflictDoNothing();
@@ -164,6 +172,8 @@ export async function reportErrorForAlert(input: ReportableError): Promise<void>
       } else {
         await tx.update(signatures).set({ lastSpikeAlertAt: now })
           .where(eq(signatures.id, id));
+        await tx.update(daily).set({ spikeCount: sql.raw("log_alert_daily_counts.spike_count + 1") })
+          .where(and(eq(daily.signatureId, id), eq(daily.dayKey, dayKey)));
       }
       await tx.update(states).set({
         burstMinuteAt: minute, burstCount: spent + 1,

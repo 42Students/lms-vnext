@@ -114,3 +114,19 @@ export const db10LogAlertStates = pgTable(
     check("db10_log_alert_states_key_ck", sql`length(trim(${t.stateKey})) > 0`),
   ],
 );
+
+/** Full calendar-day counts are separate from the rolling 5-minute spike counter. */
+export const db10LogAlertDailyCounts = pgTable(
+  "log_alert_daily_counts",
+  {
+    signatureId: uuid("signature_id").notNull().references(() => db10LogAlertSignatures.id, { onDelete: "cascade" }),
+    dayKey: varchar("day_key", { length: 10 }).notNull(),
+    occurrenceCount: bigint("occurrence_count", { mode: "number" }).notNull().default(1),
+    spikeCount: bigint("spike_count", { mode: "number" }).notNull().default(0),
+  },
+  (t) => [
+    primaryKey({ columns: [t.signatureId, t.dayKey] }),
+    index("db10_log_alert_daily_day_idx").on(t.dayKey),
+    check("db10_log_alert_daily_count_ck", sql`${t.occurrenceCount} >= 1`),
+  ],
+);
