@@ -187,7 +187,7 @@ export function ProgramActions({
                         durationTerms: displayDurationYears ? Number(durationTerms)*2 : Number(durationTerms),
                       }),
                     ),
-                  "Program updated",
+                  displayDurationYears ? `Updated program “${program.name}”.` : "Program updated",
                   () => setEditOpen(false),
                 )
               }
@@ -228,9 +228,9 @@ export function ProgramActions({
             </label>
             <Input
               type="number"
-              min={displayDurationYears?0.5:1}
-              max={displayDurationYears?12:24}
-              step={displayDurationYears?0.5:1}
+              min={1}
+              max={displayDurationYears?10:24}
+              step={1}
               value={durationTerms}
               onChange={(event) =>
                 setDurationTerms(
