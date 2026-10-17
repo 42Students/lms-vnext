@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { TrackerThemeToggle } from "./tracker-theme-toggle";
 
 export function TrackerAdminNav() {
   return (
@@ -33,6 +34,7 @@ export function TrackerAdminNav() {
       >
         Audit findings
       </Link>
+      <TrackerThemeToggle />
     </nav>
     <span id="tracker-content" tabIndex={-1} className="sr-only">Tracker page content</span>
     </>
