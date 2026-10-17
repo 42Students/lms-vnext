@@ -16,6 +16,7 @@ export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:
  if(!membership||!hasMembershipRole(context,"TPO"))
   throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
+ const readsReady=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
