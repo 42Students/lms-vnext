@@ -20,7 +20,7 @@ export function TpoPrepReadinessEditor({choices,initial,expectedVersion}:{choice
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
   <h3 className="font-semibold">Required preparation courses</h3>
-  <p className="text-sm text-muted-foreground">Select active courses from this college only. The readiness indicator is not yet derived from learner course completions.</p>
+  <p className="text-sm text-muted-foreground">Select active courses from this college only. TPO Students derives preparation support from saved learner course completions when published course evidence is available; missing progress remains unclassified.</p>
   <label className="block text-sm">Find a preparation course<input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100} placeholder="Search course name or code" className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
   <p className="text-xs text-muted-foreground">With none picked, nobody is marked as needing prep.</p>
   <fieldset disabled={busy} className="max-h-72 space-y-2 overflow-y-auto">
