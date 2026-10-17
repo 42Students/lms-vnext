@@ -76,3 +76,9 @@ Unresolved: faculty register optional profile fields; platform-wide account bloc
 ## chat-13 final sprint source acceptance — 2026-10-18
 | SA-academics-people-92 | DONE | `src/components/college/college-student-register-form.tsx` has separate First Name and Last Name, Indian 10-digit mobile validation/normalization, optional email, gender, DOB and address. User-wide canonical login identity is kept separate from college-scoped editable profile data; `tests/unit/chat13-final-sprint-sa-92.test.ts` test `SA-academics-people-92`. |
 | SA-academics-people-94 | DONE (source) | `src/app/(authenticated)/admin/students/page.tsx` renders the existing `CollegePersonEditAction` and newly wired `StudentClassMoveAction` on a college-scoped learner roster. `src/modules/academics/college-student-section-move-service.ts` now supports verified Super Admin acting-college permission with same-cohort, period and capacity restrictions, optimistic section-enrollment token, audit event, and preserves historical placement. `tests/unit/chat13-final-sprint-sa-94.test.ts` test `SA-academics-people-94` (unrun). |
+
+### chat-9 reassessment — SA-academics-people-92
+
+| ID | Status | Evidence |
+|---|---|---|
+| SA-academics-people-92 | DONE (source verified; browser/database acceptance pending) | `src/components/college/college-student-register-form.tsx` provides First Name, Last Name, 10-digit Indian mobile normalization, optional email, gender, DOB and address. `src/modules/people/college-onboard-mobile-model.ts` validates the mobile and formats the name. `tests/unit/chat9-final-named-gap-verification.test.ts` → `SA-academics-people-92 uses structured legacy identity and validates the Indian mobile without requiring demographic fields`. Existing verified source behavior was not removed. |
