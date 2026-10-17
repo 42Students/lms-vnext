@@ -39,6 +39,25 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
+ <section aria-label="Placement journey" className="space-y-3 rounded-lg border border-border bg-surface p-4">
+  <h2 className="font-semibold">Placement journey</h2>
+  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+   {([["Students",journey.total],["Eligible",journey.eligible],
+      ["Invited",batchScope.lifecycle?.invitedAt?journey.eligible:null],
+      ["Registered",journey.registered]] as const).map(([label,value])=>
+      <div key={label} className="rounded-md border border-border p-3">
+       <dt className="text-xs text-muted-foreground">{label}</dt>
+       <dd className="text-xl font-semibold tabular-nums">{value===null?"—":value}</dd>
+      </div>)}
+  </dl>
+  <div className="flex flex-wrap gap-2 text-xs">
+   {journey.undecided!==null?<span className="rounded-md bg-muted px-2 py-1">Not decided: {journey.undecided}</span>:null}
+   {journey.registrationGap!==null?<span className="rounded-md bg-muted px-2 py-1">Not registered: {journey.registrationGap}</span>:null}
+  </div>
+  {journey.sampled?<p className="text-xs text-muted-foreground">Eligibility covers a sample of {journey.sampleCount} learners; full-cohort eligibility and invited counts are not inferred.</p>:null}
+  {!registrationCounts.available?<p className="text-xs text-muted-foreground">Registration choice totals are unavailable.</p>:null}
+  <p className="text-xs text-muted-foreground">Registered means a student recorded a placement registration choice, not merely that they were eligible or invited.</p>
+ </section>
  <div className="flex flex-wrap items-center justify-between gap-2">
   <p className="text-xs text-muted-foreground">CSV includes only this page (up to 25 students), with decision source and review flags.</p>
   <a href={"/api/placements/tpo/batches/"+batchId+"/students/export?page="+result.page}
