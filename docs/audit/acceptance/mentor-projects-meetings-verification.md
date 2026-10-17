@@ -22,3 +22,6 @@
 | MEN-projects-meetings-52 | DONE | `src/components/projects/mentor-task-allocation.tsx`; `tests/unit/mentor-projects-meetings-chat7-acceptance.test.ts` — `MEN-projects-meetings-52 preserves the reviewed mentor surface`. Source contract authored, not executed. |
 
 Remaining queue entries are OPEN until the behavior described in the legacy audit is verified end-to-end; no source-only proof is claimed for unlisted gaps.
+
+| MEN-projects-meetings-01 | DONE | `src/components/projects/mentor-projects-unavailable.tsx`, `src/app/(authenticated)/mentor/projects/page.tsx`; `tests/unit/mentor-projects-chat7-availability.test.ts` — `MEN-projects-meetings-01 never mislabels access-policy lookup failure as Projects disabled`. Authored, not executed. |
+| MEN-projects-meetings-08 | DONE | `src/components/projects/mentor-projects-unavailable.tsx`, `src/app/(authenticated)/mentor/projects/page.tsx`; `tests/unit/mentor-projects-chat7-availability.test.ts` — `MEN-projects-meetings-08 retains notifications and retry when lookup fails`. Authored, not executed. |
