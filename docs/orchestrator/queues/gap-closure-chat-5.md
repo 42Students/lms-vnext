@@ -43,7 +43,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-50 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drive-workspace-51 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-52 | S2 | MISSING-ACTION | DONE |
-| TPO-drive-workspace-54 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-54 | S2 | MISSING-ACTION | BLOCKED |
 | TPO-drive-workspace-55 | S2 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-59 | S2 | MISSING-TAB | OPEN |
 | TPO-drive-workspace-61 | S2 | MISSING-MODAL | OPEN |
@@ -243,11 +243,11 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-14 | S3 | MISSING-ACTION | DONE |
 | TPO-requests-verification-15 | S3 | MISSING-EXPORT | DONE |
 | TPO-requests-verification-17 | S3 | COPY | DONE |
-| TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-requests-verification-25 | S3 | MISSING-ACTION | DONE |
 | TPO-requests-verification-27 | S3 | COPY | DONE |
 | TPO-requests-verification-28 | S3 | COPY | DONE |
 | TPO-requests-verification-29 | S3 | MISSING-FIELD | DONE |
-| TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-30 | S3 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | DONE |
 | TPO-requests-verification-R01 | S3 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
@@ -350,3 +350,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] round-2 verified on main: TPO-requests-verification-23, TPO-requests-verification-17, TPO-requests-verification-27, TPO-requests-verification-28, TPO-requests-verification-29: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
 
 - [chat-5] round-2 verified on main: TPO-requests-verification-R01, TPO-requests-verification-16: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
+
+- [chat-5] round-2 TPO-requests-verification-25 and -30 DONE: verified sequential review and exact learner notification source + existing chat12 tests, supplemented by `tests/unit/chat5-requests-sequential-notices.test.ts`. TPO-drive-workspace-54 BLOCKED exclusively for private file storage and malware scanning; existing secure link-only behavior does not claim complete letter upload.
