@@ -6,7 +6,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 import {getTpoDriveOfferRegister} from "@/modules/placements/tpo-drive-offer-register-service";
 import {offerRegisterQuery} from "@/modules/placements/tpo-drive-offer-register-model";
-export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[]}>}){
+export default async function OffersPage({params,searchParams}:{params:Promise<{jobId:string}>,searchParams:Promise<{status?:string|string[];page?:string|string[];q?:string|string[];joining?:string|string[];kind?:string|string[];expiry?:string|string[];minCtcLpa?:string|string[];maxCtcLpa?:string|string[]}>}){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const [p,q]=await Promise.all([params,searchParams]);
@@ -16,7 +16,9 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
  const joiningRaw=Array.isArray(q.joining)?q.joining[0]:q.joining;
  const kindRaw=Array.isArray(q.kind)?q.kind[0]:q.kind;
  const expiryRaw=Array.isArray(q.expiry)?q.expiry[0]:q.expiry;
- const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{}),...(expiryRaw?{expiry:expiryRaw}:{})});
+ const minCtcRaw=Array.isArray(q.minCtcLpa)?q.minCtcLpa[0]:q.minCtcLpa;
+ const maxCtcRaw=Array.isArray(q.maxCtcLpa)?q.maxCtcLpa[0]:q.maxCtcLpa;
+ const parsed=offerRegisterQuery.safeParse({jobId:p.jobId,status:raw||"ALL",...(page?{page}:{}),...(qterm?{q:qterm}:{}),...(joiningRaw?{joining:joiningRaw}:{}),...(kindRaw?{kind:kindRaw}:{}),...(expiryRaw?{expiry:expiryRaw}:{}),...(minCtcRaw?{minCtcLpa:minCtcRaw}:{}),...(maxCtcRaw?{maxCtcLpa:maxCtcRaw}:{})});
  if(!parsed.success)notFound();
  let data:Awaited<ReturnType<typeof getTpoDriveOfferRegister>>;
  try{data=await getTpoDriveOfferRegister(context,parsed.data)}
