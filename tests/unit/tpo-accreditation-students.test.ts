@@ -23,6 +23,8 @@ describe("TPO-calendar-reports-33 NAAC student evidence",()=>{
   const csv=accreditationStudentCsv(rows);
   expect(csv).toContain("Employer contact");
   expect(csv).toContain("'=IMPORTXML()");
-  expect(csv).toContain("WARNING");
+  expect(csv.split("\r\n")[0]).toContain("Employer contact");
+  expect(csv.split("\r\n")).toHaveLength(2);
+  expect(csv).not.toContain("\"=IMPORTXML()\"");
  });
 });
