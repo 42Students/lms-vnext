@@ -1,3 +1,15 @@
+## FAST v2 S1/S2 build round — 17 Oct 2026 (post-lane merge 5759f883)
+
+- Synced `chatgpt/chat-3-b` to the then-current merged main `5759f883` via safe fast-forward, before file edits. Source groups committed and pushed to branch only with `[chat-3]` plus audit gap ID. No tests/typecheck/lint/build/CI waits per FAST v2.
+- **TPO-students-23 — additional source:** derive offers awaiting learner answer from persisted `ISSUED` offer status, expose as a roster count column and exact Yes/No filter; server-side selection applied before pagination; URL, spreadsheet, CSV and drilldown filtering stay synchronized. No fictitious unanswered offers inferred.
+- **TPO-students-21 — partial source:** persisted candidate academic CGPA numeric min/max (0–10), maximum active/past backlogs, and recorded/missing CGPA evidence filters. Server rejects inverted CGPA bounds, negative backlog counts and unsupported URL values; page and spreadsheet pickers plus CSV/query persistence added. 10th/12th/Diploma/UG/PG verified percentages, passing year and entrance-exam filters remain open until their authoritative persisted scope is wired.
+- **TPO-students-20 — partial:** Verified/profile and nine after-college selections were implemented in preceding rounds. Stage filter Invited still needs authoritative student invitations and cannot be mislabeled from readiness/registration.
+- **Blocked — TPO-drives-02, TPO-requests-verification-33–35:** recruiter drive REQUEST/SENT_BACK/REJECTED lifecycle requires registered domain states/decision policy; no fake drive-request statuses.
+- **Blocked — TPO-inbox-team-15:** Everyone/mute needs group participant access schema; never repurpose private two-person messages.
+- **Blocked — TPO-requests-verification-01/36:** five missing institutional request kinds and recruiter change requests need registration and policy; no fake verification/letter claims.
+- **Blocked — COL-people-02/07, COL-placements-02/03/10:** canonical login identity changes and protected resume/offer evidence require authorized services.
+- WP-chat-3-02/03/04 and reassigned WP-chat-5-02/09/10/14/15 remain IN-PROGRESS; completed source work alone is not acceptance evidence.
+
 ## FAST v2 S1/S2 continuation — 17 Oct 2026, post-merged main
 
 - Fast-forwarded `chatgpt/chat-3-b` to merged main `9c4cdf54` before editing. All new commits tagged `[chat-3]` and pushed only to the lane branch; no PR, tests, build, typecheck, lint or CI wait.
