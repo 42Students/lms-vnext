@@ -1,134 +1,151 @@
 import "server-only";
-import {and,asc,desc,eq} from "drizzle-orm";
-import {canPostToTpoCompanyTeam,tpoCompanyTeamCompanyIdSchema,tpoCompanyTeamPostSchema} from "./tpo-company-team-model";
+import {and,asc,desc,eq,inArray} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,placementCompanies,placementCompanyRelationships,users} from "@/db/schema";
-import {placementTpoCompanyThreads,placementTpoCompanyThreadMessages} from "@/db/schema/tpo-company-team";
-import {type RequestContext} from "@/modules/identity/context";
+import {collegeMemberships,membershipRoles,placementCompanyRelationships,placementCompanies,users,
+ placementTpoCompanyTeamMessages as messages,placementTpoCompanyTeamFollows as follows} from "@/db/schema";
+import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
-async function scope(context:RequestContext){
- const member=context.membership;
- if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-    !hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
- const college=await requirePlacementManageScope(context,member.collegeId);
- return {member,college};
+export const companyTeamCompanyIdSchema=z.string().uuid();
+const uuid=z.string().uuid();
+const messageText=z.string().trim().min(1).max(4000);
+const mutation=z.discriminatedUnion("action",[
+ z.strictObject({action:z.literal("SEND"),body:messageText,decision:z.boolean().default(false),
+  assigneeId:uuid.nullable().default(null),dueAt:z.iso.datetime({offset:true}).nullable().default(null)}),
+ z.strictObject({action:z.literal("FOLLOW"),following:z.boolean()}),
+ z.strictObject({action:z.literal("EDIT"),messageId:uuid,body:messageText}),
+ z.strictObject({action:z.literal("DELETE"),messageId:uuid}),
+ z.strictObject({action:z.literal("DECISION"),messageId:uuid,marked:z.boolean()}),
+ z.strictObject({action:z.literal("ASK_DONE"),messageId:uuid}),
+ z.strictObject({action:z.literal("ASK_CANCEL"),messageId:uuid}),
+]);
+export class TpoCompanyTeamError extends Error {
+ constructor(readonly code:"NOT_FOUND"|"STORAGE_PENDING"|"BAD_ACTION"|"NOT_AUTHORIZED"|"STALE"){
+  super(code);this.name="TpoCompanyTeamError";
+ }
 }
-async function ready(){
- return await placementTableExists("placement_tpo_company_threads")&&
-  await placementTableExists("placement_tpo_company_thread_messages");
-}
-/** The relationship is the object; never create one for a global company
- * without explicit active college relationship membership. */
-export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown){
- const companyId=tpoCompanyTeamCompanyIdSchema.parse(rawCompanyId),{college}=await scope(context);
- if(!await ready())return {status:"NOT_REGISTERED" as const};
- return getDb().transaction(async tx=>{
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
-   collegeId:college.id,organizationId:college.organizationId,
-  });
-  const [relation]=await tx.select({
-   id:placementCompanyRelationships.id,status:placementCompanyRelationships.status,
-   companyName:placementCompanies.name,
-  }).from(placementCompanyRelationships)
-   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
-   .where(and(eq(placementCompanyRelationships.collegeId,college.id),
-    eq(placementCompanyRelationships.companyId,companyId))).limit(1);
-  if(!relation)return {status:"NOT_FOUND" as const};
-  const [thread]=await tx.select({
-   id:placementTpoCompanyThreads.id,topic:placementTpoCompanyThreads.topic,
-  }).from(placementTpoCompanyThreads).where(and(
-   eq(placementTpoCompanyThreads.collegeId,college.id),
-   eq(placementTpoCompanyThreads.relationshipId,relation.id))).limit(1);
-  const messages=thread?await tx.select({
-   id:placementTpoCompanyThreadMessages.id,body:placementTpoCompanyThreadMessages.body,
-   createdAt:placementTpoCompanyThreadMessages.createdAt,
-   authorName:users.displayName,
-  }).from(placementTpoCompanyThreadMessages)
-   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementTpoCompanyThreadMessages.authorMembershipId))
-   .innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .where(and(eq(placementTpoCompanyThreadMessages.threadId,thread.id),
-    eq(placementTpoCompanyThreadMessages.collegeId,college.id)))
-   .orderBy(desc(placementTpoCompanyThreadMessages.createdAt),desc(placementTpoCompanyThreadMessages.id))
-   .limit(100):[];
-  return {status:"READY" as const,companyId,companyName:relation.companyName,
-   canPost:canPostToTpoCompanyTeam(relation.status),topic:thread?.topic??relation.companyName,
-   messages:messages.reverse()};
- });
-}
-/** Each first post creates at most one company thread in a college; retries
- * return the original message and cannot deliver duplicate bell events. */
-export async function postTpoCompanyTeamMessage(
- context:RequestContext,rawCompanyId:unknown,raw:unknown,
-){
- const companyId=tpoCompanyTeamCompanyIdSchema.parse(rawCompanyId),input=tpoCompanyTeamPostSchema.parse(raw);
- const {member,college}=await scope(context);
- if(!await ready())throw new Error("TPO_COMPANY_TEAM_NOT_REGISTERED");
- return getDb().transaction(async tx=>{
-  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
-   collegeId:college.id,organizationId:college.organizationId,
-  });
-  const [relation]=await tx.select({
-   id:placementCompanyRelationships.id,name:placementCompanies.name,
-  }).from(placementCompanyRelationships)
-   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
-   .where(and(eq(placementCompanyRelationships.collegeId,college.id),
+async function companyScope(context:RequestContext,companyId:string){
+ const membership=context.membership;
+ if(!membership||!hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
+ const college=await requirePlacementManageScope(context,membership.collegeId);
+ const [company]=await getDb().select({id:placementCompanies.id,name:placementCompanies.name})
+  .from(placementCompanyRelationships)
+  .innerJoin(placementCompanies,and(eq(placementCompanies.id,placementCompanyRelationships.companyId),
+    eq(placementCompanies.status,"ACTIVE")))
+  .where(and(eq(placementCompanyRelationships.collegeId,college.id),
     eq(placementCompanyRelationships.companyId,companyId),
-    eq(placementCompanyRelationships.status,"ACTIVE")))
-   .for("update").limit(1);
-  if(!relation)throw new Error("TPO_COMPANY_TEAM_NOT_FOUND");
-  await tx.insert(placementTpoCompanyThreads).values({
-   collegeId:college.id,relationshipId:relation.id,createdByMembershipId:member.id,
-   topic:relation.name.slice(0,200),
-  }).onConflictDoNothing();
-  const [thread]=await tx.select({id:placementTpoCompanyThreads.id})
-   .from(placementTpoCompanyThreads).where(and(
-    eq(placementTpoCompanyThreads.collegeId,college.id),
-    eq(placementTpoCompanyThreads.relationshipId,relation.id))).limit(1);
-  if(!thread)throw new Error("TPO_COMPANY_TEAM_NOT_FOUND");
-  const [inserted]=await tx.insert(placementTpoCompanyThreadMessages).values({
-   threadId:thread.id,collegeId:college.id,authorMembershipId:member.id,
-   body:input.body,idempotencyKey:input.idempotencyKey,
-  }).onConflictDoNothing().returning({id:placementTpoCompanyThreadMessages.id});
-  const [message]=await tx.select({
-   id:placementTpoCompanyThreadMessages.id,body:placementTpoCompanyThreadMessages.body,
-  }).from(placementTpoCompanyThreadMessages).where(and(
-   eq(placementTpoCompanyThreadMessages.threadId,thread.id),
-   eq(placementTpoCompanyThreadMessages.collegeId,college.id),
-   eq(placementTpoCompanyThreadMessages.authorMembershipId,member.id),
-   eq(placementTpoCompanyThreadMessages.idempotencyKey,input.idempotencyKey))).limit(1);
-  if(!message||message.body!==input.body)throw new Error("TPO_COMPANY_TEAM_IDEMPOTENCY_CONFLICT");
-  if(inserted){
-   const [event]=await tx.insert(activityEvents).values({
-    organizationId:college.organizationId,collegeId:college.id,
-    actorUserId:context.user.id,actorMembershipId:member.id,
-    module:"PLACEMENTS",eventType:"placements.tpo_team.company_message",
-    subjectType:"placement_company_relationship",subjectId:relation.id,
-    summary:"Team discussion on company",
-    metadata:{threadId:thread.id,messageId:message.id,companyId},
-   }).returning({id:activityEvents.id});
-   if(event){
-    const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
-     .from(collegeMemberships)
-     .innerJoin(users,eq(users.id,collegeMemberships.userId))
-     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-      eq(membershipRoles.role,"TPO")))
-     .where(and(eq(collegeMemberships.collegeId,college.id),
-      eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
-     .orderBy(asc(collegeMemberships.userId)).limit(501);
-    if(recipients.length>500)throw new Error("TPO_NOTIFICATION_RECIPIENT_LIMIT");
-    if(recipients.length)await tx.insert(inAppNotifications).values(
-     recipients.map(({userId})=>({
-      userId,eventId:event.id,title:"Team update on "+relation.name.slice(0,80),
-      body:input.body.slice(0,120),
-      actionHref:"/tpo/companies/"+companyId+"/team?m="+message.id,
-     }))).onConflictDoNothing();
-   }
+    eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1);
+ if(!company)throw new TpoCompanyTeamError("NOT_FOUND");
+ return {college,membership,company};
+}
+async function tablesReady(){
+ return (await placementTableExists("placement_tpo_company_team_messages"))&&
+  (await placementTableExists("placement_tpo_company_team_follows"));
+}
+/** TPO-companies-05: only same-college active placement-team members get company discussion. */
+export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown){
+ const companyId=companyTeamCompanyIdSchema.parse(rawCompanyId);
+ const {college,membership,company}=await companyScope(context,companyId);
+ if(!await tablesReady())return {status:"NOT_REGISTERED" as const,companyName:company.name,
+  messages:[],members:[],following:false,truncated:false};
+ const [latest,followers,team]=await Promise.all([
+  getDb().select({id:messages.id,body:messages.body,decision:messages.decision,
+    askAssigneeMembershipId:messages.askAssigneeMembershipId,askStatus:messages.askStatus,
+    askDueAt:messages.askDueAt,authorMembershipId:messages.authorMembershipId,
+    authorName:users.displayName,createdAt:messages.createdAt,editedAt:messages.editedAt,
+    deletedAt:messages.deletedAt})
+   .from(messages).innerJoin(collegeMemberships,and(eq(collegeMemberships.id,messages.authorMembershipId),
+     eq(collegeMemberships.collegeId,messages.collegeId)))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(eq(messages.collegeId,college.id),eq(messages.companyId,companyId)))
+   .orderBy(desc(messages.createdAt),desc(messages.id)).limit(101),
+  getDb().select({membershipId:follows.membershipId}).from(follows)
+   .where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId),
+    eq(follows.membershipId,membership.id))).limit(1),
+  getDb().selectDistinct({membershipId:collegeMemberships.id,name:users.displayName})
+   .from(collegeMemberships)
+   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+     inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+   .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")))
+   .orderBy(asc(users.displayName)).limit(100),
+ ]);
+ return {status:"READY" as const,companyName:company.name,messages:latest.slice(0,100).reverse(),
+  members:team,following:followers.length>0,truncated:latest.length>100};
+}
+export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown,raw:unknown){
+ const companyId=companyTeamCompanyIdSchema.parse(rawCompanyId);
+ const input=mutation.parse(raw);
+ const {college,membership}=await companyScope(context,companyId);
+ if(!await tablesReady())throw new TpoCompanyTeamError("STORAGE_PENDING");
+ return getDb().transaction(async tx=>{
+  const persisted=await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  if(!persisted.membership||persisted.membership.id!==membership.id||
+   !hasPlacementTeamMembership(persisted))throw new AuthorizationError("placements.manage");
+  const [link]=await tx.select({id:placementCompanyRelationships.id})
+    .from(placementCompanyRelationships).where(and(
+     eq(placementCompanyRelationships.collegeId,college.id),
+     eq(placementCompanyRelationships.companyId,companyId),
+     eq(placementCompanyRelationships.status,"ACTIVE"))).for("share").limit(1);
+  if(!link)throw new TpoCompanyTeamError("NOT_FOUND");
+  if(input.action==="FOLLOW"){
+   if(input.following)await tx.insert(follows).values({collegeId:college.id,
+    companyId,membershipId:membership.id}).onConflictDoNothing();
+   else await tx.delete(follows).where(and(eq(follows.collegeId,college.id),
+    eq(follows.companyId,companyId),eq(follows.membershipId,membership.id)));
+   return {changed:true};
   }
-  return {id:message.id,threadId:thread.id,created:Boolean(inserted)};
+  if(input.action==="SEND"){
+   if(input.dueAt&&(!input.assigneeId||Date.parse(input.dueAt)<=Date.now()))
+    throw new TpoCompanyTeamError("BAD_ACTION");
+   if(input.assigneeId){
+    const [assignee]=await tx.select({id:collegeMemberships.id})
+     .from(collegeMemberships).innerJoin(users,and(eq(users.id,collegeMemberships.userId),
+      eq(users.platformStatus,"ACTIVE")))
+     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+      inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
+     .where(and(eq(collegeMemberships.id,input.assigneeId),eq(collegeMemberships.collegeId,college.id),
+      eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+    if(!assignee)throw new TpoCompanyTeamError("NOT_AUTHORIZED");
+   }
+   const [message]=await tx.insert(messages).values({
+    collegeId:college.id,companyId,authorMembershipId:membership.id,body:input.body,
+    decision:input.decision,askAssigneeMembershipId:input.assigneeId,
+    askDueAt:input.dueAt?new Date(input.dueAt):null,
+    askStatus:input.assigneeId?"OPEN":null,
+   }).returning({id:messages.id});
+   return {changed:true,id:message.id};
+  }
+  const [message]=await tx.select().from(messages).where(and(
+    eq(messages.id,input.messageId),eq(messages.collegeId,college.id),
+    eq(messages.companyId,companyId))).for("update").limit(1);
+  if(!message||message.deletedAt)throw new TpoCompanyTeamError("NOT_FOUND");
+  if(input.action==="EDIT"){
+   if(message.authorMembershipId!==membership.id)throw new TpoCompanyTeamError("NOT_AUTHORIZED");
+   if(Date.now()-message.createdAt.getTime()>15*60*1000)throw new TpoCompanyTeamError("STALE");
+   await tx.update(messages).set({body:input.body,editedAt:new Date()}).where(eq(messages.id,message.id));
+  }else if(input.action==="DELETE"){
+   if(message.authorMembershipId!==membership.id)throw new TpoCompanyTeamError("NOT_AUTHORIZED");
+   await tx.update(messages).set({body:"Message removed",deletedAt:new Date(),decision:false,
+    askStatus:message.askStatus==="OPEN"?"CANCELLED":message.askStatus}).where(eq(messages.id,message.id));
+  }else if(input.action==="DECISION"){
+   await tx.update(messages).set({decision:input.marked}).where(eq(messages.id,message.id));
+  }else if(input.action==="ASK_DONE"||input.action==="ASK_CANCEL"){
+   if(message.askStatus!=="OPEN")throw new TpoCompanyTeamError("STALE");
+   if(input.action==="ASK_DONE"&&message.askAssigneeMembershipId!==membership.id)
+    throw new TpoCompanyTeamError("NOT_AUTHORIZED");
+   if(input.action==="ASK_CANCEL"&&message.authorMembershipId!==membership.id)
+    throw new TpoCompanyTeamError("NOT_AUTHORIZED");
+   await tx.update(messages).set({askStatus:input.action==="ASK_DONE"?"DONE":"CANCELLED"})
+    .where(eq(messages.id,message.id));
+  }
+  return {changed:true,id:message.id};
  });
 }
