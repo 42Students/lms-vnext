@@ -9,7 +9,7 @@ import {
   listKnownErrorsForAdmin,
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
-import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
+import { cloudLogPollConfigured, logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
 import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 
@@ -30,9 +30,14 @@ export default async function TrackerLogsPage({
       <PageHeader
         eyebrow="42 Tracker"
         title="Known Errors"
-        description="Durable error signatures, recurrence and triage. Live Cloud Logging search and alerts are separate integrations, not implied by this view."
+        description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
       />
       <TrackerAdminNav />
+      {!cloudLogPollConfigured() ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.
+        </p>
+      ) : null}
       {!telegramAlertsConfigured() ? (
         <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
           Telegram alerts are not configured

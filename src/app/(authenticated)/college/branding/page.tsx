@@ -5,6 +5,7 @@ import { CollegeLogoUploader } from "@/components/admin/college-logo-uploader";
 import { PageHeader } from "@/components/ui/page-header";
 import { getCollegeBranding } from "@/modules/colleges/branding-service";
 import { can } from "@/modules/permissions/policy";
+import {isSuperAdmin} from "@/modules/identity/context";
 
 export default async function CollegeBrandingPage() {
   const context = await getCurrentRequestContext();
@@ -15,7 +16,7 @@ export default async function CollegeBrandingPage() {
   }
 
   const branding = await getCollegeBranding(context, membership.collegeId);
-  const canEdit = can(context, "college.manage", {
+  const canEdit = isSuperAdmin(context)&&can(context, "college.manage", {
     organizationId: membership.organizationId,
     collegeId: membership.collegeId,
   });
@@ -27,6 +28,9 @@ export default async function CollegeBrandingPage() {
         title="Branding"
         description="Logo, colours and support details shown on your college's sign-in page."
       />
+      <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">
+        College contact details are managed in College profile. Sign-in branding, domains and logo changes are controlled by a Super Admin.
+      </p>
       <CollegeLogoUploader collegeId={membership.collegeId} currentUrl={branding.uploadedLogoUrl} canEdit={canEdit}/>
       <CollegeBrandingForm
         collegeId={membership.collegeId}

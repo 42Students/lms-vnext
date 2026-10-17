@@ -110,4 +110,30 @@ describe("chat-4 College Verification and Misc verification",()=>{
    expect(s).toContain("ownInbox.unreadCount");
   }
  });
+ it("COL-verification-misc-06 offers precise Education and Identity send-back reasons",()=>{
+  const drawer=read("src/components/verification/VerificationReviewDrawer.tsx");
+  expect(drawer).toContain("tpoVerificationSectionReasons(row.section)");
+  expect(drawer).toContain("The student sees your reason and fixes it on their profile.");
+  const college=read("src/components/verification/CollegeVerificationPanel.tsx");
+  expect(college).toContain('tpoVerificationSectionReasons("EDUCATION")');
+  expect(college).toContain('tpoVerificationSectionReasons("IDENTITY")');
+  expect(college).toContain("apiFetch<unknown>");
+ });
+
+ it("COL-verification-misc-17 keeps domains branding and logo mutations Super Admin only",()=>{
+  expect(read("src/modules/tenant-domains/service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
+  expect(read("src/modules/colleges/branding-service.ts")).toContain('if(!isSuperAdmin(context))throw new AuthorizationError("college.manage")');
+  expect(read("src/modules/colleges/admin-branding-logo-service.ts")).toContain('if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage")');
+  expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain('isSuperAdmin(context)&&can(context, "college.manage"');
+ });
+ it("COL-verification-misc-18 accepts approved extra Student groups surface under OD-38",()=>{
+  const s=read("docs/audit/owner-decisions-resolved.md");
+  expect(s).toContain("OD-38");
+  expect(read("src/app/(authenticated)/college/groups/page.tsx")).toContain("getCurrentRequestContext");
+ });
+ it("COL-verification-misc-20 documents which role edits profile contacts versus branding",()=>{
+  expect(read("src/app/(authenticated)/college/branding/page.tsx")).toContain("Sign-in branding, domains and logo changes are controlled by a Super Admin.");
+  expect(read("src/app/(authenticated)/college/college-profile/page.tsx")).toContain("College profile manages operational contact details.");
+ });
+
 });

@@ -1,9 +1,10 @@
 "use client";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useEffect,useRef,useState} from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import type {SafeSnapshot} from "@/modules/profile-verification/domain";
 import {verificationSnapshotComparison} from "@/modules/verification/snapshot-comparison";
-import {VERIFICATION_SEND_BACK_REASONS,tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
+import {tpoVerificationSectionReasons} from "@/modules/verification/review-reasons";
 import {canRetryVerificationReview} from "@/modules/verification/review-retry-state";
 import {canDismissVerificationDialog} from "@/modules/verification/review-dialog-keyboard";
 import {verificationFocusWrap} from "@/modules/verification/review-focus-loop";
@@ -27,9 +28,10 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  const [loading,setLoading]=useState(true);
  const [retryKey,setRetryKey]=useState(0);
  const [saving,setSaving]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [pendingAction,setPendingAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
  const isTpo=apiBase==="/api/tpo/verification";
- const reasonChoices:readonly string[]=isTpo?tpoVerificationSectionReasons(row.section):VERIFICATION_SEND_BACK_REASONS;
+ const reasonChoices:readonly string[]=tpoVerificationSectionReasons(row.section);
  const [reason,setReason]=useState<string>(reasonChoices[0]??"");
  const [additional,setAdditional]=useState("");
  const url=`${apiBase}/${encodeURIComponent(row.learnerMembershipId)}/${row.section}${collegeId?`?collegeId=${encodeURIComponent(collegeId)}`:""}`;
@@ -68,7 +70,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
   setRetryKey(key=>key+1);
  }
  async function decide(action:"VERIFY"|"SEND_BACK"){
-  if(!detail||saving||pendingAction!==action)return;
+  if(!detail||saving||guardedPending||pendingAction!==action)return;
   if(action==="SEND_BACK"&&[reason,additional.trim()].filter(Boolean).join(": ").trim().length<3){
    setError("Write what needs to change before sending this back.");return;
   }
@@ -177,13 +179,13 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
        </li>)}</ul>}
     </section>
     {detail.review.status==="SUBMITTED"||detail.review.status==="UPDATE_PENDING"?<>
-     <section className="space-y-2"><h3 className="font-semibold">Send back for correction</h3>
+     <section className="space-y-2"><h3 className="font-semibold">Send {row.section==="EDUCATION"?"Education":"Identity"} back</h3>
       <label className="block text-sm">Reason
        <select disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 w-full rounded-md border bg-background p-2" value={reason} onChange={e=>setReason(e.target.value)}>
         {reasonChoices.map(item=><option key={item} value={item}>{item}</option>)}
-        {isTpo?<option value="">Or write what needs to change</option>:null}
+        <option value="">Or write what needs to change</option>
        </select></label>
-      <label className="block text-sm">{isTpo?"Or write what needs to change":"Additional details"}
+      <label className="block text-sm">Additional details
        <textarea disabled={!canEditVerificationDecision(saving,pendingAction)} className="mt-1 min-h-20 w-full rounded-md border bg-background p-2" value={additional} onChange={e=>setAdditional(e.target.value)} maxLength={350}/></label>
      </section>
      <div className="flex flex-wrap gap-2">
@@ -192,9 +194,9 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
      </div>
      {pendingAction&&<section aria-label="Confirm verification decision" className="w-full space-y-2 rounded-md border p-3">
       <h3 className="font-semibold">{isTpo&&pendingAction==="SEND_BACK"?"Send "+(row.section==="EDUCATION"?"education":"identity")+" back":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).heading}</h3>
-      <p className="break-words text-sm">{isTpo&&pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
+      <p className="break-words text-sm">{pendingAction==="SEND_BACK"?"The student sees your reason and fixes it on their profile.":verificationDecisionConfirmation(pendingAction,row.section,[reason,additional].filter(Boolean).join(": ")).message}</p>
       <div className="flex flex-wrap gap-2">
-       <button type="button" disabled={saving} onClick={()=>void decide(pendingAction)} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
+       <button type="button" disabled={saving||guardedPending} onClick={()=>void runGuarded(()=>decide(pendingAction))} className="rounded-md border px-3 py-2 font-semibold disabled:opacity-50">{verificationDecisionConfirmation(pendingAction,row.section,reason).button}</button>
        <button type="button" disabled={saving} onClick={()=>setPendingAction(null)} className="rounded-md border px-3 py-2 disabled:opacity-50">Cancel</button>
       </div>
      </section>}

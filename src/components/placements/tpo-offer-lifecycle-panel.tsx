@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {friendlyApiError} from "@/lib/friendly-error";
 import { canRecordTpoOfferAction, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
 
 type CandidateOffer = {
@@ -19,6 +22,8 @@ export function TpoOfferLifecyclePanel({
   choices: readonly CandidateOffer[];
 }) {
   const router = useRouter();
+  const {run}=useGuardedAction({timeoutMs:35000});
+  const [reviewed,setReviewed]=useState(false);
   const [action, setAction] = useState<TpoOfferAction>("EXTEND");
   const [ids, setIds] = useState<string[]>([]);
   const [reason, setReason] = useState("");
@@ -46,16 +51,12 @@ export function TpoOfferLifecyclePanel({
 
   async function submit() {
     if (!valid || busy) return;
-    if (!window.confirm(
-      "Confirm " + action.replaceAll("_", " ").toLowerCase() + " for " +
-      selected.length + " offer(s)? This is an audited, all-or-nothing " +
-      "administrative record. For accept/decline, the reason must cite " +
-      "the learner-confirmed response; this is not a learner self-response.",
-    )) return;
+    if(!reviewed)return;
+    await run(async()=>{
     setBusy(true);
     setNotice(null);
     try {
-      const response = await fetch(
+      const payload = await apiFetch<{updated?:number}>(
         "/api/placements/jobs/" + encodeURIComponent(jobId) + "/offers/lifecycle",
         {
           method: "POST",
@@ -74,18 +75,18 @@ export function TpoOfferLifecyclePanel({
           }),
         },
       );
-      const payload = (await response.json().catch(() => null)) as
-        { updated?: number; error?: string } | null;
-      if (!response.ok) throw new Error(payload?.error ?? "Unable to record offer change");
+
       setNotice(String(payload?.updated ?? 0) + " offer(s) updated and audited.");
       setIds([]);
       setReason("");
+      setReviewed(false);
       router.refresh();
     } catch (error) {
-      setNotice(error instanceof Error ? error.message : "Offer action failed. Refresh before retrying.");
+      setNotice(error instanceof Error ? error.message : friendlyApiError({}));
     } finally {
       setBusy(false);
     }
+    });
   }
 
   if (choices.length === 0) return null;
@@ -107,6 +108,7 @@ export function TpoOfferLifecyclePanel({
           onChange={(event) => {
             setAction(event.target.value as TpoOfferAction);
             setIds([]);
+            setReviewed(false);
           }}
           className="mt-2 block min-h-10 rounded-md border border-border bg-surface px-3 text-sm font-normal"
         >
@@ -173,16 +175,22 @@ export function TpoOfferLifecyclePanel({
       </label>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <span className="text-sm text-body">{ids.length} / 200 selected</span>
+        <label className="flex items-start gap-2 text-sm text-body">
+          <input type="checkbox" checked={reviewed} disabled={busy}
+            onChange={event=>setReviewed(event.target.checked)} className="mt-1 h-4 w-4 accent-primary"/>
+          I reviewed the {selected.length} affected offer(s) and supporting evidence.
+          This is an audited administrative action, not a learner self-response.
+        </label>
         <button
           type="button"
-          disabled={!valid || busy}
+          disabled={!valid || busy || !reviewed}
           onClick={() => void submit()}
           className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
         >
           {busy ? "Recording..." : "Review and confirm action"}
         </button>
       </div>
-      {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
+      {notice ? <p role={notice.includes("updated and audited")?"status":"alert"} className="text-sm text-body">{notice}</p> : null}
     </section>
   );
 }

@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 type Event={from:string|null;to:string;reason:string|null;when:string};
 export type CollegeApplicationDetail={
@@ -26,6 +26,9 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [note,setNote]=useState("");
  const [saving,setSaving]=useState(false);
  const [success,setSuccess]=useState("");
+ const [linkNotice,setLinkNotice]=useState("");
+ const errorRef=useRef<HTMLParagraphElement>(null);
+ useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  const url="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
@@ -59,14 +62,14 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       <h2 className="text-lg font-semibold">Application Details</h2>
       <div className="flex gap-2">
        <button type="button" onClick={()=>void reload()} disabled={loading}
-        className="min-h-10 rounded border border-border px-3">Refresh</button>
+        className="min-h-10 rounded border border-border px-3 focus-visible:ring-2 focus-visible:ring-primary">Refresh</button>
        <button type="button" onClick={onClose} className="min-h-10 rounded border border-border px-3">Close</button>
       </div>
     </div>
     {!detail&&!loading&&!error?<button type="button" onClick={()=>void reload()}
       className="mt-4 min-h-11 rounded bg-primary px-4 text-on-primary">Open application details</button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
-    {error?<p role="alert" className="my-4 text-sm text-error">{error}</p>:null}
+    {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
     {detail?<div className="mt-4 space-y-5">
       <div className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">{detail.application.name??"Unnamed learner"} · {detail.application.role}</h3>
@@ -97,9 +100,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).length?
         <div className="mt-3 space-y-2">{detail.rounds.filter(r=>r.testUrl?.startsWith("https://")).map(r=>
           <p key={r.id} className="text-sm"><a href={r.testUrl!} target="_blank"
-            rel="noreferrer noopener" className="font-semibold text-primary-text underline">{r.name} · Open assessment</a></p>)}</div>
+            rel="noreferrer noopener" className="font-semibold text-primary-text underline">{r.name} · Open assessment</a>
+            <span className="mt-1 block break-all text-xs text-muted-foreground">{r.testUrl}</span>
+            <button type="button" onClick={async()=>{try{await navigator.clipboard.writeText(r.testUrl!);setLinkNotice("Assessment link copied.");}catch{setLinkNotice("Copy unavailable. Select and copy the link shown above.");}}}
+             className="mt-1 min-h-10 rounded border border-border px-3 font-semibold focus-visible:ring-2 focus-visible:ring-primary">Copy assessment link</button></p>)}</div>
         :<p className="mt-2 text-sm text-body">Link shared soon</p>}
       </section>
+      {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
       <section className="rounded-lg border border-border p-4">
        <h3 className="font-semibold">Interview scheduling</h3>
        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+

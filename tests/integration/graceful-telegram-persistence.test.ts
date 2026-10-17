@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { Pool } from "pg";
 import { assertDb018DisposableTarget } from "../support/db018-test-target.mjs";
 import { closeDatabaseConnection } from "@/db/client";
-import { reportErrorForAlert } from "@/modules/log-alerts/reporter";
+import { observedEventHash, reportErrorForAlert } from "@/modules/log-alerts/reporter";
 import { errorSignatureHash } from "@/modules/log-alerts/signature";
 
 const enabled = process.env.DB10_DISPOSABLE_TEST_DATABASE === "true" &&
@@ -14,6 +14,9 @@ const message = "GR125 durable alert unique fixture";
 const hash = errorSignatureHash({ environment: "DEVELOPMENT", message, path });
 const failureMessage = "GR125 rejected provider unique fixture";
 const failureHash = errorSignatureHash({ environment: "DEVELOPMENT", message: failureMessage, path });
+const dedupRequestId = "91a2b3c4";
+const dedupHash = observedEventHash("DEVELOPMENT", hash, dedupRequestId);
+
 const env = { app: process.env.APP_ENV, ready: process.env.DB10_LOG_ALERTS_READY,
   bot: process.env.TELEGRAM_ALERT_BOT_TOKEN, chat: process.env.TELEGRAM_ALERT_CHAT_ID };
 
@@ -31,6 +34,7 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
     if (!columns.rows.length) throw new Error("GR-125 registered DB10 daily-count migration required");
     await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [hash]);
     await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [failureHash]);
+    if (dedupHash) await pool.query("delete from log_alert_observed_events where event_hash=$1", [dedupHash]);
     await pool.query("delete from log_alert_states where state_key='TELEGRAM_BURST_DEVELOPMENT'");
   });
   afterAll(async () => {
@@ -38,6 +42,7 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
     if (pool) {
       await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [hash]);
       await pool.query("delete from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1", [failureHash]);
+      if (dedupHash) await pool.query("delete from log_alert_observed_events where event_hash=$1", [dedupHash]);
       await pool.query("delete from log_alert_states where state_key='TELEGRAM_BURST_DEVELOPMENT'");
       await pool.end();
     }
@@ -88,4 +93,28 @@ describe.skipIf(!enabled)("GR-125 PostgreSQL Telegram alert delivery and counter
     );
     expect(after.rows[0]?.count).toBe("1");
   });
+  it("GR-114 GR-115 GR-125 deduplicates immediate and Cloud Logging reports using only a hash", async () => {
+    const transport = vi.fn(async () => Response.json({ ok: true }));
+    vi.stubGlobal("fetch", transport);
+    const before = await pool!.query<{ count: string }>(
+      "select occurrence_count::text as count from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1",
+      [hash],
+    );
+    const baseline = Number(before.rows[0]?.count ?? 0);
+    const input = { event: "test.error", error: new Error(message), path, requestId: dedupRequestId };
+    expect(await reportErrorForAlert(input)).toBe(true);
+    expect(await reportErrorForAlert(input)).toBe(true);
+    const after = await pool!.query<{ count: string }>(
+      "select occurrence_count::text as count from log_alert_signatures where environment='DEVELOPMENT' and signature_hash=$1",
+      [hash],
+    );
+    expect(Number(after.rows[0]?.count)).toBe(baseline + 1);
+    const recorded = await pool!.query(
+      "select event_hash from log_alert_observed_events where event_hash=$1",
+      [dedupHash],
+    );
+    expect(recorded.rows).toHaveLength(1);
+    expect(transport).not.toHaveBeenCalled();
+  });
+
 });

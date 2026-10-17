@@ -7,6 +7,8 @@ import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-foll
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { SuperAdminInterviewOperations } from "@/components/admin/super-admin-interview-operations";
+import { listSuperAdminBookedInterviews } from "@/modules/placements/super-admin-booked-interviews-service";
+import { PlacementPanelErrorBoundary } from "@/components/admin/placement-panel-error-boundary";
 
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import type { RequestContext } from "@/modules/identity/context";
@@ -456,6 +458,8 @@ export async function PlacementCalendarWorkspace({
       },
     );
 
+  const bookings=audience==="SUPER_ADMIN"?await listSuperAdminBookedInterviews(context,window.from,window.to)
+    .then(value=>({...value,failed:false})).catch(()=>({events:[],truncated:false,failed:true})):null;
   const eventTypeCountsSource=audience==="TPO"&&(state.kind||state.company)
    ?await listPlacementCalendarEvents(context,{
     collegeId,from:window.from,to:window.to,tpoLegacyScope:true,
@@ -1040,13 +1044,13 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <SuperAdminInterviewOperations today={today}
-        events={visibleEvents.filter(event=>event.kind==="ROUND").map(event=>({
-         id:event.id,roundId:event.roundId,jobId:event.jobId,jobTitle:event.jobTitle,
-         title:event.title,companyName:event.companyName,status:event.status,
-         kind:event.roundKind??"OTHER",startsAt:event.startsAt.toISOString(),
-         endsAt:event.endsAt?.toISOString()??null,venue:event.venue??null,
-        }))} /> : null}
+      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
+        {bookings?.failed ? <section role="alert" className="rounded-xl border border-border bg-surface p-5">
+          <p>Could not load candidate interviews right now. The calendar is still available.</p>
+          <Link href={calendarHref(basePath,audience,state,{})}
+           className="mt-3 inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Retry interviews</Link>
+        </section> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+       </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
         className="space-y-4"
