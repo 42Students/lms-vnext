@@ -70,6 +70,8 @@ export async function listOfferingSectionPreview(
    quizzes:quizzes.map(item=>({
     id:item.id,title:item.title,status:item.status,sequence:item.sequence,
     scope:item.deliveryId?"SECTION":"SHARED",
+    studentVisible:learningPathPublished&&lesson.visibleToStudents&&lesson.status==="ACTIVE"&&
+      (item.status==="PUBLISHED"||item.status==="CLOSED"),
    })),
   };
  }));
