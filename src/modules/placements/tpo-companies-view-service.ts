@@ -267,6 +267,18 @@ export async function getTpoCompaniesView(
   };
 }
 
+/** Use one authorized college read for the complete bounded directory export. */
+export async function exportTpoCompanyDirectory(
+ context:RequestContext,raw:unknown,
+){
+ const input=tpoCompaniesQuerySchema.parse(raw);
+ const source=await loadCompanySources(context,input.collegeId);
+ const all=buildTpoCompanyRows(source);
+ const result=filterTpoCompanyRows(all,{...input,page:1,pageSize:2001});
+ if(result.total>2000)throw new Error("COMPANY_EXPORT_TOO_LARGE");
+ return result.items;
+}
+
 /**
  * Canonical UUID detail view. The authorized relationship must
  * belong to this college. Unknown and cross-tenant IDs both
