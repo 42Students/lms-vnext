@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { apiFetch } from "@/lib/api-fetch";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { ConfirmActionDialog } from "@/components/ui/confirm-action-dialog";
+import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 
@@ -25,27 +29,22 @@ export function NotificationToolbar({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, setPending] = useState(false);
+  const { pending, run } = useGuardedAction();
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   async function markAllRead() {
-    if (confirmMarkAll && !window.confirm(confirmMessage)) return;
-    setPending(true);
     try {
-      const response = await fetch(markAllEndpoint, {
-        method: "POST",
+      await run(async () => {
+        await apiFetch(markAllEndpoint, { method: "POST", timeoutMs: 25_000 });
+        setConfirmOpen(false);
+        router.refresh();
       });
-      if (!response.ok) {
-        throw new Error("The inbox could not be updated. Retry the action.");
-      }
-      router.refresh();
     } catch (error) {
       showToast({
         tone: "error",
         title: "Could not mark all as read",
-        description: error instanceof Error ? error.message : "Please retry.",
+        description: error instanceof Error ? error.message : FRIENDLY_MESSAGES.unexpected,
       });
-    } finally {
-      setPending(false);
     }
   }
 
@@ -71,10 +70,19 @@ export function NotificationToolbar({
         size="sm"
         variant="secondary"
         disabled={pending || unreadCount === 0}
-        onClick={markAllRead}
+        onClick={() => confirmMarkAll ? setConfirmOpen(true) : void markAllRead()}
       >
         {pending ? "Marking…" : "Mark all as read"}
       </Button>
+      <ConfirmActionDialog
+        open={confirmOpen}
+        title="Mark all as read"
+        consequence={confirmMessage}
+        confirmLabel="Mark all as read"
+        onCancel={() => setConfirmOpen(false)}
+        onConfirm={() => void markAllRead()}
+        pending={pending}
+      />
     </div>
   );
 }
