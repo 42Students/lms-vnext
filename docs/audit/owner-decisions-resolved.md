@@ -59,3 +59,6 @@ Principle: vNext keeps its intentional improvements (archive instead of delete, 
 - Storage: links only until uploads are unblocked.
 - Cutover plan: draft after the NSRIT dev load is accepted.
 - NSRIT: all open questions decided by Claude with the recommended defaults (see memory and `docs/migration/nsrit-migration-plan.md`).
+
+## 2026-10-17: UNCONFIRMED live checks
+Owner: "you are more forward and future proof thinker than me, do the best recommended things... no need to follow the old lms if things are wrong there." All UNCONFIRMED gaps are decided by the orchestrator and lanes (better, safer behaviour where legacy is ambiguous or wrong); no old-LMS live checks are required. Decisions are documented per gap in the acceptance files.

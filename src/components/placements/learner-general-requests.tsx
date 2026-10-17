@@ -64,7 +64,7 @@ export function LearnerGeneralRequests({
   </label>:
    <label className="grid gap-1 text-sm">{kind==="OFF_CAMPUS_OFFER"?"Company name":
     kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
-    <input className={box} maxLength={200} value={target} onChange={e=>setTarget(e.target.value)}/>
+    <input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?150:kind==="CORRECTION_WITH_PROOF"?140:200} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
   {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-1 text-sm">
    {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":

@@ -16,6 +16,14 @@ describe("Super Admin student CSV lifecycle",()=>{
   expect(parsed.entries[0]?.data?.phoneE164).toBe("+919876543210");
   expect(parsed.entries[0]?.data?.cohortId).toBe(cohortId);
   expect(parseStudentCsv(csv,{programId}).structuralErrors).toContain("CHOOSE_PROGRAM_AND_BATCH");
+  const large=LEGACY_STUDENT_CSV_COLUMNS.join(",")+"\n"+
+    Array.from({length:500},(_,i)=>`First${i},Last,REG${i},${9000000000+i},`).join("\n")+"\n";
+  const validLarge=parseStudentCsv(large,{programId,cohortId});
+  expect(validLarge.structuralErrors).toEqual([]);
+  expect(validLarge.entries).toHaveLength(500);
+  expect(validLarge.entries.every(entry=>entry.errors.length===0)).toBe(true);
+  expect(parseStudentCsv(large+"One,More,R501,9000000600,\n",{programId,cohortId}).structuralErrors)
+    .toContain("ROW_LIMIT_EXCEEDED");
  });
  it("SA-academics-people-95 scopes import writes and history to the selected active college, with same-origin checked API",()=>{
   const service=src("src/modules/people/college-student-csv-service.ts");

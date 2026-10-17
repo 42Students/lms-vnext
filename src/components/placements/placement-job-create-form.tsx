@@ -8,12 +8,14 @@ import {
   type FormEvent,
 } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
+import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
 import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
@@ -53,7 +55,7 @@ export type PlacementCompanyChoice = {
   otherNames?: readonly string[];
   domains?: readonly string[];
   isTrusted: boolean;
-  memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[]} | null;
+  memory:{pastDrives:number;joinedLearners:number;lastDriveAt:Date;recentRoles:string[];existingRoles:Array<{jobId:string;title:string;status:string}>} | null;
 };
 
 const inputClass =
@@ -132,6 +134,9 @@ export function PlacementJobCreateForm({
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
+  // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
+  const existingDrive=selectedEmployer?.memory?.existingRoles.find(row=>
+    Boolean(enteredDriveTitle.trim())&&row.title.trim().toLowerCase()===enteredDriveTitle.trim().toLowerCase());
   const [eligibilityPreset,setEligibilityPreset]=useState<DriveEligibilityPreset>("OPEN");
   const [hasEnteredEligibilityRule,setHasEnteredEligibilityRule]=useState(false);
   const [newEmployerName,setNewEmployerName]=useState("");
@@ -765,9 +770,10 @@ export function PlacementJobCreateForm({
                 <p>{selectedEmployer.memory.pastDrives} past drives · {selectedEmployer.memory.joinedLearners} confirmed hires</p>
                 <p>Last drive: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(selectedEmployer.memory.lastDriveAt))} IST</p>
                 <p>Recent roles: {selectedEmployer.memory.recentRoles.join(", ")}</p>
-                {enteredDriveTitle.trim()&&selectedEmployer.memory.recentRoles.some(role=>role.toLowerCase()===enteredDriveTitle.trim().toLowerCase())?
+                {existingDrive?
                   <p role="alert" className="mt-2 font-semibold text-amber-900">
-                    A drive for {selectedEmployer.name} · {enteredDriveTitle.trim()} already exists. Check the previous drive before creating another.
+                    A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
+                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline">Open it</Link> before creating another.
                   </p>:null}
               </section>:null}
             </div>

@@ -37,7 +37,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
   <Link href={root} className="text-sm font-semibold text-primary-text">← Back to drive</Link>
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<a href={csvHref} className="inline-flex min-h-10 items-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">Export filtered CSV</a>}/>
-  <p className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</p>
+  <p className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">Students see an offer only when you release it. The respond-by time is at least 48 hours. Sunday and holiday rules prevent an offer deadline from ending on a non-working day.</p>
   <nav aria-label="Offer status" className="flex flex-wrap gap-2">{tabs.map(([value,label,count])=>
    <Link key={value} href={root+"/offers?status="+value+searchSuffix} aria-current={data.status===value?"page":undefined}
     className="inline-flex min-h-10 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-primary-text">{label} ({count})</Link>)}</nav>
