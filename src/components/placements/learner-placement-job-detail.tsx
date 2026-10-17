@@ -94,7 +94,7 @@ export function LearnerPlacementJobDetail({
           </div>
         </dl>
         <div className="mt-5 flex flex-wrap gap-3">
-          <LearnerSaveDriveButton jobId={item.job.id} initialSaved={initialSaved}/>
+          <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={initialSaved}/>
           <a href="#job-role-options" className="inline-flex min-h-11 items-center rounded-lg bg-primary px-5 text-sm font-semibold text-on-primary hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
             {summary.appliedCount ? "View my application" : "See roles & application"} ↓
           </a>
