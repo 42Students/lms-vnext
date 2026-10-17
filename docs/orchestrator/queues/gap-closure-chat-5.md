@@ -139,7 +139,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-61 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-63 | S3 | SIDE-EFFECT | DONE |
 | TPO-batches-64 | S3 | PERMISSION | DONE |
-| TPO-batches-R04 | S3 | VALIDATION | OPEN |
+| TPO-batches-R04 | S3 | VALIDATION | DONE |
 | TPO-batches-12 | S4 | STATE | DONE |
 | TPO-batches-17 | S4 | STATE | OPEN |
 | TPO-batches-24 | S4 | MISSING-FIELD | DONE |
@@ -352,3 +352,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] round-2 verified on main: TPO-requests-verification-R01, TPO-requests-verification-16: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
 
 - [chat-5] round-2 TPO-requests-verification-25 and -30 DONE: verified sequential review and exact learner notification source + existing chat12 tests, supplemented by `tests/unit/chat5-requests-sequential-notices.test.ts`. TPO-drive-workspace-54 BLOCKED exclusively for private file storage and malware scanning; existing secure link-only behavior does not claim complete letter upload.
+
+- [chat-5] TPO-batches-R04 DONE (source reviewed): CSV parser reports exact legacy unusable-row reasons; UI refuses unresolved rows and unacknowledged writes, server recomputes and rejects any source with unusable rows using same-origin guard; `tests/unit/chat5-batches-r04-import-contract.test.ts` named tests. Runtime CI pending.
