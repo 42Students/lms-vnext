@@ -444,7 +444,7 @@ export default async function HrPlacementJobPage({
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
           {selectedApplicant ? (
-            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
+            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal="true" aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
