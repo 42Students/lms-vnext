@@ -19,9 +19,10 @@ import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } fr
 import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-batch-sort-model";
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
 import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
+import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-set-model";
 export const dynamic="force-dynamic";
 
-export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[]}>}){
+export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[]}>}){
  const raw=await searchParams,parsed=batchDirectoryFilterSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q,state:Array.isArray(raw.state)?raw.state[0]:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
@@ -37,14 +38,19 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const context=await getCurrentRequestContext();
  const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context)]);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
- const batches=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
+ const sorted=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
+ const showOlder=(Array.isArray(raw.showOlder)?raw.showOlder[0]:raw.showOlder)==="1";
+ const currentYear=new Date().getFullYear();
+ const workingSet=visibleTpoBatchWorkingSet(sorted,currentYear,showOlder,
+  Boolean(parsed.data.q||parsed.data.state!=="ALL"||programParsed.data||departmentParsed.data||deadlineParsed.data!=="ALL"));
+ const batches=workingSet.visible;
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
  const [eligibility,journey,recent]=await Promise.all([
   listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)),
   listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)),
   listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)),
  ]);
- const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data};
+ const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{})};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
@@ -74,6 +80,12 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
   ].map(([label,value])=><div key={label} className="rounded-lg border border-border p-3"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready?value:"—"}</dd></div>)}</dl>
+  {workingSet.hidden>0?<p role="status" className="flex flex-wrap items-center gap-2 rounded-md border border-border p-3 text-sm">
+    {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
+    <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}
+      className="font-semibold text-primary-text underline">Show older batches</Link>
+   </p>:showOlder?<Link href={tpoBatchPageHref({...pageFilters,showOlder:""},1,pageParsed.data.pageSize)}
+      className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Hide older batches</Link>:null}
   <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<p role="status" className="rounded border border-border p-3 text-sm text-body">The requested batch page no longer exists for these filters. Showing the last available page.</p>:null}
   <nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
