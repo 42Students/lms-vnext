@@ -35,7 +35,11 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
  const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
-   (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release));
+   (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release)&&
+   (!priority||task.priority===priority)&&
+   (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
+     task.assigneeMembershipId===assignee))&&
+   (!statusFilter||task.status===statusFilter));
  const lanes=groupLearnerBoardLanes(visible,sprints);
  async function move(id:string,status:string){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
