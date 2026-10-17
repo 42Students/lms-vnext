@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
+import {TpoNoticeDeleteConfirm} from "@/components/tpo/tpo-notice-delete-confirm";
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
@@ -154,7 +155,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
       </form>
      </details>:null}
-    {((tab.data==="yours"&&row.senderUserId===context.user.id)||tab.data==="deleted")?
+    {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
+    {tab.data==="deleted"?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-4 flex flex-wrap gap-2">
       <input type="hidden" name="expectedVersion" value={row.version}/>
