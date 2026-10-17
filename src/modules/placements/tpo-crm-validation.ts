@@ -68,7 +68,7 @@ export const confirmedCreateTpoLeadSchema = z.object({
 
 export const logTpoLeadActivitySchema = z.object({
   collegeId: id,
-  type: z.enum(["CALL", "WHATSAPP", "EMAIL", "MEETING", "NOTE"]),
+  type: z.enum(["CALL", "EMAIL", "MEETING", "NOTE"]),
   outcome: z.string().trim().max(30).nullable().optional(),
   note: z.string().trim().max(2000).nullable().optional(),
 }).strict();
