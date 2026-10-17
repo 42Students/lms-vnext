@@ -60,10 +60,12 @@ export async function DELETE(
     const context = await getCurrentRequestContext();
     const { projectId, resourceId } =
       await params;
+    const body: unknown=await request.json().catch(()=>({}));
     const resource = await archiveProjectResource(
       context,
       projectId,
       resourceId,
+      body,
     );
 
     return NextResponse.json({ resource });
