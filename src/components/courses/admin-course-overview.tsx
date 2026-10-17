@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
 import { COLLEGE_COURSES_COPY, courseVisibleToStudentsLabel, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
@@ -50,13 +51,15 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,
+  duplicateCourseId,catalogueQuery,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
   allowOfferingLifecycle?: boolean;
   duplicateCourseId?:string;
+  catalogueQuery?:CollegeCourseCatalogueQuery;
 }) {
+  const catalogue=catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null;
   const deliveryCountByOffering = new Map<
     string,
     number
@@ -448,11 +451,40 @@ export function AdminCourseOverview({
             {COLLEGE_COURSES_COPY.existingTitle}
           </h2>
         </div>
+        {catalogue&&catalogueQuery?<form method="get" action="/college/courses"
+         className="flex flex-wrap items-end gap-3 rounded border border-border bg-surface p-3">
+         <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold">Search courses
+          <input type="search" name="q" maxLength={100} defaultValue={catalogueQuery.q}
+           placeholder="Name, code or department" className="min-h-10 rounded border border-border bg-background p-2"/>
+         </label>
+         <label className="grid gap-1 text-sm font-semibold">Sort
+          <select name="sort" defaultValue={catalogueQuery.sort}
+           className="min-h-10 rounded border border-border bg-background p-2">
+           <option value="NAME_ASC">Name A–Z</option><option value="NAME_DESC">Name Z–A</option>
+           <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
+          </select>
+         </label>
+         <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
+        </form>:null}
+        {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
+         No courses match these filters. Clear filters to see the whole catalogue.
+        </p>:null}
         <DataTable
           columns={courseColumns}
-          rows={workspace.courses}
+          rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}
         />
+        {catalogue&&catalogueQuery?<nav aria-label="Course catalogue pages"
+          className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · 25 per page</p>
+          <div className="flex gap-3">
+           {catalogue.page>1?<Link className="font-semibold text-primary-text"
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1})}>Previous</Link>:null}
+           {catalogue.page<catalogue.pages?<Link className="font-semibold text-primary-text"
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page+1})}>Next</Link>:null}
+          </div>
+         </nav>:null}
       </section>
 
       <section className="space-y-3">

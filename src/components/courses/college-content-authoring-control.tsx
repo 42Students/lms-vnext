@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 type Lesson={id:string;name:string;course:string;courseCode:string;offeringId:string;nextSequence:number};
 type Existing={id:string;lessonId:string;deliveryId:string|null;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
@@ -16,8 +17,9 @@ function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){if(!/^\d{4}-\d{2}-
  if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
  return date.toISOString();
 }
-export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false}:{
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,materialsEnabled=false}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
+ materialsEnabled?:boolean;
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
@@ -27,11 +29,19 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
  const [listLessonId,setListLessonId]=useState("");
+ const [listSectionId,setListSectionId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
+ const [openMaterialsId,setOpenMaterialsId]=useState<string|null>(null);
  const [deliveryId,setDeliveryId]=useState("");
  const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
+ const listSections=deliveries.filter(row=>!listLessonId||
+  lessons.find(lesson=>lesson.id===listLessonId)?.offeringId===row.offeringId);
+ const matching=existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
+  (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
+  (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
+   lesson.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId)));
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
@@ -188,18 +198,39 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>}
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
+   {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground">
+    Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
+    You can still edit Resource notes and its saved HTTPS link.
+   </p>:null}
    {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
    <label className="grid gap-1 text-sm font-semibold">Lesson
-    <select value={listLessonId} onChange={event=>setListLessonId(event.target.value)}
+    <select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All Lessons</option>
      {lessons.map(row=><option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
     </select>
    </label>
-   <ul className="space-y-1">{existing.filter(item=>!listLessonId||item.lessonId===listLessonId).map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
-    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"One section":"All sections taking this course"})</span></span>
+   <label className="grid gap-1 text-sm font-semibold">Section
+    <select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
+     onChange={e=>setListSectionId(e.target.value)}
+     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
+     <option value="">Showing every section&apos;s content together</option>
+     {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
+      {row.sectionName} ({row.sectionCode})</option>)}
+    </select>
+   </label>
+   {listSectionId?<p className="text-xs text-muted-foreground">
+    Showing shared offering items and content specific to the selected Section.
+    The Order field below is the authored default order, not a Section-specific override.
+   </p>:null}
+   <p className="text-xs text-muted-foreground">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
+   {matching.length===0?<p className="text-xs text-muted-foreground">No saved items match this Lesson and Section.</p>:null}
+   <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
+    <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
+        ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
+         (deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionCode??"")+")"):"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
       {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
@@ -209,12 +240,18 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        className="w-16 rounded border border-border bg-background p-1"/>
      </label>
      <button type="button" className="underline" disabled={busy} onClick={()=>void saveOrder(item)}>Save order</button>
+     {kind==="RESOURCE"&&materialsEnabled?<button type="button" className="underline"
+      aria-expanded={openMaterialsId===item.id} disabled={busy}
+      onClick={()=>setOpenMaterialsId(openMaterialsId===item.id?null:item.id)}>Materials</button>:null}
      <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
      {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
      <button type="button" className="underline text-error" disabled={busy}
        onClick={()=>void transition(item,"ARCHIVE")}>Delete</button>
     </div>
+    {kind==="RESOURCE"&&materialsEnabled&&openMaterialsId===item.id?
+      <LessonResourceMaterialsControl key={item.id} contentId={item.id}
+       deliveryId={item.deliveryId} editable/>:null}
    </li>)}</ul>
   </div>}
   {error&&<p role="alert" className="text-sm text-error">{error}</p>}

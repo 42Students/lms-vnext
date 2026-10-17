@@ -156,6 +156,10 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
           </Link>
         </form>
       </section>
+      {!videos?<p className="text-xs text-muted-foreground">
+        Materials counts cover registered additional materials only; a legacy Resource HTTPS link is stored separately.
+        {data.materialCountsReady?"":" Counts require the verified DB05 Resource Materials runtime."}
+      </p>:null}
       <section aria-label={title + " catalogue"} className="overflow-x-auto rounded-xl border border-border bg-surface">
         <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">
           {data.total} matching content {data.total === 1 ? "record" : "records"}
@@ -185,6 +189,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
                   </p>
                   {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
+                  {!videos?<p className="text-xs text-muted-foreground">Materials: {item.materialsCount===null?"Unavailable until DB05 is verified":item.materialsCount}</p>:null}
                   <p className="text-xs text-muted-foreground">
                     {collegeContentScopeLabel(item.deliveryId)} · {item.visibleToStudents ? "Visible to students" : "Hidden from students"}
                     {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
@@ -199,6 +204,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 <th scope="col" className="px-4 py-3">Content</th>
                 <th scope="col" className="px-4 py-3">Course / cohort</th>
                 <th scope="col" className="px-4 py-3">Lesson / learning path</th>
+                {!videos?<th scope="col" className="px-4 py-3">Materials</th>:null}
                 <th scope="col" className="px-4 py-3">Scope</th>
                 <th scope="col" className="px-4 py-3">State</th>
               </tr>
@@ -223,6 +229,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     {item.lessonName}
                     <p className="mt-1 text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</p>
                   </td>
+                  {!videos?<td className="px-4 py-4 text-body">{item.materialsCount===null?"—":item.materialsCount}</td>:null}
                   <td className="px-4 py-4 text-body">
                     {collegeContentScopeLabel(item.deliveryId)}
                     <p className="mt-1 text-xs">{item.visibleToStudents ? "Visible to students" : "Hidden from students"}</p>
@@ -256,9 +263,9 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
         </div>
       </nav>
       <p className="text-xs leading-5 text-muted-foreground">
-        Read-only authoring metadata. Publishing state does not by itself grant learner visibility.
-        No storage key, file download, signed URL, resource text or external playback URL is returned.
-        Content creation, revision and publication remain in the offering workspace.
+        This catalogue shows authorization-scoped content metadata. Publishing state does not by itself grant learner visibility.
+        No storage key, file download, signed URL or external playback URL is returned here.
+        Use the authoring controls above or the offering workspace to manage content.
       </p>
     </div>
   );

@@ -135,3 +135,10 @@ Headline finding: in legacy every one of these seven tabs is a working managemen
 - Source work `COL-course-tabs-04`: College assignment creation requires at least one permitted submission method, guards repeated same-session sequence collision and rejects malformed deadline dates.
 - Source work `COL-course-tabs-13`: tenant authorization is checked before bulk visibility per-item failure aggregation; stale updates still report individual failures.
 - Remaining WP-01 nonblocked gaps: complete attachments/rich-text/instructor material parity, end-to-end learner/instructor semantics and live operations. File upload/scanner remains blocked; `COL-course-tabs-16` per-Section content-order writer still requires DB05; `COL-course-tabs-17` secure previews remain owner SKIP. No tests/typecheck/lint/build/CI per FAST v2.
+
+## FAST v2 chat-4-b College Courses & Content pass (2026-10-17)
+
+- `COL-course-tabs-16`: Existing Content now filters by Lesson and Section, includes shared offering rows for the selected Section, labels individual Section audiences, and shows matching counts/empty states. The editable Order is explicitly labeled **default authored order**, not the DB05 per-Section override. DB05 section-order writer remains blocked.
+- `COL-course-tabs-03`: existing gated Resource Materials control now opens on demand per Resource when `DB05_RESOURCE_MATERIALS_READY=DB05_VERIFIED`. The catalogue displays batch-counted registered additional materials without storage keys and without miscounting the separate legacy HTTPS link. Gate-off states are explicit; private FILE grant/scanner remains blocked.
+- `COL-course-tabs-05`: College bulk grade publication reports partial failures, shows progress, supports **Retry failed** (re-fetches only still-unpublished graded submissions), clears retry state on Section changes and does not promise a provider notification without delivery confirmation.
+- `COL-course-tabs-01/03`: removed outdated read-only catalogue messaging after implementing direct authoring above the catalogue. Full legacy parity remains unverified; no tests, typecheck, lint, build or CI under FAST v2.

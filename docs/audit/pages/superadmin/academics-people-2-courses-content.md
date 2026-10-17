@@ -120,3 +120,9 @@ Needed (`scripts/verify/pages/superadmin-courses-content.mjs`): with a Super Adm
 - `SA-academics-people-58`: source-implemented a direct persisted content row editor for title/order, Resource notes, YouTube duration and live-class dates; confirmation-based Publish and Delete/Archive using existing authenticated API routes; all private URLs and file keys stay out of the directory. The authoring lesson selector now excludes inactive offerings, inactive lessons and archived paths.
 - `SA-academics-people-59`: Super Admin binary upload remains blocked by the storage actor grant/private storage environment; the page no longer advertises a nonfunctional binary-upload action. Text/YouTube/Resource/Live link authoring remains available.
 - Runtime and complete legacy-parity verification not performed. Do not mark all Super Admin content authoring/upload gaps DONE.
+
+## FAST v2 chat-4-b Super Admin content edit pass (2026-10-17)
+
+- `SA-academics-people-58`: authorized selected-college content editors can **replace** YouTube, Resource and Live Class links using write-only URL inputs. The existing stored published/private URLs are never fetched or echoed into the UI. URL allowlisting excludes local origins, fragment URLs and unsupported YouTube domains; blank replacement preserves the stored link.
+- Live Class metadata editor now supports IST/UTC selection, resets unsaved date inputs only with confirmation, and validates end after start in the selected Time Zone.
+- `SA-academics-people-59` private binary uploads remain blocked; no claim of full upload, rich materials or private-file parity. No checks/tests performed under FAST v2.
