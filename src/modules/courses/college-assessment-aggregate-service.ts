@@ -22,6 +22,7 @@ import {
   courses,
   departments,
   quizAttempts,
+  users,
 } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
@@ -203,6 +204,7 @@ export async function listCollegeAssessmentAggregate(
     offeringId: courseSectionDeliveries.offeringId,
     deliveryId: courseSectionDeliveries.id,
     eligible: countDistinct(collegeMemberships.id),
+    members:sql<string[]>`array_agg(distinct ${collegeMemberships.id})`,
   }).from(courseSectionDeliveries)
     .innerJoin(courseOfferings, eq(courseOfferings.id,courseSectionDeliveries.offeringId))
     .innerJoin(sections, and(
@@ -229,6 +231,7 @@ export async function listCollegeAssessmentAggregate(
       eq(membershipRoles.membershipId,collegeMemberships.id),
       eq(membershipRoles.role,"LEARNER"),
     ))
+    .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
     .where(and(inArray(courseSectionDeliveries.offeringId,offeringIds),
       isNull(courseSectionDeliveries.endedAt)))
     .groupBy(courseSectionDeliveries.offeringId,courseSectionDeliveries.id):[];
