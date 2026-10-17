@@ -94,6 +94,7 @@ export async function AdminOfferingLearningPage({
             : null
         }
       />
+      <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
       <AdminOfferingLearningOverview
         workspace={workspace}
       />
