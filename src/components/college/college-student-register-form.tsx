@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import {legacyPersonName} from "@/modules/people/college-onboard-mobile-model";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -16,7 +17,9 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [programId,setProgramId]=useState("");
   const [cohortId,setCohortId]=useState("");
   const [sectionId,setSectionId]=useState("");
-  const [displayName,setDisplayName]=useState("");
+  const [firstName,setFirstName]=useState("");
+  const [lastName,setLastName]=useState("");
+  const displayName=legacyPersonName(firstName,lastName);
   const [phoneE164,setPhone]=useState("");
   const [email,setEmail]=useState("");
   const [rollNumber,setRoll]=useState("");
@@ -45,15 +48,18 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
           ? "Partially registered. Student membership "+(body?.membershipId??"")+"; "+(body?.failures??[]).join("; ")
           : "Student registered and enrolled successfully.");
         if(!isPartial){
-          setDisplayName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
+          setFirstName("");setLastName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
           router.refresh();
         }
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
   return <form onSubmit={submit} className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
-    <label className="grid gap-1 text-sm font-semibold">Full name
-      <input required maxLength={255} value={displayName} onChange={e=>setDisplayName(e.target.value)} className={field}/>
+    <label className="grid gap-1 text-sm font-semibold">First Name
+      <input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold">Last Name
+      <input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Mobile number (with country code)
       <input required type="tel" placeholder="+919876543210" value={phoneE164}
