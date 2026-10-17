@@ -153,11 +153,15 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
   {open&&<div className="grid max-w-3xl gap-3 md:grid-cols-2">
    <label className="text-sm">Lesson
-    <select className="mt-1 w-full rounded border bg-background p-2" value={lessonId}
+    <select className="mt-1 w-full rounded border bg-background p-2" value={selectedLesson?lessonId:""}
      onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}} disabled={Boolean(editing)}>
+     {editing&&!selectedLesson?<option value="">Saved Lesson outside authoring picker</option>:null}
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
     </select></label>
+   {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2">
+    This saved Lesson is outside the first 250 authoring choices. Its Course and Section association cannot be changed; metadata can still be edited.
+   </p>:null}
    <label className="text-sm">Section
     <select value={deliveryId} disabled={Boolean(editing)} onChange={e=>setDeliveryId(e.target.value)}
       className="mt-1 w-full rounded border bg-background p-2">
