@@ -40,6 +40,7 @@ import { loadProjectCollegeScope } from "./scope";
 
 const projectAdminQuerySchema = z.object({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
+  riskSort: z.enum(["INACTIVE","WORKSPACE","SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z
     .enum([
