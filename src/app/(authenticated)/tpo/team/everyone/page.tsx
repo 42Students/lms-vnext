@@ -4,6 +4,7 @@ import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {readTpoTeamEveryone} from "@/modules/placements/tpo-team-everyone-service";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {TPO_EVERYONE_DESCRIPTION,TPO_EVERYONE_TITLE,TPO_EVERYONE_WELCOME} from "@/modules/placements/tpo-team-everyone-model";
 export const dynamic="force-dynamic";
 export default async function TpoEveryonePage({searchParams}:{
@@ -13,14 +14,20 @@ export default async function TpoEveryonePage({searchParams}:{
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
  const raw=(await searchParams).page;
  const page=typeof raw==="string"&&/^[1-9][0-9]{0,3}$/.test(raw)?Number(raw):1;
- const result=await readTpoTeamEveryone(context,page);
+ const result=await readTpoTeamEveryone(context,page).catch(error=>{
+  if(error instanceof AuthorizationError)throw error;
+  return {status:"FAILED" as const};
+ });
  return <main className="space-y-5">
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">← Team conversations</Link>
   <header className="space-y-2">
    <h1 className="text-2xl font-semibold text-foreground">{TPO_EVERYONE_TITLE}</h1>
    <p className="text-sm text-body">{TPO_EVERYONE_DESCRIPTION}</p>
   </header>
-  {result.status==="NOT_REGISTERED"?<p role="status" className="rounded-xl border border-border p-4">
+  {result.status==="FAILED"?<section role="alert" className="rounded-xl border border-border p-4">
+   <p>Could not load Everyone right now. Your messages were not changed.</p>
+   <Link href="/tpo/team/everyone" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry Everyone</Link>
+  </section>:result.status==="NOT_REGISTERED"?<p role="status" className="rounded-xl border border-border p-4">
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
    <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
