@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import { redirect } from "next/navigation";
@@ -56,7 +57,7 @@ export default async function TpoByCompanyReportPage({
   const companyLinks=buildTpoCompanyReportLinks(view.rows);
   const href=(page:number)=>companyReportViewHref({seasonId:workspace.selectedSeasonId??undefined,jobId:workspace.selectedJobId??undefined,q:view.query.q,outcome:view.query.outcome,sort:view.query.sort,page});
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Placement by company"
@@ -71,6 +72,7 @@ export default async function TpoByCompanyReportPage({
         </div>}
       />
 
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters workspace={workspace} path="/tpo/reports/by-company" />
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-company" collegeId={context.membership.collegeId}/></Suspense>
