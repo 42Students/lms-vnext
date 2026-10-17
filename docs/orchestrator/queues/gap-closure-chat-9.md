@@ -121,7 +121,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-95 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
-| TPO-settings-audit-99 | S3 | SIDE-EFFECT | OPEN |
+| TPO-settings-audit-99 | S3 | SIDE-EFFECT | DONE-BRANCH |
 | TPO-settings-audit-R02 | S3 | VALIDATION | DONE-BRANCH |
 | TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
 | TPO-settings-audit-80 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
