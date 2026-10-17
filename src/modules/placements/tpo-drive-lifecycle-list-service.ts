@@ -33,6 +33,12 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const season = filters.seasonId
     ? seasons.find((s) => s.id === filters.seasonId)
     : null;
+  const companies=await db.select({id:placementCompanies.id,name:placementCompanies.name})
+    .from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(eq(placementCompanyRelationships.collegeId,collegeId))
+    .orderBy(placementCompanies.name);
+
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
   const attentionBoundary=new Date(now.getTime()+7*86400000);
   const [attention]=await db.select({
@@ -53,7 +59,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   if (filters.view === "REQUESTS") {
     const available = await placementTableExists("placement_recruiter_drive_requests");
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
-    const common = {seasons,season,view:filters.view,search:filters.search,
+    const common = {seasons,season,companies,companyId:filters.companyId,view:filters.view,search:filters.search,
       deadline:filters.deadline,workMode:filters.workMode,
       employmentType:filters.employmentType,sort:filters.sort,
       minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
@@ -63,6 +69,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const pattern=tpoApplicantExportSearchPattern(filters.search);
     const requestScope=and(
       eq(placementRecruiterDriveRequests.collegeId,collegeId),
+      filters.companyId?eq(placementCompanies.id,filters.companyId):undefined,
       inArray(placementRecruiterDriveRequests.status,["REQUEST","SENT_BACK","DRAFT","REJECTED","CANCELLED"]),
       filters.search?or(
         ilike(placementCompanies.name,pattern),
@@ -109,6 +116,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;
    const scope=and(eq(placementJobs.collegeId,collegeId),
     season?eq(placementJobs.seasonId,season.id):undefined,
+    filters.companyId?eq(placementCompanies.id,filters.companyId):undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
@@ -188,7 +196,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
-    ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
+    ...projection, seasons, season,companies,companyId:filters.companyId, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
     attentionCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
