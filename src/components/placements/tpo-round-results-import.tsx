@@ -68,7 +68,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
       </select>
       <label className="flex items-center gap-2 text-sm">
        <input type="checkbox" checked={skips.includes(row.line)} disabled={busy}
-        onChange={e=>setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line))}/> Skip row
+        onChange={e=>{setSkips(p=>e.target.checked?[...p,row.line]:p.filter(n=>n!==row.line));if(e.target.checked)setOverrides(p=>({...p,[row.line]:""}));}}/> Skip row
       </label>
      </div>
     </div>)}
