@@ -1,4 +1,4 @@
-import { and, asc, eq, isNull } from "drizzle-orm";
+import { and, asc, eq, isNull, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -13,6 +13,8 @@ import {
   placementDebarments,
   placementJobs,
   placementJobRoleOptions,
+  placementJobRounds,
+  placementJobEligibilityPolicies,
   placementSeasons,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -20,6 +22,7 @@ import { PlacementsServiceError } from "./errors";
 import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
 import { isDebarmentActive } from "./batch-registration-policy";
 import {notifyEligiblePublishedDrive} from "./tpo-drive-publish-effects";
+import {hasSecureEmployerPortalUrl} from "./tpo-drive-lifecycle-model";
 import {
   requirePlacementJobSeasonActive,
 } from "./season-service";
@@ -428,10 +431,7 @@ export async function publishPlacementJob(
     current.collegeId,
     current.companyRelationshipId,
   );
-  if (
-    current.applicationMode !== "INTERNAL" &&
-    !current.externalApplicationUrl
-  ) {
+  if (!hasSecureEmployerPortalUrl(current.applicationMode,current.externalApplicationUrl)) {
     throw new PlacementsServiceError(
       "PLACEMENT_JOB_EXTERNAL_URL_REQUIRED",
     );
@@ -469,6 +469,34 @@ export async function publishPlacementJob(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    // TPO-drives-42: all direct publish paths must honor the same persisted
+    // evaluative-round and eligibility-policy blockers as TPO lifecycle publish.
+    // Check inside the publication transaction, not against a stale form preview.
+    const [lockedJob] = await tx.select({
+      id: placementJobs.id,
+      status: placementJobs.status,
+      applicationDeadline: placementJobs.applicationDeadline,
+    }).from(placementJobs).where(and(
+      eq(placementJobs.id, jobId),
+      eq(placementJobs.collegeId, current.collegeId),
+    )).for("update").limit(1);
+    if (!lockedJob || lockedJob.status !== "DRAFT" ||
+      !lockedJob.applicationDeadline || lockedJob.applicationDeadline <= new Date()) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
+    }
+    const [rounds, policy] = await Promise.all([
+      tx.select({ id: placementJobRounds.id }).from(placementJobRounds).where(and(
+        eq(placementJobRounds.jobId, jobId),
+        ne(placementJobRounds.kind, "TALK"),
+        ne(placementJobRounds.status, "CANCELLED"),
+      )).limit(1),
+      tx.select({ jobId: placementJobEligibilityPolicies.jobId })
+        .from(placementJobEligibilityPolicies)
+        .where(eq(placementJobEligibilityPolicies.jobId, jobId)).limit(1),
+    ]);
+    if (!rounds.length || !policy.length) {
+      throw new PlacementsServiceError("PLACEMENT_JOB_NOT_PUBLISHABLE");
+    }
     const now = new Date();
     const [published] = await tx
       .update(placementJobs)

@@ -9,8 +9,8 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-drives-01 | S2 | MISSING-PAGE | DONE |
-| TPO-drives-03 | S2 | MISSING-TAB | WRONG |
-| TPO-drives-05 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drives-03 | S2 | MISSING-TAB | NOT-A-GAP |
+| TPO-drives-05 | S2 | MISSING-COLUMN | DONE |
 | TPO-drives-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-07 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-09 | S2 | COPY | DONE |
@@ -18,7 +18,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-14 | S2 | SIDE-EFFECT | DONE |
 | TPO-drives-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-drives-17 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-drives-17 | S2 | MISSING-EXPORT | DONE |
 | TPO-drives-21 | S2 | COPY | DONE |
 | TPO-drives-22 | S2 | COPY | DONE |
 | TPO-drives-23 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -28,14 +28,14 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-31 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-32 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-33 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-drives-34 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drives-34 | S2 | MISSING-FIELD | NOT-A-GAP |
 | TPO-drives-40 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-drives-42 | S2 | VALIDATION | OPEN |
+| TPO-drives-42 | S2 | VALIDATION | DONE |
 | TPO-drives-43 | S2 | STATE | OPEN |
 | TPO-drives-47 | S2 | MISSING-MODAL | OPEN |
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-04 | S3 | STATE | DONE |
-| TPO-drives-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drives-08 | S3 | MISSING-COLUMN | DONE |
 | TPO-drives-11 | S3 | MISSING-FILTER | DONE |
 | TPO-drives-12 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-16 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -54,12 +54,12 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-44 | S3 | COPY | OPEN |
 | TPO-drives-45 | S3 | VALIDATION | DONE |
 | TPO-drives-49 | S3 | STATE | DONE |
-| TPO-drives-50 | S3 | PERMISSION | OPEN |
+| TPO-drives-50 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-drives-51 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-drives-R03 | S3 | VALIDATION | DONE |
 | TPO-drives-R05 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-drives-R06 | S3 | MISSING-ACTION | DONE |
-| TPO-drives-36 | S4 | MISSING-ACTION | OPEN |
+| TPO-drives-36 | S4 | MISSING-ACTION | DONE |
 | TPO-drives-52 | S4 | MISSING-FIELD | OPEN |
 
 ## learner/learning-misc (36: OPEN 15, FIXED-ON-MAIN 19, UNCONFIRMED 2)
@@ -70,10 +70,10 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 |---|---|---|---|
 | LEARNER-learning-misc-01 | S1 | STATE | OPEN |
 | LEARNER-learning-misc-02 | S2 | MISSING-FIELD | OPEN |
-| LEARNER-learning-misc-03 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-learning-misc-04 | S2 | MISSING-ACTION | OPEN |
+| LEARNER-learning-misc-03 | S2 | MISSING-FIELD | DONE |
+| LEARNER-learning-misc-04 | S2 | MISSING-ACTION | DONE |
 | LEARNER-learning-misc-07 | S2 | VALIDATION | OPEN |
-| LEARNER-learning-misc-09 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
+| LEARNER-learning-misc-09 | S3 | MISSING-MODAL | DONE |
 | LEARNER-learning-misc-10 | S3 | COPY | DONE |
 | LEARNER-learning-misc-11 | S3 | MISSING-FIELD | OPEN |
 | LEARNER-learning-misc-14 | S3 | COPY | DONE |
@@ -84,15 +84,15 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-19 | S3 | STATE | DONE |
 | LEARNER-learning-misc-20 | S3 | MISSING-MODAL | DONE |
 | LEARNER-learning-misc-21 | S3 | COPY | DONE |
-| LEARNER-learning-misc-22 | S3 | VALIDATION | FIXED-ON-MAIN |
+| LEARNER-learning-misc-22 | S3 | VALIDATION | NOT-A-GAP |
 | LEARNER-learning-misc-24 | S3 | MISSING-FIELD | DONE |
-| LEARNER-learning-misc-25 | S3 | MISSING-FIELD | UNCONFIRMED |
+| LEARNER-learning-misc-25 | S3 | MISSING-FIELD | NOT-A-GAP |
 | LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | DONE |
 | LEARNER-learning-misc-30 | S3 | MISSING-FIELD | DONE |
-| LEARNER-learning-misc-33 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-34 | S3 | PERFORMANCE | OPEN |
+| LEARNER-learning-misc-33 | S3 | COPY | DONE |
+| LEARNER-learning-misc-34 | S3 | PERFORMANCE | DONE |
 | LEARNER-learning-misc-36 | S3 | MISSING-COLUMN | DONE |
-| LEARNER-learning-misc-38 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-38 | S3 | COPY | DONE |
 | LEARNER-learning-misc-39 | S3 | COPY | DONE |
 | LEARNER-learning-misc-12 | S4 | MISSING-ACTION | OPEN |
 | LEARNER-learning-misc-13 | S4 | COPY | DONE |
@@ -103,7 +103,7 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-35 | S4 | RESPONSIVE | FIXED-ON-MAIN |
 | LEARNER-learning-misc-37 | S4 | COPY | DONE |
 | LEARNER-learning-misc-40 | S4 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-41 | S4 | MISSING-PAGE | UNCONFIRMED |
+| LEARNER-learning-misc-41 | S4 | MISSING-PAGE | NOT-A-GAP |
 
 ## college/people (27: FIXED-ON-MAIN 19, UNCONFIRMED 3, OPEN 5)
 
@@ -136,7 +136,7 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-25 | S3 | VALIDATION | FIXED-ON-MAIN |
 | COL-people-09 | S4 | MISSING-ACTION | NOT-A-GAP |
 | COL-people-12 | S4 | MISSING-ACTION | NOT-A-GAP |
-| COL-people-26 | S4 | A11Y | FIXED-ON-MAIN |
+| COL-people-26 | S4 | A11Y | DONE |
 | COL-people-27 | S4 | RESPONSIVE | DONE |
 
 ## public/auth-public-2-links-marketing (25: FIXED-ON-MAIN 13, OPEN 10, UNCONFIRMED 2)
@@ -146,7 +146,7 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | PUB-auth-public-44 | S2 | VALIDATION | FIXED-ON-MAIN |
-| PUB-auth-public-45 | S2 | STATE | FIXED-ON-MAIN |
+| PUB-auth-public-45 | S2 | STATE | NOT-A-GAP |
 | PUB-auth-public-46 | S2 | STATE | DONE |
 | PUB-auth-public-47 | S2 | COPY | OPEN |
 | PUB-auth-public-50 | S2 | PERMISSION | OPEN |
@@ -159,12 +159,12 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 | PUB-auth-public-67 | S2 | MISSING-PAGE | DONE |
 | PUB-auth-public-68 | S2 | MISSING-PAGE | DONE |
 | PUB-auth-public-48 | S3 | COPY | DONE |
-| PUB-auth-public-49 | S3 | SIDE-EFFECT | UNCONFIRMED |
+| PUB-auth-public-49 | S3 | SIDE-EFFECT | DONE |
 | PUB-auth-public-54 | S3 | MISSING-EXPORT | DONE |
 | PUB-auth-public-57 | S3 | MISSING-FIELD | OPEN |
-| PUB-auth-public-60 | S3 | SIDE-EFFECT | UNCONFIRMED |
+| PUB-auth-public-60 | S3 | SIDE-EFFECT | NOT-A-GAP |
 | PUB-auth-public-58 | S4 | MISSING-FIELD | DONE |
-| PUB-auth-public-61 | S4 | MISSING-PAGE | OPEN |
+| PUB-auth-public-61 | S4 | MISSING-PAGE | NOT-A-GAP |
 | PUB-auth-public-62 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-63 | S4 | MISSING-PAGE | DONE |
 | PUB-auth-public-64 | S4 | MISSING-PAGE | DONE |
@@ -179,22 +179,22 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 |---|---|---|---|
 | SA-tenants-modules-10 | S2 | VALIDATION | DONE |
 | SA-tenants-modules-12 | S2 | VALIDATION | DONE |
-| SA-tenants-modules-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-18 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-21 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-03 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-04 | S3 | COPY | DONE |
-| SA-tenants-modules-06 | S3 | MISSING-TAB | OPEN |
+| SA-tenants-modules-06 | S3 | MISSING-TAB | DONE |
 | SA-tenants-modules-07 | S3 | COPY | NOT-A-GAP |
-| SA-tenants-modules-08 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-tenants-modules-08 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-11 | S3 | MISSING-FIELD | DONE |
-| SA-tenants-modules-13 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-tenants-modules-13 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-14 | S3 | COPY | NOT-A-GAP |
-| SA-tenants-modules-16 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-tenants-modules-17 | S3 | MISSING-TAB | FIXED-ON-MAIN |
-| SA-tenants-modules-19 | S3 | MISSING-TAB | OPEN |
+| SA-tenants-modules-16 | S3 | MISSING-FIELD | DONE |
+| SA-tenants-modules-17 | S3 | MISSING-TAB | DONE |
+| SA-tenants-modules-19 | S3 | MISSING-TAB | NOT-A-GAP |
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
 | SA-tenants-modules-R02 | S3 | MISSING-ACTION | DONE |
-| SA-tenants-modules-05 | S4 | A11Y | FIXED-ON-MAIN |
+| SA-tenants-modules-05 | S4 | A11Y | DONE |
 | SA-tenants-modules-09 | S4 | STATE | DONE |
 | SA-tenants-modules-R01 | S4 | MISSING-FIELD | OPEN |
 | SA-tenants-modules-R03 | S4 | PERMISSION | NOT-A-GAP |
@@ -336,3 +336,20 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 - Source review: 39 distinct queued gap IDs have additive, ID-named **sub-contract** tests in `tests/unit/chat3-{tpo,learner,college}-round12-parity-contracts.test.ts`; 18 TPO, 11 learner, 10 college. Full gaps still OPEN/FIXED-ON-MAIN where the legacy workflow is incomplete. The page acceptance files record each ID without inflating DONE counts.
 - Functional code progressed: `TPO-drives-R05`/`TPO-drives-44` validate known field keys using predefined safe text; `COL-attendance-09` now includes tenant-scoped ended deliveries and orders active first, with persisted `past` labels, but archived-term coverage remains incomplete. Added or strengthened ID-named tests. No migrations and no edits to the shared shell, auth or UX playbook.
 - Delegated UNCONFIRMED `MEN-projects-meetings-71` decision is documented in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md` with an ID-named partial-source failure test; intentional fail-soft delivery is retained.
+
+## Chat-3 round 13 — 30 gap dispositions, no page UX changes (2026-10-18)
+
+After fast-forwarding `origin/main`, **30 distinct queued IDs** changed disposition following source inspection and named regression coverage. **20 moved to DONE (source-level), 10 to NOT-A-GAP (safer vNext contract)**. None is claimed end-to-end verified; browser, disposable PostgreSQL, Vitest and `tsc` execution remain with the orchestrator.
+
+- TPO Drives (8 IDs): TPO-drives-03 NOT-A-GAP, -34 NOT-A-GAP, -36 DONE, -42 DONE (core publish validation), -50 NOT-A-GAP, -05 DONE, -08 DONE, -17 DONE.
+- Learner learning (9 IDs): LEARNER-learning-misc-03 DONE, -04 DONE, -22 NOT-A-GAP, -25 NOT-A-GAP, -34 DONE, -41 NOT-A-GAP, -09 DONE, -33 DONE, -38 DONE . Other learner source copy remains tracked separately.
+- Public (4 IDs): PUB-auth-public-45 NOT-A-GAP, -49 DONE, -60 NOT-A-GAP, -61 NOT-A-GAP.
+- Super Admin Tenant Setup (8 IDs): SA-tenants-modules-05 DONE, -08 DONE, -13 DONE, -16 DONE, -06 DONE, -17 DONE, -18 DONE, -19 NOT-A-GAP .
+- College People (1 ID): COL-people-26 DONE.
+- The *canonical count is the actual queue status diff*: DONE 89→109 (+20), NOT-A-GAP 9→19 (+10). The group descriptions above are explanatory; the individual table rows are authoritative.
+
+Changed code (functional, not styling): TPO-drives-42 enforces actual policy and non-TALK rounds transactionally in direct publish and rejects insecure external application URLs in both publication paths; LEARNER-learning-misc-33/-38 restore distinct safe legacy empty and failed copy. Named tests: `tests/unit/chat3-tpo-publish-readiness-round13.test.ts`, `tests/unit/chat3-tenant-public-verified-round13.test.ts`, `tests/unit/chat3-closure-round13-six.test.ts`, existing ID-named tests for other dispositions. Acceptance evidence and intentional differences are appended to per-page verification files.
+
+**UNCONFIRMED delegation:** `MEN-projects-meetings-71` already has the approved partial-source/fail-soft decision with an ID-named test in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`. Other queue UNCONFIRMEDs have separate owner-lane dispositions (chat-5/chat-15); do not overwrite them.
+
+The old `unit-failures-r1.md` chat-3 lines describe source assertions that presently match on the branch (COL-people-20, TPO-drives-47, TPO-drives-51). Latest `typecheck-errors.md` no longer lists a chat-3 owned error; the four `courses-c3-progress` fixture missing-points regressions were fixed in the previous integrated round. **No tests were run here.** Keep UI/UX restyling frozen until the playbook is signed off after three audits.

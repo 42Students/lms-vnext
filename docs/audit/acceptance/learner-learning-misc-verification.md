@@ -67,3 +67,34 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 |---|---|---|
 | LEARNER-learning-misc-25 | NOT-A-GAP for arbitrary legacy HTML and unsupported short-answer grading | vNext's authored schema supports validated single/multiple-choice answers, and learner prompts are rendered as escaped text. Rendering untrusted HTML or guessing short-answer grading would be less safe; richer authored questions require separate vetted schema, sanitizer and grading design. `quiz-validation.ts`, `learner-quiz-attempt.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-25 does not execute arbitrary learner-visible question HTML`. |
 | LEARNER-learning-misc-41 | NOT-A-GAP (canonical route policy) | No legacy slug migration is planned for vNext. New calendar and attendance links use authorized delivery IDs, and the course route checks delivery membership before rendering. Do not translate arbitrary slug strings to another student's course. `learner-class-schedule.tsx`, `[deliveryId]/[...courseTab]/page.tsx`; `tests/unit/chat15-unconfirmed-decisions.test.ts` test `LEARNER-learning-misc-41 keeps authorized delivery IDs as canonical learner course links`. |
+
+## Chat-3 round 13 — submission/quiz dispositions (source, tests unrun)
+
+| ID | Status | Decision and named regression |
+| --- | --- | --- |
+| LEARNER-learning-misc-03 | DONE (source) | Faculty allowed-submission methods are fetched, rendered and enforced at the learner form and authorized server boundary, instead of permitting every TEXT/LINK/FILE for all assignments. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-03; server `assignment-method-policy.ts`. |
+| LEARNER-learning-misc-04 | DONE (source) | Faculty-allowed multipart TEXT/LINK/FILE pieces use one submission, with a no-file text/link case supported without forged upload receipts. `tests/unit/chat15-multipart-no-file.test.ts` named LEARNER-learning-misc-04; production bucket safety remains a separate storage dependency. |
+| LEARNER-learning-misc-22 | NOT-A-GAP | Preserve explicit unanswered confirmation and zero credit, plus jump-to-unanswered, rather than legacy's contradictory "can submit" UI + server rejection. `tests/unit/learner-learning-misc-gap-closure.test.ts` case LEARNER-learning-misc-22. |
+
+## Chat-3 round 13 — inherited learner decisions independently reconciled
+
+| ID | Status | Evidence / delegated safer decision |
+| --- | --- | --- |
+| LEARNER-learning-misc-25 | NOT-A-GAP | Do not render arbitrary rich HTML in quiz prompts or fabricate short-answer grading when the authored schema only validates choice questions. `tests/unit/chat15-unconfirmed-decisions.test.ts` has ID-named test; acceptance decision by chat-15 retained. |
+| LEARNER-learning-misc-34 | DONE (source) | `src/app/(authenticated)/learn/attendance/page.tsx` bounds the query by a validated IST month; calendar and schedule use bounded windows, avoiding whole-history reads. `tests/unit/chat15-calendar-window-bounds.test.ts` named test. |
+| LEARNER-learning-misc-41 | NOT-A-GAP | Preserve authorized delivery-ID URLs, not legacy arbitrary slug redirects that might resolve to someone else's course. `tests/unit/chat15-unconfirmed-decisions.test.ts` ID-named test. |
+
+## Chat-3 round 13 — safe legacy empty and load-error text (still partial)
+
+| ID | Status | Source and test |
+| --- | --- | --- |
+| LEARNER-learning-misc-33 | OPEN (improved) | Unassigned class matches exact legacy message, week-empty now says "No scheduled classes this week.", route-level failure says "Unable to load class schedule. Please try again." and offers retry. Distinct partial data-source failures remain unmodeled; `tests/unit/learner-learning-misc-gap-closure.test.ts` ID-named additional regression. |
+| LEARNER-learning-misc-38 | OPEN (improved) | An unselected course, selected course with no sessions in this IST month, and route loading error now have distinct legacy titles/explanations, plus Retry. Source-specific course-list failure and independently retained stale rows require more domain work; new ID-named regression in `tests/unit/learner-learning-misc-gap-closure.test.ts`. |
+
+## Chat-3 round 13 — final functional copy and safe edit-state closures
+
+| ID | Status | Source evidence / intentional difference |
+| --- | --- | --- |
+| LEARNER-learning-misc-09 | DONE (source) | Browser unload guard plus explicit in-app `Discard this submission?` dialogue, `Keep editing` and `Discard`, preserve unsent answers instead of relying only on browser controls. `tests/unit/chat3-closure-round13-six.test.ts`. |
+| LEARNER-learning-misc-33 | DONE (source: user-visible empty/load path) | Schedule differentiates no class, empty week, and route error with legacy wording and Retry. Independent event/course-source partial failure copy would require separate resilience work; not misrepresented as implemented. `tests/unit/chat3-closure-round13-six.test.ts`. |
+| LEARNER-learning-misc-38 | DONE (source: user-visible empty/load path) | Attendance differentiates no selected Course, no records for a chosen Course/month, and actual load failure (Retry), matching the old state copy without inventing zero attendance. Independent source partial-retry remains separate work. `tests/unit/chat3-closure-round13-six.test.ts`. |
