@@ -57,3 +57,10 @@ MEN-projects-meetings-58/75 and partial editor/document integration (57/72/76). 
 | MEN-projects-meetings-69 | PARTIAL | `mentor-calendar-load-failure.tsx` inline retry + `mentor/calendar/page.tsx`; `tests/unit/chat16-reassigned-mentor-parity.test.ts` `MEN-projects-meetings-69 keeps meeting load failure inline with a Retry action`. No persisted RESCHEDULED/DRAFT statuses in vNext; do not misreport full parity. |
 
 Remaining reassigned mentor OPEN items require data-model or full UI workflows: MEN-53,55,56,57,58,65,69(status),72,73,75,76. These have not been relabeled DONE merely for partial code. Tests are authored, not run by this lane.
+
+## Chat-16 follow-on mentor editor recovery — source and ID tests authored, not executed
+
+| MEN-projects-meetings-55 | DONE (source authored) | `project-resource-list.tsx` has legacy separate Files / Links / Other counters and required status, type, sprint and task facets; `tests/unit/chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-55 separate tile test. |
+| MEN-projects-meetings-57 | PARTIAL | Draft resources display Draft rather than Active; file metadata and uploaded-file row parity still missing; `tests/unit/chat16-mentor-tracker-contract-round2.test.ts` — MEN-projects-meetings-57. |
+| MEN-projects-meetings-75 | PARTIAL | `mentor-task-create.tsx`, `mentor-sprint-write.tsx`, `project-meeting-controls.tsx`, `project-delivery-reopen-control.tsx` warn about unsaved draft / feedback before dismissal or unload. Additional mentor editor variants remain to audit. `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-75. |
+| MEN-projects-meetings-76 | PARTIAL | Consistent confirmations for sprint/closeout, safe static failure copy for task, sprint, meeting scheduling, reopen feedback and closeout. Not all mentor mutations covered. `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-76. |
