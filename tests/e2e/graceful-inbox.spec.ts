@@ -52,3 +52,43 @@ for (const journey of journeys) {
       });
   });
 }
+
+
+for (const journey of journeys) {
+  test.describe("GR-80 " + journey.role + " individual notification acknowledgement", () => {
+    test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
+      "Requires development-only E2E identity and role notification fixture");
+    for (const kind of kinds) {
+      test("GR-80 " + journey.role + " individual read " + kind + " does not dismiss unread item",
+        async ({ page, context }) => {
+          await authenticateGracefulRole(context, journey.role);
+          await page.goto(journey.route + "?view=unread");
+          const unread = page.getByRole("button", { name: "Mark read" }).first();
+          test.skip(await unread.count() === 0,
+            "GR-80 fixture gap: this role needs one persisted unread personal notification");
+          const row = unread.locator("xpath=ancestor::article");
+          const before = await row.innerText();
+          const endpoint = journey.role === "faculty"
+            ? /\/api\/notifications\/faculty\/[^/]+\/read$/
+            : /\/api\/mentor\/notifications\/[^/]+\/read$/;
+          const failure = await failApi(page,
+            kind === "backend-down" ? "**/api/**" : endpoint, kind);
+          const errors = captureUncaughtErrors(page);
+          try {
+            await unread.click();
+            await expect.poll(() => failure.requests().some((request) =>
+              request.startsWith("POST ") &&
+              endpoint.test(request.slice(5)))).toBe(true);
+            await expect(page.getByText("Notification update failed")).toBeVisible();
+            await expect(page.getByText("Could not mark notification read")).toBeVisible();
+            await expect(row).toContainText(before.slice(0, Math.min(before.length, 24)));
+            await expect(unread).toBeEnabled();
+            await expectNoRawErrors(page);
+            expect(errors).toEqual([]);
+          } finally {
+            await failure.dispose();
+          }
+        });
+    }
+  });
+}
