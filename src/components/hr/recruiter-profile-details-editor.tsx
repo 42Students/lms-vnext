@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
@@ -9,6 +10,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  userUpdatedAt:string;profileUpdatedAt:string;contactReady:boolean;
 }){
  const router=useRouter();
+ const {run:runGuarded}=useGuardedAction({timeoutMs:13000});
  const originalName=splitHrRecruiterName(initialName);
  const [saved,setSaved]=useState({firstName:originalName.firstName,lastName:originalName.lastName,
   title:initialTitle??"",phone:initialPhone??""});
@@ -50,12 +52,13 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   busyRef.current=true;setBusy(true);setFeedback("");
   const controller=new AbortController(),timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
-   const response=await fetch("/api/placements/recruiter/profile/details",{
+   const response=await runGuarded(()=>fetch("/api/placements/recruiter/profile/details",{
     method:"PATCH",credentials:"same-origin",signal:controller.signal,
     headers:{"content-type":"application/json"},
     body:JSON.stringify({...form,expectedUserUpdatedAt:versions.userUpdatedAt,
      expectedProfileUpdatedAt:versions.profileUpdatedAt}),
-   });
+   }));
+   if(!response)throw new Error("PROFILE_REQUEST_UNCONFIRMED");
    if(!response.ok){setFeedback(response.status===409?
     "Your profile changed. Refresh before saving; your edits are still here.":
     "Could not save your profile. Your changes are still here; try again.");return;}
