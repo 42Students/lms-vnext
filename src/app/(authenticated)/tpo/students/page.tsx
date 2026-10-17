@@ -3,6 +3,7 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentsBulkDebar} from "@/components/tpo/tpo-students-bulk-debar";
 import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
@@ -947,6 +948,9 @@ export default async function TpoStudentsPage({
             id:student.membershipId,label:student.displayName+" · "+student.branchName
           }))??undefined:undefined}/>
 
+        {manageAllowed?<TpoStudentsBulkDebar learners={roster.items.map(student=>({
+          id:student.membershipId,name:student.displayName,debarred:student.debarred===true
+        }))}/>:null}
         {manageAllowed ? (
           <TpoStudentsBulkAdd
             key={"bulk-add:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
