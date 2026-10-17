@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {useToast} from "@/components/ui/toast";
 
@@ -21,6 +22,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [open,setOpen]=useState(false);
  const [loaded,setLoaded]=useState(false);
  const [busy,setBusy]=useState(false);
+ const [confirmOpen,setConfirmOpen]=useState(false);
  const [searching,setSearching]=useState(false);
  const [search,setSearch]=useState("");
  const [options,setOptions]=useState<Candidate[]>([]);
@@ -57,24 +59,25 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  }
  async function save(){
   if(lock.current||!loaded)return;
-  if(!window.confirm("Replace roster? Learners removed from this workspace will lose active Project access. Continue?"))return;
-  lock.current=true;setBusy(true);setError("");
+   lock.current=true;setBusy(true);setError("");
   try{
    const result=await apiFetch<Result>(endpoint+"/roster",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({learnerMembershipIds:selected,roleLabel:roleLabel.trim()||undefined,expectedUpdatedAt:version}),
    });
-   setVersion(result.updatedAt);setInitial([...selected]);setOpen(false);
+   setVersion(result.updatedAt);setInitial([...selected]);setConfirmOpen(false);setOpen(false);
    showToast({tone:"success",title:"Learners updated",
     description:result.added+" added · "+result.removed+" removed."});
    router.refresh();
   }catch(cause){
+   setConfirmOpen(false);
    setError(cause instanceof FriendlyFetchError&&cause.status===409?
     "This roster changed while you were working. Your selected learners are kept. Refresh and review before retrying.":
     "Could not update the roster. Your selected learners are kept; try again.");
   }finally{lock.current=false;setBusy(false);}
  }
  const changed=selected.length!==initial.length||selected.some(x=>!initial.includes(x));
+ const removeCount=initial.filter(id=>!selected.includes(id)).length;
  return <>
   <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>Manage students</Button>
   <Dialog open={open} onOpenChange={value=>{if(!busy)setOpen(value);}}
@@ -106,11 +109,15 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex justify-end gap-2">
      <Button type="button" variant="secondary" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" disabled={busy||!loaded||!changed} onClick={()=>void save()}>
+     <Button type="button" disabled={busy||!loaded||!changed} onClick={()=>setConfirmOpen(true)}>
       {busy?"Saving…":"Replace roster"}
      </Button>
     </div>
    </div>
   </Dialog>
+  <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
+   title={"Remove "+removeCount+" learner(s) from this workspace?"}
+   description="Learners removed from the roster lose active access, but their previous project work is retained. Confirm the selected learners before replacing the roster."
+   confirmLabel="Replace roster" pending={busy} onConfirm={()=>void save()}/>
  </>;
 }

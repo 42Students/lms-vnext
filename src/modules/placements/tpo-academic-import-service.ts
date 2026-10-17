@@ -3,8 +3,8 @@ import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
-  activityEvents, collegeMemberships, membershipRoles,
-  placementCandidateAcademicEvidence, users,
+  activityEvents, collegeMemberships, membershipRoles, inAppNotifications,
+  placementCandidateAcademicEvidence, placementApplications, placementJobs, users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -12,6 +12,8 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "./scope";
 import { tpoAcademicPreviewRowSchema } from "./tpo-academic-preview-import-model";
+import {evaluatePlacementEligibility} from "./eligibility-service";
+import {tpoAcademicImportNewlyIneligible} from "./tpo-academic-import-recheck-model";
 
 const schema = z.object({
   rows: z.array(tpoAcademicPreviewRowSchema).min(1).max(200),
@@ -88,7 +90,7 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
     // Lock the learner membership and role rows with the eligibility read so
     // no campus-admin status or role change can race a verified import.
     const found = await tx.select({
-      id: collegeMemberships.id,
+      id: collegeMemberships.id,userId:collegeMemberships.userId,
     }).from(collegeMemberships)
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .innerJoin(membershipRoles, and(
@@ -100,13 +102,28 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         inArray(collegeMemberships.id, ids)))
       .for("share");
     const eligible = new Set(found.map(row => row.id));
+    const studentUsers = new Map(found.map(row=>[row.id,row.userId]));
+    const staff=await tx.selectDistinct({userId:collegeMemberships.userId}).from(collegeMemberships)
+      .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+      .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+      .where(and(eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE")));
     const missing = ids.filter(id => !eligible.has(id));
     if (missing.length && !input.skipUnmatched)
       throw new Error("ACADEMIC_IMPORT_UNMATCHED_STUDENTS");
     const now = new Date();
-    let updated = 0;
+    let updated = 0, newlyIneligible = 0;
     for (const row of input.rows) {
       if (!eligible.has(row.studentCode)) continue;
+      // Re-evaluate every open application before and after the verified evidence
+      // update in the same transaction; never withdraw or delete it.
+      const applications=await tx.select({
+       id:placementApplications.id,jobId:placementApplications.jobId,
+       snapshot:placementApplications.eligibilitySnapshot,
+      }).from(placementApplications).innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+       .where(and(eq(placementApplications.membershipId,row.studentCode),
+        eq(placementApplications.status,"SUBMITTED"),eq(placementJobs.collegeId,college.id)));
+      const oldStatuses=await Promise.all(applications.map(app=>
+       evaluatePlacementEligibility(context,app.jobId,row.studentCode,tx).then(result=>result.status)));
       const evidence = {
         cgpaHundredths: Math.round(row.cgpa * 100),
         activeBacklogs: row.activeBacklogs,
@@ -129,8 +146,45 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
         summary: "Academic record imported",
         metadata: { cgpa: row.cgpa, activeBacklogs: row.activeBacklogs },
       });
+      for(let index=0;index<applications.length;index++){
+       const application=applications[index]!;
+       const current=await evaluatePlacementEligibility(context,application.jobId,row.studentCode,tx);
+       if(!tpoAcademicImportNewlyIneligible(oldStatuses[index]!,current.status))continue;
+       if(!application.snapshot||typeof application.snapshot!=="object"||Array.isArray(application.snapshot))
+        throw new Error("ACADEMIC_IMPORT_INVALID_APPLICATION_SNAPSHOT");
+       const learnerUserId=studentUsers.get(row.studentCode);
+       if(!learnerUserId)throw new Error("ACADEMIC_IMPORT_MEMBER_CHANGED");
+       await tx.update(placementApplications).set({
+        eligibilitySnapshot:{...application.snapshot,
+         academicImportReview:{newlyIneligible:true,at:now.toISOString(),
+          reason:"VERIFIED_ACADEMIC_EVIDENCE_CHANGED"}},
+        updatedAt:now,
+       }).where(and(eq(placementApplications.id,application.id),
+        eq(placementApplications.membershipId,row.studentCode)));
+       const [event]=await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId:college.id,
+        actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+        module:"PLACEMENTS",eventType:"NOW_INELIGIBLE",
+        subjectType:"placement_application",subjectId:application.id,
+        summary:"Academic import flagged an existing application for eligibility review",
+        metadata:{previousStatus:oldStatuses[index],nextStatus:current.status,
+         jobId:application.jobId,applicationPreserved:true},
+       }).returning({id:activityEvents.id});
+       if(!event)throw new Error("ACADEMIC_IMPORT_NOTICE_FAILED");
+       const recipients=[{
+        userId:learnerUserId,eventId:event.id,title:"Placement eligibility needs review",
+        body:"Your updated academic details no longer meet a drive requirement. Your existing application is still recorded. Contact the placement cell.",
+        actionHref:"/learn/my-placements",
+       },...staff.filter(person=>person.userId!==learnerUserId).map(person=>({
+        userId:person.userId,eventId:event.id,title:"Now ineligible after academic import",
+        body:"Verified academic data changed an existing applicant's eligibility. Review the affected drive application.",
+        actionHref:"/tpo/requests",
+       }))];
+       await tx.insert(inAppNotifications).values(recipients).onConflictDoNothing();
+       newlyIneligible++;
+      }
       updated++;
     }
-    return { updated, skipped: missing.length, unmatched: missing };
+    return { updated, skipped: missing.length, unmatched: missing, newlyIneligible };
   });
 }

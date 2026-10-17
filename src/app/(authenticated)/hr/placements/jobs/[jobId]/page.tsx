@@ -11,7 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
-import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
+import { HR_OFFER_STATES,HR_RECRUITER_STAGES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
 import { recruiterVisibleDriveFunnel } from "@/modules/placements/recruiter-drive-funnel-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
@@ -103,7 +103,7 @@ export default async function HrPlacementJobPage({
     }
     throw error;
   }
-  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
+  const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal, selectionRows, selectionPage, selectionTotal, roundSlotCounts, stageCounts } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
@@ -506,21 +506,22 @@ export default async function HrPlacementJobPage({
           </div>
           <p className="text-sm text-body">Only placement-cell-shortlisted applicants are visible to this employer. Private pending, held and rejected candidates are excluded. Counts include all authorized shared applications, while the list loads 25 per page.</p>
           <nav aria-label="Applicant stage" className="flex flex-wrap gap-2">
-            {([["ALL", "All shared", applicants.counts.all], ["SHORTLISTED", "Active shortlist", applicants.counts.shortlisted],
-              ["WITHDRAWN", "Withdrawn", applicants.counts.withdrawn]] as const).map(([stage, label, count]) => (
+            {HR_RECRUITER_STAGES.map(({value:stage,label}) => (
               <Link key={stage} href={`/recruiter/drives/${workspace.job.id}?tab=applicants&stage=${stage}${returnQuery}`}
                 aria-current={filters.stage === stage ? "page" : undefined}
                 className={`inline-flex min-h-10 items-center rounded-md border px-3 text-sm ${filters.stage === stage ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body"}`}>
-                {label} ({count})
+                {label} ({stageCounts[stage]})
               </Link>
             ))}
           </nav>
+          <p className="text-xs text-muted-foreground">These milestones reflect only applicants the placement cell has shared. A candidate may appear in multiple historical stages; unshared or privately rejected applicants remain hidden.</p>
           {applicants.rows.length ? <div className="grid gap-3 md:grid-cols-2">
             {applicants.rows.map(applicant => (
               <article key={applicant.id} className="min-w-0 rounded-lg border border-border bg-surface-subtle p-4">
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 {applicant.rollNumber?<p className="mt-1 text-xs text-body">Roll no. {applicant.rollNumber}</p>:null}
+                {applicant.branch?<p className="mt-1 text-xs text-body">Branch: {applicant.branch}</p>:null}
                 {applicant.ugPercentage?<p className="mt-1 text-xs text-body">UG %: {applicant.ugPercentage}</p>:null}
                 {applicant.tenthPercentage?<p className="mt-1 text-xs text-body">10th %: {applicant.tenthPercentage}</p>:null}
                 {applicant.twelfthOrDiplomaPercentage?<p className="mt-1 text-xs text-body">12th / diploma %: {applicant.twelfthOrDiplomaPercentage}</p>:null}
@@ -559,6 +560,8 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Role</dt><dd className="text-foreground">{selectedApplicant.role}</dd></div>
                 <div><dt className="text-muted-foreground">Shared email</dt><dd className="break-all text-foreground">{selectedApplicant.email ?? "Not provided"}</dd></div>
                 {selectedApplicant.rollNumber?<div><dt className="text-muted-foreground">Roll no.</dt><dd className="text-foreground">{selectedApplicant.rollNumber}</dd></div>:null}
+                {selectedApplicant.branch?<div><dt className="text-muted-foreground">Branch</dt><dd className="text-foreground">{selectedApplicant.branch}</dd></div>:null}
+                {selectedApplicant.phone?<div><dt className="text-muted-foreground">Shared phone</dt><dd className="text-foreground">{selectedApplicant.phone}</dd></div>:null}
                 {selectedApplicant.ugPercentage?<div><dt className="text-muted-foreground">UG %</dt><dd className="text-foreground">{selectedApplicant.ugPercentage}</dd></div>:null}
                 {selectedApplicant.tenthPercentage?<div><dt className="text-muted-foreground">10th %</dt><dd className="text-foreground">{selectedApplicant.tenthPercentage}</dd></div>:null}
                 {selectedApplicant.twelfthOrDiplomaPercentage?<div><dt className="text-muted-foreground">12th / diploma %</dt><dd className="text-foreground">{selectedApplicant.twelfthOrDiplomaPercentage}</dd></div>:null}
@@ -594,8 +597,7 @@ export default async function HrPlacementJobPage({
             <span className="text-xs text-muted-foreground">
               {applicantsPage.first === 0 ? "No rows on this page" :
                 "Showing " + applicantsPage.first + "–" + applicantsPage.last}
-              {" of " + (filters.stage === "SHORTLISTED" ? applicants.counts.shortlisted :
-                filters.stage === "WITHDRAWN" ? applicants.counts.withdrawn : applicants.counts.all)}
+              {" of " + stageCounts[filters.stage]}
             </span>
             <div className="flex gap-2">
               {filters.page > 1 ? (
@@ -619,7 +621,7 @@ export default async function HrPlacementJobPage({
               Export offers CSV
             </Link>
           </div>
-          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include the authorized persisted offer versions, and the table loads 25 at a time. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
+          <p className="text-sm text-body">Only offers for company-shared shortlisted applicants appear here. Counts include only issued offer records, and the table loads 15 at a time. Pre-issue selections appear separately below. Letters of intent issued by the placement team are labelled; the placement team issues and withdraws them.</p>
           <div className="grid gap-3 sm:grid-cols-3">
             {[
               {label:"Recorded offers",value:offerSummary.recorded},
@@ -649,10 +651,41 @@ export default async function HrPlacementJobPage({
                 className={status===filters.offerState ?
                   "rounded-full bg-primary px-3 py-2 text-xs font-semibold text-on-primary" :
                   "rounded-full border border-border px-3 py-2 text-xs text-body"}>
-                {status==="ALL" ? "All statuses" : recruiterOfferStatusLabel(status)}
+                {status==="ALL" ? "All statuses" : status==="PENDING_VERIFICATION"?"Verified, awaiting release":status==="REVOKED"?"Selection cancelled":recruiterOfferStatusLabel(status)}
               </Link>
             ))}
           </nav>
+          {(filters.offerState==="ALL"||["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState))?
+            <section aria-label="Placement-cell selection history" className="space-y-3 rounded-lg border border-border bg-surface-secondary p-4">
+              <h3 className="font-semibold text-foreground">Selection history · placement-cell records</h3>
+              <p className="text-sm text-body">Selections are not issued offers. Verified selections still await formal release by the placement cell. Cancelled selections do not imply a revoked offer.</p>
+              {selectionRows.length?<div className="overflow-x-auto">
+               <table className="w-full min-w-[34rem] text-left text-sm">
+                <thead><tr><th scope="col" className="px-3 py-2">Candidate</th>
+                 <th scope="col" className="px-3 py-2">Role</th>
+                 <th scope="col" className="px-3 py-2">CTC (LPA)</th>
+                 <th scope="col" className="px-3 py-2">Status</th></tr></thead>
+                <tbody>{selectionRows.map(item=><tr key={item.id} className="border-t border-border">
+                  <td className="px-3 py-2">{item.name??"Unnamed applicant"}</td>
+                  <td className="px-3 py-2">{item.role}</td>
+                  <td className="px-3 py-2">{item.annualCtcInr==null?"—":
+                    (item.annualCtcInr/100000).toLocaleString("en-IN",{maximumFractionDigits:2})}</td>
+                  <td className="px-3 py-2"><StatusBadge>{item.status==="SELECTED"?"With the placement cell":
+                    item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled"}</StatusBadge></td>
+                </tr>)}</tbody>
+               </table>
+              </div>:<p role="status" className="text-sm text-muted-foreground">No selections have been recorded in this status.</p>}
+              <p className="text-xs text-muted-foreground">
+               {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
+              </p>
+              {filters.offerState!=="ALL"?<nav aria-label="Selection history pages" className="flex gap-3 text-sm">
+               {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
+                className="text-primary-text underline">Previous selections</Link>:null}
+               {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
+                className="text-primary-text underline">Next selections</Link>:null}
+              </nav>:selectionTotal>selectionRows.length?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState=SELECTED"+returnQuery}
+               className="text-primary-text underline text-sm">Review recorded selections</Link>:null}
+            </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full min-w-[56rem] text-left text-sm">
               <caption className="sr-only">Offers for shared applicants at this college</caption>
@@ -686,8 +719,8 @@ export default async function HrPlacementJobPage({
                 </tr>)}
               </tbody>
             </table>
-          </div> : <p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>}
-          <nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          </div> : filters.offerState==="ALL"||!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<p className="text-sm text-muted-foreground">No offers yet. The placement cell will issue offers after selection verification.</p>:null}
+          {!["SELECTED","PENDING_VERIFICATION","REVOKED"].includes(filters.offerState)?<nav aria-label="Offer pages" className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
             <span className="text-xs text-muted-foreground">
               {offersPage.first===0 ? "No rows on this page" : "Showing "+offersPage.first+"–"+offersPage.last}
               {" of " + offersPage.total}
@@ -704,7 +737,7 @@ export default async function HrPlacementJobPage({
                 Next
               </Link> : null}
             </div>
-          </nav>
+          </nav>:null}
         </section>
       ) : null}
       {filters.tab === "rounds" || filters.tab === "overview" ? <section>
@@ -756,6 +789,7 @@ export default async function HrPlacementJobPage({
               <p className="mt-1 text-xs text-muted-foreground">
                {round.participants.filter(person=>person.result?.status==="STAGED").length} waiting for the cell ·
                {" "}{round.participants.filter(person=>person.result?.status==="APPLIED").length} applied
+               {" · "}{roundSlotCounts[round.id]?.confirmed??0}/{roundSlotCounts[round.id]?.total??0} slots confirmed by the placement cell
               </p>
 
               {!driveOverview.readOnly && round.createdByUserId===context.user.id ?

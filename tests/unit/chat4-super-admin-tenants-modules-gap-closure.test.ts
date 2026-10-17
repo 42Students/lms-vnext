@@ -143,4 +143,17 @@ describe("chat-4 Super Admin Tenants and Modules verified source contracts",()=>
   expect(s).toContain("Organization-wide activity.");
   expect(s).toContain("Activity restricted to the selected college.");
  });
+
+ it("SA-tenants-modules-50 remembers filters across visits and clears them without redirecting elsewhere",()=>{
+  const memory=source("src/components/tracker/audit-finding-filter-memory.tsx");
+  const page=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
+  expect(memory).toContain("42tracker_audit_findings_filters_v1");
+  expect(memory).toContain("window.localStorage.setItem");
+  expect(memory).toContain("window.localStorage.getItem");
+  expect(memory).toContain("new URLSearchParams(saved)");
+  expect(memory).toContain('router.replace("/tracker/audit-findings?"');
+  expect(memory).toContain("allowed.has(key)");
+  expect(page).toContain("<AuditFindingFilterMemory/>");
+  expect(page).toContain('href="/tracker/audit-findings?view=OPEN"');
+ });
 });
