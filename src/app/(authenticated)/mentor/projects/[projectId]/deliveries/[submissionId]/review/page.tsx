@@ -26,6 +26,8 @@ export default async function MentorDeliveryVersionPage({params}:{
       <dl className="mt-4 grid gap-3 sm:grid-cols-2">
         <div><dt className="text-xs text-muted-foreground">Submission state</dt>
           <dd className="mt-1 text-sm font-semibold">{v.status}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Submission type</dt>
+          <dd className="mt-1 text-sm">{v.submissionType}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Review</dt>
           <dd className="mt-1 text-sm font-semibold">{v.decisionLabel}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Submitted by</dt>
