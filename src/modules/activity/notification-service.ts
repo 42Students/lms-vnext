@@ -3,6 +3,7 @@ import {
   count,
   desc,
   eq,
+  gte,
   inArray,
   isNull,
   lt,
@@ -273,6 +274,7 @@ export async function listOwnNotifications(
   context: RequestContext,
   options: {
     unreadOnly?: boolean;
+    unreadSince?: Date;
     limit?: number;
     collegeId?: string;
   } = {},
@@ -490,6 +492,7 @@ export async function listOwnNotificationPage(
   if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
   if (options.unreadOnly) {
     conditions.push(isNull(inAppNotifications.readAt));
+    if(options.unreadSince)conditions.push(gte(inAppNotifications.createdAt,options.unreadSince));
   }
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);

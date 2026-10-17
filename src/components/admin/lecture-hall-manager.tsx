@@ -36,8 +36,8 @@ type Draft = {
 
 const EMPTY: Draft = {
   name: "",
-  capacity: "",
-  roomType: "CLASSROOM",
+  capacity: "50",
+  roomType: "LECTURE_HALL",
   departmentId: "",
   description: "",
 };
@@ -176,7 +176,7 @@ export function LectureHallManager({
 
       {halls.length === 0 ? (
         <EmptyState
-          title={emptyState?.title ?? "No lecture halls yet"}
+          title={emptyState?.title ?? "No lecture halls found."}
           description={emptyState?.description ?? "Add the rooms your college teaches in, so classes can be scheduled into them."}
         />
       ) : (

@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname,useRouter } from "next/navigation";
+import {useRef} from "react";
+import {learnerPlacementSwipeDestination} from "@/modules/placements/learner-placements-swipe-model";
 
 export const learnerPlacementsLegacyTabs = [
   { label: "Home", href: "/learn/my-placements" },
@@ -15,9 +17,25 @@ export const learnerPlacementsLegacyTabs = [
 
 export function LearnerPlacementsTabs() {
   const pathname = usePathname();
+  const router=useRouter();
+  const touchStart=useRef<{x:number;y:number}|null>(null);
 
   return (
-    <nav aria-label="Placements workspace" className="min-w-0 border-b border-border">
+    <nav aria-label="Placements workspace" className="min-w-0 border-b border-border"
+      onTouchStart={event=>{
+        const touch=event.touches[0];
+        touchStart.current=touch?{x:touch.clientX,y:touch.clientY}:null;
+      }}
+      onTouchCancel={()=>{touchStart.current=null;}}
+      onTouchEnd={event=>{
+        const start=touchStart.current;
+        touchStart.current=null;
+        const end=event.changedTouches[0];
+        if(!start||!end)return;
+        const destination=learnerPlacementSwipeDestination(pathname,end.clientX-start.x,
+          end.clientY-start.y,learnerPlacementsLegacyTabs.map(tab=>tab.href));
+        if(destination)router.push(destination);
+      }}>
       <div className="flex min-w-0 flex-wrap gap-1">
         {learnerPlacementsLegacyTabs.map((tab) => {
           const active =

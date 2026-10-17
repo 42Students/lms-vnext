@@ -18,12 +18,15 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
   const parsed = editTpoNoticeSchema.safeParse({
     noticeId, expectedVersion: token.data,
     title: form?.get("title"), message: form?.get("message"),
+    buttonLabel:String(form?.get("buttonLabel")??"").trim()||undefined,
+    buttonUrl:String(form?.get("buttonUrl")??"").trim()||undefined,
     pinned: form?.get("pinned") === "on",
     sendAt:form?.has("sendAt")?String(form.get("sendAt")??""):undefined,
     showUntil:form?.has("showUntil")?String(form.get("showUntil")??""):undefined,
   });
   if (!parsed.success)
-    return noticePostError(request,"INVALID_BODY",400);
+    return noticePostError(request,
+      parsed.error.issues.some(issue=>issue.path.includes("buttonUrl"))?"BUTTON_URL_INVALID":"INVALID_BODY",400);
   try {
     await editTpoNotice(await getCurrentRequestContext(), parsed.data);
     return NextResponse.redirect(new URL("/tpo/announcements?tab=yours", request.url), 303);

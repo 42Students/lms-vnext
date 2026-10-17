@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import {tpoStudentDisplayLabel} from "@/modules/placements/tpo-student-display-label";
 import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
@@ -26,7 +27,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
   setLoading(true);setError("");
   try{const response=await fetch("/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",{cache:"no-store"});
    const body=await response.json().catch(()=>null);
-   if(!response.ok||!body?.student)throw Error(body?.error??"Could not load student records");
+   if(!response.ok||!body?.student)throw Error(response.status===403
+     ?"You do not have permission to open these student details.":
+      "Could not load student records. Please try again.");
    setDetail(body as PanelDetail);
   }catch(e){setError(e instanceof Error?e.message:"Could not load student records");}
   finally{setLoading(false);}
@@ -45,6 +48,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
   !student.registeredForPlacements?"Placement registration not recorded":null,
+   student.participationStatus==="INELIGIBLE"?"Not eligible for placements":null,
+   student.verification.status==="WAITING"?"Profile verification waiting: "+student.verification.waitingSections.join(", "):null,
+   student.verification.status==="SENT_BACK"?"Profile correction needed":null,
+   student.offersAwaitingAnswer>0?student.offersAwaitingAnswer+" offer(s) waiting on an answer":null,
   student.ambiguousSection?"Conflicting active class membership requires review":null,
   student.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence is incomplete":null,
   student.journeyState==="READY_NOT_APPLYING"?"No active applications recorded":null,
@@ -65,7 +72,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     <div><p className="text-xs text-muted-foreground">TPO · Student</p>
       <h2 className="text-xl font-bold">{student.displayName}</h2>
       <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
-      <p className="text-xs text-muted-foreground">{student.cohortName} · {student.journeyState.replaceAll("_"," ")}</p>
+      <p className="text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
       <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
     <button type="button" autoFocus className="min-h-10 rounded border border-border px-3" onClick={onClose}>
@@ -90,6 +97,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["CGPA",student.cgpa??"Not recorded"],["Active backlogs",student.activeBacklogs??"Not recorded"],
         ["Past backlogs",student.pastBacklogs??"Not recorded"],
         ["After college",afterCollegeDisplay(recordedOutcome)],
+        ["Stage",tpoStudentDisplayLabel(student.journeyState)],
+        ["Profile check",student.verification.status==="UNKNOWN"?"Verification unavailable":tpoStudentDisplayLabel(student.verification.status)],
+        ["Placements decision",tpoStudentDisplayLabel(student.participationStatus)],
+        ["Offers waiting on their answer",student.offersAwaitingAnswer],
+        ["Prep %","Not recorded"],
         ["Registration",student.registrationChoice??"Not recorded"],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
@@ -98,14 +110,17 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Needs attention</h3>
       {attention.length?<ul className="list-disc space-y-1 pl-5">{attention.map(item=><li key={item}>{item}</li>)}</ul>
        :<p>No attention flags derived from the current roster evidence.</p>}
+      <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Placement eligibility</Link>
+      <Link href={"/tpo/team?about="+encodeURIComponent("STUDENT:"+student.membershipId)}
+        className="ml-3 inline-flex min-h-10 items-center text-primary-text underline">Discuss with team</Link>
     </>:null}
     {tab==="Placement"?<>
       <h3 className="font-semibold">Placement journey</h3>
       <dl className="grid grid-cols-2 gap-3">
        {[
-        ["Participation",student.participationStatus],["Applications",student.applicationCount],
+        ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
-        ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestSoFar],
+        ["Accepted offers",student.acceptedOfferCount],["Best so far",tpoStudentDisplayLabel(student.bestSoFar)],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
@@ -121,7 +136,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
-    {error?<p role="alert" className="text-error">{error}</p>:null}
+    {error?<div role="alert" className="space-y-2 text-error"><p>{error}</p>
+     <button type="button" className="min-h-10 rounded border border-border px-3 text-sm font-semibold text-primary-text" onClick={()=>void fetchDetail()}>Retry loading student details</button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}

@@ -32,8 +32,8 @@ export default async function SuperAdminProjectAtRiskRoute({
           description="A selected college scope is required."
         />
         <EmptyState
-          title="Select a college scope"
-          description="Choose a college before reviewing project risk."
+          title="Select a college to continue"
+          description="Choose a college in the header above to see its at-risk projects."
         />
       </div>
     );

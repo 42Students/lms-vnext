@@ -9,12 +9,15 @@ import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoInternalThreads} from "./tpo-team-staged-schema";
 /** Read only threads where the active TPO membership is a named participant. */
-export async function listMyTpoInternalThreads(context:RequestContext){
+export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=""){
+ const search=rawSearch.trim().slice(0,120);
+ const q=search.length>=2?search:"";
  const membership=context.membership;
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("placement_tpo_internal_threads"))
   return {status:"NOT_REGISTERED" as const,items:[]};
+ const readsReady=await placementTableExists("placement_tpo_internal_reads");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -22,11 +25,47 @@ export async function listMyTpoInternalThreads(context:RequestContext){
   const items=await tx.select({
    id:tpoInternalThreads.id,topic:tpoInternalThreads.topic,
    createdAt:tpoInternalThreads.createdAt,
+   counterpartName:sql<string|null>`(select coalesce(nullif(btrim(u.display_name),''),'Team member')
+    from college_memberships cm join users u on u.id=cm.user_id
+    where cm.college_id=${college.id}::uuid and cm.id=
+     (case when ${tpoInternalThreads.startedByMembershipId}=${membership.id}::uuid
+       then ${tpoInternalThreads.invitedMembershipId} else ${tpoInternalThreads.startedByMembershipId} end)
+    limit 1)`,
+   kind:sql<"PRIVATE">`'PRIVATE'`,
+   lastPreview:sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
+     where m.thread_id=placement_tpo_internal_threads.id
+     order by m.created_at desc,m.id desc limit 1)`,
+   following:readsReady?sql<boolean>`coalesce((select r.following
+    from placement_tpo_internal_reads r where r.thread_id=${tpoInternalThreads.id}
+    and r.membership_id=${membership.id}::uuid),true)`:sql<boolean>`true`,
+   muted:readsReady?sql<boolean>`coalesce((select r.muted_at is not null
+    from placement_tpo_internal_reads r where r.thread_id=${tpoInternalThreads.id}
+    and r.membership_id=${membership.id}::uuid),false)`:sql<boolean>`false`,
+   unreadMessages:readsReady?sql<number>`(select count(*)::integer from placement_tpo_internal_messages m
+     where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid
+       and m.author_membership_id<>${membership.id}::uuid
+       and m.created_at>coalesce((select r.read_through from placement_tpo_internal_reads r
+         where r.thread_id=${tpoInternalThreads.id} and r.membership_id=${membership.id}::uuid),
+          '-infinity'::timestamptz))`:sql<number>`0`,
+   searchSnippet:q?sql<string|null>`(select left(m.body,160) from placement_tpo_internal_messages m
+     where m.thread_id=placement_tpo_internal_threads.id
+       and position(lower(${q}) in lower(m.body))>0
+     order by m.created_at desc,m.id desc limit 1)`:sql<string|null>`null`,
   }).from(tpoInternalThreads)
    .where(and(eq(tpoInternalThreads.collegeId,college.id),
     or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
-       eq(tpoInternalThreads.invitedMembershipId,membership.id))))
-   .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(50);
+       eq(tpoInternalThreads.invitedMembershipId,membership.id)),
+    q?or(sql`position(lower(${q}) in lower(${tpoInternalThreads.topic}))>0`,
+      sql`exists(select 1 from placement_tpo_internal_messages m
+        where m.thread_id=${tpoInternalThreads.id}
+        and m.college_id=${college.id}::uuid
+        and position(lower(${q}) in lower(m.body))>0)`) : undefined))
+   .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(100);
+  if(readsReady)return {status:"READY" as const,items:items.map(row=>({
+   ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
+  }))};
+  // Legacy fallback while the proposed read-receipt migration is not yet registered.
+  // Unread counts are per original recipient: query results never change who may read a thread.
   const unread = await tx.select({
    href:inAppNotifications.actionHref,
    total:sql<number>`count(*)::integer`,

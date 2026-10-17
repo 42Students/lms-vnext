@@ -1,5 +1,6 @@
 /** TPO-drive-workspace-48: parse small company selection CSVs before explicit review. */
-export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] {
+export function parseSelectionCsv(text:string,strictBlankRows=false,maxDataRows=500):string[][] {
+ if(!Number.isSafeInteger(maxDataRows)||maxDataRows<1||maxDataRows>1000)throw Error("Unsupported import row limit.");
  const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;let startedQuoted=false;let closedQuote=false;
  for(let i=0;i<text.length;i++){
   const char=text[i];
@@ -23,7 +24,7 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
  }
  if(quoted)throw Error("Unclosed quoted value in the CSV.");
  row.push(field.trim());if(row.some(value=>value!==""))rows.push(row);
- if(rows.length>501)throw Error("Import up to 500 students at a time.");
+ if(rows.length>maxDataRows+1)throw Error("Import up to "+maxDataRows+" students at a time.");
  return rows;
 }
 export type SelectionImportCandidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};

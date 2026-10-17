@@ -13,6 +13,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportDetails } from "@/modules/placements/report-service";
+import {tpoUnplacedStudentsHref} from "@/modules/placements/tpo-unplaced-students-link";
 import {getTpoUnplacedAcademicEvidence} from "@/modules/placements/tpo-unplaced-academic-evidence-service";
 import {formatUnplacedPercentage} from "@/modules/placements/tpo-unplaced-academic-evidence-model";
 import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
@@ -98,7 +99,7 @@ export default async function TpoUnplacedReportPage({
         </select></label>
        <button type="submit" className="min-h-10 rounded bg-primary px-4 text-on-primary">Filter</button>
        {(batchId||branchId)?<Link href="/tpo/reports/unplaced" className="inline-flex min-h-10 items-center text-primary-text underline">Clear batch and branch</Link>:null}
-       <Link href="/tpo/students?journeyState=READY_NOT_APPLYING"
+       <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-10 items-center text-primary-text underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
@@ -131,7 +132,7 @@ export default async function TpoUnplacedReportPage({
 
       <ReportScopeNote note={workspace.detailScopeNote} />
       <div className="rounded-xl border border-border bg-surface p-4">
-       <Link href="/tpo/students?journeyState=READY_NOT_APPLYING"
+       <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
         Act on them on Students
        </Link>

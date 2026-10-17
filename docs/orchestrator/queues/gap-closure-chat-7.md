@@ -255,6 +255,13 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 | FAC-courses-R06 | S4 | STATE | OPEN |
 
 ## Notes (blockers, one line each)
+- LEARNER-placements-20 BLOCKED: secure resume upload, preview and attachment receipts await private bucket and malware scanning.
+- REC-home-drives-23 BLOCKED: secure PDF/Word job-description upload requires private storage and malware scanning.
+- REC-home-drives-43 BLOCKED: resume ZIP with protected source documents requires the private scanned object store.
+- FAC-courses-14 BLOCKED: lesson material uploads depend on a private object-store bucket and malware-scanning pipeline.
+- GR-30/GR-70 adoption pending: shared friendly error and guarded-action helpers were not yet on main at the start of round 3; revisit all four pages after chat-14 merges.
+
+- LEARNER-placements-20 BLOCKED: profile resume attachment and preview require an authenticated private object-storage bucket and malware-scanning service.
 
 ## Needs shell (chat-9 only)
 
