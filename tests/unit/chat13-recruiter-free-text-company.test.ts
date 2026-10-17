@@ -18,6 +18,7 @@ describe("SA-placements-projects-37 free-text company onboarding",()=>{
   expect(create).toContain("input.newCompany.collegeId");
   expect(create).toContain("requireHrCollege(");
   expect(create).toContain("selectedRelationships");
+  expect(create.indexOf("if(input.newCompany && input.companyRelationshipIds?.length)")).toBeLessThan(create.indexOf("createPlacementCompany(context"));
  });
  it("SA-placements-projects-37 shows company entry and college options, keeping failures retryable",()=>{
   const dialog=read("src/components/admin/super-admin-hr-account-dialog.tsx");

@@ -653,6 +653,8 @@ export async function createSuperAdminHrAccount(
 
   // Canonical company creation is idempotent by name/domain. If recruiter
   // creation fails, the linked employer remains available for a later retry.
+  if(input.newCompany && input.companyRelationshipIds?.length)
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
   const firstRelationshipId=input.newCompany
     ?(await createPlacementCompany(context,{
       collegeId:input.newCompany.collegeId,name:input.newCompany.name,
@@ -671,8 +673,6 @@ export async function createSuperAdminHrAccount(
     relationship.relationshipId,...(input.companyRelationshipIds??[]),
   ])];
   if(selectedIds.length>20)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
-  if(input.newCompany&&input.companyRelationshipIds?.length)
-    throw new PlacementsServiceError("PLACEMENT_RECRUITER_COMPANY_CONFLICT");
   const additionalRelationships=await Promise.all(selectedIds.slice(1).map(loadActiveRelationship));
   for(const candidate of additionalRelationships){
     if(candidate.companyId!==relationship.companyId)

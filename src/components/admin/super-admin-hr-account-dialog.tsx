@@ -394,9 +394,9 @@ export function SuperAdminHrAccountDialog({
             {status === "ARCHIVED" &&
             account.status !== "ARCHIVED" ? (
               <p className="mt-2 text-xs leading-5 text-warning">
-                Archiving revokes every active college
-                grant. Reopening the profile later does
-                not restore those grants automatically.
+                Suspending signs the recruiter out everywhere
+                and blocks sign-in. Existing college grants
+                remain linked for reactivation.
               </p>
             ) : null}
 
