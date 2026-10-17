@@ -13,6 +13,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  const [busy,setBusy]=useState(false),[notice,setNotice]=useState("");
  const [selected,setSelected]=useState("");
  const [editingName,setEditingName]=useState(""),[editingNote,setEditingNote]=useState("");
+ const [deleteReview,setDeleteReview]=useState<string|null>(null);
  async function refresh(){
   try{
    const res=await fetch("/api/placements/tpo/leads/views",{credentials:"same-origin",cache:"no-store"});
@@ -25,7 +26,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
  function currentQuery(){
   const params=new URLSearchParams(window.location.search),result:Record<string,string>={};
   for(const key of ["q","stage","owner","status","invite","source","company","reach",
-    "designation","nextFollowup","lastActivity","added"]){
+    "designation","nextFollowup","lastActivity","added","need","attention"]){
    const value=params.get(key);if(value)result[key]=value;
   }
   return result;
@@ -41,16 +42,19 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
    pinned:action==="PIN"?!view?.pinned:action==="CREATE"?false:undefined,
   };
   if(action==="CREATE"&&!payload.name){setNotice("Name this view first.");setBusy(false);return;}
+  if(action==="CREATE"&&views.length>=100){setNotice("You can save up to 100 views.");setBusy(false);return;}
   try{
    const response=await fetch("/api/placements/tpo/leads/views",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(payload),
    });
    const data=await response.json() as {error?:string};
-   if(!response.ok)throw new Error(data.error==="PIN_LIMIT"?"You can pin up to 5 views.":
+   if(!response.ok)throw new Error(data.error==="VIEW_LIMIT"?"You can save up to 100 views.":
+    data.error==="PIN_LIMIT"?"You can pin up to 5 views.":
     data.error==="DUPLICATE_NAME"?"A view with that name already exists.":
     data.error==="STORAGE_PENDING"?"Saved view storage is not registered.":"Couldn't save.");
    setNotice(action==="CREATE"?"View saved":action==="DELETE"?"View deleted":"Saved");
+   if(action==="DELETE"){setSelected("");setDeleteReview(null);setEditingName("");setEditingNote("");}
    if(action==="CREATE"){setName("");setNote("");}
    await refresh();
   }catch(e){setNotice(e instanceof Error?e.message:"Couldn't save");}
@@ -81,14 +85,21 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      onChange={e=>setName(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
     <input aria-label="View note" maxLength={500} placeholder="Note (optional)" value={note}
      onChange={e=>setNote(e.target.value)} className="min-h-10 rounded border border-border px-3"/>
-    <button type="button" disabled={busy||!name.trim()} className={button}
+    <button type="button" disabled={busy||!name.trim()||views.length>=100} className={button}
      onClick={()=>void apply("CREATE")}>Save current view</button>
    </div>
    {views.length?<div className="space-y-2">
+    <p role="status" className="text-xs text-muted-foreground">{views.length} saved views · {views.filter(view=>view.pinned).length} of 5 pinned</p>
+    {views.some(view=>view.pinned)?<nav aria-label="Pinned recruiter views" className="flex flex-wrap gap-2">
+      {views.filter(view=>view.pinned).map(view=><button key={view.id} type="button"
+        className={button} onClick={()=>open(view)} title={view.note??undefined}>
+        ★ {view.name}
+      </button>)}
+    </nav>:null}
     <label className="block text-sm">Open saved view
      <select className="mt-1 min-h-10 w-full max-w-sm rounded border border-border px-3"
       value={selected} onChange={e=>{
-       setSelected(e.target.value);
+       setSelected(e.target.value);setDeleteReview(null);
        const view=views.find(item=>item.id===e.target.value);
        setEditingName(view?.name??"");setEditingNote(view?.note??"");
       }}>
@@ -100,11 +111,15 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
      <label className="text-sm">Rename view<input maxLength={100} className="ml-2 min-h-10 rounded border border-border px-3" value={editingName} onChange={e=>setEditingName(e.target.value)}/></label>
      <label className="text-sm">Note<input maxLength={500} className="ml-2 min-h-10 rounded border border-border px-3" value={editingNote} onChange={e=>setEditingNote(e.target.value)}/></label>
      <button type="button" className={button} onClick={()=>open(active)}>Open</button>
-     <button type="button" className={button} disabled={busy} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
-     <button type="button" className={button} disabled={busy} onClick={()=>void apply("PIN",active)}>
+     <button type="button" className={button} disabled={busy||!editingName.trim()} onClick={()=>void apply("UPDATE",active)}>Update filters and columns</button>
+     <button type="button" className={button} disabled={busy||(!active.pinned&&views.filter(view=>view.pinned).length>=5)} onClick={()=>void apply("PIN",active)}>
       {active.pinned?"Unpin":"Pin"}
      </button>
-     <button type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Delete</button>
+     {deleteReview===active.id?<>
+       <span role="status" className="text-sm">Delete {active.name}? This view cannot be restored.</span>
+       <button type="button" className={button} disabled={busy} onClick={()=>void apply("DELETE",active)}>Confirm delete</button>
+       <button type="button" className={button} onClick={()=>setDeleteReview(null)}>Cancel</button>
+     </>:<button type="button" className={button} disabled={busy} onClick={()=>setDeleteReview(active.id)}>Delete</button>}
      <button type="button" className={button} onClick={()=>download(active)}>Download view</button>
      <p className="w-full text-xs text-muted-foreground">{active.note||"No note"}</p>
     </div>:null}
