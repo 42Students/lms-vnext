@@ -13,6 +13,8 @@ export const RECRUITER_ATTENTION_LABELS: Readonly<Record<RecruiterAttentionChip,
 export function recruiterAttentionFromPersistedFacts(input: {
   createdAt: Date;
   lastContactAt: Date | null;
+  lastActivityAt?: Date | null;
+  stage?: string;
   nextFollowupAt: Date | null;
   inviteBouncedAt: Date | null;
   inviteSentAt: Date | null;
