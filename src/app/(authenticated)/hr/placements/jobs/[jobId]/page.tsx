@@ -546,7 +546,15 @@ export default async function HrPlacementJobPage({
                   />
                 </div>
               ) : null}
-              <p className="mt-5 text-sm text-muted-foreground">Round-specific review decisions are not persisted by this drawer. The placement team controls official screening.</p>
+              {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
+                <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
+                <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
+                <RecruiterResultControls rounds={resultControlRounds
+                  .filter(round=>round.participants.some(person=>person.applicationId===selectedApplicant.id))
+                  .map(round=>({...round,participants:round.participants.filter(person=>person.applicationId===selectedApplicant.id)}))}/>
+              </div>:<p className="mt-5 text-sm text-muted-foreground">
+                {driveOverview.readOnly?"This drive is finished. Results can no longer be sent.":"Official screening is controlled by the placement cell. Open Focused review to stage results for this applicant."}
+              </p>}
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
