@@ -13,6 +13,8 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
 }){
  const router=useRouter();const [open,setOpen]=useState(false);
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
+ const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
+ const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
  const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
  const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
