@@ -64,3 +64,9 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 
 | COL-people-05 | DONE (source-level, test unexecuted) | `src/modules/people/college-student-csv-service.ts` inserts the import audit using the actual current membership only when its college and organization equal the import scope; avoids the reported union-property type error. `tests/unit/chat11-college-student-csv-audit-round10.test.ts` — `COL-people-05 writes a typed same-college actor membership instead of an unknown union property`. |
 | COL-people-25 | PARTIAL — OPEN | `src/modules/people/college-student-csv-service.ts` now strips raw class-placement exception messages from imported-row receipts; `tests/unit/chat11-college-student-csv-audit-round10.test.ts` — `COL-people-25 does not leak database error messages in partial CSV row receipts`. Existing-account duplicate detection and full field-level identity error parity are not complete. |
+
+## Chat-3 round 13 — audited faculty suspension interaction
+
+| ID | Disposition | Evidence |
+| --- | --- | --- |
+| COL-people-26 | DONE (source, browser test pending) | Accessible, explicit two-step `ConfirmDialog` and pending state for faculty lifecycle changes, with success notices and no browser `window.confirm`. `src/components/college/college-faculty-lifecycle-action.tsx` and `tests/unit/college-people-gap-closure.test.ts` case COL-people-26. |

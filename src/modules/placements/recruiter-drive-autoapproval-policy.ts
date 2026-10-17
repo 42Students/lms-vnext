@@ -6,6 +6,7 @@ export function trustedRecruiterDomain(recruiterEmail:string|null,companyDomain:
   trustedDomains:readonly string[]):boolean{
  if(!recruiterEmail||!companyDomain)return false;
  const email=recruiterEmail.trim().toLowerCase();
+ if(!/^[^@\s]+@[^@\s]+$/.test(email))return false;
  const at=email.lastIndexOf("@");
  if(at<1||at!==email.indexOf("@"))return false;
  const domain=email.slice(at+1);

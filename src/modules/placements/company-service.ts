@@ -494,6 +494,19 @@ export async function restorePlacementCompanyRelationship(
   throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
  if(current.relationship.status==="ACTIVE")return current;
  return getDb().transaction(async tx=>{
+  // COL-placements-15: lock both rows and revalidate the global employer state
+  // against concurrent archive, so restoring cannot revive a disabled company.
+  const [locked]=await tx.select({
+    relationship:placementCompanyRelationships,
+    company:placementCompanies,
+  }).from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(and(eq(placementCompanyRelationships.id,relationshipId),
+      eq(placementCompanyRelationships.collegeId,current.relationship.collegeId)))
+    .for("update").limit(1);
+  if(!locked || locked.company.status!=="ACTIVE" ||
+     locked.relationship.status!=="ARCHIVED" || !locked.relationship.archivedAt)
+   throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
   const [restored]=await tx.update(placementCompanyRelationships).set({
    status:"ACTIVE",archivedAt:null,updatedAt:new Date(),
   }).where(and(eq(placementCompanyRelationships.id,relationshipId),

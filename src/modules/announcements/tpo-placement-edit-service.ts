@@ -5,6 +5,10 @@ import {getDb} from "@/db/client";
 import {activityEvents} from "@/db/schema/activity";
 import {inAppNotifications} from "@/db/schema";
 import {db10Announcements} from "@/db/schema/db10-announcements";
+import {placementTpoNoticeAudiences,placementTpoNoticeRecipients} from "@/db/schema/placement-tpo-notice-audiences";
+import {tpoNoticeAudienceChangeSchema,mayChangeTpoNoticeAudience} from "./tpo-notice-audience-change-model";
+import {freezeTpoNoticeRecipients} from "./tpo-notice-audience-snapshot-model";
+import {tpoTargetedRecipientQuery} from "./tpo-targeted-recipient-query";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -20,6 +24,7 @@ export const editTpoNoticeSchema=z.object({
  buttonLabel:z.string().trim().min(1).max(60).optional(),
  buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
  notifyChanged:z.boolean().default(false),
+ audienceChange:tpoNoticeAudienceChangeSchema.optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().refine(data=>Boolean(data.buttonLabel)===Boolean(data.buttonUrl),{path:["buttonUrl"],message:"The link has to start with https://"});
 
@@ -30,6 +35,9 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
  if(!membership||!hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,membership.collegeId);
  if(!await placementTableExists("announcements"))throw new Error("ANNOUNCEMENTS_NOT_REGISTERED");
+ if(input.audienceChange&&(!await placementTableExists("placement_tpo_notice_audiences")||
+   !await placementTableExists("placement_tpo_notice_recipients")))
+  throw new Error("TARGETED_NOTICES_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -37,6 +45,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
   const [current]=await tx.select({
    id:db10Announcements.id,version:db10Announcements.version,
    scheduledAt:db10Announcements.scheduledAt,expiresAt:db10Announcements.expiresAt,
+   deletedAt:db10Announcements.deletedAt,
   }).from(db10Announcements).where(and(
    eq(db10Announcements.id,input.noticeId),
    eq(db10Announcements.collegeId,college.id),
@@ -51,6 +60,44 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
   const schedule=input.sendAt!==undefined||input.showUntil!==undefined?
    parseTpoNoticeSchedule(input,new Date()):
    {scheduledAt:current.scheduledAt,expiresAt:current.expiresAt};
+  if(input.audienceChange){
+   // Never retarget a visible/delivered notice. The lock covers the frozen
+   // recipient set and the version-checked content update together.
+   const [sent]=await tx.select({eventId:inAppNotifications.eventId})
+    .from(inAppNotifications).innerJoin(activityEvents,
+     eq(activityEvents.id,inAppNotifications.eventId))
+    .where(and(eq(activityEvents.collegeId,college.id),
+     eq(activityEvents.subjectType,"announcement"),
+     eq(activityEvents.subjectId,current.id),
+     eq(activityEvents.eventType,"placements.tpo_notice.created"))).limit(1);
+   const now=new Date();
+   if(!mayChangeTpoNoticeAudience({scheduledAt:current.scheduledAt,now,
+      delivered:Boolean(sent),deleted:Boolean(current.deletedAt)})||
+      !schedule.scheduledAt||schedule.scheduledAt<=now)
+    throw new Error("TPO_NOTICE_AUDIENCE_LOCKED");
+   const change=input.audienceChange;
+   const members=change.audience==="COLLEGE"?[]:
+    (await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
+     kind:change.audience,targetId:change.targetId,targetIds:change.targetIds,
+    }))).rows.map(row=>row.id);
+   const frozen=freezeTpoNoticeRecipients(members);
+   if(change.audience!=="COLLEGE"&&!frozen.length)
+    throw new Error("TPO_NOTICE_NO_RECIPIENTS");
+   await tx.delete(placementTpoNoticeRecipients).where(
+    eq(placementTpoNoticeRecipients.announcementId,current.id));
+   await tx.delete(placementTpoNoticeAudiences).where(
+    eq(placementTpoNoticeAudiences.announcementId,current.id));
+   if(change.audience!=="COLLEGE"){
+    await tx.insert(placementTpoNoticeAudiences).values({
+     announcementId:current.id,kind:change.audience,
+    });
+    for(let offset=0;offset<frozen.length;offset+=500)
+     await tx.insert(placementTpoNoticeRecipients).values(
+      frozen.slice(offset,offset+500).map(membershipId=>({
+       announcementId:current.id,membershipId,
+      })));
+   }
+  }
   const [updated]=await tx.update(db10Announcements).set({
    title:input.title,message:input.message,isPinned:input.pinned,
    buttonLabel:input.buttonLabel??null,buttonUrl:input.buttonUrl??null,
@@ -69,7 +116,7 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    subjectType:"announcement",subjectId:updated.id,
    summary:"TPO notice content or schedule edited",
    metadata:{noticeId:updated.id,version:updated.version,pinned:input.pinned,
-    notifyChanged:input.notifyChanged},
+    notifyChanged:input.notifyChanged,audienceChangedTo:input.audienceChange?.audience??null},
   }).returning({id:activityEvents.id});
   if(input.notifyChanged && editEvent){
    // Tell ONLY recipients with a persisted original notification. A notice

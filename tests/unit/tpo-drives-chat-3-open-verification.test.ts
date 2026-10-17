@@ -88,6 +88,16 @@ describe("chat-3 remaining Drives audit evidence — open unless explicitly clos
   expect(create()).toMatch(/recruiter lead invitations are managed separately under Engage\./i);
   expect(source("src/modules/placements/tpo-recruiter-invite-service.ts")).toContain("lead");
  });
+ it("TPO-drives-50 recruiter cannot mutate college-owned approved drive fields through TPO endpoints",()=>{
+  const edit=source("src/modules/placements/tpo-drive-edit-service.ts");
+  const guard=source("src/modules/placements/tpo-job-write-base.ts");
+  const service=edit.slice(edit.indexOf("export async function editTpoDrive"));
+  expect(service).toContain("await requireTpoJobActor(tx,context)");
+  expect(service).toContain('eq(placementJobs.collegeId,collegeId)');
+  expect(guard).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
+  expect(guard).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(guard).toContain('eq(users.platformStatus,"ACTIVE")');
+ });
  it("TPO-drives-50 TPO edit access still requires a scoped TPO actor",()=>{
   const service=source("src/modules/placements/tpo-drive-edit-service.ts");
   expect(service).toContain("requireTpoJobCollege(context)");

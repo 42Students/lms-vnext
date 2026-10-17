@@ -179,3 +179,27 @@ These named regression tests check *existing pieces* of the legacy audit only. A
 | --- | --- | --- |
 | TPO-drives-R05 | OPEN — safer partial implementation | `src/modules/placements/tpo-drive-form-error-copy.ts` maps recognized `FriendlyFetchError.fieldErrors` keys to predefined, readable field labels without echoing untrusted server text; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-R05 surfaces recognized offending fields, never raw Zod messages`. Inline per-field errors and the remaining exact legacy field rules are not yet complete. |
 | TPO-drives-44 | OPEN — safer partial implementation | Unknown machine-code messages are replaced by bounded friendly fallback, and known season/role/deadline failures are mapped to sentences; `tests/unit/tpo-drives-44-error-copy.test.ts` `TPO-drives-44 unknown short machine codes are never displayed from typed API errors`. Full legacy message inventory is not yet exhaustively mapped. |
+
+## Chat-3 round 13 — owner-delegated safer dispositions (source, tests unrun)
+
+| ID | Status | Reason and ID-named test |
+| --- | --- | --- |
+| TPO-drives-03 | NOT-A-GAP | Closed lifecycle intentionally includes CLOSED/CANCELLED jobs and rejected recruiter requests are labelled Declined separately rather than inventing a fictitious rejected job status. `src/modules/placements/tpo-drive-lifecycle-list-model.ts`; `tests/unit/tpo-drives-gap-closure.test.ts` test TPO-drives-03. |
+| TPO-drives-34 | NOT-A-GAP | Prefer explicit college-scoped cohort targeting and avoid ambiguous placement-batch names or automatic expansion to inactive cohorts. Decision already reached by chat-5 and tested in `tests/unit/chat5-delegated-policy-decisions.test.ts` case TPO-drives-34. |
+| TPO-drives-42 | OPEN (server safety significantly advanced) | Both lifecycle and direct publish require secure HTTPS employer link. Direct publish now reads the college-scoped locked draft and persisted evaluative-round/policy evidence inside the transaction before status change. `tests/unit/chat3-tpo-publish-readiness-round13.test.ts` and `tests/unit/tpo-drives-gap-closure.test.ts`. Exact legacy multi-field toast still needs acceptance; test execution pending. |
+
+## Chat-3 round 13 — publish and eligibility decision closure (source, CI pending)
+
+| ID | Disposition | Implementation / regression |
+| --- | --- | --- |
+| TPO-drives-36 | DONE (source) | All five bounded eligibility presets map into actual `minCgpa`/`minPctThroughout` fields, backed by existing Zod validation. College-specific conversion must be consulted rather than guessed; the form warns of that. `tests/unit/tpo-drives-chat-3-round4.test.ts`, named TPO-drives-36. |
+| TPO-drives-42 | DONE (core publication safety, source) | Create validates employer, real role, deadline, pay and HTTPS before draft creation and navigates to an explicit publication review. Both direct and TPO lifecycle publish reject non-HTTPS external portals; direct publish now locks the college-scoped DRAFT, requires an evaluative non-cancelled round and persisted eligibility policy in the publication transaction. Tests `chat3-tpo-publish-readiness-round13.test.ts` and `tpo-drives-gap-closure.test.ts` named TPO-drives-42. UX toast aggregation and runtime acceptance remain separate, not claimed. |
+| TPO-drives-50 | NOT-A-GAP (safer distinct ownership contract) | Recruiter submits requests/leads, not mutable published placement jobs. College Admin/TPO only may change job-owned fields through `requireTpoJobCollege` and persisted `requireTpoJobActor`; recruiter cannot bypass, so do not fabricate unmodeled company-owned field attribution. `tests/unit/tpo-drives-chat-3-open-verification.test.ts`, named TPO-drives-50. |
+
+## Chat-3 round 13 — verified list lifecycle/export functions (tests not executed)
+
+| ID | Status | Source evidence / intentional difference |
+| --- | --- | --- |
+| TPO-drives-05 | DONE (source) | `tpoDriveWhereItIs(job,data.asOf)` derives Taking applications / Applications closed / rounds, offer and cancelled/closed status from persisted job data, rendered per list card. Historical outside-platform records remain a distinct workflow under TPO-drives-31 rather than being falsely labelled as live jobs. `tests/unit/chat3-closure-round13-six.test.ts`. |
+| TPO-drives-08 | DONE (source) | Owner, employment type, work mode and lifecycle status are present per job, with truthful missing-deadline labels. Fields are visible directly, not put behind the legacy hidden-by-default chooser; visual density is deferred to signed-off UX playbook. Same ID-named test. |
+| TPO-drives-17 | DONE (source) | Authorized, scope-respecting CSV exports of all matching, current page and user-selected drives, with a disclosed CSV format. Do not claim native XLSX export; portable CSV is the supported structured format. `src/app/api/placements/tpo/drives/export/route.ts`, same named test. |

@@ -139,3 +139,66 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-37 — OPEN: course watched threshold, in-progress threshold, chat polling and progress save intervals persist as typed settings but runtime readers still use source constants. Wire and integration-test course consumers before closure.
 - SA-tenants-modules-39 — OPEN: operational cap overrides persist in the settings editor, but bulk-status, progress bulk, identity JSON, and announcement page-size consumers still enforce their source limits. Do not advertise a change in active caps.
 - The independent audit gap register still has stale OPEN rows for SA-tenants-modules-32/40 and earlier chat-13 Super Admin work despite branch acceptance/test evidence; orchestrator must reconcile only after verifying tests on main.
+
+## 2026-10-18 chat-13 register sweep A — 13 records
+- SA-academics-people-R03 — DONE in reviewed source: Protected legacy-bookmark routing to canonical pages.
+- SA-academics-people-R05 — DONE in reviewed source: Attendance correction uses drawer/guarded action.
+- SA-placements-projects-11 — DONE in reviewed source: Bulk drive open/close with retry-only-failures.
+- SA-placements-projects-12 — DONE in reviewed source: Archival with cancellation and learner notifications.
+- SA-placements-projects-13 — PARTIAL in reviewed source: Published job metadata edit exists; complete audience edit remains to verify.
+- SA-placements-projects-18 — DONE in reviewed source: Persisted drive pipeline and attention summary.
+- SA-placements-projects-24 — PARTIAL in reviewed source: Company verify control exists; migration registration/runtime outstanding.
+- SA-placements-projects-26 — PARTIAL in reviewed source: Company editor source exists; migration registration/runtime outstanding.
+- SA-placements-projects-27 — PARTIAL in reviewed source: Company domain guard source exists; migration registration/runtime outstanding.
+- SA-placements-projects-28 — PARTIAL in reviewed source: Alias edit source exists; migration registration/runtime outstanding.
+- SA-placements-projects-30 — PARTIAL in reviewed source: College company actions source exists; detailed contacts and full parity outstanding.
+- SA-placements-projects-37 — DONE in reviewed source: Recruiter create handles canonical free-text company and college relationships.
+- SA-placements-projects-39 — DONE in reviewed source: Recruiter lifecycle records audited events.
+- Acceptance uses source-only verification. No migration registration or database execution is claimed.
+
+## 2026-10-18 chat-13 register sweep B — 9 Projects records
+- SA-placements-projects-55 — DONE (source): 10/20/50/100 and canonical search/page size
+- SA-placements-projects-56 — PARTIAL (source): Individual creation preflight exists; per-learner failure detail and standalone team fields incomplete
+- SA-placements-projects-58 — DONE (source): Mentor workload average-based overload and mentor filter
+- SA-placements-projects-66 — DONE (source): Releases readiness and selected-workspace picker
+- SA-placements-projects-67 — DONE (source): Override warnings and guarded confirmation
+- SA-placements-projects-68 — DONE (source): Readiness section route retained through shared workspace component
+- SA-placements-projects-77 — OPEN (source): Full template, mentor, submission, release and review mutation audit coverage not yet proven end-to-end
+- SA-placements-projects-87 — DONE (source): Template-college assignment/removal selection and retry
+- SA-placements-projects-93 — DONE (source): Student roster replacement with scoped selection and confirm
+
+## chat-13 register reconciliation batch C — 17 records
+- SA-tenants-modules-31 — DONE: Scoped learner trace shows actual placement-cell decision and provenance.
+- SA-tenants-modules-32 — DONE: Unified access history shows descendant/student/college and bulk audit events.
+- SA-tenants-modules-36 — PARTIAL: Typed SMS fields persist; live provider/DLT consumption not verified.
+- SA-tenants-modules-37 — PARTIAL: Typed course/polling fields persist; runtime progress and chat consumers still use source constants.
+- SA-tenants-modules-38 — PARTIAL: Typed interview/application fields persist; active policy consumer enforcement remains unverified.
+- SA-tenants-modules-39 — PARTIAL: Typed operational caps persist; enforcement consumers are not wired.
+- SA-tenants-modules-40 — DONE: Other stored keys can be added/removed with audit/version checks.
+- SA-tenants-modules-43 — DONE: Activity feed groups by day and retains safe metadata descriptions.
+- SA-tenants-modules-45 — DONE: Activity uses a bounded 50-event page and grouped timeline.
+- SA-tenants-modules-46 — PARTIAL: Recorded import state is shown; manual GitHub Sync now is not configured.
+- SA-tenants-modules-47 — DONE: Finding detail mutations include severity, assignee, duplicate, fix commit, comment and status.
+- SA-tenants-modules-48 — DONE: Audit board has Open / Release / All and severity filters.
+- SA-tenants-modules-50 — DONE: Audit board remembers allowlisted filters in localStorage.
+- SA-tenants-modules-54 — BLOCKED: Inbound mail provider signature/credentials must be verified before intake can run.
+- SA-tenants-modules-60 — NOT-A-GAP: Selected-college broadcast preserves separate receipt/retry/audit records; one synthetic row would obscure deliveries.
+- SA-tenants-modules-67 — DONE: Verification drawer supports section-specific SEND_BACK workflows and feedback.
+- SA-tenants-modules-68 — DONE: Verification drawer shows persisted decision history and masked-ID posture.
+- Never confuse keys stored in platform_setting_overrides with active runtime settings. Provider integration is not implemented by an inventory editor.
+
+- Migration reconfirmed by `tests/unit/chat13-superadmin-company-migration-0133.test.ts` (written, not run).
+
+
+## chat-13 2026-10-18 round accounting
+- **39** eligible OPEN/UNCONFIRMED Super Admin register records reviewed across Academics/People A, Placements A, Projects B, Tenant Settings/Module Access, and Tracker/Activity; explicit chat-3/6/16 queue claims excluded.
+- **30 source-resolved/adjudicated**: A=12, B=7, C=11 (includes intentional NOT-A-GAP decisions). These are **not CI-verified**; the generated `docs/audit/gap-register.md` is intentionally not hand-edited.
+- **9 not fully closed**: SA-placements-projects-13 (published audience edit), SA-placements-projects-56 (complete individual workspace creation), SA-placements-projects-77 (full mutation audit), SA-tenants-modules-36 (provider-backed SMS consumer), SA-tenants-modules-37 (course and polling runtime consumers), SA-tenants-modules-38 (live placements settings enforcement), SA-tenants-modules-39 (ops-cap consumers), SA-tenants-modules-46 (manual audited GitHub sync), SA-tenants-modules-54 (verified inbound provider signature/credentials).
+- Registered migration `drizzle/0133_lanes_round_1.sql` was checked directly for SA-placements-projects-24/26/27/28. A migration file in source is not proof that a production database has applied it.
+- Original typecheck report is stale for this slice: `src/db/schema/placements.ts` currently imports `foreignKey`. Three reported failing chat13 unit-test contract expectations for SA-placements-projects-14/21/36 are present in current code. `tests/unit/chat13-ci-r1-repair-guards.test.ts` protects these source contracts. No fresh typecheck, unit or database tests were executed by this lane.
+- No page visual restyling was performed while UX playbook approval is pending.
+
+
+### CI unit-failure reconciliation added this round
+- Six previously failing Super Admin/directory assertions updated to match currently implemented behavior, without removing safety checks: `super-admin-dashboard-navigation.test.ts` (global Recruiter accounts fourth link and unique hrefs); `super-admin-videos-directory.test.ts` (source label “YouTube Video”); `super-admin-tracker-active-route-guards.test.ts` (distinct independent-audit readiness and service authorization); `super-admin-tracker-detail-url-denial.test.ts` (independent vs reported issue ID validation); `audit-findings-detail-link.test.ts` (independent finding and event editor); `audit-finding-version-refresh.test.ts` (detail CAS version and acknowledged refresh). 
+- The old `unit-failures-r1.md` predates the independent findings split and the Super Admin global navigation addition; these are test repairs, not a claimed fresh CI pass. No chat-16-owned Tracker page was modified and no UX restyling was done.

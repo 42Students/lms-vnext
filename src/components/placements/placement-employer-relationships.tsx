@@ -191,9 +191,9 @@ export function PlacementEmployerRelationships({
                   item.ownerMembershipId ??
                   "",
               };
-            const busy =
-              pendingId ===
-              item.relationshipId;
+            // COL-placements-15: serialize relationship edits and recovery;
+            // concurrent row writes otherwise race a shared refresh/pending state.
+            const busy = pendingId !== null;
 
             return (
               <div
@@ -314,7 +314,11 @@ export function PlacementEmployerRelationships({
                 </div>
 
                 <div className="flex flex-wrap items-start gap-2 xl:justify-end">
-                  {item.relationshipStatus==="ARCHIVED" ? (
+                  {item.companyStatus!=null && item.companyStatus!=="ACTIVE" ? (
+                    <span role="status" className="text-sm text-muted-foreground">
+                      This company is archived on the platform and cannot be restored here.
+                    </span>
+                  ) : item.relationshipStatus==="ARCHIVED" ? (
                     <Button size="sm" variant="secondary" disabled={busy}
                       onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
                   ) : (<>
