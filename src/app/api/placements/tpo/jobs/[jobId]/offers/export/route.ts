@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import { getTpoDriveOfferRegisterCsv } from "@/modules/placements/tpo-drive-offer-register-service";
@@ -7,8 +6,6 @@ export const dynamic="force-dynamic";
 export async function GET(request:Request,{params}:{
  params:Promise<{jobId:string}>;
 }){
- if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED")return NextResponse.json(
-  {error:"DB09_MIGRATIONS_PENDING"},{status:503,headers:{"Cache-Control":"private, no-store, max-age=0"}});
  try{
   const {jobId}=await params;
   const url=new URL(request.url);
