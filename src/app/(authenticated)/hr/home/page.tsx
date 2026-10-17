@@ -154,8 +154,11 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-2 block break-words font-semibold text-primary-text">{task.label}</span>
             <span className="mt-1 block text-xs text-body">{task.description}</span>
             {task.at?<span className="mt-1 block text-xs text-muted-foreground">
-              {task.key.startsWith("due:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
+              {task.key.startsWith("due:")||task.key.startsWith("deadline:") ? task.tone==="URGENT"?"Overdue since ":"Due " : "Recorded for "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(task.at)}
             </span>:null}
+            <span className="mt-3 block text-sm font-semibold text-primary-text">
+              {task.tone==="URGENT"?"Review now →":task.key.startsWith("due:")?"Open results →":"Open →"}
+            </span>
           </Link>
         </li>)}
       </ul> : collegeJobs.length===0 && requestCount===0 ? (
