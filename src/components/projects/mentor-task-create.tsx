@@ -51,7 +51,7 @@ export function MentorTaskCreate({
         estimatePoints:estimate!==""?Number(estimate):null,
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
-      showToast({tone:"success",title:"Project task created"});
+      showToast({tone:"success",title:"Task added."});
       setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
       setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
       setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
