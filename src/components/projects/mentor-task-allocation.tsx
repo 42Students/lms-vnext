@@ -143,6 +143,10 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
    }} className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>:null}
+  {activeFilterCount>0?<p role="status" className="text-xs text-body">
+    {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
+    {" "}{filtered.length} matching {filtered.length===1?"task":"tasks"}
+  </p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   <section className="overflow-x-auto rounded-xl border border-border p-3">
