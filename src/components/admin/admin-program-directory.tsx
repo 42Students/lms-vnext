@@ -36,7 +36,7 @@ function rememberSize(size: number) {
   window.dispatchEvent(new Event("lms-program-size"));
 }
 
-const columns: DataTableColumn<AdminProgramRow>[] = [
+const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
     key: "name", header: "Program",
     cell: (item) => (
@@ -66,7 +66,8 @@ const columns: DataTableColumn<AdminProgramRow>[] = [
       name: item.name,
       code: item.code,
       durationTerms: item.durationTerms,
-    }} contents={item.contents ?? null} />,
+      departmentId: item.departmentId,
+    }} departments={departments} contents={item.contents ?? null} />,
   },
 ];
 
@@ -211,7 +212,7 @@ export function AdminProgramDirectory({
         <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
           {result.total} of {programs.length} {programs.length === 1 ? "result" : "results"}
         </p>
-        <DataTable columns={columns} rows={result.items}
+        <DataTable columns={columns(departments)} rows={result.items}
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
             {search
