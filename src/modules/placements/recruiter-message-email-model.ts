@@ -37,6 +37,13 @@ export function makeRecruiterReplyAddress(token:string,domain:string):string|nul
  if(!/^[a-f0-9]{32}$/.test(token)||!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))return null;
  return "r-"+token+"@"+domain.toLowerCase();
 }
+/** Verify Reply-To before it leaves the outbound mail provider boundary. */
+export function isRecruiterReplyAddress(value:string,domain:string):boolean{
+ const parts=/^r-([a-f0-9]{32})@([a-z0-9.-]+)$/i.exec(value);
+ if(!parts)return false;
+ const expected=makeRecruiterReplyAddress(parts[1].toLowerCase(),domain.trim().toLowerCase());
+ return expected!==null&&expected===value.toLowerCase();
+}
 export function recruiterMailBridgeSignature(secret:string,rawBody:string):string{
  return createHmac("sha256",secret).update(rawBody,"utf8").digest("hex");
 }
