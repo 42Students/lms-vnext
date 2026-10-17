@@ -156,9 +156,11 @@ export async function endDriveApplicants(
     metadata:{mode,reason,rejected,acceptedOffersRetained:accepted.length},
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("PLACEMENT_APPLICANT_STOP_AUDIT_FAILED");
-  const recipients=new Map<string,boolean>();
+  const recipients=new Map<string,{accepted:boolean;withdrawn:boolean}>();
   for(const row of rows){
-    recipients.set(row.userId,Boolean(recipients.get(row.userId))||protectedIds.has(row.id));
+    const previous=recipients.get(row.userId);
+    recipients.set(row.userId,{accepted:Boolean(previous?.accepted)||protectedIds.has(row.id),
+      withdrawn:Boolean(previous?.withdrawn)||row.status==="WITHDRAWN"});
   }
   const notices=[...recipients].map(([userId,hasAcceptedOffer])=>({
     userId,eventId:event.id,
