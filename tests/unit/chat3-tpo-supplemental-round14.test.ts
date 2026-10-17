@@ -104,4 +104,26 @@ describe("TPO supplemental job metadata",()=>{
   expect(quick).toContain("I checked for duplicates");
  });
 
+ it("TPO-drives-39 persists actual pending preset rounds with readback dedupe",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  const presets=source("src/modules/placements/tpo-drive-round-presets.ts");
+  expect(presets).toContain("TALK_TEST_INTERVIEW");
+  expect(presets).toContain("TEST_TECHNICAL_HR");
+  expect(presets).toContain("TEST_GD_INTERVIEW");
+  expect(form).toContain("plannedTpoRoundRows(roundPreset)");
+  expect(form).toContain("saved.rounds.length");
+  expect(form).toContain("planned.slice(saved.rounds.length)");
+  expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
+ });
+ it("TPO-drives-44 quick and full create both format safe API messages",()=>{
+  const full=source("src/components/placements/placement-job-create-form.tsx");
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  const messages=source("src/modules/placements/tpo-drive-form-error-copy.ts");
+  expect(full).toContain("tpoDriveFormErrorMessage(error)");
+  expect(quick).toContain("tpoDriveFormErrorMessage(cause)");
+  expect(messages).toContain("PLACEMENT_JOB_INVALID_DEADLINE");
+  expect(messages).toContain("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+  expect(messages).toContain('const FALLBACK = "We could not save this drive. Check your drafts and try again."');
+ });
+
 });
