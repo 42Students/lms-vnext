@@ -13,6 +13,7 @@ import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {TpoBatchStudentBulkNotes} from "@/components/tpo/tpo-batch-student-bulk-notes";
+import {TpoBatchStudentSavedViews} from "@/components/tpo/tpo-batch-student-saved-views";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -41,6 +42,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  const href=(page:number)=>batchStudentPageHref(batchId,page,view.data);
  return <main className="min-w-0 space-y-4"><h1 className="text-xl font-semibold">{result.batch.name} — Students</h1>
  <TpoBatchWorkspaceTabs batchId={batchId} active="students" />
+ <TpoBatchStudentSavedViews batchId={batchId}/>
  <section aria-label="Placement journey" className="space-y-3 rounded-lg border border-border bg-surface p-4">
   <h2 className="font-semibold">Placement journey</h2>
   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
