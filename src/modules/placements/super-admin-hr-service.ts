@@ -1,4 +1,6 @@
 import {superAdminHrLiteralSearchPattern} from "./super-admin-hr-search-model";
+import { recordActivityEvent, recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   and,
   asc,
@@ -765,6 +767,14 @@ export async function createSuperAdminHrAccount(
             relationship.relationshipId,
           grantedByUserId: context.user.id,
         });
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_CREATED,
+        collegeId: relationship.collegeId,
+        organizationId: relationship.organizationId,
+        subjectType: "recruiter", subjectId: identity.userId,
+        summary: "Recruiter account created",
+        metadata: {companyRelationshipId: relationship.relationshipId},
+      });
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -933,6 +943,22 @@ export async function updateSuperAdminHrAccount(
             ),
           );
       }
+      const eventType = input.status === "ARCHIVED"
+        ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SUSPENDED
+        : input.status === "ACTIVE" && current.status === "ARCHIVED"
+          ? ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_REACTIVATED
+          : ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_UPDATED;
+      await recordActivityEventInTransaction(tx, context, {
+        eventType,
+        collegeId: context.adminScope?.collegeId ?? null,
+        organizationId: context.adminScope?.organizationId ?? null,
+        subjectType: "recruiter", subjectId: userId,
+        summary: input.status === "ARCHIVED" ? "Recruiter suspended"
+          : input.status === "ACTIVE" && current.status === "ARCHIVED"
+            ? "Recruiter reactivated" : "Recruiter account updated",
+        metadata: {changedFields: Object.keys(input), previousStatus: current.status,
+          nextStatus: input.status ?? current.status},
+      });
     });
   } catch (error) {
     if (isUniqueViolation(error)) {
@@ -1097,6 +1123,14 @@ export async function grantSuperAdminHrCollegeAccess(
       .returning();
 
     if (created) {
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
+        collegeId: relationship.collegeId, organizationId: relationship.organizationId,
+        subjectType: "recruiter", subjectId: userId,
+        summary: "Recruiter college access granted",
+        metadata: {companyRelationshipId: relationship.relationshipId,
+          grantId: created.id, validUntil: expiration.toISOString()},
+      });
       return created;
     }
 
@@ -1132,6 +1166,14 @@ export async function grantSuperAdminHrCollegeAccess(
     const [renewed]=await tx.update(placementRecruiterCollegeGrants)
       .set({validUntil:expiration,updatedAt:new Date()})
       .where(eq(placementRecruiterCollegeGrants.id,existing.id)).returning();
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_GRANTED,
+      collegeId: relationship.collegeId, organizationId: relationship.organizationId,
+      subjectType: "recruiter", subjectId: userId,
+      summary: "Recruiter college access renewed",
+      metadata: {companyRelationshipId: relationship.relationshipId,
+        grantId: existing.id, validUntil: expiration.toISOString()},
+    });
     return renewed??existing;
   });
 }
@@ -1236,6 +1278,15 @@ export async function revokeSuperAdminHrCollegeAccess(
       )
       .returning();
 
+    if (revoked) {
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_COLLEGE_REVOKED,
+        collegeId: current.collegeId, organizationId: current.organizationId,
+        subjectType: "recruiter", subjectId: userId,
+        summary: "Recruiter college access revoked",
+        metadata: {grantId, companyRelationshipId: current.grant.companyRelationshipId},
+      });
+    }
     return revoked ?? current.grant;
   });
 }
@@ -1270,6 +1321,15 @@ export async function terminateSuperAdminHrSessions(
     context.user.id,
     "SUPER_ADMIN_HR_TERMINATE_ALL",
   );
+
+  await recordActivityEvent(context, {
+    eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RECRUITER_SESSIONS_REVOKED,
+    collegeId: context.adminScope?.collegeId ?? null,
+    organizationId: context.adminScope?.organizationId ?? null,
+    subjectType: "recruiter", subjectId: userId,
+    summary: "Recruiter signed out everywhere",
+    metadata: {reason: "SUPER_ADMIN_HR_TERMINATE_ALL"},
+  });
 
   return {
     userId,
