@@ -1,34 +1,17 @@
 import "server-only";
 import {and,eq,sql} from "drizzle-orm";
-import {z} from "zod";
 import {getDb} from "@/db/client";
 import {users,placementRecruiterProfiles,placementRecruiterPublicContacts} from "@/db/schema";
 import {type RequestContext,hasActiveRecruiter} from "@/modules/identity/context";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
-import {hrRecruiterNameFieldsSchema,joinHrRecruiterName} from "./hr-recruiter-name-fields-model";
+import {joinHrRecruiterName} from "./hr-recruiter-name-fields-model";
 import {sameRecruiterProfileVersion,normalizeRecruiterDesignation} from "./recruiter-designation-model";
+import {recruiterProfileDetailsPatchSchema} from "./recruiter-profile-details-model";
 import {placementTableExists} from "./staged-tables";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
-export const recruiterProfileDetailsPatchSchema=z.strictObject({
- firstName:z.string().trim().min(1).max(100),
- lastName:z.string().trim().max(100),
- title:z.string().trim().max(160),
- phone:z.string().trim().max(14),
- expectedUserUpdatedAt:z.iso.datetime(),
- expectedProfileUpdatedAt:z.iso.datetime(),
-}).superRefine((input,ctx)=>{
- const valid=hrRecruiterNameFieldsSchema.safeParse({
-  firstName:input.firstName,lastName:input.lastName,
- });
- if(!valid.success)ctx.addIssue({code:"custom",path:["firstName"],message:"Enter a valid first and last name."});
- const digits=input.phone.replace(/\D/g,"");
- if(input.phone&&(!/^\+?[0-9() .-]+$/.test(input.phone)||
-   !(digits.length===10||(digits.length===12&&digits.startsWith("91")))))
-  ctx.addIssue({code:"custom",path:["phone"],message:"Enter a valid 10-digit mobile number, or leave it blank"});
-});
 export async function updateOwnRecruiterProfileDetails(context:RequestContext,raw:unknown){
  const input=recruiterProfileDetailsPatchSchema.parse(raw);
  requirePermission(context,"identity.self.manage");

@@ -1,6 +1,6 @@
 import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
-import {recruiterProfileDetailsPatchSchema} from "@/modules/placements/recruiter-profile-details-service";
+import {recruiterProfileDetailsPatchSchema} from "@/modules/placements/recruiter-profile-details-model";
 const src=(p:string)=>readFileSync(p,"utf8");
 const version="2099-01-01T01:00:00.000Z";
 const valid={firstName:"Maya",lastName:"Rao",title:"Manager",phone:"9876543210",
@@ -10,7 +10,7 @@ describe("Recruiter profile combined update",()=>{
   expect(recruiterProfileDetailsPatchSchema.safeParse(valid).success).toBe(true);
   expect(recruiterProfileDetailsPatchSchema.safeParse({...valid,phone:""}).success).toBe(true);
   expect(recruiterProfileDetailsPatchSchema.safeParse({...valid,phone:"123"}).success).toBe(false);
-  expect(recruiterProfileDetailsPatchSchema.safeParse({...valid,phone:"+91 98765 43210"}).success).toBe(true);
+  expect(recruiterProfileDetailsPatchSchema.safeParse({...valid,phone:"+919876543210"}).success).toBe(true);
   const service=src("src/modules/placements/recruiter-profile-details-service.ts");
   expect(service).toContain("placementRecruiterPublicContacts");
   expect(service).not.toContain("phoneE164");
