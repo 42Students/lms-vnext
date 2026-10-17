@@ -53,3 +53,7 @@ Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4
 | TPO-home-R06 | DONE | `src/modules/placements/tpo-home-legacy-rows.ts` eliminates fabricated placeholder copy; displays known counts with exact legacy wording and leaves unknown count status blank; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-R06`. |
 
 | TPO-home-22 | DONE | Client `tpo-home-return-refresh.tsx` preflights the dynamic Home route on return, keeps previous snapshot if GET fails, announces Refreshing placement home… and exact failure alert with Retry. `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-22`. |
+
+### Owner decision and functional source evidence (2026-10-18)
+
+| TPO-home-25 | NOT-A-GAP | Intentional, audited vNext improvement: College TPO Home surfaces an all-college work queue filtered by the authenticated membership college, not the legacy `team=false` mine-plus-unowned filter. Operational ownership remains visible within the college; hiding colleagues' outstanding rounds would cause missed handoffs. `src/app/(authenticated)/tpo/home/page.tsx`, `src/modules/placements/tpo-operations-service.ts`; `tests/unit/chat4-gap-ux-freeze-product-decisions.test.ts` test `TPO-home-25`. Scope and runtime still require orchestrator tests. |
