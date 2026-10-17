@@ -328,7 +328,7 @@ export function buildTpoCompanyTimeline(input: {
       type: "OFFER_ISSUED",
       description:
         `Offer issued: ${offer.roleTitle} · ` +
-        (offer.candidateName || "Learner"),
+        "Learner",
       href,
     });
 
@@ -339,7 +339,7 @@ export function buildTpoCompanyTimeline(input: {
         type: "OFFER_RESPONSE",
         description:
           `Current offer status: ${offer.status} · ` +
-          (offer.candidateName || "Learner"),
+          "Learner",
         href,
       });
     }
@@ -355,7 +355,7 @@ export function buildTpoCompanyTimeline(input: {
         type: "JOINING_RECORDED",
         description:
           `Joining outcome: ${offer.joiningStatus} · ` +
-          (offer.candidateName || "Learner"),
+          "Learner",
         href,
       });
     }
