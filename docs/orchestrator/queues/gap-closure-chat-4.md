@@ -228,7 +228,7 @@ Audit: `docs/audit/pages/college/academic-people.md` (and `academic-people-revie
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-academic-setup-R02 | S2 | STATE | OPEN |
+| COL-academic-setup-R02 | S2 | STATE | DONE |
 | COL-academic-setup-R03 | S2 | MISSING-ACTION | DONE |
 | COL-academic-setup-R04 | S2 | VALIDATION | DONE |
 | COL-people-R01 | S2 | VALIDATION | DONE |
