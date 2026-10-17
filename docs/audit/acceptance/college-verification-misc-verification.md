@@ -39,3 +39,9 @@ Photo upload for -01/-02 requires private object storage; the HTTPS link route w
 | COL-verification-misc-04 | PARTIAL | `src/components/verification/CollegeVerificationPanel.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-04` | The 1,000-row legacy bulk-selection scope and all document eligibility rules still need acceptance |
 | COL-verification-misc-08 | PARTIAL | `src/components/verification/VerificationWorkspace.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-08` | Full saved-view, column-choice and waiting-since filters remain incomplete |
 | COL-verification-misc-11 | PARTIAL | `src/app/(authenticated)/college/activity/page.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-11` | The day-grouped readable Activity feed and complete module sentence coverage remain incomplete |
+
+### Chat-4 follow-up acceptance, 2026-10-18
+
+| COL-verification-misc-13 | PARTIAL (source reverified) | activity-center.tsx resolves actor displayName/System and stores readable summary/subjectLabel. tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests COL-verification-misc-13. Every source event producer still needs human-readable summary verification. |
+
+Source inspections and regression tests authored, **not executed**. No UX page restyling is part of these records.
