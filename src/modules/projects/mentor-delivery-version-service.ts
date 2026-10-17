@@ -25,6 +25,13 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
   const [row]=await getDb().select({
     id:projectSubmissions.id,version:projectSubmissions.version,
     status:projectSubmissions.status,submittedAt:projectSubmissions.submittedAt,
+    createdAt:projectSubmissions.createdAt,
+    createdByMembershipId:projectSubmissions.createdByMembershipId,
+    submittedByMembershipId:projectSubmissions.submittedByMembershipId,
+    summary:projectSubmissions.summary,notes:projectSubmissions.notes,
+    attachments:projectSubmissions.attachments,
+    sourceUrl:projectSubmissions.sourceUrl,demoUrl:projectSubmissions.demoUrl,
+    lockedAt:projectSubmissions.lockedAt,reopenedAt:projectSubmissions.reopenedAt,
     decision:projectSubmissionReviews.decision,reviewedAt:projectSubmissionReviews.reviewedAt,
     feedback:projectSubmissionReviews.feedback,
   }).from(projectSubmissions)
