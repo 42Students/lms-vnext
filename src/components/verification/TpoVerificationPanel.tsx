@@ -19,15 +19,16 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
  }
  const [selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [sequenceIndex,setSequenceIndex]=useState<number|null>(null);
+ const [sequenceRows,setSequenceRows]=useState<VerificationQueueCard[]>([]);
  const [filters,setFilters]=useState<TpoVerificationLocalFilters>(defaultTpoVerificationFilters);
  const [asOf]=useState(()=>new Date());
  const visible=filterTpoVerificationRows(rows,filters,asOf);
  const waiting=visible.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
- const active=sequenceIndex===null?selected:waiting[sequenceIndex]??null;
+ const active=sequenceIndex===null?selected:sequenceRows[sequenceIndex]??null;
  function finishSequential(){setSequenceIndex(null);setSelected(null);router.refresh();}
  function nextSequential(){
   if(sequenceIndex===null)return;
-  if(sequenceIndex+1>=waiting.length){finishSequential();return;}
+  if(sequenceIndex+1>=sequenceRows.length){finishSequential();return;}
   setSequenceIndex(sequenceIndex+1);
  }
  function saved(action?:"VERIFY"|"SEND_BACK"){
@@ -42,7 +43,7 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
   <div className="flex flex-wrap gap-3">
    <button type="button" className="rounded border px-3 py-2 text-sm" onClick={()=>router.refresh()}>Refresh</button>
    {serverTab==="WAITING"&&waiting.length>0?<button type="button" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text"
-    onClick={()=>{setSelected(null);setSequenceIndex(0);}}>Review one by one ({waiting.length})</button>:null}
+    onClick={()=>{setSelected(null);setSequenceRows(waiting);setSequenceIndex(0);}}>Review one by one ({waiting.length})</button>:null}
   </div>
   <section aria-label="Verification filters" className="grid gap-3 rounded-xl border border-border p-3 sm:grid-cols-2">
    <label className="text-sm font-semibold">Marksheets
@@ -72,7 +73,7 @@ export function TpoVerificationPanel({rows,serverTab,serverKind}:{rows:Verificat
    key={active.learnerMembershipId+active.section} row={active}
    apiBase="/api/tpo/verification"
    onClose={()=>{setSelected(null);setSequenceIndex(null);}}
-   sequenceProgress={sequenceIndex===null?undefined:(sequenceIndex+1)+" of "+waiting.length}
+   sequenceProgress={sequenceIndex===null?undefined:(sequenceIndex+1)+" of "+sequenceRows.length}
    onNext={nextSequential} onFinish={finishSequential}
    onSaved={saved} />}
  </section>;

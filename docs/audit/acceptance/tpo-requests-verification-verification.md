@@ -14,3 +14,5 @@ Base source `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. These are auth
 
 | TPO-requests-verification-25 | DONE | Sequential review and progress in `TpoVerificationPanel.tsx`; `tests/unit/chat12-tpo-verification-workflows.test.ts` — `TPO-requests-verification-25` |
 | TPO-requests-verification-28 | DONE | TPO review outcome feedback; `tests/unit/chat12-tpo-verification-workflows.test.ts` — `TPO-requests-verification-28` |
+
+TPO-requests-verification-25: sequential review uses an immutable page snapshot so refetching after each decision never skips the next student; same named test covers the edge case.\n
