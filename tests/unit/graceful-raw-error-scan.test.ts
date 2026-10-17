@@ -20,7 +20,9 @@ function blobHash(content: string) {
 const rawErrorPatterns = [
   /\{\s*(?:result|body)\.error\b/,
   /\{\s*reason\.message\b/,
-  /set(?:Error|Notice)\(\s*(?:result|body)\.error\b/,
+  // A local Zod issue tree is field-validation data, not a server error code.
+  // Keep direct result.error assignments forbidden, including optional chaining.
+  /set(?:Error|Notice)\(\s*(?:result|body)\.error\b(?!\s*\.)/,
   /set(?:Error|Notice)\(\s*reason\.message\b/,
   /set(?:Error|Notice)\(\s*["'][A-Z][A-Z0-9_]{5,}["']/,
   /\{\s*["'][A-Z][A-Z0-9_]{5,}["']\s*\}/,
@@ -36,6 +38,12 @@ describe("new raw-error and mutation regression gate", () => {
       return leaks && blobHash(content) !== baseline[file];
     });
     expect(offenders, `New unsafe error rendering in: ${offenders.join(", ")}`).toEqual([]);
+  });
+  it("GR-09 distinguishes direct raw API errors from client Zod issue details", () => {
+    const pattern = rawErrorPatterns[2];
+    expect(pattern.test('setNotice(result.error)')).toBe(true);
+    expect(pattern.test('setError(body.error)')).toBe(true);
+    expect(pattern.test('setNotice(result.error.issues[0]?.message)')).toBe(false);
   });
   it("GR-31 inventories newly changed unguarded mutating components", () => {
     const offenders = allComponentFiles().filter((file) => {
