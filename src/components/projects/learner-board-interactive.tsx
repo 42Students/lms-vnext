@@ -89,7 +89,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
      </h2>
      <ul className="mt-3 space-y-2">{lane.tasks.map(task=>{
       const own=membershipId!==null&&task.assigneeMembershipId===membershipId;
-      const editable=own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
+      const editable=!readOnly&&own&&Boolean(task.sprintId)&&sprintState.get(task.sprintId!)==="ACTIVE"&&statuses.includes(task.status as EditableStatus);
       return <li key={task.id} draggable={editable&&!busy}
        onDragStart={event=>{if(editable)event.dataTransfer.setData("text/plain",task.id)}}
        className="rounded-lg border border-border bg-surface p-3 text-sm">
