@@ -284,3 +284,5 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 
 
 - FAC-attendance-grades-01: learner notices built on active same-college recipient scope; parent absence/correction SMS cannot be sent until the real registered attendance DLT sender/template/provider credentials and approved parent contact mappings exist (do not send OTP template for attendance).
+
+- MEN-projects-meetings-75: task/sprint create drafts now guarded by styled discard confirmation + beforeunload; still OPEN for meeting, task edit, delivery review editor coverage.
