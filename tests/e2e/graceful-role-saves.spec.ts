@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
 import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
 
@@ -48,7 +48,15 @@ for (const action of actions) {
           await page.getByRole("button", { name: action.button, exact: true }).click();
           await expect.poll(failure.hits).toBeGreaterThan(0);
           await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 15_000 });
+          if (kind === "session-expired" && new URL(page.url()).pathname !== action.route) {
+            // Simulates returning to the requested page after a fresh E2E sign-in.
+            await page.goto(action.route);
+          }
           await expect(field).toHaveValue(action.value);
+          if (kind === "conflict") {
+            await expect(page.getByText(/This changed while you were working/i).first())
+              .toBeVisible();
+          }
           await expectNoRawErrors(page);
           expect(errors).toEqual([]);
           await expect(page.getByRole("button", { name: action.button, exact: true })).toBeEnabled();
@@ -82,7 +90,7 @@ const missingRecords = [
   { role: "learner", route: "/learn/courses/00000000-0000-4000-8000-000000000000" },
   { role: "faculty", route: "/teacher/courses/00000000-0000-4000-8000-000000000000/home" },
   { role: "mentor", route: "/mentor/projects/00000000-0000-4000-8000-000000000000" },
-  { role: "college", route: "/college/people/manage/00000000-0000-4000-8000-000000000000" },
+  { role: "college", route: "/college/students/00000000-0000-4000-8000-000000000000" },
   { role: "tpo", route: "/tpo/recruiters/00000000-0000-4000-8000-000000000000" },
   { role: "recruiter", route: "/hr/drives/00000000-0000-4000-8000-000000000000" },
   { role: "superadmin", route: "/admin/colleges/00000000-0000-4000-8000-000000000000" },

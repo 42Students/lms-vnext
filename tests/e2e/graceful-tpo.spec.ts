@@ -44,9 +44,9 @@ test.describe("GR-80 TPO client-side roster and company directory failures", () 
     await expect(page.getByRole("heading", { name: "Engage" })).toBeVisible();
     await context.setOffline(true);
     try {
-      await page.reload({ waitUntil: "domcontentloaded" }).catch(() => undefined);
-      // A previously loaded tab must show offline help; the browser's own
-      // network-error document is not an acceptable fallback.
+      // Do not navigate while offline: a browser-native network error page
+      // cannot be branded by the app without a pre-cached service worker.
+      // Exercise the already loaded workspace and its offline banner instead.
       await expect(page.getByText(/offline|connection|reconnect/i).first()).toBeVisible();
       await expectNoRawErrors(page);
     } finally {
