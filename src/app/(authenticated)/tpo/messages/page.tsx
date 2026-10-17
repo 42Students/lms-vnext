@@ -190,14 +190,7 @@ export default async function TpoMessagesPage({
           </p>
         ) : (
           <p className="mt-2 text-sm leading-6 text-body">
-            Recruiter Messages tables are not fully registered
-            in this database. The list below therefore shows
-            actual in-app placement notifications delivered
-            to active TPO members of this college. These are
-            <strong> not recruiter conversations</strong>,
-            and their read/unread status belongs to the
-            notification recipient. Missing conversations
-            must not be interpreted as zero messages.
+            Recruiter conversations are temporarily unavailable. These are your placement notifications, not recruiter conversations.
           </p>
         )}
 
