@@ -22,7 +22,7 @@ import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import {RecruiterInlineStage} from "./recruiter-inline-stage";
 import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Lead = {
   id: string;
@@ -70,10 +70,12 @@ type NewLead = {
   companyName: string;
   designation: string;
   source: string;
+  followupDate: string;
+  followupNote: string;
 };
 const EMPTY: NewLead = {
   name: "", email: "", phone: "", companyName: "",
-  designation: "", source: "",
+  designation: "", source: "", followupDate: "", followupNote: "",
 };
 const SOURCE_CHOICES = [
   ["ALUMNI", "Alumni"], ["REFERRAL", "Referral"],
@@ -166,11 +168,16 @@ export function RecruiterLeadsWorkspace({
   const [companiesPhase, setCompaniesPhase] = useState<Phase>("loading");
   const [companiesError, setCompaniesError] = useState("");
   const [adding, setAdding] = useState(initialAdd);
+  const createDialogRef=useRef<HTMLFormElement>(null);
+  const createNameRef=useRef<HTMLInputElement>(null);
+  const createLaunchRef=useRef<HTMLButtonElement>(null);
+  useEffect(()=>{if(adding)createNameRef.current?.focus();},[adding]);
   const [form, setForm] = useState<NewLead>({
     ...EMPTY,
     companyName: initialCompany,
   });
   const [saveError, setSaveError] = useState("");
+  const [reviewingCreate,setReviewingCreate]=useState(false);
   const [saving, setSaving] = useState(false);
   const [duplicate, setDuplicate] = useState<Lead | null>(null);
   const [checking, setChecking] = useState(false);
@@ -336,7 +343,7 @@ export function RecruiterLeadsWorkspace({
       new Blob([recruiterTableExportCsv(chosen)],{type:"text/csv;charset=utf-8"});
     const url=URL.createObjectURL(blob);
     const link=document.createElement("a");
-    link.href=url;link.download="recruiter-leads"+(query.trim()?"-filtered":"")+"."+format;
+    link.href=url;link.download="recruiter-leads-"+view+"-"+selection+(filterChips.length?"-filtered":"")+"."+format;
     document.body.appendChild(link);link.click();link.remove();
     URL.revokeObjectURL(url);
     setExportFeedback(chosen.length+" recruiter leads exported to "+format.toUpperCase());
@@ -352,6 +359,7 @@ export function RecruiterLeadsWorkspace({
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
      "reach"|"nextFollowup"|"lastActivity"|"added"|"stage",value:string){
    const params=new URLSearchParams(window.location.search);
+   if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
    else params.delete(kind==="query"?"q":kind);
    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
@@ -418,7 +426,7 @@ export function RecruiterLeadsWorkspace({
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
-    setSaveError("");
+    setSaveError("");setReviewingCreate(false);
   }
 
   async function checkContact() {
@@ -450,7 +458,8 @@ export function RecruiterLeadsWorkspace({
     if(saving)return;
     const dirty=Object.values(form).some(value=>value.trim());
     if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
-    setAdding(false);setDuplicate(null);setSaveError("");
+    setAdding(false);setDuplicate(null);setSaveError("");setReviewingCreate(false);
+    createLaunchRef.current?.focus();
   }
 
   async function create(event: React.FormEvent<HTMLFormElement>) {
@@ -485,11 +494,10 @@ export function RecruiterLeadsWorkspace({
       setSaveError(cause instanceof Error?cause.message:"Could not check this contact.");
       return;
     }finally{setChecking(false);}
-    if (!window.confirm(
-      "Create recruiter lead for " + form.name.trim() +
-      (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
-      "? This saves a new college contact and records an auditable creation event.",
-    )) return;
+    if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
+      setSaveError("Choose a future follow-up date (IST).");return;
+    }
+    if(!reviewingCreate){setReviewingCreate(true);return;}
 
     setSaving(true);
     setSaveError("");
@@ -507,12 +515,13 @@ export function RecruiterLeadsWorkspace({
             ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
             ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
             ...(form.source ? { source: form.source } : {}),
+            ...(form.followupDate ? {followup:{dueAt:new Date(form.followupDate+"T09:00:00+05:30").toISOString(),note:form.followupNote.trim()}} : {}),
           },
         }),
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(friendlyError(response.status, data));
-      setAdding(false);
+      setAdding(false);setReviewingCreate(false);
       setActionToast("Recruiter lead added");
       setForm(EMPTY);
       setDuplicate(null);
@@ -537,8 +546,8 @@ export function RecruiterLeadsWorkspace({
             Follow-ups Due
           </Link>
           <RecruiterLeadCsvImport onImported={() => void load()} />
-          <button type="button" className={primaryStyle} disabled={phase !== "ready"}
-            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
+          <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
+            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
             Add recruiter lead
           </button>
         </div>
@@ -682,6 +691,7 @@ export function RecruiterLeadsWorkspace({
                 <select className={inputStyle+" mt-1"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
                   <option value="ALL">Any date</option>
+                  <option value="DUE">Due now</option>
                   <option value="OVERDUE">Overdue</option>
                   <option value="TODAY">Today</option>
                   <option value="NEXT_7">In the next 7 days</option>
@@ -999,15 +1009,24 @@ export function RecruiterLeadsWorkspace({
 
       {adding && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-          <form role="dialog" aria-modal="true" aria-label="Add recruiter lead"
+          <form ref={createDialogRef} role="dialog" aria-modal="true" aria-label="Add recruiter lead"
             onSubmit={e => void create(e)}
-            onKeyDown={e=>{if(e.key==="Escape"){e.preventDefault();closeAddDialog();}}}
+            onKeyDown={e=>{
+             if(e.key==="Escape"){e.preventDefault();closeAddDialog();return;}
+             if(e.key!=="Tab"||!createDialogRef.current)return;
+             const available=Array.from(createDialogRef.current.querySelectorAll<HTMLElement>(
+              'button:not([disabled]),input:not([disabled]),textarea:not([disabled]),select:not([disabled]),a[href]'));
+             const first=available[0],last=available[available.length-1];
+             if(!first||!last)return;
+             if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+             else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+            }}
             className="max-h-[90vh] w-full max-w-lg space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl">
             <div className="flex items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Add recruiter lead</h2>
               <button type="button" className={buttonStyle} onClick={closeAddDialog} disabled={saving}>Close</button>
             </div>
-            <label className="block text-sm">Name *<input className={inputStyle + " mt-1"} required maxLength={150}
+            <label className="block text-sm">Name *<input ref={createNameRef} className={inputStyle + " mt-1"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
             <label className="block text-sm">Email<input className={inputStyle + " mt-1"} type="email" maxLength={150}
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
@@ -1037,11 +1056,30 @@ export function RecruiterLeadsWorkspace({
                 {SOURCE_CHOICES.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </select>
             </label>
+            <label className="block text-sm">First follow-up (optional, IST)
+              <input type="date" className={inputStyle+" mt-1"} value={form.followupDate}
+                onChange={e=>field("followupDate",e.target.value)}/>
+            </label>
+            <label className="block text-sm">Follow-up note (optional)
+              <textarea className={inputStyle+" mt-1"} maxLength={500} value={form.followupNote}
+                onChange={e=>field("followupNote",e.target.value)}
+                disabled={!form.followupDate}
+                placeholder="What should the placement cell do next?"/>
+            </label>
+            {reviewingCreate?<div role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+              <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
+                This saves a new college contact and records an auditable creation event.
+              </p>
+              {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
+              <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewingCreate(false)}>
+                Edit details
+              </button>
+            </div>:null}
             {saveError && <p role="alert" className="text-sm text-destructive">{saveError}</p>}
             <div className="flex justify-end">
               <button type="submit" className={primaryStyle}
                 disabled={saving || checking || Boolean(duplicate)}>
-                {saving ? "Creating…" : "Create recruiter lead"}
+                {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
               </button>
             </div>
           </form>

@@ -217,6 +217,16 @@ export async function createTpoLead(
       note: leadCreatedAuditNote(),
       createdByUserId: context.user.id,
     });
+    // Initial follow-up belongs to the same transaction: never create a
+    // lead without the requested reminder after a partial network failure.
+    if(input.followup){
+      await tx.insert(placementTpoFollowups).values({
+        collegeId:input.collegeId,leadId:created.id,
+        dueAt:new Date(input.followup.dueAt),
+        note:input.followup.note??null,
+        ownerMembershipId:ownerMembership(context,input.collegeId),
+      });
+    }
     return created;
   });
     return tpoLeadView(lead);
