@@ -648,7 +648,7 @@ export default async function TpoStudentsPage({
          </div>)}
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
-         {data.debarredCount!==null&&data.debarredCount>0?<Link
+         {data.debarredCount!=null&&data.debarredCount>0?<Link
           href={scopedHref({...currentFilters,debarred:true,page:1})}
           className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
           Debarred · {data.debarredCount}</Link>:null}
