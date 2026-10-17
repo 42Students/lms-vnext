@@ -370,10 +370,8 @@ export async function transitionProjectMeeting(
       .where(
         and(
           eq(projectMeetings.id, meeting.id),
-          eq(
-            projectMeetings.status,
-            "SCHEDULED",
-          ),
+          eq(projectMeetings.projectId,scope.project.id),
+          eq(projectMeetings.status, "SCHEDULED"),
         ),
       )
       .returning();
