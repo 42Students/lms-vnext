@@ -7,6 +7,7 @@ export function TpoReportPresentation(){
  useEffect(()=>{
   const sync=()=>setActive(Boolean(document.fullscreenElement?.matches("[data-tpo-presentation-report]")));
   document.addEventListener("fullscreenchange",sync);
+  sync();
   return ()=>document.removeEventListener("fullscreenchange",sync);
  },[]);
  async function toggle(){

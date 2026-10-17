@@ -7,7 +7,7 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const dirty=TPO_NOTIFICATION_PREFERENCE_FIELDS.some(field=>value[field.key]!==initial[field.key]);
  async function save(){
-  if(!dirty||busy)return;
+  if((!dirty&&version!==null)||busy)return;
   setBusy(true);setError("");setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/my-notification-preferences",{
@@ -30,8 +30,8 @@ export function TpoMyNotificationPreferencesEditor({initial,version}:{initial:Tp
      onChange={e=>setValue(previous=>({...previous,[field.key]:e.target.checked}))}/>
    </label>)}
   </div>
-  <button type="button" disabled={busy||!dirty} onClick={()=>void save()}
-   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":"Save preferences"}</button>
+  <button type="button" disabled={busy||(!dirty&&version!==null)} onClick={()=>void save()}
+   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":version===null&&!dirty?"Save default preferences":"Save preferences"}</button>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </section>;

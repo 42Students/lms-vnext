@@ -1,3 +1,6 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -55,7 +58,9 @@ export default async function TpoAccreditationReportPage({
   );
 
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
+      <TpoReportPresentation />
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader
         eyebrow="TPO · Reports"
         title="Accreditation evidence export"

@@ -64,7 +64,7 @@ export default async function TpoByBranchReportPage({
       >
         View applicant and accepted-offer evidence by season →
       </Link>
-      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId}/></Suspense>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/by-branch" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
