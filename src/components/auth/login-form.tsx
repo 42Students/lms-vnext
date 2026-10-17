@@ -90,7 +90,7 @@ const RESTART_ERRORS = new Set([
  * table, while all response/transport parsing goes through apiFetch.
  */
 async function post<T>(url: string, body: unknown): Promise<{
-  ok: boolean; data: T & { error?: string };
+  ok: boolean; data: T & { error?: string; retryAfterSeconds?: number };
 }> {
   try {
     const data = await apiFetch<T>(url, {
@@ -102,7 +102,10 @@ async function post<T>(url: string, body: unknown): Promise<{
     return { ok: true, data: data as T & { error?: string } };
   } catch (reason) {
     if (reason instanceof FriendlyFetchError && reason.status > 0) {
-      return { ok: false, data: { error: reason.code ?? undefined } as T & { error?: string } };
+      return { ok: false, data: {
+        error: reason.code ?? undefined,
+        retryAfterSeconds: reason.retryAfterSeconds ?? undefined,
+      } as T & { error?: string; retryAfterSeconds?: number } };
     }
     throw reason;
   }
@@ -160,7 +163,10 @@ export function LoginForm({
     return ()=>clearTimeout(timer);
   },[emailCooldown]);
 
-  function fail(errorCode: string | undefined) {
+  function fail(errorCode: string | undefined, retryAfterSeconds?: number) {
+    const safeRetry = typeof retryAfterSeconds === "number" &&
+      Number.isInteger(retryAfterSeconds) && retryAfterSeconds >= 1 &&
+      retryAfterSeconds <= 3600 ? retryAfterSeconds : null;
     const known = errorCode==="NOT_REGISTERED" && channel==="EMAIL"
       ?"We couldn't find an account with that email.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
       ?"We couldn't send the email just now. Try again.":errorCode==="NO_ACCOUNT_FOR_DOMAIN"
@@ -170,7 +176,11 @@ export function LoginForm({
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
        errorCode?ERROR_MESSAGES[errorCode]:undefined;
-    setError(known ?? "Something went wrong. Try again in a moment.");
+    setError(errorCode==="TOO_MANY_REQUESTS" && safeRetry !== null
+      ? "Too many codes were requested. Try again in about "+
+        (safeRetry < 120 ? safeRetry+" seconds." : Math.ceil(safeRetry/60)+" minutes.")
+      : known ?? "Something went wrong. Try again in a moment.");
+    if(safeRetry !== null)setCooldown(Math.max(cooldown,safeRetry));
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
       setCooldown(0);
@@ -217,7 +227,7 @@ export function LoginForm({
         contact: contact.trim(),
       }));
       if (!result) return;
-      if (!result.ok) { setNotice(null); return fail(result.data.error); }
+      if (!result.ok) { setNotice(null); return fail(result.data.error,result.data.retryAfterSeconds); }
       setErrorCode(null);
       setNotice(channel === "PHONE" ? "Your code is on its way." : "Your email code is on its way.");
       setAttempt(result.data);
@@ -254,7 +264,7 @@ export function LoginForm({
         },
       ));
       if (!result) return;
-      if (!result.ok) return fail(result.data.error);
+      if (!result.ok) return fail(result.data.error,result.data.retryAfterSeconds);
       saveLoginAttempt(null);
       const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
       window.location.assign(returnTo ?? result.data.next ?? "/dashboard");
@@ -276,7 +286,7 @@ export function LoginForm({
         { attemptId: attempt.attemptId },
       ));
       if (!result) return;
-      if (!result.ok) return fail(result.data.error);
+      if (!result.ok) return fail(result.data.error,result.data.retryAfterSeconds);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
       setCooldown(RESEND_SECONDS);
