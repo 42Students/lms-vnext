@@ -533,9 +533,7 @@ export async function updateCourseQuiz(
     return await getDb().transaction(
       async (tx) => {
         // Serialize deadline checks with quiz attempt inserts and lifecycle writes.
-        const [lockedQuiz]=await tx.select({
-          status:courseQuizzes.status,dueAt:courseQuizzes.dueAt,
-        }).from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
+        const [lockedQuiz]=await tx.select().from(courseQuizzes).where(eq(courseQuizzes.id,quizId))
           .for("update").limit(1);
         if(!lockedQuiz)throw new CoursesServiceError("QUIZ_NOT_FOUND");
         if(input.dueAt!==undefined && (
