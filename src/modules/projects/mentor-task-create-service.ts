@@ -65,7 +65,7 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         sequence:(last?.sequence??-1)+1,
         title:input.title,description:input.description,
         acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
-        status:"TODO",
+        status:input.status,assigneeMembershipId:input.assigneeMembershipId,
         blockerReason:input.blockerReason??null,dueDate:input.dueDate??null,
         estimatePoints:input.estimatePoints??null,taskType:input.taskType??null,
       }).returning();
