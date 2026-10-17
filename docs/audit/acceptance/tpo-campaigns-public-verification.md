@@ -13,3 +13,6 @@
 | TPO-campaigns-public-R01 | DONE (source verified) | Real `join-service` stores normalized optional mobile in registered `placement_recruiter_public_contacts`; refuses to accept with a phone when storage is missing, no silent drop; named test. |
 | TPO-campaigns-public-R02 | PARTIAL — OPEN | Existing per-code error copy and phone/network guards verified, but field-specific placement pending; named test. |
 | TPO-campaigns-public-R07 | DONE (source verified) | Existing registrable work-domain matching and subdomain guards, with named test. |
+
+| TPO-campaigns-public-35 | DONE (source, unrun) | Unknown host / explicitly unpublished college page returns real Next 404, with legacy unavailable text in `src/app/placements/not-found.tsx`; transient read outage remains separate. Named `tests/unit/chat2-public-placements-page.test.ts`. |
+| TPO-campaigns-public-36 | PARTIAL — OPEN | Replaced platform eyebrow, college heading and footer with legacy public placements framing; exact Recruit from us body still subject to legacy verification, named test. |
