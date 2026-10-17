@@ -91,7 +91,8 @@ export function TpoBulkRoundResultRecorder({
     if (!window.confirm(
       "Stage " + entries.length + " result(s) as " +
       ({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome]) +
-      "? Each successful result will be audited individually. " +
+      "? " + (failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"") +
+      "Each successful result will be audited individually. " +
       "This does NOT publish results; a completed round requires separate APPLY confirmation. " +
       "Some rows may succeed even if others fail. Continue?",
     )) return;
