@@ -259,6 +259,7 @@ async function addOne(
     // Re-evaluate the same college-scoped evidence under the job lock. A
     // reasoned INCLUDE may override ordinary scoring, never hard tenant,
     // cohort, debarment, or verified-proof requirements.
+    let forcedInclude=false;
     let finalEligibility=await evaluatePlacementEligibility(context,job.id,membershipId,tx);
     if(finalEligibility.status==="INELIGIBLE"||finalEligibility.status==="NEEDS_DATA"){
       if(!includeIneligibleReason)return bulkDriveOutcome(membershipId,{
@@ -273,6 +274,7 @@ async function addOne(
        reason:includeIneligibleReason,createdByUserId:context.user.id,
       }).returning({id:placementEligibilityOverrides.id});
       finalEligibility=await evaluatePlacementEligibility(context,job.id,membershipId,tx);
+      forcedInclude=true;
       if(!["ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"].includes(finalEligibility.status)){
        // Rollback restores any previous override and never creates an application.
        throw new UnsafeForceInclude();
@@ -291,7 +293,7 @@ async function addOne(
       channel: "INTERNAL", eligibilityStatus: finalEligibility.status,
       eligibilitySnapshot: {
         ...finalEligibility, source: "TPO_BULK_ADD", addedByUserId: context.user.id,
-        addedByCollege: Boolean(includeIneligibleReason),
+        addedByCollege: forcedInclude,
       },
       submittedByUserId: context.user.id,
     }).onConflictDoNothing().returning({ id: placementApplications.id });

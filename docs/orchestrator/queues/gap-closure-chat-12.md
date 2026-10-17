@@ -191,3 +191,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 47: TPO-students-12 now has expected override CAS undo of last successful bulk action and audit on SET/CLEAR in the shared service; remain OPEN pending live DB concurrency proof and true legacy visibility semantics.
 
 - Round 48: TPO-students-14 OPEN (partial): explicit ineligible Add to Drive with audited reason and scoped transactional eligibility override; hard guards cannot be bypassed, application conflict rolls back override; 48-hour opt-out and user-visible release still need verified work.
+
+- Round 49: TPO-requests-verification-01 OPEN (partial): effective 0134 target-key varchar(150) bounds enforced at both learner entry and Zod boundary, while sixth OFFER_ACCEPTANCE_DISPUTE remains unsupported by the active first CHECK; additive correction proposed, not registered.
