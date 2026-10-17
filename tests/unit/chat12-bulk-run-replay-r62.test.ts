@@ -20,6 +20,16 @@ describe("TPO-requests-verification-13: durable bulk request run idempotency",()
  it("TPO-requests-verification-13 refuses duplicate IDs in caller input",()=>expect(sameTpoBulkRequestRun({...input,requestIds:[A,B]},{...input,requestIds:[A,A]})).toBe(false));
  it("TPO-requests-verification-13 refuses a zero-row run despite a replayed empty audit",()=>expect(sameTpoBulkRequestRun({action:"APPROVE",requestIds:[]},{action:"APPROVE",requestIds:[]})).toBe(false));
  it("TPO-requests-verification-13 permits nonidentity summary fields in persisted metadata",()=>expect(sameTpoBulkRequestRun({...input,verifiedCount:2},input)).toBe(true));
+ it("TPO-requests-verification-13 re-reads a winning audit after concurrent insert conflict",()=>{
+  const code=readFileSync(new URL("../../src/modules/placements/tpo-request-bulk-audit-service.ts",import.meta.url),"utf8");
+  expect(code).toContain('if(!event){');
+  expect(code).toContain('const [winner]=await tx.select({id:activityEvents.id,metadata:activityEvents.metadata})');
+  expect(code).toContain('if(!winner||!sameTpoBulkRequestRun(winner.metadata,input))');
+ });
+ it("TPO-requests-verification-13 returns the persisted successful count on a concurrent replay",()=>{
+  const code=readFileSync(new URL("../../src/modules/placements/tpo-request-bulk-audit-service.ts",import.meta.url),"utf8");
+  expect(code).toContain('return {eventId:winner.id,replayed:true,verifiedCount:typeof evidence==="number"?evidence:count}');
+ });
  it("TPO-requests-verification-13 actually wires the replay guard into the transactional audit writer",()=>{
   const code=readFileSync(new URL("../../src/modules/placements/tpo-request-bulk-audit-service.ts",import.meta.url),"utf8");
   expect(code).toContain('if(!sameTpoBulkRequestRun(prior.metadata,input))');
