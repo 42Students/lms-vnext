@@ -42,6 +42,7 @@ type SearchParams = {
   profileStatus?:string|string[];
   minApplications?:string|string[];maxApplications?:string|string[];
   minOffers?:string|string[];maxOffers?:string|string[];
+  offerWaiting?:string|string[];
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
@@ -71,6 +72,7 @@ function studentsHref(
     afterCollege?:string;
     profileStatus?:string;
     minApplications?:number;maxApplications?:number;minOffers?:number;maxOffers?:number;
+    offerWaiting?:boolean;
     classId?:string;
     batchId?: string;
     search?: string;
@@ -92,6 +94,7 @@ function studentsHref(
   if(filters.programId)params.set("programId",filters.programId);
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
   if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
+  if(filters.offerWaiting!==undefined)params.set("offerWaiting",filters.offerWaiting?"YES":"NO");
   for(const key of ["minApplications","maxApplications","minOffers","maxOffers"] as const){
    if(filters[key]!==undefined)params.set(key,String(filters[key]));
   }
@@ -166,6 +169,7 @@ export default async function TpoStudentsPage({
     maxApplications:first(raw.maxApplications)||undefined,
     minOffers:first(raw.minOffers)||undefined,
     maxOffers:first(raw.maxOffers)||undefined,
+    offerWaiting:first(raw.offerWaiting)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
