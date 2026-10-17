@@ -127,3 +127,9 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | ID | Status | Evidence |
 | --- | --- | --- |
 | TPO-drives-44 | OPEN (improved) | `src/modules/placements/tpo-drive-form-error-copy.ts` now maps common company, season, draft/edit, deadline, compensation, role, round and eligibility server codes to actionable sentences. `tests/unit/tpo-drives-44-error-copy.test.ts` names TPO-drives-44 in both cases and checks unmapped codes do not appear. Exact messaging for every legacy backend error remains to be verified; tests are written, not executed. |
+
+## Round 11 — automatic IST application deadline default
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-drives-45 | DONE (source-level; test not run) | `tpo-drive-deadline-ist.ts` validates full IST wall-clock date and time, rejects impossible days, and converts to UTC without browser timezone assumptions. `placement-job-create-form.tsx` automatically sets a first selected valid date to `23:59` IST, respects an existing restored value and later user changes, retains manual end-of-day action and checks future publication deadline. Named `TPO-drives-45 automatically applies 11:59 PM IST once, then preserves user edits and restored drafts` plus existing tests in `tests/unit/tpo-drives-chat-3-round4.test.ts`. Browser validation still unexecuted. |
