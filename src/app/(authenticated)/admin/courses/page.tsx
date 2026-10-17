@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-course-catalogue-model";
 import { ErrorState } from "@/components/ui/error-state";
+import {getSuperAdminCourseDependencyCounts} from "@/modules/admin-ui/super-admin-course-dependencies-service";
 
 export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[]}>}) {
   const context =
@@ -45,11 +46,10 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   </div>;
   const duplicateCourseId=typeof query.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(query.duplicate)
     ?query.duplicate:undefined;
-  const workspace =
-    await getAdminCourseWorkspace(
-      context,
-      collegeId,
-    );
+  const [workspace,lessonCountByCourse]=await Promise.all([
+    getAdminCourseWorkspace(context,collegeId),
+    getSuperAdminCourseDependencyCounts(context),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -70,6 +70,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         courseBasePath="/admin/courses"
         duplicateCourseId={duplicateCourseId}
         catalogueQuery={catalogueQuery.data}
+        lessonCountByCourse={lessonCountByCourse}
         offeringBasePath="/admin/courses/offerings"
       />
     </div>
