@@ -30,6 +30,17 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  if(query.kinds.length)predicates.push(inArray(db10AuditFindings.kind,query.kinds));
  if(query.view!=="ALL")predicates.push(inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]));
  if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
+ // Facet chips report the full current view, not just the one selected chip.
+ // Preserve query, area and kind scope while ignoring selected status/severity.
+ const facetsWhere=and(
+  query.q?or(ilike(db10AuditFindings.title,pattern),
+    ilike(db10AuditFindings.summary,pattern),ilike(db10AuditFindings.externalId,pattern)):undefined,
+  query.area?ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\ if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
+ const where=and(...predicates);")+"%"):undefined,
+  query.kinds.length?inArray(db10AuditFindings.kind,query.kinds):undefined,
+  query.view!=="ALL"?inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]):undefined,
+  query.view==="RELEASE"?inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]):undefined,
+ );
  const where=and(...predicates);
  const db=getDb();
  const [total,items,facets]=await Promise.all([
@@ -38,7 +49,7 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
    .orderBy(desc(db10AuditFindings.foundAt),desc(db10AuditFindings.importedAt),asc(db10AuditFindings.id))
    .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
   db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
-   .from(db10AuditFindings).where(where)
+   .from(db10AuditFindings).where(facetsWhere)
    .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
  ]);
  const statusCounts:Record<string,number>={};
