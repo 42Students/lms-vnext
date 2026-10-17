@@ -1275,7 +1275,7 @@ export async function withdrawPlacementApplication(
           reason,
         });
 
-      await recordActivityEventInTransaction(
+      const withdrawnEvent=await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -1301,6 +1301,11 @@ export async function withdrawPlacementApplication(
             `placement-application:${application.id}:withdrawn`,
         },
       );
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:withdrawnEvent.id,collegeId:row.job.collegeId,
+        membershipId:membership.id,kind:"APPLICATION_STATUS_CHANGED",
+        subject:"Application withdrawn from "+row.roleOption.title,
+      });
 
       return application;
     },
