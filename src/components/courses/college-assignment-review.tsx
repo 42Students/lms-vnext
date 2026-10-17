@@ -24,7 +24,7 @@ export function CollegeAssignmentReview({
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string){
   if(bulkBusy||!window.confirm(
-    "Publish grades for every graded submission in this Section? Learners will be notified."
+    "Publish grades for every graded submission in this Section? Published results become visible to learners."
   ))return;
   setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setProgress("Loading graded submissions…");
   let published=0,failed=0;
