@@ -33,6 +33,6 @@ export function LearnerSaveDriveButton({jobId,jobTitle,initialSaved}:{jobId:stri
    <span aria-hidden="true">{saved?"♥":"♡"}</span>
    {busy?"Saving…":learnerSavedDriveCopy(saved).action}
   </button>
-  {message?<span role={message===learnerSavedDriveCopy(!saved).toast?"status":"alert"} className="text-xs text-body">{message}</span>:null}
+  {message?<span role={(message===learnerSavedDriveCopy(false).toast||message===learnerSavedDriveCopy(true).toast)?"status":"alert"} className="text-xs text-body">{message}</span>:null}
  </span>;
 }
