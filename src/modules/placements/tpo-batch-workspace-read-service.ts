@@ -26,7 +26,7 @@ export async function requireTpoBatchActor(ctx:RequestContext) {
 }
 export async function listTpoBatches(ctx:RequestContext){
  const collegeId=await requireTpoBatchActor(ctx);
- const batches=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,program:programs.name,departmentId:departments.id,department:departments.name,
+ const batches=await getDb().select({id:cohorts.id,name:cohorts.name,code:cohorts.code,status:cohorts.status,programId:programs.id,program:programs.name,departmentId:departments.id,department:departments.name,
   startYear:sql<number | null>`(select extract(year from ap.start_date)::int from academic_periods ap where ap.id = ${cohorts.startPeriodId})`,
   endYear:sql<number | null>`(select extract(year from ap.end_date)::int from academic_periods ap where ap.id = ${cohorts.expectedEndPeriodId})`})
  .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
