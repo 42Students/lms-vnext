@@ -103,7 +103,7 @@ describe("College Courses & Content gap closure",()=>{
  it("COL-courses-content-15 raw machine codes are not rendered in Course mutation errors",()=>{
   expect(read("src/components/courses/admin-course-actions.tsx")).toContain("academicSetupErrorMessage(error");
   expect(read("src/components/courses/learner-course-api.ts")).toContain("COURSE_NAME_CONFLICT");
-  expect(actions).toContain("apiFetch<unknown>");
+  expect(read("src/components/courses/admin-course-actions.tsx")).toContain("apiFetch<unknown>");
   expect(creation()).toContain("apiFetch<unknown>");
   expect(read("src/components/courses/admin-course-display-editor.tsx")).toContain("apiFetch<void>");
  });
