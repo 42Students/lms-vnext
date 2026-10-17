@@ -24,7 +24,7 @@ export default async function SuperAdminPlacementInterviewCalendarPage({
       <div className="space-y-6">
         <PageHeader
           eyebrow="Super Admin · Placements"
-          title="Placement Interview Calendar"
+          title="Interviews"
           description="Interview-calendar oversight requires an exact college safety scope."
         />
         <EmptyState

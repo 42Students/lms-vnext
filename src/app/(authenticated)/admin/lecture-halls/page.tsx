@@ -119,7 +119,7 @@ export default async function SuperAdminLectureHallsPage({
         emptyState={total > 0 ? {
           title: "No halls on this page", description: "Go to an earlier page to see matching rooms.",
         } : {
-          title: "No matching lecture halls", description: "Clear filters or add a lecture hall.",
+          title: "No lecture halls found.", description: "Clear filters or add a lecture hall.",
         }} />
     </section>
     <nav aria-label="Lecture hall pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">

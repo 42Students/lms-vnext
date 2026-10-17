@@ -252,7 +252,38 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 | LEARNER-profile-misc-R04 | S3 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-profile-misc-R05 | S4 | COPY / STATE | FIXED-ON-MAIN |
 
+## Round 2 — verified source closure (tests authored, not run)
+
+Merged current `origin/main` into `chatgpt/chat-3-b` before work and checked again between page areas. The queue's prior status column is the **initial assignment**, not a claim about the merged commit. Exact per-gap evidence is in the files below.
+
+- `college/courses-content`: 8 DONE (04, 07, 08, 09, 10, 11, 14, 15), 1 NOT-A-GAP (16); 6 OPEN (01, 02, 03, 05, 12, 17). Evidence `docs/audit/acceptance/college-courses-content-verification.md`; tests `tests/unit/college-courses-content-gap-closure.test.ts` (15 cases including COPY -15, not in the original queue).
+- `college/attendance`: 8 DONE (03, 04, 05, 06, 11, 12, 13, 17), 1 NOT-A-GAP (07); 5 OPEN (09, 10, 14, 15, 16). Evidence `docs/audit/acceptance/college-attendance-verification.md`; tests `tests/unit/college-attendance-gap-closure.test.ts` (14 cases including improvement -13).
+- `learner/profile-learning`: 3 DONE (R02, R04, R05), 2 OPEN (`LEARNER-learning-misc-R01`, `LEARNER-profile-misc-R01`). Evidence `docs/audit/acceptance/learner-profile-learning-verification.md`; tests `tests/unit/learner-profile-learning-gap-closure.test.ts` (5 cases).
+- GR page adoption: `docs/audit/acceptance/graceful-chat-3-verification.md`; 9 ID-named tests in `tests/unit/chat-3-graceful-pages.test.ts`. Shared friendly-error/guarded hooks still absent from main at round start. No test, typecheck, lint or build was run by chat-3; orchestrator will execute.
+
+**Round-2 source dispositions:** 19 DONE, 2 NOT-A-GAP, 13 still OPEN across 32 assigned gaps. Separate source-contract assertions on incomplete gaps are not counted DONE.
+
 ## Notes (blockers, one line each)
 
+- COL-courses-content-02 (Course Image upload only): needs a private upload bucket, scanner and verified storage workflow; non-storage display fields remain OPEN for feature parity.
+
+- PUB-auth-public-55: All-resume ZIP download remains blocked by production private document receipt/bucket and scanner readiness; do not fabricate PDFs or public signed links.
+
+- LEARNER-learning-misc-01: Assignment file-upload acceptance needs real private bucket and scanner readiness; do not fake signed receipts.
+- TPO-drives-27: JD file upload needs real private bucket and scanner readiness; no public storage URLs.
+- COL-people-02/07: Canonical login identity edits stay restricted pending the approved identity verification workflow.
+
+## Verified acceptance progress (source claims, tests not run)
+
+- tpo/drives: 6 DONE + 1 NOT-A-GAP with gap-ID-named tests in `tests/unit/tpo-drives-gap-closure.test.ts` and page record in `docs/audit/acceptance/tpo-drives-verification.md`; the other gaps remain open/partial.
+- learner/learning-misc: 11 DONE with gap-ID-named tests in `tests/unit/learner-learning-misc-gap-closure.test.ts` and page record in `docs/audit/acceptance/learner-learning-misc-verification.md`.
+- college/people: 9 DONE with unit and disposable-PostgreSQL integration gap tests in `tests/unit/college-people-gap-closure.test.ts`, `tests/integration/college-people-gap-closure.test.ts`, and page record `docs/audit/acceptance/college-people-verification.md`.
+- Current round: 42 DONE and 1 NOT-A-GAP source-level dispositions through Super Admin Tenants & Modules, subject to orchestrator acceptance; unexecuted tests are not proof of integration.
+- superadmin/tenants-modules: 4 DONE, 11 ID-named tests in `tests/unit/superadmin-tenants-gap-closure.test.ts`, acceptance `docs/audit/acceptance/superadmin-tenants-modules-verification.md`; remaining gaps explicitly OPEN.
+- public/auth-public-2-links-marketing: 12 DONE in `docs/audit/acceptance/public-auth-public-2-links-marketing-verification.md`, 18 ID-named tests in `tests/unit/public-auth-links-gap-closure.test.ts`; remaining open gaps have explicit reasons.
+
 ## Needs shell (chat-9 only)
+
+- LEARNER-profile-misc-R01: chat-9 owns `src/components/shell/learner-topbar-tools.tsx`; replace plain Notifications link with a guarded, accessible eight-item drawer, refresh/read/error/stale states and View all link; no chat-3 edits in shell.
+
 

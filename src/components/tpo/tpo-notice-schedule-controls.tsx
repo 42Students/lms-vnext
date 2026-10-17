@@ -1,8 +1,8 @@
 "use client";
 import {useState} from "react";
 
-export function TpoNoticeScheduleControls({count,enabled}:{
- count:number|null;enabled:boolean;
+export function TpoNoticeScheduleControls({count,enabled,minDateTime}:{
+ count:number|null;enabled:boolean;minDateTime?:string;
 }){
  const [mode,setMode]=useState<"NOW"|"LATER">("NOW");
  return <div className="space-y-3">
@@ -16,7 +16,7 @@ export function TpoNoticeScheduleControls({count,enabled}:{
    </div>
   </fieldset>
   {mode==="LATER"?<label className="grid gap-1 text-sm">Schedule for (IST)
-    <input type="datetime-local" name="sendAt" required
+    <input type="datetime-local" name="sendAt" required min={minDateTime}
       className="min-h-11 rounded-md border border-border bg-surface px-3"/>
    </label>:null}
   <button type="submit" disabled={!enabled}

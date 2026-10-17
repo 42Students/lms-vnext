@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { friendlyApiError } from "@/lib/friendly-error";
+import { createRequestId } from "@/lib/request-id";
+import { isDatabaseUnavailableError } from "@/lib/db-outage";
 import { ZodError } from "zod";
 import { SessionAuthenticationError } from "@/auth/session";
 import { ContextResolutionError } from "@/modules/identity/context-service";
@@ -20,27 +23,51 @@ import { StorageFileError } from "@/modules/storage/file-errors";
 import { logError } from "@/observability/logger";
 import {StudentRuleConflict} from "@/modules/module-access/admin-student-rule-write";
 
+/**
+ * GR-06 / GR-07: retain machine error keys for existing callers, but always
+ * supply customer-safe message, a reference and the x-request-id header.
+ * Usage: catch (error) { return apiErrorResponse(error); }
+ */
 export function apiErrorResponse(error: unknown) {
+  const requestId = createRequestId();
+  const respond = (body: Record<string, unknown>, init?: ResponseInit) => {
+    const status = init?.status ?? 500;
+    const headers = new Headers(init?.headers);
+    headers.set("x-request-id", requestId);
+    if (status === 429 || status === 503) headers.set("Retry-After", "60");
+    const code = typeof body.error === "string" ? body.error : undefined;
+    return NextResponse.json({
+      ...body,
+      message: friendlyApiError({ status, code }),
+      requestId,
+    }, { ...init, status, headers });
+  };
   if (error instanceof ZodError) {
-    return NextResponse.json(
-      { error: "INVALID_REQUEST", issues: error.issues },
+    return respond(
+      {
+        error: "INVALID_REQUEST",
+        fieldErrors: Object.fromEntries(error.issues
+          .filter((issue) => issue.path.length > 0)
+          .map((issue) => [issue.path.join("."), "Please check this field."])),
+        issues: error.issues,
+      },
       { status: 400 },
     );
   }
 
   if (error instanceof StorageFileError) {
-    return NextResponse.json({ error: error.code }, { status: error.status });
+    return respond({ error: error.code }, { status: error.status });
   }
 
   if (error instanceof SessionAuthenticationError) {
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status: 401 },
     );
   }
 
   if (error instanceof ContextResolutionError) {
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       {
         status:
@@ -52,10 +79,10 @@ export function apiErrorResponse(error: unknown) {
     );
   }
 
-  if (error instanceof StudentRuleConflict) return NextResponse.json({error:error.code},{status:409});
+  if (error instanceof StudentRuleConflict) return respond({error:error.code},{status:409});
 
   if (error instanceof AuthorizationError) {
-    return NextResponse.json(
+    return respond(
       { error: "FORBIDDEN" },
       { status: 403 },
     );
@@ -65,7 +92,7 @@ export function apiErrorResponse(error: unknown) {
     error instanceof
     DepartmentHasDependenciesError
   ) {
-    return NextResponse.json(
+    return respond(
       {
         error:
           "DEPARTMENT_HAS_DEPENDENCIES",
@@ -81,7 +108,7 @@ export function apiErrorResponse(error: unknown) {
         ? 409
         : 404;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
@@ -94,7 +121,7 @@ export function apiErrorResponse(error: unknown) {
         ? 409
         : 404;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
@@ -104,7 +131,7 @@ export function apiErrorResponse(error: unknown) {
     error instanceof
     CollegeHasDependenciesError
   ) {
-    return NextResponse.json(
+    return respond(
       {
         error:
           "COLLEGE_HAS_DEPENDENCIES",
@@ -120,7 +147,7 @@ export function apiErrorResponse(error: unknown) {
         ? 409
         : 404;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
@@ -153,7 +180,7 @@ export function apiErrorResponse(error: unknown) {
       "MEMBERSHIP_COLLEGE_MISMATCH",
     ]);
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       {
         status: notFound.has(error.code)
@@ -215,7 +242,7 @@ export function apiErrorResponse(error: unknown) {
           ? 400
           : 409;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
@@ -246,7 +273,7 @@ export function apiErrorResponse(error: unknown) {
       "PROJECT_MEETING_ACCESS_DENIED",
     ]);
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       {
         status: notFound.has(error.code)
@@ -284,7 +311,7 @@ export function apiErrorResponse(error: unknown) {
       "PLACEMENT_DRIVE_DAY_ATTENDANCE_FORBIDDEN",
     ]);
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       {
         status: notFound.has(error.code)
@@ -303,7 +330,7 @@ export function apiErrorResponse(error: unknown) {
       "NOTIFICATION_NOT_FOUND",
       "NOTIFICATION_RECIPIENT_NOT_FOUND",
     ]);
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       {
         status: notFound.has(error.code)
@@ -314,7 +341,7 @@ export function apiErrorResponse(error: unknown) {
   }
 
   if (error instanceof AdminScopeServiceError) {
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status: 404 },
     );
@@ -327,7 +354,7 @@ export function apiErrorResponse(error: unknown) {
         ? 404
         : 409;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
@@ -344,18 +371,20 @@ export function apiErrorResponse(error: unknown) {
           ? 400
           : 409;
 
-    return NextResponse.json(
+    return respond(
       { error: error.code },
       { status },
     );
   }
 
+  const isOutage = isDatabaseUnavailableError(error);
   logError("api.unhandled_error", error, {
     component: "api",
+    requestId,
   });
 
-  return NextResponse.json(
-    { error: "INTERNAL_ERROR" },
-    { status: 500 },
+  return respond(
+    { error: isOutage ? "DATABASE_UNAVAILABLE" : "INTERNAL_ERROR" },
+    { status: isOutage ? 503 : 500 },
   );
 }

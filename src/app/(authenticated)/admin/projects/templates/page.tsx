@@ -29,8 +29,8 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  const data=await listSuperAdminTemplateDirectory(context,query.data);
  return <div className="space-y-5">
   <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-  <PageHeader eyebrow="Super Admin · Projects" title="Template catalogue"
-   description="Global template metadata with active college-assignment counts limited to your current administrative scope. No publishing or editing when scoped."
+  <PageHeader eyebrow="Super Admin · Projects" title="Project templates"
+   description="A single catalog every college draws from — college-admin can use these but not edit them."
    actions={can(context,"project-template.manage")?<Link href="/admin/projects/templates/new" className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">New template →</Link>:undefined}/>
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Template title or slug

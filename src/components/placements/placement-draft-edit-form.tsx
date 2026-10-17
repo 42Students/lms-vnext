@@ -7,6 +7,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
+import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -148,6 +149,7 @@ export function PlacementDraftEditForm({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const [pending, setPending] =
     useState(false);
   const [
@@ -356,6 +358,7 @@ export function PlacementDraftEditForm({
         description:
           "Job details and eligibility rules were saved.",
       });
+      clearDirty();
       router.refresh();
     } catch (error) {
       showToast({
@@ -378,6 +381,7 @@ export function PlacementDraftEditForm({
       </summary>
       <form
         onSubmit={submit}
+      onChange={markDirty}
         className="grid gap-5 border-t border-border p-5"
       >
         <div className="grid gap-4 lg:grid-cols-2">
@@ -724,6 +728,7 @@ export function PlacementDraftEditForm({
               : "Save draft changes"}
           </Button>
         </div>
+        {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
       </form>
     </details>
   );
