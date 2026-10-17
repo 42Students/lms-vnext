@@ -1,7 +1,7 @@
 "use client";
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
-type View={name:string;kind:string;from:string;to:string;q:string;pinned:boolean;usedAt:number};
+type View={name:string;kind:string;from:string;to:string;q:string;who:string;pinned:boolean;usedAt:number};
 function safeViews(value:unknown):View[]{
  if(!Array.isArray(value))return [];
  return value.slice(0,12).flatMap(row=>{
@@ -9,13 +9,13 @@ function safeViews(value:unknown):View[]{
   const x=row as Record<string,unknown>;
   if(typeof x.name!=="string"||typeof x.kind!=="string"||typeof x.q!=="string"||
    typeof x.from!=="string"||typeof x.to!=="string")return [];
-  return [{name:x.name.slice(0,50),kind:x.kind.slice(0,40),q:x.q.slice(0,120),
+  return [{name:x.name.slice(0,50),kind:x.kind.slice(0,40),q:x.q.slice(0,120),who:typeof x.who==="string"?x.who.slice(0,100):"",
    from:x.from.slice(0,10),to:x.to.slice(0,10),pinned:x.pinned===true,
    usedAt:typeof x.usedAt==="number"&&Number.isFinite(x.usedAt)?x.usedAt:0}];
  });
 }
 export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters:{
- kind:string;from?:string;to?:string;q:string;
+ kind:string;from?:string;to?:string;q:string;who?:string;
 }}){
  const router=useRouter();
  const key="lms.tpo.audit.views."+collegeId;
@@ -32,7 +32,7 @@ export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters
   const title=name.trim();if(!title||title.length>50){setMessage("Name must be 1–50 characters.");return;}
   const existing=views.find(v=>v.name===title);
   if(views.length>=12&&!existing){setMessage("Maximum 12 saved audit views.");return;}
-  if(persist([...views.filter(v=>v.name!==title),{...filters,from:filters.from??"",to:filters.to??"",
+  if(persist([...views.filter(v=>v.name!==title),{...filters,from:filters.from??"",to:filters.to??"",who:filters.who??"",
    name:title,pinned:existing?.pinned??false,usedAt:Date.now()}])){setSelected(title);setName("");setMessage("Audit view saved in this browser.");}
  }
  function apply(){
@@ -42,6 +42,7 @@ export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters
   if(view.from)params.set("from",view.from);
   if(view.to)params.set("to",view.to);
   if(view.q)params.set("q",view.q);
+  if(view.who)params.set("who",view.who);
   persist(views.map(v=>v.name===view.name?{...v,usedAt:Date.now()}:v));
   router.push("/tpo/audit"+(params.size?"?"+params:""));
  }
