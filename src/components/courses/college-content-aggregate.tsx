@@ -185,6 +185,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
                   </p>
                   {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
+                  {!videos?<p className="text-xs text-muted-foreground">Materials: {item.materialsCount===null?"Unavailable until DB05 is verified":item.materialsCount}</p>:null}
                   <p className="text-xs text-muted-foreground">
                     {collegeContentScopeLabel(item.deliveryId)} · {item.visibleToStudents ? "Visible to students" : "Hidden from students"}
                     {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
