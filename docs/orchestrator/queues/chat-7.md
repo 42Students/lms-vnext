@@ -219,3 +219,20 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **WP statuses:** WP-chat-7-01 through WP-chat-7-05 stay **IN-PROGRESS**. Some nonblocked full-fidelity legacy gaps remain (recruiter Today queue synthesis, performance/paging, course cards, placement-cell events); do not mark DONE based solely on source edits. No tests, lint, typecheck, build or CI were run by explicit FAST v2 request.
 
 - **Commit-history reconciliation:** Individual file write calls returned success identifiers, but the post-merge branch ancestry did not include all those identifiers. Only direct two-parent/tree-based branch commits are counted as independently verified pushes. Reconcile source blobs and commit history before claiming the target number of landed lane commits; no test or CI evidence exists.
+
+## FAST v2 chat-7 continuation — post migration 0131
+
+- **Sync:** two-parent merged main `31c9efece5286262341ca05aca23eb2a412b5bfa` into `chatgpt/chat-7-b` at `91d25f353fda37dfc236a3ca43308a5466ddb3b9`; migration 0131 adds canonical TPO job-type fields, not selection-list persistence.
+- **WP-01:** `REC-home-drives-25` validates CTC fixed+variable reconciliation with distinct under/over messages and explains it on request form; `LEARNER-profile-misc-22` excludes credential-bearing announcement links; `REC-calendar-messages-profile-10` repaired a malformed recruiter inbox message-query expression and literal LIKE escaping.
+- **WP-02:** `REC-home-drives-01/-02` considers all authorized live drives for deadlines, caps generic reviews, keeps recently overdue dates, and surfaces SENT_BACK requests as urgent actionable fix-and-resend links; `REC-home-drives-06` adds precise round deep links and IST Today/Tomorrow event labels; `REC-home-drives-49` disallows overlapping individual/bulk requests and validates waitlist ranks including duplicate selected ranks.
+- **WP-03:** `REC-home-drives-R08` supports college/relationship/own-company-scoped job-ID lookup for recruiter inbox threads, avoiding full job portfolio reads; `REC-home-drives-R06` honors lowercase lifecycle aliases and trimmed search values; `REC-home-drives-17/-29` refreshes unsent-request alerts across tabs, offers confirmed scoped discard, and recovers drafts through either persistent or session storage.
+- **WP-04:** `REC-home-drives-03` routes waiting request cards directly to authorized EDIT or RESUBMIT screens rather than generic waiting lists; `REC-home-drives-25` pay fields explicitly reconcile or show the exact discrepancy. Full legacy requester workflow remains incomplete.
+- **WP-05:** No WP marked DONE because unresolved nonblocked behaviors, runtime acceptance and parity evidence remain outstanding.
+- **BLOCKED LEARNER-profile-misc-01/-02/-03/-04:** private resume, identity, marksheet, photo and video media need attested storage, access checks and scanner integration; skipped.
+- **BLOCKED REC-home-drives-23/-43:** JD file and resume ZIP cannot be safely implemented without signed private object storage; skipped.
+- **BLOCKED REC-home-drives-38:** applicant PII, marks and resume disclosure requires college-controlled consent policy; skipped.
+- **BLOCKED REC-home-drives-51:** selection-list persistence and TPO verified apply workflow not present in migration 0131; skipped.
+- **BLOCKED REC-home-drives-21/-33/-R03:** trusted auto-approval and recruiter-only ownership need security/product decisions; skipped.
+- **BLOCKED REC-calendar-messages-profile-25/-46 and REC-home-drives-09:** login phone and invite acceptance require verified identity workflow; skipped.
+- **BLOCKED LEARNER-profile-misc-18:** per-viewer data-access audit is not available from an authoritative feed; skipped.
+- **Acceptance:** WP-chat-7-01 through WP-chat-7-05 remain IN-PROGRESS, not DONE. All patches were source-only; per FAST v2 no tests, build, typecheck, lint or CI performed.

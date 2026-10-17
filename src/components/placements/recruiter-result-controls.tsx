@@ -2,6 +2,7 @@
 
 import {
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -95,6 +96,7 @@ export function RecruiterResultControls({
     useState<string | null>(null);
   const [selected,setSelected]=useState<Record<string,string[]>>({});
   const [bulkPending,setBulkPending]=useState<string|null>(null);
+  const bulkSubmissionLock=useRef(false);
   const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
   const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
   function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
@@ -157,6 +159,7 @@ export function RecruiterResultControls({
     roundId: string,
     applicationId: string,
   ) {
+    if(bulkSubmissionLock.current||pendingKey!==null)return;
     const key =
       roundId + ":" + applicationId;
     const draft = drafts[key];
@@ -260,17 +263,26 @@ export function RecruiterResultControls({
 
 
   async function stageSelected(round:RecruiterRound){
-    if(bulkPending!==null||pendingKey!==null)return;
+    if(bulkSubmissionLock.current||bulkPending!==null||pendingKey!==null)return;
     const chosen=new Set(selected[round.id]??[]);
     const participants=round.participants.filter(p=>chosen.has(p.applicationId)&&p.result?.status!=="APPLIED");
     if(!participants.length){showToast({tone:"error",title:"No candidates selected",description:"Select candidates who do not have applied results."});return;}
     for(const participant of participants){
       const draft=drafts[round.id+":"+participant.applicationId];
       if(!draft||draft.outcome!=="PASS"&&!draft.candidateMessage.trim()||
-        draft?.outcome==="HOLD"&&(!draft.waitlistRank||Number(draft.waitlistRank)<=0)){
+        draft?.outcome==="HOLD"&&(!draft.waitlistRank||!Number.isInteger(Number(draft.waitlistRank))||Number(draft.waitlistRank)<=0||Number(draft.waitlistRank)>10000)){
         showToast({tone:"error",title:"Complete candidate outcomes",description:"Every selected row needs a valid outcome, waitlist rank when held, and a message for non-pass results."});
         return;
       }
+    }
+    const ranks=participants.flatMap(p=>{
+      const d=drafts[round.id+":"+p.applicationId];
+      return d?.outcome==="HOLD"?[Number(d.waitlistRank)]:[];
+    });
+    if(new Set(ranks).size!==ranks.length){
+      showToast({tone:"error",title:"Duplicate waitlist rank",
+        description:"Give every selected waitlisted candidate a distinct rank."});
+      return;
     }
     const summary=participants.slice(0,12).map((person,index)=>{
       const decision=drafts[round.id+":"+person.applicationId]!;
@@ -288,6 +300,7 @@ export function RecruiterResultControls({
     if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
       summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
       "\n\nNo result is final until the placement cell applies it."))return;
+    bulkSubmissionLock.current=true;
     setBulkPending(round.id);
     const succeeded:string[]=[];
     let failures=0;
@@ -314,6 +327,7 @@ export function RecruiterResultControls({
       description:succeeded.length+" sent to the placement cell to verify. "+failures+
         " failed; failed selections remain checked for retry.",
     });
+    bulkSubmissionLock.current=false;
     setBulkPending(null);
     if(succeeded.length)router.refresh();
   }
@@ -387,7 +401,7 @@ export function RecruiterResultControls({
                     onClick={undoDraftOutcome} className="rounded-md border border-border px-2 py-1 text-primary-text disabled:opacity-40">
                     Undo draft
                   </button>
-                  <button type="button" disabled={bulkPending!==null||(selected[round.id]??[]).length===0}
+                  <button type="button" disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
                     className="rounded-md bg-primary px-3 py-2 font-semibold text-on-primary disabled:opacity-50"
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":

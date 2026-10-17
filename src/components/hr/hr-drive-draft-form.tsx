@@ -71,7 +71,7 @@ export function HrDriveDraftForm({
   useEffect(()=>{
     if(fixRequestId||sourceJobId)return;
     try{
-      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now());
+      const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved)return;
       // Adopt only a matching college/user browser draft. Never overwrite an edit/resubmit.
       queueMicrotask(()=>{setDraft(saved);setNotice("We restored your unsent draft");});
@@ -85,7 +85,7 @@ export function HrDriveDraftForm({
       if(submittedRef.current)return;
       const saved=saveHrUnsentDraft(draft,Date.now());
       if(!saved)return;
-      try{window.localStorage.setItem(storageKey,saved);}catch{/* Storage disabled */ }
+      try{window.localStorage.setItem(storageKey,saved);}catch{try{window.sessionStorage.setItem(storageKey,saved);}catch{/* Disabled */}}
     };
     const timer=window.setTimeout(persist,600);
     const onVisibility=()=>{if(document.visibilityState==="hidden")persist();};
@@ -107,7 +107,7 @@ export function HrDriveDraftForm({
   }
   function restoreFromThisTab(){
     try{
-      const saved=restoreHrUnsentDraft(window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey),Date.now());
+      const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
       if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
         !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
@@ -253,6 +253,7 @@ export function HrDriveDraftForm({
             <input className={inputClass} inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
+          <p className="text-xs text-muted-foreground sm:col-span-3">Fixed and variable LPA must add up to the total CTC if entered.</p>
           {draft.employmentType!=="FULL_TIME"&&draft.employmentType!=="CONTRACT"?<label className="grid gap-1 text-sm text-body">
             Stipend per month (₹)
             <input className={inputClass} inputMode="numeric" value={draft.stipendMonthlyInr??""}

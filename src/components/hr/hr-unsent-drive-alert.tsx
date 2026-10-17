@@ -6,10 +6,20 @@ import {restoreHrUnsentDraft} from "@/modules/placements/hr-unsent-draft-storage
 export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;collegeId:string}){
  const [hasDraft,setHasDraft]=useState(false);
  useEffect(()=>{
-  try{
-   const raw=window.localStorage.getItem(storageKey)??window.sessionStorage.getItem(storageKey);
-   queueMicrotask(()=>setHasDraft(!!restoreHrUnsentDraft(raw,Date.now())));
-  }catch{/* Storage may be unavailable */ }
+  function readDraft(){
+   try{
+    const local=restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now());
+    const session=restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now());
+    setHasDraft(Boolean(local||session));
+   }catch{setHasDraft(false);}
+  }
+  readDraft();
+  window.addEventListener("storage",readDraft);
+  window.addEventListener("focus",readDraft);
+  return ()=>{
+   window.removeEventListener("storage",readDraft);
+   window.removeEventListener("focus",readDraft);
+  };
  },[storageKey]);
  if(!hasDraft)return null;
  return <aside role="status" className="rounded-xl border border-warning bg-surface p-4">
@@ -19,5 +29,12 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
     className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
     Continue
    </Link>
+   <button type="button" className="ml-3 min-h-10 text-sm font-semibold text-body underline"
+    onClick={()=>{
+      if(!window.confirm("Discard the unsent drive request saved on this device?"))return;
+      try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
+      catch{/* Browser storage may be unavailable. */}
+      setHasDraft(false);
+    }}>Discard saved draft</button>
  </aside>;
 }

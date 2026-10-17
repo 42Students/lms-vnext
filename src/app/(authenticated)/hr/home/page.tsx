@@ -94,12 +94,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
+  const requests = await listOwnRecruiterDriveRequests(context,selectedId);
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
+    returnedRequests:requests,
   });
   // Pending formal requests count as drives, even before publication.
-  const requests = await listOwnRecruiterDriveRequests(context,selectedId);
   const requestCount=requests.length;
   const waitingRequests=recruiterTodayWaitingRequests(requests);
   const weekEvents=recruiterTodayWeekEvents({events:calendar.events,resultsDue:dueResults,allowedJobs:collegeJobs.map(row=>row.job.id),now});
@@ -195,7 +196,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-1 block font-semibold text-foreground">{item.title}</span>
             <span className="mt-1 block text-sm text-body">{item.jobTitle}</span>
             <span className="mt-1 block text-xs text-muted-foreground">
-              {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
+              {item.dayLabel ? item.dayLabel+" · ":""}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(item.startsAt)} IST
             </span>
           </Link>
         </li>)}
@@ -281,7 +282,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
       {waitingRequests.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {waitingRequests.map(request=><li key={request.id}>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=WAITING"}
+          <Link href={"/recruiter/drives/new?collegeId="+encodeURIComponent(selectedId)+(request.status==="SENT_BACK"?"&fix=":"&edit=")+encodeURIComponent(request.id)}
             className="block rounded-md border border-border p-4 text-sm text-primary-text">
             <span className="block font-semibold">{request.title}</span>
             <span className="mt-1 block text-xs text-body">
