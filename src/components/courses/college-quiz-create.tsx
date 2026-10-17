@@ -106,7 +106,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <label className="grid gap-1 text-sm font-semibold">Title
      <input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
-    <label className="grid gap-1 text-sm font-semibold">Deadline (IST)
+    <label className="grid gap-1 text-sm font-semibold">Deadline (IST, required before publishing)
      <input type="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-10 rounded border border-border px-2"/></label>
     <label className="grid gap-1 text-sm font-semibold">Maximum attempts
