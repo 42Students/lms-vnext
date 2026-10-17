@@ -584,7 +584,7 @@ export async function updateTpoLead(
 ) {
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
   const input = updateTpoLeadSchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const college=await requirePlacementManageScope(context, input.collegeId);
 
   try {
     return await getDb().transaction(async tx => {
@@ -629,6 +629,14 @@ export async function updateTpoLead(
         ))
         .returning();
       if (!updated) throw new TpoCrmError("TPO_CRM_LEAD_NOT_FOUND");
+      await tx.insert(activityEvents).values({
+        organizationId:college.organizationId,collegeId:input.collegeId,
+        actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+        module:"PLACEMENTS",eventType:"RECRUITER_LEADS_CONTACT_UPDATED",
+        subjectType:"placement_tpo_lead",subjectId:leadId,
+        summary:"Recruiter contact details updated",
+        metadata:{updatedFields:Object.keys(input).filter(key=>key!=="collegeId")},
+      });
       return tpoLeadView(updated);
     });
   } catch (error) {
