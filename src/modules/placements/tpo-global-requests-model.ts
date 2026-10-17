@@ -6,6 +6,8 @@ export const globalTpoRequestsQuerySchema = z.object({
   age: z.enum(["ALL","OLDER_THAN_1_DAY","OLDER_THAN_2_DAYS","OLDER_THAN_7_DAYS","OLDER_THAN_30_DAYS"]).default("ALL"),
   sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST"]).default("URGENCY_FIRST"),
   search: z.string().trim().max(150).default(""),
+  urgentOnly: z.coerce.boolean().optional(),
+  jobId: z.string().uuid().optional(),
   page: z.coerce.number().int().min(1).max(100000).default(1),
   pageSize: z.coerce.number().int().refine(value=>[25,50,100].includes(value)).default(25),
 }).strict();
@@ -90,7 +92,7 @@ export function parseGlobalTpoRequestFilters(raw:unknown){
 }
 
 export function globalTpoRequestFirstPageHref(query:{
- status:string;age:string;sort:string;requestType:string;search:string;pageSize:number;
+ status:string;age:string;sort:string;requestType:string;search:string;pageSize:number;urgentOnly?:boolean;jobId?:string;
 }){
  const p=new URLSearchParams();
  p.set("status",query.status);
@@ -98,6 +100,8 @@ export function globalTpoRequestFirstPageHref(query:{
  p.set("sort",query.sort);
  if(query.requestType!=="ALL")p.set("requestType",query.requestType);
  if(query.search)p.set("search",query.search);
+ if(query.urgentOnly)p.set("urgentOnly","true");
+ if(query.jobId)p.set("jobId",query.jobId);
  p.set("page","1");p.set("pageSize",String(query.pageSize));
  return "/tpo/requests?"+p.toString();
 }
