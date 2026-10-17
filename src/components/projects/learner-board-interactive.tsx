@@ -99,7 +99,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
         {!readOnly && own && (task.sprintId===null||editable) && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
-        {task.sprintId===null && own ?
+        {task.sprintId===null && own && !readOnly ?
           <label className="mt-2 block text-xs font-semibold text-body">
             Pull into sprint
             <select defaultValue="" disabled={busy||!sprints.some(s=>s.status==="ACTIVE")}
