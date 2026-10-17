@@ -315,6 +315,10 @@ export function LearnerPlacementsDashboard({
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>
+                         <Link href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
+                           className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                           Ask to reschedule →
+                         </Link>
                       </li>
                     ))}</ul>}
                   {day.total>day.events.length?<p className="mt-1 text-xs text-muted-foreground">{day.total-day.events.length} more that day · open full calendar</p>:null}
