@@ -19,25 +19,28 @@ export default async function HrProfilePage() {
       <PageHeader
         eyebrow="Recruiter"
         title="Profile"
-        description="Your recruiter identity, company and college access."
+        description="Manage your recruiter details."
       />
 
       <section className="rounded-xl border border-border bg-surface p-5">
-        <h2 className="text-base font-semibold text-foreground">Your Details</h2>
+        <h2 className="text-base font-semibold text-foreground">Your details</h2>
+        <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <dl className="mt-4 grid gap-4 sm:grid-cols-2">
           <RecruiterDisplayNameEditor initialName={profile.displayName} updatedAt={profile.userUpdatedAt.toISOString()} />
           <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Email</dt>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
+            <p className="mt-1 text-xs text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
           </div>
           <RecruiterDesignationEditor initialTitle={profile.title} updatedAt={profile.profileUpdatedAt.toISOString()} />
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Mobile</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.phoneE164 ?? "Not provided"}</dd>
+            <p className="mt-1 text-xs text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
           </div>
         </dl>
         <p className="mt-4 text-xs text-muted-foreground">
-          Edit your first and last name above. They are saved together as your display name. Your designation can be edited separately. Email, mobile, company and college access remain centrally managed.
+          Edit your first and last name above. They are saved together as your display name. Your designation can be edited separately. Mobile editing is not available here yet; ask the placement cell to update it.
         </p>
       </section>
 
@@ -47,6 +50,7 @@ export default async function HrProfilePage() {
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
             <dd className="mt-1 text-sm text-foreground">{profile.companyName}</dd>
+            <p className="mt-1 text-xs text-muted-foreground">Your company comes from your work email. Ask 42 if its name or logo is wrong.</p>
           </div>
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Active college access</dt>
@@ -101,7 +105,7 @@ export default async function HrProfilePage() {
             id="recruiter-current-grants"
             className="text-base font-semibold text-foreground"
           >
-            Your current college access
+            College access
           </h2>
           <p className="mt-1 text-sm leading-6 text-muted-foreground">
             This is a read-only view of your active

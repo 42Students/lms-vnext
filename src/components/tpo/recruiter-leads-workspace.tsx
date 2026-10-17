@@ -595,6 +595,7 @@ export function RecruiterLeadsWorkspace({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-foreground">{TPO_OWNER_PAGE_COPY.recruiterLeads}</h1>
+           <p className="mt-1 text-sm text-body">Every company contact you find, and what you will do next.</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
@@ -795,7 +796,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
           </div>
           <p className="text-sm text-muted-foreground" aria-live="polite">
-            Showing {visible.length} of {rows.length} recruiter leads
+            {visible.length} of {rows.length} in this view
           </p>
           {freshInvite ? (
             <section className="rounded-lg border border-border bg-surface p-3" aria-label="Fresh recruiter invite link">
@@ -976,7 +977,8 @@ export function RecruiterLeadsWorkspace({
                       </td>
                       <td style={{display:visibleColumns.includes("Contact")?undefined:"none"}} className="px-4 py-3 font-medium">
                         <Link className="text-primary-text underline-offset-2 hover:underline"
-                          href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name}</Link>
+                          href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}>{lead.name||"Unnamed contact"}</Link>
+                         {lead.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{lead.designation}</p>:null}
                       </td>
                       <td style={{display:visibleColumns.includes("Company")?undefined:"none"}} className="px-4 py-3">{lead.companyName || "—"}</td>
                       <td style={{display:visibleColumns.includes("Status")?undefined:"none"}} className="px-4 py-3">{lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"}</td>
@@ -1045,7 +1047,8 @@ export function RecruiterLeadsWorkspace({
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
                           className="block text-primary-text underline-offset-2 hover:underline">
-                        <span className="block font-medium">{lead.name}</span>
+                        <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
+                         {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
                         </Link>
                         <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
-import { PageHeader } from "@/components/ui/page-header";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
@@ -84,8 +83,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   };
   return (
     <div className="space-y-6">
-      <PageHeader eyebrow="My Placements" title="Schedule"
-        description="Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice; review your booking details and ask to reschedule if you cannot attend" />
+      <p className="text-sm text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
       <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
         {([
           ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
