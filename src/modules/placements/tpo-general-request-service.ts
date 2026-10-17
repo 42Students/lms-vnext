@@ -5,7 +5,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementOffers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
@@ -77,6 +77,21 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
  return getDb().transaction(async tx=>{
   const college=await lockCollege(tx,member.collegeId);
   await verifyLearnerTx(tx,member.collegeId,member.id);
+  if(input.kind==="OFFER_ACCEPTANCE_DISPUTE"){
+   const [offer]=await tx.select({
+    id:placementOffers.id,
+    status:placementOffers.status,
+    acceptanceChannel:placementOffers.acceptanceChannel,
+    acceptedDisputableUntil:placementOffers.acceptedDisputableUntil,
+   }).from(placementOffers).where(and(
+    eq(placementOffers.id,input.offerId),
+    eq(placementOffers.membershipId,member.id),
+    eq(placementOffers.collegeId,member.collegeId),
+   )).for("update").limit(1);
+   if(!offer||offer.status!=="ACCEPTED"||offer.acceptanceChannel!=="EXTERNAL_IMPORT"||
+     !offer.acceptedDisputableUntil||offer.acceptedDisputableUntil.getTime()<=Date.now())
+      throw new TpoGeneralRequestError("TARGET_CHANGED");
+  }
   if(input.kind==="REGISTRATION_CHANGE"){
    const rows=await tx.select({cohortId:learnerProgramEnrollments.cohortId})
     .from(learnerProgramEnrollments).where(and(eq(learnerProgramEnrollments.membershipId,member.id),
