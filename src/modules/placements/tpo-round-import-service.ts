@@ -155,6 +155,7 @@ export async function stageTpoRoundImport(
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
   if(reason){
+   if(exact.length===1)problemApplications.add(exact[0]!.applicationId);
    // Invalid or ambiguous rows must never turn a matched student's missing
    // result into an automatic failure under MARK_NOT_CLEARED.
    if(match&&candidates.has(match))problemApplications.add(match);
