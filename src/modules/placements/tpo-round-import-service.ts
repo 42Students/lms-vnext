@@ -115,6 +115,7 @@ export async function stageTpoRoundImport(
  if([...skippedLines,...override.keys()].some(line=>!knownLines.has(line)))
   throw new Error("A skipped or matched row is not present in the uploaded file. Preview the file again.");
  const explicitlySkippedApplications=new Set<string>();
+ const problemApplications=new Set<string>();
  for(const row of inputRows){
   if(skippedLines.has(row.line)){
    const unique=matchSource(row,roster.roster);
@@ -131,6 +132,9 @@ export async function stageTpoRoundImport(
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
   if(reason){
+   // Invalid or ambiguous rows must never turn a matched student's missing
+   // result into an automatic failure under MARK_NOT_CLEARED.
+   if(match&&candidates.has(match))problemApplications.add(match);
    rejected.push({applicationId:match??"",line:row.line,status:"skipped",reason});
    continue;
   }
@@ -145,7 +149,8 @@ export async function stageTpoRoundImport(
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
-     !explicitlySkippedApplications.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
+     !explicitlySkippedApplications.has(candidate.applicationId)&&
+     !problemApplications.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
     entries.push({line:0,applicationId:candidate.applicationId,outcome:"FAIL",rank:null,
      message:"No passing result was reported by the company."});
    }
