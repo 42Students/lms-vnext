@@ -14,14 +14,15 @@ import type { RequestContext } from "@/modules/identity/context";
 export type TenantForAccess =
   | { kind: "platform" }
   | { kind: "college"; collegeId: string }
-  | { kind: "unknown" };
+  | { kind: "unknown" }
+  | { kind: "unavailable" };
 
 export function isTenantAccessAllowed(
   context: RequestContext,
   tenant: TenantForAccess,
 ) {
   if (tenant.kind === "platform") return true;
-  if (tenant.kind === "unknown") return false;
+  if (tenant.kind === "unknown" || tenant.kind === "unavailable") return false;
 
   if (context.membership?.collegeId === tenant.collegeId) return true;
 

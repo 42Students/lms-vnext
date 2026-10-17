@@ -161,7 +161,7 @@ export function KnownErrorsWorkspace({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pending, setPending] = useState(false);
+  const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
 
   async function markViewed() {
     try {
