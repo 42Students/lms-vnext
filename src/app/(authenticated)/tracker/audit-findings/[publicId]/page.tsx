@@ -3,7 +3,7 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
-import {getIndependentAuditFinding,listIndependentAuditFindingEvents} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {getIndependentAuditFinding,listIndependentAuditFindingEvents,listIndependentAuditFindings} from "@/modules/bug-tracker/independent-audit-findings-service";
 import {IndependentFindingActions} from "@/components/tracker/independent-finding-actions";
 import {IndependentFindingCopyAction} from "@/components/tracker/independent-finding-copy-action";
 export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
@@ -14,7 +14,11 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
  const {publicId}=await params;
  const finding=await getIndependentAuditFinding(await getCurrentRequestContext(),publicId);
  if(!finding)notFound();
- const events=await listIndependentAuditFindingEvents(await getCurrentRequestContext(),finding.id);
+ const context=await getCurrentRequestContext();
+ const [events,candidates]=await Promise.all([
+  listIndependentAuditFindingEvents(context,finding.id),
+  listIndependentAuditFindings(context,{q:"",view:"ALL",statuses:[],severities:[],kinds:[],area:"",page:1}),
+ ]);
  const details=[
   ["Summary",finding.summary],["Steps",finding.steps],["Expected",finding.expected],
   ["Actual",finding.actual],["Evidence",finding.evidence],["Suggested fix",finding.suggestedFix],
@@ -34,12 +38,15 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
     <div key={label} className="mt-3"><h3 className="text-sm font-semibold">{label}</h3>
      <ul className="list-disc pl-5 text-sm">{values.map(value=><li key={value} className="break-all">{value}</li>)}</ul></div>)}
   </section>
+  <Link href={"/tracker/audit-findings?q="+encodeURIComponent(finding.title.slice(0,100))}
+   className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Looks similar</Link>
   <IndependentFindingCopyAction finding={{
    id:finding.externalId,title:finding.title,summary:finding.summary,steps:finding.steps,
    expected:finding.expected,actual:finding.actual,sourceRepo:finding.sourceRepo,
    sourcePath:finding.sourcePath,severity:finding.severity,status:finding.status,
   }}/>
-  <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}/>
+  <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}
+   candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
   <section className="rounded-xl border border-border bg-surface p-4">
    <h2 className="font-semibold">Audit event history</h2>
    <ol className="mt-3 space-y-2 text-sm">{events.map(event=><li key={event.id} className="border-b border-border pb-2">
