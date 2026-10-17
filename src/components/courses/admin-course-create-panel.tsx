@@ -300,17 +300,31 @@ export function AdminCourseCreatePanel({
             <FieldLabel htmlFor="course-name">{COLLEGE_COURSES_COPY.nameLabel}</FieldLabel>
             <Input id="course-name" value={courseName} onChange={(event) => setCourseName(event.target.value)} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
           </div>
-          <div>
+          {superAdmin?<div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+            <div>
+              <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
+              <Input id="course-short-title" value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120} required />
+            </div>
+            <div>
+              <FieldLabel htmlFor="course-official-code">Official course code (optional)</FieldLabel>
+              <Input id="course-official-code" value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+            </div>
+            <div>
+              <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
+              <Input id="course-card-color" value={cardColor} onChange={event=>setCardColor(event.target.value)}
+                maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="#1677FF"/>
+            </div>
+          </div>:<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
             <Input id="course-code" value={courseCode} onChange={(event) => setCourseCode(event.target.value)} placeholder="CS201" maxLength={64} required />
-          </div>
+          </div>}
           <div className="sm:col-span-2">
             <FieldLabel htmlFor="course-description">Description</FieldLabel>
             <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => setCourseDescription(event.target.value)} maxLength={5000} placeholder="Optional Course description" />
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" disabled={pending || !courseDepartmentId || !courseName.trim() || !courseCode.trim()}>Create Course</Button>
+          <Button type="submit" disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
         </div>
       </form>
 
