@@ -40,6 +40,9 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   return ()=>controller.abort();
  },[selectionKey,audienceRetry]);
  async function save(){
+  if(selectedLeadIds.length&&(!audience||audienceStatus!=="ready"||audience.unavailable>0||audience.eligible===0)){
+   setError("Selected recruiters could not be confirmed as eligible. Review the audience before saving.");return;
+  }
   const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
