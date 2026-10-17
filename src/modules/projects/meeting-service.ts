@@ -403,7 +403,7 @@ export async function transitionProjectMeeting(
       .update(projectMeetings)
       .set({
         status: "COMPLETED",
-        outcome: input.outcome ?? null,
+        outcome: input.outcome ?? meeting.outcome ?? null,
         cancellationNote: null,
         updatedAt: new Date(),
       })
