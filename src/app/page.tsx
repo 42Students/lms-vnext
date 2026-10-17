@@ -184,8 +184,8 @@ export default async function HomePage({
         <div className="mt-8">
           {tenant.kind === "unavailable" ? (
             <div role="alert" className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm text-body">
-              <h2 className="font-semibold">We couldn't confirm this college right now</h2>
-              <p className="mt-2">This address may be correct, but its settings didn't load. Try again in a moment, or use the main sign-in page.</p>
+              <h2 className="font-semibold">We couldn&apos;t confirm this college right now</h2>
+              <p className="mt-2">This address may be correct, but its settings didn&apos;t load. Try again in a moment, or use the main sign-in page.</p>
               <a href="https://42lms.com/" className="mt-3 inline-block font-semibold text-primary-text underline">
                 Use the main sign-in page (42lms.com)
               </a>
