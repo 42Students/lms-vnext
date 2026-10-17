@@ -5,7 +5,7 @@ describe("TPO Students phone presentation and scoped selection summary",()=>{
  it("TPO-students-48 announces selected of filtered view with exact scoped totals",()=>{
   const selection=src("src/components/tpo/tpo-students-selection.tsx");
   const page=src("src/app/(authenticated)/tpo/students/page.tsx");
-  expect(selection).toContain('{visibleIds.length} of {totalCount} in this view');
+  expect(selection).toContain('{visibleIds.length} shown of {totalCount} in this view');
   expect(selection).toContain('selectedCount} selected');
   expect(selection).toContain('role="status" aria-live="polite"');
   expect(page).toContain('<TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>');

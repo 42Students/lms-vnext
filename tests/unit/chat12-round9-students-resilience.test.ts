@@ -38,10 +38,11 @@ describe("chat-12 Students S2/S3 audited gap guardrails",()=>{
   expect(bulk()).toContain('title="Share selected applicants with the company"');
   expect(bulk()).not.toContain("window.confirm(");
  });
- it("TPO-students-17 counts selections accessibly and limits Ctrl+A to the visible page",()=>{
-  expect(sheet()).toContain("selected of {rows.length} on this visible page.");
+ it("TPO-students-17 counts selections accessibly and limits Ctrl+A to authorized filtered students",()=>{
+  expect(sheet()).toContain("selected of {shared?.totalCount??rows.length} in the authorized view.");
   expect(sheet()).toContain('event.key.toLowerCase()==="a"');
-  expect(sheet()).toContain("rows.slice(0,100)");
+  expect(sheet()).toContain("shared?.allIds??rows.map(row=>row.membershipId)");
+  expect(students()).toContain("roster.total<=5000");
  });
  it("TPO-students-28 names the furthest known company without fabricating a placement",()=>{
   expect(sheet()).toContain('row.bestCompany?row.bestCompany+": "');

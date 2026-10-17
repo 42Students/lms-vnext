@@ -51,7 +51,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         setSavedMemberId(body?.membershipId??null);
         setResult(isPartial
           ? "Partially registered. Some enrollment steps need attention. Check the student roster before retrying."
-          : "Student registered and enrolled successfully.");
+          : "Student registered successfully! They can now login with their mobile number.");
         if(!isPartial){
           setFirstName("");setLastName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
           router.refresh();
@@ -67,6 +67,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       <input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Mobile Number
+      <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
       <input required type="tel" placeholder="9876543210" value={phoneE164}
         onChange={e=>setPhone(e.target.value)} className={field}/>
     </label>
