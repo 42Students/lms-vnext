@@ -6,12 +6,13 @@ type Existing={id:string;lessonId:string;deliveryId:string|null;title:string;ext
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
 type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 type Delivery={deliveryId:string;offeringId:string;sectionName:string;sectionCode:string};
-const dateInput=(iso:string|null)=>iso?new Intl.DateTimeFormat("sv-SE",{
- timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+type MeetingZone="Asia/Kolkata"|"UTC";
+const dateInput=(iso:string|null,zone:MeetingZone="Asia/Kolkata")=>iso?new Intl.DateTimeFormat("sv-SE",{
+ timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(iso)).replace(" ","T"):"";
-function isoIst(local:string){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))throw Error("Enter date and time");
- const date=new Date(local+":00+05:30");
+function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(local))throw Error("Enter date and time");
+ const date=new Date(local+":00"+(zone==="UTC"?"+00:00":"+05:30"));
  if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
  return date.toISOString();
 }
@@ -28,6 +29,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [listLessonId,setListLessonId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
+ const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
  const allowedDeliveries=deliveries.filter(row=>row.offeringId===selectedLesson?.offeringId);
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
@@ -59,10 +61,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
       !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
    }
-   const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:kind==="RESOURCE"?{notes:notes.trim()||null}:{startsAt:isoIst(start),endsAt:isoIst(end)};
+   const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:kind==="RESOURCE"?{notes:notes.trim()||null}:{startsAt:isoIst(start,timeZone),endsAt:isoIst(end,timeZone)};
    if(kind==="YOUTUBE"&&(!duration.trim()||!Number.isInteger(Number(duration))||Number(duration)<1||
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
-   if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
+   if(kind==="LIVE_CLASS"&&new Date(isoIst(end,timeZone)).getTime()<=new Date(isoIst(start,timeZone)).getTime())
     throw Error("End time must be after start time");
    if(editing&&deliveryId&& !allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
     setError("This Section is no longer active for the selected Lesson.");return;
@@ -156,10 +158,16 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     </label>:kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
     <input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
-    <label className="text-sm">Start date and time (IST)
+    <label className="text-sm">Time Zone
+     <select value={timeZone} onChange={event=>setTimeZone(event.target.value as MeetingZone)}
+      className="mt-1 w-full rounded border bg-background p-2">
+      <option value="Asia/Kolkata">India Standard Time (IST)</option>
+      <option value="UTC">UTC</option>
+     </select></label>
+    <label className="text-sm">Start Date and Time
      <input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
       className="mt-1 w-full rounded border bg-background p-2"/></label>
-    <label className="text-sm">End date and time (IST)
+    <label className="text-sm">End Date and Time
      <input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
       className="mt-1 w-full rounded border bg-background p-2"/></label>
    </>}
