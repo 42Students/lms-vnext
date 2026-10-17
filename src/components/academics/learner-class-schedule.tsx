@@ -424,8 +424,7 @@ export function LearnerClassSchedule({
       <div className="grid gap-3 sm:grid-cols-2">
         <Metric
           label="Today"
-          value={courseBasePath==="/learn/courses"?todayEvents.length+" today":
-            todayEvents.length+" "+(todayEvents.length===1?"class":"classes")}
+          value={todayEvents.length+" today"}
           tooltip={courseBasePath==="/learn/courses"?todayEvents.map(e=>scheduleEventTooltip(e)).join("\n\n"):undefined}
         />
         <Metric
@@ -440,7 +439,7 @@ export function LearnerClassSchedule({
                   timeZone: "Asia/Kolkata",
                 }).format(
                   new Date(nextEvent.startsAt),
-                )} · ${nextEvent.courseName || nextEvent.title}`
+                )} · Next: ${nextEvent.courseName || nextEvent.title}`
               : "No upcoming classes"
           }
         />
@@ -602,7 +601,7 @@ export function LearnerClassSchedule({
                   )
                 }
               >
-                All
+                All courses
               </Button>
               {courses.map((course) => (
                 <Button

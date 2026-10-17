@@ -213,8 +213,7 @@ export function SuperAdminHrDetailDrawer({
 
             {account.grants.length === 0 ? (
               <p className="mt-4 rounded-lg bg-muted p-4 text-sm text-muted-foreground">
-                No active college grants are visible
-                for this recruiter.
+                No colleges yet.
               </p>
             ) : (
               <ul className="mt-4 space-y-3">
@@ -250,7 +249,7 @@ export function SuperAdminHrDetailDrawer({
             {account.status === "ACTIVE" ? (
               <div className="mt-5 border-t border-border pt-4">
                 <h4 className="m-0 text-sm font-semibold text-foreground">
-                  Grant another college
+                  Add a college
                 </h4>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
                   Only active relationships for{" "}
