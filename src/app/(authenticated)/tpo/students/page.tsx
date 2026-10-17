@@ -386,6 +386,13 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
          </label>)}
+        <label className="text-sm font-semibold">CGPA recorded
+          <select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option><option value="YES">Recorded</option>
+            <option value="NO">No recorded CGPA</option>
+          </select>
+        </label>
         <label className="text-sm font-semibold">Offer waiting on answer
           <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
