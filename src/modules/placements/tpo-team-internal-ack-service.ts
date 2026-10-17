@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,inArray,isNull,or} from "drizzle-orm";
+import {and,eq,inArray,isNull,or,like} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalReads} from "@/db/schema/tpo-internal";
@@ -40,7 +40,8 @@ export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:
    .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
    .where(and(
     eq(inAppNotifications.userId,context.user.id),
-    eq(inAppNotifications.actionHref,"/tpo/team/"+thread.id),
+    or(eq(inAppNotifications.actionHref,"/tpo/team/"+thread.id),
+       like(inAppNotifications.actionHref,"/tpo/team/"+thread.id+"?m=%")),
     isNull(inAppNotifications.readAt),
     eq(activityEvents.collegeId,college.id),
     eq(activityEvents.organizationId,college.organizationId),

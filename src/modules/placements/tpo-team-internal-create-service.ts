@@ -67,10 +67,12 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
    dedupeKey:key,
   }).returning({id:activityEvents.id});
   if(!event)throw new Error("TEAM_THREAD_CREATE_FAILED");
+  const [actor]=await tx.select({displayName:users.displayName})
+   .from(users).where(eq(users.id,context.user.id)).limit(1);
   await tx.insert(inAppNotifications).values({
    userId:recipient.userId,eventId:event.id,
-   title:"Private TPO conversation invitation",
-   body:"A TPO colleague started a private conversation with you.",
+   title:(actor?.displayName?.trim()||"TPO colleague")+" added you to a conversation",
+   body:input.topic.slice(0,120),
    actionHref:"/tpo/team/"+thread.id,
   });
   return thread;

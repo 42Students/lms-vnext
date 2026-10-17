@@ -116,7 +116,7 @@ export default async function TpoTeamPage({searchParams}:{
         </div>
         <p className="mt-1 truncate text-xs text-body">With {row.counterpartName??"Team member"} · Private conversation</p>
         {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
-        <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
+        <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
        </li>)}</ul>:
        <div className="mt-2 space-y-2 text-sm text-body"><p role="status">{search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}</p>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters</Link>:null}</div>}
     <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-primary-text">
