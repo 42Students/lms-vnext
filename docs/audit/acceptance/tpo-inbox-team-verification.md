@@ -125,3 +125,11 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 ### PostgreSQL evidence for TPO-inbox-team-57
 
 `tests/integration/tpo-inbox-team-colleague-notices-chat2.test.ts` named test **TPO-inbox-team-57 permits a different authorized same-college TPO to edit then delete without losing optimistic concurrency** creates a notice under one actor, edits/deletes under a distinct persisted TPO actor and checks stale-version rejection and persisted state. It runs only on the orchestrator's approved disposable DB10 target. **Not executed by builder.**
+
+## Builder chat-2 continuation — Notifications history and refresh
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-65 | DONE (source; unrun) | TPO-only optional `allLabel` in shared `NotificationToolbar`: Latest n/All (n), exact subtitle and empty strings on `src/app/(authenticated)/tpo/notifications/page.tsx`; named **TPO-inbox-team-65** in `tests/unit/tpo-notifications-history-chat2.test.ts`. |
+| TPO-inbox-team-67 | DONE (source; unrun) | `tpo-notifications-service.ts` applies 30-day cutoff to unread count and view. First page now explains older unread items, with cursor history replacing legacy 200 ceiling as a documented enhancement. Named **TPO-inbox-team-67** same unit suite. |
+| TPO-inbox-team-68 | DONE (source; unrun) | `src/components/tpo/tpo-notification-refresh.tsx` probes bounded same-origin data before refreshing cards, keeps stale cards on transient failure and exposes exact legacy stale and refresh messages with Retry; existing loading skeleton and route Retry remain. Named **TPO-inbox-team-68** same unit suite. |
