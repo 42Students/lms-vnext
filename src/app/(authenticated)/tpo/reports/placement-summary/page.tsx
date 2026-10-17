@@ -51,6 +51,19 @@ export default async function TpoPlacementSummaryPage({
   });
 
   const { metrics, byDrive, byCompany } = workspace.report;
+  const dimensions=await getTpoReportDriveDimensions(context,{collegeId:context.membership.collegeId,
+   seasonId:workspace.selectedSeasonId,jobId:workspace.selectedJobId});
+  const companyId=first(query.companyId)??"";
+  const workMode=first(query.workMode)??"";
+  const payCategory=first(query.payCategory)??"";
+  const validFilters=(!companyId||byCompany.some(item=>item.companyId===companyId))&&
+   (!workMode||["ONSITE","HYBRID","REMOTE"].includes(workMode))&&
+   (!payCategory||["CTC_RECORDED","STIPEND_RECORDED","NOT_RECORDED"].includes(payCategory));
+  const shownDrives=validFilters?byDrive.filter(row=>{
+   const dim=dimensions.get(row.jobId);
+   return dim&&(!companyId||dim.companyId===companyId)&&(!workMode||dim.workMode===workMode)&&
+    (!payCategory||dim.payCategory===payCategory);
+  }):[];
 
   return (
     <div data-tpo-presentation-report className="space-y-6">
