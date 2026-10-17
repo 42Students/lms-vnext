@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
 
 test.describe("GR-80 Mentor notifications and calendar failure behaviour", () => {
   test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
