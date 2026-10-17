@@ -69,7 +69,7 @@ export async function undoTpoRecruiterBulkRun(context:RequestContext,raw:unknown
    leadId:string;beforeStage?:string;afterStage?:string;
    beforeReason?:string|null;afterReason?:string|null;
    beforeUntil?:string|null;afterUntil?:string|null;
-   beforeOwnerId?:string|null;afterOwnerId?:string;
+   beforeOwnerId?:string|null;afterOwnerId?:string;afterUpdatedAt:string;
   }>;
   if(new Set(changed.map(row=>row.leadId)).size!==changed.length)
    throw new TpoBulkUndoError("INVALID_SNAPSHOT");
