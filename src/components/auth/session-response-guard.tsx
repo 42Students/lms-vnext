@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { sessionExpiredHref } from "@/lib/return-to";
 
 /**
  * vNext uses first-party opaque device sessions, not refresh tokens. A stale
@@ -26,7 +27,10 @@ export function SessionResponseGuard() {
       catch { /* Original response body stays available for the caller. */ }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
-        window.location.assign(reason === "SESSION_REVOKED" ? "/?auth=revoked" : "/?auth=expired");
+        window.location.assign(sessionExpiredHref(
+          window.location.pathname + window.location.search,
+          reason === "SESSION_REVOKED" ? "revoked" : "expired",
+        ));
       }
       return response;
     };
