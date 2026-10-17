@@ -71,7 +71,8 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
       eq(collegeMemberships.collegeId,scope.collegeId))):[];
   const eventPerson=(id:string)=>people.concat(otherActors).find(person=>
     person.membershipId===id)?.displayName??"Project member";
-  return {events:immutableEvents.map(event=>({...event,
+  return {reviewedByName:reviewer?.name??null,
+    events:immutableEvents.map(event=>({...event,
       actorName:eventPerson(event.actorMembershipId),
     })),createdByName:personName(row.createdByMembershipId),
     submittedByName:personName(row.submittedByMembershipId),
