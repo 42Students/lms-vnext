@@ -26,6 +26,8 @@ import {getRecruiterSelfProfile} from "@/modules/placements/recruiter-profile-se
 import {recruiterTodayGreeting} from "@/modules/placements/recruiter-today-greeting-model";
 import {recruiterTodayWaitingRequests} from "@/modules/placements/recruiter-today-waiting-model";
 import {recruiterTodayWeekEvents} from "@/modules/placements/recruiter-today-week-events-model";
+import {HrUnsentDriveAlert} from "@/components/hr/hr-unsent-drive-alert";
+import {hrDriveSessionStorageKey} from "@/modules/placements/hr-unsent-draft-storage-model";
 
 const querySchema = z.object({collegeId: z.string().uuid().optional()}).strict();
 function first(value: string | string[] | undefined) {return Array.isArray(value) ? value[0] : value;}
@@ -116,6 +118,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
         className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Request a drive
       </Link>} />
+    <HrUnsentDriveAlert collegeId={selectedId}
+      storageKey={hrDriveSessionStorageKey(context.user.id,selectedId,null)}/>
     {grants.length > 1 ? <nav aria-label="Choose college" className="flex flex-wrap gap-2">{grants.map(item=>
       <Link key={item.id} href={"/hr/home?collegeId="+encodeURIComponent(item.collegeId)}
         aria-current={item.collegeId === selectedId ? "page" : undefined}
