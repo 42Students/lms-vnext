@@ -1,3 +1,6 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -61,7 +64,7 @@ export default async function TpoUnplacedReportPage({
   });
   const filteredExportHref="/api/placements/tpo/reports/unplaced?"+exportParams.toString();
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Unplaced students"
@@ -69,6 +72,8 @@ export default async function TpoUnplacedReportPage({
         actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
       />
 
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/unplaced" collegeId={context.membership.collegeId}/></Suspense>
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
        {workspace.selectedSeasonId?<input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}

@@ -1,3 +1,6 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -45,7 +48,7 @@ export default async function TpoJoiningStatusReportPage({
   const { totals, byDrive, byCompany } = workspace.details.joining;
 
   return (
-    <div className="space-y-6">
+    <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
         title="Joining outcomes"
@@ -57,6 +60,8 @@ export default async function TpoJoiningStatusReportPage({
         className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Review joining follow-ups →
       </Link>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/joining-status" collegeId={context.membership.collegeId}/></Suspense>
+      <TpoReportPresentation />
       <ReportNavigation workspace={workspace} />
       <ReportFilters
         workspace={workspace}

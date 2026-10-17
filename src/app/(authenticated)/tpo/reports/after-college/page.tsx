@@ -1,3 +1,6 @@
+import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -21,10 +24,12 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  const branches=new Map(data.branches.map(row=>[row.id,row.name]));
  if(branchId&&!branches.has(branchId))return <p role="alert">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
- return <main className="space-y-5">
+ return <main data-tpo-presentation-report className="space-y-5">
   <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text underline">← All reports</Link>
+      <TpoReportPresentation />
   <PageHeader eyebrow="TPO · Reports" title="After college"
    description="Student-reported destinations after graduation, including higher studies, entrepreneurship, competitive exams and job searching."/>
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/after-college" collegeId={ctx.membership.collegeId}/></Suspense>
   {!data.available?<p role="status" className="rounded border border-border p-4">
     After-college outcomes storage is unavailable. This page does not infer destinations.
    </p>:<>
