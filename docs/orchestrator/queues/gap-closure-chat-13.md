@@ -131,3 +131,5 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-32 — DONE in source: college, descendant, learner and bulk access history in one 50-row actor/scope list with stable cursor; orchestrator DB/browser checks pending.
 
 - SA-tenants-modules-30 — NOT-A-GAP: descendant locks already writable for the four academic scope levels; a lock without enabled value is impossible under the persisted NOT NULL schema.
+
+- SA-tenants-modules-31 — DONE in source: learner trace now includes real placement cell decision, reason, actor and date with college/scope filtering and learner>class>batch precedence; runtime verification pending.
