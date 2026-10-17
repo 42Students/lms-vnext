@@ -167,7 +167,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-75 | S4 | STATE | OPEN |
 | MEN-projects-meetings-77 | S4 | A11Y | FIXED-ON-MAIN |
 
-## faculty/attendance-grades (22: DONE 15, NOT-A-GAP 3, OPEN 1, FIXED-ON-MAIN 3)
+## faculty/attendance-grades (22: OPEN 1, DONE 17, FIXED-ON-MAIN 1, NOT-A-GAP 3)
 
 Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/faculty-attendance-grades-verification.md`.
 
@@ -175,12 +175,12 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 |---|---|---|---|
 | FAC-attendance-grades-01 | S2 | SIDE-EFFECT | OPEN |
 | FAC-attendance-grades-02 | S2 | STATE | DONE |
-| FAC-attendance-grades-04 | S3 | COPY | FIXED-ON-MAIN |
+| FAC-attendance-grades-04 | S3 | COPY | DONE |
 | FAC-attendance-grades-05 | S3 | MISSING-FILTER | DONE |
 | FAC-attendance-grades-06 | S3 | COPY | DONE |
 | FAC-attendance-grades-07 | S3 | VALIDATION | DONE |
 | FAC-attendance-grades-14 | S3 | COPY | DONE |
-| FAC-attendance-grades-20 | S3 | RESPONSIVE | FIXED-ON-MAIN |
+| FAC-attendance-grades-20 | S3 | RESPONSIVE | DONE |
 | FAC-attendance-grades-22 | S3 | COPY | DONE |
 | FAC-attendance-grades-03 | S4 | STATE | FIXED-ON-MAIN |
 | FAC-attendance-grades-08 | S4 | COPY | DONE |
