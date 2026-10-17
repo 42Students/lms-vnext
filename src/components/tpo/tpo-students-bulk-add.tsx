@@ -54,7 +54,7 @@ export function TpoStudentsBulkAdd({
   const membersById=new Map(available.map(learner=>[learner.membershipId,learner]));
   const names = new Map(available.map(learner=>[learner.membershipId,learner.displayName]));
   const pageSelected=selected.filter(id=>membersById.has(id));
-  const selectionFingerprint=JSON.stringify({jobId,roleOptionId,ids:pageSelected,
+  const selectionFingerprint=JSON.stringify({jobId:driveId,roleOptionId,ids:pageSelected,
    includeIneligible,reason:includeIneligible?overrideReason.trim():""});
   const visibleDrives=drives.filter(drive=>
    (drive.companyName+" "+drive.title).toLocaleLowerCase("en-IN").includes(driveSearch.toLocaleLowerCase("en-IN").trim()));
