@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
+import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  approach:string|null;
  priority:string;estimatePoints:number|null;};
