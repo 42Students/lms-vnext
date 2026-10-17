@@ -101,6 +101,7 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   const {rearrangeLessonIds,collegeLessonBulkOrderSchema}=await import("@/modules/courses/college-lesson-order-model");
   const ids=["10000000-0000-4000-8000-000000000001","10000000-0000-4000-8000-000000000002","10000000-0000-4000-8000-000000000003"];
   expect(rearrangeLessonIds(ids,ids[2],ids[0])).toEqual([ids[2],ids[0],ids[1]]);
+  expect(rearrangeLessonIds(ids,ids[0],ids[1])).toEqual([ids[1],ids[0],ids[2]]);
   const payload={learningPathId:ids[0],expected:ids.map((id,sequence)=>({id,sequence})),orderedIds:[ids[2],ids[0],ids[1]]};
   expect(collegeLessonBulkOrderSchema.safeParse(payload).success).toBe(true);
   expect(collegeLessonBulkOrderSchema.safeParse({...payload,orderedIds:[ids[1],ids[1],ids[0]]}).success).toBe(false);
