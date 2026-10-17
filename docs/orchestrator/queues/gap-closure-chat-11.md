@@ -135,14 +135,14 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
-## mentor/projects-meetings-part2 (25: DONE 12, OPEN 9, FIXED-ON-MAIN 4)
+## mentor/projects-meetings-part2 (25: FIXED-ON-MAIN 3, DONE 14, OPEN 8)
 
 Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meetings-part2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`.
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | MEN-projects-meetings-64 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
-| MEN-projects-meetings-66 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| MEN-projects-meetings-66 | S2 | SIDE-EFFECT | DONE |
 | MEN-projects-meetings-72 | S2 | SIDE-EFFECT | OPEN |
 | MEN-projects-meetings-53 | S3 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-54 | S3 | MISSING-FIELD | DONE |
@@ -152,7 +152,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-60 | S3 | STATE | DONE |
 | MEN-projects-meetings-61 | S3 | COPY | DONE |
 | MEN-projects-meetings-63 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| MEN-projects-meetings-65 | S3 | COPY | OPEN |
+| MEN-projects-meetings-65 | S3 | COPY | DONE |
 | MEN-projects-meetings-67 | S3 | COPY | DONE |
 | MEN-projects-meetings-68 | S3 | STATE | DONE |
 | MEN-projects-meetings-70 | S3 | COPY | DONE |
@@ -167,7 +167,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-75 | S4 | STATE | OPEN |
 | MEN-projects-meetings-77 | S4 | A11Y | FIXED-ON-MAIN |
 
-## faculty/attendance-grades (22: OPEN 1, DONE 17, FIXED-ON-MAIN 1, NOT-A-GAP 3)
+## faculty/attendance-grades (22: OPEN 1, DONE 18, NOT-A-GAP 3)
 
 Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/faculty-attendance-grades-verification.md`.
 
@@ -182,7 +182,7 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | FAC-attendance-grades-14 | S3 | COPY | DONE |
 | FAC-attendance-grades-20 | S3 | RESPONSIVE | DONE |
 | FAC-attendance-grades-22 | S3 | COPY | DONE |
-| FAC-attendance-grades-03 | S4 | STATE | FIXED-ON-MAIN |
+| FAC-attendance-grades-03 | S4 | STATE | DONE |
 | FAC-attendance-grades-08 | S4 | COPY | DONE |
 | FAC-attendance-grades-09 | S4 | COPY | DONE |
 | FAC-attendance-grades-10 | S4 | MISSING-ACTION | DONE |
