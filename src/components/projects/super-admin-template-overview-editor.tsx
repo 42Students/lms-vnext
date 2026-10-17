@@ -1,0 +1,78 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {projectMutation} from "./project-api";
+import {projectTemplateBlueprintSchema,type ProjectTemplateBlueprint} from "@/modules/projects/validation";
+const field="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3 py-2 text-sm";
+const lines=(list?:string[])=>list?.join("\n")??"";
+const array=(value:string)=>value.split("\n").map(v=>v.trim()).filter(Boolean);
+export function SuperAdminTemplateOverviewEditor({templateId,title,summary,version,blueprint}:{
+ templateId:string;title:string;summary:string|null;version:number;blueprint:ProjectTemplateBlueprint;
+}){
+ const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false),
+ [error,setError]=useState(""),[message,setMessage]=useState("");
+ const [courseLabel,setCourseLabel]=useState(blueprint.overview.courseLabel??""),
+ [phase,setPhase]=useState(blueprint.overview.phase??""),
+ [goal,setGoal]=useState(blueprint.overview.goal??""),
+ [description,setDescription]=useState(blueprint.overview.description??""),
+ [deliverables,setDeliverables]=useState(lines(blueprint.overview.deliverables)),
+ [done,setDone]=useState(lines(blueprint.overview.definitionOfDone)),
+ [personas,setPersonas]=useState(lines(blueprint.overview.personas)),
+ [submissionType,setSubmissionType]=useState(blueprint.overview.submissionType??"LINK"),
+ [instructions,setInstructions]=useState(blueprint.overview.submissionInstructions??"");
+ async function save(){
+  const updated={...blueprint,overview:{
+   ...blueprint.overview,goal:goal.trim()||undefined,description:description.trim()||undefined,
+   courseLabel:courseLabel.trim()||undefined,phase:phase.trim()||undefined,
+   deliverables:array(deliverables),definitionOfDone:array(done),personas:array(personas),
+   submissionType:submissionType as "LINK"|"FILE"|"TEXT",
+   submissionInstructions:instructions.trim()||undefined,
+  }};
+  const parsed=projectTemplateBlueprintSchema.safeParse(updated);
+  if(!parsed.success){setError(parsed.error.issues[0]?.message??"Invalid overview");return;}
+  if(!window.confirm("Save template Overview as a new version?"))return;
+  setPending(true);setError("");
+  try{
+   await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId),"PATCH",{
+    title,summary:summary??undefined,expectedVersion:version,
+    blueprint:parsed.data,changeNote:"Updated template overview",
+   });
+   setMessage("Template Overview saved.");setOpen(false);router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:"Could not save overview");}
+  finally{setPending(false);}
+ }
+ return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  <button type="button" onClick={()=>setOpen(x=>!x)}
+   className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold">
+   {open?"Close Overview editor":"Edit Overview"}
+  </button>
+  {open?<div className="grid gap-3 sm:grid-cols-2">
+   <label className="text-sm font-semibold">Course label
+    <input className={field} maxLength={160} value={courseLabel} onChange={e=>setCourseLabel(e.target.value)}/></label>
+   <label className="text-sm font-semibold">Phase
+    <input className={field} maxLength={120} value={phase} onChange={e=>setPhase(e.target.value)}/></label>
+   <label className="text-sm font-semibold sm:col-span-2">Goal
+    <textarea className={field+" min-h-16"} maxLength={2000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+   <label className="text-sm font-semibold sm:col-span-2">Description
+    <textarea className={field+" min-h-20"} maxLength={4000} value={description} onChange={e=>setDescription(e.target.value)}/></label>
+   {([{label:"Deliverables (one per line)",value:deliverables,set:setDeliverables},
+      {label:"Definition of done (one per line)",value:done,set:setDone},
+      {label:"Personas (one per line)",value:personas,set:setPersonas}]).map(item=>
+    <label key={item.label} className="text-sm font-semibold sm:col-span-2">{item.label}
+     <textarea className={field+" min-h-20"} value={item.value} onChange={e=>item.set(e.target.value)}/>
+    </label>)}
+   <label className="text-sm font-semibold">Submission type
+    <select className={field} value={submissionType} onChange={e=>setSubmissionType(e.target.value)}>
+     <option value="LINK">Link</option><option value="FILE">File upload</option><option value="TEXT">Text</option>
+    </select></label>
+   <label className="text-sm font-semibold sm:col-span-2">Submission instructions
+    <textarea className={field+" min-h-20"} maxLength={4000} value={instructions}
+     onChange={e=>setInstructions(e.target.value)}/></label>
+   <div className="sm:col-span-2"><button type="button" disabled={pending}
+     onClick={()=>void save()} className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-primary-foreground">
+     {pending?"Saving…":"Save as new version"}</button></div>
+  </div>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {message?<p role="status" className="text-sm text-success">{message}</p>:null}
+ </section>;
+}
