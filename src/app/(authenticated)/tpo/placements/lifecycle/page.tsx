@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions";
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
+import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
 import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -33,6 +34,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
+  const savedViewScope=context.user.id+":"+context.membership.collegeId;
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
     ...(data.companyId?{companyId:data.companyId}:{}),
@@ -61,6 +63,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
   }};}
   return <div className="space-y-6">
+    <TpoDriveSavedViews scopeKey={savedViewScope}/>
     <PageHeader eyebrow="TPO · Drives" title="Drive lifecycle"
       description="College-owned drafts, live opportunities and closed drives from persisted jobs." />
     <div className="flex flex-wrap items-center justify-between gap-3">
