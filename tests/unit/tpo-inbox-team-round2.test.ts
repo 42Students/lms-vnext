@@ -2,6 +2,7 @@ import {describe,expect,it} from "vitest";
 import {readFileSync} from "node:fs";
 import {join} from "node:path";
 import {tpoTeamFormErrorMessage} from "@/modules/placements/tpo-team-form-feedback-model";
+import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 const src=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 const messages=()=>src("src/app/(authenticated)/tpo/messages/page.tsx");
 const team=()=>src("src/app/(authenticated)/tpo/team/page.tsx");
@@ -109,6 +110,9 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain("Give it a title.");
   expect(src("src/modules/announcements/tpo-notice-form-error-model.ts")).toContain("Write the announcement.");
   expect(announcements()).toContain('role="alert"');
+  expect(tpoNoticeFormErrorMessage("BUTTON_URL_INVALID")).toBe("The link has to start with https://");
+  expect(announcements()).toContain("formMinDateTime");
+  expect(src("src/components/tpo/tpo-notice-schedule-controls.tsx")).toContain("min={minDateTime}");
  });
  it("TPO-inbox-team-64 makes bell rows clickable and includes New and relative date cues",()=>{
   const bell=src("src/components/tpo/tpo-bell-panel.tsx");
