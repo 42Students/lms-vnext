@@ -303,8 +303,8 @@ export function ProjectWorkspace({
       ) : null}
 
       <PageHeader
-        title={workspace.project.title}
-        description={mode==="MENTOR"
+        title={mode==="LEARNER"?"Projects":workspace.project.title}
+        description={mode==="LEARNER"?workspace.project.title:mode==="MENTOR"
           ? [workspace.project.courseLabel??"Course not linked",
              "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
                ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
@@ -1388,7 +1388,10 @@ export function ProjectWorkspace({
               <h2 className="m-0 text-lg font-semibold text-foreground">
                 Resources
               </h2>
-
+              {mode==="LEARNER"?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
+                {workspace.resources.filter(resource=>resource.status!=="ARCHIVED").length} active resources ·
+                {" "}{workspace.resources.filter(resource=>resource.required&&resource.status!=="ARCHIVED").length} required
+              </p>:null}
             </div>
             {!readOnly && (mode !== "LEARNER" || workspace.project.status === "ACTIVE") ? (
               <CreateProjectResourceControl
