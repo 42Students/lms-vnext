@@ -26,6 +26,10 @@
 | TPO-inbox-team-R01 | DONE | scoped recruiter message TPO bell notification; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-R01**. |
 | TPO-inbox-team-R03 | DONE | legacy announcement tab aliases; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-R03**. |
 
-Source-level follow-up still required for `TPO-inbox-team-48/52/53/55/64`: named tests capture implemented pieces, but full legacy acceptance has not yet been demonstrated. These remain queued.
+| TPO-inbox-team-41 | DONE | Last 500 messages, default scroll to newest or deep-linked message `src/modules/placements/tpo-team-conversation-service.ts`, `src/components/tpo/tpo-team-message-scroll.tsx`; `tests/unit/tpo-inbox-team-round2.test.ts` **TPO-inbox-team-41 loads the latest five hundred messages…**. |
+| TPO-inbox-team-55 | DONE | `src/modules/announcements/tpo-notice-form-error-model.ts`, create/edit routes and UI exact HTTPS error, required title/message, IST schedule minima; `tests/unit/tpo-inbox-team-round2.test.ts` **TPO-inbox-team-55 returns a user-facing error…**. |
+| TPO-inbox-team-R05 | DONE | `src/db/schema/tpo-internal.ts`, `src/modules/placements/tpo-team-internal-read-service.ts`, `src/modules/placements/tpo-team-internal-ack-service.ts`; proposed SQL `docs/proposed-migrations/tpo-inbox-team-read-receipts.sql`; `tests/unit/tpo-inbox-team-round2.test.ts` **TPO-inbox-team-R05 separates Team read positions…** and `tests/integration/db09-tpo-team-read-receipts.test.ts` **TPO-inbox-team-R05 separates unread message positions…**. PG test requires schema registration and `TPO_TEAM_READ_RECEIPTS_SCHEMA_READY=1`. |
+
+Source-level follow-up still required for `TPO-inbox-team-30/48/49/50/51/52/53/64`: named tests capture implemented pieces, but full legacy acceptance has not yet been demonstrated. These remain queued.
 
 Other queued gaps remain outstanding until individually inspected and recorded.
