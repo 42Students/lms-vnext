@@ -56,3 +56,6 @@ TPO-students-36: the authorized filtered CSV is now downloaded through a guarded
 
 | TPO-students-06 | OPEN (bulk, live PG acceptance pending) | TPO timed/date/drive debar and reasoned lift wired to existing DB08 services with tenant-checked API; `tests/unit/chat12-timed-debar-round3.test.ts` `TPO-students-06` |
 | TPO-students-07 | OPEN (student notification, dispute and BULK_RUN pending) | Existing immutable DB trigger history and collision-safe active ban checked; `tests/unit/chat12-timed-debar-round3.test.ts` `TPO-students-07` |
+
+| TPO-students-32 | DONE (batch lifecycle source, runtime acceptance pending) | Filter-scoped uninvited count and legacy banner with eligibility link; `tests/unit/chat12-registration-invitation-round3.test.ts` `TPO-students-32` |
+| TPO-students-50 | OPEN (historic applications and outcomes remain) | Missing registration row falls back to current persisted application; explicit choice remains authoritative; `tests/unit/chat12-registration-invitation-round3.test.ts` `TPO-students-50` |
