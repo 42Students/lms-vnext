@@ -218,6 +218,7 @@ function toAccount(row: AccountRow) {
 async function loadAccountGrants(
   context: RequestContext,
   userIds: string[],
+  includeHistory = false,
 ) {
   if (userIds.length === 0) {
     return [];
@@ -261,7 +262,7 @@ async function loadAccountGrants(
           placementRecruiterCollegeGrants.recruiterUserId,
           userIds,
         ),
-        eq(
+        includeHistory ? undefined : eq(
           placementRecruiterCollegeGrants.status,
           "ACTIVE",
         ),
@@ -465,13 +466,14 @@ export async function getSuperAdminHrAccount(
     );
   }
 
-  const grants = await loadAccountGrants(
-    context,
-    [userId],
-  );
+  const [grants,grantHistory] = await Promise.all([
+    loadAccountGrants(context,[userId]),
+    loadAccountGrants(context,[userId],true),
+  ]);
 
   return {
     ...toAccount(row),
+    grantHistory:grantHistory.filter(grant=>grant.companyId===row.companyId),
     accountManageable:(await hrAccountManageability(context,[userId])).get(userId)??false,
     grants: grants.filter(
       (grant) =>
@@ -874,6 +876,7 @@ export async function updateSuperAdminHrAccount(
     );
 
   const db = getDb();
+  let phoneChanged = false;
 
   try {
     await db.transaction(async (tx) => {
@@ -922,6 +925,10 @@ export async function updateSuperAdminHrAccount(
        if(outOfScope.length)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
       }
 
+      const [priorIdentity] = await tx.select({phoneE164:users.phoneE164})
+        .from(users).where(eq(users.id,userId)).for("update").limit(1);
+      if(!priorIdentity)throw new PlacementsServiceError("PLACEMENT_RECRUITER_USER_NOT_FOUND");
+      phoneChanged = input.phoneE164 !== undefined && input.phoneE164 !== priorIdentity.phoneE164;
       const now = new Date();
 
       if (
@@ -1019,7 +1026,8 @@ export async function updateSuperAdminHrAccount(
 
   // A suspension signs out existing sessions without deleting the college grants.
   // The revocation helper also writes the session-audit event.
-  if(input.status==="ARCHIVED") {
+  if(input.status==="ARCHIVED" || phoneChanged) {
+    // A changed sign-in mobile invalidates every existing recruiter session.
     await terminateSuperAdminHrSessions(context,userId);
   }
 

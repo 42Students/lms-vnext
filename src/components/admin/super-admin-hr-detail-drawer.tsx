@@ -59,6 +59,7 @@ export function SuperAdminHrDetailDrawer({
 }) {
   const id = useId();
   const [validUntil,setValidUntil] = useState("");
+  const [expiryError,setExpiryError] = useState("");
   const [
     selectedRelationshipId,
     setSelectedRelationshipId,
@@ -82,6 +83,10 @@ export function SuperAdminHrDetailDrawer({
       return;
     }
 
+    if(validUntil && Date.parse(validUntil+"T23:59:59+05:30") <= Date.now()){
+      setExpiryError("Choose a future access expiration date.");return;
+    }
+    setExpiryError("");
     const completed = await onGrant(
       selectedRelationshipId,
       validUntil ? new Date(validUntil+"T23:59:59+05:30").toISOString() : undefined,
@@ -293,8 +298,9 @@ export function SuperAdminHrDetailDrawer({
 
                 <label className="mb-1.5 mt-3 block text-xs font-semibold text-body">
                  Until (optional)
-                 <input type="date" value={validUntil} onChange={event=>setValidUntil(event.target.value)}
+                 <input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground"/>
+                 {expiryError?<span role="alert" className="mt-1 block text-error">{expiryError}</span>:null}
                  <span className="mt-1 block font-normal text-muted-foreground">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
                 </label>
                 {optionsLoading ? (
@@ -361,6 +367,14 @@ export function SuperAdminHrDetailDrawer({
             )}
           </section>
 
+          {account.grantHistory?.length ? <section aria-label="College grant history" className="rounded-xl border border-border bg-surface p-5">
+            <h3 className="font-semibold">College access history</h3>
+            <ul className="mt-3 space-y-2 text-sm">{account.grantHistory.map(grant=><li key={grant.id} className="flex flex-wrap justify-between gap-2 border-b border-border pb-2">
+              <span>{grant.collegeName}</span>
+              <span>{grant.status==="REVOKED"?"Revoked":grant.validUntil&&Date.parse(grant.validUntil)<=currentTimeMs()?"Expired":"Active"}
+               {" · "}{grant.validUntil?"Until "+grant.validUntil.slice(0,10):"No recorded expiry"}</span>
+            </li>)}</ul>
+          </section>:null}
           <section className="rounded-xl border border-border bg-surface p-5">
             <h3 className="m-0 text-base font-semibold text-foreground">
               Account security

@@ -21,6 +21,8 @@ export type ActivityImportance =
   (typeof ACTIVITY_IMPORTANCE)[number];
 
 export const ACTIVITY_EVENT_TYPES = {
+  PLATFORM_USER_BLOCKED:"platform.user.blocked",
+  PLATFORM_USER_REACTIVATED:"platform.user.reactivated",
   PLATFORM_COLLEGE_CREATED:
     "platform.college.created",
   PLATFORM_COLLEGE_UPDATED:"platform.college.updated",
@@ -250,6 +252,7 @@ export type ActivityEventType =
 
 const highImportance = new Set<ActivityEventType>([
   ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_SUSPENDED,
+  ACTIVITY_EVENT_TYPES.PLATFORM_USER_BLOCKED,
   ACTIVITY_EVENT_TYPES.IDENTITY_MEMBERSHIP_ENDED,
   ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_ARCHIVED,
   ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_DELETED,

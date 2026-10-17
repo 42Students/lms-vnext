@@ -7,7 +7,7 @@ type Phases = ReturnType<typeof collegeChecklistProjection>;
 export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
   const steps = phases.flatMap(phase => phase.steps);
   const recorded = steps.filter(step => step.hasRecords).length;
-  return <details aria-label="College setup evidence" className="rounded-xl border border-border bg-surface p-4">
+  return <details aria-label="College setup evidence" className="min-w-0 rounded-xl border border-border bg-surface p-4">
     <summary className="cursor-pointer text-sm font-semibold text-foreground">
       {COLLEGE_SETUP_GUIDE_COPY.collapseLabel}
     </summary>
@@ -21,7 +21,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
         {recorded} of {steps.length} steps contain records
       </p>
     </div>
-    <div className="grid gap-4 md:grid-cols-2">
+    <div className="grid min-w-0 gap-4 md:grid-cols-2">
       {phases.map(phase => <section key={phase.title}
         className="rounded-xl border border-border bg-surface p-4">
         <h3 className="text-base font-semibold text-foreground">{phase.title}</h3>

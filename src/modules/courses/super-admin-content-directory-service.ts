@@ -1,11 +1,11 @@
 import "server-only";
 
-import { and,asc,count,eq,ilike,inArray,sql,type Column } from "drizzle-orm";
+import { and,asc,count,eq,ilike,inArray,isNull,isNotNull,sql,type Column } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
  academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courses,
- departments,lessonContents,programs,
+ departments,lessonContents,programs,courseSectionDeliveries,sections,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -42,6 +42,8 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   lessonName:aliased(courseLessons.name,"admin_lesson_name"),
   lessonStatus:aliased(courseLessons.status,"admin_lesson_status"),
   offeringId:aliased(courseOfferings.id,"admin_offering_id"),
+  lessonId:courseLessons.id,
+  deliveryId:lessonContents.deliveryId,
   offeringStatus:aliased(courseOfferings.status,"admin_offering_status"),
   courseName:aliased(courses.name,"admin_course_name"),
   courseCode:courses.code,
@@ -60,6 +62,11 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   .where(and(
    inArray(lessonContents.contentType,[...contentTypesForKind(kind)]),
    query.status==="ALL"?undefined:eq(lessonContents.status,query.status),
+   query.offeringId?eq(courseOfferings.id,query.offeringId):undefined,
+   query.lessonId?eq(courseLessons.id,query.lessonId):undefined,
+   query.deliveryId?eq(lessonContents.deliveryId,query.deliveryId):undefined,
+   query.scope==="SHARED"?isNull(lessonContents.deliveryId):
+    query.scope==="SECTION"?isNotNull(lessonContents.deliveryId):undefined,
    query.q?sql`(${lessonContents.title} ilike ${pattern} or ${courseLessons.name} ilike ${pattern} or ${courses.name} ilike ${pattern} or ${courses.code} ilike ${pattern})`:undefined,
   )).as("admin_content_directory_scope");
  const [totalRow]=await db.select({total:count()}).from(source);
@@ -68,4 +75,24 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
   .orderBy(asc(source.courseName),asc(source.lessonName),asc(source.sequence),asc(source.id))
   .limit(ADMIN_CONTENT_PAGE_SIZE).offset((query.page-1)*ADMIN_CONTENT_PAGE_SIZE);
  return {kind,query,total,totalPages:adminContentPages(total),items};
+}
+
+/** Section choices are selected-college only and never fetched from global rosters. */
+export async function listSuperAdminContentSectionOptions(context:RequestContext){
+ const collegeId=context.adminScope?.collegeId;
+ if(!isSuperAdmin(context)||!collegeId)throw new AuthorizationError("courses.read");
+ requirePermission(context,"courses.read",{collegeId,organizationId:context.adminScope?.organizationId});
+ return getDb().select({
+  id:courseSectionDeliveries.id,
+  offeringId:courseSectionDeliveries.offeringId,
+  courseCode:courses.code,
+  courseName:courses.name,
+  sectionName:sections.name,
+ }).from(courseSectionDeliveries)
+  .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,eq(departments.id,courses.departmentId))
+  .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+  .where(and(eq(departments.collegeId,collegeId),isNull(courseSectionDeliveries.endedAt)))
+  .orderBy(asc(courses.name),asc(sections.name)).limit(1000);
 }
