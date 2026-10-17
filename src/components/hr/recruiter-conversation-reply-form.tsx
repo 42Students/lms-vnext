@@ -100,5 +100,6 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
     const destination=leaveHref;setLeaveHref(null);setBody("");
     if(destination)router.push(destination);
    }}/>
+  </div>
  </form>;
 }
