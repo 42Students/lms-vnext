@@ -51,6 +51,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       try{
         await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
+          approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
