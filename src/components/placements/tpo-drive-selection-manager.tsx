@@ -14,7 +14,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  const [lastRecorded,setLastRecorded]=useState(0);
  const existing=new Set(selections.map(s=>s.applicationId));
  const recordable=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&!existing.has(c.applicationId));
- const releasable=selections.filter(s=>s.status!=="RELEASED");
+ const releasable=selections.filter(s=>s.status==="SELECTED"||s.status==="VERIFIED");
  const visibleRecordable=recordable.filter(c=>(c.name+" "+c.email+" "+c.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
  const visibleReleasable=releasable.filter(s=>(s.name+" "+s.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
  function open(next:"RECORD"|"VERIFY_AND_RELEASE"){setMode(next);setChosen([]);setSearch("");setError("");setReport([]);}
