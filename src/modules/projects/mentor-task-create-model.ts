@@ -10,6 +10,7 @@ export const mentorTaskCreateSchema=z.object({
   acceptanceCriteria:z.string().trim().max(4000).nullable(),
   priority:z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]),
   status:z.enum(["TODO","IN_PROGRESS","BLOCKED"]).default("TODO"),
+  assigneeMembershipId:z.string().uuid().nullable().default(null),
   expectedSprintUpdatedAt:z.iso.datetime({offset:true}).nullable(),
   ...projectTaskExpandedFieldsSchema.shape,
 }).strict();
