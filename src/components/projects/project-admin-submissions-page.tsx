@@ -106,6 +106,7 @@ export async function ProjectAdminSubmissionsPage({
       </nav>
       <nav aria-label="Review status shortcuts" className="flex flex-wrap gap-2 text-xs font-semibold">
         <Link href={queuePath+"?submissionStatus=UNDER_REVIEW"}
+          aria-current={query.submissionStatus==="UNDER_REVIEW"?"page":undefined}
           className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
           Under Review
         </Link>
