@@ -554,6 +554,11 @@ export const placementJobs = pgTable(
     index("placement_jobs_relationship_idx").on(
       table.companyRelationshipId,
     ),
+    foreignKey({
+      name: "placement_jobs_owner_college_fk",
+      columns: [table.ownerMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
     check(
       "placement_jobs_status_ck",
       sql`${table.status} in ('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED', 'CANCELLED')`,
