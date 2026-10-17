@@ -92,6 +92,12 @@ export default async function HomePage({
   const tenant = await resolveRequestTenant(
     (await headers()).get("host"),
   );
+  // PUB-auth-public-39: platform visitors see the minimal public landing,
+  // while college hosts and explicit sign-in links keep the OTP entry screen.
+  // The proxy supplies the canonical path; do not use untrusted forwarded hosts.
+  const requestPath = (await headers()).get("x-lms-path")?.split("?")[0];
+  if (tenant.kind === "platform" && requestPath !== "/login" &&
+      !authValue && !recruiterValue && !requested) redirect("/home");
   const branding =
     tenant.kind === "college"
       ? await getPublicCollegeBranding(tenant.collegeId)
