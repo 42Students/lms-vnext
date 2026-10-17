@@ -88,3 +88,9 @@ The production-only `graceful-production-faults.spec.ts` runs four additional si
 `graceful-recovery-cycle.spec.ts` exercises 18 two-request controlled failure/retry cases (email and phone across nine fault types) and 16 responsive offline/reconnect journeys for public and seven seeded roles. Do not replace this with a static mocked page; the request method, URL, and attempt count are part of the contract. Both login attempts fail under interception, so no real OTP is sent.
 
 `graceful-dom-surfaces.spec.ts` provides 26 synthetic disclosures and two safe controls across accessible names, tooltips, placeholders, hidden alerts, status/live regions, and framework overlays. The shared `expectNoRawErrors` checks those DOM surfaces in every existing role journey and keeps legitimate uppercase role/status labels outside failure surfaces intact. Browser execution and production release gates are still required.
+
+## Round 6: signed-in production save faults
+
+`graceful-production-saves.spec.ts` supplements the seven-role stale-chunk checks with **36** staged production-browser mutation failures: Learner placement preferences (PUT), College Admin department creation (POST), Recruiter profile designation, and Super Admin organization creation (POST), each for connection abort, HTML 502, JSON 500, 403, 404, 409, 429, maintenance 503 and a five-second delayed 504. The test requires the genuine production-origin login storage states described above. Every save is intercepted before it can reach the server, and any absent authentication fixture is reported as a skip. The assertion demands a real intercepted method/path and retained edits, a visible friendly recovery notice and a re-enabled control; raw DOM leaks and uncaught errors fail the run.
+
+Do not count a skipped role test or authored source as product release certification. The orchestrator must run this in the disposable production staging environment with no development bypass.

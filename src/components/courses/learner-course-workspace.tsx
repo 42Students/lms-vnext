@@ -19,6 +19,7 @@ import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { AssignmentSubmissionControl } from "./assignment-submission-control";
 import { QuizAttemptControl } from "./quiz-attempt-control";
 import { ResourceProgressControl } from "./resource-progress-control";
+import {LearnerLiveSessionStatus} from "./learner-live-session-status";
 import {LessonResourceMaterialsControl} from "./lesson-resource-materials-control";
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
@@ -241,6 +242,17 @@ function ContentCard({
         </div>
       ) : null}
 
+      {(content.type==="VIDEO"||content.type==="YOUTUBE") && content.progress.durationSeconds>0
+        ? <p className="mt-2 text-xs font-semibold text-body">
+            {content.progress.percentComplete}% watched
+          </p>:null}
+      {content.type==="LIVE_CLASS"&&content.startsAt&&content.endsAt
+        ? <LearnerLiveSessionStatus startsAt={new Date(content.startsAt).toISOString()}
+            endsAt={new Date(content.endsAt).toISOString()}/>:null}
+      {content.type==="LIVE_CLASS"&&!learnerSafeExternalContentHref(content.externalUrl)
+        ? <p role="status" className="mt-2 text-xs text-muted-foreground">
+            No meeting link available yet. Check back before the session starts.
+          </p>:null}
       {start || end ? (
         <p className="mt-3 text-xs text-muted-foreground">
           {start ? `Starts ${start}` : ""}
@@ -345,12 +357,11 @@ function ContentCard({
       {content.type==="RESOURCE"&&materialsEnabled&&!scheduled?<LessonResourceMaterialsControl
         contentId={content.id} deliveryId={deliveryId} editable={false}/>:null}
       {!readOnly &&
-      interaction.canMarkComplete &&
-      !scheduled &&
-      (content.type !== "LIVE_CLASS" || ended) ? (
+      interaction.canMarkComplete ? (
         <ResourceProgressControl
           contentId={content.id}
           deliveryId={deliveryId}
+          contentType={content.type === "LIVE_CLASS" ? "LIVE_CLASS" : "RESOURCE"}
         />
       ) : null}
     </article>
@@ -642,7 +653,7 @@ export function LearnerCourseWorkspace({
     { key: "lectures", label: "Lectures" },
     { key: "resources", label: "Resources" },
     { key: "assessments", label: "Assessments" },
-    { key: "live-sessions", label: "Live Sessions" },
+    { key: "live-sessions", label: "Live sessions" },
   ] as const;
 
   const matchesFilter = (
@@ -707,6 +718,15 @@ export function LearnerCourseWorkspace({
   return (
     <div className="space-y-5">
       {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
+      {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
+        ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+            Lesson not found. This lesson is unavailable in your current learning path.
+          </p>
+        : focusLessonId && focusContentId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId &&
+            lesson.items.some(item=>item.id===focusContentId))
+          ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
+              Content unavailable. This item is not published in the selected lesson.
+            </p>:null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
         <p className="m-0 text-sm text-body">
@@ -825,6 +845,7 @@ export function LearnerCourseWorkspace({
       <div className="space-y-4">
         {workspace.lessons.map((lesson, lessonIndex) => {
           const visibleItems = lesson.items.filter((item) => matchesFilter(lesson, item));
+          if (focusLessonId && focusLessonId !== lesson.id) return null;
           if (activeFilter !== "all" && visibleItems.length === 0) return null;
 
           const lessonProgress = lessonProgressState(
@@ -854,7 +875,8 @@ export function LearnerCourseWorkspace({
               key={lesson.id}
               open={
                 focusLessonId === lesson.id ||
-                (!focusLessonId && lessonIndex === 0)
+                (!focusLessonId && (workspace.nextItem?.lessonId === lesson.id ||
+                  (!workspace.nextItem && lessonIndex === 0)))
               }
               className="group rounded-xl border border-border bg-[var(--lms-neutral-50)]"
             >
@@ -862,7 +884,7 @@ export function LearnerCourseWorkspace({
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                      Lesson {lessonIndex + 1}
+                      {String(lessonIndex + 1).padStart(2, "0")}
                     </p>
                     <h3 className="mt-1 text-lg font-semibold text-foreground">
                       {lesson.name}
@@ -880,15 +902,17 @@ export function LearnerCourseWorkspace({
                       </StatusBadge>
                     ) : lessonProgress.current ? (
                       <StatusBadge tone="info">
-                        Current lesson
+                        Continue here
                       </StatusBadge>
                     ) : lessonProgress.inProgress ? (
                       <StatusBadge tone="info">
                         In progress
                       </StatusBadge>
-                    ) : null}
+                    ) : (
+                      <StatusBadge tone="neutral">Not started</StatusBadge>
+                    )}
                     <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
-                      {lessonProgress.completed}/{lessonProgress.total} complete
+                      {lessonProgress.completed} of {lessonProgress.total} complete
                     </span>
                     {contentCounts.lectures > 0 ? (
                       <span className="rounded-full bg-surface px-2.5 py-1 text-xs font-semibold text-muted-foreground">
@@ -918,6 +942,18 @@ export function LearnerCourseWorkspace({
               </summary>
 
               <div className="border-t border-border bg-surface p-4 sm:p-5">
+                {focusLessonId===lesson.id?<nav aria-label="Lesson navigation"
+                   className="mb-4 flex flex-wrap items-center gap-3 text-sm">
+                  <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter="+activeFilter}
+                    className="font-semibold text-primary-text underline">Back to Learning Path</Link>
+                  {workspace.lessons[lessonIndex-1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex-1]!.id)}
+                    className="font-semibold text-primary-text underline">Previous lesson</Link>:null}
+                  {workspace.lessons[lessonIndex+1]?<Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+
+                    "/roadmap?lesson="+encodeURIComponent(workspace.lessons[lessonIndex+1]!.id)}
+                    className="font-semibold text-primary-text underline">Next lesson</Link>:null}
+                  <span>{lessonProgress.completed} of {lessonProgress.total} complete</span>
+                </nav>:null}
                 {visibleItems.length === 0 ? (
                   <div className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">
                     No published learning items in this lesson yet.
@@ -937,6 +973,8 @@ export function LearnerCourseWorkspace({
                             )}
                             title={content.title}
                             kind="Content"
+                            caption={content.type === "LIVE_CLASS" ? "Live session" :
+                              content.type === "RESOURCE" ? "Resource" : "Lecture"}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -959,6 +997,7 @@ export function LearnerCourseWorkspace({
                             )}
                             title={assignment.title}
                             kind="Assignment"
+                            caption="Assignment" dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
@@ -979,6 +1018,7 @@ export function LearnerCourseWorkspace({
                           )}
                           title={quiz.title}
                           kind="Quiz"
+                          caption="Quiz" dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}

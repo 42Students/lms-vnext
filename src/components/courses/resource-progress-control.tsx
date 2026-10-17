@@ -3,14 +3,17 @@
 import { useState, useSyncExternalStore } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { courseApiError } from "./learner-course-api";
 
 export function ResourceProgressControl({
   contentId,
   deliveryId,
+  contentType = "RESOURCE",
 }: {
   contentId: string;
   deliveryId: string;
+  contentType?: "RESOURCE" | "LIVE_CLASS";
 }) {
   const router = useRouter();
   const hydrated = useSyncExternalStore(
@@ -19,6 +22,7 @@ export function ResourceProgressControl({
     () => false,
   );
   const [saving, setSaving] = useState(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [error, setError] =
     useState<string | null>(null);
   const [complete, setComplete] =
@@ -26,6 +30,8 @@ export function ResourceProgressControl({
 
 
   async function markComplete() {
+    if (saving || complete) return;
+    setConfirmOpen(false);
     setError(null);
     setSaving(true);
 
@@ -54,9 +60,7 @@ export function ResourceProgressControl({
       setComplete(true);
       router.refresh();
     } catch {
-      setError(
-        "Could not save progress. Check your connection and try again.",
-      );
+      setError("Could not mark this as complete. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -70,7 +74,7 @@ export function ResourceProgressControl({
           complete ? "secondary" : "primary"
         }
         disabled={!hydrated || saving || complete}
-        onClick={markComplete}
+        onClick={() => setConfirmOpen(true)}
       >
         {complete
           ? "Completed"
@@ -78,6 +82,11 @@ export function ResourceProgressControl({
             ? "Saving…"
             : "Mark as complete"}
       </Button>
+      {complete ? <p role="status" className="mt-2 text-xs text-success">Marked as complete</p> : null}
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+        title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
+        description="Mark this learning item as complete?"
+        confirmLabel="Mark as complete" pending={saving} onConfirm={markComplete} />
       {error ? (
         <p
           role="alert"

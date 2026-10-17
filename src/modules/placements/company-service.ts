@@ -4,6 +4,7 @@ import {
   eq,
   ilike,
   inArray,
+  sql,
   isNull,
   or,
 } from "drizzle-orm";
@@ -120,6 +121,10 @@ export async function listPlacementCompanies(
       name: placementCompanies.name,
       websiteUrl: placementCompanies.websiteUrl,
       primaryDomain: placementCompanies.primaryDomain,
+      otherNames: sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
+        from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
+      domains: sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
+        from placement_company_domains d where d.company_id=${placementCompanies.id})`,
       logoObjectPath: placementCompanies.logoObjectPath,
       isTrusted: placementCompanyRelationships.isTrusted,
       ownerMembershipId:

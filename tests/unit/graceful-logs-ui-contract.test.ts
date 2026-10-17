@@ -19,6 +19,15 @@ describe("known error triage UI resilience", () => {
     expect(source).toContain('description: error instanceof FriendlyFetchError');
     expect(source).toContain('friendlyApiError({})');
   });
+  it("GR-123 GR-125 preserves a safe timeout recovery message on both Logs mutations", () => {
+    const source = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
+    expect(source).toContain('import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error"');
+    expect(source.match(/error instanceof FriendlyFetchError/g)).toHaveLength(2);
+    expect(source.match(/error\.message === FRIENDLY_MESSAGES\.timeout/g)).toHaveLength(2);
+    expect(source).not.toMatch(/description:\s*error\.message\b/);
+    expect(source).toContain("setConfirmMute(false)");
+    expect(source).toContain("router.refresh()");
+  });
   it("GR-123 preserves legacy Known errors empty and mute confirmation wording", () => {
     const ui = readFileSync("src/components/tracker/known-errors-workspace.tsx", "utf8");
     expect(ui).toContain("No tracked errors yet");

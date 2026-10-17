@@ -206,3 +206,64 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 ## Chat-2 round 5 — Team inbox pagination
 
 | TPO-inbox-team-18 | PARTIAL — OPEN | Team list now paginates beyond the old 100-row cap, preserves search/filter URL, selects latest activity descending with stable ID tie-break, and labels page-scoped filter counts truthfully; `tests/unit/tpo-team-inbox-paging-chat2.test.ts` (two `TPO-inbox-team-18` named tests). Other legacy thread-kind filters not built. |
+
+## Chat-2 round 5 — Team message corrections
+
+| TPO-inbox-team-24 | PARTIAL — OPEN | Scoped optimistic private-message edit (author only, first 15 min), delete tombstone, guarded UI and event-backed edited/removed indicators with explicit same-origin POST, `tests/unit/tpo-team-message-corrections-chat2.test.ts` tests named `TPO-inbox-team-24`. Newly mentioned recipients and ask cancellation need ask/mention persistence. |
+| TPO-inbox-team-25 | PARTIAL — OPEN | Actual event-backed “edited” tag and “Message removed” UI now render with existing author names/day separators/alignment; same suite names `TPO-inbox-team-25`. Rich system-event lines remain. |
+
+## Chat-2 round 5 — pinned decisions
+
+| TPO-inbox-team-23 | PARTIAL — OPEN | Same-college participants can optimistically mark/unmark a persisted Team message as decision with audited state changes; the thread displays decision tags and a last-five “Decided:” strip, and guards retry with friendly errors. `tests/unit/tpo-team-decision-chat2.test.ts` names `TPO-inbox-team-23`. Conversation-level Decisions filter and cross-message context panel still pending. |
+
+## Chat-2 round 5 — Conversation details
+
+| TPO-inbox-team-26 | PARTIAL — OPEN | `TpoTeamThreadDetails` provides optional context with authorized counterpart/topic/date and real last-page decision count; no unsupported company or drive claims. Named `TPO-inbox-team-26` in `tests/unit/tpo-team-details-chat2.test.ts`. Object facts, people workload and open asks pending. |
+| TPO-inbox-team-42 | PARTIAL — OPEN | Detail disclosure persists per-thread browser preference and folds on phones using responsive width; named `TPO-inbox-team-42` same test. Full desktop list/detail split remains open. |
+
+## Chat-2 round 5 — Drive Discussion handoff
+
+| TPO-inbox-team-07 | PARTIAL — OPEN | Drive-specific Discussion now links as `Discuss` to the persisted recruiter conversation, shows the last message preview and supports `?tab=discussion` legacy alias without relaxing scoped read; `tests/unit/tpo-drive-discussion-chat2.test.ts` names `TPO-inbox-team-07`. Change request quote/event lines remain to build in drive workspace. |
+
+## Chat-2 round 5 — away intervals
+
+| TPO-inbox-team-34 | PARTIAL — OPEN | Author-scoped away-until/back-now stored in proposed `placement_tpo_team_away` table, one-year bounded date and stale write checks, plus form and clear action. Proposed migration `docs/proposed-migrations/tpo-inbox-team-away-until.sql`, named test `TPO-inbox-team-34` in `tests/unit/tpo-team-away-chat2.test.ts`. The table must be registered by orchestrator before UI is writable; ask warnings not implemented. |
+| TPO-inbox-team-31 | PARTIAL — OPEN | People cards show persisted away interval only if enabled and allow current member to update their own absence, never inferred from activity; same test names `TPO-inbox-team-31`. Five workload aggregates remain open. |
+
+## Chat-2 round 5 — sequential review of the next 27 OPEN queue entries
+
+Status is deliberately **PARTIAL** or **OPEN**, not DONE, until the complete legacy behavior and database tests are established. These IDs are the next 27 OPEN rows after the earlier round's IN-BRANCH dispositions, kept in original queue order.
+
+| ID | Status | Specific current evidence or remaining work |
+| --- | --- | --- |
+| TPO-inbox-team-07 | PARTIAL | Drive Discussion handoff and message preview; request quotes/events missing |
+| TPO-inbox-team-16 | OPEN | No persisted drive/company/student-scoped Team object conversations |
+| TPO-inbox-team-17 | PARTIAL | 200-character create and renamed private thread; multi-person/leave/visibility outstanding |
+| TPO-inbox-team-18 | PARTIAL | Latest-activity paging/search and initial filters; object/asks/decisions chips outstanding |
+| TPO-inbox-team-20 | PARTIAL | Independent following/mute/read acknowledgement; mention subscriptions missing |
+| TPO-inbox-team-22 | OPEN | Assignable asks, due dates and completion lifecycle not persisted |
+| TPO-inbox-team-24 | PARTIAL | Author-only optimistic edit in first 15 min, delete tombstone; mention/ask side effects outstanding |
+| TPO-inbox-team-31 | PARTIAL | You and real away status; workload counts/actions missing |
+| TPO-inbox-team-33 | OPEN | Unowned drives/companies assignment workflows absent |
+| TPO-inbox-team-36 | OPEN | Member removal and safe work handover absent |
+| TPO-inbox-team-44 | PARTIAL | Scoped audience options and empty states; multi-select/picker parity missing |
+| TPO-inbox-team-54 | PARTIAL | College-wide unread From 42 count; shell/bell variants outstanding |
+| TPO-inbox-team-60 | PARTIAL | Bell actions and selected producers exist; legacy event set incomplete |
+| TPO-inbox-team-23 | PARTIAL | Scoped decision toggle and pinned strip; inbox Decisions filter missing |
+| TPO-inbox-team-26 | PARTIAL | Collapsible verified private-thread facts; object facts/asks missing |
+| TPO-inbox-team-29 | PARTIAL | Named actor, 120-char preview, message deep link; ask/mention alerts missing |
+| TPO-inbox-team-30 | PARTIAL | c/m/legacy members links; object about/ask entrypoints missing |
+| TPO-inbox-team-34 | PARTIAL | Persisted self-away date and Back now proposed migration; ask warnings missing |
+| TPO-inbox-team-37 | PARTIAL | Correct TPO/admin note and hides obsolete coordinators; college-admin membership policy missing |
+| TPO-inbox-team-38 | OPEN | Non-TPO team-admin and college-admin private conversation authorization missing |
+| TPO-inbox-team-51 | PARTIAL | Versioned edits to CTA/schedule/expiry; Tell them it changed not delivered |
+| TPO-inbox-team-52 | PARTIAL | Confirmation and success message; downstream notice retraction not certified |
+| TPO-inbox-team-59 | OPEN | Student notice audience/action/unread parity owned by student-facing flows |
+| TPO-inbox-team-R02 | OPEN | Centralized TPO admin roles across Messages/Team/Announcements/bell pending |
+| TPO-inbox-team-42 | PARTIAL | Mobile back and collapsible Details; split-panel desktop view pending |
+| TPO-inbox-team-R04 | PARTIAL | 100-row pagination and full From 42 unread count; own-author filtering needs revision |
+| TPO-inbox-team-R06 | OPEN | Historical college-wide bell feed for newly joined teammates missing |
+
+The existing queue blocker TPO-inbox-team-08 remains provider-credential dependent; no other technical gap is treated as a provider blocker. The named tests in `tests/unit/tpo-inbox-team-round5-parity-review.test.ts` protect seven specific partial workflows without claiming end-to-end parity. Tests were authored, not executed by this lane.
+
+- Round 5 review tally: **19 PARTIAL / 8 OPEN** across the 27 reviewed queue rows. TPO-inbox-team-34 also treats expired away status as absent for optimistic replace, guarded by the new `tpoEffectiveAwayUntil` unit case.

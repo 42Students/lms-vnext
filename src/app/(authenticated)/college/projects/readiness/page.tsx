@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminReadinessPage } from "@/components/projects/project-admin-readiness-page";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -18,7 +18,7 @@ export default async function CollegeProjectReadinessRoute({
     getProjectAdminCollegeId(context);
 
   if (!collegeId) {
-    redirect("/dashboard");
+    return <ProjectAdminMissingCollege/>;
   }
 
   return (

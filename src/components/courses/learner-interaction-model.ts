@@ -56,11 +56,7 @@ export function resourceInteractionState(input: {
 }) {
   return {
     canMarkComplete:
-      input.type === "RESOURCE" &&
-      Boolean(
-        input.externalUrl ||
-          input.storageKey,
-      ) &&
+      (input.type === "RESOURCE" || input.type === "LIVE_CLASS") &&
       input.progressStatus !== "COMPLETED",
   };
 }
