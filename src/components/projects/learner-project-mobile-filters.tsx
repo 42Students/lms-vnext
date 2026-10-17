@@ -3,8 +3,8 @@ import type { ProjectParticipantListQuery } from "./project-participant-list-con
 import { learnerProjectMobileFilterSummary } from "@/modules/projects/learner-project-mobile-filter-model";
 
 const statuses = [
-  ["CURRENT","Current only"],["PLANNED","Planned"],["ACTIVE","In progress"],
-  ["COMPLETED","Ready"],["ARCHIVED","Archived"],
+  ["CURRENT","Current only"],["ACTIVE","Active"],["IN_PROGRESS","In progress"],
+  ["READY","Ready"],["BLOCKED","Blocked"],["ARCHIVED","Archived"],
 ] as const;
 
 /** Learner-only compact fallback. Desktop and Mentor controls are unchanged. */
