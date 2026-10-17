@@ -4,7 +4,7 @@ const name = z.string().trim().min(1, "Batch name is required").max(255);
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid batch code");
 const uuid = z.string().uuid();
-const legacyYear=z.string().trim().min(4).max(16).regex(/^\\d{4}([\\s–-]+\\d{2,4})?$/, "Enter a valid academic year");
+const legacyYear=z.string().trim().min(7).max(9).regex(/^\d{4}[-–]\d{2,4}$/, "Use an academic year like 2026-27.");
 const legacyDate=z.iso.date();
 
 export const createCollegeCohortSchema = z.object({
