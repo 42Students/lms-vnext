@@ -225,7 +225,8 @@ export function HrDriveDraftForm({
           <label className="grid gap-1 text-sm text-body">
             Mode
             <select className={inputClass} value={draft.driveMode??"ON_CAMPUS"}
-              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS"}))}>
+              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS",
+                ...(event.target.value==="ON_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
               <option value="ON_CAMPUS">On campus</option>
               <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
             </select>
