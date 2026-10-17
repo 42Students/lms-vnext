@@ -37,6 +37,7 @@ export async function bulkChangeTpoLeadStages(
 
   return getDb().transaction(async (tx) => {
     const resultById = new Map<string, TpoBulkLeadStageResult>();
+    const changed: Array<{leadId:string;beforeStage:string;afterStage:string;beforeReason:string|null;afterReason:string|null;beforeUntil:string|null;afterUntil:string|null}> = [];
     for (const selected of sorted) {
       // Deterministic lock order; same-college lookup hides foreign UUIDs.
       const [current] = await tx.select()
