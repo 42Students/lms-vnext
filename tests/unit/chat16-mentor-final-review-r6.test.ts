@@ -4,7 +4,10 @@ const code=()=>readFileSync("src/components/projects/project-final-delivery-cont
 describe("chat-16 mentor delivery review verified actions",()=>{
  it("MEN-projects-meetings-65 always requires explicit approval/change confirmation before submitting",()=>{
    const ui=code();
-   expect(ui).toContain('onClick={()=>setConfirmReview(true)}');
+   // The decision must be captured before confirmation; a bare opener would
+   // reuse a previous approval/change selection and is not acceptable.
+   expect(ui).toContain('onClick={()=>{setDecision("APPROVED");setConfirmReview(true);}}');
+   expect(ui).toContain('onClick={()=>{setDecision("CHANGES_REQUESTED");setConfirmReview(true);}}');
    expect(ui).toContain('open={confirmReview} onOpenChange={setConfirmReview}');
    expect(ui).toContain('onConfirm={()=>void review()}');
    expect(ui).toContain('confirmLabel={decision==="APPROVED"?"Accept submission":"Request changes"}');
