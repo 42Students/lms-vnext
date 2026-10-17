@@ -7,12 +7,16 @@
 | REC-calendar-messages-profile-37 | NOT-A-GAP | Existing `/hr/company?tab=reports` deep-link redirects to scoped Reports, preserving collegeId and navigation, verified named test. |
 | REC-calendar-messages-profile-47 | PARTIAL — OPEN | Retired `/recruiter` and `/recruiter/colleges` entrypoints now use explicit redirects to canonical Today (`/hr/home`) rather than rendering duplicated surfaces. Named unit tests in `tests/unit/chat2-recruiter-legacy-entrypoints.test.ts`. Global navigation aliases are shell-owned and still require chat-9. |
 
-| REC-calendar-messages-profile-12 | DONE (source, not run) | `src/components/hr/recruiter-conversation-reply-form.tsx` now offers Close, confirming nonempty draft with exact Discard / Keep writing dialog; beforeunload remains guarded. `tests/unit/chat2-recruiter-draft-discard.test.ts` named tests. |
+## Chat-14 reassignment — batch 1 (authored; tests not executed)
 
-| REC-calendar-messages-profile-R03 | DONE (source, unrun) | Notification footer no longer claims conversations unavailable, while `/hr/messages` resolves to the real conversation inbox. Named `tests/unit/chat2-recruiter-access-copy.test.ts`. |
-| REC-calendar-messages-profile-16 | PARTIAL — OPEN | Exact ended-access copy in college conversation selection, while detail still hides unauthorized IDs as 404. Named test. |
-| REC-calendar-messages-profile-48 | DONE (source, unrun) | No-college calendar page explicitly mentions the college placements address and retains Return to Today. Named test. |
-
-| REC-calendar-messages-profile-25 | DONE (source; unrun) | Single profile form edits optional validated phone via dedicated `placement_recruiter_public_contacts`, blank clears it, login `users.phone_e164` untouched; scoped atomic PATCH; named test `tests/unit/chat2-recruiter-profile-combined.test.ts`. |
-| REC-calendar-messages-profile-27 | PARTIAL — OPEN | Single Save changes, dirty badge, beforeunload and conflict-retained fields; in-app route transition guard still pending. Named test same file. |
-| REC-calendar-messages-profile-28 | DONE (source; unrun) | Exact legacy section titles, account explanations, one combined editor for first/last/designation/mobile, same named test. |
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-calendar-messages-profile-12 | DONE | `src/components/hr/recruiter-conversation-reply-form.tsx` intercepts in-app leave with confirmation while retaining beforeunload; `tests/unit/recruiter-chat14-round1.test.ts` — ID-named test |
+| REC-calendar-messages-profile-16 | PARTIAL — OPEN | `src/modules/placements/hr-conversation-send-feedback-model.ts` maps 403 to legacy access-ended; server read/disposition still needs consistent ended-access state; named test |
+| REC-calendar-messages-profile-25 | DONE | `src/modules/placements/recruiter-profile-details-service.ts`, `src/app/api/placements/recruiter/profile/details/route.ts` + client details editor; optional normalized mobile, same-origin, optimistic CAS, named test |
+| REC-calendar-messages-profile-27 | DONE | Same transaction and single Save changes with beforeunload/navigation confirmation and persistent error; named test |
+| REC-calendar-messages-profile-28 | DONE | `src/app/(authenticated)/hr/profile/page.tsx` + details editor retain titles, work email and contact-only mobile explanatory copy; named test |
+| REC-calendar-messages-profile-37 | NOT-A-GAP | Existing `?tab=reports` deep link redirects to scoped Reports and preserves college; named test |
+| REC-calendar-messages-profile-42 | DONE | Existing invite declined/unsubscribed copy already exact; independently inspected `src/components/tpo/recruiter-invite-landing.tsx`; named test |
+| REC-calendar-messages-profile-47 | DONE | Existing `/recruiter` and `/recruiter/colleges` redirects both land at canonical Today; named test |
+| REC-calendar-messages-profile-R03 | DONE | `src/app/(authenticated)/hr/notifications/page.tsx` now links Messages, no contradictory unavailable sentence; named test |
