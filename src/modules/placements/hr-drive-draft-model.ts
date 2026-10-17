@@ -55,7 +55,7 @@ export const hrDriveDraftSchema = z.strictObject({
     }
     uniqueRoundNames.add(label);
   }
-  if ((data.employmentType==="INTERNSHIP"||data.employmentType==="INTERNSHIP_FULL_TIME") && !data.stipendMonthlyInr) {
+  if ((data.employmentType==="INTERNSHIP"||data.employmentType==="INTERNSHIP_FULL_TIME") && (!data.stipendMonthlyInr||Number(data.stipendMonthlyInr)<=0)) {
     ctx.addIssue({code:"custom",path:["stipendMonthlyInr"],message:"Students need to know the stipend"});
   }
   if (data.employmentType!=="INTERNSHIP" && !data.ctcLpa &&
