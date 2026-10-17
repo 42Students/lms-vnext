@@ -19,6 +19,7 @@ type PageProps = {
     search?: string | string[];
     page?: string | string[];
     pageSize?: string | string[];
+    sort?: string | string[];
   }>;
 };
 
@@ -31,11 +32,13 @@ function companiesHref(
     search?: string;
     page?: number;
     pageSize?: number;
+    sort?: "NAME"|"CONTACTS"|"DRIVES"|"JOINS";
   },
 ) {
   const params = new URLSearchParams();
 
   if (filters.search) params.set("search", filters.search);
+  if (filters.sort && filters.sort !== "NAME") params.set("sort", filters.sort);
   if (filters.page && filters.page > 1) {
     params.set("page", String(filters.page));
   }
@@ -83,6 +86,7 @@ export default async function TpoCompanyMemoryPage({
     search: first(raw.search) || undefined,
     page: first(raw.page) || undefined,
     pageSize: first(raw.pageSize) || undefined,
+    sort: first(raw.sort) || undefined,
   });
 
   if (!parsed.success) {
