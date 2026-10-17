@@ -2,6 +2,7 @@
 import Link from "next/link";
 import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
+import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
@@ -92,6 +93,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
        </div>)}
       </dl>
       <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Manage placement participation</Link>
+      <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
+       registered:student.registeredForPlacements}]}/>
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes")?<p role="status">Loading student records…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
