@@ -2,7 +2,7 @@
 
 import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
-import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
 import { learnerProfileCollectionMayEdit } from "@/modules/people/learner-profile-collection-busy-model";
 import { learnerProfileDeletePrompt } from "@/modules/people/learner-profile-delete-confirm-model";
@@ -14,6 +14,7 @@ import {learnerProfilePublicationsAwards,newLearnerShowcaseEntry,isLearnerShowca
 import {learnerProfileMobileQuickLinks} from "@/modules/people/learner-profile-mobile-model";
 import {learnerProfileSocialFocusField} from "@/modules/people/learner-profile-social-connect-model";
 import { learnerContactEditSchema } from "@/modules/people/learner-contact-model";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -193,7 +194,7 @@ export function LearnerProfileWorkspace(props: {
   const [showcaseBaseline,setShowcaseBaseline]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
-  const [pending, startTransition] = useTransition();
+  const {pending,run:guardedRun}=useGuardedAction();
 
   const checklist = useMemo(
     () => learnerProfileChecklist(document),
@@ -268,7 +269,7 @@ export function LearnerProfileWorkspace(props: {
   },[detailsOpen,props.initialSection]);
 
   function saveDocument(next: LearnerProfileDocument, onDone?: () => void, expectedDocument=document) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const payload=await apiFetch<{profile:{profileDocument:LearnerProfileDocument}}>("/api/profile/me",{
           method:"PUT",headers:{"content-type":"application/json"},
@@ -439,7 +440,7 @@ export function LearnerProfileWorkspace(props: {
     items: LearnerProfileDocument[typeof section],
     onDone?: () => void,
   ) {
-    startTransition(async () => {
+    void guardedRun(async () => {
       try {
         const payload=await apiFetch<{items:unknown[]}>("/api/profile/me/sections",{
           method:"PATCH",headers:{"content-type":"application/json"},
