@@ -100,6 +100,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
           <div className="min-w-0">
             <h2 className="font-semibold">{request.studentName} · {request.requestType.replaceAll("_"," ")}</h2>
             <p className="mt-1 text-sm text-body">{request.companyName} · {request.jobTitle}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Student number: {request.rollNumber??"Not recorded"}</p>
             {request.nextRoundAt?<p className="mt-1 text-sm text-body">{tpoNextRoundCue(request,asOf)}</p>:null}
             {request.urgent?<strong className="mt-2 inline-flex rounded border border-danger px-2 py-1 text-xs text-error">Urgent</strong>:null}
             <p className="mt-1 text-xs text-muted-foreground"><time dateTime={request.requestedAt.toISOString()}>{request.requestedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</time> · {tpoRequestAgeLabel(request.requestedAt,asOf)}</p>
