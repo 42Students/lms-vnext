@@ -392,7 +392,7 @@ export function LearnerPlacementOffers({
                   disabled={
                     pendingId !== null
                   }
-                  onClick={() => setConfirmOffer(item)}
+                  onClick={() => void reviewAccept(item)}
                 >
                   {pendingId ===
                   item.offerId
@@ -521,14 +521,14 @@ export function LearnerPlacementOffers({
       </Dialog>
       <Dialog
         open={confirmOffer !== null}
-        onOpenChange={(open) => { if (!open && pendingId === null) setConfirmOffer(null); }}
+        onOpenChange={(open) => { if (!open && pendingId === null) dismissAccept(); }}
         title="Review offer before accepting"
         description="Review the recorded offer terms. Acceptance is only submitted after you confirm."
         footer={
           <>
             <Button variant="secondary" disabled={pendingId !== null}
-              onClick={() => setConfirmOffer(null)}>Keep offer pending</Button>
-            <Button disabled={!preview?.canConfirm || pendingId !== null}
+              onClick={dismissAccept}>Keep offer pending</Button>
+            <Button disabled={!preview?.canConfirm || !acceptImpact || acceptImpactBusy || Boolean(acceptImpactError) || acceptImpact.blockedByAnotherAcceptedOffer || pendingId !== null}
               onClick={() => { if (preview?.canConfirm) void respond(preview.offerId, "ACCEPT"); }}>
               {pendingId !== null ? "Saving…" : "Confirm acceptance"}
             </Button>
