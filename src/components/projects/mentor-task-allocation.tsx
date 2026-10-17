@@ -12,7 +12,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  projectId:string;initialTasks:Task[];members:Member[];sprints:Sprint[];releases:Release[];readOnly?:boolean;
 }){
  const router=useRouter(),searchParams=useSearchParams();
- const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(""),[sprint,setSprint]=useState("");
+ const [tasks,setTasks]=useState(initialTasks),
+   [release,setRelease]=useState(searchParams.get("release")??""),
+   [sprint,setSprint]=useState(searchParams.get("sprint")??"");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  const learners=members.filter(member=>member.role==="LEARNER");
