@@ -14,6 +14,10 @@ export type PlacementEmployerRelationshipItem = {
   name: string;
   websiteUrl: string | null;
   primaryDomain: string | null;
+  verifiedAt?:Date|null;
+  companyStatus?:string;
+  relationshipStatus?:string;
+  industry?:string|null;
   isTrusted: boolean;
   ownerMembershipId: string | null;
 };
@@ -145,6 +149,7 @@ export function PlacementEmployerRelationships({
         </h2>
         <p className="mt-1 text-sm text-body">
           Maintain each recruiting company once and reuse it across drives.
+          {" "}A company is kept once across colleges by its website or company email domain: add at least one of them.
         </p>
       </div>
 
@@ -176,6 +181,9 @@ export function PlacementEmployerRelationships({
                     <p className="m-0 font-semibold text-foreground">
                       {item.name}
                     </p>
+                    {item.verifiedAt?<StatusBadge tone="success">Verified by 42</StatusBadge>:null}
+                    {item.companyStatus==="ARCHIVED"||item.relationshipStatus==="ARCHIVED"?
+                      <StatusBadge tone="warning">Deleted</StatusBadge>:null}
                     <StatusBadge
                       tone={
                         draft.isTrusted
@@ -189,8 +197,8 @@ export function PlacementEmployerRelationships({
                     </StatusBadge>
                   </div>
                   <p className="mt-1 text-sm text-body">
-                    {item.primaryDomain ??
-                      "No primary domain"}
+                    Domains: {item.primaryDomain??(item.websiteUrl?new URL(item.websiteUrl).hostname:"No domain registered")}
+                    {item.industry?" · "+item.industry:""}
                   </p>
                   {item.websiteUrl ? (
                     <a

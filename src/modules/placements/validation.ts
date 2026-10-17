@@ -314,7 +314,7 @@ export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
     const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
     if(assessmentDeadline){
-      if(!value.applicationDeadline||Date.parse(assessmentDeadline)<value.applicationDeadline.getTime())
+      if(!value.applicationDeadline||Date.parse(assessmentDeadline)<=value.applicationDeadline.getTime())
         ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
           message:"Assessment deadline must be after application deadline"});
     }

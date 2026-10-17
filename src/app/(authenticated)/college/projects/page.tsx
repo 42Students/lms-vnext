@@ -34,7 +34,7 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) {
-    return <main className="space-y-4"><PageHeader title="Workspaces"
+    return <main className="space-y-4"><PageHeader title="Project workspaces"
      description="Select a college to continue."/>
      <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
       Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
@@ -73,6 +73,7 @@ export default async function CollegeProjectsPage({
    updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
    templateTitle:templates.find(template=>template.templateId===project.templateId)?.title??null,
    progressPercent:project.progressPercent,
+   riskReasons:project.riskReasons,
   }));
   const viewHref=(view:"cards"|"table")=>"/college/projects?"+new URLSearchParams({
    ...(query.q?{q:query.q}:{}),...(query.status?{status:query.status}:{}),
@@ -85,7 +86,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Workspaces"
+        title="Project workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
           className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

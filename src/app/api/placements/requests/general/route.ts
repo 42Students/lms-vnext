@@ -2,10 +2,18 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
+import {getDb} from "@/db/client";
+import {and,eq} from "drizzle-orm";
+import {learnerProgramEnrollments} from "@/db/schema";
 import {TpoGeneralRequestError,createOwnTpoGeneralRequest,listOwnTpoGeneralRequests} from "@/modules/placements/tpo-general-request-service";
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(){
- try{return NextResponse.json({requests:await listOwnTpoGeneralRequests(await getCurrentRequestContext())},
+ try{
+  const ctx=await getCurrentRequestContext();
+  const requests=await listOwnTpoGeneralRequests(ctx);
+  const memberships=ctx.membership?await getDb().select({cohortId:learnerProgramEnrollments.cohortId}).from(learnerProgramEnrollments)
+   .where(and(eq(learnerProgramEnrollments.membershipId,ctx.membership.id),eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(2):[];
+  return NextResponse.json({requests,cohortId:memberships.length===1?memberships[0].cohortId:null},
   {headers:{"Cache-Control":"private, no-store"}});}
  catch(error){
   if(error instanceof TpoGeneralRequestError&&error.code==="UNAVAILABLE")

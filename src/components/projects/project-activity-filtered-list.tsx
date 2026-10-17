@@ -8,8 +8,8 @@ type Event={id:string;eventType:string;importance:string;summary:string;actorDis
 type Cursor={time:string;id:string};
 type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({projectId,events,now}:{
- projectId:string;events:Event[];now:string;
+export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=false}:{
+ projectId:string;events:Event[];now:string;resourceAudit?:boolean;
 }){
  const [items,setItems]=useState<readonly Event[]>(events);
  const [hasMore,setHasMore]=useState(events.length>=100);
@@ -67,13 +67,13 @@ export function ProjectActivityFilteredList({projectId,events,now}:{
     <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      placeholder="Search activity" className="min-h-10 rounded border border-border bg-background px-3"/>
    </label>
-   <label className="grid gap-1 text-sm font-semibold">Resource change
+   {resourceAudit?<label className="grid gap-1 text-sm font-semibold">Resource change
     <select value={resourceAction} onChange={event=>setResourceAction(event.target.value)}
      className="min-h-10 rounded border border-border bg-background p-2">
      <option value="ALL">All resource changes</option>
      {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
     </select>
-   </label>
+   </label>:null}
    <label className="grid gap-1 text-sm font-semibold">Type
     <select value={type} onChange={event=>setType(event.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2">

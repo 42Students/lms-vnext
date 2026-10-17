@@ -18,6 +18,11 @@ const foreign:RequestContext={...admin,membership:{...admin.membership!,
   id:SEED_IDS.facultyCollegeBMembership,collegeId:SEED_IDS.collegeB}};
 const learner:RequestContext={...admin,membership:{...admin.membership!,roles:["LEARNER"]}};
 describe.skipIf(!enabled)("College elective slot lifecycle isolated PostgreSQL",()=>{
+  it("COL-academic-setup-R02 keeps archived slots recoverable with version CAS",async()=>{
+    const {electiveLifecyclePrompt}=await import("@/modules/electives/college-elective-lifecycle-model");
+    expect(electiveLifecyclePrompt("A","ARCHIVE")).toContain("enrolled students lose access");
+    expect(electiveLifecyclePrompt("A","RESTORE")).toContain("program and academic period");
+  });
   it("uses own-college fixture, prevents stale restore, persists immutable audit and rolls back",async()=>{
     const ids={program:randomUUID(),period:randomUUID(),slot:randomUUID()};
     const tag="elective-cycle-"+ids.slot.slice(0,8);
