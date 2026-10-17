@@ -16,7 +16,7 @@ describe("chat-14 UNCONFIRMED recruiter owner decisions",()=>{
  it("REC-home-drives-R02 keeps placement-cell verification authoritative by default",()=>{
   const service=source("src/modules/placements/result-service.ts");
   expect(service).toContain("STAGED");
-  expect(source("src/components/hr/recruiter-result-controls.tsx")).toContain("Result staged");
+  expect(source("src/components/placements/recruiter-result-controls.tsx")).toContain("Result staged");
   expect(initialRecruiterRequestStatus({trusted:false,approvalRequired:true,verificationPending:false})).toBe("REQUEST");
  });
  it("REC-home-drives-44 bounds and CSV-quotes recruiter exports rather than exposing all students",()=>{
