@@ -9,7 +9,9 @@ import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatc
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 export const dynamic="force-dynamic";
 export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string|string[]}>}){
- const raw=(await searchParams).selected??"";
+ const requested=(await searchParams).selected;
+ const raw=typeof requested==="string"?requested:"";
+ const invalidSelection=Array.isArray(requested);
  const selectedLeadIds=[...new Set(raw.split(",").filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))].slice(0,100);
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
