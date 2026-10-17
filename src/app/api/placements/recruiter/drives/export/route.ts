@@ -2,8 +2,8 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {hasActiveRecruiter} from "@/modules/identity/context";
-import {recruiterDriveListQuerySchema,filterRecruiterDrives,sortRecruiterDrives} from "@/modules/placements/recruiter-drive-list-model";
-import {listOwnRecruiterPlacementJobs} from "@/modules/placements/recruiter-service";
+import {recruiterDriveListQuerySchema} from "@/modules/placements/recruiter-drive-list-model";
+import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import {buildHrDrivesCsv,HR_DRIVE_CSV_CAP} from "@/modules/placements/hr-drives-csv-model";
 export const runtime="nodejs";
 export async function GET(request:Request){
@@ -22,10 +22,10 @@ export async function GET(request:Request){
     context.recruiter.grants[0]!.collegeId:null);
   if(!collegeId||!context.recruiter.grants.some(g=>g.collegeId===collegeId))
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
-  const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(row=>
-   row.collegeId===collegeId&&row.companyId===context.recruiter!.companyId);
-  const sorted=sortRecruiterDrives(filterRecruiterDrives(jobs,{...query,collegeId},new Date()),query.sort);
-  const output=buildHrDrivesCsv(sorted.slice(0,HR_DRIVE_CSV_CAP+1),sorted.length>HR_DRIVE_CSV_CAP);
+  const result=await searchOwnRecruiterDrives(context,collegeId,{...query,collegeId},new Date(),{
+   pageSize:HR_DRIVE_CSV_CAP+1,
+  });
+  const output=buildHrDrivesCsv(result.rows,result.total>HR_DRIVE_CSV_CAP);
   return new Response(output.csv,{headers:{
    "Content-Type":"text/csv; charset=utf-8",
    "Content-Disposition":'attachment; filename="recruiter-drives.csv"',
