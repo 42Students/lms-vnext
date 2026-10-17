@@ -11,7 +11,7 @@ describe("TPO audit saved views final sprint",()=>{
   expect(ui).toContain("localStorage.getItem(key)");
   expect(ui).toContain("Maximum five pinned audit views.");
   expect(ui).toContain("Maximum 12 saved audit views.");
-  for(const action of ["Save current",">Open</button>",">Pin","Rename</button>",">Delete</button>","usedAt:Date.now()"])
+  for(const action of ["Save current",">Open</button>","\"Unpin\":\"Pin\"","Rename</button>",">Delete</button>","usedAt:Date.now()"])
    expect(ui).toContain(action);
   expect(ui).toContain('router.push("/tpo/audit"');
  });
