@@ -134,6 +134,8 @@ export type TpoStudentBranchSummary = TpoStudentSummary & {
 
 export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
+  legacyStage?:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED";
+  minRoundReached?:number;needsAttention?:boolean;
   branchId?: string;
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
@@ -450,6 +452,10 @@ export function filterTpoStudentRoster(
         row.branchId === filter.branchId,
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>!filter.legacyStage||tpoStudentMatchesLegacyStage(row,filter.legacyStage))
+    .filter(row=>filter.minRoundReached===undefined||
+      (row.maximumAppliedRoundSequence!=null&&row.maximumAppliedRoundSequence>=filter.minRoundReached))
+    .filter(row=>filter.needsAttention===undefined||tpoStudentNeedsAttention(row)===filter.needsAttention)
     .filter(row=>!filter.classId||row.classIds.includes(filter.classId))
     .filter(row=>!filter.profileStatus||row.verification.status===filter.profileStatus)
     .filter(row=>filter.minApplications===undefined||row.applicationCount>=filter.minApplications)
@@ -519,4 +525,20 @@ export function selectTpoStudentWorkingSet(
 /** An actual application counts as legacy placement registration when no explicit choice exists. */
 export function tpoStudentRegisteredForPlacements(choice:string|null,applicationCount:number):boolean{
  return choice==="PLACEMENTS"||(choice===null&&applicationCount>0);
+}
+
+export function tpoStudentMatchesLegacyStage(row:TpoStudentRow,stage:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED"):boolean{
+ switch(stage){
+  case "ELIGIBLE":return row.participationStatus==="ELIGIBLE";
+  case "INVITED":return row.registrationOpen===true;
+  case "REGISTERED":return row.registeredForPlacements;
+  case "VERIFIED":return row.verification.status==="VERIFIED";
+  case "PLACED":return row.placed;
+ }
+}
+export function tpoStudentNeedsAttention(row:TpoStudentRow):boolean{
+ return row.participationStatus==="INELIGIBLE"||
+  row.verification.status==="WAITING"||row.verification.status==="SENT_BACK"||
+  row.offersAwaitingAnswer>0||row.ambiguousSection||
+  row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING";
 }

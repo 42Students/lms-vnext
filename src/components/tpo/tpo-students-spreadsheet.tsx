@@ -8,7 +8,7 @@ import {TpoStudentClipboardActions} from "./tpo-student-clipboard-actions";
 import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard-model";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
-import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
+import {tpoStudentNeedsAttention,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
@@ -35,6 +35,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"marksVerified",label:"Marks verified",read:row=>row.marksVerified?"Verified":"Not verified"},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
+ {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
+ {key:"furthest",label:"Furthest round",read:row=>row.maximumAppliedRoundSequence??"Not recorded"},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
  {key:"best",label:"Best so far",read:row=>tpoStudentDisplayLabel(row.bestSoFar)},

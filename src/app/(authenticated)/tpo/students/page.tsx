@@ -72,6 +72,7 @@ function first(value: string | string[] | undefined) {
 function studentsHref(
   filters: {
     journeyState?: string;
+    legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;
     branchId?: string;
     programId?:string;
     afterCollege?:string;
@@ -95,8 +96,11 @@ function studentsHref(
   const params = new URLSearchParams();
 
   if (filters.journeyState) {
-    params.set("journeyState", filters.journeyState);
+    params.set("journeyState",filters.journeyState);
   }
+  if(filters.legacyStage)params.set("legacyStage",filters.legacyStage);
+  if(filters.minRoundReached!==undefined)params.set("minRoundReached",String(filters.minRoundReached));
+  if(filters.needsAttention!==undefined)params.set("needsAttention",filters.needsAttention?"YES":"NO");
 
   if (filters.branchId) {
     params.set("branchId", filters.branchId);
@@ -176,7 +180,10 @@ export default async function TpoStudentsPage({
   const urlError = tpoStudentUrlError(raw);
   const parsed = tpoStudentsQuerySchema.safeParse({
     collegeId: context.membership.collegeId,
-    journeyState: first(raw.journeyState) || undefined,
+    journeyState:first(raw.journeyState)||undefined,
+    legacyStage:first(raw.legacyStage)||undefined,
+    minRoundReached:first(raw.minRoundReached)||undefined,
+    needsAttention:first(raw.needsAttention)||undefined,
     branchId: first(raw.branchId) || undefined,
     programId:first(raw.programId)||undefined,
     afterCollege:first(raw.afterCollege)||undefined,
@@ -286,6 +293,9 @@ export default async function TpoStudentsPage({
       programId:query.programId,
       afterCollege:query.afterCollege,
       profileStatus:query.profileStatus,
+      legacyStage:query.legacyStage,
+      minRoundReached:query.minRoundReached,
+      needsAttention:query.needsAttention,
       minApplications:query.minApplications,maxApplications:query.maxApplications,
       minOffers:query.minOffers,maxOffers:query.maxOffers,
       offerWaiting:query.offerWaiting,
@@ -312,6 +322,9 @@ export default async function TpoStudentsPage({
     programId:query.programId,
     afterCollege:query.afterCollege,
     profileStatus:query.profileStatus,
+    legacyStage:query.legacyStage,
+    minRoundReached:query.minRoundReached,
+    needsAttention:query.needsAttention,
     minApplications:query.minApplications,maxApplications:query.maxApplications,
     minOffers:query.minOffers,maxOffers:query.maxOffers,
     offerWaiting:query.offerWaiting,
@@ -373,6 +386,24 @@ export default async function TpoStudentsPage({
             <option value="">All classes</option>
             {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
+        </label>
+        <label className="text-sm font-semibold">Stage
+          <select name="legacyStage" defaultValue={query.legacyStage??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All stages</option>
+            {(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"] as const).map(stage=>
+              <option key={stage} value={stage}>{stage.charAt(0)+stage.slice(1).toLowerCase()}</option>)}
+          </select>
+        </label>
+        <label className="text-sm font-semibold">Needs attention
+          <select name="needsAttention" defaultValue={query.needsAttention===undefined?"":query.needsAttention?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option><option value="YES">Needs attention</option><option value="NO">No attention flags</option>
+          </select>
+        </label>
+        <label className="grid gap-1 text-sm font-semibold">Furthest round reached (minimum)
+          <input type="number" name="minRoundReached" min={0} max={10000} step={1}
+           defaultValue={query.minRoundReached??""} className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
         </label>
         <label className="text-sm font-semibold">Profile verified
           <select name="profileStatus" defaultValue={query.profileStatus??""}
