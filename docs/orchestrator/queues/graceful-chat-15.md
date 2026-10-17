@@ -89,3 +89,10 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/81: [big-round one-factor] `tests/e2e/graceful-verify-one-factor-domain-failures.spec.ts` adds 10 intercepted real OTP-verification domain outcomes (correct human copy, input preserved or intentionally reset, no provider send); authored, not run.
 
 - GR-80/81: [big-round two-factor] `tests/e2e/graceful-verify-two-factor-domain-failures.spec.ts` adds 10 intercepted real OTP-verification domain outcomes (correct human copy, input preserved or intentionally reset, no provider send); authored, not run.
+
+### Big-round closure accounting (2026-10-17)
+
+- The requested audit of `docs/audit/gap-register.md` found **0 OPEN/UNCONFIRMED/IN-BRANCH rows assigned to chat-15**. The register currently has 483 open/unconfirmed/in-branch rows across other proposed lanes, including 19 public rows assigned to chat-7. Chat-15 owns the four distinct GR-80–GR-83 browser-acceptance IDs in this queue, not the other lanes' page implementation gaps.
+- Ten grouped commits/pushes authored **100 concrete Playwright cases**, 10 per push: 60 unknown-provider-error form/retry cases (Email and Phone × error/code/message × ten backend identifiers), 20 intentional domain-code wording cases, and 20 OTP verification/restart recovery cases (one-factor/two-factor). Both OTP-start and verify requests use Playwright interception; no provider request or valid login is attempted.
+- **Source coverage only:** GR-80, GR-81, GR-82, GR-83 remain **BLOCKED for runtime certification**, not DONE. Orchestrator must execute unit/browser integration tests and independently staged production-build smoke, provision real signed-in role states, and prove the GR-51 fake-provider persisted outbox. No tests, typecheck, lint or CI were executed by this builder.
+- No new page implementations were claimed for chat-7/chat-9/other product lanes; no gaps were reassigned, and no migrations were proposed.
