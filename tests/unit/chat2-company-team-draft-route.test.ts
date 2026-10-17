@@ -6,8 +6,8 @@ describe("Company Team posting routes and graceful draft retention",()=>{
   const route=src("src/app/api/placements/tpo/companies/[companyId]/team/route.ts");
   expect(route).toContain("isSameOriginRequest(request)");
   expect(route).toContain("tpoCompanyTeamPostSchema.safeParse");
-  expect(route).toContain('TPO_COMPANY_TEAM_NOT_REGISTERED');
-  expect(route).toContain('TPO_COMPANY_TEAM_IDEMPOTENCY_CONFLICT');
+  expect(route).toContain('error.code==="STORAGE_PENDING"');
+  expect(route).toContain('error.code==="STALE"');
   expect(route).toContain('status:409');
   expect(route).not.toContain("export async function GET(");
  });
@@ -21,12 +21,13 @@ describe("Company Team posting routes and graceful draft retention",()=>{
   expect(form).toContain("timeoutMs:12000");
   expect(form).toContain("router.refresh()");
  });
- it("TPO-inbox-team-29 restricts company activity bell to active TPO college recipients and links directly to a message",()=>{
+ it("TPO-inbox-team-29 restricts company activity bell to active college placement-team recipients and links directly to a message",()=>{
   const service=src("src/modules/placements/tpo-company-team-service.ts");
-  expect(service).toContain('eq(membershipRoles.role,"TPO")');
+  expect(service).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
   expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
-  expect(service).toContain('"/team?m="+message.id');
-  expect(service).toContain("if(recipients.length>500)throw");
+  expect(service).toContain('"/team#team-message-"+message.id');
+  expect(service).toContain("notifyIds.delete(membership.id)");
+  expect(service).toContain("inArray(collegeMemberships.id,[...notifyIds].slice(0,250))");
  });
 });

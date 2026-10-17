@@ -11,7 +11,10 @@ describe("chat15 learner recoverability and staff applications",()=>{
   expect(service).toContain('stateWarnings.push("quiz attempts")');
   const ui=src("src/components/courses/learner-course-workspace.tsx");
   expect(ui).toContain("Some course state could not be loaded");
-  expect(ui).toContain("Retry state");
+  expect(ui).toContain("<LearnerCourseStateRetry/>");
+  const retry=src("src/components/courses/learner-course-state-retry.tsx");
+  expect(retry).toContain("Retry state");
+  expect(retry).toContain("router.refresh()");
   expect(src("src/app/(authenticated)/learn/courses/error.tsx")).toContain("Could not load course lessons");
  });
  it("LEARNER-placements-30 derives staff origin from verified submittedByUserId and shows 48 hour deadline",()=>{

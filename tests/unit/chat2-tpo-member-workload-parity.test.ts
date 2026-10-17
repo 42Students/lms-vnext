@@ -23,7 +23,7 @@ describe("TPO Team People persisted workloads",()=>{
   expect(page).toContain("readTpoTeamOwnershipWorkload(context)");
   for(const label of ["Live drives","Draft drives","Companies","Overdue follow-ups","Waiting on teammates"])
     expect(page).toContain(label);
-  expect(page).toContain('!ownerWorkload.drivesReady?"Unavailable":count');
+  expect(page).toContain('label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":');
  });
  it("TPO-inbox-team-32 sorts real work before name, and overdue workload first",()=>{
   expect(sortTpoPeople(members,"WORK").map(member=>member.membershipId)).toEqual(["b","a","c"]);

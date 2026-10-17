@@ -14,10 +14,11 @@ const claim = {
   expiresAt: now + 24 * 60 * 60 * 1000,
 };
 describe("TPO-campaigns-public-13 recipient token family", () => {
-  it("accepts only its purpose-specific signature within expiry", () => {
+  it("accepts only its purpose-specific signature and preserves historic opt-out after the claim timestamp", () => {
     const token = issueTpoCampaignRecipientToken(claim, key);
     expect(verifyTpoCampaignRecipientToken(token, key, now)).toEqual(claim);
-    expect(verifyTpoCampaignRecipientToken(token, key, claim.expiresAt)).toBeNull();
+    expect(verifyTpoCampaignRecipientToken(token, key, claim.expiresAt)).toEqual(claim);
+    // Signed historical links must remain usable to withdraw consent.
     expect(verifyTpoCampaignRecipientToken(token, "other-" + key, now)).toBeNull();
     expect(verifyTpoCampaignRecipientToken(token + "x", key, now)).toBeNull();
   });

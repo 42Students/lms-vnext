@@ -19,10 +19,13 @@ describe("REC-home-drives-21 recruiter formal request contract",()=>{
   expect(recruiterDriveRequestInputSchema.safeParse({...input,submissionId:"bad"}).success).toBe(false);
  });
  it("maps every request status without silently hiding declined or cancelled work",()=>{
-  for(const s of ["REQUEST","SENT_BACK","DRAFT"] as const){
+  for(const s of ["REQUEST","SENT_BACK"] as const){
    expect(recruiterRequestStage(s)).toBe("WAITING");
    expect(recruiterRequestLegacyLabel(s)).toBe("Sent for review");
   }
+  // An approved DRAFT is not still pending review and has not been published.
+  expect(recruiterRequestStage("DRAFT")).toBe("WAITING");
+  expect(recruiterRequestLegacyLabel("DRAFT")).toBe("Approved — awaiting publication");
   for(const s of ["REJECTED","CANCELLED"] as const){
    expect(recruiterRequestStage(s)).toBe("CLOSED");
    expect(recruiterRequestLegacyLabel(s)).toBe("Cancelled");
