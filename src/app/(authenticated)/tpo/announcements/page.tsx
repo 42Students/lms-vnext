@@ -44,7 +44,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   :null;
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
-   description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
+   description="What you tell your students, to whom, and who has read it. They read it under Placements."/>
   {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
@@ -100,7 +100,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
    </form>
   </section>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
-   {([["yours","Yours"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
+   {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
     className={value===tab.data?"inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm text-on-primary":
     "inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-body"}>{label}</Link>)}
