@@ -32,7 +32,7 @@ export const placementLearnerGeneralRequests=pgTable("placement_learner_general_
  index("placement_general_request_college_queue_idx").on(t.collegeId,t.status,t.requestedAt),
  index("placement_general_request_member_idx").on(t.collegeId,t.membershipId,t.requestedAt),
  check("placement_general_request_kind_ck",sql`${t.kind} in
-  ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE')`),
+  ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')`),
  check("placement_general_request_status_ck",sql`${t.status} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
  check("placement_general_request_reason_ck",sql`length(btrim(${t.reason})) between 3 and 2000`),
  check("placement_general_request_payload_ck",sql`jsonb_typeof(${t.payload})='object'`),
