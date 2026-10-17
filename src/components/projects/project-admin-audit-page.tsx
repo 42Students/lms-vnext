@@ -11,6 +11,7 @@ import {
 } from "@/modules/activity/service";
 import {
   ACTIVITY_IMPORTANCE,
+  ACTIVITY_EVENT_TYPES,
 } from "@/modules/activity/taxonomy";
 import {
   isSuperAdmin,
@@ -209,12 +210,14 @@ export async function ProjectAdminAuditPage({
           <span className="mb-1 block text-xs font-semibold text-body">
             Action
           </span>
-          <input
-            className={inputClass}
-            name="action"
-            defaultValue={eventType}
-            placeholder="projects.task.submitted"
-          />
+          <select className={inputClass} name="action" defaultValue={eventType??""}>
+            <option value="">All actions</option>
+            {Object.values(ACTIVITY_EVENT_TYPES).filter((value):value is string=>
+              typeof value==="string"&&value.startsWith("projects."))
+              .sort().map(value=><option key={value} value={value}>
+                {value.replace(/^projects\./,"").replaceAll("."," · ").replaceAll("_"," ")}
+              </option>)}
+          </select>
         </label>
         <label>
           <span className="mb-1 block text-xs font-semibold text-body">
