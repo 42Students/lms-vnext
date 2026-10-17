@@ -4,6 +4,10 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {FacultyItemActions} from "@/components/courses/faculty-item-actions";
 import {AdminQuizResultsActions} from "@/components/courses/admin-learning-structure-actions";
+import {CollegeAssignmentActions} from "@/components/courses/college-assignment-actions";
+import {CollegeAssignmentReview} from "@/components/courses/college-assignment-review";
+import {CollegeQuizActions} from "@/components/courses/college-quiz-actions";
+import {CollegeQuizAttempts} from "@/components/courses/college-quiz-attempts";
 import { adminAssessmentHref, adminAssessmentStats } from "@/modules/courses/admin-assessment-directory-model";
 import type { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
@@ -63,6 +67,18 @@ export function AdminAssessmentDirectory({ data }: { data: Data }) {
           <div><dt className="text-xs text-muted-foreground">{assignment ? "Submissions" : "Attempts"}</dt>
             <dd className="text-lg font-semibold tabular-nums">{item.activityCount}</dd></div>
         </dl>
+        {assignment?<div className="mt-3 space-y-2">
+          <CollegeAssignmentActions assignment={{id:item.id,title:item.title,
+            points:item.points,dueAt:item.dueAt,status:item.status}}/>
+          <CollegeAssignmentReview assignmentId={item.id} offeringId={item.offeringId}
+            specificDeliveryId={item.deliveryId} maxPoints={item.points}
+            status={item.status} deliveries={data.reviewDeliveries} filesEnabled={false}/>
+        </div>:<div className="mt-3 space-y-2">
+          <CollegeQuizActions quiz={{id:item.id,title:item.title,status:item.status,dueAt:item.dueAt}}/>
+          <CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId}
+            specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries}
+            status={item.status}/>
+        </div>}
         <div className="mt-3 flex flex-wrap items-center gap-2">
           <FacultyItemActions
             transitionUrl={"/api/courses/"+(assignment?"assignments":"quizzes")+"/"+item.id+"/transition"}

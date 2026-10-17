@@ -13,10 +13,12 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   expect(createCourseInputSchema.safeParse({...example,shortTitle:""}).success).toBe(false);
   expect(createCourseInputSchema.safeParse({...example,cardColor:"red"}).success).toBe(false);
   expect(updateCourseInputSchema.safeParse({shortTitle:"OS",officialCode:null}).success).toBe(true);
+  expect(updateCourseInputSchema.safeParse({takeaways:"Build operating systems"}).success).toBe(true);
+  expect(createCourseInputSchema.safeParse({...example,takeaways:"x".repeat(2001)}).success).toBe(false);
   const ui=read("src/components/courses/admin-course-create-panel.tsx");
   const edit=read("src/components/courses/admin-course-actions.tsx");
   const service=read("src/modules/courses/course-service.ts");
-  for(const text of ["Short display name","Official course code (optional)","Card colour"]){
+  for(const text of ["Short display name","Official course code (optional)","Card colour","Course takeaways (optional)"]){
    expect(ui).toContain(text);expect(edit).toContain(text);
   }
   expect(service).toContain("shortTitle:input.shortTitle??input.name.slice(0,120)");
@@ -40,10 +42,18 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
   const single=read("src/modules/courses/college-content-visibility-service.ts");
   expect(single).toContain("isSuperAdmin(context)");
   expect(single).toContain("requirePermission(context");
+  const lessons=read("src/app/(authenticated)/admin/lessons/page.tsx");
+  const lessonService=read("src/modules/courses/college-lesson-visibility-service.ts");
+  expect(lessons).toContain("<CollegeLessonVisibilityControl");
+  expect(lessonService).toContain("isSuperAdmin(context)");
+  expect(lessonService).toContain("resolveActingCollege(context");
+
  });
  it("SA-academics-people-56 can edit archive reorder and open offering creation from the lesson directory",()=>{
   const page=read("src/app/(authenticated)/admin/lessons/page.tsx");
   expect(page).toContain("<SuperAdminLessonCreate");
+  expect(page).toContain("listSuperAdminLearningPathPicker(context)");
+  expect(read("src/modules/courses/super-admin-learning-path-picker.ts")).toContain("resolveActingCollege(context");
   const create=read("src/components/courses/super-admin-lesson-create.tsx");
   expect(create).toContain('"Course / Offering"'.replaceAll('"','')); 
   expect(create).toContain('"/api/courses/lessons"');
@@ -65,6 +75,10 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
  it("SA-academics-people-64 connects assignments to publish archive and existing builder",()=>{
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
   expect(ui).toContain("<FacultyItemActions");
+  expect(ui).toContain("<CollegeAssignmentActions");
+  expect(ui).toContain("<CollegeAssignmentReview");
+  expect(read("src/modules/courses/college-assignment-submission-review-service.ts")).toContain("isSuperAdmin(context)");
+  expect(read("src/app/(authenticated)/admin/assignments/page.tsx")).toContain("<CollegeAssignmentCreate");
   expect(ui).toContain('assignment?"assignments":"quizzes"');
   expect(ui).toContain("Open offering builder / submissions");
   expect(read("src/app/(authenticated)/admin/assignments/page.tsx"))
@@ -73,6 +87,9 @@ describe("chat-7 final sprint Super Admin courses and content",()=>{
  it("SA-academics-people-65 exposes quiz transitions, result releases and existing builder entry",()=>{
   const ui=read("src/components/courses/admin-assessment-read-directory.tsx");
   expect(ui).toContain("<AdminQuizResultsActions");
+  expect(ui).toContain("<CollegeQuizActions");
+  expect(ui).toContain("<CollegeQuizAttempts");
+  expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("<CollegeQuizCreate");
   expect(ui).toContain("resultsPublished={Boolean(item.resultsPublished)}");
   expect(ui).toContain("deadlineReached={item.resultsReleaseReady}");
   expect(read("src/app/(authenticated)/admin/quizzes/page.tsx")).toContain("Export quizzes.csv");
