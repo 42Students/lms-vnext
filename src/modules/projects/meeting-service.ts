@@ -28,7 +28,7 @@ import {
 } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
-import {mentorMeetingFacilitationSchema} from "./mentor-meeting-facilitation-model";
+import {mentorMeetingFacilitationSchema,emptyMentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -156,7 +156,7 @@ export async function listProjectMeetings(
       projectIdInput,
     );
 
-  return getDb()
+  const rows = await getDb()
     .select()
     .from(projectMeetings)
     .where(
@@ -174,6 +174,10 @@ export async function listProjectMeetings(
       asc(projectMeetings.startsAt),
       asc(projectMeetings.createdAt),
     );
+  // MEN-projects-meetings-27: facilitator notes belong to managers, not the
+  // learner/observer workspace payload (even if the UI hides the panel).
+  return scope.access==="MENTOR" || scope.access==="ADMIN" ? rows :
+    rows.map(row=>({...row,facilitation:emptyMentorMeetingFacilitation}));
 }
 
 export async function requestProjectMeeting(
