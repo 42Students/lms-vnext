@@ -19,7 +19,7 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80 Recruiter: Additional test tenant must have active, verified, nonexpired employer college grant with required capability before messaging/profile suites can certify.
 - GR-80/82: All seven authenticated role stale-chunk tests require separately signed-in staging storageState files under GRACEFUL_PRODUCTION_AUTH_STORAGE_DIR; development bypass cannot certify production.
 - GR-82: Orchestrator must supply a separately built production origin and run tests/e2e/playwright.graceful-production.config.ts; local dev is not evidence.
-- GR-83: Chat-14 helper unit suites and isolated PostgreSQL integration still require merge and execution; chat-15 only records their contract and dependencies.
+- GR-83: The GR-51 automatic-retry outbox UI witness is not identified in merged helper unit tests; a fake-provider persisted-outbox integration and all helper execution evidence are still needed.
 
 ### Round-3 source handoff
 
@@ -27,3 +27,6 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 - GR-80/82: Added `tests/e2e/graceful-production-roles.spec.ts` for the seven signed-in roles; production config runs both production specs without launching a dev server.
 - GR-81: The DOM scan distinguishes legitimate uppercase role/status labels from raw API error identifiers; actual request methods/paths remain asserted.
 - GR-83: Merged chat-14 helper unit suites are listed in `tests/e2e/README-graceful.md`; only orchestrator execution can certify.
+
+- GR-80: HTTP 503 maintenance injection added to every role matrix with the exact shared customer message; still requires orchestrator runtime execution.
+- GR-80/GR-34: New delayed duplicate-send tests for Recruiter conversation replies and TPO confirmed recruiter creation cover high-risk non-idempotent actions without a real send.
