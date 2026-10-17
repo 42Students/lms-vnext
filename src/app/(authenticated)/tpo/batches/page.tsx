@@ -18,7 +18,7 @@ import { tpoBatchDepartmentSchema, filterTpoBatchDepartment, listTpoBatchDepartm
 import { tpoBatchProgramSchema, filterTpoBatchProgram, listTpoBatchPrograms } from "@/modules/placements/tpo-batch-program-model";
 import { tpoBatchSortSchema, sortTpoBatchNames } from "@/modules/placements/tpo-batch-sort-model";
 import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryState } from "@/modules/placements/tpo-batch-directory-filter-model";
-import {tpoBatchPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
+import {tpoBatchPlacementState,tpoBatchMatchesPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-set-model";
 export const dynamic="force-dynamic";
 
@@ -37,16 +37,21 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!parsed.success)return <div role="alert">Invalid search. <Link href="/tpo/batches">Clear search</Link></div>;
  const context=await getCurrentRequestContext();
  const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context)]);
- const selected=filterTpoBatchDepartment(filterTpoBatchProgram(filterTpoBatchDirectory(data.batches,data.ready?parsed.data:{...parsed.data,state:"ALL"}),programParsed.data),departmentParsed.data);
- const sorted=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(selected,deadlineParsed.data,new Date()):selected,sortParsed.data);
+ const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id));
+ const selected=filterTpoBatchDepartment(filterTpoBatchProgram(
+  filterTpoBatchDirectory(data.batches,{...parsed.data,state:"ALL"}),
+  programParsed.data),departmentParsed.data);
+ const stateFiltered=selected.filter(batch=>!data.ready||tpoBatchMatchesPlacementState({
+  finishedAt:batch.finishedAt,eligible:eligibility.get(batch.id)?.eligible??null,
+ },parsed.data.state));
+ const sorted=sortTpoBatchNames(data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered,sortParsed.data);
  const showOlder=(Array.isArray(raw.showOlder)?raw.showOlder[0]:raw.showOlder)==="1";
  const currentYear=new Date().getFullYear();
  const workingSet=visibleTpoBatchWorkingSet(sorted,currentYear,showOlder,
   Boolean(parsed.data.q||parsed.data.state!=="ALL"||programParsed.data||departmentParsed.data||deadlineParsed.data!=="ALL"));
  const batches=workingSet.visible;
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
- const [eligibility,journey,recent]=await Promise.all([
-  listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)),
+ const [journey,recent]=await Promise.all([
   listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)),
   listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)),
  ]);
@@ -55,7 +60,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const departments=listTpoBatchDepartments(data.batches);
  const summary=summarizeTpoBatchStates(data.batches);
  const working=data.batches.filter(batch=>!batch.finishedAt);
- const activeCount=data.batches.filter(batch=>!batch.finishedAt && Boolean(batch.invitedAt)).length;
+ const activeCount=data.batches.filter(batch=>tpoBatchPlacementState({finishedAt:batch.finishedAt,eligible:eligibility.get(batch.id)?.eligible??null})==="In placements").length;
  const eligibleCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
  const pendingCount=working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
  const placedCount=working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
@@ -63,7 +68,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
-   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="PLANNING">Not started</option><option value="INVITED">Invited / registration open</option><option value="FINISHED">Finished</option></select></label>
+   <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></select></label>
    <label className="text-sm">Program<select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
    <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
    <label className="text-sm">Deadline<select name="deadline" defaultValue={deadlineParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All deadlines</option><option value="NEXT_7_DAYS">Due in next 7 days</option><option value="PAST_DUE">Past due</option><option value="NO_DEADLINE">No deadline recorded</option></select></label>
