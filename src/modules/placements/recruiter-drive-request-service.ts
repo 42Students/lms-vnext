@@ -2,7 +2,8 @@ import "server-only";
 import {and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,membershipRoles,
- placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,users} from "@/db/schema";
+ placementCompanies,placementCompanyRelationships,placementJobs,placementRecruiterCollegeGrants,placementRecruiterDriveRequests,
+ placementTpoCollegeSettings,placementTpoTrustedDomains,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
@@ -12,6 +13,8 @@ import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
 import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
+import {recruiterDriveApprovalPolicy} from "./recruiter-drive-autoapproval-policy";
+import {createRecruiterApprovedDraftJob,RecruiterDraftApprovalError} from "./recruiter-approved-draft-job-service";
 
 export class RecruiterDriveRequestError extends Error{
  constructor(public readonly code:"FORBIDDEN"|"NOT_FOUND"|"STALE"|"INVALID_STATE"|"IDEMPOTENCY_CONFLICT"|"STORAGE_NOT_READY"){
@@ -32,12 +35,15 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
  const grant=requireOwnGrant(context,collegeId);
  const [row]=await tx.select({relationshipId:placementCompanyRelationships.id,
   companyId:placementCompanyRelationships.companyId,collegeId:placementCompanyRelationships.collegeId,
+  companyDomain:placementCompanies.primaryDomain,relationshipTrusted:placementCompanyRelationships.isTrusted,
+  workEmail:users.email,
   relationshipStatus:placementCompanyRelationships.status,grant:placementRecruiterCollegeGrants,
   collegeStatus:colleges.status,organizationId:colleges.organizationId,
   userStatus:users.platformStatus})
  .from(placementRecruiterCollegeGrants)
  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
  .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+ .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
  .innerJoin(users,eq(users.id,placementRecruiterCollegeGrants.recruiterUserId))
  .where(and(eq(placementRecruiterCollegeGrants.id,grant.id),
    eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
@@ -50,12 +56,14 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
    throw new RecruiterDriveRequestError("FORBIDDEN");
  return row;
 }
-async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"="NEW",previousDraft?:unknown,currentDraft?:unknown){
- const headline=action==="NEW"?"New drive request from "+context.recruiter!.companyName:
+async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"|"AUTO_APPROVED"="NEW",previousDraft?:unknown,currentDraft?:unknown){
+ const headline=action==="AUTO_APPROVED"?"Recruiter drive request automatically approved":
+  action==="NEW"?"New drive request from "+context.recruiter!.companyName:
   action==="UPDATED"?"Recruiter updated a drive request":"Recruiter cancelled a drive request";
  const [event]=await tx.insert(activityEvents).values({
   organizationId:scope.organizationId,collegeId:scope.collegeId,
-  actorUserId:context.user.id,module:"PLACEMENTS",eventType:action==="NEW"?"placements.recruiter.drive.requested":
+  actorUserId:context.user.id,module:"PLACEMENTS",eventType:action==="AUTO_APPROVED"?"placements.recruiter.drive.auto_approved":
+   action==="NEW"?"placements.recruiter.drive.requested":
     action==="UPDATED"?"placements.recruiter.drive.updated":"placements.recruiter.drive.cancelled",
   subjectType:"placement_recruiter_drive_request",subjectId:id,subjectLabel:title,
   summary:headline,metadata:{requestId:id,action,
@@ -70,12 +78,18 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
   .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(recipients.length) await tx.insert(inAppNotifications).values(recipients.map(recipient=>({
   userId:recipient.userId,eventId:event.id,title:headline,
-  body:action==="NEW"?"A recruiter sent a formal drive request. Open Drive lifecycle to inspect the recorded request.":
+  body:action==="AUTO_APPROVED"?"A verified recruiter request met this college\u0027s approval policy. A draft was created; the placement cell still controls publication.":
+    action==="NEW"?"A recruiter sent a formal drive request. Open Drive lifecycle to inspect the recorded request.":
     action==="UPDATED"?"A recruiter saved changes to a drive request. Open Drive lifecycle to review the new version.":
     "A recruiter cancelled a drive request. Open Drive lifecycle to review its history.",actionHref:"/tpo/placements/lifecycle?view=REQUESTS",
  }))).onConflictDoNothing();
+ if(action==="AUTO_APPROVED")await tx.insert(inAppNotifications).values({
+  userId:context.user.id,eventId:event.id,title:"Drive request approved",
+  body:"Your request is approved as a draft. The placement cell will publish the drive.",
+  actionHref:"/recruiter/drives",
+ }).onConflictDoNothing();
 }
-/** REC-home-drives-21: writes registered 0101 table and TPO bell transactionally. */
+ /** REC-home-drives-21: writes registered 0101 table and TPO bell transactionally. */
 export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:unknown){
  const input=recruiterDriveRequestInputSchema.parse(raw);
  return getDb().transaction(async tx=>{
@@ -104,16 +118,48 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
       .for("share").limit(1);
     if(!source)throw new RecruiterDriveRequestError("FORBIDDEN");
   }
-  // No auto-approval until the shared TPO-side policy is registered. REQUEST is real/pending.
+  // All policy inputs come from registered college/company/grant persistence.
+  // Missing settings default to review; the requesting browser cannot override it.
+  const [settings]=await tx.select({approvalRequired:placementTpoCollegeSettings.recruiterDriveNeedsApproval})
+   .from(placementTpoCollegeSettings)
+   .where(eq(placementTpoCollegeSettings.collegeId,input.collegeId)).limit(1);
+  const trusted=await tx.select({domain:placementTpoTrustedDomains.domain})
+   .from(placementTpoTrustedDomains)
+   .where(eq(placementTpoTrustedDomains.collegeId,input.collegeId));
+  const policy=recruiterDriveApprovalPolicy({
+   approvalRequired:settings?.approvalRequired??true,
+   grantVerified:scope.grant.verificationStatus==="VERIFIED",
+   recruiterEmail:scope.workEmail,
+   companyDomain:scope.companyDomain,
+   trustedDomains:trusted.map(row=>row.domain),
+   relationshipTrusted:scope.relationshipTrusted,
+  });
   const [created]=await tx.insert(placementRecruiterDriveRequests).values({
    collegeId:input.collegeId,companyRelationshipId:scope.relationshipId,
    recruiterUserId:context.user.id,submissionId:input.submissionId,
    sourceJobId:input.sourceJobId??null,status:"REQUEST",draft:input.draft,
   }).onConflictDoNothing().returning();
   if(!created)throw new RecruiterDriveRequestError("IDEMPOTENCY_CONFLICT");
+  let finalRequest=created;
+  let approvedJobId:string|null=null;
+  if(policy.autoApprove){
+   try{
+    approvedJobId=await createRecruiterApprovedDraftJob(tx,created,context.user.id);
+    const [approved]=await tx.update(placementRecruiterDriveRequests).set({
+      status:"DRAFT",approvedJobId,updatedAt:new Date(),
+      decisionNote:null,decidedAt:new Date(),decidedByUserId:null,
+    }).where(eq(placementRecruiterDriveRequests.id,created.id)).returning();
+    if(!approved)throw new RecruiterDriveRequestError("STORAGE_NOT_READY");
+    finalRequest=approved;
+   }catch(error){
+    // Ambiguous seasons and incomplete drafts require human review.
+    // Never drop a valid request or publish on an unreviewed assumption.
+    if(!(error instanceof RecruiterDraftApprovalError))throw error;
+   }
+  }
   await informPlacementCell(tx,context,{collegeId:input.collegeId,organizationId:scope.organizationId},
-   created.id,input.draft.title);
-  return {request:created,replayed:false};
+   created.id,input.draft.title,approvedJobId?"AUTO_APPROVED":"NEW");
+  return {request:finalRequest,replayed:false};
  });
 }
 export async function listOwnRecruiterDriveRequests(context:RequestContext,collegeId:string){
