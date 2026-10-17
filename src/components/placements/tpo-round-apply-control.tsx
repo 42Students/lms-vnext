@@ -8,6 +8,11 @@ type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
  skippedUnrecordedNote:string};
 type ApplyReport={applied:number;skipped:number;unchanged:number;
  results:Array<{resultId:string;student:string;outcome:string;status:string;reason?:string}>};
+function downloadRoundCsv(csv:string,name:string){
+ const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+ const link=document.createElement("a");link.href=url;link.download=name;link.click();
+ URL.revokeObjectURL(url);
+}
 export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:string}){
  const router=useRouter();const [preview,setPreview]=useState<Preview|null>(null);
  const [report,setReport]=useState<ApplyReport|null>(null);const [busy,setBusy]=useState(false);
