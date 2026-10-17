@@ -34,5 +34,7 @@ describe("mentor meeting facilitated notes",()=>{
   }
   const request=control.split("export function ScheduleProjectMeetingControl")[0];
   expect(request).not.toContain("value={facilitation[field]}");
+  expect(control).toContain('meetingType==="RETRO" ||');
+  expect(control).toContain('? "Meeting updated."');
  });
 });
