@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -50,6 +51,7 @@ export function PlacementEmployerRelationships({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [restoreConfirmId,setRestoreConfirmId]=useState<string|null>(null);
   const [archiveConfirmId, setArchiveConfirmId] =
     useState<string | null>(null);
   const [drafts, setDrafts] = useState<
@@ -144,6 +146,21 @@ export function PlacementEmployerRelationships({
     } finally {
       setPendingId(null);
     }
+  }
+
+  /** COL-placements-15: recovery is a confirmed, same-college write. */
+  async function restore(relationshipId:string){
+    if(pendingId)return;
+    setPendingId(relationshipId);
+    try{
+      await apiFetch("/api/placements/companies/"+encodeURIComponent(relationshipId)+"/restore",{method:"POST"});
+      setRestoreConfirmId(null);
+      showToast({tone:"success",title:"Company restored"});
+      router.refresh();
+    }catch{
+      showToast({tone:"error",title:"Could not restore company",
+        description:"This company cannot be restored right now. Refresh and try again."});
+    }finally{setPendingId(null);}
   }
 
   return (
@@ -290,6 +307,10 @@ export function PlacementEmployerRelationships({
                 </div>
 
                 <div className="flex flex-wrap items-start gap-2 xl:justify-end">
+                  {item.relationshipStatus==="ARCHIVED" ? (
+                    <Button size="sm" variant="secondary" disabled={busy}
+                      onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
+                  ) : (<>
                   <Button
                     size="sm"
                     variant="secondary"
@@ -347,12 +368,18 @@ export function PlacementEmployerRelationships({
                       Archive
                     </Button>
                   )}
+                  </>)}
                 </div>
               </div>
             );
           })}
         </div>
       )}
+      <ConfirmDialog open={Boolean(restoreConfirmId)} onOpenChange={next=>{if(!next)setRestoreConfirmId(null);}}
+        title="Restore this company?"
+        description="The archived company relationship will become available to this college again. Its history is preserved."
+        confirmLabel="Restore company" pending={Boolean(pendingId)}
+        onConfirm={()=>{if(restoreConfirmId)void restore(restoreConfirmId);}}/>
     </section>
   );
 }
