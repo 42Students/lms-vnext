@@ -61,7 +61,7 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  useEffect(()=>{
   let active=true;
   apiFetch<Detail>(url,{cache:"no-store"}).then(data=>{if(active)setDetail(data);})
-   .catch(e=>{if(active)setError(e instanceof Error?e.message:"Could not load review. Please try again.");})
+   .catch(e=>{if(active)setError(isTpo?"Could not open this student":e instanceof Error?e.message:"Could not load review. Please try again.");})
     .finally(()=>{if(active)setLoading(false);});
   return ()=>{active=false;};
  },[url,retryKey]);
