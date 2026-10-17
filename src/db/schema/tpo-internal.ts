@@ -29,7 +29,7 @@ export const placementTpoInternalThreads = pgTable(
       .references(() => colleges.id, { onDelete: "restrict" }),
     startedByMembershipId: uuid("started_by_membership_id").notNull(),
     invitedMembershipId: uuid("invited_membership_id").notNull(),
-    topic: varchar("topic", { length: 160 }).notNull(),
+    topic: varchar("topic", { length: 200 }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
