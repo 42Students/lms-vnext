@@ -231,10 +231,10 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 | SA-tenants-modules-35 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-tenants-modules-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-29 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
-| SA-tenants-modules-36 | S3 | MISSING-FIELD | OPEN |
-| SA-tenants-modules-37 | S3 | MISSING-FIELD | OPEN |
+| SA-tenants-modules-36 | S3 | MISSING-FIELD | DONE |
+| SA-tenants-modules-37 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-38 | S3 | MISSING-FIELD | UNCONFIRMED |
-| SA-tenants-modules-39 | S3 | MISSING-FIELD | OPEN |
+| SA-tenants-modules-39 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-30 | S4 | MISSING-ACTION | UNCONFIRMED |
 | SA-tenants-modules-31 | S4 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-32 | S4 | MISSING-FIELD | OPEN |
