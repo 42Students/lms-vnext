@@ -1476,6 +1476,7 @@ export function ProjectWorkspace({
             ) : !readOnly ? (
               <ScheduleProjectMeetingControl
                 projectId={workspace.project.id}
+                projectUpdatedAt={workspace.project.updatedAt}
                 sprints={workspace.sprints.map(
                   (sprint) => ({
                     id: sprint.id,
@@ -1600,6 +1601,7 @@ export function ProjectWorkspace({
                       <div className="mt-3">
                         <ScheduleProjectMeetingControl
                           projectId={workspace.project.id}
+                          projectUpdatedAt={workspace.project.updatedAt}
                           meeting={meeting}
                           sprints={workspace.sprints.map(
                             (sprint) => ({
