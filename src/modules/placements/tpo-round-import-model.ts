@@ -34,6 +34,8 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   ext.endsWith(".csv")?parseSelectionCsv(bytes.toString("utf8")):
   (()=>{throw Error("Use a .xlsx or .csv file.");})();
  const heads=(grid.shift()??[]).map(x=>x.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""));
+ if(new Set(heads.filter(Boolean)).size!==heads.filter(Boolean).length)
+  throw Error("Duplicate column headers make this result import ambiguous. Keep one column of each type.");
  const locate=(...words:string[])=>heads.findIndex(x=>words.includes(x));
  const app=locate("applicationid","applicantid"),email=locate("email","studentemail"),
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
