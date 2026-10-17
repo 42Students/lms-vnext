@@ -47,4 +47,20 @@ describe("TPO supplemental job metadata",()=>{
   expect(show).toContain("job.legacyPostingDetails.skillsWanted");
   expect(show).toContain('rel="noopener noreferrer"');
  });
+ it("TPO-drives-41 blocks both native unload and in-app navigation while unsaved",()=>{
+  const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
+  expect(guard).toContain('window.addEventListener("beforeunload", beforeUnload)');
+  expect(guard).toContain('document.addEventListener("click",onAnchorClick,true)');
+  expect(guard).toContain("window.confirm");
+  expect(guard).toContain("event.preventDefault()");
+  expect(guard).toContain("event.stopPropagation()");
+ });
+ it("TPO-drives-41 exposes an honest IST local-save timestamp distinct from server persistence",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("setLastLocalSaveAt(Date.now())");
+  expect(form).toContain("Local draft saved at ");
+  expect(form).toContain("not yet submitted to the server.");
+  expect(form).toContain("timeZone:\"Asia/Kolkata\"");
+ });
+
 });
