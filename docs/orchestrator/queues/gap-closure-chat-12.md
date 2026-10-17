@@ -199,3 +199,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 51: TPO-students-14 OPEN pending runtime acceptance: 200 cross-page selected authorized learners, server already-applied count before confirm and drive search are implemented; no mutation on preview. Named tests authored, unrun.
 
 - Round 52: TPO-requests-verification-01 0134 conflict decision: first effective strict tables remain canonical; sixth learner kind requires proposed-only new CHECK; runtime pg_catalog guard avoids DB 500 until registered. No numbered migrations edited.
+
+- Round 53 TPO-requests-verification-37: shared transaction-bound recruiter request -> DRAFT builder extracted, preserving TPO manual review semantics; verified policy auto-approval wiring follows; no design restyling.
