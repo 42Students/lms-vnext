@@ -283,7 +283,7 @@ export function TpoBulkRoundResultRecorder({
                   {rows.find((row) => row.applicationId === item.applicationId)?.displayName ??
                     "Learner"}
                 </span>
-                <span>{item.status}</span>
+                <span>{reportedOutcomeByApplicant[item.applicationId]??outcome} · {item.status}</span>
                 {item.reason ? <span>{item.reason.replaceAll("_", " ")}</span> : null}
               </li>
             ))}
