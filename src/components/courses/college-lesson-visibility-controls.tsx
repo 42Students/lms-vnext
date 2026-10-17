@@ -45,6 +45,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
  const [failed,setFailed]=useState<string[]>([]);
+ const [retryTarget,setRetryTarget]=useState<boolean|null>(null);
  const [message,setMessage]=useState("");
  const [pending,start]=useTransition();
  const [versions,setVersions]=useState<Record<string,string>>({});
@@ -58,24 +59,35 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
   if(pending||ids.length===0)return;
   const action=next?"Show to students":"Hide from students";
   if(!window.confirm(action+" for "+ids.length+" selected Lessons?"))return;
+  setRetryTarget(next);
   start(async()=>{
    try{
     const chosen=items.filter(item=>ids.includes(item.id));
-    const response=await fetch("/api/courses/college-lesson-visibility",{
-     method:"POST",headers:{"content-type":"application/json"},
-     body:JSON.stringify({items:chosen.map(item=>({
-      lessonId:item.id,expectedUpdatedAt:versions[item.id]??item.updatedAt,
-     })),visibleToStudents:next,confirmed:true}),
-    });
-    if(!response.ok)throw Error("Unable to update selected Lessons.");
-    const result=await response.json() as Result;
-    setVersions(old=>({...old,...Object.fromEntries(result.changed.map(item=>[item.id,item.updatedAt]))}));
-    setLatestVisible(old=>({...old,...Object.fromEntries(result.changed.map(item=>[item.id,item.visibleToStudents]))}));
-    const failures=result.failed.map(item=>item.lessonId);
+    const changed:Result["changed"]=[];
+    const failedRows:Result["failed"]=[];
+    // The endpoint caps each transaction group at 25; batch a full 100-row page safely.
+    for(let from=0;from<chosen.length;from+=25){
+     const batch=chosen.slice(from,from+25);
+     const response=await fetch("/api/courses/college-lesson-visibility",{
+      method:"POST",headers:{"content-type":"application/json"},
+      body:JSON.stringify({items:batch.map(item=>({
+       lessonId:item.id,expectedUpdatedAt:versions[item.id]??item.updatedAt,
+      })),visibleToStudents:next,confirmed:true}),
+     });
+     if(!response.ok){
+      failedRows.push(...batch.map(item=>({lessonId:item.id,reason:"Unable to update this batch."})));
+      continue;
+     }
+     const result=await response.json() as Result;
+     changed.push(...result.changed);failedRows.push(...result.failed);
+    }
+    setVersions(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.updatedAt]))}));
+    setLatestVisible(old=>({...old,...Object.fromEntries(changed.map(item=>[item.id,item.visibleToStudents]))}));
+    const failures=failedRows.map(item=>item.lessonId);
     setFailed(failures);setSelected(failures);
-    const detail=result.failed.slice(0,5).map(item=>
+    const detail=failedRows.slice(0,5).map(item=>
      (items.find(row=>row.id===item.lessonId)?.name??"Lesson")+": "+item.reason).join("; ");
-    setMessage(result.changed.length+" Lessons updated. "+failures.length+
+    setMessage(changed.length+" Lessons updated. "+failures.length+
      " failed."+ (detail?" "+detail:""));
     router.refresh();
    }catch(error){setMessage(error instanceof Error?error.message:"Unable to save visibility.");}
@@ -111,8 +123,7 @@ export function CollegeLessonBulkVisibility({items}:{items:Item[]}){
     Hide from students
    </button>
    {failed.length?<button type="button" disabled={pending} onClick={()=>{
-    const target=items.filter(item=>failed.includes(item.id));
-    if(target.length)apply(!(latestVisible[target[0].id]??target[0].visibleToStudents),failed);
+    if(retryTarget!==null)apply(retryTarget,failed);
    }} className="min-h-10 rounded border border-border px-3 font-semibold text-primary-text">
     Retry failed
    </button>:null}
