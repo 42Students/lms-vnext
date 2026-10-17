@@ -10,7 +10,11 @@ describe("Drive Target Audience Department Program Batch Class",()=>{
   const form=get("src/components/placements/placement-job-create-form.tsx");
   expect(form).toContain("Department · Target Audience");
   expect(form).toContain("Classes (sections)");
-  expect(form).toContain("allowedSectionIds:selectedSectionIds");
+  expect(form).toContain("allowedSectionIds:effectiveSectionIds");
+  expect(form).toContain("allowedCohortIds:effectiveCohortIds");
+  expect(form).toContain("selectedProgramIds.includes(cohort.programId)");
+  expect(form).toContain("selectedCohortIds.includes(section.cohortId)");
+  expect(form).toContain("selectedSectionIds.length>=100");
   expect(form).toContain("effectiveProgramIds");
   expect(form).toContain("selectedSectionIds:[...selectedSectionIds]");
  });

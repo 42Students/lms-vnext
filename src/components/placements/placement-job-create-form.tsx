@@ -149,10 +149,6 @@ export function PlacementJobCreateForm({
     .sort((a,b)=>a.localeCompare(b));
   const visiblePrograms=departmentFilter==="ALL"?academicOptions.programs:
     academicOptions.programs.filter(program=>program.departmentName===departmentFilter);
-  const visibleCohorts=academicOptions.cohorts.filter(cohort=>
-    visiblePrograms.some(program=>program.id===cohort.programId));
-  const visibleSections=academicOptions.sections.filter(section=>
-    visibleCohorts.some(cohort=>cohort.id===section.cohortId));
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -161,8 +157,18 @@ export function PlacementJobCreateForm({
     selectedCohortIds,
     setSelectedCohortIds,
   ] = useState<string[]>([]);
+  // Child choices narrow when their parent is checked. Previously selected
+  // children outside a changed parent filter are never posted to the policy.
+  const visibleCohorts=academicOptions.cohorts.filter(cohort=>
+    visiblePrograms.some(program=>program.id===cohort.programId) &&
+    (!selectedProgramIds.length||selectedProgramIds.includes(cohort.programId)));
+  const visibleSections=academicOptions.sections.filter(section=>
+    visibleCohorts.some(cohort=>cohort.id===section.cohortId) &&
+    (!selectedCohortIds.length||selectedCohortIds.includes(section.cohortId)));
   const effectiveProgramIds=selectedProgramIds.length?selectedProgramIds:
     departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
+  const effectiveCohortIds=selectedCohortIds.filter(id=>visibleCohorts.some(c=>c.id===id));
+  const effectiveSectionIds=selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id));
 
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
@@ -321,8 +327,8 @@ export function PlacementJobCreateForm({
       const fingerprint=JSON.stringify({
         fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
         selectedProgramIds:[...effectiveProgramIds].sort(),
-        selectedCohortIds:[...selectedCohortIds].sort(),
-        selectedSectionIds:[...selectedSectionIds].sort(),
+        selectedCohortIds:[...effectiveCohortIds].sort(),
+        selectedSectionIds:[...effectiveSectionIds].sort(),
         companyMode,companyRelationshipId,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
@@ -470,8 +476,8 @@ export function PlacementJobCreateForm({
         "PUT",
         {
           allowedProgramIds:effectiveProgramIds,
-          allowedCohortIds:selectedCohortIds,
-          allowedSectionIds:selectedSectionIds,
+          allowedCohortIds:effectiveCohortIds,
+          allowedSectionIds:effectiveSectionIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -1120,10 +1126,13 @@ export function PlacementJobCreateForm({
               {visibleSections.slice(0,500).map(section=><label key={section.id}
                 className="flex items-center gap-2 text-sm">
                 <input type="checkbox" checked={selectedSectionIds.includes(section.id)}
+                 disabled={!selectedSectionIds.includes(section.id)&&selectedSectionIds.length>=100}
                  onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
                 {section.name} · {section.cohortName}
               </label>)}
               {!visibleSections.length?<p className="text-sm text-muted-foreground">No active classes in this selection.</p>:null}
+              {visibleSections.length>500?<p className="text-sm text-muted-foreground">Showing first 500 classes. Narrow your program and batch selection to target later classes.</p>:null}
+              {selectedSectionIds.length>=100?<p className="text-sm text-muted-foreground">Maximum 100 classes selected. Deselect a class to choose another.</p>:null}
             </div>
           </fieldset>
           <label className="block text-sm font-semibold text-body">Eligibility preset
