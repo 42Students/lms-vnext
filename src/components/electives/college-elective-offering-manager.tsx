@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useState } from "react";
+import {apiFetch} from "@/lib/api-fetch";
 
 type Delivery = { id: string; courseId: string; course: string; code: string; section: string };
 type Group = { id: string; name: string; capacity: number | null };
@@ -29,9 +30,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
   async function load() {
     setLoading(true); setError("");
     try {
-      const res = await fetch(api, { cache: "no-store" });
-      if (!res.ok) throw Error("Unable to load offerings for this slot.");
-      const next = await res.json() as Load;
+      const next = await apiFetch<Load>(api, { cache: "no-store" });
       setData(next);
       if (!editing) setDeliveryId(next.deliveries[0]?.id ?? "");
     } catch (cause) {
@@ -68,7 +67,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     setBusy(true); setError(""); setMessage("");
     const url = editing ? api + "/" + encodeURIComponent(editing.offeringId) : api;
     try {
-      const res = await fetch(url, {
+      await apiFetch(url, {
         method: editing ? "PATCH" : "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
@@ -76,8 +75,6 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           ...(editing ? { expectedVersion: editing.version } : { groupId: groupId || undefined }),
         }),
       });
-      const result = await res.json().catch(() => null);
-      if (!res.ok) throw Error(result?.error ?? "Unable to save elective offering");
       setMessage(editing ? "Offering updated." : "Offering added.");
       setEditing(null); setGroupId("");
       await load(); router.refresh();
@@ -90,12 +87,10 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
     if (!window.confirm("Archive this elective offering? Existing members are retained read-only.")) return;
     setBusy(true); setError(""); setMessage("");
     try {
-      const res = await fetch(api + "/" + encodeURIComponent(offering.offeringId), {
+      await apiFetch(api + "/" + encodeURIComponent(offering.offeringId), {
         method: "DELETE", headers: { "content-type": "application/json" },
         body: JSON.stringify({ expectedVersion: offering.version }),
       });
-      const result = await res.json().catch(() => null);
-      if (!res.ok) throw Error(result?.error ?? "Unable to archive offering");
       setMessage("Offering archived.");
       await load(); router.refresh();
     } catch (cause) {
