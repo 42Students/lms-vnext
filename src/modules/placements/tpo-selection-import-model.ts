@@ -3,6 +3,8 @@ export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] 
  const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;let startedQuoted=false;let closedQuote=false;
  for(let i=0;i<text.length;i++){
   const char=text[i];
+  if(strictBlankRows&&quoted&&(char==="\n"||char==="\r"))
+   throw Error("Multiline CSV fields are not supported for round results; keep one learner per line.");
   if(char==='"'){
    if(quoted&&text[i+1]==='"'){field+='"';i++;}
    else if(quoted){quoted=false;closedQuote=true;}
