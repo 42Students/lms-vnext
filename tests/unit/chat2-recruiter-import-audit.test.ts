@@ -9,7 +9,7 @@ describe("Recruiter CSV audit completeness",()=>{
   expect(service).toContain("importedLeadIds:created.map(row=>row.leadId)");
   expect(service).toContain("organizationId:college.organizationId");
   expect(service).toContain("actorUserId:context.user.id");
-  expect(service).toContain("counts:summarizeTpoLeadImport(results)");
+  expect(service).toContain("const counts=summarizeTpoLeadImport(rows)");
   expect(service).not.toContain("metadata:{csv");
  });
 });
