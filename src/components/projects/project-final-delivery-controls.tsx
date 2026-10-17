@@ -554,10 +554,13 @@ export function FinalReviewControl({
               <option value="CHANGES_REQUESTED">Request changes</option>
             </Select>
           </label> : null}
-          {staleReview?<p role="alert" className="rounded-md border border-border p-3 text-sm text-body">
-            This submission may have changed since you opened this review.
-            Refresh the page to load the latest version before accepting, requesting changes, or locking.
-          </p>:null}
+          {staleReview?<div role="alert" className="space-y-2 rounded-md border border-border p-3 text-sm text-body">
+            <p>This submission may have changed since you opened this review. Refresh before accepting, requesting changes, or locking.</p>
+            <Button type="button" variant="secondary" disabled={pending}
+              onClick={()=>{setConfirmReview(false);setOpen(false);setStaleReview(false);router.refresh();}}>
+              Refresh latest submission
+            </Button>
+          </div>:null}
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Feedback
