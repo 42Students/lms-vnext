@@ -17,6 +17,9 @@ describe("independent Telegram health monitoring", () => {
     expect(manifest).toContain('concurrencyPolicy: Forbid');
     expect(scheduler).toContain("180_000");
     expect(scheduler).toContain("let limit = 12");
+    expect(scheduler).toContain("page < 1 && limit > 0");
+    expect(scheduler).toContain("if (result.errors.length > limit) return;");
+    expect(scheduler).toContain("pollPageToken: nextPageToken");
   });
   it("GR-121 validates rollout, restart counts and /ready before reporting healthy", () => {
     const script = readFileSync("scripts/ops/deploy-health-check.sh", "utf8");
