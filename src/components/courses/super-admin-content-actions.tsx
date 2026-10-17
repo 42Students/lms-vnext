@@ -40,6 +40,10 @@ export function SuperAdminContentActions({item}:{item:Content}){
    const href=facultyContentExternalHref(item.contentType,replacementUrl.trim());
    if(!href){setError("Enter a secure HTTPS link for this content.");return;}
    const parsed=new URL(href),host=parsed.hostname.toLowerCase();
+   if(item.contentType==="YOUTUBE"&&host!=="youtube.com"&&host!=="youtu.be"&&
+      !host.endsWith(".youtube.com")){
+    setError("Enter a YouTube URL supported by the content editor.");return;
+   }
    if(parsed.hash||host==="localhost"||host.endsWith(".localhost")||
     host==="0.0.0.0"||host==="::1"||/^127\./.test(host)||/^10\./.test(host)||
     /^192\.168\./.test(host)||/^169\.254\./.test(host)||
