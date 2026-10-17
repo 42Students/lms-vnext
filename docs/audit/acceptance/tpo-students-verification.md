@@ -96,3 +96,5 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | TPO-students-15 | OPEN (additional delegated decision) | College-assisted applications must disclose Added by college provenance, notify learners, preserve a 48-hour opt-out, and never imply student consent from an administrator action. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-15`. Tests authored, CI pending. |
 
 | TPO-students-49 | OPEN (additional delegated decision) | Allow a scoped College Admin with placements.manage on TPO Students and exports, never general Faculty or cross-college users; this requires the full roster, CSV and detail service permission path. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-49`. Tests authored, CI pending. |
+
+| TPO-students-50 | NOT-A-GAP (additional delegated decision) | Do not infer opt-in from an application: an application and a recorded placement registration choice are distinct persisted facts, and unknown registration data is shown as unavailable rather than assumed consent. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-students-50`. Tests authored, CI pending. |
