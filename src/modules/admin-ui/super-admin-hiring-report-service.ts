@@ -25,9 +25,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
       query.programId?eq(programs.id,query.programId):undefined,
       query.cohortId?eq(cohorts.id,query.cohortId):undefined))) : undefined;
  const stage=sql<string>`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end)`;
- const tally=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (where ${stage} = ${name})::integer`.mapWith(Number);
+ const tally=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stage} = ${name})::integer`.mapWith(Number);
  const applicationFilters=and(
-  eq(placementApplications.status,"SUBMITTED"),
   query.appliedFrom?gte(placementApplications.submittedAt,new Date(query.appliedFrom+"T00:00:00+05:30")):undefined,
   query.appliedTo?lte(placementApplications.submittedAt,new Date(query.appliedTo+"T23:59:59.999+05:30")):undefined,
   matchingAcademic,
@@ -35,7 +34,10 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
  const result=await db.select({
   companyId:placementCompanies.id,companyName:placementCompanies.name,
   jobId:placementJobs.id,jobTitle:placementJobs.title,
-  applied:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
+  totalApplications:sql<number>`count(distinct ${placementApplications.id})::integer`.mapWith(Number),
+  applied:tally("APPLIED"),
+  withdrawn:sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'WITHDRAWN')::integer`.mapWith(Number),
+  waitlisted:tally("WAITLISTED"),
   shortlisted:tally("SHORTLISTED"),assessment:tally("ASSESSMENT"),interview:tally("INTERVIEW"),
   offered:tally("OFFERED"),hired:tally("HIRED"),rejected:tally("REJECTED"),
  }).from(placementJobs)

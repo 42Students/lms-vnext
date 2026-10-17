@@ -2,7 +2,7 @@
 import {useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 type Student={learnerEnrollmentId:string;memberId:string;name:string|null;email:string|null;roll:string|null;classId:string|null};
-type ClassRow={id:string;name:string;code:string;capacity:number|null;status:string;learnerCount:number};
+type ClassRow={id:string;name:string;code:string;capacity:number|null;status:string;learnerCount:number;academicPeriodId:string};
 export function SuperAdminBatchRosterManager({students,classes}:{students:readonly Student[];classes:readonly ClassRow[]}){
  const router=useRouter(),[search,setSearch]=useState(""),[source,setSource]=useState("ALL");
  const [moving,setMoving]=useState<string|null>(null),[destinations,setDestinations]=useState<Record<string,string>>({});
@@ -15,6 +15,8 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
   const id=destinations[row.learnerEnrollmentId];
   if(!id||id===row.classId)return;
   const target=classes.find(c=>c.id===id);
+  const current=classes.find(c=>c.id===row.classId);
+  if(current&&target&&current.academicPeriodId!==target.academicPeriodId){setError("Use Batch Promotion to move a learner to another academic period.");return;}
   if(!target||target.status!=="ACTIVE"){setError("Choose an active destination class.");return;}
   if(target.capacity!==null&&target.learnerCount>=target.capacity){setError("Destination class is full.");return;}
   if(!confirm("Move "+(row.name??"this student")+" to "+target.name+"?"))return;
@@ -57,7 +59,7 @@ export function SuperAdminBatchRosterManager({students,classes}:{students:readon
       <select aria-label={"Destination class for "+(row.name??"student")} value={destinations[row.learnerEnrollmentId]??""}
        onChange={e=>setDestinations(curr=>({...curr,[row.learnerEnrollmentId]:e.target.value}))}
        disabled={Boolean(moving)} className="min-h-10 min-w-40 rounded border border-border bg-background px-2">
-       <option value="">Select class</option>{options.map(c=><option key={c.id} value={c.id} disabled={c.id!==row.classId&&c.capacity!==null&&c.learnerCount>=c.capacity}>
+       <option value="">Select class</option>{options.filter(c=>!row.classId||c.academicPeriodId===classes.find(x=>x.id===row.classId)?.academicPeriodId).map(c=><option key={c.id} value={c.id} disabled={c.id!==row.classId&&c.capacity!==null&&c.learnerCount>=c.capacity}>
         {c.name}{c.capacity!==null&&c.learnerCount>=c.capacity?" · Full":""}
        </option>)}
       </select>

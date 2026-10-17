@@ -271,7 +271,7 @@ export default async function RecruiterCompanyReportsPage({
 
       <section aria-label="All your drives at this college" className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="font-semibold text-foreground">All your drives at this college</h2>
-        <p className="mt-1 text-sm text-body">Hiring progress across all authorized drives, not just this page.</p>
+        <p className="mt-1 text-sm text-body">Hiring progress of applicants already shared by the placement cell, across all your authorized drives. Private applications are not counted.</p>
         <div className="mt-4 space-y-3">
           {buildRecruiterReportFunnel(report.funnel).map(stage=><div key={stage.label}>
             <div className="flex items-center justify-between gap-2 text-sm">

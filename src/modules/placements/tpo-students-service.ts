@@ -866,6 +866,8 @@ export type TpoStudentRequestView = {
   updatedAt: Date;
   reason: string;
   decisionNote: string | null;
+  decidedAt: Date | null;
+  decidedBy: string | null;
   membershipId: string;
   studentName: string;
   rollNumber: string | null;
@@ -933,6 +935,8 @@ export async function listTpoStudentRequests(
       reason: placementLearnerRequests.reason,
       decisionNote:
         placementLearnerRequests.decisionNote,
+      decidedAt:placementLearnerRequests.decidedAt,
+      decidedBy:sql<string|null>`(select decider.display_name from users decider where decider.id=${placementLearnerRequests.decidedByUserId} limit 1)`,
       membershipId: collegeMemberships.id,
       studentName: users.displayName,
       rollNumber: learnerProfiles.rollNumber,
@@ -1068,6 +1072,8 @@ export async function listTpoStudentRequests(
         updatedAt: row.updatedAt,
         reason: row.reason,
         decisionNote: row.decisionNote,
+        decidedAt:row.decidedAt,
+        decidedBy:row.decidedBy,
         membershipId: row.membershipId,
         studentName:
           row.studentName ?? "Unnamed learner",

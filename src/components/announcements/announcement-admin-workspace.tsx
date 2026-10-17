@@ -23,6 +23,8 @@ export type AnnouncementAdminItem = {
   receiverId: string;
   title: string;
   message: string;
+  buttonLabel?:string|null;
+  buttonUrl?:string|null;
   senderType: string;
   scheduledAt: string | null;
   expiresAt: string | null;
@@ -273,6 +275,10 @@ export function AnnouncementAdminWorkspace({
                     </div>
                     <h3 className="mt-2 text-base font-semibold text-foreground">{item.title}</h3>
                     <p className="mt-1 whitespace-pre-wrap text-sm text-body">{item.message}</p>
+                    {item.buttonLabel&&item.buttonUrl&&/^https:\/\/[^\s]+$/i.test(item.buttonUrl)?<a href={item.buttonUrl} target="_blank" rel="noopener noreferrer"
+                      className="mt-2 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+                      {item.buttonLabel} ↗
+                    </a>:null}
                     {safeLink ? <a href={safeLink} target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-10 items-center break-all text-sm font-semibold text-primary-text underline">Open linked resource ↗</a> : null}
                     {item.expiresAt ? <p className="mt-2 text-xs text-muted-foreground">Show until {new Date(item.expiresAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p> : null}
                     <p className="mt-2 text-xs text-muted-foreground">

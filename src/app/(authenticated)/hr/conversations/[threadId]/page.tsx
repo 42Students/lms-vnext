@@ -32,7 +32,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }
- const ownDrives=result.thread.jobId ? await listOwnRecruiterPlacementJobs(context) : [];
+ const ownDrives=result.thread.jobId ? await listOwnRecruiterPlacementJobs(context,result.thread.collegeId) : [];
  const matchingDrive=result.thread.jobId
   ? ownDrives.find(item=>item.job.id===result.thread.jobId&&item.collegeId===result.thread.collegeId)
   : null;

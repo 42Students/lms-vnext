@@ -28,10 +28,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  }
  const groups=hiringCompanyRollups(data.rows);
  const totals=groups.reduce((out,row)=>({
+  totalApplications:out.totalApplications+row.totalApplications,
   applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
   assessment:out.assessment+row.assessment,interview:out.interview+row.interview,
   offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
- }),{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0});
+  withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
+ }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
   <label className="grid gap-1 text-sm font-semibold">{label}<select name={key} defaultValue={q[key]??""}
    className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-2">
@@ -60,7 +62,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
    <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">Export report (CSV) →</a>
   </div>
-  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">{(["applied","shortlisted","interview","hired"] as const).map(key=>
+  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
    <div key={key} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm capitalize text-muted-foreground">{key}</dt>
     <dd className="mt-1 text-2xl font-semibold tabular-nums">{totals[key]}</dd></div>)}</dl>
   <section className="overflow-x-auto rounded-xl border border-border bg-surface">
@@ -69,7 +71,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <tbody>{data.rows.map(row=><tr key={row.jobId} className="border-b border-border">
      <td className="p-3">{row.companyName}</td>
      <td className="p-3"><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)} className="text-primary-text underline">{row.jobTitle}</Link></td>
-     {(["applied","shortlisted","assessment","interview","offered","hired","rejected"] as const).map(key=><td key={key} className="p-3 tabular-nums">{row[key]}</td>)}
+     {(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=><td key={key} className="p-3 tabular-nums">{row[key]}</td>)}
     </tr>)}</tbody>
     <tfoot>{groups.map(row=><tr key={row.companyName} className="border-t border-border bg-muted font-semibold">
      <th className="p-3 text-left" scope="row">{row.companyName}</th><td className="p-3">Company total</td>

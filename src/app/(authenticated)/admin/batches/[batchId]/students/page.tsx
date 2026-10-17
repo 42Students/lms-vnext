@@ -17,6 +17,7 @@ export default async function SuperAdminBatchStudentsPage({params}:{
   <nav aria-label="Breadcrumbs" className="flex flex-wrap gap-2 text-sm"><Link href="/admin/batches" className="font-semibold text-primary-text">Batches</Link><span>›</span><span>{data.batch.name}</span></nav>
   <div><h1 className="text-2xl font-semibold">Manage students · {data.batch.name}</h1>
    <p className="mt-1 text-sm text-body">{data.batch.programName} · {data.batch.code} · {total} active class assignments</p></div>
+  <a href={"/api/admin/batches/"+encodeURIComponent(batchId)+"/students/export"} className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Export batch students (CSV)</a>
   <p className="rounded-md border border-border bg-surface p-4 text-sm text-body">Select a class to search its roster by learner name, roll number or email and move learners through the existing capacity-checked class assignment controls. A learner may have distinct period-based assignments.</p>
   <section className="overflow-x-auto rounded-xl border border-border bg-surface" aria-label="Batch classes">
    <table className="w-full min-w-[36rem] text-left text-sm"><thead><tr className="border-b border-border">

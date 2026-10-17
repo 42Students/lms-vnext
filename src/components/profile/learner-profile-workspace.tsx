@@ -1,6 +1,6 @@
 "use client";
 
-import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
+import {LEARNER_EDUCATION_TYPES,learnerQualifyingExamSuggestions,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
@@ -222,7 +222,7 @@ export function LearnerProfileWorkspace(props: {
     const onVisible=()=>{
       if(!learnerProfileCanRefresh({
         visible:window.document.visibilityState==="visible",
-        editing:detailsOpen||contactOpen||collection!==null,
+        editing:detailsOpen||contactOpen||collection!==null||jobPrefsEditing||showcaseDraft!==null,
         saving:pending||contactPending,
         nowMs:Date.now(),lastRefreshMs:lastRefreshAt.current,
       }))return;
@@ -231,7 +231,7 @@ export function LearnerProfileWorkspace(props: {
     };
     window.document.addEventListener("visibilitychange",onVisible);
     return ()=>window.document.removeEventListener("visibilitychange",onVisible);
-  },[router,detailsOpen,contactOpen,collection,pending,contactPending]);
+  },[router,detailsOpen,contactOpen,collection,pending,contactPending,jobPrefsEditing,showcaseDraft]);
 
   // Guard the whole page as well as dialog Cancel. A browser reload cannot
   // safely preserve edits that exist only in local component state.
@@ -981,7 +981,7 @@ export function LearnerProfileWorkspace(props: {
                     list="learner-qualifying-exams" value={value} maxLength={120}
                     onChange={event=>setItemDraft({...itemDraft,[field.key]:event.target.value})}/>
                   <datalist id="learner-qualifying-exams">
-                    {LEARNER_QUALIFYING_EXAMS.map(option=><option key={option} value={option}/>)}
+                    {learnerQualifyingExamSuggestions(String(itemDraft.educationType??"")).map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
               if (field.type === "textarea") return <label key={field.key} className="text-xs font-semibold text-body sm:col-span-2">{field.label}<Textarea className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;

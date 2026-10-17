@@ -13,6 +13,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   placementApplications,
+  placementApplicationScreenings,
   placementJobs,
   placementOffers,
   placementJoiningOutcomes,
@@ -231,6 +232,10 @@ export async function getRecruiterCompanyReports(
             ),
           ),
         )
+        .innerJoin(placementApplicationScreenings,and(
+          eq(placementApplicationScreenings.applicationId,placementApplications.id),
+          eq(placementApplicationScreenings.status,"SHORTLISTED"),
+        ))
         .leftJoin(
           placementOffers,
           eq(placementOffers.applicationId,placementApplications.id),
@@ -279,6 +284,8 @@ export async function getRecruiterCompanyReports(
       join jobs j on j.id=a.job_id
       join college_memberships m on m.id=a.membership_id
         and m.college_id=${collegeId}::uuid
+      where exists (select 1 from placement_application_screenings sc
+        where sc.application_id=a.id and sc.status='SHORTLISTED')
     )
     select
       (select count(*)::int from applicants) as applied,

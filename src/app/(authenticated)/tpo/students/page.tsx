@@ -18,6 +18,7 @@ import { TpoStudentsBulkAdd } from "@/components/tpo/tpo-students-bulk-add";
 import { listPlacementJobs } from "@/modules/placements/job-service";
 import {tpoJourneyDrillFilters,tpoBranchDrillFilters} from "@/modules/placements/tpo-student-drill-filters-model";
 import {tpoStudentRosterClearHref} from "@/modules/placements/tpo-student-roster-clear-model";
+import {tpoStudentJourneySteps,tpoStudentJourneyGaps} from "@/modules/placements/tpo-student-journey-strip-model";
 import { can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -345,6 +346,19 @@ export default async function TpoStudentsPage({
           </StatusBadge>
         </div>
 
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Student placement journey">
+         {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-lg border border-border bg-surface p-4">
+          <h3 className="text-sm font-semibold">{step.label}</h3>
+          <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
+          <p className="text-xs text-muted-foreground">{step.percent}% of {summary.activeLearners} student(s)</p>
+         </div>)}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Journey attention filters">
+         {tpoStudentJourneyGaps(summary).map(gap=><Link key={gap.state}
+          href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
+          className="rounded-full border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+          {gap.label} · {gap.count}</Link>)}
+        </div>
         <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
           {TPO_STUDENT_JOURNEY_STATES.map((state) => {
             const selected = query.journeyState === state;
