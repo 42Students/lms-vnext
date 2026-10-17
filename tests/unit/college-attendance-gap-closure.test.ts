@@ -56,8 +56,14 @@ describe("College Attendance legacy and graceful-state gaps",()=>{
   expect(workspace()).toContain('params.set("deliveryId"');
   expect(page()).toContain("entry.deliveryId===query.deliveryId");
  });
- it("COL-attendance-10 non-elective course labels cannot be asserted as elective without a slot",()=>{
-  expect(workspace()).toContain("{course.code} · {course.name}");
+ it("COL-attendance-10 elective labels come from persisted offering type, never guessed by course name",()=>{
+  const service=source("src/modules/attendance/admin-service.ts");
+  const form=workspace();
+  expect(service).toContain("offeringType:courseOfferings.type");
+  expect(form).toContain('offeringType:"CORE"|"ELECTIVE"');
+  expect(form).toContain('row.offeringType==="ELECTIVE"');
+  expect(form).toContain('item.offeringType==="ELECTIVE"?" (elective)":""');
+  expect(form).toContain("{course.code} · {course.name}");
  });
  it("COL-attendance-11 invalid filters and absent selected college show in-page error and reset, not thrown error",()=>{
   const src=page();

@@ -83,7 +83,7 @@ export default async function CompanySharePage({
   </nav>
   <a className="font-semibold text-primary-text underline"
    href={publicApplicantExportHref(token,result.search)}>
-   Download capped CSV
+   Download list (CSV, up to 500 applicants)
   </a>
  </main>;
 }

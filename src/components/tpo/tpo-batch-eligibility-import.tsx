@@ -12,7 +12,7 @@ type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  studentName?:string|null;rollNumber?:string|null;currentStatus?:string|null;proposedStatus?:string|null;
 }[]};
 export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
- const fileInput=useRef<HTMLInputElement>(null);
+ const fileInput=useRef<HTMLInputElement>(null),dialog=useRef<HTMLDialogElement>(null);
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -68,7 +68,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     body:JSON.stringify({rows:selections.map(item=>preview.rows[item.index]),expectedVersions:versions,previewMemberIds:selections.map(item=>item.row.membershipId),confirmed:true}),
    });
    setLastActionId(data.actionId??null);
-   setNotice((data.changedCount??0)+" changes saved; "+(data.skipped??0)+" skipped.");
+   setNotice("Import saved");
    setPreview(null);setAcknowledged(false);router.refresh();
   }catch(e){setError(e instanceof FriendlyFetchError&&e.status===409?
     "This changed while you were working. Your import is still here; preview it again.":
@@ -76,7 +76,19 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
-  <h2 className="font-semibold">Import eligibility</h2>
+  <h2 className="font-semibold">Import eligibility decisions</h2>
+  <button type="button" disabled={busy} onClick={()=>dialog.current?.showModal()}
+   className="min-h-11 rounded border border-border px-4 text-sm font-semibold text-primary-text">
+   Import eligibility decisions
+  </button>
+  <dialog ref={dialog} aria-label="Import eligibility decisions"
+   onCancel={event=>{if(busy)event.preventDefault();}}
+   className="m-auto max-h-[90dvh] w-[calc(100%_-_2rem)] max-w-3xl space-y-3 overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground backdrop:bg-black/40">
+   <div className="flex items-center justify-between gap-3">
+    <h3 className="font-semibold">Import eligibility</h3>
+    <button type="button" disabled={busy} onClick={()=>dialog.current?.close()}
+     className="min-h-10 rounded border border-border px-3">Close</button>
+   </div>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <div className="rounded-md border border-dashed border-border p-3"
    onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
@@ -91,7 +103,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
-  <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview file"}</button>
+  <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview import"}</button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    {unresolved>0?<p role="alert" className="text-sm text-warning-text">{unresolved} row(s) need attention before you can confirm. Pick a suggestion or skip the row.</p>:null}
@@ -133,10 +145,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      Unusable rows must be explicitly skipped before the matched decisions can be saved.
    </label>
    <button type="button" disabled={busy||preview.ready===0||unresolved>0||!acknowledged} onClick={()=>void commit()}
-    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm import</button>
+    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {lastActionId?<TpoBatchUndoControl batchId={batchId} actionId={lastActionId}/>:null}
+  </dialog>
  </section>;
 }

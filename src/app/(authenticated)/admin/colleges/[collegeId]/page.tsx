@@ -21,6 +21,14 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
  ];
  return <div className="space-y-5">
   <PageHeader eyebrow="Super Admin · Tenant" title={item.name} description="Read-only tenant identity and setup links in the authorized scope."/>
+  <nav aria-label="College tabs" className="flex flex-wrap items-center gap-3">
+   <Link href={`/admin/colleges/${encodeURIComponent(item.id)}`}
+     aria-current="page" className="inline-flex min-h-11 items-center font-semibold text-primary-text">College</Link>
+   <Link href={`/activity?collegeId=${encodeURIComponent(item.id)}`}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Activity</Link>
+   <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(item.id)}`}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export activity CSV</Link>
+  </nav>
   <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}

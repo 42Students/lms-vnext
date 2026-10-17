@@ -43,6 +43,7 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   expect(invite()).toContain("You are joining as ");
   expect(invite()).toContain("invite.companyName");
   expect(invite()).toContain("invite.collegeName");
+  expect(invite()).toContain("Contact details are shared only as the placement cell allows.");
  });
  it("PUB-auth-public-48 declined recruiter subtitle exact legacy wording",()=>{
   expect(invite()).toContain("You will not be contacted about this again.");
@@ -97,4 +98,12 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   expect(src("public/assets/static/terms-and-conditions-view.html")).toContain("privacy-policy-view.html");
   expect(src("public/assets/static/privacy-policy-view.html")).toContain("Privacy");
  });
+ it("PUB-auth-public-54 shared applicant export is labelled Download list with approved bounded CSV",()=>{
+  const page=src("src/app/company-share/[token]/page.tsx");
+  const href=src("src/modules/placements/company-share/export-href-model.ts");
+  expect(page).toContain("Download list (CSV, up to 500 applicants)");
+  expect(page).toContain("publicApplicantExportHref(token,result.search)");
+  expect(href).toContain("company-share");
+ });
+
 });

@@ -357,11 +357,11 @@ export function FacultyLessonAuthoring({
         const points = Number(maxPoints);
         if (
           !Number.isInteger(points) ||
-          points < 1 ||
+          points < 0 ||
           points > 1000
         ) {
           throw new Error(
-            "Enter a whole number from 1 to 1000",
+            "Enter a whole number from 0 to 1000",
           );
         }
 
@@ -710,7 +710,7 @@ export function FacultyLessonAuthoring({
                   </FieldLabel>
                   <Input
                     type="number"
-                    min={1}
+                    min={0}
                     max={1000}
                     value={maxPoints}
                     onChange={(event) =>
