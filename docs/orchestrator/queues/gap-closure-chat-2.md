@@ -25,11 +25,11 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-24 | S2 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-28 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-inbox-team-31 | S2 | MISSING-COLUMN | OPEN |
-| TPO-inbox-team-33 | S2 | MISSING-ACTION | OPEN |
+| TPO-inbox-team-33 | S2 | MISSING-ACTION | IN-BRANCH |
 | TPO-inbox-team-35 | S2 | MISSING-ACTION | UNCONFIRMED |
 | TPO-inbox-team-36 | S2 | MISSING-ACTION | OPEN |
 | TPO-inbox-team-39 | S2 | STATE | IN-BRANCH |
-| TPO-inbox-team-44 | S2 | MISSING-FIELD | OPEN |
+| TPO-inbox-team-44 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-inbox-team-45 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-46 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-inbox-team-47 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
@@ -170,7 +170,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 |---|---|---|---|
 | TPO-companies-04 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | TPO-companies-05 | S2 | MISSING-TAB | OPEN |
-| TPO-companies-06 | S2 | MISSING-FIELD | OPEN |
+| TPO-companies-06 | S2 | MISSING-FIELD | IN-BRANCH |
 | TPO-companies-08 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-companies-10 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
 | TPO-companies-11 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -286,3 +286,10 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Checked latest main and fast-forwarded lane branch before edits. The branch's GitHub commits persist directly on `chatgpt/chat-2-b`; no writes to main.
 - TPO-campaigns-public-04 remains OPEN for full campaign/non-campaign provider history. Campaign dispatch now creates an opaque delivery batch and records actual receipt outcomes. TPO-companies-21 remains OPEN for independent count-retry behavior.
 - IN-BRANCH source closure this round: TPO-inbox-team-52, TPO-recruiters-40, TPO-companies-29, TPO-campaigns-public-10/12/36. Tests and paths in acceptance files; unit/integration and typecheck have NOT been run by builder.
+## Chat-2 current branch round — 2026-10-17 (after 0133/0134)
+- Fast-forwarded `chatgpt/chat-2-b` to `main` at `1b41f799c02ae0576e0c8a9558f93f0852e04e4b` (branch was behind, not divergent); all subsequent commits were made directly on the lane branch.
+- Repaired chat-2 failing unit contracts without deleting test coverage: exact Settings labels, recruiter draft shared confirm, Company Memory real placed count, scoped notification-edit opt-in, drive Discussion link, Team notification title, People derived sorting, and 0133 registered SQL assertions for Team reads, asks, away, topic limit.
+- `TPO-inbox-team-44`: added required searchable published-drive picker in addition to the existing multiple batch/branch selection, scoped service and empty states; named tests in `tests/unit/chat2-tpo-inbox-audience-44.test.ts`. IN-BRANCH, pending orchestrator test/DB verification.
+- `TPO-inbox-team-33`: unowned assignment now requires explicit confirm/cancel before guarded scoped DB mutation; named tests in `tests/unit/chat2-tpo-unowned-confirm-33.test.ts`. The owner-column proposal `docs/proposed-migrations/tpo-team-drive-owner.sql` is not present in 0133/0134, so registration is still needed before the assignment can work in production.
+- `TPO-companies-06`: Companies list now computes distinct placed members using college policy and recorded offers (never invents the SELECTED ledger); named existing unit test `tests/unit/chat2-company-placed-policy.test.ts`.
+- `TPO-inbox-team-51`: restored the opt-in edit checkbox, but unsent audience-change parity is still outstanding; keep OPEN. No numbered migrations were added. Builder could not run tests or typecheck; orchestrator must validate.
