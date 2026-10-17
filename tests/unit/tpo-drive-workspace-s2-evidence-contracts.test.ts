@@ -56,9 +56,13 @@ describe("Drive workspace S2 source-to-UI contracts",()=>{
  });
  it("TPO-drive-workspace-59 scopes existing TPO recruiter conversation metadata to a college",()=>{
   const reader=file("src/modules/placements/tpo-messages-service.ts");
-  expect(reader).toContain("placementTpoMessageThreads");
+  const scopedSql=file("src/modules/placements/tpo-messages-sql-page-service.ts");
+  expect(reader).toContain("getTpoRecruiterThreadSqlPage");
   expect(reader).toContain("collegeId");
-  expect(reader).toContain("placementJobs.title");
+  expect(scopedSql).toContain("placement_tpo_message_threads");
+  expect(scopedSql).toContain("where t.college_id=${collegeId}::uuid");
+  expect(scopedSql).toContain("j.title as job_title");
+  expect(scopedSql).toContain("j.college_id=t.college_id");
  });
  it("TPO-drive-workspace-61 has a recruiter invitation service but cannot infer a recipient from a public link",()=>{
   const service=file("src/modules/placements/tpo-recruiter-invite-service.ts");
