@@ -5,6 +5,8 @@ import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet"
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
+import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
+import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
 import { redirect } from "next/navigation";
 import {tpoStudentUrlError,tpoStudentFilterMessage} from "@/modules/placements/tpo-students-url-guard";
@@ -197,6 +199,9 @@ export default async function TpoStudentsPage({
   const summary = data.summary;
   const roster = data.roster;
   const afterCollege = await getTpoAfterCollegeForRoster(context, roster.items.map(row=>row.membershipId));
+  const rosterVerifications=manageAllowed&&roster.items.length?await getTpoVerificationQueue(context,{
+    tab:"WAITING",kind:"ALL",waitingState:"ALL",search:"",page:1,pageSize:100,
+  },roster.items.map(row=>row.membershipId)):null;
 
   const counts: Record<TpoStudentJourneyState, number> = {
     NOT_REGISTERED: summary.notRegistered,
@@ -628,6 +633,8 @@ export default async function TpoStudentsPage({
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
 
+        {rosterVerifications?.enabled&&rosterVerifications.permitted&&rosterVerifications.rows.length>0?
+          <TpoRosterVerificationBulk rows={rosterVerifications.rows}/>:null}
         {manageAllowed?<TpoStudentNudgePanel
           key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
           rows={roster.items.map(student=>({
