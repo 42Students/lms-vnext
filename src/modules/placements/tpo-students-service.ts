@@ -379,6 +379,7 @@ export async function getTpoStudentsIntelligence(
       exportRows: options.includeExportRows ? [] : null,
       definitions: {
         afterCollegeAvailable:input.afterCollege?await placementTableExists("placement_tpo_after_college"):true,
+        verificationAvailable:await placementTableExists("profile_verifications"),
         registrationsAvailable,
         externalOffersAvailable,
         registrationScope: "ACTIVE_COHORT",
@@ -875,6 +876,7 @@ export async function getTpoStudentsIntelligence(
       : null,
     definitions: {
       afterCollegeAvailable:outcomeMatches?.available??true,
+      verificationAvailable:verificationFacts.available,
       registrationsAvailable,
       externalOffersAvailable,
       registrationScope: "ACTIVE_COHORT",
