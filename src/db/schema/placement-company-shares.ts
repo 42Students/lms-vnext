@@ -36,7 +36,7 @@ export const placementCompanyApplicantShares = pgTable(
     wrongCodeWindowStart: timestamp("wrong_code_window_start", { withTimezone: true }),
     lockedUntil: timestamp("locked_until", { withTimezone: true }),
     selectedColumns: jsonb("selected_columns").$type<string[]>().notNull()
-      .default(sql`\x27["APPLICATION_ID","NAME","EMAIL"]\x27::jsonb`),
+      .default(sql`'["APPLICATION_ID","NAME","EMAIL"]'::jsonb`),
     shortlistBy: timestamp("shortlist_by", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
     revokedAt: timestamp("revoked_at", { withTimezone: true }),
