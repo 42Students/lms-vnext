@@ -16,8 +16,8 @@ function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){if(!/^\d{4}-\d{2}-
  if(Number.isNaN(date.getTime()))throw Error("Enter a valid date and time");
  return date.toISOString();
 }
-export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing}:{
- kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false}:{
+ kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
@@ -187,6 +187,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>}
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
+   {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
+    Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
+   </p>:null}
    <label className="grid gap-1 text-sm font-semibold">Lesson
     <select value={listLessonId} onChange={event=>setListLessonId(event.target.value)}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
