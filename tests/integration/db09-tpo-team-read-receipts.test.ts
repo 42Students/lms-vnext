@@ -1,4 +1,5 @@
 import {afterAll,describe,expect,it} from "vitest";
+import {randomUUID} from "node:crypto";
 import {Pool} from "pg";
 import {assertDb018DisposableTarget} from "../support/db018-test-target.mjs";
 import {SEED_IDS} from "../../scripts/db-seed-data";
