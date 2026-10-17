@@ -3,7 +3,7 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
@@ -109,6 +109,17 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .orderBy(desc(placementOffers.issuedAt), desc(placementOffers.id))
       .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE),
   ]);
+  // REC-home-drives-46: only placement-cell recorded candidate slots
+  // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
+  const slotRows=filters.tab==="rounds"
+    ?await db.select({roundId:placementRoundCandidateSlots.roundId,
+      total:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`,
+      confirmed:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.confirmedAt} is not null and ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`})
+     .from(placementRoundCandidateSlots)
+     .where(eq(placementRoundCandidateSlots.jobId,workspace.job.id))
+     .groupBy(placementRoundCandidateSlots.roundId):[];
+  const roundSlotCounts=Object.fromEntries(slotRows.map(row=>[row.roundId,
+   {confirmed:Number(row.confirmed),total:Number(row.total)}])) as Record<string,{confirmed:number;total:number}>;
   // REC-home-drives-52: formal selection ledger is not an issued offer.
   // Share the same shortlisted/active-college boundary as the offer reader,
   // and never treat a CANCELLED selection as a revoked issued offer.
@@ -194,7 +205,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectedTotal = filters.stage === "SHORTLISTED" ? applicantCounts.shortlisted
     : filters.stage === "WITHDRAWN" ? applicantCounts.withdrawn : applicantCounts.all;
   return {
-    workspace, filters, selectionRows, selectionPage, selectionTotal,
+    workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal,
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
     applicantsTruncated: false,
