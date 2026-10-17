@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 
 export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
@@ -35,6 +36,16 @@ export function MentorSprintDetailsEdit({
     (description.trim()||null)!==(originalDescription??null)||
     (goal.trim()||null)!==(originalGoal??null)||(done.trim()||null)!==(originalDone??null)||
     (start||null)!==originalStart||(end||null)!==originalEnd||(due||null)!==originalDue;
+  function discardDraft() {
+    setOpen(false);
+    setConfirmOpen(false);
+    setError(null);
+    setTitle(originalTitle);
+    setDescription(originalDescription??"");
+    setGoal(originalGoal??"");setDone(originalDone??"");
+    setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
+  }
+  const guard=useProjectEditorDiscardGuard(open||confirmOpen,changed,pending,discardDraft);
   function begin() {
     setTitle(originalTitle);
     setDescription(originalDescription??"");
@@ -82,7 +93,7 @@ export function MentorSprintDetailsEdit({
   }
   return <>
     <Button size="sm" variant="secondary" onClick={begin}>Edit sprint</Button>
-    <Dialog open={open} onOpenChange={setOpen} title="Edit sprint details"
+    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Edit sprint details"
       description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid gap-4">
         <label className="grid gap-1 text-xs font-semibold text-body">
@@ -110,7 +121,7 @@ export function MentorSprintDetailsEdit({
         </div>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">
-          <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>
+          <Button type="button" variant="secondary" onClick={guard.requestClose}>
             Cancel
           </Button>
           <Button type="submit" disabled={!changed||!title.trim()}>
@@ -119,7 +130,7 @@ export function MentorSprintDetailsEdit({
         </div>
       </form>
     </Dialog>
-    <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+    <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!next)guard.requestClose();}}
       title="Confirm sprint changes?"
       description="The revised sprint details will be visible to its project team."
       confirmLabel="Save sprint details" confirmVariant="primary"
@@ -132,5 +143,9 @@ export function MentorSprintDetailsEdit({
       </dl>
       {error?<p role="alert" className="mt-3 text-sm font-semibold text-error">{error}</p>:null}
     </ConfirmDialog>
+    <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+      title="Discard sprint changes?"
+      description="You have unsaved project changes. Leave this page and discard them?"
+      confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard}/>
   </>;
 }
