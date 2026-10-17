@@ -235,3 +235,16 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - SKIP TPO-drive-workspace-65: owner-sensitive OD-09 recruiter disclosure and private attachments decision remains pending.
 - MOVED WP-02/09/10/14/15 to chat-3 and WP-04/05/11/16 to chat-6; nothing reassigned was edited.
 - No tests, typecheck, lint, build or CI checks run. Owned WPs 01/03/06/07/08/12/13 are still IN-PROGRESS; source commits are not runtime acceptance.
+
+## FAST v2 chat-5-b S1/S2 continuation (2026-10-17, post latest main merge)
+
+- Fast-forwarded chatgpt/chat-5-b onto latest merged main 5759f883; never pushed to main or edited reassigned WP ownership.
+- WP-01: TPO-drive-workspace-40 Excel parsing now preserves and validates source row numbers; rejects skipped/blank/duplicate physical rows, duplicate cell coordinates, malformed/out-of-row references, bogus shared-string indices, duplicate workbook ZIP entries, hidden trailing columns, formula cells and password-protected workbooks. This fails closed rather than silently misapplying outcomes to another learner.
+- WP-01: TPO-drive-workspace-40 and TPO-drive-workspace-48 CSV import now rejects malformed bare quotes, trailing data after closing quote and multiline quoted learner result fields; quoted field state resets at record boundaries.
+- WP-06: TPO-drive-workspace-R03 / TPO-drive-workspace-41 bulk recorder stages deliberately unselected applicants as Not cleared ONLY when the operator opts in, the selected and unselected combined set is at most 25, a student-facing reason is entered, and the consequence confirmation is accepted. Per-learner receipt and CSV preserve mixed actual outcomes instead of mislabelling all rows as the selected outcome.
+- BLOCKED TPO-drive-workspace-28: apply-on-behalf 48-hour opt-out requires a registered persisted placement notice and consent policy; existing reminder workflow stays.
+- BLOCKED LEARNER-placements-20 / TPO-drive-workspace-54: private document storage and consent/retention controls are absent; do not invent resume or offer-letter uploads.
+- BLOCKED TPO-drive-workspace-40 portal IDs: employer company-portal-to-application mapping is not registered; keep exact internal ID/email/roll matching only.
+- SKIP TPO-drive-workspace-65: OD-09 recruiter candidate disclosure needs explicit owner security decision.
+- MOVED WP-02/09/10/14/15 belong to chat-3; WP-04/05/11/16 to chat-6; no cross-lane edits performed.
+- All seven retained WPs (01,03,06,07,08,12,13) remain IN-PROGRESS; no completed-acceptance claim. No tests, lint, typecheck, builds or CI waits were run.
