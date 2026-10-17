@@ -287,3 +287,12 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 ## Needs shell (chat-9 only)
 - TPO-home-40 duplicate global notifications entry and TPO-home-44 global topbar placement belong to chat-9; chat-4 must not edit `src/components/shell`.
 
+## Chat-4 next round after main merge — 26 gap IDs addressed (2026-10-17)
+
+- Synced origin/main with a two-parent merge on `chatgpt/chat-4-b`; the only overlapping test file was reconciled with main's `read` helper, preserving new `COL-verification-misc-10` coverage and other chat-4 College changes. No force push, no main push.
+- **Source-backed DONE (5, provisional pending orchestrator tests):** `LEARNER-home-courses-16` (one attendance summary with Present/Absent/Held and IST Day), `LEARNER-home-courses-20` (pinned author/count and own-message delete), `TPO-home-19` (visibility-return refresh), `TPO-home-37` (own-college notification refresh + friendly error/retry), `COL-verification-misc-09` (legacy label, guarded scoped settings save, retry and saved notice).
+- **PARTIAL / still OPEN (21):** `TPO-home-R07`; `COL-verification-misc-04/08/11`; `COL-course-tabs-03/04/14/16/18`; `SA-placements-projects-53/55/58/65/66/71/75/81/82/86/88/89`. Gap-ID tests safeguard existing subbehavior, but the acceptance files explicitly enumerate legacy work not yet present. Do not count these as closed.
+- Regression tests written but **not run**, with an ID-named test for each of the 26 outcomes in `tests/unit/chat4-{learner-home-courses,tpo-home,super-admin-projects,college-course-tabs,college-verification-misc}-gap-closure.test.ts`. Source-level acceptance records updated in those five page verification files. The orchestrator alone executes/certifies test and database results.
+- Next queue: finish the still-open Projects template, readiness and team flows, TPO full palette/team/recruiter inputs, learner semester/setup/performance, College content materials and Section ordering, verification saved views, then later academic/operations pages. No package, migration, shared shell, auth or security edits by this lane.
+- Blocked `COL-course-tabs-03/16` full private file materials and per-Section ordering: private object storage, scanner and registered DB05/runtime owner dependency; metadata and scoped filters remain usable. Continue unrelated open gaps without delay.
+
