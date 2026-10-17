@@ -51,6 +51,25 @@ describe("Chat-3 final sprint team and review contracts",()=>{
   expect(service).toContain('status:"NOT_REGISTERED"');
   expect(service).toContain(".limit(101)");
  });
+ it("TPO-companies-05 notifies only active same-college team followers, @team and explicit @members",()=>{
+  const service=read("src/modules/placements/tpo-company-team-service.ts");
+  const ui=read("src/components/tpo/tpo-company-team-conversation.tsx");
+  expect(service).toContain("inAppNotifications");
+  expect(service).toContain("notifyIds.delete(membership.id)");
+  expect(service).toContain('eq(collegeMemberships.collegeId,college.id)');
+  expect(service).toContain('eq(collegeMemberships.status,"ACTIVE")');
+  expect(service).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(service).toContain("input.body.matchAll");
+  expect(service).toContain("@team");
+  expect(service).toContain("ASK_DONE");
+  expect(service).toContain("Company Team ask completed");
+  expect(ui).toContain("Mention a teammate");
+  expect(ui).toContain('chunk.startsWith("#drive:")');
+  expect(ui).toContain('chunk.startsWith("#company:")');
+  expect(ui).toContain('chunk.startsWith("#student:")');
+  expect(ui).toContain("dayLabel");
+  expect(ui).toContain("Overdue ask");
+ });
  it("TPO-companies-R02 company joining link honors company name, domain prerequisite, modal confirmation and Retry",()=>{
   const ui=read("src/components/tpo/tpo-public-join-link-card.tsx");
   const route=read("src/app/api/placements/tpo/public-join-links/status/route.ts");
