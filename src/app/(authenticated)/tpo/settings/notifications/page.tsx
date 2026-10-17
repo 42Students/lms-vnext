@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {TpoMyNotificationPreferencesEditor} from "@/components/tpo/tpo-my-notification-preferences-editor";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -10,7 +11,6 @@ import { StatusBadge } from "@/components/ui/status-badge";
 
 import { hasMembershipRole } from "@/modules/identity/context";
 import {
-  TPO_NOTIFICATION_PREFERENCE_FIELDS,
   TPO_NOTIFICATION_VIEWS,
   tpoMyNotificationsHref,
   tpoMyNotificationsQuerySchema,
@@ -422,35 +422,9 @@ export default async function TpoMyNotificationsPage({
               </p>
             ) : null}
 
-            <dl className="divide-y divide-border">
-              {TPO_NOTIFICATION_PREFERENCE_FIELDS.map((field) => (
-                <div
-                  key={field.key}
-                  className="flex flex-wrap items-start justify-between gap-4 px-5 py-4"
-                >
-                  <div>
-                    <dt className="font-semibold text-foreground">
-                      {field.label}
-                    </dt>
-                    <dd className="mt-1 text-sm text-body">
-                      {field.description}
-                    </dd>
-                  </div>
+            <TpoMyNotificationPreferencesEditor
+             initial={preferences.values} version={data.preferencesVersion}/>
 
-                  <StatusBadge
-                    tone={
-                      preferences.values[field.key]
-                        ? "success"
-                        : "neutral"
-                    }
-                  >
-                    {preferences.values[field.key]
-                      ? "Enabled"
-                      : "Disabled"}
-                  </StatusBadge>
-                </div>
-              ))}
-            </dl>
           </>
         )}
       </section>
@@ -461,8 +435,8 @@ export default async function TpoMyNotificationsPage({
         Saved preferences are read from
         placement_tpo_user_preferences only when that table
         exists. No bodies, raw notification titles, activity
-        metadata, recipient contact information, preference
-        updates or read acknowledgments are performed here.
+        metadata or recipient contact information are exposed here.
+        Preference saves are audited; read acknowledgments are separate.
         Preference values do not prove that downstream
         delivery behavior has been implemented.
       </p>
