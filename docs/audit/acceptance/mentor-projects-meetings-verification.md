@@ -102,3 +102,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-09 | DONE (source checked; CI pending) | `src/modules/projects/mentor-project-order-model.ts`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-09 number-aware Team ordering`. number-aware Team ordering. |
 | MEN-projects-meetings-12 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-12 distinct legacy navigation tabs`. distinct legacy navigation tabs. |
 | MEN-projects-meetings-13 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-13 legacy task and meeting deep-link aliases`. legacy task and meeting deep-link aliases. |
+
+## Chat-7 round 2 — mentor overview/release evidence (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-18 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-18 author-entered definition-of-done and persona evidence`. |
+| MEN-projects-meetings-19 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-19 recorded project due, next action and blocker shortcut`. |
+| MEN-projects-meetings-21 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-21 task lane visualization and final signoff rule`. |
+| MEN-projects-meetings-23 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-23 legacy overview and deliverables vocabulary`. |
+| MEN-projects-meetings-24 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-24 team card with explainer and count`. |
