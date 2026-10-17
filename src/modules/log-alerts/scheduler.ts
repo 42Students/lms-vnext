@@ -53,10 +53,44 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
   return true;
 }
 
+/** Subsequent burst errors are recorded in the state row and sent during the next tick. */
+export function burstOverflowText(count: number, environment: string): string {
+  const safeCount = Number.isSafeInteger(count) && count > 0 ? count : 0;
+  return "vNext alert burst: " + safeCount +
+    " more new or recurring errors; see the Logs page. Environment: " + environment;
+}
+
+async function flushOverflow(now: Date): Promise<boolean> {
+  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
+    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  return getDb().transaction(async (tx) => {
+    const key = "TELEGRAM_BURST_" + environment;
+    const [state] = await tx.select().from(states)
+      .where(eq(states.stateKey, key)).for("update").limit(1);
+    if (!state?.overflowCount) return false;
+    const minute = new Date(Math.floor(now.getTime() / 60_000) * 60_000);
+    const sent = state.burstMinuteAt?.getTime() === minute.getTime()
+      ? state.burstCount : 0;
+    if (sent >= 5) return false;
+    if (!await sendTelegramAlert(burstOverflowText(state.overflowCount, environment))) {
+      return false;
+    }
+    await tx.update(states).set({
+      overflowCount: 0,
+      burstMinuteAt: minute,
+      burstCount: sent + 1,
+    }).where(eq(states.stateKey, key));
+    return true;
+  });
+}
+
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
   const { day, hour } = istDayAndHour(now);
+  // Burst overflow is not lost even if no subsequent error arrives to trigger a send.
+  // The locked state row preserves the five-per-minute ceiling across web replicas.
+  await flushOverflow(now);
   let digest = false;
   const acquired = await withScheduledLease("telegram-digest", now, async () => {
     if (hour < 9) return;
