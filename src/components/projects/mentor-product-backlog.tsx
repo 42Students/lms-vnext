@@ -10,6 +10,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
 }){
  const router=useRouter();
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
+ const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
