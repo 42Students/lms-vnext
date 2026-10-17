@@ -88,3 +88,15 @@ These are **named source-contract regressions**, not completed browser/DB accept
 | TPO-companies-28 | FIXED-ON-MAIN (source; privacy review pending) | Canonical hiring pulse derives persisted outcomes and is under authorized TPO company detail. Do not expose learner PII in a public or recruiter company view; browser/data-minimization review remains. | `tests/unit/chat3-final-sprint-companies-round14.test.ts` — TPO-companies-28 |
 | TPO-companies-R02 | FIXED-ON-MAIN (source) | Public join-link card has safe employer-domain setup, domain requirements, and unavailable-source error state. | `tests/unit/chat3-final-sprint-companies-round14.test.ts` — TPO-companies-R02 |
 | TPO-companies-R05 | FIXED-ON-MAIN (source) | Canonical company drive query uses descending persisted createdAt, newer jobs first. | `tests/unit/chat3-final-sprint-companies-round14.test.ts` — TPO-companies-R05 |
+
+## Chat-3 final sprint — company memory verification (source-level, CI pending)
+
+| Gap ID | Disposition | Specific evidence |
+| --- | --- | --- |
+| TPO-companies-07 | DONE (source) | `tpo-company-memory-service.ts` computes distinct confirmed JOINED learners by recorded joining year; `tpo-company-memory-workspace.tsx` now displays “Students placed, by year” bars and correct repeat relationship subtitle without inventing selected/offer-only placements. `tests/unit/chat3-final-sprint-company-memory.test.ts`, test `TPO-companies-07`. |
+| TPO-companies-08 | DONE (source) | The name-based drives table shows year, applied and offers, plus working scoped drive search and CSV export (`companyDriveCsv`). Unavailable dependent counts are not silently treated as true zero. Same test file `TPO-companies-08`. |
+| TPO-companies-10 | DONE (source) | Drive row links use the existing `/tpo/placements/jobs/{id}` route, not the former 404 path. Same test file `TPO-companies-10`. |
+| TPO-companies-11 | DONE (source) | Company Memory documents use real company share history, “Applicant list shared …”, authorized Open drive link, and “Nothing shared yet” only when history is ready and empty. Same test file `TPO-companies-11`. |
+| TPO-companies-12 | DONE (source) | Person rows show effective recruiter stage and persisted invite/join/sign-in activity, with explicit joined-not-signed-in and bounced cases, not solely `manualStage`. Same test file `TPO-companies-12`. |
+
+Tests were authored but not executed here. Browser, PostgreSQL and CI verification remain with the orchestrator.
