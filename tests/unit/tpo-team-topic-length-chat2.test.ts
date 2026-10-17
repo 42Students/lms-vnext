@@ -16,6 +16,6 @@ describe("TPO Team legacy topic limits",()=>{
  it("TPO-inbox-team-17 aligns form and persisted topic length without altering recruiter messaging",()=>{
   expect(source("src/components/tpo/tpo-team-forms.tsx")).toContain("maxLength={200}");
   expect(source("src/db/schema/tpo-internal.ts")).toContain('topic: varchar("topic", { length: 200 })');
-  expect(source("docs/proposed-migrations/tpo-inbox-team-topic-limit.sql")).toContain("TYPE varchar(200)");
+  expect(source("drizzle/0133_lanes_round_1.sql")).toContain("TYPE varchar(200)");
  });
 });
