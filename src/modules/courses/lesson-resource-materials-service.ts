@@ -3,7 +3,7 @@ import "server-only";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {lessonContents} from "@/db/schema";
-import {lessonContentMaterials} from "@/db/schema/lesson-content-materials-staged";
+import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {can} from "@/modules/permissions/policy";
