@@ -52,4 +52,18 @@ describe("chat-15 learner general placement requests",()=>{
   expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
   expect(page).toContain('initialKind={prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
  });
+ it("LEARNER-placements-43 only offers externally-reported acceptance dispute before the persisted cutoff",()=>{
+  const schema=tpoGeneralRequestInputSchema.safeParse({kind:"OFFER_ACCEPTANCE_DISPUTE",
+   reason:"I did not accept this offer",offerId:uuid});
+  expect(schema.success).toBe(true);
+  if(schema.success)expect(tpoGeneralRequestTarget(schema.data)).toBe(uuid);
+  const ui=source("src/components/placements/learner-placement-offers.tsx");
+  expect(ui).toContain('item.status==="ACCEPTED" && item.acceptanceChannel==="EXTERNAL_IMPORT"');
+  expect(ui).toContain("The company told us you accepted this offer.");
+  expect(ui).toContain('Date.parse(item.acceptedDisputableUntil)>Date.parse(snapshotNowIso)');
+  const writer=source("src/modules/placements/tpo-general-request-service.ts");
+  expect(writer).toContain('offer.acceptanceChannel!=="EXTERNAL_IMPORT"');
+  expect(writer).toContain("offer.acceptedDisputableUntil.getTime()<=Date.now()");
+  expect(writer).toContain("eq(placementApplications.membershipId,member.id)");
+ });
 });
