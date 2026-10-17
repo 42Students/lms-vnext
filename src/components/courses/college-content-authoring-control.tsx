@@ -25,6 +25,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
+ const [listLessonId,setListLessonId]=useState("");
  const [removeLink,setRemoveLink]=useState(false);
  const [deliveryId,setDeliveryId]=useState("");
  const selectedLesson=lessons.find(row=>row.id===lessonId);
@@ -174,7 +175,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>}
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
-   <ul className="space-y-1">{existing.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
+   <label className="grid gap-1 text-sm font-semibold">Lesson
+    <select value={listLessonId} onChange={event=>setListLessonId(event.target.value)}
+     className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
+     <option value="">All Lessons</option>
+     {lessons.map(row=><option key={row.id} value={row.id}>{row.courseCode} · {row.name}</option>)}
+    </select>
+   </label>
+   <ul className="space-y-1">{existing.filter(item=>!listLessonId||item.lessonId===listLessonId).map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"One section":"All sections taking this course"})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
