@@ -9,6 +9,7 @@ import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-mod
 import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
 import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
+import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -68,6 +69,16 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
+    {result.items.find(row=>!row.jobId)?<details className="mt-3 rounded-lg border border-border p-3">
+      <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
+      <p className="mt-2 text-sm text-body">Placement cell · General</p>
+      {result.items.find(row=>!row.jobId)?.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+        {result.items.find(row=>!row.jobId)!.preview!.text}
+      </p>:null}
+      <div className="mt-3"><RecruiterConversationReplyForm threadId={result.items.find(row=>!row.jobId)!.id}/></div>
+      <Link href={"/hr/conversations/"+result.items.find(row=>!row.jobId)!.id}
+        className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
+    </details>:null}
     <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
