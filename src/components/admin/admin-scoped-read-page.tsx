@@ -9,12 +9,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,peopleFilters,classOptions}:{
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
  exportPath?:string;exportFilename?:string;renderRowActions?:(row:SuperAdminReadRow)=>ReactNode;
+ renderBulkActions?:(rows:readonly SuperAdminReadRow[])=>ReactNode;
  classOptions?:readonly {id:string;name:string}[];
  peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
@@ -31,6 +32,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  const data=await loader(parsed.data);
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Read-only" title={title} description={description}/>
+  {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
    {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
