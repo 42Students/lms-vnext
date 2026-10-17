@@ -1,5 +1,5 @@
 import "server-only";
-import {inArray} from "drizzle-orm";
+import {eq,inArray} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {courseLessons,lessonContents} from "@/db/schema";
@@ -17,8 +17,7 @@ export async function bulkSuperAdminLessonVisibility(context:RequestContext,raw:
  const rows=await getDb().select({
   id:lessonContents.id,lessonId:courseLessons.id,status:lessonContents.status,
   visible:lessonContents.visibleToStudents,updatedAt:lessonContents.updatedAt,
- }).from(lessonContents).innerJoin(courseLessons, 
-  inArray(courseLessons.id,input.lessonIds))
+ }).from(lessonContents).innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
  .where(inArray(lessonContents.lessonId,input.lessonIds)).limit(501);
  if(rows.length>500)throw new Error("LESSON_CONTENT_BULK_TOO_LARGE");
  const changed:string[]=[],failures:{id:string;reason:string}[]=[];
