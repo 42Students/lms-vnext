@@ -1567,7 +1567,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()}/>
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={renderTime.toISOString()}/>
 
 
         </section>
