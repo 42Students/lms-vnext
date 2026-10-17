@@ -78,6 +78,12 @@ export async function mutateCollegeInterview(context:RequestContext,rawJobId:unk
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,proposed.applicationId),
+     eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+     eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+   if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
    const start=new Date(proposed.scheduledAt);
    const end=new Date(start.getTime()+proposed.durationMinutes*60000);
    const sharedResource=or(
