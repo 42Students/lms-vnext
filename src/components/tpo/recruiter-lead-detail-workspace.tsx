@@ -386,7 +386,7 @@ export function RecruiterLeadDetailWorkspace({
                   <dd>{lead.emailNorm ? lead.unsubscribedAt?<span>{lead.emailNorm} · opted out</span>:<a href={"mailto:" + lead.emailNorm} className="text-primary-text underline">{lead.emailNorm}</a>
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add email</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Phone</dt>
-                  <dd>{lead.phoneNorm ? <a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
+                  <dd>{lead.phoneNorm ? lead.unsubscribedAt?<span>{lead.phoneNorm} · opted out</span>:<a href={"tel:" + lead.phoneNorm} className="text-primary-text underline">{lead.phoneNorm}</a>
                     : <button type="button" className="text-primary-text underline" onClick={openEdit}>Add phone</button>}</dd></div>
                 <div><dt className="text-muted-foreground">Source</dt><dd>{lead.source || "Added by hand"}</dd></div>
               </dl>
