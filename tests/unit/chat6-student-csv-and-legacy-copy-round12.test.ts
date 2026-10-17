@@ -9,7 +9,7 @@ describe("Super Admin student CSV lifecycle",()=>{
  it("SA-academics-people-95 validates a 500-row legacy roster with the selected academic placement and no mutation",()=>{
   expect(MAX_STUDENT_CSV_ROWS).toBe(500);
   expect(LEGACY_STUDENT_CSV_COLUMNS).toEqual(["First Name","Last Name","Roll Number","Mobile Number","Email"]);
-  const csv=LEGACY_STUDENT_CSV_COLUMNS.join(",")+"\n"+"Anjali,Sharma,9876543210,anjali@example.edu,22CS001\n";
+  const csv=LEGACY_STUDENT_CSV_COLUMNS.join(",")+"\n"+"Anjali,Sharma,22CS001,9876543210,anjali@example.edu\n";
   const parsed=parseStudentCsv(csv,{programId,cohortId});
   expect(parsed.structuralErrors).toEqual([]);
   expect(parsed.entries[0]?.errors).toEqual([]);
