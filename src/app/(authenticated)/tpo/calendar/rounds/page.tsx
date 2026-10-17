@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { TpoRoundCalendarControl } from "@/components/placements/tpo-round-calendar-control";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { listTpoCalendarRoundChoices } from "@/modules/placements/tpo-round-calendar-service";
+import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
 export default async function TpoRoundCalendarPage({searchParams}:{
  searchParams:Promise<{page?:string|string[];q?:string|string[]}>;
 }) {
@@ -12,9 +13,9 @@ export default async function TpoRoundCalendarPage({searchParams}:{
   if (!context.membership || !hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const raw=await searchParams;
   const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
-  const result = await listTpoCalendarRoundChoices(context,{
+  const [result,blockedDates] = await Promise.all([listTpoCalendarRoundChoices(context,{
    page:first(raw.page)||1,q:first(raw.q)||"",
-  });
+  }),getTpoBlockedDates(context)]);
   const link=(page:number)=>"/tpo/calendar/rounds?"+new URLSearchParams({
    ...(result.q?{q:result.q}:{}),page:String(page),
   }).toString();
@@ -33,7 +34,8 @@ export default async function TpoRoundCalendarPage({searchParams}:{
      <Link href="/tpo/calendar/rounds" className="inline-flex min-h-11 items-center text-primary-text underline">Clear</Link>
     </form>
     <p role="status" className="text-sm">Page {result.page}: {result.rows.length} rounds{result.limited?" · more available":""}</p>
-    <TpoRoundCalendarControl choices={result.rows.map((row) => ({
+    <TpoRoundCalendarControl blockedDates={blockedDates.ready?blockedDates.rows.map(row=>row.day):[]} blockedDatesAvailable={blockedDates.ready}
+     choices={result.rows.map((row) => ({
       ...row, updatedAt: row.updatedAt.toISOString(),
       scheduledAt: row.scheduledAt?.toISOString() ?? null,
     }))} />

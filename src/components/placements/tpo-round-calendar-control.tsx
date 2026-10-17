@@ -13,7 +13,9 @@ const localIst = (value: string | null) => value
       day: "2-digit", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
     }).format(new Date(value)).replace(", ", "T").replace(" ", "T")
   : "";
-export function TpoRoundCalendarControl({ choices }: { choices: readonly Choice[] }) {
+export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvailable }: {
+ choices: readonly Choice[];blockedDates:readonly string[];blockedDatesAvailable:boolean;
+}) {
   const router = useRouter();
   const [id, setId] = useState(choices[0]?.id ?? "");
   const round = useMemo(() => choices.find((item) => item.id === id), [choices, id]);
@@ -26,6 +28,7 @@ export function TpoRoundCalendarControl({ choices }: { choices: readonly Choice[
   const [reason, setReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const blockedDay=blockedDates.find(day=>day===dateInput.slice(0,10));
   function choose(next: string) {
     setId(next);
     const value = choices.find((item) => item.id === next);
@@ -40,6 +43,9 @@ export function TpoRoundCalendarControl({ choices }: { choices: readonly Choice[
     if (!round || pending) return;
     const note = action === "CANCEL" ? reason.trim() : "";
     if (action === "CANCEL" && note.length < 3) { setError("Enter a cancellation reason."); return; }
+    if(action==="SCHEDULE"&&blockedDay&&!window.confirm(
+      "This is a blocked date ("+blockedDay+"). Schedule this round anyway?"
+    ))return;
     if (!window.confirm(
       (action === "CANCEL" ? "Cancel " : "Create or reschedule ") +
       round.name + " for " + round.companyName +
@@ -88,6 +94,12 @@ export function TpoRoundCalendarControl({ choices }: { choices: readonly Choice[
         <input type="datetime-local" className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface p-2"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
+      {blockedDay?<p role="alert" className="rounded border border-warning bg-warning-subtle p-3 text-sm text-warning-text">
+       This day is blocked in placement settings. Review the clash before scheduling a round.
+      </p>:null}
+      {!blockedDatesAvailable?<p role="status" className="text-sm text-warning-text">
+       Blocked-date storage is unavailable; schedule clashes cannot be verified.
+      </p>:null}
       <label className="block text-sm font-semibold text-foreground">Mode
         <select className="mt-1 block min-h-11 w-full rounded-md border border-border bg-surface p-2"
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>

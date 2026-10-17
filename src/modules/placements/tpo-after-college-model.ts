@@ -9,9 +9,9 @@ export const afterCollegeOutcomeSchema=z.enum(AFTER_COLLEGE_OUTCOMES);
 export type AfterCollegeOutcome=z.infer<typeof afterCollegeOutcomeSchema>;
 export const AFTER_COLLEGE_LABELS:Record<AfterCollegeOutcome,string>={
  PLACED_ON_CAMPUS:"Placed on campus",PLACED_OFF_CAMPUS:"Placed off campus",
- HIGHER_STUDIES:"Higher studies",ENTREPRENEURSHIP:"Entrepreneurship",
+ HIGHER_STUDIES:"Higher studies",ENTREPRENEURSHIP:"Entrepreneurship / self-employed",
  COMPETITIVE_EXAMS:"Competitive exams",NOT_INTERESTED:"Not interested",
- LOOKING_FOR_JOB:"Looking for a job",DEBARRED:"Debarred",NOT_DECIDED:"Not decided",
+ LOOKING_FOR_JOB:"Looking for a job",DEBARRED:"Debarred",NOT_DECIDED:"Not decided yet",
 };
 /** Placement and debarment outcomes require verified evidence in their own modules. */
 export const MANUAL_AFTER_COLLEGE_OUTCOMES=AFTER_COLLEGE_OUTCOMES.filter(value=>
@@ -23,4 +23,9 @@ export function afterCollegeOptions(){
 }
 export function afterCollegeDisplay(outcome:AfterCollegeOutcome|null|undefined){
  return outcome?AFTER_COLLEGE_LABELS[outcome]:AFTER_COLLEGE_LABELS.NOT_DECIDED;
+}
+
+/** Include evidence-derived placed and debarred outcomes in read-only settings. */
+export function afterCollegeAllOptions(){
+ return AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}));
 }
