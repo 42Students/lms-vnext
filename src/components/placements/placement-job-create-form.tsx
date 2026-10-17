@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
+import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 export type PlacementAcademicTargetingChoice = {
@@ -160,6 +161,9 @@ export function PlacementJobCreateForm({
         event.currentTarget,
       );
       const title = String(data.get("title") ?? "").trim();
+      // TPO-drives-45: datetime-local is IST regardless of browser timezone.
+      const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
+      const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -173,8 +177,7 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       if(reviewPublish){
-        const dueText=String(data.get("applicationDeadline")??"").trim();
-        const dueTime=dueText?new Date(dueText).getTime():Number.NaN;
+        const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
         const roleTitle=String(data.get("title")??"").trim();
@@ -269,10 +272,7 @@ export function PlacementJobCreateForm({
         data.get("applicationMode") ??
           "INTERNAL",
       );
-      const deadlineRaw = String(
-        data.get("applicationDeadline") ??
-          "",
-      );
+      
       const jobResult = await requestJson(
         "/api/placements/jobs",
         "POST",
@@ -334,12 +334,7 @@ export function PlacementJobCreateForm({
                     "externalApplicationUrl",
                   ) ?? "",
                 ).trim() || null,
-          applicationDeadline:
-            deadlineRaw
-              ? new Date(
-                  deadlineRaw,
-                ).toISOString()
-              : null,
+          applicationDeadline: deadlineIso,
         },
       );
 
@@ -832,7 +827,9 @@ export function PlacementJobCreateForm({
               className={inputClass}
               name="applicationDeadline"
               type="datetime-local"
+              aria-describedby="drive-deadline-ist-help"
             />
+            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Choose 11:59 PM if applications close at the end of the day.</span>
           </label>
         </div>
       </section>
