@@ -124,3 +124,9 @@ All five named source regressions were added; integration, mobile and browser ac
 | TPO-companies-28 | DONE (source, safer behavior) | Canonical hiring rows show role, pay, offer and joining statuses, without adding learner-name fields to the Company screen; sensitive learner profile details belong to separately authorized placement flows. Same test file `TPO-companies-28`. |
 
 These named regressions were authored, not run; responsive and keyboard browser acceptance is outstanding.
+
+### Round-14 R02 and company privacy refinements
+
+- **TPO-companies-R02:** The join-link card now says `Anyone at {company name}` rather than repeating the domain; the registered email domain remains explicitly labelled `@domain`. A `DOMAIN_REQUIRED` API response provides the precise add-domain instruction, stale/not-found errors stay readable, and a failed initial load has a Retry action. Source: `src/components/tpo/tpo-public-join-link-card.tsx`. ID-named test in `chat3-final-sprint-companies-round14.test.ts`.
+- **TPO-companies-28:** The authorized canonical company summary renders role, offer status, joining status, dates and aggregated confirmed-join evidence without rendering `candidateName` or `learnerName` fields. Applicant identity belongs in the separately authorized candidate/drive workflows. Same ID-named test.
+- **TPO-companies-13:** The canonical Create drive URL sends the company hint to the full create page, which resolves `initialCompanyName` to a scoped company relationship. Same ID-named regression.
