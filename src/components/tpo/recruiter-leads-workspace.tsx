@@ -544,6 +544,7 @@ export function RecruiterLeadsWorkspace({
       setSaveError("Choose a future follow-up date (IST).");return;
     }
     if(!reviewingCreate){setReviewingCreate(true);return;}
+    if(sequence!==contactCheckSeq.current)return;
 
     setSaving(true);
     setSaveError("");
