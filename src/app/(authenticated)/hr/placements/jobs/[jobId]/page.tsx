@@ -19,6 +19,7 @@ import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/pl
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
+import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
@@ -373,7 +374,7 @@ export default async function HrPlacementJobPage({
             ))}
           </div> : <p className="text-sm text-muted-foreground">No shared applicants match this stage.</p>}
           {selectedApplicant ? (
-            <section role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
+            <section id="recruiter-focused-review-dialog" role="dialog" aria-modal={focused ? "true" : "false"} aria-labelledby="hr-applicant-drawer-title"
               className="fixed inset-x-0 bottom-0 z-30 max-h-[85vh] overflow-y-auto rounded-t-2xl border border-border bg-surface p-5 shadow-xl sm:inset-x-auto sm:right-0 sm:top-0 sm:h-screen sm:max-h-screen sm:w-full sm:max-w-lg sm:rounded-none"
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
@@ -381,6 +382,10 @@ export default async function HrPlacementJobPage({
                 <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
                   className="rounded-md border border-border px-3 py-2 text-sm text-foreground">Close</Link>
               </div>
+              {focusedNavigation ? <RecruiterFocusedReviewShortcuts
+                closeHref={"/recruiter/drives/"+workspace.job.id+"?tab=applicants&stage="+filters.stage+"&page="+filters.page}
+                previousHref={focusedNavigation.previous?focusedHref(focusedNavigation.previous):null}
+                nextHref={focusedNavigation.next?focusedHref(focusedNavigation.next):null}/> : null}
               {focusedNavigation ? <nav aria-label="Step through shortlisted applicants" className="mt-4 flex flex-wrap items-center gap-3 text-sm">
                 <span className="text-body">{focusedNavigation.index+1} of {focusedNavigation.total} shared applicants on this page</span>
                 {focusedNavigation.previous ? <Link className="rounded-md border border-border px-3 py-2 text-primary-text" href={focusedHref(focusedNavigation.previous)}>Previous applicant</Link> : null}
