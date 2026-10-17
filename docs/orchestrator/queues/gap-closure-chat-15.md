@@ -47,3 +47,7 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 ## Chat-15 verified closure group A
 
 LEARNER-course-detail-08, LEARNER-course-detail-09, LEARNER-course-detail-13, LEARNER-course-detail-14, LEARNER-course-detail-15, LEARNER-course-detail-16, LEARNER-course-detail-20, LEARNER-placements-03, LEARNER-placements-05 — source completed, ID-named tests added; not run by builder.
+
+## Chat-15 reassigned closure B1
+
+- DONE (source): LEARNER-learning-misc-13, LEARNER-learning-misc-29. Legacy assignment date labels and quiz submitted popover. Test: tests/unit/chat15-assessment-legacy-copy.test.ts (not run).
