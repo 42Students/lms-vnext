@@ -85,7 +85,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         {[...generalHistory.messages].reverse().map(message=><li key={message.id}
           className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
           <p className="mb-1 text-xs font-semibold text-muted-foreground">
-            {message.senderType==="RECRUITER"?"You":"Placement cell"} · {when(message.createdAt)} IST
+            {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {when(message.createdAt)} IST
           </p>
           <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
         </li>)}
