@@ -60,7 +60,9 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
    counterpart={result.thread.counterpartName}
    createdDate={new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(result.thread.createdAt)}
-   decisions={result.messages.filter(message=>message.decision&&!message.removed).length}/>
+   decisions={result.messages.filter(message=>message.decision&&!message.removed).length}
+   openAsks={asks.status==="READY"?asks.items.filter(ask=>ask.status==="OPEN").length:0}
+   awayLabel={awayLabel}/>
   {asks.status==="READY"?<TpoTeamAskPanel threadId={result.thread.id}
    actorId={context.membership?.id??""}
    recipientId={otherMembershipId}
