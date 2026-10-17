@@ -1,6 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
 import {serializeTpoEligibilityPreviewCsv} from "@/modules/placements/tpo-eligibility-preview-csv-model";
 import {parseTpoEligibilitySheetCsv} from "@/modules/placements/tpo-eligibility-sheet-model";
@@ -10,6 +10,7 @@ type Preview={rows:ImportRow[];ready:number;skipped:number;preview:{
  studentName?:string|null;rollNumber?:string|null;currentStatus?:string|null;proposedStatus?:string|null;
 }[]};
 export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
+ const fileInput=useRef<HTMLInputElement>(null);
  const router=useRouter(),[csv,setCsv]=useState("studentCode,decision,reason\n");
  const [preview,setPreview]=useState<Preview|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
@@ -76,7 +77,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   <div className="rounded-md border border-dashed border-border p-3"
    onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
    <label className="block text-sm font-semibold text-body">Choose or drop eligibility CSV
-    <input type="file" accept=".csv,text/csv" disabled={busy}
+    <input ref={fileInput} type="file" accept=".csv,text/csv" disabled={busy}
      className="mt-2 block min-h-11 max-w-full text-sm" onChange={event=>void chooseFile(event.target.files?.[0]??null)}/>
    </label>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
@@ -109,6 +110,10 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <span>Page {previewPage} of {Math.max(1,Math.ceil(preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length/8))}</span>
     <button type="button" disabled={busy||previewPage*8>=preview.preview.filter(row=>previewTab==="ALL"||row.status===(previewTab==="MATCHED"?"matched":"unusable")).length} onClick={()=>setPreviewPage(p=>p+1)} className="min-h-10 rounded border border-border px-3 disabled:opacity-50">Next</button>
    </nav>
+   <div className="flex flex-wrap gap-2">
+    <button type="button" disabled={busy} onClick={()=>fileInput.current?.click()} className="min-h-10 rounded border border-border px-3 text-sm">Choose another file</button>
+    <button type="button" disabled={busy} onClick={()=>{setPreview(null);setSkippedByUser([]);setNotice("Review discarded; no eligibility changes were saved.");}} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
+   </div>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <button type="button" disabled={busy||preview.ready===0} onClick={()=>void commit()}
     className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
