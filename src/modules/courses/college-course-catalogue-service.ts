@@ -15,6 +15,7 @@ async function authorizedCollege(context:RequestContext){
     !hasMembershipRole(context,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.read");
  const college=await loadAcademicCollegeScope(membership.collegeId);
+ if(membership.organizationId!==college.organizationId)throw new AuthorizationError("courses.read");
  requirePermission(context,"courses.read",{
   organizationId:college.organizationId,collegeId:college.id,
  });
