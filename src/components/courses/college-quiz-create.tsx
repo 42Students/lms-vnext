@@ -20,12 +20,14 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const [questions,setQuestions]=useState<Question[]>([empty()]);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
+ const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
  function replaceQuestion(i:number,updated:Question){
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
  }
  function valid(){
-  if(!title.trim()||!lesson||lesson.nextSequence>10000)return "Select a lesson and enter a quiz title.";
+  if(!title.trim()||!lesson||(nextOverride[lesson.id]??lesson.nextSequence)>10000)
+   return "Select a lesson and enter a quiz title.";
   if(deliveryId&&!sections.some(x=>x.deliveryId===deliveryId))return "Choose a Section within this offering.";
   const attempts=Number(maxAttempts);
   if(!Number.isInteger(attempts)||attempts<1||attempts>20)return "Attempts must be 1–20.";
@@ -36,9 +38,12 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       texts.some(x=>!x)||new Set(texts.map(x=>x.toLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
    const correct=q.options.filter(x=>x.correct).length;
-   if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1))return "Select valid correct answers for every question.";
+   if(!correct||(q.type==="SINGLE_CHOICE"&&correct!==1)||
+      (q.type==="MULTIPLE_CHOICE"&&correct>=q.options.length))return "Select at least one correct and one incorrect answer for each multiple-choice question.";
   }
+  if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
   if(dueAt&&Number.isNaN(new Date(dueAt+":00+05:30").getTime()))return "Use a valid deadline.";
+  if(dueAt&&new Date(dueAt+":00+05:30").getTime()<=Date.now())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){
@@ -51,11 +56,12 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:lesson!.id,deliveryId:deliveryId||null,title:title.trim(),
      description:description.trim()||null,dueAt:dueAt?new Date(dueAt+":00+05:30").toISOString():null,
-     maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:lesson!.nextSequence,
+     maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:nextOverride[lesson!.id]??lesson!.nextSequence,
      questions:questions.map((q,index)=>({...q,sequence:index,
       prompt:q.prompt.trim(),options:q.options.map((o,j)=>({...o,text:o.text.trim(),sequence:j}))}))})});
    const body=await result.json().catch(()=>null);
    if(!result.ok||!body?.quiz?.id)throw new Error(body?.error??"Could not create quiz.");
+   setNextOverride(old=>({...old,[lesson!.id]:(old[lesson!.id]??lesson!.nextSequence)+1}));
    setOpened(false);setTitle("");setDescription("");setDueAt("");setQuestions([empty()]);
    setNotice("Quiz draft created. Publish it when the questions are ready.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}

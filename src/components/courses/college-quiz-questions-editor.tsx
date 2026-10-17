@@ -9,6 +9,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false),[loading,setLoading]=useState(false),[busy,setBusy]=useState(false);
  const [questions,setQuestions]=useState<Question[]>([]),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [dirty,setDirty]=useState(false);
  async function load(){
   if(loading||busy)return;
   setOpen(true);setLoading(true);setError("");setNotice("");
@@ -18,12 +19,14 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
    if(!response.ok||!Array.isArray(body?.quiz?.questions)&&!Array.isArray(body?.questions))
     throw new Error(typeof body?.error==="string"?body.error:"Unable to load quiz questions.");
    const rows=Array.isArray(body?.questions)?body.questions:body.quiz.questions;
+   setDirty(false);
    setQuestions(rows.map((q:Question)=>({type:q.type,prompt:q.prompt,points:q.points,
     options:q.options.map(o=>({text:o.text,correct:Boolean(o.correct)}))})));
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load quiz questions.");}
+  }catch(cause){setOpen(false);setQuestions([]);
+   setError(cause instanceof Error?cause.message:"Unable to load quiz questions.");}
   finally{setLoading(false);}
  }
- function update(i:number,question:Question){setQuestions(prev=>prev.map((q,j)=>i===j?question:q));}
+ function update(i:number,question:Question){setDirty(true);setQuestions(prev=>prev.map((q,j)=>i===j?question:q));}
  async function save(){
   if(busy)return;
   if(questions.length<1||questions.length>100){setError("Add 1–100 questions.");return;}
@@ -33,9 +36,13 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
     labels.length<2||labels.length>20||labels.some(x=>!x)||
     new Set(labels.map(x=>x.toLowerCase())).size!==labels.length||
     !q.options.some(x=>x.correct)||
-    q.type==="SINGLE_CHOICE"&&q.options.filter(x=>x.correct).length!==1){
+    (q.type==="SINGLE_CHOICE"&&q.options.filter(x=>x.correct).length!==1)||
+    (q.type==="MULTIPLE_CHOICE"&&q.options.every(x=>x.correct))){
     setError("Complete every question, unique option and correct answer.");return;
    }
+  }
+  if(questions.reduce((total,q)=>total+q.points,0)>10000){
+   setError("Quiz total points may not exceed 10000.");return;
   }
   if(!window.confirm("Save changed quiz questions? Draft question edits replace the saved question bank."))return;
   setBusy(true);setError("");setNotice("");
@@ -47,12 +54,12 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
    });
    const body=await response.json().catch(()=>null);
    if(!response.ok||body?.quiz?.id!==quizId)throw new Error(body?.error??"Quiz questions could not be updated.");
-   setOpen(false);setNotice("Quiz questions updated.");router.refresh();
+   setDirty(false);setOpen(false);setNotice("Quiz questions updated.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update questions.");}
   finally{setBusy(false);}
  }
  return <section className="space-y-2">
-  <button type="button" disabled={busy||loading} onClick={()=>open?setOpen(false):void load()}
+  <button type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
    {loading?"Loading…":open?"Close questions":"Edit questions"}</button>
   {open&&!loading?<div className="max-h-[32rem] space-y-3 overflow-auto rounded border border-border p-3">
@@ -84,11 +91,11 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
       onClick={()=>update(i,{...q,options:[...q.options,{text:"",correct:false}]})}
       className="text-primary-text">+ Option</button>
      {questions.length>1?<button type="button" disabled={busy} className="text-error"
-      onClick={()=>setQuestions(prev=>prev.filter((_,k)=>k!==i))}>Remove question</button>:null}
+      onClick={()=>{setDirty(true);setQuestions(prev=>prev.filter((_,k)=>k!==i));}}}>Remove question</button>:null}
     </div>
    </fieldset>)}
    <div className="flex flex-wrap gap-2">
-    <button type="button" disabled={busy||questions.length>=100} onClick={()=>setQuestions(rows=>[...rows,empty()])}
+    <button type="button" disabled={busy||questions.length>=100} onClick={()=>{setDirty(true);setQuestions(rows=>[...rows,empty()]);}}
      className="min-h-10 rounded border border-border px-3 text-xs">+ Add question</button>
     <button type="button" disabled={busy} onClick={()=>void save()}
      className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">

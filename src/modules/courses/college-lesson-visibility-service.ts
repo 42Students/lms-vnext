@@ -81,6 +81,14 @@ export async function updateCollegeLessonStudentVisibility(context:RequestContex
 /** Per-lesson isolation makes failed bulk requests retryable without hiding successes. */
 export async function bulkCollegeLessonStudentVisibility(context:RequestContext,raw:unknown){
  const input=batch.parse(raw);
+ // An unauthorized caller must not receive a successful bulk response
+ // that merely embeds per-item permission errors.
+ const acting=await resolveActingCollege(context,"courses.manage");
+ if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
+  throw new AuthorizationError("courses.manage");
+ requirePermission(context,"courses.manage",{
+  collegeId:acting.collegeId,organizationId:acting.organizationId,
+ });
  const changed:{id:string;visibleToStudents:boolean;updatedAt:Date}[]=[];
  const failed:{lessonId:string;reason:string}[]=[];
  for(const item of input.items){
@@ -91,7 +99,8 @@ export async function bulkCollegeLessonStudentVisibility(context:RequestContext,
    changed.push(saved);
   }catch(error){
    failed.push({lessonId:item.lessonId,
-    reason:error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});
+    reason:error instanceof CoursesServiceError?error.code:
+     error instanceof Error?error.message:"VISIBILITY_UPDATE_FAILED"});
   }
  }
  return {changed,failed};
