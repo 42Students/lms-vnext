@@ -142,6 +142,7 @@ export function LearnerFinalDeliveryControl({
         },
       );
       lastSavedSnapshot.current=JSON.stringify(currentPayload());
+      failedSnapshot.current=null;
       setAutosaveStatus("saved");
       setOpen(false);
       showToast({
