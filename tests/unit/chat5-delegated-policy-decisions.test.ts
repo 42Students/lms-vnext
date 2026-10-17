@@ -47,7 +47,7 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
   const register=source("src/modules/placements/tpo-drive-offer-register-model.ts");
   expect(register).toContain("acceptanceChannel");
   expect(register).toContain("acceptedDisputableUntil");
-  expect(register).toContain("Learner");
+  expect(register).toContain("offerRulesCheck");
   expect(source("docs/audit/acceptance/tpo-drive-workspace-verification.md")).toContain("TPO-drive-workspace-51 | OPEN");
  });
  it("TPO-drives-28 keeps employer contract type distinct from college-specific counts-as-placed configuration",()=>{
