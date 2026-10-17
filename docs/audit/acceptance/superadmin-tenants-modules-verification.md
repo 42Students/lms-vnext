@@ -7,7 +7,7 @@ Audit `docs/audit/pages/superadmin/tenants-modules.md`. Protocol `docs/orchestra
 | SA-tenants-modules-10 | DONE | Server canonicalizes organization whitespace and validates blanks; form shows human duplicate and success; named test SA-tenants-modules-10 |
 | SA-tenants-modules-12 | DONE | Server lowercases and validates ^[a-z0-9-]{3,63}$; form honors the rule and maps duplicate errors; named test SA-tenants-modules-12 |
 | SA-tenants-modules-18 | OPEN | Sign out everywhere action exists; complete active session device/IP list not independently verified |
-| SA-tenants-modules-21 | DONE | College sign-in methods provide explicit email/phone options, expectedVersion guarded write, and save feedback; named test SA-tenants-modules-21 |
+| SA-tenants-modules-21 | DONE | College sign-in methods provide explicit email/phone options, expectedVersion guarded write, shared apiFetch and ref-locked action guard with friendly 409 handling; named test SA-tenants-modules-21 |
 | SA-tenants-modules-03 | OPEN | Tenant setup navigation exists; full 11-card scoped overview grid not confirmed |
 | SA-tenants-modules-04 | OPEN | Unscoped Overview recruiter-accounts card and original four descriptions incomplete |
 | SA-tenants-modules-06 | OPEN | Tenant structure and launch setup remain separate navigation; two-tab parity open |
