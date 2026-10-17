@@ -180,4 +180,30 @@ describe("chat-3 Drives round 4",()=>{
   expect(action).not.toContain("window.confirm");
   expect(action).toContain("<ConfirmDialog");
  });
+ it("TPO-drives-22 creation and edit wording matches the familiar drive actions",()=>{
+  const workspace=source("src/components/placements/placement-job-create-workspace.tsx");
+  const create=source("src/components/placements/placement-job-create-form.tsx");
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(workspace).toContain('title="Create drive"');
+  expect(workspace).toContain("Back to drives");
+  expect(create).toContain("Create draft");
+  expect(create).toContain("Publish");
+  expect(edit).toContain("Save changes");
+  expect(edit).toContain("Open drive page");
+ });
+ it("GR-04 TPO-drives-22 edit action never surfaces a raw API error code",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("await apiFetch(");
+  expect(edit).not.toContain("result?.error");
+ });
+ it("GR-30 TPO-drives-22 edit blocks duplicate writes",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("useGuardedAction");
+  expect(edit).toContain("await run(async()=>");
+ });
+ it("GR-35 TPO-drives-22 edit uses accessible confirmation rather than window.confirm",()=>{
+  const edit=source("src/components/placements/tpo-drive-edit-form.tsx");
+  expect(edit).toContain("<ConfirmDialog");
+  expect(edit).not.toContain("window.confirm");
+ });
 });
