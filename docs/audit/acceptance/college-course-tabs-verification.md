@@ -52,6 +52,8 @@ the selection and return plain retry guidance.
 
 ### Chat-4 follow-up acceptance, 2026-10-18
 
+| Gap ID | Status | Evidence |
+| --- | --- | --- |
 | COL-course-tabs-26 | PARTIAL (source reverified) | college-content-aggregate.tsx retains existing content visibility controls; college-assessment-aggregate.tsx exposes assignment and quiz authoring but publish/archive is not a substitute for per-item visibility. tests/unit/chat4-remaining-queue-revalidation-round.test.ts tests COL-course-tabs-26. Keep gap open until actual assessment/live-class visibility action exists. |
 
 Source inspections and regression tests authored, **not executed**. No UX page restyling is part of these records.
