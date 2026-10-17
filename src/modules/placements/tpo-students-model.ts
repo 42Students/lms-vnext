@@ -99,6 +99,9 @@ export type TpoStudentRow = {
   profileFacts?:TpoStudentProfileFacts;
   hiddenSearchMatched?:boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
+  participationLevel?:ResolvedPlacementParticipation["level"];
+  participationReason?:string|null;
+  participationDecidedAt?:Date|null;
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
@@ -322,6 +325,9 @@ export function deriveTpoStudent(
     registrationOpen:source.registrationOpen??null,
     registeredForPlacements,
     participationStatus: source.participation.status,
+    participationLevel:source.participation.level,
+    participationReason:source.participation.reason,
+    participationDecidedAt:source.participation.decidedAt,
     readinessSignal,
     preferencesPresent: source.preferencesPresent,
     verification:source.verification,
