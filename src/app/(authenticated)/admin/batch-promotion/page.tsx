@@ -16,14 +16,14 @@ export default async function SuperAdminBatchPromotionPage({
   const input = readAdminPromotionParams(raw);
   const showCompleted = raw.showCompleted==="1";
   if (!input.success) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview" />
+    <PageHeader  title="Batch Promotion" />
     <ErrorState title="Invalid batch promotion filters" description="Use valid program, cohort and optional academic year values."
       action={<Link href="/admin/batch-promotion" className="font-semibold text-primary-text">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion Preview" />
-    <EmptyState title="Select a college scope" description="Choose the exact college before inspecting promotion eligibility. No batch is selected automatically." />
+    <PageHeader  title="Batch Promotion" />
+    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its batch promotion." />
   </div>;
   const options = await listCollegePromotionOptions(context, input.data);
   const visibleCohorts = showCompleted ? options.cohorts : options.cohorts.filter(item=>!["COMPLETED","ARCHIVED"].includes(item.status));
@@ -42,7 +42,7 @@ export default async function SuperAdminBatchPromotionPage({
   }
   const summary = preview ? summarizeAdminPromotion(preview) : null;
   return <div className="space-y-5">
-    <PageHeader eyebrow="Super Admin · Academics" title="Batch Promotion"
+    <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Graduation and class moves remain unavailable." />
     <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Program

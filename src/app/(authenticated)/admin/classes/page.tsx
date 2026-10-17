@@ -25,7 +25,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
       ])
     : [null, null];
   return <div className="space-y-6">
-      <AcademicSetupSteps step={6} />
+      {data ? <AcademicSetupSteps step={6} /> : null}
+    {!selected ? <p role="status" className="rounded-xl border border-border bg-surface p-5">Select a college to continue. Choose a college in the header above to see its classes.</p> : null}
     {data && options ? <>
       <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />
       <section aria-label="Filter managed classes" className="rounded-xl border border-border bg-surface p-4">
