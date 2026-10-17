@@ -66,6 +66,7 @@ export function parseResultXlsx(bytes:Buffer):string[][]{
    const ref=/\br="([^"]+)"/.exec(attr)?.[1]??"";
    const position=cellIndex(ref);
    if(position<0||position>39)throw Error("Each worksheet cell must have a valid column from A to AN.");
+   if(values[position]!==undefined)throw Error("Duplicate worksheet cell coordinate. Export a clean sheet before importing.");
    const type=/\bt="([^"]+)"/.exec(attr)?.[1];
    const inline=[...body.matchAll(/<t\b[^>]*>([\s\S]*?)<\/t>/g)].map(x=>decodeXml(x[1]??"")).join("");
    const raw=/<v\b[^>]*>([\s\S]*?)<\/v>/.exec(body)?.[1]??"";
