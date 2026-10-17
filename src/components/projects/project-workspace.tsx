@@ -717,10 +717,23 @@ export function ProjectWorkspace({
           </p>:null}
           {mode!=="LEARNER"&&!readOnly?<MentorReleaseEditor projectId={workspace.project.id}/>:null}
         </div>
+        {mode==="LEARNER"&&workspace.releases.length>0?
+          <nav aria-label="Release roadmap" className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+            {workspace.releases.map(release=><a key={release.id}
+              href={"#project-release-"+release.id}
+              aria-current={release.status==="ACTIVE"?"step":undefined}
+              className={"min-h-11 rounded-md border px-3 py-2 text-sm font-semibold "+
+                (release.status==="SHIPPED"?"border-success-border bg-success-subtle text-success-text":
+                  release.status==="ACTIVE"?"border-primary bg-primary-subtle text-primary-text":
+                  "border-border bg-surface text-body")}>
+              {release.title} · {label(release.status)}
+            </a>)}
+          </nav>:null}
         <div className="space-y-4">
           {workspace.releases.map((release) => (
             <article
               key={release.id}
+              id={"project-release-"+release.id}
               className="rounded-xl border border-border bg-surface p-5"
             >
               <div className="flex flex-wrap items-start justify-between gap-3">
