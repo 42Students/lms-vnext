@@ -133,6 +133,23 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
     className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
+  <div className="flex flex-wrap items-center gap-2" aria-label="Board lane filters">
+    {[{value:"",label:"All lanes"},{value:"BACKLOG",label:"Backlog"},
+      {value:"TODO",label:"To Do"},{value:"IN_PROGRESS",label:"In Progress"},
+      {value:"IN_REVIEW",label:"In Review"},{value:"BLOCKED",label:"Blocked"},
+      {value:"DONE",label:"Completed"}].map(option=>
+      <button key={option.value||"all"} type="button"
+        aria-pressed={statusFilter===option.value}
+        onClick={()=>{setStatusFilter(option.value);remember("lane",option.value);}}
+        className={"min-h-9 rounded-full border px-3 text-xs font-semibold "+
+          (statusFilter===option.value?"border-primary bg-primary text-primary-foreground":
+          "border-border bg-surface text-body")}>
+        {option.label}
+      </button>)}
+    {activeFilterCount>0?<span className="rounded-full bg-muted px-2 py-1 text-xs font-semibold text-body">
+      {activeFilterCount} active {activeFilterCount===1?"filter":"filters"}
+    </span>:null}
+  </div>
   <p role="status" className="text-xs text-body">
     {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project's full history.
     {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
