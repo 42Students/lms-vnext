@@ -9,7 +9,7 @@ import {
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import {LearnerRichResponseEditor} from "./learner-rich-response-editor";
 import { AssignmentFileSubmissionControl } from "./assignment-file-submission-control";
 import { courseApiError } from "./learner-course-api";
 import { createSubmissionFlightGuard } from "@/modules/courses/learner-submission-flight-model";
@@ -265,22 +265,10 @@ export function AssignmentSubmissionControl({
         {submissionType === "FILE" ? <AssignmentFileSubmissionControl
           assignmentId={assignmentId} deliveryId={deliveryId} onBusyChange={setSubmitting} multipartEnabled={multipartEnabled} uploadsAllowed={fileUploadsEnabled&&mayUpload} pdfOnly={methodsEnabled&&!allowedMethods.includes("FILE_UPLOAD")&&allowedMethods.includes("PDF_UPLOAD")}
           onSubmitted={() => { setSuccess(true); router.refresh(); }} /> : submissionType === "TEXT" ? (
-          <label className="mt-4 block">
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Written response
-            </span>
-            <Textarea
-              value={textContent}
-              onChange={(event) =>
-                setTextContent(
-                  event.target.value,
-                )
-              }
-              maxLength={50000}
-              placeholder="Write your assignment response…"
-              required
-            />
-          </label>
+          <section className="mt-4">
+            <h3 className="mb-1.5 text-xs font-semibold text-body">Written response</h3>
+            <LearnerRichResponseEditor value={textContent} onChange={setTextContent} disabled={submitting}/>
+          </section>
         ) : (
           <label className="mt-4 block">
             <span className="mb-1.5 block text-xs font-semibold text-body">
