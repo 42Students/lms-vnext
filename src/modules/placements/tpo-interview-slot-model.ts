@@ -31,6 +31,11 @@ export function planInterviewDay(input:{startsAt:string;durationMinutes:number;g
  return input.rooms.flatMap(room=>Array.from({length:input.slotsPerRoom},(_,index)=>{
   const begins=new Date(start+index*(input.durationMinutes+input.gapMinutes)*60_000);
   const ends=new Date(begins.getTime()+input.durationMinutes*60_000);
+  const localDay=(value:Date)=>new Intl.DateTimeFormat("en-CA",{
+   timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  }).format(value);
+  if(localDay(new Date(start))!==localDay(new Date(ends.getTime()-1)))
+   throw Error("An interview day must end before midnight in college time. Shorten the slots or start earlier.");
   return {room,startsAt:begins,endsAt:ends};
  }));
 }

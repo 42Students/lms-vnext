@@ -215,6 +215,12 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplications.id,request.applicationId),
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,request.applicationId),
+     eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+     eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+   if(withdrawal)throw Error("Resolve the pending withdrawal before approving another interview time.");
    const [target]=await tx.select().from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.id,input.targetSlotId),
     eq(placementRoundCandidateSlots.roundId,info.round.id))).for("update").limit(1);
@@ -289,6 +295,18 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
      eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!candidate)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+   const [alreadyBooked]=await tx.select({id:placementRoundCandidateSlots.id})
+    .from(placementRoundCandidateSlots).where(and(
+     eq(placementRoundCandidateSlots.applicationId,input.applicationId),
+     eq(placementRoundCandidateSlots.roundId,info.round.id),
+     eq(placementRoundCandidateSlots.status,"BOOKED"))).limit(1);
+   if(alreadyBooked)throw Error("This learner already has a booked interview in this round. Use Move to reschedule.");
+   const [pendingWithdrawal]=await tx.select({id:placementLearnerRequests.id})
+    .from(placementLearnerRequests).where(and(
+     eq(placementLearnerRequests.applicationId,input.applicationId),
+     eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
+     eq(placementLearnerRequests.status,"PENDING"))).limit(1);
+   if(pendingWithdrawal)throw Error("Resolve the learner's pending withdrawal before assigning a new interview.");
    const [saved]=await tx.update(placementRoundCandidateSlots).set({
     applicationId:input.applicationId,status:"BOOKED",
     confirmedAt:new Date(),updatedAt:new Date(),version:slot.version+1,
