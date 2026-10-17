@@ -787,6 +787,7 @@ export function RecruiterLeadsWorkspace({
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
                 Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
               </button>:null}
+              {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
