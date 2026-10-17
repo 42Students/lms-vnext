@@ -5,12 +5,14 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 /** Native dialog gives keyboard Escape, focus containment and modal semantics.
  * The authorized Server Component content mounts only while the dialog is open. */
 export function LearnerRoadmapItemDialog({
-  children, title, kind, progress, initiallyOpen = false, highlighted = false,
+  children, title, kind, progress, caption, dueText, initiallyOpen = false, highlighted = false,
 }: {
   children: ReactNode;
   title: string;
   kind: "Content" | "Assignment" | "Quiz";
   progress: string;
+  caption?: string;
+  dueText?: string;
   initiallyOpen?: boolean;
   highlighted?: boolean;
 }) {
@@ -30,7 +32,10 @@ export function LearnerRoadmapItemDialog({
         aria-haspopup="dialog"
         className="flex min-h-14 w-full min-w-0 items-center justify-between gap-3 rounded-lg border border-border bg-surface px-4 py-3 text-left hover:border-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         <span className="min-w-0">
-          <span className="block text-xs font-semibold uppercase text-muted-foreground">{kind} · {progress.replaceAll("_", " ").toLowerCase()}</span>
+          <span className="block text-xs font-semibold uppercase text-muted-foreground">
+            {caption ?? kind} · {progress.replaceAll("_", " ").toLowerCase()}
+            {dueText ? " · Due " + dueText : ""}
+          </span>
           <span className="block truncate text-sm font-semibold text-foreground">{title}</span>
         </span>
         <span className="shrink-0 text-sm font-semibold text-primary-text">Open ›</span>

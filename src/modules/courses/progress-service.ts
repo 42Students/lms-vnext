@@ -389,17 +389,8 @@ export async function saveLearnerContentProgress(
       );
     }
 
-    if (
-      content.contentType === "LIVE_CLASS" &&
-      content.endsAt &&
-      content.endsAt.getTime() >
-        Date.now()
-    ) {
-      throw new CoursesServiceError(
-        "LIVE_CLASS_NOT_FINISHED",
-      );
-    }
-
+    // Legacy allows a learner to mark a live session attended at any time.
+    // Do not manufacture an attendance mark; this writes content progress only.
     shouldComplete = true;
     return completeManualContentOnce(context, content, membershipId, input.deliveryId);
   }
