@@ -9,6 +9,7 @@ import {
 import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
+import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
 import { PageHeader } from "@/components/ui/page-header";
 import { listProjectAdminSnapshots } from "@/modules/projects/admin-insights-service";
 import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
@@ -40,6 +41,7 @@ export default async function CollegeProjectsPage({
   const params = await searchParams;
   const query: ProjectAdminCollectionQuery = {
     q: one(params.q),
+    view:one(params.view)==="table"?"table":"cards",
     status: one(
       params.status,
     ) as ProjectAdminCollectionQuery["status"],
@@ -61,6 +63,15 @@ export default async function CollegeProjectsPage({
     ),
   ]);
 
+  const items=result.items.map(project=>({
+   id:project.id,title:project.title,summary:project.summary,status:project.status,
+   updatedAt:project.updatedAt,mentorName:project.mentorName,memberCount:project.memberCount,
+   progressPercent:project.progressPercent,
+  }));
+  const viewHref=(view:"cards"|"table")=>"/college/projects?"+new URLSearchParams({
+   ...(query.q?{q:query.q}:{}),...(query.status?{status:query.status}:{}),
+   ...(query.pageSize?{pageSize:String(query.pageSize)}:{}),view,
+  }).toString();
   return (
     <div className="space-y-6">
       <ProjectAdminNav
@@ -68,7 +79,8 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Workspaces"
+        title="Project workspaces"
+        description="Live projects, each run by a mentor with a team of students."
         actions={
           <CreateProjectControl
             collegeId={membership.collegeId}
@@ -86,25 +98,23 @@ export default async function CollegeProjectsPage({
       <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
       <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk mentor reassignment</Link></div>
 
+      <div className="flex flex-wrap items-center gap-3">
+       <ProjectAdminWorkspacePageExport items={items}/>
+       <Link href={viewHref("cards")} aria-current={query.view==="cards"?"page":undefined} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Cards</Link>
+       <Link href={viewHref("table")} aria-current={query.view==="table"?"page":undefined} className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">List</Link>
+       <Link href="/college/projects?status=ARCHIVED" className="min-h-10 rounded border border-border px-3 py-2 text-sm text-primary-text">Archived workspaces</Link>
+      </div>
       <ProjectAdminFilters query={query} />
 
       <ProjectAdminWorkspaceList
-        items={result.items.map((project) => ({
-          id: project.id,
-          title: project.title,
-          summary: project.summary,
-          status: project.status,
-          updatedAt: project.updatedAt,
-          mentorName: project.mentorName,
-          memberCount: project.memberCount,
-          progressPercent:
-            project.progressPercent,
-        }))}
+        items={items}
+        view={query.view}
         basePath="/college/projects"
         emptyTitle="No Projects match these filters"
         emptyDescription="Clear the filters, or create a Project from an assigned published template."
       />
 
+      <p role="status" className="text-sm text-muted-foreground">{result.total===0?"0 of 0 workspaces":`${(result.page-1)*(query.pageSize??25)+1}–${Math.min(result.page*(query.pageSize??25),result.total)} of ${result.total} workspaces`}</p>
       <ProjectAdminPagination
         basePath="/college/projects"
         query={query}
