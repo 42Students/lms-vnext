@@ -150,3 +150,16 @@ export const placementTpoInternalReads=pgTable(
   index("tpo_internal_reads_member_idx").on(t.collegeId,t.membershipId),
  ],
 );
+
+/** TPO-inbox-team-34: explicitly declared temporary absence, scoped to one membership. */
+export const placementTpoTeamAway=pgTable("placement_tpo_team_away",{
+ collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
+ membershipId:uuid("membership_id").notNull(),
+ awayUntil:timestamp("away_until",{withTimezone:true}).notNull(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ primaryKey({name:"tpo_team_away_pk",columns:[t.collegeId,t.membershipId]}),
+ foreignKey({name:"tpo_team_away_membership_college_fk",columns:[t.membershipId,t.collegeId],
+  foreignColumns:[collegeMemberships.id,collegeMemberships.collegeId]}).onDelete("restrict"),
+ index("tpo_team_away_until_idx").on(t.collegeId,t.awayUntil),
+]);
