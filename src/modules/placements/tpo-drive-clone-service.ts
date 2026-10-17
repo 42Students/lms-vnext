@@ -9,6 +9,7 @@ import {requireTpoJobCollege} from "./tpo-job-write-base";
 import {placementJobIdSchema} from "./validation";
 import {PlacementsServiceError} from "./errors";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 
 const cloneCommand=z.object({confirmed:z.literal(true)}).strict();
 
@@ -33,7 +34,7 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   applicationMode:"INTERNAL",externalApplicationUrl:null,applicationDeadline:null,
  });
  await getDb().transaction(tx=>recordActivityEventInTransaction(tx,context,{
-  eventType:"PLACEMENTS_TPO_DRIVE_CLONED",collegeId,
+  eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_DRAFT_CREATED,collegeId,
   subjectType:"placement_job",subjectId:draft.id,subjectLabel:draft.title,
   summary:"New placement drive draft copied from a historical drive",
   metadata:{sourceJobId:source.id,sourceStatus:source.status,
