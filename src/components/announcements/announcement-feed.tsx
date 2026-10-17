@@ -3,7 +3,7 @@ function trustedAnnouncementAction(url:string|undefined|null,label:string|undefi
  if(!url||!label)return null;
  try{
   const parsed=new URL(url);
-  return parsed.protocol==="https:"&&parsed.hostname?
+  return parsed.protocol==="https:"&&parsed.hostname&&!parsed.username&&!parsed.password?
    {href:parsed.href,label}:null;
  }catch{return null;}
 }
