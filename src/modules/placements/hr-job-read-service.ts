@@ -3,7 +3,7 @@ import { and, desc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds } from "./hr-job-applicants-model";
@@ -29,6 +29,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     eq(placementCompanyRelationships.companyId,context.recruiter?.companyId??""),
     eq(placementCompanyRelationships.status,"ACTIVE"))).limit(1):[];
   const shareRoll=Boolean(share?.columns?.includes("roll"));
+  const shareBranch=Boolean(share?.columns?.includes("branch"));
+  const sharePhone=Boolean(share?.columns?.includes("phone"));
   const shareEmail=Boolean(share?.columns?.includes("email"));
   const shareUg=Boolean(share?.columns?.includes("cgpa"));
   const shareTenth=Boolean(share?.columns?.includes("tenth"));
@@ -53,7 +55,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .where(where),
     db.select({
       id: placementApplications.id, membershipId:placementApplications.membershipId,
-      name: users.displayName, email: users.email,
+      name: users.displayName, email: users.email, phone:users.phoneE164,
       rollNumber: learnerProfiles.rollNumber,
       role: placementJobRoleOptions.title, status: placementApplications.status,
       screening: placementApplicationScreenings.status,
@@ -189,6 +191,23 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
    row[mark.level]=mark.percentage;
    byMember.set(mark.membershipId,row);
   }
+  // A branch is derived from the college's active program enrollment, never
+  // unverified learner-supplied profile JSON. Ambiguous multiple branches fail closed.
+  const activeBranches=(memberIds.length&&shareBranch)
+   ?await db.select({membershipId:learnerProgramEnrollments.membershipId,
+      branch:departments.name})
+      .from(learnerProgramEnrollments)
+      .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+      .innerJoin(departments,eq(departments.id,programs.departmentId))
+      .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
+       eq(learnerProgramEnrollments.status,"ACTIVE"),
+       eq(departments.collegeId,workspace.college.id))):[];
+  const branchSet=new Map<string,Set<string>>();
+  for(const row of activeBranches){
+   const names=branchSet.get(row.membershipId)??new Set<string>();
+   names.add(row.branch);
+   branchSet.set(row.membershipId,names);
+  }
   const percentage=(points:number|undefined)=>
    points===undefined?null:(points/100).toFixed(2).replace(/\.00$/,"")+"%";
   const projected = projectSharedApplicants(applications.map(({membershipId,...row})=>{
@@ -196,6 +215,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     return {...row,
       rollNumber:shareRoll?row.rollNumber:null,
       email:shareEmail?row.email:null,
+      phone:sharePhone?row.phone:null,
+      branch:shareBranch && branchSet.get(membershipId)?.size===1
+       ?[...branchSet.get(membershipId)!][0]??null:null,
       ugPercentage:shareUg?percentage(marks?.UG):null,
       tenthPercentage:shareTenth?percentage(marks?.["10TH"]):null,
       twelfthOrDiplomaPercentage:shareTwelfth?
