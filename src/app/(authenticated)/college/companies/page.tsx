@@ -33,9 +33,6 @@ export default async function CollegeCompaniesPage({
     redirect(collegeCompaniesHref({...query,page:data.totalPages}));
   }
 
-  const exportParams=new URLSearchParams({
-    q:query.q,sort:query.sort,showDeleted:query.showDeleted,pageSize:String(query.pageSize),
-  });
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
