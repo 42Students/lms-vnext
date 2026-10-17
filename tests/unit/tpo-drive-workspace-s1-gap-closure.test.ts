@@ -102,4 +102,14 @@ describe("TPO drive workspace verified S1 gaps",()=>{
    expectedUpdatedAt:"2099-05-03T09:00:00Z",note:"Approved by placement cell"}).success).toBe(true);
   expect(driveChangeCommandSchema.safeParse({action:"COMMENT",requestId:id,body:""}).success).toBe(false);
  });
+ it("TPO-drive-workspace-62 displays source-backed deal category and company compensation without guessing dates",()=>{
+  const result=projectTpoDriveHeader({status:"PUBLISHED",workMode:"ONSITE",
+   employmentType:"INTERNSHIP",applicationMode:"INTERNAL",
+   applicationDeadline:null,minimumAnnualCtcInr:null,maximumAnnualCtcInr:null,
+   stipendPerMonthInr:50000,isDream:true});
+  expect(result.category).toBe("Dream");
+  expect(result.ctc).toContain("50,000");
+  expect(result.deadline).toBe("Deadline not set");
+  expect(result.status).toBe("Published");
+ });
 });
