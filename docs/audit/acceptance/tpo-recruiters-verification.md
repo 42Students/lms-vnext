@@ -12,3 +12,5 @@
 | TPO-recruiters-39 | DONE (source) | Legacy first-run empty message and count/add action; named `tests/unit/chat2-tpo-recruiter-needs.test.ts`. |
 
 | TPO-recruiters-41 | DONE (source, tests not run) | `tpo-bulk-lead-stage-model.ts` accepts confirmed NEW and keeps derived recruiter stages separate. `tpo-bulk-lead-stage-service.ts` clears Not Now fields, records row audit and retains existing five-minute undo. UI exposes Restore to New. Named `tests/unit/chat2-tpo-recruiter-bulk-new.test.ts`. |
+
+| TPO-recruiters-42 | DONE (source, not run) | Last successful leads and companies snapshots survive errors, with separate Retry warnings. Named `tests/unit/chat2-tpo-recruiter-stale-refresh.test.ts`. |

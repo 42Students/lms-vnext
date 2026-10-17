@@ -215,8 +215,10 @@ export function RecruiterLeadsWorkspace({
   const [checking, setChecking] = useState(false);
   const contactCheckSeq=useRef(0);
 
+  const leadsSnapshotReady=useRef(false);
+  const companiesSnapshotReady=useRef(false);
   const load = useCallback(async (signal?: AbortSignal) => {
-    setPhase("loading");
+    if(!leadsSnapshotReady.current)setPhase("loading");
     setError("");
     try {
       const response = await fetch(
@@ -226,7 +228,7 @@ export function RecruiterLeadsWorkspace({
       const data = await response.json() as { leads?: Lead[]; error?: string };
       if (!response.ok) {
         if (signal?.aborted) return;
-        setPhase(response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
+        setPhase(leadsSnapshotReady.current?"ready":response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
           ? "migration-pending" : "error");
         setError(friendlyError(response.status, data));
         return;
@@ -251,7 +253,7 @@ export function RecruiterLeadsWorkspace({
   }, [load]);
 
   const loadCompanies = useCallback(async (signal?: AbortSignal) => {
-    setCompaniesPhase("loading");
+    if(!companiesSnapshotReady.current)setCompaniesPhase("loading");
     setCompaniesError("");
     try {
       const response = await fetch(
@@ -266,7 +268,7 @@ export function RecruiterLeadsWorkspace({
       if (!response.ok) {
         if (signal?.aborted) return;
         setCompaniesPhase(
-          response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
+          companiesSnapshotReady.current?"ready":response.status === 503 && data.error === "DB09_MIGRATIONS_PENDING"
             ? "migration-pending"
             : "error",
         );
@@ -611,6 +613,14 @@ export function RecruiterLeadsWorkspace({
         </div>
       </div>
 
+      {phase==="ready"&&error?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+        {error} Showing the last recruiter list we loaded.
+        <button type="button" className={buttonStyle+" ml-2"} onClick={()=>void load()}>Retry</button>
+      </div>:null}
+      {companiesPhase==="ready"&&companiesError?<div role="alert" className="rounded-lg border border-border bg-surface p-3 text-sm">
+        {companiesError} Showing the last company list we loaded.
+        <button type="button" className={buttonStyle+" ml-2"} onClick={()=>void loadCompanies()}>Retry companies</button>
+      </div>:null}
       {actionToast?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm">{actionToast}</p>:null}
       {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
