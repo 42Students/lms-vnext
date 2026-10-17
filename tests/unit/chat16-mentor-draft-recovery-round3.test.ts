@@ -33,17 +33,21 @@ describe("chat-16 mentor editor draft recovery",()=>{
   });
 
   it("MEN-projects-meetings-75 requires confirmation before discarding task and sprint drafts",()=>{
+    const shared=read("src/components/projects/project-editor-discard-guard.ts");
+    expect(shared).toContain('window.addEventListener("beforeunload"');
+    expect(shared).toContain('window.removeEventListener("beforeunload"');
+    expect(shared).toContain("if(dirty)setDiscardOpen(true)");
     for(const file of [
       "src/components/projects/mentor-task-create.tsx",
       "src/components/projects/mentor-sprint-write.tsx",
     ]){
       const code=read(file);
-      expect(code).toContain("window.addEventListener(\"beforeunload\"");
-      expect(code).toContain("window.removeEventListener(\"beforeunload\"");
+      expect(code).toContain("useProjectEditorDiscardGuard(open,dirty,busy,discardDraft)");
       expect(code).toContain(draftWarning);
-      expect(code).toContain("Discard unsaved project changes?");
-      expect(code).toContain("if(dirty)setConfirmDiscard(true)");
-      expect(code).toContain("onConfirm={()=>{setConfirmDiscard(false);setOpen(false);resetForm();}}");
+      expect(code).toContain("guard.requestClose()");
+      expect(code).toContain("guard.confirmDiscard");
+      expect(code).toContain("discardDraft();");
+      expect(code).not.toContain("setOpen(false);resetForm()");
     }
   });
 
@@ -52,13 +56,13 @@ describe("chat-16 mentor editor draft recovery",()=>{
     const mentorEditor=meeting.slice(meeting.indexOf("export function ScheduleProjectMeetingControl("),
       meeting.indexOf("export function ProjectMeetingTransitionActions("));
     expect(mentorEditor).toContain(draftWarning);
-    expect(mentorEditor).toContain("window.addEventListener(\"beforeunload\"");
-    expect(mentorEditor).toContain("if(dirty)setConfirmDiscard(true)");
+    expect(mentorEditor).toContain("useProjectEditorDiscardGuard(open,dirty,pending,discardDraft)");
+    expect(mentorEditor).toContain("guard.requestClose()");
     expect(mentorEditor).toContain('confirmLabel="Discard changes"');
     const delivery=read("src/components/projects/project-delivery-reopen-control.tsx");
     expect(delivery).toContain(draftWarning);
-    expect(delivery).toContain("window.addEventListener(\"beforeunload\"");
-    expect(delivery).toContain("if(dirty)setConfirmDiscard(true)");
+    expect(delivery).toContain("useProjectEditorDiscardGuard(open,Boolean(reason.trim()),pending,discardDraft)");
+    expect(delivery).toContain("guard.requestClose()");
     expect(delivery).toContain('confirmLabel="Discard changes"');
   });
 
@@ -66,7 +70,8 @@ describe("chat-16 mentor editor draft recovery",()=>{
     const meeting=read("src/components/projects/project-meeting-controls.tsx");
     const actions=meeting.slice(meeting.indexOf("export function ProjectMeetingTransitionActions("));
     expect(actions).toContain(draftWarning);
-    expect(actions).toContain("if(dirty)setConfirmDiscard(true)");
+    expect(actions).toContain("useProjectEditorDiscardGuard(open!==null,Boolean(note.trim()),pending,discardNote)");
+    expect(actions).toContain("guard.requestClose()");
     expect(actions).toContain('confirmLabel="Discard changes"');
     const release=read("src/components/projects/mentor-release-editor.tsx");
     expect(release).toContain(draftWarning);
