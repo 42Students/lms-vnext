@@ -20,6 +20,7 @@ export type TpoActorAuditRow = {
   id: string;
   occurredAt: string;
   actorId: string | null;
+  actorName?:string|null;
   eventType: string;
   entityType: string;
   entityId: string;

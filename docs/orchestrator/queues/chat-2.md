@@ -1,4 +1,4 @@
-> **FAST MODE ACTIVE: read docs/orchestrator/FAST-MODE.md first. Push directly to main, no tests or checks. It overrides any instruction below about branches, tests or CI.**
+> **FAST v2 ACTIVE (item 1): work and push ONLY to `chatgpt/chat-2-b`, never to `main`, no PR. Merge latest `origin/main` into this branch. No tests, typecheck, lint, build or CI waiting. This v2 rule overrides the old direct-to-main instructions below.**
 
 # Queue for lane chat-2
 
@@ -112,3 +112,38 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - `TPO-campaigns-public-05` accepted-send side effects insert EMAILED outreach when missing and only advance NOT_CONTACTED, leaving Replied/Meeting set/Not interested unchanged.
 - `TPO-recruiters-14/37` returned bulk status lines show names, not raw UUIDs.
 - All work packages stay IN-PROGRESS pending the listed acceptance gaps; no tests, build, lint or typecheck performed under FAST MODE.
+
+## Chat-2 FAST v2 lane continuation — 2026-10-17
+
+- Working branch `chatgpt/chat-2-b`, created from main, reconciled with main in two-parent merge `073db46` after confirming no overlapping changed paths; never push to main.
+- `PUB-auth-public-25`: both old Super Admin login bookmarks redirect to the centralized sign-in route, without introducing a bypass.
+- `REC-calendar-messages-profile-03/06`: recruiter calendar events project source-college labels and actual end time from stored round duration; no fictional end times for slots or deadlines.
+- `TPO-campaigns-public-28`: company join preview resolves the registered canonical company label for valid company-scope tokens.
+- `TPO-campaigns-public-27`: client accepts legitimate registered-domain subdomains, consistent with the server; multiple domains per company still require approved storage.
+- `TPO-inbox-team-02/21`: new message now uses a keyboard-accessible dialog, quick replies, per-actor session draft, explicit failed-send retry using the same thread, char count, and keyboard submission.
+- `TPO-inbox-team-55`: HTML POST errors render an inline safe error message instead of replacing the page with raw JSON; programmatic API consumers retain status-code JSON.
+- `TPO-recruiters-21`: add-lead submit preflights both available contact methods, refuses a known duplicate, and guards against discarding a dirty draft. Follow-up date/note and richer field errors remain.
+- `TPO-recruiters-05`: seven-column board cards now expose actual audited Stage/Owner controls, recruiter link, follow-up/owner metadata and locked-stage explanations. Actual drag/drop remains.
+- `TPO-recruiters-26`: persisted CALL `No answer` creates one pending follow-up if no open follow-up exists; `Not interested` atomically marks Not now. Both changes commit with the activity row.
+- `TPO-companies-26`: Add company dialog now traps focus, handles Escape, uses an inline review step; trust/archive, contact, interaction and recruiter feedback forms now use inline review instead of browser confirm. Full accessible modal parity is still outstanding.
+- `TPO-recruiters-13`: bulk-invite UI no longer offers an unsupported email mode that would rotate invite links then report failure; explicit one-time links only until configured delivery can verify provider acceptance.
+
+### Blocked or security-decision cases — skip and continue
+
+- `PUB-auth-public-50/53/55`: OD-09 company-share one-time code, chosen PII columns and resume ZIP require disclosure/consent/storage decision; retain existing gated behavior, do not leak more data.
+- `TPO-campaigns-public-01/02`: live campaign dispatch and retry receipts depend on delivery-provider verification, secrets, template registration and worker rollout; no live sends performed.
+- `TPO-recruiters-13/14`: outbound bulk email and full undo/restore require provider acceptance plus a durable audited bulk run; link-only workflow remains.
+- `TPO-inbox-team-08` / `REC-calendar-messages-profile-R01`: inbound email reply-to relay requires verified delivery routing, consent and webhook ownership.
+- `TPO-settings-audit-52`: no-end-date recruiter access conflicts with strict `validUntil` authorization and needs an owner-approved lifetime-access policy before changing security invariants.
+- `TPO-campaigns-public-27`: multi-domain company grants require a collision-safe registered relationship domain table, beyond current singular `primaryDomain`.
+
+**Status:** WP-01 through WP-08 stay **IN-PROGRESS**; the above source changes are not live acceptance or full WP closure. FAST v2 deliberately omits tests, typecheck, lint, build and CI waiting.
+
+### Additional source-only WP-05/06 changes on chat-2-b
+
+- `TPO-recruiters-05`: board drag from a NEW manual lead to Contacted uses the existing audited stage-change endpoint with the expected manual-stage precondition; other columns stay locked because derived stages cannot be forged and Not now requires a reason. The inline Move to… control remains keyboard accessible.
+- `TPO-companies-07`: confirmed JOINED offers are now grouped by distinct learner and *recorded joining year in IST*, with a year chart, hiring-year KPI, and clear exclusion count for missing joining dates; issued offers are not counted as hires.
+- `REC-calendar-messages-profile-45`: public join client rejects consumer email domains before OTP request. Both company/college invitation preview pages now distinguish a transient preview fetch failure (Retry) from an actually invalid link.
+- `REC-calendar-messages-profile-41`: recruiter invite clarifies controlled candidate visibility without fabricating a drive name that the current invite token does not contain.
+- `TPO-recruiters-23`: importer requires CSV/XLSX, uses a truthful 10 MB byte-size guard, traps keyboard focus in the import modal, handles Escape and restores launch-button focus.
+- **Still open**: WP-05 complete drag/drop semantics, CRM import duplicates discovered *before* commit, WP-06 multi-domain company identity and actual invite-drive context, company provider/worker confirmation, and every owner-blocked item above. No WP marked DONE. No checks run (FAST v2).
