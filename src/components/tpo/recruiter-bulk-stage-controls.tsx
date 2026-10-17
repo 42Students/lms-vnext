@@ -109,7 +109,7 @@ export function RecruiterBulkStageControls({
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
       setChosenIds([]);
-      setReviewOpen(false);
+      setReviewOpen(false);setReviewSignature("");
       setReason("");
       setRevisitDate("");
       onUpdated();
