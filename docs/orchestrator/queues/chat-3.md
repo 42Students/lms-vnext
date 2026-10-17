@@ -36,6 +36,25 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
 5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
 
+## FAST v2 chat-3 round — 0130 merged main (2026-10-17)
+
+- Fast-forwarded `chatgpt/chat-3-b` onto `origin/main` (main had merged all earlier chat-3 changes and migration 0130); no direct-main pushes, PRs, tests, typecheck, lint, build or CI waits.
+- **COL-people-05:** student import copy now reflects registered 500-row/1-MB limit, legacy header normalization, selected program/batch and upload errors. Existing server upload limit unchanged.
+- **COL-people-10:** audit uses centrally resolved college for selected-college actors instead of non-null membership; actor subject history and profile details remain tenant-scoped.
+- **COL-verification-misc-04:** missing identity proof is surfaced from verification snapshot receipt references; exclude missing identity / marksheet evidence from client bulk preview and payload, and explain excluded rows. Server continues authoritative receipt checks.
+- **COL-placements-08:** drive list date range, location text search, title/deadline/creation/applicant ordering, URL persistence, scoped per-drive open/close with backend impact preview, mobile/desktop action, corrected Applications link, clear stale bulk selection on filter/action changes.
+- **COL-placements-02:** internal notes show the most recent 100 and give explicit persistence feedback; Super Admin write-audit context uses centrally resolved tenant with nullable acting membership. **BLOCKED:** resume previews and meaningful match-score explanation need approved private-file storage + persisted scoring evidence.
+- **COL-placements-21:** per-drive overview now has Applications and Edit shortcuts.
+- **COL-placements-07:** read-only application fallback now shows email/source/applied date in addition to legacy minimal cells.
+- **COL-people-26:** faculty and student suspend/reactivate avoid double native dialogs; faculty lifecycle outcome is explicitly shown on successful persistence.
+- **COL-verification-misc-15:** College Admin Activity, Verification, Profile show a no-college-assigned alert when membership is absent, instead of silently redirecting; non-college-role access remains restricted.
+- **COL-courses-content-14:** End teaching assignment uses inline confirm and recorded success feedback instead of native confirm.
+- **COL-verification-misc-03 / COL-verification-misc-07:** cancellation reports remaining reviews; bulk outcomes expose per-row partial failures without implying all rows completed.
+- **Blocked / skip COL-verification-misc-17 and COL-verification-misc-16/18 (OD-22):** security-sensitive access grants, tenant domains, announcements and groups require owner approval; retain current restrictive behavior.
+- **Blocked COL-people-02 / COL-people-07:** canonical login email/mobile/name edits require identity-level security decisions, not College Admin profile mutation.
+- **Blocked COL-verification-misc-05:** private resume/document previews depend on approved signed receipt access; raw private storage URLs must not be invented.
+- WP-chat-3-02 and WP-chat-3-03 remain IN-PROGRESS for remaining partial gaps; WP-chat-3-04 remains IN-PROGRESS; moved chat-5 WPs retain existing statuses. All completion claims are **source-only, not acceptance verified**.
+
 ## FAST v2 chat-3 continuation — 2026-10-17, post-lane merge
 
 - Synced `chatgpt/chat-3-b` to the new `origin/main` fast-forward before edits; prior lane commits were already merged. Source-only, individual `[chat-3]` gap-tagged commits pushed to branch. Never pushed to main.
