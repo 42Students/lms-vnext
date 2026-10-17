@@ -9,7 +9,6 @@ export function bulkInviteDisposition(row:TpoBulkInviteCandidate){
  if(row.unsubscribedAt)return "Asked not to be contacted";
  if(!row.emailNorm)return "Work email missing";
  if(!row.companyRelationshipId)return "Company link missing";
- if(row.manualStage==="NOT_NOW")return "Marked Not now";
  return null;
 }
 export function previewTpoBulkInvites(rows:readonly TpoBulkInviteCandidate[]){
