@@ -103,7 +103,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
     <input type="url" required={kind!=="RESOURCE"&&!editing} className="mt-1 w-full rounded border bg-background p-2"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
    {kind==="RESOURCE"?<label className="text-sm">Notes
-     <textarea rows={3} maxLength={10000} value={notes} onChange={e=>setNotes(e.target.value)}
+     <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
        className="mt-1 w-full rounded border bg-background p-2"/>
     </label>:kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
     <input type="number" required placeholder="Actual video duration" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
