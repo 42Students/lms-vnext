@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
+import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
@@ -8,7 +9,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
- const [confirmDiscard,setConfirmDiscard]=useState(false);
+ const [pendingLeave,setPendingLeave]=useState<string|null>(null);
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
@@ -19,6 +20,23 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   return ()=>window.removeEventListener("beforeunload",warn);
  },[body,sending]);
 
+ useEffect(()=>{
+  if(!body.trim()||sending)return;
+  const intercept=(event:MouseEvent)=>{
+   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   const anchor=target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement)||anchor.target||anchor.hasAttribute("download"))return;
+   const destination=new URL(anchor.href,window.location.href);
+   if(destination.origin!==window.location.origin)return;
+   if(destination.pathname===window.location.pathname&&destination.search===window.location.search&&destination.hash)return;
+   event.preventDefault();event.stopPropagation();
+   setPendingLeave(destination.pathname+destination.search+destination.hash);
+  };
+  document.addEventListener("click",intercept,true);
+  return ()=>document.removeEventListener("click",intercept,true);
+ },[body,sending]);
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   if(sending)return;
@@ -85,19 +103,14 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   <button type="button" className="min-h-11 rounded border border-border px-4 text-sm"
    disabled={sending} onClick={()=>{
     if(!body.trim()){router.push("/hr/messages");return;}
-    setConfirmDiscard(true);
+    setPendingLeave("/hr/messages");
    }}>Close</button>
   </div>
-  {confirmDiscard?<div role="alertdialog" aria-modal="true" aria-label="Discard this unsent message?"
-   className="rounded-lg border border-border bg-surface-secondary p-4">
-   <h3 className="font-semibold">Discard this unsent message?</h3>
-   <p className="mt-1 text-sm">Your draft reply will be lost.</p>
-   <div className="mt-3 flex flex-wrap gap-3">
-    <button type="button" className="min-h-11 rounded bg-primary px-4 text-on-primary"
-     onClick={()=>{setBody("");setConfirmDiscard(false);router.push("/hr/messages");}}>Discard</button>
-    <button type="button" className="min-h-11 rounded border border-border px-4"
-     onClick={()=>setConfirmDiscard(false)}>Keep writing</button>
-   </div>
-  </div>:null}
+  <ConfirmActionDialog open={pendingLeave!==null}
+   title="Discard this unsent message?"
+   consequence="Your draft reply will be lost."
+   confirmLabel="Discard"
+   onCancel={()=>setPendingLeave(null)}
+   onConfirm={()=>{const href=pendingLeave;setPendingLeave(null);setBody("");if(href)router.push(href);}}/>
  </form>;
 }
