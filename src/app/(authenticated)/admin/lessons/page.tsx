@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -42,6 +43,7 @@ export default async function SuperAdminLessonsPage({
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
+    {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
