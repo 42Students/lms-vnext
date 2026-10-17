@@ -75,10 +75,10 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.startDate ?? "—"}</td>
               <td className="p-2">{row.endDate ?? "—"}</td>
-              <td className="p-2">{row.currentAcademicYearStart ? `${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}` : "Not recorded"}</td>
+              <td className="p-2">{row.academicYear??(row.currentAcademicYearStart ? `${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}` : "Not recorded")}</td>
               <td className="p-2">{row.currentTermNumber ?? "—"}</td>
               <td className="p-2">{row.activeEnrolledLearners}</td>
-              <td className="p-2">{row.status}</td>
+              <td className="p-2">{row.status}{row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Date(row.inactiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>:null}</td>
               <td className="p-2"><CollegeCohortRowActions row={row} periods={periods} /></td>
             </tr>)}</tbody>
           </table></div>}
