@@ -62,7 +62,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
         <select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
-          {data.seasons.length === 0 ? <option value="">No season</option> : null}
+          <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
         </select>
       </label>
@@ -171,7 +171,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.page<data.totalPages?<Link href={pageHref(data.page+1)}>Next</Link>:null}
         </nav>
       </section>
-    ) : !data.season ? <EmptyState title="No season available" description="Create a season before reading its drive lifecycle." /> : <>
+    ) : <>
       <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {metrics.map(([name,n]) =>
           <div key={name} className="rounded-xl border border-border bg-surface p-4">
@@ -181,7 +181,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </section>
       <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>
       <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
-       Counts cover the selected season and search across every page.</p>
+       Counts cover the selected college season (or all seasons) and search across every page.</p>
       {data.rows.length === 0 ?
         <div className="space-y-3">
           <EmptyState
