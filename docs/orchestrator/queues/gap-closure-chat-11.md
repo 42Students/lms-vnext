@@ -125,14 +125,14 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-29 | S3 | STATE | DONE |
 | COL-academic-setup-30 | S3 | MISSING-FIELD | DONE |
 | COL-academic-setup-32 | S3 | STATE | DONE |
-| COL-academic-setup-33 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-academic-setup-40 | S3 | STATE | OPEN |
-| COL-academic-setup-20 | S4 | VALIDATION | OPEN |
-| COL-academic-setup-21 | S4 | MISSING-FILTER | WRONG |
-| COL-academic-setup-24 | S4 | STATE | OPEN |
-| COL-academic-setup-36 | S4 | VALIDATION | OPEN |
-| COL-academic-setup-38 | S4 | COPY | OPEN |
-| COL-academic-setup-39 | S4 | MISSING-EXPORT | OPEN |
+| COL-academic-setup-33 | S3 | MISSING-ACTION | DONE |
+| COL-academic-setup-40 | S3 | STATE | DONE |
+| COL-academic-setup-20 | S4 | VALIDATION | DONE |
+| COL-academic-setup-21 | S4 | MISSING-FILTER | DONE |
+| COL-academic-setup-24 | S4 | STATE | DONE |
+| COL-academic-setup-36 | S4 | VALIDATION | DONE |
+| COL-academic-setup-38 | S4 | COPY | NOT-A-GAP |
+| COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
 ## mentor/projects-meetings-part2 (25: FIXED-ON-MAIN 8, OPEN 16, UNCONFIRMED 1)
@@ -145,10 +145,10 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-66 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | MEN-projects-meetings-72 | S2 | SIDE-EFFECT | OPEN |
 | MEN-projects-meetings-53 | S3 | MISSING-FIELD | OPEN |
-| MEN-projects-meetings-54 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| MEN-projects-meetings-54 | S3 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-55 | S3 | MISSING-FILTER | OPEN |
 | MEN-projects-meetings-57 | S3 | COPY | OPEN |
-| MEN-projects-meetings-59 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| MEN-projects-meetings-59 | S3 | MISSING-FILTER | DONE |
 | MEN-projects-meetings-60 | S3 | STATE | OPEN |
 | MEN-projects-meetings-61 | S3 | COPY | OPEN |
 | MEN-projects-meetings-63 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
