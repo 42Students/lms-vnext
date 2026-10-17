@@ -136,6 +136,7 @@ export default async function MentorProjectsPage({
       return [
         row.project.title,
         row.project.slug,
+        row.project.courseLabel ?? "",
         row.project.summary ?? "",
       ].some((value) =>
         value
@@ -167,9 +168,7 @@ export default async function MentorProjectsPage({
       ) {
         return (
           row.project.status !==
-            "ARCHIVED" &&
-          row.project.status !==
-            "COMPLETED"
+            "ARCHIVED"
         );
       }
       return (
