@@ -6,6 +6,8 @@ import {projectTemplates,projectTemplateVersions} from "@/db/schema";
 import {requirePermission} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {projectTemplateBlueprintSchema} from "./validation";
 const rollbackSchema=z.strictObject({
  versionId:z.string().uuid(),
@@ -41,6 +43,15 @@ export async function rollbackProjectTemplate(context:RequestContext,templateIdI
     changeNote:"Rolled back to version "+prior.version,
     createdByUserId:context.user.id,
   }).returning();
+  await recordActivityEventInTransaction(tx,context,{
+   eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_ROLLED_BACK,
+   subjectType:"project_template",subjectId:template.id,subjectLabel:updated.title,
+   summary:"Super Admin rolled back a project template version",
+   metadata:{restoredFromVersion:prior.version,previousCurrentVersion:template.currentVersion,
+    newCurrentVersion:updated.currentVersion,publishedVersionUnchanged:template.publishedVersion,
+    existingWorkspacesUnchanged:true},
+   groupKey:"template:"+template.id,
+  });
   return {template:updated,version,restoredFromVersion:prior.version,
     impact:{existingWorkspaces:"unchanged",publishedVersion:template.publishedVersion,
       currentVersion:updated.currentVersion}};

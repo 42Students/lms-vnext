@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,count,desc,eq,ilike,inArray,or,type SQL} from "drizzle-orm";
+import {and,asc,count,desc,eq,ilike,inArray,or,sql,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -22,20 +22,25 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  if(!independentAuditFindingsReady())throw new Error("Audit findings storage is not verified.");
  const predicates:SQL[]=[];
  const pattern="%"+query.q.replace(/[\\%_]/g,"\\$&")+"%";
- if(query.q)predicates.push(or(ilike(db10AuditFindings.title,pattern),
-  ilike(db10AuditFindings.summary,pattern),ilike(db10AuditFindings.externalId,pattern))!);
- if(query.area)predicates.push(ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"));
+ const searchPredicate=query.q?or(
+  ilike(db10AuditFindings.title,pattern),
+  ilike(db10AuditFindings.summary,pattern),
+  ilike(db10AuditFindings.externalId,pattern),
+  ilike(db10AuditFindings.sourcePath,pattern),
+  ilike(sql<string>`${db10AuditFindings.paths}::text`,pattern),
+ ):undefined;
+ if(searchPredicate)predicates.push(searchPredicate);
+ const areaPredicate=query.area?ilike(db10AuditFindings.area,
+  "%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"):undefined;
+ if(areaPredicate)predicates.push(areaPredicate);
  if(query.statuses.length)predicates.push(inArray(db10AuditFindings.status,query.statuses));
  if(query.severities.length)predicates.push(inArray(db10AuditFindings.severity,query.severities));
  if(query.kinds.length)predicates.push(inArray(db10AuditFindings.kind,query.kinds));
  if(query.view!=="ALL")predicates.push(inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]));
  if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
- // Facet chips report the full current view, not just the one selected chip.
- // Preserve query, area and kind scope while ignoring selected status/severity.
- const facetsWhere=and(
-  query.q?or(ilike(db10AuditFindings.title,pattern),
-    ilike(db10AuditFindings.summary,pattern),ilike(db10AuditFindings.externalId,pattern)):undefined,
-  query.area?ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"):undefined,
+ // Counts must not collapse to a single selected chip. Keep query, area,
+ // kind and view scope but exclude the selected status and severity.
+ const facetsWhere=and(searchPredicate,areaPredicate,
   query.kinds.length?inArray(db10AuditFindings.kind,query.kinds):undefined,
   query.view!=="ALL"?inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]):undefined,
   query.view==="RELEASE"?inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]):undefined,
@@ -84,14 +89,17 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
   ))return {ok:false as const,reason:"INVALID_STATUS_TRANSITION"};
   const patch:Partial<typeof db10AuditFindings.$inferInsert>={version:row.version+1,updatedAt:new Date()};
   let note:string|null=null;
-  if(input.action==="STATUS"){patch.status=input.status;note=input.note??null;}
+  if(input.action==="STATUS"){
+   patch.status=input.status;note=input.note??null;
+   if(row.status==="DUPLICATE"&&input.status!=="DUPLICATE")patch.duplicateOf=null;
+  }
   if(input.action==="SEVERITY")patch.severity=input.severity;
   if(input.action==="ASSIGNEE")patch.assignee=input.assignee;
   if(input.action==="DUPLICATE"){
    if(row.id===input.duplicateOf)return {ok:false as const,reason:"INVALID_DUPLICATE"};
-   const [target]=await tx.select({id:db10AuditFindings.id}).from(db10AuditFindings)
-    .where(eq(db10AuditFindings.id,input.duplicateOf)).limit(1);
-   if(!target)return {ok:false as const,reason:"INVALID_DUPLICATE"};
+   const [target]=await tx.select({id:db10AuditFindings.id,status:db10AuditFindings.status})
+    .from(db10AuditFindings).where(eq(db10AuditFindings.id,input.duplicateOf)).limit(1);
+   if(!target||target.status==="DUPLICATE")return {ok:false as const,reason:"INVALID_DUPLICATE"};
    patch.duplicateOf=target.id;patch.status="DUPLICATE";
   }
   if(input.action==="FIX_COMMIT"){

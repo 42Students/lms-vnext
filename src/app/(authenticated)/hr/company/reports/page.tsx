@@ -385,7 +385,7 @@ export default async function RecruiterCompanyReportsPage({
         {jobs.length === 0 ? (
           <EmptyState
             title="No matching drives"
-            description="There are no recruiter-visible published or closed hiring drives matching these filters for this company and college."
+            description="Reports appear once you have a drive with applicants. If you expected a report, review the selected college and filters."
           />
         ) : (
           <>
@@ -395,7 +395,7 @@ export default async function RecruiterCompanyReportsPage({
               <p className="mt-1 text-xs text-muted-foreground">{job.status}</p>
               <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
                 {[
-                  ["Applied",job.applications],["Offered (issued)",job.outstandingOffers],
+                  ["Applied",job.applications],["Offered",job.outstandingOffers+job.acceptedOffers+job.declinedOffers],
                   ["Accepted",job.acceptedOffers],["Declined",job.declinedOffers],
                   ["Joined",job.joinedOffers],["Withdrawn",job.withdrawnApplications],
                 ].map(([label,value])=><div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
@@ -426,7 +426,7 @@ export default async function RecruiterCompanyReportsPage({
                     Withdrawn
                   </th>
                   <th scope="col" className="px-4 py-3 text-right">
-                    Outstanding offers
+                    Offered
                   </th>
                   <th scope="col" className="px-4 py-3 text-right">
                     Accepted offers
@@ -489,7 +489,7 @@ export default async function RecruiterCompanyReportsPage({
                     </td>
 
                     <td className="px-4 py-4 text-right tabular-nums text-body">
-                      {job.outstandingOffers}
+                      {job.outstandingOffers+job.acceptedOffers+job.declinedOffers}
                     </td>
 
                     <td className="px-4 py-4 text-right tabular-nums text-body">

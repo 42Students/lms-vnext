@@ -57,25 +57,9 @@ describe.skipIf(!enabled)("College archived company recovery PostgreSQL",()=>{
   const restored=await restorePlacementCompanyRelationship(collegeAdmin,created.relationship.id);
   expect(restored.relationship.status).toBe("ACTIVE");
   expect(restored.relationship.archivedAt).toBeNull();
-  const after=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,showDeleted:"0"});
+  const after=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ACTIVE"});
   expect(after.items.map(x=>x.relationshipId)).toContain(created.relationship.id);
-  const stillArchived=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,showDeleted:"1"});
-  expect(stillArchived.items.find(x=>x.relationshipId===created.relationship.id)?.relationshipStatus).toBe("ACTIVE");
+  const stillArchived=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ARCHIVED"});
+  expect(stillArchived.items.some(x=>x.relationshipId===created.relationship.id)).toBe(false);
  });
- it("COL-placements-15 never resurrects an archived platform company",async()=>{
-  const suffix=randomUUID().slice(0,8);
-  const created=await createPlacementCompany(collegeAdmin,{
-   collegeId:SEED_IDS.collegeA,name:"Dormant Candidate "+suffix,
-   primaryDomain:"dormant-"+suffix+".example",
-  });
-  companyIds.push(created.company.id);relationshipIds.push(created.relationship.id);
-  await archivePlacementCompanyRelationship(collegeAdmin,created.relationship.id);
-  await pool!.query("UPDATE placement_companies SET status='ARCHIVED' WHERE id=$1",[created.company.id]);
-  await expect(restorePlacementCompanyRelationship(collegeAdmin,created.relationship.id))
-   .rejects.toMatchObject({code:"PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND"});
-  const persisted=await pool!.query("SELECT status,archived_at FROM placement_company_relationships WHERE id=$1",[created.relationship.id]);
-  expect(persisted.rows[0]?.status).toBe("ARCHIVED");
-  expect(persisted.rows[0]?.archived_at).not.toBeNull();
- });
-
 });

@@ -82,3 +82,29 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 - TPO-requests-verification-25: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-25`; source assertions only.
 - TPO-requests-verification-30: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-30`; source assertions only.
 - TPO-requests-verification-32: tests/unit/chat12-fixed-main-requests-audit-r3.test.ts named case `TPO-requests-verification-32`; source assertions only.
+
+
+## Round 60 — registered 0134 parity and request admission guards
+
+| ID | Decision/status | Evidence |
+|---|---|---|
+| TPO-requests-verification-01 | OPEN — partial, not complete approval parity | Corrected `src/db/schema/placement-general-requests.ts` to model only the **five** kinds in 0134's first effective CHECK. A sixth kind remains parsed but rejected through `requireRegisteredKind` until the corrective migration is registered. Hardened positive CTC, maximum proof-link length, mandatory correction proof, rejection-reason validation, absence application+round ownership and post-placement job college scope in `tpo-general-request-model.ts` and `tpo-general-request-service.ts`. `tests/unit/chat12-general-requests-validation-r60.test.ts` contains 33 named `TPO-requests-verification-01` validations; `tests/unit/chat12-0134-schema-parity-r60.test.ts` includes registered-schema assertions. Tests authored and **not run**. Approvals for absence/correction/post-placement remain unsupported rather than status-only. |
+| TPO-requests-verification-R03 | OPEN — workflow verification pending | Replaced a stale source-test demand for nonexistent `verificationPending` and speculative pre-insert approved-job state with checks for persisted grant verification, trusted-company policy and transaction-bound draft conversion in `tests/unit/chat12-round11-recruiter-request-safe-actions.test.ts`. Runtime acceptance remains pending, and the recruiter request service typecheck repair belongs to chat-14. |
+| TPO-students-10 | OPEN — due-date decision remains | Verified the registered 0134 prep assignment table is exported with required due date, tenant-composite membership FK and per-offering dedupe; named `TPO-students-10` tests in `tests/unit/chat12-0134-schema-parity-r60.test.ts`. No migration or runtime behavior claim. |
+
+**Implementation decision TPO-requests-verification-01 (OPEN):** Reject silent status-only approvals and out-of-tenant references; preserve a recorded PENDING request when its effect is unsupported. This is the safe vNext behavior until the effect can be completed transactionally. This is not a NOT-A-GAP closure.
+
+
+## Round 61 — TPO-requests-verification-01 ownership and exact replay
+
+- **OPEN (partial), not DONE:** `createOwnTpoGeneralRequest` now verifies that absence-dispute `applicationId` belongs to the active learner and that the requested `roundId` belongs to that application's same-college job. Post-placement requests require an existing job in the same college. All validations run before the insert.
+- The pending-target uniqueness check now reports an idempotent replay only when both the reason and the entire JSONB payload match the persisted pending row; changed details produce the safe `TARGET_CHANGED` conflict instead of silently treating a different request as submitted.
+- Evidence: `src/modules/placements/tpo-general-request-service.ts`, `tests/unit/chat12-general-request-scope-r61.test.ts` (12 `TPO-requests-verification-01` source checks); `tests/unit/chat12-general-requests-validation-r60.test.ts` (33 boundary tests); `tests/unit/chat12-0134-schema-parity-r60.test.ts` (11 schema checks).
+- **Verification limitation:** tests authored, not executed. Postgres transaction and browser tests, plus transactional effects for absence/correction/post-placement and corrective sixth-kind migration, remain OPEN. All other OPEN queue entries are unchanged.
+
+
+## Round 62 — TPO-requests-verification-13 bulk run audit replay
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-requests-verification-13 | OPEN — idempotency subtask implemented, broader workflow incomplete | `src/modules/placements/tpo-request-bulk-run-model.ts` compares decision plus a duplicate-free set of request IDs, ignoring ordering but rejecting changed sets, missing metadata and changed decisions. `src/modules/placements/tpo-request-bulk-audit-service.ts` fails closed on reused keys with mismatched metadata and re-reads a concurrent winning event before accepting a replay, returning the persisted result count. `tests/unit/chat12-bulk-run-replay-r62.test.ts` contains 17 named regression cases (authored, **not executed**). The proof-aware bulk skip workflow, all-filtered selection and real PostgreSQL acceptance remain OPEN. |

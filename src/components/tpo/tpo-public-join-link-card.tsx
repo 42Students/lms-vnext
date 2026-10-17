@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
 } from "@/modules/placements/tpo-public-join-link-model";
@@ -18,16 +19,12 @@ export function TpoPublicJoinLinkCard({
   const [busy, setBusy] = useState(false);
   const [domainDraft,setDomainDraft]=useState("");
   const [feedback, setFeedback] = useState("");
+  const [replaceOpen,setReplaceOpen] = useState(false);
   const isCompany = scope === "COMPANY";
   const title = isCompany ? PUBLIC_JOIN_LINK_COPY.company : PUBLIC_JOIN_LINK_COPY.college;
 
   async function makeLink() {
     const action = status.link ? "REPLACE" : "CREATE";
-    if (action === "REPLACE" && !window.confirm(
-      PUBLIC_JOIN_LINK_COPY.replaceTitle + "\n" +
-      PUBLIC_JOIN_LINK_COPY.replaceExplanation + "\n" +
-      PUBLIC_JOIN_LINK_COPY.replaceConfirm,
-    )) return;
     setFeedback("");
     setBusy(true);
     try {
@@ -39,18 +36,40 @@ export function TpoPublicJoinLinkCard({
           action, confirmed: true,
         }),
       });
-      if (!response.ok) throw new Error("LINK_CHANGE_FAILED");
+      if (!response.ok) {
+        const body=await response.json().catch(()=>null) as {error?:string}|null;
+        if(body?.error==="DOMAIN_REQUIRED")
+          throw new Error("Add the company's email domain first, so only its people can join.");
+        if(body?.error==="STALE")
+          throw new Error("The join link changed. Refresh and try again.");
+        if(body?.error==="NOT_FOUND")
+          throw new Error("The company relationship was not found in your college.");
+        throw new Error("Couldn't make the link. Check your access and try again.");
+      }
       const data: { path: string; status: TpoPublicJoinLinkStatus } = await response.json();
       setStatus(data.status);
       setFreshUrl(window.location.origin + data.path);
       setFeedback(action === "REPLACE" ? "New link made" : "Link made");
-    } catch {
-      setFeedback(isCompany ? "Couldn't make the link" : "Couldn't save");
+    } catch(error) {
+      setFeedback(error instanceof Error?error.message:"Couldn't make the link");
     } finally {
       setBusy(false);
     }
   }
 
+  async function retryStatus(){
+    setBusy(true);setFeedback("");
+    try{
+      const query=new URLSearchParams({scope,...(isCompany&&companyId?{companyId}:{})});
+      const response=await fetch("/api/placements/tpo/public-join-links/status?"+query.toString(),{
+        credentials:"same-origin",cache:"no-store",
+      });
+      if(!response.ok)throw new Error("Couldn't load the company link");
+      const state=await response.json() as TpoPublicJoinLinkStatus;
+      setStatus(state);
+    }catch{setFeedback("Couldn't load the company link");}
+    finally{setBusy(false);}
+  }
   async function saveDomain(){
     if(!companyId)return;
     setBusy(true);setFeedback("");
@@ -98,7 +117,7 @@ export function TpoPublicJoinLinkCard({
         <>
           {status.domain ? (
             <p className="mt-2 text-sm text-body">
-              Anyone at <strong>{status.domain}</strong> joins your placements through this link, with their work email. Other emails can&apos;t use it.
+              Anyone at <strong>{companyName??status.domain}</strong> joins your placements through this link, with their work email. Other emails can&apos;t use it.
             </p>
           ) : (
             <p className="mt-2 text-sm text-body">
@@ -121,6 +140,8 @@ export function TpoPublicJoinLinkCard({
       {!status.ready ? (
         <p role="status" className="mt-3 text-sm text-body">
           {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
+          <button type="button" disabled={busy} onClick={()=>void retryStatus()}
+            className="ml-3 font-semibold text-primary-text underline">Retry</button>
         </p>
       ) : (
         <>
@@ -136,7 +157,7 @@ export function TpoPublicJoinLinkCard({
           </label>:null}
           <button
             type="button" disabled={busy || (isCompany && !status.domain)}
-            onClick={makeLink}
+            onClick={()=>{if(status.link)setReplaceOpen(true);else void makeLink();}}
             className="mt-4 min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status.link ? PUBLIC_JOIN_LINK_COPY.replace :
@@ -159,6 +180,10 @@ export function TpoPublicJoinLinkCard({
           {feedback ? <p role="status" className="mt-2 text-sm text-body">{feedback}</p> : null}
         </>
       )}
+      <ConfirmDialog open={replaceOpen} onOpenChange={setReplaceOpen}
+        title={PUBLIC_JOIN_LINK_COPY.replaceTitle} description={PUBLIC_JOIN_LINK_COPY.replaceExplanation}
+        confirmVariant="primary" confirmLabel={PUBLIC_JOIN_LINK_COPY.replaceConfirm}
+        pending={busy} onConfirm={()=>{setReplaceOpen(false);void makeLink();}} />
     </section>
   );
 }

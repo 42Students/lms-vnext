@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { PlacementsServiceError } from "@/modules/placements/errors";
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterResultControls } from "@/components/placements/recruiter-result-controls";
 import { PageHeader } from "@/components/ui/page-header";
@@ -567,12 +568,12 @@ export default async function HrPlacementJobPage({
                 {selectedApplicant.sharedSkills.length?<div><dt className="text-muted-foreground">Skills provided by applicant</dt>
                  <dd className="break-words text-foreground">{selectedApplicant.sharedSkills.join(", ")}</dd></div>:null}
                 {selectedApplicant.githubUrl?<div><dt className="text-muted-foreground">GitHub</dt>
-                 <dd><a href={selectedApplicant.githubUrl}  className="text-[var(--lms-link-text)] underline">View GitHub</a></dd></div>:null}
+                 <dd><ThirdPartyLink href={selectedApplicant.githubUrl} label="View GitHub"/></dd></div>:null}
                 {selectedApplicant.portfolioUrl?<div><dt className="text-muted-foreground">Portfolio</dt>
-                 <dd><a href={selectedApplicant.portfolioUrl}  className="text-[var(--lms-link-text)] underline">View portfolio</a></dd></div>:null}
+                 <dd><ThirdPartyLink href={selectedApplicant.portfolioUrl} label="View portfolio"/></dd></div>:null}
                 {selectedApplicant.sharedProjects.length?<div><dt className="text-muted-foreground">Shared projects</dt>
                  <dd className="space-y-1">{selectedApplicant.sharedProjects.map(project=>
-                  <a key={project.url} href={project.url}  className="block text-[var(--lms-link-text)] underline">{project.name}</a>)}</dd></div>:null}
+                  <span key={project.url} className="block"><ThirdPartyLink href={project.url} label={project.name}/></span>)}</dd></div>:null}
                 {selectedApplicant.ugPercentage?<div><dt className="text-muted-foreground">UG %</dt><dd className="text-foreground">{selectedApplicant.ugPercentage}</dd></div>:null}
                 {selectedApplicant.tenthPercentage?<div><dt className="text-muted-foreground">10th %</dt><dd className="text-foreground">{selectedApplicant.tenthPercentage}</dd></div>:null}
                 {selectedApplicant.twelfthOrDiplomaPercentage?<div><dt className="text-muted-foreground">12th / diploma %</dt><dd className="text-foreground">{selectedApplicant.twelfthOrDiplomaPercentage}</dd></div>:null}
@@ -689,13 +690,12 @@ export default async function HrPlacementJobPage({
               <p className="text-xs text-muted-foreground">
                {selectionPage.first===0?"No selection rows":`Showing ${selectionPage.first}–${selectionPage.last}`} of {selectionTotal}
               </p>
-              {filters.offerState!=="ALL"?<nav aria-label="Selection history pages" className="flex gap-3 text-sm">
+              <nav aria-label="Selection history pages" className="flex gap-3 text-sm">
                {selectionPage.page>1?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page-1)+returnQuery}
                 className="text-[var(--lms-link-text)] underline">Previous selections</Link>:null}
                {selectionPage.page<selectionPage.pages?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState="+filters.offerState+"&offerPage="+(selectionPage.page+1)+returnQuery}
                 className="text-[var(--lms-link-text)] underline">Next selections</Link>:null}
-              </nav>:selectionTotal>selectionRows.length?<Link href={"/recruiter/drives/"+workspace.job.id+"?tab=offers&offerState=SELECTED"+returnQuery}
-               className="text-[var(--lms-link-text)] underline text-sm">Review recorded selections</Link>:null}
+              </nav>
             </section>:null}
           {offers.length ? <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full min-w-[56rem] text-left text-sm">
