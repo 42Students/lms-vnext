@@ -45,7 +45,7 @@ type SearchParams = {
   afterCollege?:string|string[];
   legacyStage?:string|string[];minRoundReached?:string|string[];needsAttention?:string|string[];
   interviewedWith?:string|string[];debarred?:string|string[];
-  gender?:string|string[];birthYear?:string|string[];minSkills?:string|string[];
+  gender?:string|string[];birthYear?:string|string[];skillName?:string|string[];minSkills?:string|string[];
   minProjects?:string|string[];minCertifications?:string|string[];minExperiences?:string|string[];
   hasProfileLinks?:string|string[];hasResume?:string|string[];hasCodingProfiles?:string|string[];
   minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
@@ -84,7 +84,7 @@ function studentsHref(
     journeyState?: string;
     legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
     interviewedWith?:string;
-    gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
+    gender?:string;birthYear?:number;skillName?:string;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
     branchId?: string;
     programId?:string;
     afterCollege?:string;
@@ -114,6 +114,7 @@ function studentsHref(
   if(filters.debarred!==undefined)params.set("debarred",filters.debarred?"YES":"NO");
   if(filters.interviewedWith)params.set("interviewedWith",filters.interviewedWith);
   if(filters.gender)params.set("gender",filters.gender);
+  if(filters.skillName)params.set("skillName",filters.skillName);
   if(filters.hasProfileLinks!==undefined)params.set("hasProfileLinks",filters.hasProfileLinks?"YES":"NO");
   if(filters.hasResume!==undefined)params.set("hasResume",filters.hasResume?"YES":"NO");
   if(filters.hasCodingProfiles!==undefined)params.set("hasCodingProfiles",filters.hasCodingProfiles?"YES":"NO");
@@ -205,6 +206,7 @@ export default async function TpoStudentsPage({
     debarred:first(raw.debarred)||undefined,
     interviewedWith:first(raw.interviewedWith)||undefined,
     gender:first(raw.gender)||undefined,birthYear:first(raw.birthYear)||undefined,
+    skillName:first(raw.skillName)||undefined,
     minSkills:first(raw.minSkills)||undefined,minProjects:first(raw.minProjects)||undefined,
     minCertifications:first(raw.minCertifications)||undefined,minExperiences:first(raw.minExperiences)||undefined,
     hasProfileLinks:first(raw.hasProfileLinks)||undefined,
@@ -323,7 +325,7 @@ export default async function TpoStudentsPage({
       legacyStage:query.legacyStage,
       debarred:query.debarred,
       interviewedWith:query.interviewedWith,
-      gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+      gender:query.gender,birthYear:query.birthYear,skillName:query.skillName,minSkills:query.minSkills,minProjects:query.minProjects,
     hasResume:query.hasResume,hasCodingProfiles:query.hasCodingProfiles,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
       minRoundReached:query.minRoundReached,
@@ -357,7 +359,7 @@ export default async function TpoStudentsPage({
     legacyStage:query.legacyStage,
       debarred:query.debarred,
       interviewedWith:query.interviewedWith,
-      gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+      gender:query.gender,birthYear:query.birthYear,skillName:query.skillName,minSkills:query.minSkills,minProjects:query.minProjects,
     hasResume:query.hasResume,hasCodingProfiles:query.hasCodingProfiles,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
     minRoundReached:query.minRoundReached,
@@ -450,6 +452,10 @@ export default async function TpoStudentsPage({
            <select name="gender" defaultValue={query.gender??""} className="min-h-11 rounded border border-border p-2">
             <option value="">Any</option>{(["Male","Female","Other"] as const).map(v=><option key={v}>{v}</option>)}
            </select>
+          </label>
+          <label className="grid gap-1 text-sm">Skill name
+           <input type="search" name="skillName" defaultValue={query.skillName??""} maxLength={100}
+            placeholder="e.g. Java" className="min-h-11 rounded border border-border p-2"/>
           </label>
           <label className="grid gap-1 text-sm">Birth year
            <input name="birthYear" type="number" min={1900} max={2100} defaultValue={query.birthYear??""} className="min-h-11 w-28 rounded border border-border p-2"/>
