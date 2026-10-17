@@ -1,0 +1,22 @@
+import {readFileSync} from "node:fs";
+import {describe,it,expect} from "vitest";
+const base=new URL("../../",import.meta.url);
+describe("chat-12 Requests and Verification contracts, source-only",()=>{
+ it("TPO-requests-verification-02 preserves contract",()=>{const code=readFileSync(new URL("src/components/placements/tpo-request-decision-control.tsx",base),"utf8");expect(code).toContain("tpoRequestNeedsConfirmation(requestType)");});
+ it("TPO-requests-verification-03 preserves contract",()=>{const code=readFileSync(new URL("src/components/placements/tpo-request-decision-control.tsx",base),"utf8");expect(code).toContain("decisionNote.length>=3");});
+ it("TPO-requests-verification-04 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/request-service.ts",base),"utf8");expect(code).toContain("PLACEMENTS_REQUEST_DECIDED");});
+ it("TPO-requests-verification-08 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/tpo-global-requests-model.ts",base),"utf8");expect(code).toContain("sortTpoRequestRows");});
+ it("TPO-requests-verification-19 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/TpoVerificationPanel.tsx",base),"utf8");expect(code).toContain("VerificationReviewDrawer");});
+ it("TPO-requests-verification-20 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/tpo-verification-queue-service.ts",base),"utf8");expect(code).toContain("tpoVerifierGrantAllowed(grant)");});
+ it("TPO-requests-verification-22 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/tpo-verification-queue-service.ts",base),"utf8");expect(code).toContain("marksheets:{uploaded:");});
+ it("TPO-requests-verification-23 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/tpo-verification-queue-service.ts",base),"utf8");expect(code).toContain("counts.WAITING+=");});
+ it("TPO-requests-verification-24 preserves contract",()=>{const code=readFileSync(new URL("src/app/(authenticated)/tpo/verification/page.tsx",base),"utf8");expect(code).toContain("name=\"waitingSince\"");});
+ it("TPO-requests-verification-25 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/TpoVerificationPanel.tsx",base),"utf8");expect(code).toContain("Review one by one (");});
+ it("TPO-requests-verification-26 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/TpoVerificationPanel.tsx",base),"utf8");expect(code).toContain("TpoRosterVerificationBulk");});
+ it("TPO-requests-verification-27 preserves contract",()=>{const code=readFileSync(new URL("src/modules/verification/review-reasons.ts",base),"utf8");expect(code).toContain("The marksheet is unclear or cropped");});
+ it("TPO-requests-verification-28 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/TpoVerificationPanel.tsx",base),"utf8");expect(code).toContain("Sent back. The student sees your reason.");});
+ it("TPO-requests-verification-29 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/VerificationReviewDrawer.tsx",base),"utf8");expect(code).toContain("Verification history");});
+ it("TPO-requests-verification-31 preserves contract",()=>{const code=readFileSync(new URL("src/components/verification/VerificationWorkspace.tsx",base),"utf8");expect(code).toContain("Verified marks are what eligibility uses.");});
+ it("TPO-requests-verification-32 preserves contract",()=>{const code=readFileSync(new URL("src/app/(authenticated)/tpo/verification/page.tsx",base),"utf8");expect(code).toContain("TpoSafeCsvDownload");});
+ it("TPO-requests-verification-R01 preserves contract",()=>{const code=readFileSync(new URL("src/modules/placements/request-service.ts",base),"utf8");expect(code).toContain("fromStatus:\"ISSUED\",toStatus:\"DECLINED\"");});
+});
