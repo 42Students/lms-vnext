@@ -36,7 +36,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     .from(placementJobs).innerJoin(users,eq(users.id,placementJobs.createdByUserId))
     .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
     .orderBy(users.displayName);
-  const batches=await db.select({id:cohorts.id,name:cohorts.name})
+  const batches=await db.select({id:cohorts.id,name:cohorts.name,programName:programs.name})
     .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
     .innerJoin(departments,eq(departments.id,programs.departmentId))
     .where(eq(departments.collegeId,collegeId))
