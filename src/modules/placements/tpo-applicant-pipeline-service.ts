@@ -84,6 +84,16 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
     eligibilityStatus:placementApplications.eligibilityStatus,
     channel:placementApplications.channel,
+    pendingWithdrawal:sql<boolean>`exists(select 1 from placement_learner_requests w
+      where w.application_id=${placementApplications.id}
+        and w.request_type='APPLICATION_WITHDRAWAL' and w.status='PENDING')`,
+    noShow:sql<boolean>`exists(select 1 from placement_round_results r
+      where r.application_id=${placementApplications.id}
+        and r.status='APPLIED' and r.outcome='ABSENT')`,
+    placedElsewhere:sql<boolean>`exists(select 1 from placement_offers o
+      join placement_applications other on other.id=o.application_id
+      where other.membership_id=${placementApplications.membershipId}
+        and other.job_id<>${job.id} and o.status='ACCEPTED')`,
     submittedAt:placementApplications.submittedAt,
   }).from(placementApplications)
     .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
@@ -114,7 +124,12 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
       eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
     .orderBy(placementApplications.id).limit(5000):null;
    return {counts:totals,...pagination,allFiltered,rows:records.map(row=>({
-    ...row,submittedAt:row.submittedAt.toISOString(),
+    ...row,flags:[
+      ...(row.eligibilityStatus!=="ELIGIBLE"?["Eligibility needs review"]:[]),
+      ...(row.pendingWithdrawal?["Withdrawal requested"]:[]),
+      ...(row.noShow?["No-show"]:[]),
+      ...(row.placedElsewhere?["Accepted offer elsewhere"]:[]),
+    ],submittedAt:row.submittedAt.toISOString(),
     screeningUpdatedAt:row.screeningUpdatedAt?.toISOString()??null,
    }))};
   },{isolationLevel:"repeatable read",accessMode:"read only"});

@@ -1,3 +1,4 @@
+import {ReportInteractiveTable} from "./report-interactive-table";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -135,10 +136,12 @@ export function ReportScopeNote({
       <p className="font-semibold text-foreground">Reporting methodology</p>
       <p className="mt-1">{note}</p>
       <p className="mt-2">
-        A placed student is counted once when holding a currently accepted
-        offer. Offer totals count individual offers, not unique students.
-        Package statistics use the highest known accepted full-time annual
-        CTC per learner; internships and unknown CTC values are excluded.
+        A placed student is counted at most once using the college's active
+        placement rule (selected, released or accepted). The exact rule is
+        stated above when a season is available. Offer totals count individual
+        offers, not unique students. Package statistics use the highest known
+        accepted full-time annual CTC per learner; internships and unknown CTC
+        values are excluded.
       </p>
     </section>
   );
@@ -222,7 +225,12 @@ export function ReportNavigation({
     { href: "/tpo/reports/accreditation", label: "Accreditation export" },
   ];
 
-  return (
+  const m=workspace.report.metrics;
+  return (<>
+    <p role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm font-semibold">
+     For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
+     {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
+    </p>
     <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
       {links.map((link) => (
         <Link
@@ -234,7 +242,7 @@ export function ReportNavigation({
         </Link>
       ))}
     </nav>
-  );
+   </>);
 }
 
 export function ReportCsvLink({
@@ -274,57 +282,11 @@ export function ReportCsvLink({
 }
 
 export function ReportTable({
-  title,
-  headings,
-  rows,
-  emptyDescription,
-}: {
-  title: string;
-  headings: readonly string[];
-  rows: readonly (readonly (string | number | null)[])[];
-  emptyDescription: string;
-}) {
-  return (
-    <section className="space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
-      {rows.length === 0 ? (
-        <EmptyState title="No report rows" description={emptyDescription} />
-      ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-          <table className="w-full min-w-max border-collapse text-left text-sm">
-            <thead className="bg-surface-subtle">
-              <tr>
-                {headings.map((heading) => (
-                  <th
-                    key={heading}
-                    scope="col"
-                    className="border-b border-border px-4 py-3 font-semibold text-foreground"
-                  >
-                    {heading}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, rowIndex) => (
-                <tr
-                  key={rowIndex}
-                  className="border-b border-border last:border-b-0"
-                >
-                  {row.map((value, columnIndex) => (
-                    <td
-                      key={columnIndex}
-                      className="px-4 py-3 text-body"
-                    >
-                      {value === null || value === "" ? "—" : value}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-    </section>
-  );
+ title,headings,rows,emptyDescription,
+}:{
+ title:string;headings:readonly string[];
+ rows:readonly (readonly (string|number|null)[])[];
+ emptyDescription:string;
+}){
+ return <ReportInteractiveTable title={title} headings={headings} rows={rows} emptyDescription={emptyDescription}/>;
 }

@@ -13,7 +13,7 @@ import {
   reportNumber,
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
-import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
+import { getPlacementReportDetails } from "@/modules/placements/report-service";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -36,7 +36,7 @@ export default async function TpoPlacementSummaryPage({
   }
 
   const query = await searchParams;
-  const workspace = await getPlacementReportWorkspace(context, {
+  const workspace = await getPlacementReportDetails(context, {
     collegeId: context.membership.collegeId,
     seasonId: first(query.seasonId) || undefined,
     jobId: first(query.jobId) || undefined,
@@ -91,6 +91,24 @@ export default async function TpoPlacementSummaryPage({
       </section>
 
       <ReportScopeNote note={workspace.registrationScopeNote} />
+      <section aria-label="Offers by current status" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+       <h2 className="text-lg font-semibold">Offers by status</h2>
+       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {([
+         ["Released (all issued histories)",workspace.details.offers.totals.released],
+         ["Waiting for student",workspace.details.offers.totals.outstanding],
+         ["Accepted",workspace.details.offers.totals.accepted],
+         ["Declined",workspace.details.offers.totals.declined],
+         ["Withdrawn",workspace.details.offers.totals.withdrawn],
+         ["Expired waiting",workspace.details.offers.totals.expiredOutstanding],
+        ] as const).map(([label,value])=><div key={label} className="rounded border border-border p-3">
+         <dt className="text-xs font-semibold text-body">{label}</dt>
+         <dd className="mt-1 text-xl font-semibold tabular-nums">{reportNumber(value)}</dd>
+        </div>)}
+       </dl>
+       <p className="text-xs text-muted-foreground">Expired waiting is a subset derived from open offers, not a seventh stored status. Selections under verification and reversed selections are separate lifecycle data and are not inferred from the offer rows.</p>
+      </section>
+
 
       {workspace.noSeason ? (
         <EmptyState

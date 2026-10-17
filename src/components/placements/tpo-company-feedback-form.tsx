@@ -16,6 +16,7 @@ export function TpoCompanyFeedbackForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [reviewing,setReviewing]=useState(false);
 
   async function save() {
     if (busy) return;
@@ -23,9 +24,7 @@ export function TpoCompanyFeedbackForm({
       setError("Select a linked recruiter and enter 3–2000 characters.");
       return;
     }
-    if (!window.confirm(
-      "Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.",
-    )) return;
+    if(!reviewing){setReviewing(true);setError(null);return;}
     setBusy(true);
     setError(null);
     setSaved(false);
@@ -41,7 +40,7 @@ export function TpoCompanyFeedbackForm({
       );
       if (!response.ok) throw new Error("The note was not saved. Refresh and verify before retrying.");
       setNote("");
-      setSaved(true);
+      setSaved(true);setReviewing(false);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save this note.");
@@ -59,7 +58,7 @@ export function TpoCompanyFeedbackForm({
       </p>
       <label className="block text-sm font-medium text-foreground">
         Linked contact
-        <select value={leadId} onChange={(event) => setLeadId(event.target.value)}
+        <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
           className="mt-1 w-full rounded-md border border-border bg-surface p-2">
           {contacts.map((item) => (
             <option key={item.id} value={item.id}>{item.name}</option>
@@ -68,14 +67,18 @@ export function TpoCompanyFeedbackForm({
       </label>
       <label className="block text-sm font-medium text-foreground">
         Feedback / meeting note
-        <textarea value={note} onChange={(event) => setNote(event.target.value)}
+        <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           rows={4} maxLength={2000}
           className="mt-1 w-full rounded-md border border-border bg-surface p-2" />
       </label>
+      {reviewing?<div role="group" aria-label="Review recruiter feedback" className="rounded-lg border border-border p-3 text-sm">
+        <p>Record this internal recruiter note? New CRM contacts become CONTACTED when an activity is logged.</p>
+        <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+      </div>:null}
       <button type="button" disabled={busy || !leadId || note.trim().length < 3}
         onClick={() => void save()}
         className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-        {busy ? "Saving note..." : "Review and save note"}
+        {busy ? "Saving note..." : reviewing?"Confirm note save":"Review and save note"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {saved ? <p role="status" className="text-sm text-body">Note saved. The timeline is refreshing.</p> : null}

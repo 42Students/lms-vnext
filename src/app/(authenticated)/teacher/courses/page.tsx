@@ -39,7 +39,7 @@ export default async function TeacherCoursesPage({searchParams}: {
       <PageHeader
         title="My Courses"
       />
-      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} />
+      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
     </div>
   );
 }

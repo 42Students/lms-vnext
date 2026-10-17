@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -88,6 +89,8 @@ export default async function TpoJoiningStatusReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
+      <ReportBarChart title="Joined by company" units="joined offers"
+       rows={byCompany.map(row=>({label:row.label,value:row.joined}))}/>
 
       <ReportTable
         title="Joining outcomes by drive"

@@ -8,6 +8,7 @@ import {
   ilike,
   inArray,
   or,
+  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -133,6 +134,27 @@ function visibilityClause(context: RequestContext) {
     );
 
   return exists(scopedGrants);
+}
+
+function outsideHrScopeCondition(context:RequestContext){
+ const selected=context.adminScope;
+ if(selected?.collegeId)return ne(colleges.id,selected.collegeId);
+ if(selected?.organizationId)return ne(colleges.organizationId,selected.organizationId);
+ return undefined;
+}
+/** Account-wide identity changes must never spill outside a selected college/org. */
+export async function hrAccountManageability(context:RequestContext,userIds:readonly string[]){
+ requireHrAdmin(context);
+ const outside=outsideHrScopeCondition(context);
+ if(!outside||!userIds.length)return new Map(userIds.map(id=>[id,true]));
+ const grants=await getDb().select({recruiterUserId:placementRecruiterCollegeGrants.recruiterUserId})
+  .from(placementRecruiterCollegeGrants)
+  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
+  .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+  .where(and(inArray(placementRecruiterCollegeGrants.recruiterUserId,[...userIds]),
+   eq(placementRecruiterCollegeGrants.status,"ACTIVE"),outside));
+ const outsideIds=new Set(grants.map(row=>row.recruiterUserId));
+ return new Map(userIds.map(id=>[id,!outsideIds.has(id)]));
 }
 
 function grantScopeClause(context: RequestContext) {
@@ -372,6 +394,7 @@ export async function listSuperAdminHrAccounts(
     rows.map((row) => row.userId),
   );
 
+  const manageable=await hrAccountManageability(context,rows.map(item=>item.userId));
   const total = Number(
     totalRows[0]?.value ?? 0,
   );
@@ -379,6 +402,7 @@ export async function listSuperAdminHrAccounts(
   return {
     items: rows.map((row) => ({
       ...toAccount(row),
+      accountManageable:manageable.get(row.userId)??false,
       grants: grants.filter(
         (grant) =>
           grant.recruiterUserId === row.userId &&
@@ -445,6 +469,7 @@ export async function getSuperAdminHrAccount(
 
   return {
     ...toAccount(row),
+    accountManageable:(await hrAccountManageability(context,[userId])).get(userId)??false,
     grants: grants.filter(
       (grant) =>
         grant.companyId === row.companyId,
@@ -804,6 +829,19 @@ export async function updateSuperAdminHrAccount(
         throw new PlacementsServiceError(
           "PLACEMENT_RECRUITER_USER_NOT_FOUND",
         );
+      }
+
+      const outside=outsideHrScopeCondition(context);
+      if(outside){
+       const outOfScope=await tx.select({id:placementRecruiterCollegeGrants.id})
+        .from(placementRecruiterCollegeGrants)
+        .innerJoin(placementCompanyRelationships,
+          eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
+        .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+        .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId,userId),
+          eq(placementRecruiterCollegeGrants.status,"ACTIVE"),outside))
+        .for("share",{of:placementRecruiterCollegeGrants}).limit(1);
+       if(outOfScope.length)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
       }
 
       const now = new Date();
@@ -1218,6 +1256,9 @@ export async function terminateSuperAdminHrSessions(
     userId,
   );
 
+  const access=await hrAccountManageability(context,[userId]);
+  if(access.get(userId)===false)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
+
   const {
     revokeAllSessionsForUser,
   } = await import(
@@ -1234,4 +1275,25 @@ export async function terminateSuperAdminHrSessions(
     userId,
     terminated: true,
   };
+}
+
+/** Current-scope status totals, independently counted across the full directory. */
+export async function getSuperAdminHrStatusSummary(context:RequestContext){
+  requireHrAdmin(context);
+  const rows=await getDb().select({
+    platformStatus:users.platformStatus,
+    recruiterStatus:placementRecruiterProfiles.status,
+    total:count(),
+  }).from(placementRecruiterProfiles)
+   .innerJoin(users,eq(users.id,placementRecruiterProfiles.userId))
+   .where(visibilityClause(context))
+   .groupBy(users.platformStatus,placementRecruiterProfiles.status);
+  const totals={accounts:0,active:0,archived:0,disabled:0};
+  for(const row of rows){
+    totals.accounts+=row.total;
+    if(row.platformStatus==="DISABLED")totals.disabled+=row.total;
+    else if(row.recruiterStatus==="ARCHIVED")totals.archived+=row.total;
+    else totals.active+=row.total;
+  }
+  return totals;
 }

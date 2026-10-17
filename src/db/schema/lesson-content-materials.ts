@@ -1,4 +1,4 @@
-/** W02 DB05 staged only; W01 owns migration registration/index export. */
+/** Lesson content materials (LINK/FILE) with upload/scan lifecycle. Migration 0127. */
 import { sql } from "drizzle-orm";
 import { check, bigint, index, integer, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { lessonContents } from "./courses";

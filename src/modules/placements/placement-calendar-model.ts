@@ -23,6 +23,10 @@ export type PlacementCalendarEvent = {
   id: string;
   kind: PlacementCalendarKind;
   startsAt: Date;
+  /** End time for scheduled rounds with a persisted duration. */
+  endsAt?: Date | null;
+  /** College label, needed when an employer works with multiple colleges. */
+  collegeName?: string | null;
 
   title: string;
   companyId: string | null;

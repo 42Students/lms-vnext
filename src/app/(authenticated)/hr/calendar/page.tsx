@@ -155,6 +155,9 @@ function RecruiterCalendarEventCard({
           <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
             {event.companyName}
           </p>
+          {event.collegeName ? (
+            <p className="mt-1 text-xs text-muted-foreground">College: {event.collegeName}</p>
+          ) : null}
 
           <h3 className="mt-1 text-base font-semibold text-foreground">
             {event.title}
@@ -168,7 +171,7 @@ function RecruiterCalendarEventCard({
 
           <p className="mt-2 text-sm text-body">
             <time dateTime={event.startsAt.toISOString()}>
-              {eventDateTime(event.startsAt)} IST
+              {eventDateTime(event.startsAt)}{event.endsAt ? ` to ${eventTime(event.endsAt)}` : ""} IST
             </time>
           </p>
 
