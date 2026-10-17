@@ -159,8 +159,8 @@ export default async function TpoAnnouncements({searchParams}:Props){
       {row.buttonLabel} ↗
     </a>:null}
     {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
-    {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeReadProgress id={row.id}/>:null}
-    {tab.data==="yours" && row.senderUserId===context.user.id ?
+    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}/>:null}
+    {tab.data==="yours" ?
      <TpoNoticeComposerDialog mode="EDIT">
       <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="mt-3 grid gap-3">
        <input type="hidden" name="expectedVersion" value={row.version}/>
@@ -201,7 +201,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Save notice edits</button>
       </form>
      </TpoNoticeComposerDialog>:null}
-    {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
+    {tab.data==="yours"?<TpoNoticeDeleteConfirm id={row.id} version={row.version}/>:null}
     {tab.data==="deleted"?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-4 flex flex-wrap gap-2">
@@ -211,7 +211,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
        {tab.data==="deleted"?"Undo removal":"Remove notice"}
       </button>
      </form>:null}
-    {tab.data==="yours"&&row.senderUserId===context.user.id&&
+    {tab.data==="yours"&&
      canUndoTpoAnnouncementSend(row.createdAt,new Date())?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="mt-2">

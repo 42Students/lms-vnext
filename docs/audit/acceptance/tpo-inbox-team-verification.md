@@ -93,3 +93,10 @@ No tests were executed by chat-2; orchestrator owns execution and migration regi
 | TPO-inbox-team-54 | PARTIAL — remains OPEN | From 42 tab shows accurately qualified per-page unread count on registered read state, not a falsely global number. `src/app/(authenticated)/tpo/announcements/page.tsx`; named source test **TPO-inbox-team-54** in `tests/unit/tpo-notice-round4-verification.test.ts`. Bell and sidebar count parity remain open (shell belongs to chat-9). |
 
 The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` contains named cases for `TPO-inbox-team-48/49/50/51/52/53/55/56/58/R03/R04` to protect existing source behavior. Those cases are **not** independent verification of complete legacy parity. No tests were executed by chat-2; the orchestrator runs them and registers proposed migrations.
+
+## Builder chat-2 continuation — college permission parity
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-17 | PARTIAL — OPEN | Create-topic limit now 200 in UI, Zod and Drizzle with proposed migration `docs/proposed-migrations/tpo-inbox-team-topic-limit.sql`. Named tests `tests/unit/tpo-team-topic-length-chat2.test.ts` (**TPO-inbox-team-17**). Multi-person/topic context, renaming, visibility and leave still missing. PostgreSQL registration and execution by orchestrator. |
+| TPO-inbox-team-57 | DONE (source; integration pending) | Same-college, persisted `placements.manage` authority can edit, delete, undo or restore colleagues' TPO notices, still guarded by organization/college/sender type, row lock and version. UI includes colleague notices in To your students and Recently removed; named tests **TPO-inbox-team-57** in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. Database authorization test to be run by orchestrator. |
