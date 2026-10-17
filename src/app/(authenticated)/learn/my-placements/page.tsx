@@ -330,7 +330,7 @@ export default async function LearnerPlacementsPage({
       </section>
       <LearnerPlacementPartialAlert missing={display.failed} />
       <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
-        profileFixes={verificationCue?.editHrefs??[]} />
+        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null} />
 
       {journeyBundle ? <LearnerRecentPlacementActivity events={journeyBundle.activity} /> : null}
 
