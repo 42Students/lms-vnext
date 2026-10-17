@@ -26,3 +26,6 @@ PARTIAL / OPEN: COL-verification-misc-04 (bulk review page cap differs), -08 (co
 -11 (full readable activity feed/day groups), -13 (audit summary coverage), -17
 (domain and branding rights need matching OD-22), -18 (student-groups visibility), -20.
 Photo upload for -01/-02 requires private object storage; the HTTPS link route works.
+| COL-verification-misc-17 | DONE | `src/modules/tenant-domains/service.ts`, `src/modules/colleges/branding-service.ts`, `src/modules/colleges/admin-branding-logo-service.ts`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-17` |
+| COL-verification-misc-18 | NOT-A-GAP | Owner OD-38 approved extra student-groups surface; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-18` |
+| COL-verification-misc-20 | DONE | `src/app/(authenticated)/college/branding/page.tsx`, `src/app/(authenticated)/college/college-profile/page.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-20` |
