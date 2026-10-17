@@ -46,7 +46,9 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   const delivery=sections.find(x=>x.deliveryId===deliveryId);
   if(deliveryId&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
   const due=dueAt?new Date(dueAt+":00+05:30"):null;
-  if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
+  if(due&&(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(dueAt)||Number.isNaN(due.getTime()))){
+   setError("Enter a valid deadline.");return;
+  }
   if(!window.confirm("Create assignment as a draft? Learners cannot submit until published."))return;
   lock.current=true;setPending(true);setError("");setMessage("");
   try{
