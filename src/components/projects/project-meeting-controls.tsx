@@ -284,11 +284,13 @@ export function RequestProjectMeetingControl({
 
 export function ScheduleProjectMeetingControl({
   projectId,
+  projectUpdatedAt,
   meeting,
   sprints,
   tasks,
 }: {
   projectId: string;
+  projectUpdatedAt: Date | string;
   meeting?: Meeting | null;
   sprints: readonly LinkChoice[];
   tasks: readonly (LinkChoice & {
@@ -408,6 +410,8 @@ export function ScheduleProjectMeetingControl({
           endsAt: toIso(endsAt),
           timeZone,
           meetingUrl: meetingUrl.trim(),
+          expectedProjectUpdatedAt: new Date(projectUpdatedAt).toISOString(),
+          ...(meeting?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString()}:{}),
           meetingType,
           linkedSprintId:
             linkedSprintId || undefined,
