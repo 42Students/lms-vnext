@@ -182,21 +182,21 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-31 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-32 | S2 | STATE | OPEN |
 | TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
-| TPO-students-35 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-35 | S2 | MISSING-ACTION | DONE |
 | TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
 | TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-13 | S3 | MISSING-ACTION | OPEN |
 | TPO-students-24 | S3 | MISSING-FILTER | OPEN |
 | TPO-students-25 | S3 | MISSING-FILTER | OPEN |
 | TPO-students-27 | S3 | MISSING-COLUMN | DONE |
-| TPO-students-37 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-students-38 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-37 | S3 | MISSING-ACTION | DONE |
+| TPO-students-38 | S3 | MISSING-ACTION | DONE |
 | TPO-students-39 | S3 | MISSING-ACTION | OPEN |
-| TPO-students-40 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-students-41 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-students-42 | S3 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-students-40 | S3 | MISSING-ACTION | DONE |
+| TPO-students-41 | S3 | A11Y | DONE |
+| TPO-students-42 | S3 | MISSING-TAB | DONE |
 | TPO-students-43 | S3 | MISSING-TAB | OPEN |
-| TPO-students-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-44 | S3 | MISSING-FIELD | DONE |
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-46 | S3 | COPY | OPEN |
 | TPO-students-47 | S3 | COPY | OPEN |
@@ -204,13 +204,13 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-50 | S3 | STATE | UNCONFIRMED |
 | TPO-students-51 | S3 | RESPONSIVE | OPEN |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
+| TPO-students-R02 | S3 | STATE | DONE |
 | TPO-students-R03 | S3 | STATE | OPEN |
 | TPO-students-R04 | S3 | STATE | OPEN |
 | TPO-students-R05 | S3 | COPY | OPEN |
 | TPO-students-R06 | S3 | COPY | OPEN |
 | TPO-students-R07 | S3 | STATE | OPEN |
-| TPO-students-R08 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-students-R08 | S3 | A11Y | DONE |
 | TPO-students-48 | S4 | STATE | OPEN |
 | TPO-students-53 | S4 | MISSING-FIELD | OPEN |
 
@@ -236,19 +236,19 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-38 | S2 | SIDE-EFFECT | OPEN |
 | TPO-requests-verification-R02 | S2 | MISSING-FIELD | OPEN |
 | TPO-requests-verification-06 | S3 | SIDE-EFFECT | OPEN |
-| TPO-requests-verification-09 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-requests-verification-10 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-requests-verification-09 | S3 | MISSING-COLUMN | DONE |
+| TPO-requests-verification-10 | S3 | MISSING-COLUMN | DONE |
 | TPO-requests-verification-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-requests-verification-12 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-requests-verification-14 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-requests-verification-15 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-requests-verification-12 | S3 | MISSING-FILTER | DONE |
+| TPO-requests-verification-14 | S3 | MISSING-ACTION | DONE |
+| TPO-requests-verification-15 | S3 | MISSING-EXPORT | DONE |
 | TPO-requests-verification-17 | S3 | COPY | OPEN |
 | TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-27 | S3 | COPY | OPEN |
 | TPO-requests-verification-28 | S3 | COPY | OPEN |
 | TPO-requests-verification-29 | S3 | MISSING-FIELD | UNCONFIRMED |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
-| TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-requests-verification-32 | S3 | MISSING-EXPORT | DONE |
 | TPO-requests-verification-R01 | S3 | SIDE-EFFECT | OPEN |
 | TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
 | TPO-requests-verification-16 | S4 | PERFORMANCE | OPEN |
@@ -330,3 +330,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round follow-up (chat-5): TPO-drive-workspace-39 still OPEN — round reorder guards page unload; app navigation protection across round edits remains.
 
 - [chat-5] source revalidation (tests authored, not executed): TPO-batches-29, TPO-students-08, TPO-students-09, TPO-students-11, TPO-students-18, TPO-students-27, TPO-students-30, TPO-requests-verification-02, TPO-requests-verification-03, TPO-requests-verification-04 now DONE with ID-named assertions in `tests/unit/chat5-fixed-on-main-verified.test.ts`; TPO-batches-64 central permission test in `tests/unit/chat5-unconfirmed-permission-decisions.test.ts`.
+
+- [chat-5] second FIXED-ON-MAIN verification: TPO-students-35, TPO-students-37, TPO-students-38, TPO-students-40, TPO-students-41, TPO-students-42, TPO-students-44, TPO-students-R02, TPO-students-R08, TPO-requests-verification-09, TPO-requests-verification-10, TPO-requests-verification-12, TPO-requests-verification-14, TPO-requests-verification-15, TPO-requests-verification-32 now DONE based on source-backed ID-named regressions in `tests/unit/chat5-fixed-on-main-more-evidence.test.ts`. CI execution pending.
