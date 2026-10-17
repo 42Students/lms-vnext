@@ -81,7 +81,7 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
     Export results (CSV)
    </button>
    <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>navigator.clipboard?.writeText(
-    report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].join(",")).join("\n")
+    ["Learner\tResult state\tOutcome\tReason",...report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].map(value=>value.replaceAll("\t"," ").replaceAll("\n"," ")).join("\t"))].join("\n")
    )}>Copy results</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error} Refresh the preview before retrying.</p>:null}
