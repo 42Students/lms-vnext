@@ -1,5 +1,6 @@
 "use client";
 import {useEffect,useState} from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 type LeadChoice={id:string;name:string;companyName:string|null};
@@ -12,7 +13,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
  const [when,setWhen]=useState("");
  const [note,setNote]=useState("");
  const [loading,setLoading]=useState(false);
- const [saving,setSaving]=useState(false);
+ const {pending:saving,run}=useGuardedAction({timeoutMs:30000});
  const [error,setError]=useState("");
  const [toast,setToast]=useState("");
  const hasDraft=open&&Boolean(leadId||when||note.trim());
@@ -56,8 +57,9 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
   if(!when){setError("Pick a date and time");return;}
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(when);}catch{setError("Pick a date and time");return;}
-  setSaving(true);setError("");
+  setError("");
   try{
+   await run(async () => {
    const response=await fetch("/api/placements/tpo/calendar/follow-ups",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({leadId,dueAt,note:note.trim()||null}),
@@ -68,8 +70,8 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
    setOpen(false);setLeadId("");setWhen("");setNote("");
    setToast("Follow-up added. It shows on the calendar.");
    router.refresh();
+   });
   }catch{setError("Could not save the follow-up");}
-  finally{setSaving(false);}
  }
  return <>
   <button type="button" onClick={()=>void show()}
