@@ -10,7 +10,7 @@ import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
-import {tpoStudentNeedsAttention,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
+import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
@@ -24,7 +24,9 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
- {key:"stage",label:"Stage",read:row=>tpoStudentDisplayLabel(row.journeyState)},
+ {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
+  options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
+  read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"gender",label:"Gender",read:row=>row.profileFacts?.gender??"Not recorded"},
  {key:"dob",label:"Birth year",read:row=>row.profileFacts?.birthYear??"Not recorded"},
  {key:"phone",label:"Phone (last four)",read:row=>row.profileFacts?.phoneMasked??"Not recorded"},
@@ -40,7 +42,10 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"resume",label:"Resume",read:row=>row.profileFacts?.resume?"Provided":"Not provided"},
  {key:"codingProfiles",label:"Coding profiles",read:row=>row.profileFacts?.codingProfiles?"Provided":"Not provided"},
  {key:"certifications",label:"Certifications",read:row=>row.profileFacts?.certifications??0},
- {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
+ {key:"profile",label:"Profile",filter:{urlKey:"profileStatus",options:[
+  {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting"},
+  {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"}]},
+  read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"tenth",label:"10th %",read:row=>row.tenthPct},
  {key:"twelfth",label:"12th %",read:row=>row.twelfthPct},
@@ -61,7 +66,9 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"eligibilityDate",label:"Eligibility set at",read:row=>row.participationDecidedAt?
   row.participationDecidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Not recorded"},
  {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
- {key:"debarred",label:"Debarred",read:row=>row.debarred===null?"Unavailable":row.debarred?"Debarred":"No"},
+ {key:"debarred",label:"Debarred",filter:{urlKey:"debarred",
+  options:[{value:"YES",label:"Debarred"},{value:"NO",label:"Not debarred"}]},
+  read:row=>row.debarred===null?"Unavailable":row.debarred?"Debarred":"No"},
  {key:"furthest",label:"Furthest round",read:row=>row.maximumAppliedRoundSequence??"Not recorded"},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
@@ -122,7 +129,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
+  {key:"afterCollege",label:"After college",filter:{urlKey:"afterCollege",options:
+   AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
   ...columns.slice(5),
  ];
  const filters:TpoFilterField[]=[
