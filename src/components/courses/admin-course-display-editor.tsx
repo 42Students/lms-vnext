@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { courseApiError } from "./learner-course-api";
+import { apiFetch } from "@/lib/api-fetch";
 
 type Display = {
   introductionText: string | null;
@@ -44,7 +44,7 @@ export function AdminCourseDisplayEditor({
   function save() {
     startTransition(async () => {
       try {
-        const response = await fetch(
+        await apiFetch<void>(
           `/api/courses/${courseId}/display`,
           {
             method: "PUT",
@@ -77,11 +77,6 @@ export function AdminCourseDisplayEditor({
             }),
           },
         );
-        if (!response.ok) {
-          throw new Error(
-            await courseApiError(response),
-          );
-        }
         showToast({
           tone: "success",
           title:
