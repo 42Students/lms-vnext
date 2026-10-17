@@ -72,9 +72,10 @@ export default async function LearnerApplicationCompanyPage({
           </div>
         </dl>
         <div role="status" className="mt-5 rounded-lg border border-border bg-surface-subtle p-4 text-sm text-body">
-          No extended company biography, public logo or employer contact details
-          are stored in the registered company profile. This page does not
-          generate those details or read private storage paths.
+          What the company sees here is limited to the verified public employer profile
+          associated with your own application. This is not a live employer-access audit.
+          Your private files, personal contacts and other learners&apos; applications
+          are never included in this preview.
         </div>
       </section>
     </div>
