@@ -201,3 +201,10 @@ These 24 formerly `FIXED-ON-MAIN` rows already have named ID regression tests an
 | TPO-drive-workspace-72 | DONE (source-verified) | `src/components/placements/placement-drive-workspace.tsx` now presents a native collapsible Actions control on mobile while preserving the direct desktop actions. `src/components/tpo/tpo-applications-spreadsheet.tsx` already uses mobile filter sheets and collapsible row actions. `tests/unit/tpo-drive-workspace-72-chat5.test.ts` — `TPO-drive-workspace-72 renders collapsed mobile Actions and responsive applicant cards`. |
 
 | TPO-drive-workspace-74 | NOT-A-GAP | Legacy `summary.recruiter` versus `hr` defect is not copied: `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx` uses persisted `data.recruiterContacts` with explicit empty state and `data.previousRequests` from scoped read service. `tests/unit/tpo-batches-48-final-chat5.test.ts` — `TPO-drive-workspace-74 derives recruiter cards from scoped data rather than a mismatched legacy key`. |
+
+## Chat-5 follow-up: grouped bulk exceptions
+
+| ID | Result | Evidence |
+|---|---|---|
+| TPO-drive-workspace-69 | DONE | `src/modules/placements/tpo-bulk-exception-groups.ts`, `src/components/tpo/tpo-bulk-action-panel.tsx`, `src/modules/placements/tpo-bulk-action-confirm-service.ts`, `tests/unit/tpo-drive-workspace-69-chat5.test.ts` — named tests `TPO-drive-workspace-69 groups skipped and failed outcomes by friendly reason without exposing unknown IDs`, `TPO-drive-workspace-69 shows grouped failures, retry preview and audited per-run results`, `TPO-drive-workspace-69 requires confirmation and consequence acknowledgement for serious actions`. Supersedes earlier OPEN notes for grouped exception UX. |
+| TPO-drive-workspace-39 | OPEN | `src/components/placements/tpo-round-reorder.tsx` uses beforeunload protection; `tests/unit/tpo-drive-workspace-39-chat5.test.ts` — `TPO-drive-workspace-39 preserves a dirty round order on reload and clears it only after save or explicit undo`. App navigation and other round forms still need guard coverage. |

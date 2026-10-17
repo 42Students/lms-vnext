@@ -86,7 +86,7 @@ export default async function CollegeProjectsPage({
         active="workspaces"
       />
       <PageHeader
-        title="Project workspaces"
+        title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
         actions={<Link href="/college/projects/create"
           className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

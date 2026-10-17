@@ -13,8 +13,7 @@ describe("TPO batch remaining legacy controls",()=>{
  it("TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason",()=>{
   const ui=read("src/components/tpo/tpo-batch-inline-decision.tsx");
   expect(ui).toContain("Common ineligibility reasons");
-  expect(ui).toContain("Academic criteria not met");
-  expect(ui).toContain("Not participating");
+  for(const reason of ["Higher studies","Not interested in placements","Detained / year back","Discontinued","Disciplinary","Already has a job"])expect(ui).toContain(reason);
   expect(ui).toContain("reason.trim().length>=3");
   expect(ui).toContain('role="alert"');
  });

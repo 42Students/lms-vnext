@@ -283,8 +283,8 @@ export async function listTpoCompanies(
       drivesRan: facts.plannedDriveCount,
       acceptedOfferDrives: facts.acceptedOfferDriveCount,
       confirmedJoinedDrives: facts.confirmedJoinedDriveCount,
-      studentsPlaced: null as number | null,
-      studentsPlacedEvidence: "PENDING_W04_COUNTS_AS_PLACED_POLICY" as const,
+      studentsPlaced:companyPlacedCount(driveRows,placedAt),
+      studentsPlacedEvidence:placedAt==="SELECTED"?"SELECTION_LEDGER_UNAVAILABLE" as const:"COLLEGE_COUNTS_AS_PLACED_POLICY" as const,
     });
   }
 

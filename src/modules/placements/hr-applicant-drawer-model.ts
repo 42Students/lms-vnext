@@ -12,6 +12,8 @@ export function buildHrApplicantDrawer(
     role:selected.role,
     email:selected.email,
     rollNumber:selected.rollNumber??null,
+    branch:selected.branch??null,
+    phone:selected.phone??null,
     ugPercentage:selected.ugPercentage??null,
     tenthPercentage:selected.tenthPercentage??null,
     twelfthOrDiplomaPercentage:selected.twelfthOrDiplomaPercentage??null,
