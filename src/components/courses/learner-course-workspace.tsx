@@ -24,6 +24,7 @@ import {LessonResourceMaterialsControl} from "./lesson-resource-materials-contro
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import { LearnerVideoPlayer } from "./learner-video-player";
+import {LearnerFormattedResponse} from "./learner-formatted-response";
 import {
   assignmentInteractionState,
   isAssignmentOverdue,
@@ -457,7 +458,7 @@ function AssignmentCard({
       {assignment.submissionId && assignment.submissionType==="TEXT"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
           <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
-          <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText??"No text was saved."}</p>
+          <LearnerFormattedResponse text={assignment.submissionText??"No text was saved."}/>
         </section>:null}
       {assignment.submissionId && assignment.submissionType==="LINK"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
@@ -473,7 +474,7 @@ function AssignmentCard({
           <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
           {assignment.submissionText?<div>
             <h5 className="text-xs font-semibold text-body">Written response</h5>
-            <p className="whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText}</p>
+            <LearnerFormattedResponse text={assignment.submissionText}/>
           </div>:null}
           <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
             enabled={assignmentFilesRuntimeEnabled()} />
