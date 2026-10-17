@@ -2,6 +2,7 @@
 
 import { formatDateTimeIst } from "@/lib/format-date";
 import {buildTpoRecruiterInviteMessage} from "@/modules/placements/tpo-recruiter-invite-message-model";
+import {RECRUITER_STAGE_LEGACY_LABELS,type TpoRecruiterLeadStage} from "@/modules/placements/tpo-recruiter-lead-policy";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -332,7 +333,7 @@ export function RecruiterLeadDetailWorkspace({
                 {lead.companyName || "Company not provided"}
                 {lead.designation ? " · " + lead.designation : ""}
               </p>
-              <p className="mt-1 text-sm text-muted-foreground">Stage: {lead.stage.replaceAll("_", " ")}</p>
+              <p className="mt-1 text-sm text-muted-foreground">Stage: {RECRUITER_STAGE_LEGACY_LABELS[lead.stage as TpoRecruiterLeadStage]??lead.stage}</p>
                <p className="mt-1 text-sm text-muted-foreground">Added: {formatDateTimeIst(lead.createdAt)}</p>
               <p className="mt-1 text-sm text-muted-foreground">Invite: {lead.inviteStatus.replaceAll("_", " ")}</p>
               <p className="mt-1 text-sm text-muted-foreground">Owner: {lead.ownerName??"Unassigned"}</p>
