@@ -1,4 +1,6 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
+import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
+import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
 import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
 import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
 import Link from "next/link";
@@ -42,6 +44,8 @@ export default async function TpoTeamPage({searchParams}:{
  const activeTeam=team.members.filter(member=>member.roles.includes("TPO")||
   member.roles.includes("TPO_ADMIN"));
  const people=sortTpoPeople(activeTeam,peopleSort);
+ const awayState=tab==="people"?await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]})):null;
+ const awayByMember=new Map<string,Date>((awayState?.items??[]).map(row=>[row.membershipId,row.awayUntil] as const));
  const search=parsed.success?(parsed.data.q??""):"";
  const conversationPage=parsed.success?(parsed.data.page??1):1;
  const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search,conversationPage)
@@ -78,6 +82,12 @@ export default async function TpoTeamPage({searchParams}:{
        <h2 className="break-words font-semibold text-foreground">{member.displayName}
          {member.membershipId===context.membership?.id?<span className="ml-2 rounded border border-border px-2 py-0.5 text-xs">You</span>:null}
         </h2>
+       {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
+        Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
+         .format(awayByMember.get(member.membershipId)!)} IST
+       </p>:null}
+       {member.membershipId===context.membership?.id&&awayState?.ready?
+        <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>:null}
        <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
        {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
          {member.studentDuties.length} recorded drive-day duties
