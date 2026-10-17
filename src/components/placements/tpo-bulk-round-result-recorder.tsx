@@ -237,6 +237,7 @@ export function TpoBulkRoundResultRecorder({
           </label>:null}
           {selected.length>0?<div role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">
             <p className="font-semibold">Result staging preview</p>
+            <p>{pendingTotal} total staged outcomes · {selected.length} explicitly selected · {failUnselected?unselected.length:0} additional Not cleared.</p>
             <p>{selected.length} unmarked applicant(s) selected · {outcome==="PASS"?"Cleared":outcome==="FAIL"?"Not cleared":outcome==="HOLD"?"Waitlisted":"Marked absent"}.</p>
             {outcome==="HOLD"?<p>Ranks {firstWaitlistRank}–{firstWaitlistRank+selected.length-1} in selection order. Existing rank collisions are rejected.</p>:null}
             <p>Saved as staged only. Learners are not told until the separate Apply results step.</p>
