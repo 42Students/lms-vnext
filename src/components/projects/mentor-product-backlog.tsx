@@ -30,6 +30,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   }catch(e){setError(e instanceof Error?e.message:"Cannot move task.");}finally{setBusy(false);}
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
+ const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
  return <section className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
