@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
-  afterCollegeOptions, type AfterCollegeOutcome,
+  afterCollegeOptions,AFTER_COLLEGE_LABELS,MANUAL_AFTER_COLLEGE_OUTCOMES, type AfterCollegeOutcome,
 } from "@/modules/placements/tpo-after-college-model";
 
 type Entry = { outcome: AfterCollegeOutcome; expectedVersion: string };
@@ -110,6 +110,7 @@ export function TpoAfterCollegeBulkEditor({
       <label className="grid gap-1 text-sm font-semibold">After college
         <select value={outcome} onChange={event => setOutcome(event.target.value as AfterCollegeOutcome)}
           disabled={!available || busy} className="min-h-10 rounded border border-border bg-surface px-2">
+          {!MANUAL_AFTER_COLLEGE_OUTCOMES.includes(outcome)?<option value={outcome} disabled>{AFTER_COLLEGE_LABELS[outcome]} · Automatic</option>:null}
           {afterCollegeOptions().map(option => <option key={option.value} value={option.value}>
             {option.label}</option>)}
         </select>
