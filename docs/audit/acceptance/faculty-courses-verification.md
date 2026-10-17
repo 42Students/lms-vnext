@@ -39,3 +39,5 @@ Not verified: resource uploads (requires private bucket and scanning), enrollmen
 | FAC-courses-R05 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-R05 confirms the audited source behavior`. Tests authored, not run. |
 
 | FAC-courses-R06 | DONE | `src/components/courses/learner-course-discussion.tsx`; `tests/unit/faculty-courses-chat7-r7.test.ts` — `FAC-courses-R06 confirms the audited source behavior`. Tests authored, not run. |
+
+| FAC-courses-21 | NOT-A-GAP | `src/components/courses/faculty-item-actions.tsx`; `tests/unit/faculty-courses-chat7-visibility-r7.test.ts` — `FAC-courses-21 matches the reviewed contract`. Legacy has no visibility toggle for non-video content; existing publish/archive behavior and video-only extra are intentional, not a parity requirement. |
