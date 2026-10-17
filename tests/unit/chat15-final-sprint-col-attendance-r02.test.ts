@@ -55,7 +55,7 @@ describe("COL-attendance-R02 verified parent absence/correction SMS",()=>{
   expect(api).toContain("isSameOriginRequest(request)");
   expect(ui).toContain("Parent phone verified independently");
   expect(ui).toContain("Parent consent was recorded and confirmed");
-  expect(ui).toContain("AdminAttendanceParentContactEditor").toBe(false);
+  expect(ui).not.toContain("alternatePhone");
   expect(source("src/components/attendance/admin-attendance-workspace.tsx")).toContain("<AdminAttendanceParentContactEditor");
   expect(source("docs/proposed-migrations/chat15-attendance-parent-sms-outbox.sql")).toContain("attendance_parent_sms_outbox");
  });
