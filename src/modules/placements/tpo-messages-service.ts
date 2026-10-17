@@ -137,6 +137,21 @@ async function loadRecruiterThreads(
         where search_message.thread_id = placement_tpo_message_threads.id
           and position(lower(${searchText}) in lower(search_message.body)) > 0
       )`,
+      accessEnded: sql<boolean>`not exists (
+        select 1 from placement_recruiter_college_grants grant_row
+        inner join placement_company_relationships relation
+          on relation.id = grant_row.company_relationship_id
+        inner join placement_recruiter_profiles recruiter_profile
+          on recruiter_profile.user_id = grant_row.recruiter_user_id
+          and recruiter_profile.company_id = relation.company_id
+        where relation.college_id = ${collegeId}::uuid
+          and relation.status = 'ACTIVE'
+          and recruiter_profile.status = 'ACTIVE'
+          and grant_row.recruiter_user_id = placement_tpo_message_threads.recruiter_user_id
+          and grant_row.status = 'ACTIVE'
+          and grant_row.verification_status = 'VERIFIED'
+          and grant_row.valid_until > now()
+      )`,
       companyName: sql<string|null>`(
         select lead.company_name from placement_tpo_leads lead
         where lead.college_id = ${collegeId}::uuid
@@ -219,6 +234,7 @@ async function loadRecruiterThreads(
       waitingForYou:row.lastSender==="RECRUITER",
       companyName:row.companyName,
       bodySearchMatch:row.bodySearchMatch,
+      accessEnded:row.accessEnded,
     };
   });
 }
