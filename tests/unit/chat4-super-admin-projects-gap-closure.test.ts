@@ -364,7 +364,7 @@ describe("chat-4 Super Admin Projects verified gap coverage",()=>{
    expect(team).toContain("Role label (optional)");
    expect(team).toContain("learnerMembershipIds:selected");
    expect(team).toContain("expectedUpdatedAt:version");
-   expect(team).toContain("Remove "+removeCount+" learner(s) from this workspace?");
+   expect(team).toContain('"Remove "+removeCount+" learner(s) from this workspace?"');
    expect(team).toContain('confirmLabel="Replace roster"');
    expect(team).toContain("setConfirmOpen(true)");
    expect(team).not.toContain("window.confirm");
