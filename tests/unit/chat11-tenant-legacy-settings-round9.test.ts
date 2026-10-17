@@ -33,6 +33,28 @@ describe("Tenant Settings legacy validated edit inventory",()=>{
   expect(editor).toContain('min={"min" in spec?spec.min:undefined}');
   expect(editor).toContain('max={"max" in spec?spec.max:undefined}');
  });
+ it("SA-tenants-modules-38 exposes every legacy placement timing, rate and risk setting",()=>{
+  for(const [key,min,max] of [
+   ["schedule.pastBookingGraceMinutes",0,1440],
+   ["interview.overlapWindowMinutes",0,1440],
+   ["interview.overlapBufferMinutes",0,1440],
+   ["interview.durationMinMinutes",1,1440],
+   ["interview.durationMaxMinutes",1,1440],
+   ["placement.applyRateLimitPerMinute",1,1000],
+   ["placement.staleAppliedDays",1,365],
+   ["placement.closingSoonDays",1,365],
+   ["placement.lowConversionThreshold",0,1],
+   ["placement.needsAttentionSampleCap",1,1000],
+  ] as const){
+   const row=spec(key);
+   expect(row).toMatchObject({key,scope:"GLOBAL",min,max});
+   expect(["int","decimal"]).toContain(row?.type);
+  }
+  const page=source("src/app/(authenticated)/admin/settings/page.tsx");
+  const editor=source("src/components/admin/tenant-settings-editor.tsx");
+  expect(page).toContain("<TenantSettingsEditor");
+  expect(editor).toContain("keys.filter(spec=>spec.group===group)");
+ });
  it("SA-tenants-modules-39 exposes bounded operational caps with audited blank-to-default removal",()=>{
   for(const [key,min,max] of [
    ["ops.bulkStatusMax",1,10000],
