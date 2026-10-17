@@ -22,6 +22,7 @@ export async function exportVisibleCollegePeople(
   facultyType:facultyProfiles.employmentType,
   facultyDocument:facultyProfiles.profileDocument,
   learnerDocument:learnerProfiles.profileDocument,
+  learnerRoll:learnerProfiles.rollNumber,
  }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
   .leftJoin(facultyProfiles,eq(facultyProfiles.membershipId,collegeMemberships.id))
   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
@@ -36,7 +37,7 @@ export async function exportVisibleCollegePeople(
   return kind==="FACULTY"
    ?[item.name,person?.phone??"",item.email??"",person?.facultyType??"",
       gender(person?.facultyDocument??null),item.membershipStatus]
-   :[item.name,"",person?.phone??"",item.email??"",item.program??"",
+   :[item.name,person?.learnerRoll??"",person?.phone??"",item.email??"",item.program??"",
       item.cohort??"",item.sections.join("; "),item.membershipStatus];
  });
  return {csv:"\uFEFF"+[columns,...rows].map(row=>row.map(value=>
