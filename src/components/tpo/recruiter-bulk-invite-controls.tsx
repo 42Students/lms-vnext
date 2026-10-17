@@ -63,6 +63,10 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
     {rows.map(row=><li key={row.id}>{row.name} · {bulkInviteDisposition(row)??"Ready"}</li>)}
    </ul>
+   {reviewSnapshot===eligibleSnapshot&&eligible.length>0?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+      Confirm issuing {eligible.length} new one-time invitation links. {eligible.filter(row=>Boolean(row.inviteSentAt)).length} previous link(s) will stop working.
+      <button type="button" className="ml-3 underline" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</button>
+    </div>:null}
    <button type="button" disabled={busy||eligible.length===0||eligible.length>100}
     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
     onClick={()=>void createLinks(eligible)}>{busy?"Working…":"Create "+eligible.length+" invite links"}</button>
