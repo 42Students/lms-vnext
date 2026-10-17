@@ -175,7 +175,7 @@ function JobActions({
   const [showSharedDetails, setShowSharedDetails] = useState(false);
   const { job, roleOption, application } = item;
   const reason = withdrawReason.trim();
-  const validWithdrawalReason = reason.length >= 3 && reason.length <= 2000;
+  const validWithdrawalReason = reason.length >= 3 && reason.length <= 900;
 
   async function apply(
     channel: "INTERNAL" | "EXTERNAL",
