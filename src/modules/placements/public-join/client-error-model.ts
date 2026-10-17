@@ -21,7 +21,7 @@ export function validatePublicJoinClient(input:{
  if(input.scope==="COLLEGE"&&input.companyName.trim().length<2)
   return "Enter your company name";
  const digits=input.phone.replace(/[^0-9]/g,"");
- if(input.phone.trim()&&digits.length!==10)return "Enter a valid 10-digit mobile number, or leave it blank";
+ if(input.phone.trim()&&(!/^[+0-9() .-]+$/.test(input.phone)||digits.length!==10))return "Enter a valid 10-digit mobile number, or leave it blank.";
  return null;
 }
 export function publicJoinErrorCopy(stage:"SEND"|"JOIN",status:number,code:string,
