@@ -96,7 +96,7 @@ export async function previewTpoRoundImport(context:RequestContext,jobId:unknown
  const scoped=await readRoster(context,jobId,roundId);
  const source=parseTpoRoundImport(bytes,filename);
  const projection=previewData(source,scoped.roster);
- const rosterFingerprint=scoped.roster.map(r=>[r.applicationId,r.currentResultId,r.currentStatus]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
+ const rosterFingerprint=scoped.roster.map(r=>[r.applicationId,r.currentResultId,r.currentStatus,r.email,r.roll,r.name]).sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
  const token=createHash("sha256").update(JSON.stringify([scoped.roundId,
    createHash("sha256").update(bytes).digest("hex"),rosterFingerprint])).digest("hex");
  return {round:scoped.round,jobId:scoped.jobId,roundId:scoped.roundId,previewToken:token,
