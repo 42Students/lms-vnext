@@ -25,6 +25,10 @@ function when(value: Date) {
   });
 }
 
+export async function generateMetadata({params}:{params:Promise<{publicId:string}>}){
+ const {publicId}=await params;
+ return {title:publicId+" · 42 Tracker"};
+}
 export default async function TrackerIssueDetailPage({
   params,
   searchParams,
