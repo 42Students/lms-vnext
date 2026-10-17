@@ -78,7 +78,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      Authentication or OTP templates cannot be used for recruitment campaigns.
     </span>
    </label>
-   <Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
+   {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
    </Link>
