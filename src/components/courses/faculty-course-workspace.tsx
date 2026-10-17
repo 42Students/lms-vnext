@@ -467,11 +467,11 @@ export function FacultyCourseWorkspace({
           <Metric label="Content" value={summary.contents}
             detail="Browse lectures and section materials →"/>
         </Link>
-        <Metric
-          label="Assignments"
-          value={summary.assignments}
-          detail="Assignment definitions visible to this Section."
-        />
+        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Assignments" value={summary.assignments}
+            detail="Browse lesson assignments →"/>
+        </Link>
         <Metric
           label="Quizzes"
           value={summary.quizzes}
