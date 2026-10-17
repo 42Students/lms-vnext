@@ -98,6 +98,7 @@ export async function listProjectAdminSnapshots(
           projectInstances.slug,
           `%${query.q}%`,
         ),
+        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
       )
     : undefined;
   const where = and(
