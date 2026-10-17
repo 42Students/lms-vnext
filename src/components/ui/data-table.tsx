@@ -31,7 +31,7 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     <div className="space-y-3 sm:hidden" role="list" aria-label={caption ?? "Records"}>
       {rows.map(row => (
         <article key={getRowKey(row)} role="listitem" className="min-w-0 rounded-xl border border-border bg-surface p-4">
-          {primary ? <h3 className="break-words text-base font-semibold leading-6 text-foreground">{primary.cell(row)}</h3> : null}
+          {primary ? <div role="heading" aria-level={3} className="min-w-0 break-words text-base font-semibold leading-6 text-foreground">{primary.cell(row)}</div> : null}
           {shown.length ? <dl className="mt-3 grid min-w-0 grid-cols-1 gap-2 text-sm leading-5">
             {shown.map(column => <div key={column.key} className="min-w-0"><dt className="font-medium text-body">{column.mobileLabel ?? column.header}</dt>
               <dd className="mt-0.5 min-w-0 break-words text-foreground">{column.cell(row)}</dd></div>)}
