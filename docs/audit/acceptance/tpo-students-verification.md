@@ -53,3 +53,6 @@ TPO-students-36: the authorized filtered CSV is now downloaded through a guarded
 
 | TPO-students-39 | OPEN (partial implementation) | Column chooser now reorders displayed columns with keyboard Earlier/Later, Reset columns; width, pin and browser persistence remain; `tests/unit/chat12-grid-columns-round3.test.ts` `TPO-students-39` |
 | TPO-students-51 | OPEN (partial implementation) | Mobile cards contain collapsible Actions picker; desktop spreadsheet preserved; mobile bottom-sheet filters still needed; `tests/unit/chat12-grid-columns-round3.test.ts` `TPO-students-51` |
+
+| TPO-students-06 | OPEN (bulk, live PG acceptance pending) | TPO timed/date/drive debar and reasoned lift wired to existing DB08 services with tenant-checked API; `tests/unit/chat12-timed-debar-round3.test.ts` `TPO-students-06` |
+| TPO-students-07 | OPEN (student notification, dispute and BULK_RUN pending) | Existing immutable DB trigger history and collision-safe active ban checked; `tests/unit/chat12-timed-debar-round3.test.ts` `TPO-students-07` |
