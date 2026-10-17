@@ -62,6 +62,11 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
           <Link href="/admin/batches" className="inline-flex min-h-11 items-center font-semibold text-primary-text">Clear filters</Link>
         </form>
       </section>
+      <nav aria-label="Batch lifecycle views" className="flex flex-wrap gap-3 text-sm">
+        <Link href="/admin/batches?status=ACTIVE" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Active batches</Link>
+        <Link href="/admin/batches?status=INACTIVE" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Show inactive</Link>
+        <Link href="/admin/batches?status=COMPLETED" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">Show completed</Link>
+      </nav>
       <section aria-label="Manage batches" className="space-y-3 rounded-xl border border-border bg-surface p-4">
         <h2 className="text-lg font-semibold">Manage batches</h2>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
