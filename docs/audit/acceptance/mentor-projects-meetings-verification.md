@@ -92,3 +92,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-05 | DONE (source checked; execution pending) | `src/components/projects/project-list.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-05 visible review and workspace actions`. Confirms visible review and workspace actions; orchestrator test run pending. |
 | MEN-projects-meetings-14 | DONE (source checked; execution pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-14 real mentor/course subtitle`. Confirms real mentor/course subtitle; orchestrator test run pending. |
 | MEN-projects-meetings-15 | DONE (source checked; execution pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-15 archived/completed read-only message`. Confirms archived/completed read-only message; orchestrator test run pending. |
+
+## Chat-7 round 2 — filter/route re-verification (tests authored, not executed)
+
+| Gap ID | Status | Verified source and regression test |
+|---|---|---|
+| MEN-projects-meetings-06 | DONE (source checked; CI pending) | `src/components/projects/project-participant-list-controls.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-06 legacy mentor status filter choices`. legacy mentor status filter choices. |
+| MEN-projects-meetings-07 | DONE (source checked; CI pending) | `src/components/projects/project-participant-list-controls.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-07 mentor-specific page sizes and total-range text`. mentor-specific page sizes and total-range text. |
+| MEN-projects-meetings-09 | DONE (source checked; CI pending) | `src/modules/projects/mentor-project-order-model.ts`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-09 number-aware Team ordering`. number-aware Team ordering. |
+| MEN-projects-meetings-12 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-12 distinct legacy navigation tabs`. distinct legacy navigation tabs. |
+| MEN-projects-meetings-13 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-13 legacy task and meeting deep-link aliases`. legacy task and meeting deep-link aliases. |
