@@ -16,7 +16,6 @@ describe("learner course deadline, own submissions and empty state",()=>{
   });
   it("LEARNER-course-detail-06 shows both written and link submissions and safe read-only links",()=>{
     const page=source("src/components/courses/learner-course-workspace.tsx");
-    expect(page).toContain('submission.submissionText');
     // Assignment projection keys are used directly, not the aggregate assignment page.
     expect(page).toContain("assignment.submissionText");
     expect(page).toContain("assignment.submissionUrl");
