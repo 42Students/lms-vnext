@@ -38,6 +38,24 @@ test.describe("GR-82 production failure smoke", () => {
     expect(response.status(), "Production must not expose source maps").toBe(404);
   });
 
+  test("GR-82 HTML 502 from the login API is never rendered as a proxy page", async ({ page }) => {
+    await page.goto(productionBase!);
+    await page.getByRole("tab", { name: "Email" }).click();
+    await page.getByRole("textbox", { name: "Email address" }).fill("learner.a@vnext.test");
+    const fault = await failApi(page, "**/api/auth/login/start", "html-502");
+    try {
+      await page.getByRole("button", { name: "Send code" }).click();
+      await expect.poll(() => fault.requests().includes("POST /api/auth/login/start")).toBe(true);
+      await expect(page.getByRole("alert")).toContainText(
+        "Something went wrong on our side. Please try again in a moment.",
+      );
+      await expect(page.getByText("502 Bad Gateway")).toHaveCount(0);
+      await expectNoRawErrors(page);
+    } finally {
+      await fault.dispose();
+    }
+  });
+
   test("GR-82 production JSON 500 shows a reference id, never the raw provider response", async ({ page }) => {
     await page.goto(productionBase!);
     const emailTab = page.getByRole("tab", { name: "Email" });
@@ -59,6 +77,8 @@ test.describe("GR-82 production failure smoke", () => {
     test.setTimeout(35_000);
     const errors = captureUncaughtErrors(page);
     let failures = 0;
+    let navigations = 0;
+    page.on("framenavigated", (frame) => { if (frame === page.mainFrame()) navigations += 1; });
     await page.route("**/_next/static/chunks/**", async (route) => {
       // Fail only the first chunk to allow the one-time version recovery reload.
       if (failures === 0) {
@@ -69,10 +89,16 @@ test.describe("GR-82 production failure smoke", () => {
       }
     });
     await page.goto(productionBase!);
-    await expect.poll(() => failures).toBeGreaterThan(0);
-    await expect(page.getByText(/new version is available|reloading|sign in|try again/i).first())
-      .toBeVisible({ timeout: 20_000 });
+    await expect.poll(() => failures).toBe(1);
+    // Hydration must actually recover. A server-rendered heading with broken
+    // JavaScript is not success; a second navigation proves the one-time reload.
+    await expect.poll(() => navigations, { timeout: 20_000 }).toBeGreaterThanOrEqual(2);
+    await expect(page.getByRole("heading", { name: /LMS vNext|sign in/i }).first()).toBeVisible();
+    const tab = page.getByRole("tab", { name: "Email" });
+    await tab.click();
+    await expect(tab).toHaveAttribute("aria-selected", "true");
     await expectNoRawErrors(page);
-    expect(errors).toEqual([]);
+    expect(errors.filter((entry) => !/ChunkLoadError|Loading chunk failed|dynamically imported module/i.test(entry)))
+      .toEqual([]);
   });
 });
