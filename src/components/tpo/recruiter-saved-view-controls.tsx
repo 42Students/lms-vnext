@@ -52,6 +52,7 @@ export function RecruiterSavedViewControls({columns}:{columns:readonly EngageCol
     data.error==="DUPLICATE_NAME"?"A view with that name already exists.":
     data.error==="STORAGE_PENDING"?"Saved view storage is not registered.":"Couldn't save.");
    setNotice(action==="CREATE"?"View saved":action==="DELETE"?"View deleted":"Saved");
+   if(action==="DELETE"){setSelected("");setDeleteReview(null);setEditingName("");setEditingNote("");}
    if(action==="CREATE"){setName("");setNote("");}
    await refresh();
   }catch(e){setNotice(e instanceof Error?e.message:"Couldn't save");}
