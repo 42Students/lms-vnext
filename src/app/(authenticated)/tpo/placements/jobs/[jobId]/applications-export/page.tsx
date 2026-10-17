@@ -65,8 +65,23 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
      <h2 className="font-semibold text-foreground">{row.studentName??"Name unavailable"}</h2>
      <p className="text-sm text-body">{row.roleTitle} · {row.status} · {row.screeningStatus??"Screening unavailable"}</p>
      <p className="text-xs text-body">Channel: {row.channel} · Submitted {new Date(row.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
+     <dl className="mt-3 grid grid-cols-2 gap-2 text-xs text-body sm:grid-cols-4">
+      <div><dt>Roll number</dt><dd className="font-semibold text-foreground">{row.rollNumber??"Not recorded"}</dd></div>
+      <div><dt>Batch</dt><dd className="font-semibold text-foreground">{row.batchName??"Not recorded"}</dd></div>
+      <div><dt>Branch</dt><dd className="font-semibold text-foreground">{row.branchName??"Not recorded"}</dd></div>
+      <div><dt>Academic year</dt><dd className="font-semibold text-foreground">{row.academicYear??"Not recorded"}</dd></div>
+     </dl>
+     {[row.pendingWithdrawal?"Withdrawal requested":null,row.noShow?"No-show":null,
+       row.placedElsewhere?"Placed elsewhere":null,row.addedByCollege?"Added by college":null]
+       .filter((value):value is string=>Boolean(value)).length>0?(
+      <p className="mt-2 text-xs font-semibold text-body">
+       {[row.pendingWithdrawal?"Withdrawal requested":null,row.noShow?"No-show":null,
+         row.placedElsewhere?"Placed elsewhere":null,row.addedByCollege?"Added by college":null]
+         .filter(Boolean).join(" · ")}
+      </p>
+     ):null}
     </article>)}
    </section>}
-  <p className="text-xs text-body">The preview is limited to 500 rows. The full filtered CSV download is formula-neutralized and includes roll number and contact columns. Internal screening comments and staged results are not exported.</p>
+  <p className="text-xs text-body">The preview is limited to 500 rows. The full filtered CSV download is formula-neutralized and includes roll number and contact columns. Internal screening comments and staged results are not exported. Batch and branch reflect the learner’s current active academic enrollment.</p>
  </div>;
 }

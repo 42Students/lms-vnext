@@ -24,6 +24,8 @@ export async function collectTpoExportPages<T>(
 export type TpoDriveApplicationExportFact={
  applicationId:string;studentName:string|null;roleTitle:string;
  status:string;screeningStatus:string|null;screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;rollNumber?:string|null;email?:string|null;phone?:string|null;
+ batchName?:string|null;branchName?:string|null;academicYear?:string|null;
+ pendingWithdrawal?:boolean;noShow?:boolean;placedElsewhere?:boolean;addedByCollege?:boolean;
 };
 export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicationExportFact[],jobTitle:string,options:{exportAll?:boolean}={}){
  const truncated=!options.exportAll&&rows.length>TPO_DRIVE_APPLICATION_EXPORT_LIMIT;
@@ -35,11 +37,15 @@ export function projectTpoDriveApplicationsExport(rows:readonly TpoDriveApplicat
   new Date(r.submittedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST",
   r.screeningUpdatedAt?new Date(r.screeningUpdatedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not recorded",
   r.rollNumber??"Not recorded",r.email??"Not recorded",r.phone??"Not recorded",
+  r.batchName??"Not recorded",r.branchName??"Not recorded",r.academicYear??"Not recorded",
+  r.pendingWithdrawal?"Yes":"No",r.noShow?"Yes":"No",
+  r.placedElsewhere?"Yes":"No",r.addedByCollege?"Yes":"No",
  ]);
  if(truncated)data.push(["TRUNCATED",
-  "First "+TPO_DRIVE_APPLICATION_EXPORT_LIMIT+" application rows are exported; further matching applications exist.",
-  null,null,null,null,null,null,null,null,null,null,null]);
+  "First "+TPO_DRIVE_APPLICATION_EXPORT_LIMIT+" application rows are shown; further matching applications exist.",
+  ...Array.from({length:18},()=>null)]);
  return {rows:displayed,truncated,jobTitle,csv:placementReportCsv([
-  "Application ID","Student","Role","Stage","Application status","Screening status","Eligibility evidence","Channel","Submitted (IST)","Screening updated (IST)","Roll number","Email","Phone",
+  "Application ID","Student","Role","Stage","Application status","Screening status","Eligibility evidence","Channel","Submitted (IST)","Screening updated (IST)","Roll number","Email","Phone","Batch","Branch","Academic year",
+  "Withdrawal requested","No-show","Accepted offer elsewhere","Added by college",
  ],data)};
 }
