@@ -306,7 +306,7 @@ export function PlacementJobCreateForm({
       const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
       const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
-      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<Date.parse(deadlineIso)))
+      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
        throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
