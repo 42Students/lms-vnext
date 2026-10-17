@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -35,7 +35,13 @@ export default async function CollegeProjectsPage({
   const context = await getCurrentRequestContext();
   const membership = context.membership;
   if (!membership) {
-    redirect("/dashboard");
+    return <main className="space-y-4"><PageHeader title="Project workspaces"
+     description="Select a college to continue."/>
+     <p role="alert" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+      Project workspaces are college-scoped. Choose an active college from the account switcher before opening this page.
+     </p>
+     <Link href="/dashboard" className="inline-flex min-h-11 items-center text-primary-text underline">Back to dashboard</Link>
+    </main>;
   }
 
   const params = await searchParams;
