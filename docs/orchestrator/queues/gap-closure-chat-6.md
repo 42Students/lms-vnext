@@ -266,5 +266,13 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 - 25 gap-specific tests authored, NOT RUN, across four new source-contract test files. Faculty: FAC-assessments-11/14 DONE, -20 NOT-A-GAP. Super Admin People: SA-academics-people-89/98/102/104/105/107/113/116 DONE. College dashboard: COL-dashboard-03/04/05/06/07/08/09/14/15/16 DONE. College placements: COL-placements-07/08/09/21 DONE.
 - New learner profile S1 blockers documented as LEARNER-profile-misc-01/03/04; private upload/preview must not be simulated. Larger open gaps and DB/browser-only acceptance remain for the orchestrator.
 
+### Chat-6 round 2 verified-closure handoff (2026-10-17)
+
+- Branch `chatgpt/chat-6-b` already contained origin/main on entry; no force-push or push to main. Source and acceptance edits pushed in scoped batches.
+- 25 new gap dispositions: Super Admin Courses/Content `SA-academics-people-48/51/63/71/73` DONE and `-70/-76` NOT-A-GAP (7); Learner `LEARNER-profile-misc-07/09/10/11/12/13/14/21/22/23/26` DONE (11); College Placements `COL-placements-11/13/16/17/18/19` DONE and `-23` NOT-A-GAP (7). Total 23 DONE, 2 NOT-A-GAP.
+- Tests authored, **not run**, named by gap ID and grouped by page area: `tests/unit/chat6-superadmin-content-round2.test.ts` (7 cases), `chat6-learner-notification-copy-round2.test.ts` (1), `chat6-learner-profile-round2-verified.test.ts` (10), `chat6-college-placements-round2-verified.test.ts` (6), `chat6-college-placements-copy-round2.test.ts` (1). Orchestrator must run unit, integration, typecheck and browser tests before independent acceptance.
+- Graceful operation still needs GR-30/34/50/52/60/70/90 adoption in the remaining mutating and data-loading pages when chat-14 shared helpers reach main. Do not treat source-only named tests as complete runtime resilience.
+- Remaining major items: Faculty `FAC-assessments-13/27/R01..R08`; Super Admin People unresolved actions and identity; Super Admin Courses/Content policy and editor parity; College Placements company editor/offer letter and application completeness; Super Admin tracker; Learner private uploads; College Dashboard failure isolation. Existing private storage/scanner blockers in Notes are unchanged.
+
 ## Needs shell (chat-9 only)
 
