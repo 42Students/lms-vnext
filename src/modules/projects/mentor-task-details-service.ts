@@ -45,13 +45,13 @@ export async function updateMentorTaskDetails(
     if(task.status==="IN_REVIEW"||task.status==="DONE")
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
 
-    const [sprint]=await tx.select({
+    const [sprint]=task.sprintId?await tx.select({
       status:projectSprints.status,releaseId:projectSprints.releaseId,
     }).from(projectSprints)
       .where(and(eq(projectSprints.id,task.sprintId),
         eq(projectSprints.projectId,scope.project.id)))
-      .limit(1);
-    if(!sprint||sprint.status==="COMPLETED")
+      .limit(1):[null];
+    if(task.sprintId&&(!sprint||sprint.status==="COMPLETED"))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
     const [release]=await tx.select({status:projectReleases.status})
       .from(projectReleases)
