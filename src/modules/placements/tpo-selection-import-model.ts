@@ -32,11 +32,16 @@ export function prepareSelectionImport(text:string,candidates:readonly Selection
  const accepted:SelectionImportEntry[]=[];const unmatched:Array<{line:number;value:string;reason:string}>=[];
  const seen=new Set<string>();
  rows.forEach((row,i)=>{
-  const identifier=row[idColumn>=0?idColumn:emailColumn>=0?emailColumn:nameColumn]??"";
-  const matches=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&
-   ((idColumn>=0&&c.applicationId.toLowerCase()===identifier.toLowerCase())||
-   (emailColumn>=0&&c.email?.toLowerCase()===identifier.toLowerCase())||
-   (nameColumn>=0&&c.name.toLowerCase()===identifier.toLowerCase())));
+  const identifier=[idColumn,emailColumn,nameColumn].filter(i=>i>=0).map(i=>(row[i]??"").trim()).find(Boolean)??"";
+  const identities=[
+   idColumn>=0&&row[idColumn]?.trim()?{kind:"id",value:row[idColumn]!.trim().toLocaleLowerCase("en-IN")}:null,
+   emailColumn>=0&&row[emailColumn]?.trim()?{kind:"email",value:row[emailColumn]!.trim().toLocaleLowerCase("en-IN")}:null,
+   nameColumn>=0&&row[nameColumn]?.trim()?{kind:"name",value:row[nameColumn]!.trim().toLocaleLowerCase("en-IN")}:null,
+  ].filter((item):item is {kind:string;value:string}=>item!==null);
+  const matches=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&identities.length>0&&
+   identities.every(v=>v.kind==="id"?c.applicationId.toLocaleLowerCase("en-IN")===v.value:
+    v.kind==="email"?c.email?.toLocaleLowerCase("en-IN")===v.value:
+    c.name.toLocaleLowerCase("en-IN")===v.value));
   if(matches.length!==1){unmatched.push({line:i+2,value:identifier,reason:matches.length?"Ambiguous student":"No eligible matching applicant"});return;}
   const candidate=matches[0]!;
   if(seen.has(candidate.applicationId)){unmatched.push({line:i+2,value:identifier,reason:"Duplicate in file"});return;}
