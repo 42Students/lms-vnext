@@ -110,3 +110,19 @@ Synchronized chat-9-b with origin/main containing registered `drizzle/0131_place
 - BLOCKED TPO-settings-audit-92: richer cross-source Drives/Recruiters/Students/Offers entity facets require a canonical attribution read model, not invented grouping.
 - BLOCKED Live acceptance, production DNS/TLS, external service credentials, high-impact owner decisions and remaining WPs already marked source-pass DONE are not certified by this run.
 
+
+
+## FAST v2 continuation 5 — merged migration 0132 (2026-10-17)
+
+Start point: fast-forward merged `origin/main@933c7301475d408d9c23cd72e270ad424c758d53` into `chatgpt/chat-9-b`. Verified migration `drizzle/0132_bored_red_ghost.sql` is registered and concerns `project_tasks.approach`, **not** chat-9 TPO schema. Preserve sole ownership `src/components/shell`. Source-pass only; no tests, lint, typecheck, build or CI.
+
+- WP-09 / TPO-settings-audit-R04: saved audit views retain Who/actor filter, case-insensitive duplicate prevention, and browser-local organization/college key. Server-wide saved-view synchronization remains separate.
+- WP-09 / TPO-calendar-reports-50: repaired saved report preset persistence to use the same college-specific storage key for read/write; saved batch, branch, sort, outcome, group and free-text filters; enabled per-report presets for placement summary, by-company, leads, unplaced, after-college, by-branch, CTC, offers-acceptance, joining-status and failure-reasons.
+- WP-09 / TPO-calendar-reports-51: native fullscreen is constrained to the rendered report root (not arbitrary shell `main`); connected presentation control to ten TPO report pages.
+- WP-09 / TPO-settings-audit-80: edit five personal notification preference flags with same-origin, college/user scope, serialized optimistic version, audit event, persisted defaults and explicit failure states. Notification delivery consumers remain a separate integration.
+- BLOCKED TPO-settings-audit-R04: cross-device, shared, server-side saved audit view sync requires a reviewed persistence/permission policy; current views are browser-local.
+- BLOCKED TPO-calendar-reports-50: cross-device named report presets and server-wide report-filter management require policy for the saved_views table; current saved views persist locally.
+- BLOCKED TPO-calendar-reports-51: actual browser fullscreen behavior on mobile/embedded browser, colors and 375px layout require runtime acceptance; browser feature failure is explicit.
+- BLOCKED TPO-settings-audit-80: preferences only persist per current user; suppression of individual outbound/email/in-app events remains to be wired into the notification producer with policy decision to avoid suppressing mandatory alerts.
+- BLOCKED Existing S1/S2 high-impact owners/producer changes, recruiter policy enforcement, unverified external messages, private file storage and browser/live tests remain pending; no closure without evidence.
+
