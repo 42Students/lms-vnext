@@ -143,6 +143,8 @@ export async function PlacementJobCreateWorkspace({
             name: company.name,
             primaryDomain:
               company.primaryDomain,
+            domains:company.domains,
+            otherNames:company.otherNames,
             isTrusted: company.isTrusted,
             memory:memoryByRelationship.get(company.relationshipId)??null,
           }),

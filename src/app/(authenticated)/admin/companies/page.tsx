@@ -2,6 +2,10 @@ import Link from "next/link";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
 import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
+import {SuperAdminCompanyEdit} from "@/components/admin/super-admin-company-edit";
+import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-company-identities";
+import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
+  from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -64,7 +68,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Search in
         <select name="searchField" defaultValue={data.query.searchField} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="ALL">Name or domain</option><option value="NAME">Company name</option><option value="DOMAIN">Primary domain</option>
+          <option value="ALL">Name, other name or domain</option><option value="NAME">Name or other name</option><option value="DOMAIN">Any company domain</option>
         </select>
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Relationship
@@ -124,6 +128,8 @@ export default async function SuperAdminCompaniesPage({
       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
       Export matching companies as CSV →
     </Link>
+    {context.adminScope?.collegeId?
+      <SuperAdminCollegeCompanyCreate collegeId={context.adminScope.collegeId}/>:null}
     <p className="text-xs text-muted-foreground">{data.total} matching college-company relationships · page {data.query.page} of {data.totalPages}; statistics and duplicate suggestions below are page-local.</p>
     <div className="grid gap-3 sm:grid-cols-3">
       {([["Companies in this page", data.distinctCompanies], ["Archived", data.archivedCompaniesOnPage],
@@ -166,6 +172,10 @@ export default async function SuperAdminCompaniesPage({
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
          <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
         <p className="mt-1 text-sm text-body">{row.collegeName}</p>
+        {context.adminScope?.collegeId===row.collegeId?
+          <SuperAdminCollegeCompanyRelationshipActions relationshipId={row.relationshipId}
+            name={row.name} trusted={row.trusted} status={row.relationshipStatus}
+            driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
         <div className="mt-3 flex flex-wrap gap-2">
           <StatusBadge>{row.companyStatus}</StatusBadge>
           <StatusBadge>{row.relationshipStatus} relationship</StatusBadge>
@@ -176,6 +186,18 @@ export default async function SuperAdminCompaniesPage({
           ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
               verified={Boolean(row.verifiedAt)} />:null}
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
+        <p className="mt-1 text-xs text-body">Added by: {row.addedByType??"Not recorded"}</p>
+        <p className="mt-1 break-all text-xs text-body">Domains: {row.domains?.length?row.domains.join(", "):"Not registered"}</p>
+        <p className="mt-1 text-xs text-body">Other names: {row.aliases?.length?row.aliases.join(", "):"Not registered"}</p>
+        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
+          ? <SuperAdminCompanyIdentities companyId={row.companyId} name={row.name}
+              domains={row.domains??[]} aliases={row.aliases??[]} />:null}
+        {row.industry?<p className="mt-1 text-sm text-body">Industry: {row.industry}</p>:null}
+        {row.about?<p className="mt-1 text-sm text-body">{row.about}</p>:null}
+        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
+          ? <SuperAdminCompanyEdit company={{id:row.companyId,name:row.name,
+              website:row.website,industry:row.industry??null,about:row.about??null,
+              logoPublicUrl:row.logoPublicUrl??null,updatedAt:row.updatedAt!.toISOString()}} />:null}
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-body">
           <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>
           <div><dt className="text-muted-foreground">Linked colleges</dt><dd className="tabular-nums">{row.companyCollegeCount??0}</dd></div>

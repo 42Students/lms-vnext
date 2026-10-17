@@ -33,7 +33,11 @@ describe("Chat 13 Super Admin placement legacy copy and S3 contracts", () => {
   });
   it("SA-placements-projects-35 safe recruiter lifecycle", () => {
     const code = source("src/components/admin/super-admin-hr-accounts.tsx");
-    expect(code).toContain("Recruiter archived");
+    // Owner decision keeps archive-as-suspend semantics instead of destructive delete.
+    expect(code).toContain("Recruiter suspended");
+    const service=source("src/modules/placements/super-admin-hr-service.ts");
+    expect(service).toContain('input.status === "ARCHIVED"');
+    expect(service).toContain('status: "REVOKED"');
     expect(code).toContain("Recruiter reactivated");
     expect(code).toContain("accountManageable");
   });
