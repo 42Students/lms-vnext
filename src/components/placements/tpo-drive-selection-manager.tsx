@@ -9,11 +9,15 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  const router=useRouter();const [mode,setMode]=useState<"RECORD"|"VERIFY_AND_RELEASE"|null>(null);
  const [chosen,setChosen]=useState<string[]>([]);const [role,setRole]=useState("");
  const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);
+ const [search,setSearch]=useState("");
  const [error,setError]=useState("");const [report,setReport]=useState<Result[]>([]);
+ const [lastRecorded,setLastRecorded]=useState(0);
  const existing=new Set(selections.map(s=>s.applicationId));
  const recordable=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&!existing.has(c.applicationId));
  const releasable=selections.filter(s=>s.status!=="RELEASED");
- function open(next:"RECORD"|"VERIFY_AND_RELEASE"){setMode(next);setChosen([]);setError("");setReport([]);}
+ const visibleRecordable=recordable.filter(c=>(c.name+" "+c.email+" "+c.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
+ const visibleReleasable=releasable.filter(s=>(s.name+" "+s.roleTitle).toLocaleLowerCase("en-IN").includes(search.toLocaleLowerCase("en-IN")));
+ function open(next:"RECORD"|"VERIFY_AND_RELEASE"){setMode(next);setChosen([]);setSearch("");setError("");setReport([]);}
  function toggle(id:string){setChosen(previous=>previous.includes(id)?previous.filter(x=>x!==id):
   previous.length<100?[...previous,id]:previous);}
  async function submit(){
@@ -33,7 +37,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
    const payload=await response.json().catch(()=>null) as {error?:string;issues?:Array<{message:string}>;results?:Result[]}|null;
    if(!response.ok)throw Error(payload?.issues?.[0]?.message??payload?.error??"Selection action failed");
    setReport(payload?.results??[]);setChosen([]);
-   if(mode==="RECORD")setMode(null);
+   if(mode==="RECORD"){setLastRecorded(chosen.length);setMode(null);}
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Unable to save");}finally{setPending(false);}
  }
@@ -45,6 +49,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     className="min-h-11 rounded border border-primary px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
     Verify and release ({releasable.length})</button>
   </div>
+  {lastRecorded>0?<p role="status" className="text-sm font-semibold">{lastRecorded} selection(s) recorded, not yet released.</p>:null}
   <p className="text-sm text-body">Selection alone does not issue an offer. Verify and release only after checking the company's selection list.</p>
   <div className="overflow-x-auto rounded border border-border bg-surface"><table className="min-w-full text-left text-sm">
    <thead><tr><th className="p-3">Student</th><th className="p-3">Role</th><th className="p-3">Package</th><th className="p-3">Stage</th></tr></thead>
@@ -75,10 +80,21 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      <label className="grid gap-1 text-sm">Package (LPA, optional)<input type="number" min={0} max={1000} step="0.01"
       value={lpa} onChange={e=>setLpa(e.target.value)} className="min-h-11 rounded border border-border bg-surface px-3"/></label>
     </div>:null}
+    <label className="grid gap-1 text-sm">Find student
+     <input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
+      placeholder="Search name, email or role" className="min-h-10 rounded border border-border bg-surface px-3"/>
+    </label>
+    <div className="flex flex-wrap gap-3 text-sm">
+      <button type="button" disabled={pending} className="font-semibold text-primary-text" onClick={()=>setChosen(previous=>[
+       ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
+       Select matching (max 100)
+      </button>
+      <button type="button" disabled={pending||!chosen.length} className="font-semibold text-primary-text" onClick={()=>setChosen([])}>Clear selection</button>
+    </div>
     <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
-     {(mode==="RECORD"?recordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
-       releasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
+     {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
+       visibleReleasable.map(s=>({id:s.id,name:s.name,note:s.roleTitle+(s.offerReady?"":" · Needs eligibility review")})))
        .map(item=><label key={item.id} className="flex min-h-10 items-center gap-3 px-2 text-sm">
         <input type="checkbox" checked={chosen.includes(item.id)} disabled={pending} onChange={()=>toggle(item.id)}/>
         <span>{item.name} · {item.note}</span>

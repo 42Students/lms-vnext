@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
+import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
 
 function one(
   value: string | string[] | undefined,
@@ -46,6 +47,8 @@ export async function ProjectAdminAtRiskPage({
   const bucket = one(searchParams.riskBucket);
   const query: ProjectAdminCollectionQuery = {
     riskBucket: bucket === "STALLED" || bucket === "BLOCKER" || bucket === "REVIEW" ? bucket : undefined,
+    riskSort: (["INACTIVE","WORKSPACE","SEVERITY"].includes(one(searchParams.riskSort)??"")
+      ? one(searchParams.riskSort) : undefined) as ProjectAdminCollectionQuery["riskSort"],
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     page: Number(one(searchParams.page) ?? 1),
@@ -73,9 +76,7 @@ export async function ProjectAdminAtRiskPage({
       />
       {!result.blockerSignalSupported ? (
         <section className="rounded-xl border border-warning-border bg-warning-subtle p-4 text-sm leading-6 text-body">
-          Active task blockers are included in this queue.
-          The legacy workspace-level blocker field is not yet persisted,
-          so that separate signal is not counted.
+          Workspace blocker data is unavailable. Task blockers are still counted.
         </section>
       ) : null}
       <div className="grid gap-3 sm:grid-cols-3">
@@ -91,7 +92,17 @@ export async function ProjectAdminAtRiskPage({
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>)}
       </div>
-      <ProjectAdminFilters query={query} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <ProjectAtRiskPageExport collegeId={collegeId}
+          rows={result.items.map(project=>({
+            id:project.id,title:project.title,mentorName:project.mentorName,
+            inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
+            blockerReason:project.blockerReason,
+            lastActivityAt:project.lastActivityAt.toISOString(),
+          }))}/>
+        <p className="text-xs text-muted-foreground">CSV includes only the workspaces on this page.</p>
+      </div>
+      <ProjectAdminFilters query={query} includeRiskSort />
 
       {!result.items.length ? (
         <section className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
@@ -129,18 +140,14 @@ export async function ProjectAdminAtRiskPage({
                     )}
                   </p>
                 </div>
-                <StatusBadge
-                  tone={
-                    project.riskReasons.length > 1
-                      ? "warning"
-                      : "neutral"
-                  }
-                >
-                  {project.riskReasons.length} signal
-                  {project.riskReasons.length === 1
-                    ? ""
-                    : "s"}
-                </StatusBadge>
+                <div className="flex flex-wrap gap-2">
+                  <StatusBadge tone={project.riskReasons.length>1||project.blockerReason?"warning":"neutral"}>
+                    {project.riskReasons.length>1||project.blockerReason?"Risk":"Watch"}
+                  </StatusBadge>
+                  <StatusBadge tone="neutral">
+                    {project.riskReasons.length} {project.riskReasons.length===1?"reason":"reasons"}
+                  </StatusBadge>
+                </div>
               </div>
               {project.blockerReason ? <div className="mt-3 rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
                 <p className="font-semibold">Active blocker</p>
@@ -148,10 +155,12 @@ export async function ProjectAdminAtRiskPage({
               </div> : null}
               <dl className="mt-3 grid gap-3 text-sm text-body sm:grid-cols-3">
                 <div><dt className="font-semibold">Severity</dt><dd>
-                  {project.riskReasons.length > 1 || project.blockerReason ? "High" : "Medium"}
+                  {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
                 </dd></div>
                 <div><dt className="font-semibold">Inactive</dt><dd>
-                  {project.inactiveDays} days
+                  <span aria-label={"Inactive for "+project.inactiveDays+" days"}>
+                    {project.inactiveDays} {project.inactiveDays===1?"day":"days"}
+                  </span>
                 </dd></div>
                 <div><dt className="font-semibold">Blocker</dt><dd className="break-words">
                   {project.blockerReason ?? "—"}

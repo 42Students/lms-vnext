@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { and, asc, count, countDistinct, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
 import { exists } from "drizzle-orm";
 import { ne, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -13,6 +13,7 @@ import {
   electiveOfferings,
   electiveSlots,
   learnerProgramEnrollments,
+  lmsGroupMembers,
   membershipRoles,
   programs,
   sectionEnrollments,
@@ -253,10 +254,29 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
       isNull(electiveOfferings.deletedAt),
     ))
     .groupBy(electiveOfferings.slotId) : [];
+  const confirmedStudents = ids.length ? await db.select({
+    slotId:electiveOfferings.slotId,
+    total:countDistinct(lmsGroupMembers.membershipId),
+  }).from(electiveOfferings)
+    .innerJoin(lmsGroupMembers, and(
+      eq(lmsGroupMembers.groupId,electiveOfferings.groupId),
+      eq(lmsGroupMembers.memberType,"LEARNER"),
+      eq(lmsGroupMembers.state,"ACTIVE"),
+    ))
+    .innerJoin(collegeMemberships,and(
+      eq(collegeMemberships.id,lmsGroupMembers.membershipId),
+      eq(collegeMemberships.collegeId,collegeId),
+      eq(collegeMemberships.status,"ACTIVE"),
+    ))
+    .where(and(inArray(electiveOfferings.slotId,ids),
+      eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt)))
+    .groupBy(electiveOfferings.slotId):[];
+  const confirmedBySlot=new Map(confirmedStudents.map(row=>[row.slotId,row.total]));
   const offeringCount = new Map(counts.map(item => [item.slotId, item.total]));
   const items = baseRows.map(item => ({
     ...item,
     activeOfferings: offeringCount.get(item.id) ?? 0,
+    confirmedStudents:confirmedBySlot.get(item.id)??0,
   }));
   const total = totals[0]?.total ?? 0;
   return {

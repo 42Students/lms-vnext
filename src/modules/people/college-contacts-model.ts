@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
-export const COLLEGE_CONTACTS_PAGE_SIZE=25;
+export const COLLEGE_CONTACTS_PAGE_SIZE=20;
 export const collegeContactsQuerySchema=z.strictObject({
   tab:z.enum(["ALL","FACULTY","STUDENT"]).default("ALL"),
   q:z.string().trim().max(100).default(""),
@@ -28,7 +28,7 @@ export const collegeContactsQuerySchema=z.strictObject({
   enrollment:z.enum(["ALL","ACTIVE","NONE"]).default("ALL"),
   sort:z.enum(["NAME","NAME_DESC","NEWEST","OLDEST"]).default("NAME"),
   page:z.coerce.number().int().min(1).max(10000).default(1),
-  pageSize:z.coerce.number().int().refine(n=>[10,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
+  pageSize:z.coerce.number().int().refine(n=>[10,20,25,50].includes(n)).default(COLLEGE_CONTACTS_PAGE_SIZE),
 });
 export type CollegeContactsQuery=z.infer<typeof collegeContactsQuerySchema>;
 export function contactRoleAudienceCompatible(filter:{tab:string;audience:string}):boolean {

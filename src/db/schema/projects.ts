@@ -508,6 +508,9 @@ export const projectTaskComments = pgTable(
         onDelete: "restrict",
       }),
     body: text("body").notNull(),
+    commentKind: varchar("comment_kind", { length: 24 })
+      .notNull()
+      .default("NOTE"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -532,6 +535,16 @@ export const projectTaskComments = pgTable(
     check(
       "project_task_comments_body_ck",
       sql`length(trim(${table.body})) between 1 and 4000`,
+    ),
+    check(
+      "project_task_comments_kind_ck",
+      sql`${table.commentKind} in ('NOTE','PROGRESS_UPDATE','FLAG_FOR_MENTOR')`,
+    ),
+    index("project_task_comments_kind_idx").on(
+      table.projectId,
+      table.taskId,
+      table.commentKind,
+      table.createdAt,
     ),
   ],
 );

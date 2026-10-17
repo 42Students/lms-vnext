@@ -68,12 +68,12 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   <label className="grid gap-2 text-sm text-body">Message
    <textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
-    required maxLength={4000} rows={4} disabled={sending}
+    rows={4} disabled={sending} aria-invalid={body.trim().length>4000}
     className="rounded-md border border-border bg-surface p-3"
     placeholder="Write a message to the placement cell"/>
   </label>
   <p className="text-xs text-muted-foreground">
-   {body.length}/4000 characters · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
+   <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <button type="submit" disabled={sending}

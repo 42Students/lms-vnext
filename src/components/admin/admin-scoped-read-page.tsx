@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions}:{
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,renderBulkActions,peopleFilters,classOptions,applicationFilters}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
@@ -17,6 +17,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  exportPath?:string;exportFilename?:string;renderRowActions?:(row:SuperAdminReadRow)=>ReactNode;
  renderBulkActions?:(rows:readonly SuperAdminReadRow[])=>ReactNode;
  classOptions?:readonly {id:string;name:string}[];
+ applicationFilters?:{jobs:readonly {id:string;name:string}[];departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[]};
  peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
  const parsed=readAdminQuery(await searchParams);
@@ -35,7 +36,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {renderBulkActions?renderBulkActions(data.items):null}
   {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
-   {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+   {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search
     <AdminScopedLiveSearch initial={data.query.q} path={path}/>
    </label>
@@ -45,6 +46,22 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
     </select>
    </label>
+   {applicationFilters?<>
+    {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
+      const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
+      const label=key==="jobId"?"Job":key==="departmentId"?"Department":key==="programId"?"Program":"Batch";
+      return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
+        <select name={key} defaultValue={data.query[key]??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">All {label.toLowerCase()}s</option>{rows.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+        </select>
+      </label>;
+    })}
+    <label className="grid gap-1 text-sm font-semibold text-body">Hiring stage
+     <select name="pipelineStage" defaultValue={data.query.pipelineStage} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+       {["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"].map(stage=><option value={stage} key={stage}>{stage==="ALL"?"All hiring stages":stage}</option>)}
+     </select>
+    </label>
+   </>:null}
    {peopleFilters ? <>
     <label className="grid gap-1 text-sm font-semibold text-body">Department
      <select name="departmentId" defaultValue={data.query.departmentId??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -84,6 +101,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
     <input type="hidden" name="status" value={data.query.status} />
     {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
     {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
