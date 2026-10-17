@@ -29,6 +29,7 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
   </p>
   {!preview.storageReady?<p role="status" className="rounded border border-border p-4 text-sm">
    Waitlist promotion storage is not registered yet. No promotion can be released.</p>:null}
+  <p className="text-sm text-body">{preview.rows.filter(row=>row.canPromote).length} waitlisted learner(s) currently pass preliminary checks; {preview.rows.filter(row=>!row.canPromote).length} have a blocking reason. The next eligible rank is shown below.</p>
   <div className="overflow-x-auto rounded border border-border bg-surface"><table className="min-w-full text-left text-sm">
    <thead><tr><th className="p-3">Rank</th><th className="p-3">Student</th><th className="p-3">Role / package</th><th className="p-3">Rules check</th></tr></thead>
    <tbody>{preview.rows.length?preview.rows.map(r=><tr key={r.applicationId} className="border-t border-border">
