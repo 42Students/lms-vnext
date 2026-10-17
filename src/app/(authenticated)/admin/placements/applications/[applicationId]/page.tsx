@@ -11,7 +11,10 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
  const history=await listSuperAdminApplicationStageHistory(await getCurrentRequestContext(),applicationId);
  return <div className="space-y-5">
   <SuperAdminPlacementDetailView data={detail}/>
-  {detail.related?<Link href={detail.related.href+"/applications"} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Manage this drive\u2019s applications and stage decisions →</Link>:null}
+  {detail.related?<div className="flex flex-wrap gap-3">
+   <Link href={detail.related.href+"/applications"} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Manage this drive's applications and stage decisions →</Link>
+   <Link href={detail.related.href+"/schedule?applicationId="+encodeURIComponent(applicationId)} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Schedule candidate interview →</Link>
+  </div>:null}
   <section aria-label="Application stage history" className="space-y-3 rounded-xl border border-border bg-surface p-5">
    <h2 className="text-lg font-semibold">Status history</h2>
    {history?.length?<ol className="space-y-2">{history.map(event=><li key={event.id} className="rounded-md border border-border p-3 text-sm">
