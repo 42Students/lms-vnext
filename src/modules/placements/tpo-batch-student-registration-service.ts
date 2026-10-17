@@ -8,9 +8,9 @@ import {placementTableExists} from "./staged-tables";
 import {tpoRegistrationChoiceSchema} from "./tpo-batch-registration-summary-model";
 /** Only learner IDs already proven to be actively enrolled are looked up. */
 export async function getTpoBatchStudentRegistrations(
- context:RequestContext,cohortId:string,page:number,
+ context:RequestContext,cohortId:string,page:number,search:string="",
 ){
- const snapshot=await getTpoBatchStudents(context,cohortId,page);
+ const snapshot=await getTpoBatchStudents(context,cohortId,page,search);
  const available=await placementTableExists("placement_batch_registrations");
  const ids=snapshot.students.map(row=>row.membershipId);
  const rows=available&&ids.length?await getDb().select({
