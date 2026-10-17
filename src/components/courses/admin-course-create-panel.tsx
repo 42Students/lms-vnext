@@ -268,7 +268,7 @@ export function AdminCourseCreatePanel({
         nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
-      <form onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-course" onSubmit={createCourse} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
@@ -301,7 +301,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={createOffering} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-offering" onSubmit={createOffering} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">New Course Offering</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Place a Course into one Cohort and Academic Period.</p>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
@@ -347,7 +347,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={createDelivery} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-delivery" onSubmit={createDelivery} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Add Section Delivery</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Connect an Offering to an exact Section. Only structurally compatible Sections are shown.</p>
         <div className="mt-4 grid gap-3">
@@ -371,7 +371,7 @@ export function AdminCourseCreatePanel({
         </div>
       </form>
 
-      <form onSubmit={assignTeacher} className="rounded-xl border border-border bg-surface p-5">
+      <form id="setup-faculty" onSubmit={assignTeacher} className="rounded-xl border border-border bg-surface p-5">
         <h2 className="m-0 text-base font-semibold text-foreground">Assign Course Faculty</h2>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">Assign an active Faculty Membership to one exact Section Delivery.</p>
         <div className="mt-4 grid gap-3">
