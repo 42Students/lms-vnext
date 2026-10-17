@@ -78,10 +78,10 @@ export function facultyAssignmentCommandError(status:number,body:unknown):string
  const code=typeof envelope.error==="string" && /^[A-Z][A-Z0-9_]{0,79}$/.test(envelope.error)?envelope.error:"";
  if(status===401||status===403||code==="FACULTY_TEACHING_SCOPE_REQUIRED")
   return "Teaching access has changed. Reload or sign in with the correct Faculty account.";
+ if(code==="ASSIGNMENT_HAS_SUBMISSIONS")
+  return "This assignment has learner submissions. You cannot change grading fields or delete the submitted work.";
  if(status===409||code==="FACULTY_ASSIGNMENT_STALE_VERSION")
   return "This assignment changed. Reload the Section before editing again.";
- if(code==="ASSIGNMENT_HAS_SUBMISSIONS")
-  return "An assignment with submissions cannot be archived.";
  if(code==="ASSIGNMENT_NAME_CONFLICT")return "An assignment with this title already exists in the Section.";
  if(code==="INVALID_ASSIGNMENT_TRANSITION")return "This assignment cannot take that action in its current state.";
  if(status===429)return "Too many requests. Retry later.";

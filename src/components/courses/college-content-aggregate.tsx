@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {lessonContentOrderRuntimeEnabled} from "@/modules/courses/lesson-content-order-readiness";
 import { COLLEGE_COURSE_TAB_COPY } from "@/modules/courses/college-course-tabs-copy";
 import { CollegeStudentVisibilityControl } from "./college-student-visibility-control";
 import { PageHeader } from "@/components/ui/page-header";
@@ -132,7 +133,9 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
               </option>)}
             </select>
             <span className="text-xs font-normal text-muted-foreground">
-              The order this section&apos;s students see includes shared and selected section content.
+              {lessonContentOrderRuntimeEnabled()?
+                "Choose a Section to inspect its shared and Section-specific content. Section ordering is edited in the offering workspace.":
+                "Section content includes shared and Section-specific items. Delivery-specific ordering is not yet enabled."}
             </span>
           </label>
           <label className="grid min-w-36 gap-1 text-sm font-semibold text-body">

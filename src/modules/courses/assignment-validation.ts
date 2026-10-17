@@ -1,3 +1,4 @@
+import {assignmentMethodsSchema} from "./assignment-submission-methods";
 import { z } from "zod";
 import {
   ASSIGNMENT_SUBMISSION_TYPES,
@@ -45,6 +46,7 @@ export const createCourseAssignmentInputSchema =
     dueAt: dateTimeSchema
       .nullable()
       .optional(),
+    allowedMethods:assignmentMethodsSchema.optional(),
     maxPoints: z
       .number()
       .int()
@@ -71,6 +73,7 @@ export const updateCourseAssignmentInputSchema =
       dueAt: dateTimeSchema
         .nullable()
         .optional(),
+      allowedMethods:assignmentMethodsSchema.optional(),
       maxPoints: z
         .number()
         .int()

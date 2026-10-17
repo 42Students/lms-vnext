@@ -178,6 +178,21 @@ export async function listCourseAssignments(
     );
 }
 
+/** Read editable settings only after the same tenant-wide mutation authorization. */
+export async function getCourseAssignmentForAdmin(context:RequestContext,assignmentIdInput:string){
+ const assignmentId=courseAssignmentIdSchema.parse(assignmentIdInput);
+ const scope=await loadCourseAssignmentScope(assignmentId);
+ await authorizeAssignmentMutation(context,scope);
+ const [row]=await getDb().select({
+  id:courseAssignments.id,
+  title:courseAssignments.title,
+  description:courseAssignments.description,
+  allowedMethods:courseAssignments.allowedSubmissionMethods,
+ }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
+ if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
+ return row;
+}
+
 export async function createCourseAssignment(
   context: RequestContext,
   rawInput: CreateCourseAssignmentInput,
@@ -234,6 +249,7 @@ export async function createCourseAssignment(
           ? new Date(input.dueAt)
           : null,
         maxPoints: input.maxPoints,
+        ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
         sequence: input.sequence,
         createdByUserId: context.user.id,
       })
@@ -274,8 +290,8 @@ export async function updateCourseAssignment(
   }
 
   if (
-    input.maxPoints !== undefined &&
-    input.maxPoints !== current.maxPoints
+    input.allowedMethods !== undefined ||
+    (input.maxPoints !== undefined && input.maxPoints !== current.maxPoints)
   ) {
     const [submission] = await getDb()
       .select({ id: assignmentSubmissions.id })
@@ -320,6 +336,8 @@ export async function updateCourseAssignment(
               maxPoints: input.maxPoints,
             }
           : {}),
+        ...(input.allowedMethods!==undefined?
+          {allowedSubmissionMethods:input.allowedMethods}:{}),
         ...(input.sequence !== undefined
           ? { sequence: input.sequence }
           : {}),
@@ -395,8 +413,7 @@ export async function transitionCourseAssignment(
 
   if (
     input.action === "PUBLISH" &&
-    current.dueAt &&
-    current.dueAt.getTime() <= Date.now()
+    (!current.dueAt || current.dueAt.getTime() <= Date.now())
   ) {
     throw new CoursesServiceError(
       "ASSIGNMENT_DEADLINE_PASSED",

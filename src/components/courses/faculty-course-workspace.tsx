@@ -457,26 +457,26 @@ export function FacultyCourseWorkspace({
       </section>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
-        <Metric
-          label="Lessons"
-          value={summary.lessons}
-          detail="Active lessons in the current learning path."
-        />
+        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Lessons" value={summary.lessons}
+            detail="Open your Blueprint lessons →"/>
+        </Link>
         <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=LECTURES"}
           className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
           <Metric label="Content" value={summary.contents}
             detail="Browse lectures and section materials →"/>
         </Link>
-        <Metric
-          label="Assignments"
-          value={summary.assignments}
-          detail="Assignment definitions visible to this Section."
-        />
-        <Metric
-          label="Quizzes"
-          value={summary.quizzes}
-          detail="Quiz definitions visible to this Section."
-        />
+        <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")+"?filter=ASSESSMENTS"}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Assignments" value={summary.assignments}
+            detail="Browse lesson assignments →"/>
+        </Link>
+        <Link href={"/teacher/courses/"+encodeURIComponent(course.deliveryId)+"/quizzes"}
+          className="rounded-lg focus-visible:outline-2 focus-visible:outline-primary">
+          <Metric label="Quizzes" value={summary.quizzes}
+            detail="Review quizzes and learner results →"/>
+        </Link>
         <Metric
           label="Draft items"
           value={summary.draftItems}

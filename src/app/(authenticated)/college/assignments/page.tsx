@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
+import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
+import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema, parseCollegeAssessmentQuery } from "@/modules/courses/college-assessment-aggregate-model";
@@ -33,5 +35,9 @@ export default async function CollegeAssignmentsPage({
   const data = await listCollegeAssessmentAggregate(
     context, "ASSIGNMENT", parseCollegeAssessmentQuery("ASSIGNMENT", validation.data),
   );
-  return <CollegeAssessmentAggregate data={data} />;
+  const lessons=await getCollegeAssignmentAuthoringOptions(context);
+  return <div className="space-y-4">
+    <CollegeAssignmentCreate lessons={lessons} deliveries={data.reviewDeliveries}/>
+    <CollegeAssessmentAggregate data={data}/>
+  </div>;
 }

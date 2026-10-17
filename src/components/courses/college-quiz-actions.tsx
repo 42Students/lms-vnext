@@ -1,0 +1,68 @@
+"use client";
+
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
+type Quiz={id:string;title:string;status:string;dueAt:Date|null};
+function istInput(date:Date|null){
+ if(!date)return "";
+ return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",
+  day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(date)).replace(" ","T");
+}
+export function CollegeQuizActions({quiz}:{quiz:Quiz}){
+ const router=useRouter();
+ const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
+ const [title,setTitle]=useState(quiz.title),[due,setDue]=useState(istInput(quiz.dueAt));
+ const [error,setError]=useState(""),[notice,setNotice]=useState("");
+ async function act(action:"EDIT"|"ARCHIVE"){
+  if(busy)return;
+  let url="/api/courses/quizzes/"+encodeURIComponent(quiz.id);
+  let method="PATCH",body:unknown;
+  if(action==="EDIT"){
+   if(!title.trim()||title.trim().length>255){setError("Enter a quiz title.");return;}
+   const deadline=due?new Date(due+":00+05:30"):null;
+   if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
+   body={title:title.trim(),dueAt:deadline?.toISOString()??null};
+  }else{
+   if(!window.confirm("Delete this quiz? Quizzes with learner attempts cannot be archived."))return;
+   url+="/transition";method="POST";body={action:"ARCHIVE"};
+  }
+  setBusy(true);setError("");setNotice("");
+  try{
+   const response=await fetch(url,{method,headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+   const data=await response.json().catch(()=>null);
+   if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Unable to update quiz.");
+   setEditing(false);setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
+   router.refresh();
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update quiz.");}
+  finally{setBusy(false);}
+ }
+ if(quiz.status==="ARCHIVED")return null;
+ return <div className="mt-2 space-y-2">
+  <div className="flex flex-wrap gap-2">
+   <button type="button" disabled={busy} onClick={()=>setEditing(v=>!v)}
+    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
+    Edit metadata</button>
+   <button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
+    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
+    Delete</button>
+  </div>
+  {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
+  {editing?<div className="grid gap-2 rounded border border-border p-3">
+   <label className="grid gap-1 text-xs font-semibold">Quiz title
+    <input required maxLength={255} value={title} disabled={busy}
+     onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
+   <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
+    <input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
+     className="min-h-10 rounded border border-border px-2"/></label>
+   {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
+    Learner attempts lock the deadline; other immutable quiz fields stay unchanged.
+   </p>:null}
+   <button type="button" disabled={busy} onClick={()=>void act("EDIT")}
+    className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary">
+    {busy?"Saving…":"Save quiz"}</button>
+  </div>:null}
+  {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+  {notice?<p role="status" className="text-xs text-success">{notice}</p>:null}
+ </div>;
+}
