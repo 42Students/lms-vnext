@@ -30,3 +30,12 @@ Shell note: `src/components/shell` belongs to chat-9. Where a GR item needs a sh
 - GR-09: isolated the last changed-file hit: HR draft preview uses local Zod `result.error.issues.map`, not a raw API response. The source scan now distinguishes field issues from a direct `{result.error}` / `{body.error}` sink; named GR-09 regression added. No broad allowlist refresh.
 - GR-31: switched shared `src/components/auth/membership-chooser.tsx` to `apiFetch` + actual synchronous `useGuardedAction`, with GR-04/GR-30/GR-31 named regression. The scan still legitimately flags **27 account-lane components**. Full paths and required changes in `docs/audit/graceful/gr31-outstanding-mutations-r1.md`; account-lane owners must finish them. Do not disguise this as a green test or treat the orphaned component fixes as a GR-31 closure.
 - No new explicitly OPEN chat-14 core GR items exist. GR-51 is still provider-blocked. These two scanner repairs and one shared auth adoption are the current round's actual changes; no 30-item closure claim. Tests not run in this lane.
+
+
+## Round 4: shared guard adoption and refreshed-test follow-up (2026-10-17)
+
+- Pulled/merged latest main before working, then merged main again after newer cross-lane commits. `docs/orchestrator/unit-failures-r1.md` still names GR-09 and GR-31 under chat-14; the source false-positive improvement to GR-09 is already present, and only the orchestrator can confirm with an executed test run.
+- GR-04 / GR-30 / GR-31 / GR-35: guarded and retained friendly recovery on eight confirmed unsafe business-mutation surfaces: `activity/notification-toolbar.tsx`, `activity/learner-notifications-inbox.tsx`, `admin/department-create-form.tsx`, `admin/super-admin-batch-graduate-action.tsx`, `courses/resource-progress-control.tsx`, `placements/tpo-public-placement-toggle.tsx`, `tpo/tpo-new-followup-modal.tsx`, `tpo/tpo-placement-cell-read-action.tsx`. The shared toolbar uses an accessible consequence dialog instead of a blocking native confirm.
+- Added eight named source-contract tests to `tests/unit/graceful-mutation-adoption-round4.test.ts` (each contains GR-31 and related GR IDs). **Tests not executed by this lane.**
+- `docs/audit/graceful/gr31-outstanding-mutations-r1.md` tracks the eight completed code edits and **19 remaining real unguarded write cases**. The GR-31 global scan is not claimed to pass while those 19 remain.
+- The chat-14 core queue itself still has no explicitly OPEN GR IDs; GR-51 remains provider-blocked. Do not report a fictional 30+ item closure count.
