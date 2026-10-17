@@ -142,7 +142,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
-    event.preventDefault();setNoteSelection(rows.slice(0,100).map(row=>row.membershipId));
+    event.preventDefault();setNoteSelection(shared?.allIds??rows.map(row=>row.membershipId));
    }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
@@ -185,7 +185,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    </select>
   </label>
   <TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
