@@ -82,6 +82,13 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
      <input type="search" value={search} onChange={e=>setSearch(e.target.value)} maxLength={100}
       placeholder="Search name, email or role" className="min-h-10 rounded border border-border bg-surface px-3"/>
     </label>
+    <div className="flex flex-wrap gap-3 text-sm">
+      <button type="button" disabled={pending} className="font-semibold text-primary-text" onClick={()=>setChosen(previous=>[
+       ...new Set([...previous,...(mode==="RECORD"?visibleRecordable.map(x=>x.applicationId):visibleReleasable.map(x=>x.id))])].slice(0,100))}>
+       Select matching (max 100)
+      </button>
+      <button type="button" disabled={pending||!chosen.length} className="font-semibold text-primary-text" onClick={()=>setChosen([])}>Clear selection</button>
+    </div>
     <fieldset className="max-h-60 space-y-1 overflow-auto rounded border border-border p-3">
      <legend className="font-semibold">Students ({chosen.length} selected, maximum 100)</legend>
      {(mode==="RECORD"?visibleRecordable.map(c=>({id:c.applicationId,name:c.name,note:c.roleTitle})):
