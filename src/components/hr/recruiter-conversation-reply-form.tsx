@@ -11,7 +11,7 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
- const [leaveHref,setLeaveHref]=useState<string|null>(null);
+ const [leaveHref,setPendingLeave]=useState<string|null>(null);
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
@@ -24,10 +24,11 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
    if(!(anchor instanceof HTMLAnchorElement))return;
-   const url=new URL(anchor.href,window.location.href);
-   if(url.origin!==window.location.origin || url.pathname===window.location.pathname)return;
+   const destination=new URL(anchor.href,window.location.href);
+   if(destination.origin!==window.location.origin || (destination.pathname===window.location.pathname &&
+      destination.search===window.location.search && destination.hash===window.location.hash))return;
    event.preventDefault();event.stopPropagation();
-   setLeaveHref(url.pathname+url.search+url.hash);
+   setPendingLeave(destination.pathname+destination.search+destination.hash);
   };
   document.addEventListener("click",intercept,true);
   return ()=>{window.removeEventListener("beforeunload",warn);document.removeEventListener("click",intercept,true);};
@@ -99,9 +100,9 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   </button>
   <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
    consequence="Your draft reply will be lost." confirmLabel="Discard"
-   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
-    const destination=leaveHref;setLeaveHref(null);setBody("");
-    if(destination)router.push(destination);
+   onCancel={()=>setPendingLeave(null)} onConfirm={()=>{
+    const href=leaveHref;setPendingLeave(null);setBody("");
+    if(href)router.push(href);
    }}/>
   </div>
  </form>;
