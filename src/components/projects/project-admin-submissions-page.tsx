@@ -181,7 +181,9 @@ export async function ProjectAdminSubmissionsPage({
                 <StatusBadge
                   tone={tone(submission.status)}
                 >
-                  {submission.lockedAt?"Locked":submission.status}
+                  {submission.lockedAt?"Locked":
+                    submission.reopenedAt?"Draft (revising)":
+                    submission.status==="SUBMITTED"?"Under Review":submission.status}
                 </StatusBadge>
               </div>
               <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3">
