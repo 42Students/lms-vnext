@@ -220,3 +220,7 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 
 | TPO-inbox-team-26 | PARTIAL — OPEN | `TpoTeamThreadDetails` provides optional context with authorized counterpart/topic/date and real last-page decision count; no unsupported company or drive claims. Named `TPO-inbox-team-26` in `tests/unit/tpo-team-details-chat2.test.ts`. Object facts, people workload and open asks pending. |
 | TPO-inbox-team-42 | PARTIAL — OPEN | Detail disclosure persists per-thread browser preference and folds on phones using responsive width; named `TPO-inbox-team-42` same test. Full desktop list/detail split remains open. |
+
+## Chat-2 round 5 — Drive Discussion handoff
+
+| TPO-inbox-team-07 | PARTIAL — OPEN | Drive-specific Discussion now links as `Discuss` to the persisted recruiter conversation, shows the last message preview and supports `?tab=discussion` legacy alias without relaxing scoped read; `tests/unit/tpo-drive-discussion-chat2.test.ts` names `TPO-inbox-team-07`. Change request quote/event lines remain to build in drive workspace. |
