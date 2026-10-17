@@ -297,3 +297,11 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 
 ## 2026-10-17 chat-11 validation checkpoint
 - SA-tenants-modules-36/37/38/39: legacy keys, bounds and audited editor were verified with four named tests in tests/unit/chat11-tenant-legacy-settings-round9.test.ts. Remain OPEN/UNCONFIRMED because saved overrides are not yet consumed by SMS, course, placement and operational services; tests were not run.
+
+## Chat-11 next-round decisions and compatibility (2026-10-18)
+- Merged origin/main twice using two-parent commits, preserving other lanes' updates and the College Companies sort/page/export/showDeleted model. No main writes.
+- Nine delegated decisions documented in each college page's acceptance file: COL-academic-setup-41, COL-course-tabs-15/23/25, COL-dashboard-17, COL-people-12/20, COL-placements-03/15. COL-placements-03 remains PARTIAL; College Admin offer-letter entry and missing-letter attention are not implemented.
+- New persisted actions: COL-course-tabs-15 archived lesson restoration and COL-placements-15 archived same-college company relationship restoration. Both use same-origin POST and centrally scoped permissions. Named unit and PostgreSQL tests written, not run.
+- COL-people-05 audit insert retains same-college and same-organization membership typing, avoiding the old union-property inference error. Unit regression written; no tsc execution available.
+- No page restyling attempted. Tests, typecheck and lint are not run; orchestrator must verify.
+- Other OPEN pages in the legacy queue have been reassigned to chat-3, chat-6, chat-9, chat-15 or chat-16; do not claim 30 new gap closures by editing their files or relabeling historical DONE IDs.

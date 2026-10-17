@@ -1,6 +1,7 @@
 import { and, eq, gt, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  activityEvents, collegeMemberships, inAppNotifications, membershipRoles, users,
   colleges,
   placementTpoLeadActivities,
   placementTpoLeads,
@@ -316,6 +317,34 @@ export async function recordRecruiterInviteFirstOpen(
   });
 }
 
+type InviteTx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+/** PUB-auth-public-49: one bell per explicit recruiter response, atomically with
+ * the irrevocable token consumption. GET previews never create TPO notices. */
+async function recordPublicRecruiterDecision(tx:InviteTx,lead:typeof placementTpoLeads.$inferSelect,
+ action:"NOT_HIRING"|"UNSUBSCRIBE",now:Date){
+ const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
+  .where(eq(colleges.id,lead.collegeId)).limit(1);
+ if(!college)throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
+ const title=action==="NOT_HIRING"?"Recruiter not hiring this season":"Recruiter unsubscribed";
+ const [event]=await tx.insert(activityEvents).values({
+  organizationId:college.organizationId,collegeId:lead.collegeId,
+  module:"PLACEMENTS",eventType:action==="NOT_HIRING"?"PLACEMENTS_RECRUITER_NOT_HIRING":"PLACEMENTS_RECRUITER_UNSUBSCRIBED",
+  subjectType:"placement_tpo_lead",subjectId:lead.id,subjectLabel:lead.companyName??"Recruiter",
+  summary:title,occurredAt:now,
+ }).returning({id:activityEvents.id});
+ if(!event)throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
+ const officers=await tx.selectDistinct({userId:collegeMemberships.userId})
+  .from(collegeMemberships).innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .where(and(eq(collegeMemberships.collegeId,lead.collegeId),eq(collegeMemberships.status,"ACTIVE")));
+ if(officers.length)await tx.insert(inAppNotifications).values(officers.map(o=>({
+  userId:o.userId,eventId:event.id,title,
+  body:action==="NOT_HIRING"?"Moved to Not now. Revisit in six months.":"This recruiter asked to stop receiving invitations.",
+  actionHref:"/tpo/recruiters",
+ }))).onConflictDoNothing();
+}
+
 async function mutatePublicInvite(
   token: string,
   now: Date,
@@ -366,6 +395,7 @@ async function mutatePublicInvite(
         isSystem: true,
         createdAt: now,
       });
+      await recordPublicRecruiterDecision(tx,lead,"NOT_HIRING",now);
       return { status: "NOT_HIRING" as const };
     }
 
@@ -390,6 +420,7 @@ async function mutatePublicInvite(
       isSystem: true,
       createdAt: now,
     });
+    await recordPublicRecruiterDecision(tx,lead,"UNSUBSCRIBE",now);
     return { status: "UNSUBSCRIBED" as const };
   });
 }

@@ -490,11 +490,19 @@ export function AdminCourseOverview({
            <option value="CODE_ASC">Code A–Z</option><option value="CODE_DESC">Code Z–A</option>
           </select>
          </label>
+         {courseBasePath.startsWith("/admin/")?<label className="grid gap-1 text-sm font-semibold">Per page
+          <select name="pageSize" defaultValue={catalogueQuery.pageSize??"25"}
+           className="min-h-10 rounded border border-border bg-background p-2">
+           <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+          </select>
+         </label>:null}
          <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
          <a href={courseBasePath.startsWith("/admin/")?"/api/admin/courses/catalogue/export"+collegeCourseCatalogueExportHref(catalogueQuery).replace("/api/academics/college-course-export",""):collegeCourseCatalogueExportHref(catalogueQuery)} download
           className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
           Export CSV
          </a>
+         {courseBasePath.startsWith("/admin/")?<Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm"
+          href={collegeCourseCatalogueHref(catalogueQuery).replace("/college/courses",courseBasePath)}>Refresh</Link>:null}
          <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href={courseBasePath}>Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total>1000?<p className="text-xs text-muted-foreground">
@@ -510,7 +518,7 @@ export function AdminCourseOverview({
         />
         {catalogue&&catalogueQuery?<nav aria-label="Course catalogue pages"
           className="flex flex-wrap items-center justify-between gap-3 text-sm">
-          <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · 25 per page</p>
+          <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · {catalogue.pageSize} per page</p>
           <div className="flex gap-3">
            {catalogue.page>1?<Link className="font-semibold text-primary-text"
             href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1}).replace("/college/courses",courseBasePath)}>Previous</Link>:null}
