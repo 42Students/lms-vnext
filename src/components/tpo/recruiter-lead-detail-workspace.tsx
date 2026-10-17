@@ -462,7 +462,8 @@ export function RecruiterLeadDetailWorkspace({
                     The link expires after seven days. Creating a new link invalidates the previous one.
                     Automatic email delivery is not available; use the email draft or copy the message.
                   </p>
-                  {lead.manualStage==="NOT_NOW"?<p className="text-xs text-warning">This lead is marked Not now. Confirm that outreach is appropriate before inviting.</p>:null}
+                  {lead.unsubscribedAt||lead.manualStage==="NOT_NOW"?
+                    <p role="status" className="text-xs text-warning">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
                   {inviteLink ? (
                     <label className="block text-xs">
                       Invite link

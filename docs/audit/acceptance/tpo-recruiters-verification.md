@@ -18,3 +18,6 @@
 | TPO-recruiters-24 | DONE (source, not run) | Allowed source labels include imported leads and Zod rejects invalid source with meaningful choices, named `tests/unit/chat2-tpo-lead-modal-source.test.ts`. |
 | TPO-recruiters-30 | PARTIAL — OPEN | Edit modal uses field-specific friendly conflict/validation messages and legacy labels; duplicate peer link pending. Named test. |
 | TPO-recruiters-36 | PARTIAL — OPEN | Edit and Not now dialogs now trap Tab and close on Escape without unguarded action; board mobile actions/layout still pending. Named test. |
+
+| TPO-recruiters-22 | DONE (source, not run) | Verified existing dual email/phone preflight and explicit link to the named existing lead with disabled duplicate create, named `tests/unit/chat2-tpo-recruiter-existing-contacts.test.ts`. |
+| TPO-recruiters-R06 | DONE (source, not run) | Unsubscribed/Not Now invite panel shows the exact legacy warning and disables inviting opted-out people, named test in same file. |
