@@ -11,6 +11,7 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
  const [lpa,setLpa]=useState("");const [pending,setPending]=useState(false);
  const [search,setSearch]=useState("");
  const [error,setError]=useState("");const [report,setReport]=useState<Result[]>([]);
+ const [lastRecorded,setLastRecorded]=useState(0);
  const existing=new Set(selections.map(s=>s.applicationId));
  const recordable=candidates.filter(c=>c.offerReady&&!c.alreadyOffered&&!existing.has(c.applicationId));
  const releasable=selections.filter(s=>s.status!=="RELEASED");
