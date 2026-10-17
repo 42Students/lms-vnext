@@ -27,6 +27,7 @@ import {
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
+import {toTpoBlockedCalendarEvents} from "@/modules/placements/tpo-blocked-calendar-model";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
@@ -61,6 +62,7 @@ const EVENT_FILTERS: ReadonlyArray<{
   label: string;
 }> = [
   { value: "", label: "All events" },
+  { value: "BLOCKED", label: "Blocked (exam) dates" },
   { value: "ROUND", label: "Rounds and talks" },
   {
     value: "APPLICATION_DEADLINE",
@@ -479,6 +481,9 @@ export async function PlacementCalendarWorkspace({
     to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
   }):null;
   const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
+  const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(!state.kind||state.kind==="BLOCKED")?
+    toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
+  const visibleEvents=state.kind==="BLOCKED"?blockedEvents:[...events,...blockedEvents];
   const needsEvents=needsWindow?.events??[];
   const overdue=needsEvents.filter(item=>item.kind==="FOLLOW_UP"&&item.status==="OPEN"&&item.startsAt<now);
   const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
@@ -490,7 +495,7 @@ export async function PlacementCalendarWorkspace({
   }
   const busyDays=[...byBusyDay].filter(([,count])=>count>=3);
   const groups =
-    groupPlacementCalendarEvents(events);
+    groupPlacementCalendarEvents(visibleEvents);
 
   const byDay = new Map(
     groups.map((group) => [
@@ -501,7 +506,7 @@ export async function PlacementCalendarWorkspace({
 
   const summary =
     summarizePlacementCalendar(
-      events,
+      visibleEvents,
       now,
     );
 
