@@ -21,6 +21,9 @@ const backlogCreateSchema = z.strictObject({
   acceptanceCriteria: z.string().trim().max(4000).nullable().default(null),
   priority: z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
   estimatePoints: z.number().int().min(0).max(1000).nullable().default(null),
+  taskType: z.enum(["STORY","BUG","CHORE","SPIKE"]).nullable().default(null),
+  dueDate: z.iso.date().nullable().default(null),
+  blockerReason: z.string().trim().max(4000).nullable().default(null),
 });
 /** MEN-projects-meetings-36: migration 0110 is registered and the ORM is authoritative. */
 export async function moveMentorBacklogTask(context: RequestContext, projectIdInput: string, raw: unknown) {
