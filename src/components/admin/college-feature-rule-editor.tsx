@@ -16,6 +16,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [students,setStudents]=useState<number|null>(null);
  const [acknowledgedPopulation,setAcknowledgedPopulation]=useState(false);
  const [impactBusy,setImpactBusy]=useState(false);
+ const lockChanged=observed!==null&&(choice==="INHERIT"?observed.locked:locked!==observed.locked);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
  const disabled=busy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
  async function recheck(){
@@ -71,10 +72,11 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
   <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
-  <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Confirm college feature policy"
+  <ConfirmDialog open={confirm} onOpenChange={setConfirm} title={lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
    confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled||students===null||(students>=100&&!acknowledgedPopulation)} onConfirm={()=>{void save();}}>
    <p className="text-sm text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
+   {lockChanged?<p role="alert" className="mt-2 text-sm font-semibold text-warning-text">You are changing the policy lock. Descendant overrides may gain or lose the ability to take effect.</p>:null}
    {students!==null?<p className="mt-2 text-sm font-semibold text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
     <p role="alert" className="mt-2 text-sm text-warning-text">Student population could not be confirmed. The change will not be saved.</p>}
    {students!==null&&students>=100?<label className="mt-3 flex items-start gap-2 text-sm text-body">
