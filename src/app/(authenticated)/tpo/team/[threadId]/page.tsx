@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -22,6 +23,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    <Link href="/tpo/team" className="text-primary-text">Back to team</Link>
  </main>;
  return <main className="space-y-5">
+  <TpoLiveRefresh intervalMs={30000}/>
   <PageHeader eyebrow="TPO · Team" title={result.thread.topic}
    description="Private conversation between the named college team participants."/>
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">Back to team conversations</Link>
