@@ -5,6 +5,7 @@ export const tpoApplicantPipelineParams = z.object({
   search: z.string().trim().max(100).default(""),
   channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
   eligibility:z.enum(["ALL","ELIGIBLE","ELIGIBLE_WITH_MISSING_EVIDENCE"]).default("ALL"),
+  flag:z.enum(["ALL","WITHDRAWAL_REQUESTED","NO_SHOW","PLACED_ELSEWHERE","ADDED_BY_COLLEGE"]).default("ALL"),
   sort:z.enum(["NEWEST","OLDEST","LEARNER_NAME"]).default("NEWEST"),
   submittedWithin:z.enum(["ALL","LAST_7_DAYS","LAST_30_DAYS"]).default("ALL"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
@@ -53,10 +54,10 @@ export function tpoApplicantSubmittedSince(value:"ALL"|"LAST_7_DAYS"|"LAST_30_DA
 
 /** An empty filtered result should not be mistaken for an empty drive. */
 export function tpoApplicantPipelineHasFilters(filter:{
- stage:string;search:string;channel:string;eligibility:string;submittedWithin:string
+ stage:string;search:string;channel:string;eligibility:string;submittedWithin:string;flag?:string
 }):boolean {
  return filter.stage!=="ALL"||Boolean(filter.search.trim())||filter.channel!=="ALL"||
-  filter.eligibility!=="ALL"||filter.submittedWithin!=="ALL";
+  filter.eligibility!=="ALL"||filter.submittedWithin!=="ALL"||(filter.flag??"ALL")!=="ALL";
 }
 
 /** Invalid deep links may never silently expand the learner roster. */

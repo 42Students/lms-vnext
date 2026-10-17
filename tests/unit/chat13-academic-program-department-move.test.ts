@@ -9,11 +9,12 @@ describe("Super Admin program department changes",()=>{
   const value=updateCollegeProgramSchema.parse({name:"Civil",code:"CIVIL",departmentId,durationTerms:8});
   expect(value.departmentId).toBe(departmentId);
   const service=read("src/modules/academics/college-program-mutation-service.ts");
-  expect(service).toContain("await lockedDepartment(tx, nextDepartmentId, member.collegeId)");
+  expect(service).toMatch(/await lockedDepartment\(tx,\s*nextDepartmentId,\s*member\.collegeId\)/);
   expect(service).toContain('throw new CollegeProgramMutationError("PROGRAM_DEPENDENCY_CONFLICT")');
+  expect(service).toContain("term.length || cohort.length || enrollment.length");
   expect(service).toContain("departmentId: nextDepartmentId");
   const actions=read("src/components/academics/academics-actions.tsx");
-  expect(actions).toContain("Department\n");
+  expect(actions).toMatch(/>Department\s*\n/);
   expect(actions).toContain("departmentId !== (program.departmentId ??");
   expect(read("src/components/admin/admin-program-directory.tsx")).toContain("departments={departments}");
  });

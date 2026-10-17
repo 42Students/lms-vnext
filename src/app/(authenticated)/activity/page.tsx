@@ -122,7 +122,7 @@ export default async function ActivityPage({
         beforeId: one(
           params.beforeId,
         ),
-        limit: 40,
+        limit: 50,
       },
     );
 
@@ -393,6 +393,8 @@ export default async function ActivityPage({
 
       <ActivityCenter
         groups={groups}
+        todayKey={today}
+        yesterdayKey={ago(1)}
         nextHref={
           result.nextCursor
             ? "/activity?" +

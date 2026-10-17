@@ -146,7 +146,7 @@ export type TpoStudentRosterFilter = {
   interviewedWith?:string;
   debarred?:boolean;
   gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
-  minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
+  minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
   branchId?: string;
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
@@ -478,6 +478,8 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.minCertifications===undefined||(row.profileFacts?.certifications??0)>=filter.minCertifications)
     .filter(row=>filter.minExperiences===undefined||(row.profileFacts?.experiences??0)>=filter.minExperiences)
     .filter(row=>filter.hasProfileLinks===undefined||row.profileFacts?.links===filter.hasProfileLinks)
+    .filter(row=>filter.hasResume===undefined||row.profileFacts?.resume===filter.hasResume)
+    .filter(row=>filter.hasCodingProfiles===undefined||row.profileFacts?.codingProfiles===filter.hasCodingProfiles)
     .filter(row=>!filter.legacyStage||tpoStudentMatchesLegacyStage(row,filter.legacyStage))
     .filter(row=>!filter.interviewedWith||(row.interviewedCompanies??[]).some(company=>
      company.toLocaleLowerCase("en-IN").includes(filter.interviewedWith!.toLocaleLowerCase("en-IN"))))

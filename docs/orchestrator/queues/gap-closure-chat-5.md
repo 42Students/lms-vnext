@@ -308,3 +308,19 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - BLOCKED TPO-drive-workspace-54/-65: private uploads require object-storage bucket and malware scanner; one-time emailed share code requires real provider credentials.
 - TPO Students and Requests Verification remain with chat-12; no edits to those pages.
 - Tests, lint, typecheck, build and database replay were NOT run by chat-5. Orchestrator owns checks.
+
+
+## Chat-5 next 25+ OPEN review (2026-10-17)
+
+- Fast-forwarded branch from origin/main after previous chat-5 commits were merged. Re-read verified-closure brief and honored reassigned pages: Students/Requests Verification chat-12, Batches WPs chat-6.
+- 38 Drive Workspace gap IDs inspected/recorded in `docs/audit/acceptance/tpo-drive-workspace-verification.md`. 4 with source/test completion (06, 34, R01, 64); 1 NOT-A-GAP (74); 2 BLOCKED (54, 65); the remaining IDs stay OPEN for missing legacy features. One named test per source contract in `tests/unit/tpo-drive-workspace-chat5-round6.test.ts`; partial cases are not completion claims.
+- TPO-drive-workspace-06: audited version-checked empty-DRAFT archive; dedicated origin-checked route, client action, and isolated PostgreSQL tests in `tests/integration/tpo-delete-draft-chat5.test.ts`. R06 distinct Cancel draft remains OPEN.
+- TPO-drive-workspace-21/22: persisted last applied result, batch, branch and academic evidence now appear as new scoped applicant grid fields; remaining full journey/skill/company identifiers still OPEN.
+- TPO-drive-workspace-23: server-side flag filters and CSV-aligned preview for Withdrawal requested, No-show, Placed elsewhere and Added by college. Academics ranges and saved views remain OPEN.
+- TPO-drive-workspace-27/71: S/R/Ctrl+Enter shortcuts, adjacent applicant links/arrows and guarded reviewed submit. Full modal resume/StudentPanel parity remains OPEN.
+- TPO-drive-workspace-49/51/56: persisted fixed/variable/bonus/bond and acceptance dispute evidence in offers register and CSV; full legacy offer action policies/export still OPEN.
+- TPO-drive-workspace-08/73: optional panels read concurrently with safe fallback and focus refresh; full per-tab lazy-loading OPEN.
+- TPO-drive-workspace-09: corrected company/job heading, exact Delete draft copy, Applicants and Close drive labels; other legacy wording remains OPEN.
+- BLOCKED TPO-drive-workspace-54: private offer-letter storage requires object bucket and malware scanning. BLOCKED TPO-drive-workspace-65: secure resume ZIP requires private storage/scanner; emailed one-time code requires provider credentials. Do not fake delivery.
+- TPO-drive-workspace-11 OPEN: College Admin permissions require coordinated guard changes across all protected TPO services; never bypass tenancy. TPO-drive-workspace-26 OPEN: 30-second notification hold requires durable delayed-outbox semantics.
+- Shared friendly-error, apiFetch and guarded action helpers adopted on modified forms. No tests, typecheck, lint or build executed; orchestrator owns CI and PostgreSQL acceptance.

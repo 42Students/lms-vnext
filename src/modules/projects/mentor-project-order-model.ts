@@ -1,10 +1,11 @@
 export type MentorProjectOrder = "RECENT" | "TITLE";
+const teamTitleCollator = new Intl.Collator("en-IN", { numeric: true, sensitivity: "base" });
 type OrderableProject = { id: string; title: string; status: string; updatedAt: Date };
 export function compareMentorProjects(a: OrderableProject,b: OrderableProject,order:MentorProjectOrder):number {
   const archived=Number(a.status==="ARCHIVED")-Number(b.status==="ARCHIVED");
   if(archived)return archived;
-  if(order==="TITLE")return a.title.localeCompare(b.title)||a.id.localeCompare(b.id);
-  return b.updatedAt.getTime()-a.updatedAt.getTime() || a.title.localeCompare(b.title) || a.id.localeCompare(b.id);
+  if(order==="TITLE")return teamTitleCollator.compare(a.title,b.title)||a.id.localeCompare(b.id);
+  return b.updatedAt.getTime()-a.updatedAt.getTime() || teamTitleCollator.compare(a.title,b.title) || a.id.localeCompare(b.id);
 }
 
 /** Invalid or impossible percentages are unmeasured, not ranking signals. */

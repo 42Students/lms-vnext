@@ -6,7 +6,7 @@ describe("legacy learner drive browse sections",()=>{
   expect(s).toContain("item.canApply||item.application!==null||item.deadlinePassed");
   expect(s).toContain("!item.canApply&&item.application===null&&!item.deadlinePassed");
   expect(s).toContain('aria-label="Not open to you"');
-  expect(s).toContain('defaultOpen={filters.availability==="not-open"}');
+  expect(s).toContain('open={filters.availability==="not-open"}');
   expect(s).toContain("See reasons");
   expect(s).toContain("ordinaryRoleCards.length>0");
   expect(s).toContain("notOpenRoleCards.length>0");
