@@ -27,7 +27,7 @@ export default function LearnerCoursesError({
           href="/learn/courses"
           className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground"
         >
-          {isList?LEARNER_BACK_TO_COURSES:"Back to Courses"}
+          {LEARNER_BACK_TO_COURSES}
         </Link>
       </div>
     </div>
