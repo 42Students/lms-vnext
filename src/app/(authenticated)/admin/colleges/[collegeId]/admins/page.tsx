@@ -25,7 +25,7 @@ export default async function CollegeAdministratorsPage({params}:{
    {data.items.length?<div className="overflow-x-auto"><table className="w-full min-w-[35rem] text-left text-sm">
     <thead className="bg-surface-subtle text-body"><tr>
      <th scope="col" className="p-3">Name</th><th scope="col" className="p-3">Email</th>
-     <th scope="col" className="p-3">Roles</th><th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Access</th><th scope="col" className="p-3">Sessions</th>
+     <th scope="col" className="p-3">Roles</th><th scope="col" className="p-3">Status</th><th scope="col" className="p-3">Access</th><th scope="col" className="p-3">Sessions</th><th scope="col" className="p-3">History</th>
     </tr></thead>
     <tbody>{data.items.map(item=><tr key={item.userId} className="border-t border-border">
      <td className="p-3 font-semibold">{item.name}</td>
@@ -36,6 +36,8 @@ export default async function CollegeAdministratorsPage({params}:{
       status={item.status} hasMentorRole={item.roles.includes("MENTOR")}/></td>
      <td className="p-3"><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)}
       className="text-primary-text underline">View active devices</Link></td>
+     <td className="p-3"><Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(item.userId)+"/history"}
+      className="text-primary-text underline">View history</Link></td>
     </tr>)}</tbody></table></div>:
     <p role="status" className="p-4 text-sm text-body">No active College Admin or TPO accounts in this college.</p>}
   </section>
