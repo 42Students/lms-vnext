@@ -29,6 +29,12 @@ export async function acknowledgeTpoInternalThread(context:RequestContext,rawId:
        eq(placementTpoInternalThreads.invitedMembershipId,membership.id)),
    )).for("share").limit(1);
   if(!thread)throw new Error("TEAM_THREAD_NOT_FOUND");
+  if(readsReady)await tx.insert(placementTpoInternalReads).values({
+   collegeId:college.id,threadId:thread.id,membershipId:membership.id,readThrough:new Date(),
+  }).onConflictDoUpdate({
+   target:[placementTpoInternalReads.threadId,placementTpoInternalReads.membershipId],
+   set:{readThrough:new Date()},
+  });
   const ids=await tx.select({id:inAppNotifications.id})
    .from(inAppNotifications)
    .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
