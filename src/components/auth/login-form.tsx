@@ -253,7 +253,7 @@ export function LoginForm({
       if (!result.ok) return fail(result.data.error);
       saveLoginAttempt(null);
       const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
-      window.location.assign(returnTo ?? result.data.next ?? "/dashboard");
+      window.location.assign(returnTo ?? safeReturnTo(result.data.next) ?? "/dashboard");
     } catch (reason) {
       setError(reason instanceof FriendlyFetchError ? reason.message :
         "Network problem. Check your connection and try again.");
