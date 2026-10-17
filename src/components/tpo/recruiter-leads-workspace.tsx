@@ -235,10 +235,11 @@ export function RecruiterLeadsWorkspace({
       }
       if (signal?.aborted) return;
       setRows(Array.isArray(data.leads) ? data.leads : []);
+      leadsSnapshotReady.current=true;
       setPhase("ready");
     } catch {
       if (signal?.aborted) return;
-      setPhase("error");
+      setPhase(leadsSnapshotReady.current?"ready":"error");
       setError("Recruiter leads could not be loaded. Try again.");
     }
   }, [collegeId]);
@@ -287,10 +288,11 @@ export function RecruiterLeadsWorkspace({
         setCommunication(Object.fromEntries((snapshot.items??[]).map(x=>[x.company_key,x.status])));
        }else setCommunicationReady(false);
       }catch{if(!signal?.aborted)setCommunicationReady(false);}
+      companiesSnapshotReady.current=true;
       setCompaniesPhase("ready");
     } catch {
       if (signal?.aborted) return;
-      setCompaniesPhase("error");
+      setCompaniesPhase(companiesSnapshotReady.current?"ready":"error");
       setCompaniesError("Companies could not be loaded. Try again.");
     }
   }, [collegeId]);
