@@ -274,6 +274,15 @@ export function RecruiterResultControls({
         return;
       }
     }
+    const ranks=participants.flatMap(p=>{
+      const d=drafts[round.id+":"+p.applicationId];
+      return d?.outcome==="HOLD"?[Number(d.waitlistRank)]:[];
+    });
+    if(new Set(ranks).size!==ranks.length){
+      showToast({tone:"error",title:"Duplicate waitlist rank",
+        description:"Give every selected waitlisted candidate a distinct rank."});
+      return;
+    }
     const summary=participants.slice(0,12).map((person,index)=>{
       const decision=drafts[round.id+":"+person.applicationId]!;
       return (index+1)+". "+(person.displayName||"Applicant")+" — "+
