@@ -60,6 +60,8 @@ describe("graceful route screens", () => {
     const boundary = source("src/components/public/graceful-error-boundary.tsx");
     expect(boundary).toContain('message: "A page could not be displayed."');
     expect(boundary).toContain("event: kind");
+    expect(boundary).toContain("requestId: reportId");
+    expect(boundary).toContain("const reportId = `00000000-0000-4000-8000-0000${id}`;");
     expect(boundary).not.toContain("body: JSON.stringify({ requestId: id, kind })");
     expect(source("src/modules/log-alerts/client-report.ts")).toContain("browserErrorSchema");
   });
