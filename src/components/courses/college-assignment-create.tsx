@@ -82,7 +82,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    </div>
    <button type="button" disabled={!lessons.length||pending}
     className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50"
-    onClick={()=>setOpened(true)}>Create New Assignment</button>
+    onClick={()=>{setError("");setMessage("");setOpened(true);}}>Create New Assignment</button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">
    Create an active course offering and lesson before adding an assignment.</p>:null}
