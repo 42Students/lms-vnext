@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
+import { and, asc, desc, count, eq, gte, ilike, lte, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobs, placementSeasons } from "@/db/schema";
 import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
@@ -62,16 +62,22 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
       query.deadlineBefore
         ? lte(placementJobs.applicationDeadline,new Date(query.deadlineBefore+"T23:59:59+05:30"))
         : undefined,
+      query.deadlineAfter
+        ? gte(placementJobs.applicationDeadline,new Date(query.deadlineAfter+"T00:00:00+05:30"))
+        : undefined,
       query.q ? or(
         ilike(placementJobs.title, pattern(query.q)),
         ilike(placementCompanies.name, pattern(query.q)),
+        sql<boolean>`${placementJobs.locations}::text ILIKE ${pattern(query.q)}`,
       ) : undefined,
     )).as("college_scoped_drives");
   const applicantsFilter = query.minimumApplicants !== undefined
     ? gte(source.applicants,query.minimumApplicants) : undefined;
   const [totals, items, seasons, companies] = await Promise.all([
     db.select({ total: count() }).from(source).where(applicantsFilter),
-    db.select().from(source).where(applicantsFilter).orderBy(asc(source.title), asc(source.id))
+    db.select().from(source).where(applicantsFilter).orderBy(query.sort==="DEADLINE"?asc(source.applicationDeadline):
+        query.sort==="NEWEST"?desc(source.createdAt):
+        query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),asc(source.id))
       .limit(COLLEGE_DRIVE_PAGE_SIZE).offset((query.page - 1) * COLLEGE_DRIVE_PAGE_SIZE),
     db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)
       .where(eq(placementSeasons.collegeId, collegeId)).orderBy(asc(placementSeasons.name)),
