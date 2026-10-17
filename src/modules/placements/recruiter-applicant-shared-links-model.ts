@@ -10,13 +10,13 @@ export function safeRecruiterExternalLink(raw:unknown,github=false):string|null{
  try{
   const url=new URL(raw.trim());
   if(url.protocol!=="https:"||url.username||url.password||!url.hostname)return null;
-  const host=url.hostname.toLowerCase().replace(/^\\[|\\]$/g,"");
+  const host=url.hostname.toLowerCase().replace(/^\[|\]$/g,"");
   // These are browser-facing links, but internal/private hosts should not be
   // presented as endorsed learner portfolio destinations in the LMS web view.
   if(host==="localhost"||host==="::1"||host==="0.0.0.0"||
      host.endsWith(".localhost")||host.endsWith(".local")||
-     /^127\\./.test(host)||/^10\\./.test(host)||/^192\\.168\\./.test(host)||
-     /^169\\.254\\./.test(host)||/^172\\.(1[6-9]|2[0-9]|3[01])\\./.test(host)||
+     /^127\./.test(host)||/^10\./.test(host)||/^192\.168\./.test(host)||
+     /^169\.254\./.test(host)||/^172\.(1[6-9]|2[0-9]|3[01])\./.test(host)||
      /^fc[0-9a-f]{0,2}:/i.test(host)||/^fd[0-9a-f]{0,2}:/i.test(host))return null;
   if(github&&!["github.com","www.github.com"].includes(url.hostname.toLowerCase()))return null;
   url.hash="";
