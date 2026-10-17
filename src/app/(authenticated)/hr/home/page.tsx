@@ -197,7 +197,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       </div>
       {liveDrives.length?<div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {liveDrives.map(row=><Link key={row.job.id}
-          href={"/hr/placements/jobs/"+encodeURIComponent(row.job.id)}
+          href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
           <span className="mt-1 block text-xs text-muted-foreground">
@@ -210,7 +210,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">Actionable deadlines</h2>
       {today.dueSoon.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.dueSoon.map(item =>
-        <Link key={item.job.id} href={"/hr/placements/jobs/" + item.job.id}
+        <Link key={item.job.id} href={"/recruiter/drives/" + item.job.id}
           className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{item.job.title}</span>
           <span className="mt-1 block text-sm text-body">Applications close {when(item.job.applicationDeadline!)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No application deadlines in the next seven days.</p>}
@@ -218,7 +218,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     <section className="rounded-xl border border-border bg-surface p-5">
       <h2 className="font-semibold text-foreground">This week · upcoming rounds</h2>
       {today.upcomingRounds.length ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{today.upcomingRounds.map(event =>
-        <Link key={event.id} href={"/hr/placements/jobs/" + event.jobId + "?tab=rounds"}
+        <Link key={event.id} href={"/recruiter/drives/" + event.jobId + "?tab=rounds"}
           className="rounded-md border border-border p-3 hover:border-primary"><span className="block font-medium text-foreground">{event.title}</span>
           <span className="mt-1 block text-sm text-body">{event.jobTitle} · {when(event.startsAt)}</span></Link>)}</div> :
         <p className="mt-3 text-sm text-muted-foreground">No upcoming scheduled rounds for this college during this week.</p>}
