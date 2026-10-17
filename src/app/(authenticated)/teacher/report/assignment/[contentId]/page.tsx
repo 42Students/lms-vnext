@@ -204,7 +204,7 @@ export default async function FacultyAssignmentReportPage({
         )}
       </section>
 
-      <section className="rounded-xl border border-border bg-surface p-5">
+      <section id="submissions" className="scroll-mt-16 rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">View submissions</h2>
         <p className="mt-1 text-sm text-body">See who submitted and grade their work.</p>
         <FacultyAssignmentReview
