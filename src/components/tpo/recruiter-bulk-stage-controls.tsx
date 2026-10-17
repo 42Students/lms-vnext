@@ -111,6 +111,8 @@ export function RecruiterBulkStageControls({
       }
       setResults(data.results);
       setRunAuditId(data.runAuditId??"");
+      setUndoRunId(data.results.some(row=>row.status==="updated")?(data.runAuditId??""):"");
+      setUndoReview(false);
       setChosenIds([]);
       setReviewOpen(false);setReviewSignature("");
       setReason("");
