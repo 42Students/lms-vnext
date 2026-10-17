@@ -14,7 +14,7 @@ describe("College Admin Projects S2 legacy gap closure",()=>{
   expect(editor).toContain('mode==="INDIVIDUAL"');
   expect(editor).toContain("cohort-preflight?");
   expect(editor).toContain("alreadyCovered");
-  expect(editor).toContain("Cohort · one workspace per student");
+  expect(editor).toContain("Before creating: one workspace per student");
   expect(editor).toContain('cohortMode:mode==="INDIVIDUAL"');
  });
  it("COL-projects-07 permits primary mentor, class, ACTIVE status and learner selection at creation",()=>{
