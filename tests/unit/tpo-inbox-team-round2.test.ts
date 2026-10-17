@@ -116,4 +116,36 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(bell).toContain("onClick={()=>void openItem(item)}");
   expect(bell).toContain('"New  →"');
  });
+ it("TPO-inbox-team-R05 separates Team read positions from bell notification reads",()=>{
+  const read=src("src/modules/placements/tpo-team-internal-read-service.ts");
+  const ack=src("src/modules/placements/tpo-team-internal-ack-service.ts");
+  const schema=src("src/db/schema/tpo-internal.ts");
+  expect(read).toContain('placementTableExists("placement_tpo_internal_reads")');
+  expect(read).toContain("m.created_at>coalesce");
+  expect(read).toContain("unreadCount:Number(row.unreadMessages)");
+  expect(ack).toContain("tx.insert(placementTpoInternalReads)");
+  expect(ack).toContain("onConflictDoUpdate");
+  expect(schema).toContain("placementTpoInternalReads=pgTable");
+  expect(src("docs/proposed-migrations/tpo-inbox-team-read-receipts.sql")).toContain("tpo_internal_reads_pk");
+ });
+ it("TPO-inbox-team-49 displays a scoped notice CTA only when it is a safe HTTPS link",()=>{
+  expect(announcements()).toContain('row.buttonUrl?.startsWith("https://")');
+  expect(announcements()).toContain('rel="noopener noreferrer"');
+  expect(src("src/modules/announcements/tpo-placement-read-service.ts")).toContain("buttonLabel:db10Announcements.buttonLabel");
+ });
+ it("TPO-inbox-team-50 restores optional HTTPS button and schedule modes",()=>{
+  expect(announcements()).toContain("Button (optional)");
+  expect(announcements()).toContain('name="buttonUrl"');
+  expect(announcements()).toContain('maxLength={500}');
+  expect(src("src/components/tpo/tpo-notice-schedule-controls.tsx")).toContain('mode==="LATER"');
+  expect(src("src/modules/announcements/tpo-placement-write-service.ts")).toContain("buttonLabel:data.buttonLabel??null");
+ });
+ it("TPO-inbox-team-51 allows version-checked editing and clearing of optional CTA",()=>{
+  const edit=src("src/modules/announcements/tpo-placement-edit-service.ts");
+  expect(edit).toContain("buttonLabel:input.buttonLabel??null");
+  expect(edit).toContain("buttonUrl:input.buttonUrl??null");
+  expect(edit).toContain("eq(db10Announcements.version,input.expectedVersion)");
+  expect(announcements()).toContain('defaultValue={row.buttonUrl??""}');
+ });
+
 });
