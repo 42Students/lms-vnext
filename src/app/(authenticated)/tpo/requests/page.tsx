@@ -37,7 +37,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   });
   if(!parsed.success)return <main className="space-y-5">
     <PageHeader eyebrow="TPO · Operations" title="Requests"
-      description="College-wide learner placement requests."/>
+      description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first."/>
     <section role="alert" className="rounded-xl border border-border bg-surface p-6">
       <h2 className="font-semibold text-foreground">Invalid request filters</h2>
       <p className="mt-2 text-sm text-body">Check the request status, kind, age, sorting and page values. No request data was loaded.</p>
@@ -55,11 +55,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
   const asOf=new Date();
   const attention=tpoRequestAttentionOnPage(data.requests,asOf);
   return <main className="min-w-0 space-y-5">
-    <PageHeader eyebrow="TPO · Operations" title="Requests" description="College-wide learner placement requests. Decisions update recorded applications, rounds or offers only through the existing verified action." />
+    <PageHeader eyebrow="TPO · Operations" title="Requests" description="What students have asked you to decide: withdrawals, off-campus offers, registration changes and disputes. Urgent ones come first." />
     <nav aria-label="Request statuses" className="flex flex-wrap gap-2">
       {TPO_REQUEST_STATUSES.map(status=>
         <Link key={status} href={href({...data.query,status,page:1})} aria-current={data.query.status===status?"page":undefined}
-          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">{status.toLowerCase().replaceAll("_"," ")} · {statusCounts[status]}</Link>)}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm text-primary-text">{status==="PENDING"?"Waiting":status.charAt(0)+status.slice(1).toLowerCase()} · {statusCounts[status]}</Link>)}
     </nav>
     <form method="get" action="/tpo/requests" className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
       <input type="hidden" name="status" value={data.query.status}/>
@@ -108,7 +108,8 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export filtered requests CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
-      {data.total>0?"This page is past the available request results.":"No requests match the current filters."}
+      {data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
+      {data.total===0?<p className="mt-2 text-sm">Withdrawals, off-campus offers, registration changes and disputes from students show up here.</p>:null}
       <Link href={data.total>0?globalTpoRequestFirstPageHref(data.query):tpoRequestClearAdvancedHref(data.query.status)}
        className="ml-3 inline-flex min-h-11 items-center text-primary-text underline">
        {data.total>0?"First matching page":"Reset filters"}

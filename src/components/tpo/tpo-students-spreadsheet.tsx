@@ -14,7 +14,7 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 import {TpoAfterCollegeEditor} from "./tpo-after-college-editor";
 import { TpoAfterCollegeBulkEditor } from "./tpo-after-college-bulk-editor";
-import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import {AFTER_COLLEGE_OUTCOMES,AFTER_COLLEGE_LABELS,afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
 
 const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"student",label:"Student",read:row=>row.fromFinishedBatch?
@@ -59,7 +59,7 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",read:row=>afterCollege[row.membershipId]?.outcome?AFTER_COLLEGE_LABELS[afterCollege[row.membershipId].outcome]??"Not decided"},
+  {key:"afterCollege",label:"After college",read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
   ...columns.slice(5),
  ];
  const filters:TpoFilterField[]=[
