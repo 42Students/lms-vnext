@@ -10,8 +10,8 @@ import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
 export function MentorSprintCreate({
-  projectId, releaseId,
-}: {projectId:string;releaseId:string}) {
+  projectId, releaseId,releases=[],
+}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[]}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
