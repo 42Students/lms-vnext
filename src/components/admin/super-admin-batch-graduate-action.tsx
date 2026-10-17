@@ -1,15 +1,17 @@
 "use client";
 import {useState} from "react";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;name:string}){
  const router=useRouter();
- const [open,setOpen]=useState(false),[pending,setPending]=useState(false);
+ const [open,setOpen]=useState(false);
+ const {pending,run}=useGuardedAction({timeoutMs:30000});
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  async function submit(){
-  if(pending)return;
-  setPending(true);setError("");
+  setError("");
   try{
+   await run(async () => {
    const response=await fetch("/api/college/batches/"+encodeURIComponent(cohortId)+"/graduate",{
     method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},body:JSON.stringify({confirm:true}),
    });
@@ -21,8 +23,8 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
     throw new Error("Could not mark this batch graduated. Refresh and try again.");
    }
    setOpen(false);setSuccess("Batch marked graduated.");router.refresh();
+   });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
-  finally{setPending(false);}
  }
  return <div className="space-y-2">
   <button type="button" disabled={pending} onClick={()=>{setError("");setOpen(true);}}
