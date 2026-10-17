@@ -84,6 +84,7 @@ export default async function TpoTeamPage({searchParams}:{
     </div>:null}
     {conversations?.status==="NOT_REGISTERED"?
       <p role="status" className="mt-2 text-sm text-body">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</p>:
+      conversations?.status==="FAILED"?null:
       conversations?.items.length?<ul className="mt-3 space-y-2">{conversations.items.map(row=>
        <li key={row.id} className="rounded-md border border-border p-3">
         <div className="flex flex-wrap items-start justify-between gap-2">
