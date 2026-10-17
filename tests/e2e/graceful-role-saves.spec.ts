@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { authenticateGracefulRole } from "./support/roles";
-import { captureUncaughtErrors, expectNoRawErrors, failApi, type FailureKind } from "./support/no-raw-error";
+import { captureUncaughtErrors, expectNoRawErrors, expectFriendlyFailure, failApi, type FailureKind } from "./support/no-raw-error";
 
 const actions = [
   {
@@ -34,7 +34,7 @@ for (const action of actions) {
     test.skip(!process.env.E2E_AUTH_SECRET || process.env.E2E_AUTH_ENABLED !== "true",
       "Requires the existing seeded E2E identities and development harness");
 
-    for (const kind of ["backend-down", "html-502", "json-500", "forbidden", "conflict", "rate-limit", "slow", "session-expired"] as FailureKind[]) {
+    for (const kind of ["backend-down", "html-502", "json-500", "forbidden", "conflict", "rate-limit", "maintenance", "slow", "session-expired"] as FailureKind[]) {
       test(`GR-80 ${action.role} ${kind} protects unsaved input`, async ({ page, context }) => {
         test.setTimeout(35_000);
         await authenticateGracefulRole(context, action.role);
@@ -46,8 +46,8 @@ for (const action of actions) {
         const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : action.endpoint, kind);
         try {
           await page.getByRole("button", { name: action.button, exact: true }).click();
-          await expect.poll(failure.hits).toBeGreaterThan(0);
-          await expect(page.getByRole("alert").first()).toBeVisible({ timeout: 15_000 });
+          await expect.poll(() => failure.requests().some((request) => request.endsWith(new URL(action.endpoint.replace("**", "http://localhost:3000")).pathname))).toBe(true);
+          await expectFriendlyFailure(page, kind);
           if (kind === "session-expired" && new URL(page.url()).pathname !== action.route) {
             // Simulates returning to the requested page after a fresh E2E sign-in.
             await page.goto(action.route);

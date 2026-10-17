@@ -14,9 +14,19 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 
 ## Notes (blockers, one line each)
 
-- GR-80: Shared friendly screens/API adoption are being built in parallel; hostile-response assertions are authored but require merged implementation and executed browser evidence.
-- GR-80 Mentor: Existing seed does not guarantee unread notifications, so read-all fault tests skip without a fixture rather than passing vacuously.
-- GR-80 Recruiter: Test recruiter grants must be current, verified, capability-enabled and seeded before messaging fault tests can run.
-- GR-82: Default Playwright server is development; orchestrator must separately serve a production build and supply GRACEFUL_PRODUCTION_BASE_URL.
-- GR-83: Shared helper unit/integration tests are assigned to chat-14 and cannot be certified by chat-15 without execution.
+- GR-80: GR-02 shared helpers and graceful screens are now merged into main, but many page-specific clients have not adopted them; strict browser acceptance remains unverified.
+- GR-80 Faculty/Mentor: Deterministic unread personal notifications must be seeded; read-all and per-notification tests skip without them and must not count toward pass totals.
+- GR-80 Recruiter: Additional test tenant must have active, verified, nonexpired employer college grant with required capability before messaging/profile suites can certify.
+- GR-80/82: All seven authenticated role stale-chunk tests require separately signed-in staging storageState files under GRACEFUL_PRODUCTION_AUTH_STORAGE_DIR; development bypass cannot certify production.
+- GR-82: Orchestrator must supply a separately built production origin and run tests/e2e/playwright.graceful-production.config.ts; local dev is not evidence.
+- GR-83: The GR-51 automatic-retry outbox UI witness is not identified in merged helper unit tests; a fake-provider persisted-outbox integration and all helper execution evidence are still needed.
 
+### Round-3 source handoff
+
+- GR-80: New role journeys: TPO two-stage recruiter creation (GET contact preflight then POST), Faculty/Mentor read-all and individual notifications with explicit unread fixture precondition, Faculty offline assignment authoring.
+- GR-80/82: Added `tests/e2e/graceful-production-roles.spec.ts` for the seven signed-in roles; production config runs both production specs without launching a dev server.
+- GR-81: The DOM scan distinguishes legitimate uppercase role/status labels from raw API error identifiers; actual request methods/paths remain asserted.
+- GR-83: Merged chat-14 helper unit suites are listed in `tests/e2e/README-graceful.md`; only orchestrator execution can certify.
+
+- GR-80: HTTP 503 maintenance injection added to every role matrix with the exact shared customer message; still requires orchestrator runtime execution.
+- GR-80/GR-34: New delayed duplicate-send tests for Recruiter conversation replies and TPO confirmed recruiter creation cover high-risk non-idempotent actions without a real send.
