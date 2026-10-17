@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -104,6 +104,8 @@ export function LoginForm({
   allowedChannels?: readonly Channel[];
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
+  const errorSummaryRef=useRef<HTMLDivElement>(null);
+  const contactRef=useRef<HTMLInputElement>(null);
   const [contact, setContact] = useState("");
   const [contactError, setContactError] = useState<string | null>(null);
   const [code, setCode] = useState("");
@@ -116,6 +118,7 @@ export function LoginForm({
   const [cooldown, setCooldown] = useState(0);
   const [emailCooldown, setEmailCooldown] = useState(0);
 
+  useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
   useEffect(() => {
     let live = true;
     void Promise.resolve().then(() => {
@@ -177,6 +180,7 @@ export function LoginForm({
           ? "Enter a valid email address" : null;
     if (validation) {
       setContactError(validation);
+      contactRef.current?.focus();
       return;
     }
     setContactError(null);
@@ -281,7 +285,7 @@ export function LoginForm({
 
       {error ? (
         <div
-          role="alert"
+          role="alert" ref={errorSummaryRef} tabIndex={-1}
           className="mt-4 rounded-lg border border-error bg-[var(--lms-error-subtle)] p-3 text-sm text-error"
         >
           {error}
@@ -363,7 +367,7 @@ export function LoginForm({
               {channel === "PHONE" ? "Mobile number" : "Email"}
             </span>
             <Input
-              name="contact"
+              name="contact" ref={contactRef}
               aria-invalid={Boolean(contactError)}
               aria-describedby={contactError ? "login-contact-error" : undefined}
               value={contact}
