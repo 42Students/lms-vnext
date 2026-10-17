@@ -39,6 +39,7 @@ export function TpoStudentsBulkAdd({
   const [driveId, setDriveId] = useState("");
   const [driveSearch,setDriveSearch]=useState("");
   const [alreadyAppliedCount,setAlreadyAppliedCount]=useState<number|null>(null);
+  const [reviewedSelection,setReviewedSelection]=useState("");
   const [roles, setRoles] = useState<Role[]>([]);
   const [roleOptionId, setRoleOptionId] = useState("");
   const [busy, setBusy] = useState(false);
@@ -53,6 +54,8 @@ export function TpoStudentsBulkAdd({
   const membersById=new Map(available.map(learner=>[learner.membershipId,learner]));
   const names = new Map(available.map(learner=>[learner.membershipId,learner.displayName]));
   const pageSelected=selected.filter(id=>membersById.has(id));
+  const selectionFingerprint=JSON.stringify({jobId,roleOptionId,ids:pageSelected,
+   includeIneligible,reason:includeIneligible?overrideReason.trim():""});
   const visibleDrives=drives.filter(drive=>
    (drive.companyName+" "+drive.title).toLocaleLowerCase("en-IN").includes(driveSearch.toLocaleLowerCase("en-IN").trim()));
 
@@ -61,7 +64,7 @@ export function TpoStudentsBulkAdd({
     setRoles([]);
     setRoleOptionId("");
     setRoleError("");
-    setResults([]);setAlreadyAppliedCount(null);
+    setResults([]);setAlreadyAppliedCount(null);setReviewedSelection("");setConfirmOpen(false);
     if (!jobId) return;
     setBusy(true);
     try {
@@ -98,13 +101,17 @@ export function TpoStudentsBulkAdd({
       });
      if(response.totalChecked!==pageSelected.length)
       throw new Error("Selection changed during review");
-     setAlreadyAppliedCount(response.alreadyAppliedCount);setConfirmOpen(true);
+     setAlreadyAppliedCount(response.alreadyAppliedCount);setReviewedSelection(selectionFingerprint);setConfirmOpen(true);
     }catch{setError("Could not check existing applications. Your selection remains for retry.");}
     finally{setBusy(false);}
   }
   async function submit() {
     if (busy || !driveId || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
         includeIneligible && overrideReason.trim().length<3) return;
+    if(reviewedSelection!==selectionFingerprint){
+     setError("Your selected learners or drive changed. Review existing applications again before confirming.");
+     setConfirmOpen(false);return;
+    }
     const candidates = pageSelected.flatMap((id) => {
       const learner = membersById.get(id);
       return learner ? [{
@@ -167,8 +174,7 @@ export function TpoStudentsBulkAdd({
       </div>
       {drives.length === 0 ? (
         <p role="status" className="text-sm text-body">
-          No published internal application drives in an active season are available.
-          No open drives. Create or publish a drive before adding learners.
+          No open drives are available. Create or publish a drive before adding learners.
         </p>
       ) : (
         <>
@@ -251,7 +257,7 @@ export function TpoStudentsBulkAdd({
           "Ineligible learners will not be added.")+" Existing applications are preserved."}
         footer={<><Button variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
           <Button disabled={busy||guardedPending||!pageSelected.length||pageSelected.length>200||!roleOptionId||
-            includeIneligible&&overrideReason.trim().length<3} onClick={()=>void runGuarded(submit)}>
+            includeIneligible&&overrideReason.trim().length<3||reviewedSelection!==selectionFingerprint} onClick={()=>void runGuarded(submit)}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button></>}>
         <p role="status" className="text-sm">{alreadyAppliedCount===null?
