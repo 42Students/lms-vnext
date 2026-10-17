@@ -7,7 +7,7 @@ import {projectMutation} from "@/components/projects/project-api";
 
 export function SuperAdminTemplateCreateForm(){
  const router=useRouter();
- const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:""});
+ const [values,setValues]=useState({slug:"",title:"",summary:"",goal:"",release:"Release 1",sprint:"Sprint 1",task:"",priority:"MEDIUM",acceptanceCriteria:"",releaseDescription:"",sprintDescription:"",taskDescription:"",overviewDescription:"",resourceTitle:"",resourceUrl:"",deliverables:"",definitionOfDone:"",personas:"",courseLabel:"",phase:"",submissionType:"LINK",submissionInstructions:""});
  const [saving,setSaving]=useState(false);
  const [error,setError]=useState("");
  const edit=(key:keyof typeof values,value:string)=>setValues(old=>({...old,[key]:value}));
@@ -48,6 +48,32 @@ export function SuperAdminTemplateCreateForm(){
    <textarea maxLength={2000} disabled={saving} value={values.goal} onChange={event=>edit("goal",event.target.value)}
     className="min-h-24 min-w-0 rounded-md border border-border bg-background p-3 text-foreground"/>
   </label>
+  <fieldset className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
+    <legend className="px-2 text-sm font-semibold">Overview and submission</legend>
+    {([{key:"courseLabel",label:"Course label"},{key:"phase",label:"Phase"}] as const)
+      .map(item=><label key={item.key} className="grid gap-1 text-sm font-semibold">{item.label}
+       <input maxLength={160} disabled={saving} value={values[item.key]}
+        onChange={e=>edit(item.key,e.target.value)}
+        className="min-h-11 rounded border border-border bg-background px-3"/></label>)}
+    {([{key:"deliverables",label:"Deliverables (one per line)"},
+       {key:"definitionOfDone",label:"Definition of done (one per line)"},
+       {key:"personas",label:"Personas (one per line)"},
+       {key:"submissionInstructions",label:"Submission instructions"}] as const).map(item=>
+      <label key={item.key} className="grid gap-1 text-sm font-semibold sm:col-span-2">
+       {item.label}
+       <textarea value={values[item.key]} onChange={e=>edit(item.key,e.target.value)}
+        maxLength={4000} disabled={saving}
+        className="min-h-20 rounded border border-border bg-background p-2"/>
+      </label>)}
+    <label className="grid gap-1 text-sm font-semibold">Submission type
+      <select disabled={saving} value={values.submissionType}
+       onChange={e=>edit("submissionType",e.target.value)}
+       className="min-h-11 rounded border border-border bg-background px-3">
+       <option value="LINK">Link</option><option value="FILE">File upload</option>
+       <option value="TEXT">Text</option>
+      </select>
+    </label>
+  </fieldset>
   <label className="grid gap-1 text-sm font-semibold text-body">First task priority
    <select disabled={saving} value={values.priority} onChange={event=>edit("priority",event.target.value)} className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
     <option value="LOW">Low</option><option value="MEDIUM">Medium</option><option value="HIGH">High</option><option value="CRITICAL">Critical</option>
