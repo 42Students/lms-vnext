@@ -56,7 +56,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   setError("");setMessage("");setRemoveLink(false);
  }
  async function save(){
-  if(busy||!title.trim()||!lessonId||(kind!=="RESOURCE"&&!editing&&!url.trim()))return;
+  if(busy)return;
+  if(!title.trim()||!lessonId){setError("Choose a Lesson and enter a Title.");return;}
+  if(kind==="LIVE_CLASS"&&!editing&&!url.trim()){setError("Enter a Meeting Link.");return;}
+  if(kind==="YOUTUBE"&&!editing&&!url.trim()){setError("Enter a YouTube URL.");return;}
   if(kind==="RESOURCE"&&!editing&&!url.trim()&&!notes.trim()){setError("Add resource notes or an HTTPS link.");return;}
   if(kind==="RESOURCE"&&editing&&removeLink&&!notes.trim()){setError("Add resource notes before removing the last link.");return;}
   setBusy(true);setError("");setMessage("");
