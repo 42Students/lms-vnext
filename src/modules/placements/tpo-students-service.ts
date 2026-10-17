@@ -86,6 +86,7 @@ export const tpoStudentsQuerySchema = z
     programId:uuid.optional(),
     classId:uuid.optional(),
     afterCollege:afterCollegeOutcomeSchema.optional(),
+    profileStatus:z.enum(["VERIFIED","WAITING","SENT_BACK","NOT_VERIFIED"]).optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
