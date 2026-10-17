@@ -63,8 +63,8 @@ export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]
  return {headers:indices.map(index=>grid.headers[index]),
   values:grid.values.map(row=>indices.map(index=>row[index]))};
 }
-export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[]){
- const grid=recruiterTableExportGrid(rows);
+export function recruiterTableExportCsv(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
+ const grid=recruiterTableExportGrid(rows,columns);
  return "\uFEFF"+[grid.headers,...grid.values].map(row=>
   row.map(recruiterCsvCell).join(",")).join("\r\n")+"\r\n";
 }
