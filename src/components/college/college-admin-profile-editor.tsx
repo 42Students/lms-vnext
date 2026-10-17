@@ -52,8 +52,13 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
     <div className="rounded-xl border border-border bg-surface p-5">
       <p className="text-lg font-semibold text-foreground">{profile.displayName}</p>
       <p className="text-sm text-muted-foreground">{profile.roleTitle || "College Admin"} · {college || "Your college"}</p>
-      {profile.photoUrl && <a href={profile.photoUrl} target="_blank" rel="noreferrer"
-        className="mt-2 inline-block text-sm font-semibold text-primary-text">View profile photo</a>}
+      {profile.photoUrl?<div className="mt-3 flex flex-wrap items-center gap-3">
+        {/* The signed-in administrator supplied this HTTPS image URL. No private document URL is synthesized. */}
+        <img src={profile.photoUrl} alt={profile.displayName+" profile photo"} referrerPolicy="no-referrer"
+          className="h-16 w-16 rounded-full border border-border bg-muted object-cover"/>
+        <a href={profile.photoUrl} target="_blank" rel="noreferrer"
+          className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View profile photo</a>
+      </div>:null}
     </div>
     <nav aria-label="Profile sections" className="flex flex-wrap gap-2">
       {[

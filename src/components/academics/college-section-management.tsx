@@ -141,6 +141,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
+  const [discardConfirm, setDiscardConfirm] = useState(false);
   const [name, setName] = useState(row.name);
   const [code, setCode] = useState(row.code);
   const [capacity, setCapacity] = useState(row.capacity === null ? "" : String(row.capacity));
@@ -150,8 +151,8 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   const changed = sectionIdentityChanged(row, draft) || row.capacity !== draft.capacity || (row.description ?? null) !== draft.description;
 
   function cancel() {
-    if (changed && !window.confirm("Discard unsaved class changes?")) return;
-    setEditing(false); setNotice("");
+    if (changed && !discardConfirm) { setDiscardConfirm(true); return; }
+    setDiscardConfirm(false); setEditing(false); setNotice("");
   }
 
   function save(event: FormEvent<HTMLFormElement>) {
@@ -166,7 +167,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
     startTransition(async () => {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
-        setEditing(false); setNotice("Class updated.");
+        setEditing(false); setDiscardConfirm(false); setNotice("Class updated.");
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Class update failed."));
@@ -176,7 +177,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
 
   return <div>
     <button type="button" disabled={pending || row.status !== "ACTIVE"}
-      onClick={() => { setEditing(true); setNotice(""); }}
+      onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
       Edit
     </button>
@@ -206,6 +207,13 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
         </label>
         <p className="text-xs text-muted-foreground">Active learner enrollments: {row.activeLearners}.</p>
         {notice ? <p role="alert" className="text-sm text-body">{notice}</p> : null}
+        {discardConfirm?<div role="group" aria-label="Discard unsaved class changes?" className="rounded-md border border-border bg-muted p-3 text-sm">
+          <p>Discard unsaved class changes?</p>
+          <div className="mt-2 flex gap-2">
+            <button type="button" disabled={pending} onClick={cancel} className="rounded bg-primary px-3 py-2 font-semibold text-on-primary">Discard changes</button>
+            <button type="button" onClick={()=>setDiscardConfirm(false)} className="rounded border border-border px-3 py-2">Keep editing</button>
+          </div>
+        </div>:null}
         <div className="flex justify-end gap-2">
           <button disabled={pending} type="button" onClick={cancel}
             className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
