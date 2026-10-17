@@ -3,7 +3,7 @@ import "server-only";
 import {randomUUID} from "node:crypto";
 import {and,desc,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
+import {collegeMemberships,membershipRoles,projectInstances,projectMembers,projectReleases,projectSprints,projectTasks,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {hasActiveMembership,hasMembershipRole,type RequestContext} from "@/modules/identity/context";
