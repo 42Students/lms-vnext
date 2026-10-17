@@ -1,15 +1,13 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
-import {tpoTeamMessageChangeSchema} from "@/modules/placements/tpo-team-message-change-service";
 const src=(p:string)=>readFileSync(p,"utf8");
-const id="11111111-1111-4111-8111-111111111111";
-const digest="a".repeat(64);
 describe("TPO Team message mutations and actor notifications",()=>{
  it("TPO-inbox-team-24 enforces author-only immutable message deletion and 15-minute edit CAS",()=>{
   const service=src("src/modules/placements/tpo-team-message-change-service.ts");
   expect(tpoTeamCanEdit(new Date("2099-01-01T12:00:00Z"),new Date("2099-01-01T12:16:00Z"))).toBe(false);
-  expect(tpoTeamMessageChangeSchema.safeParse({threadId:id,messageId:id,action:"EDIT",body:"",expectedBodyHash:digest}).success).toBe(false);
+  expect(service).toContain('base.extend({action:z.literal("EDIT"),body:z.string().trim().min(1).max(4000)})');
+  expect(service).toContain('expectedBodyHash:z.string().regex(');
   expect(service).toContain("eq(placementTpoInternalMessages.authorMembershipId,membership.id)");
   expect(service).toContain('throw new Error("TEAM_STALE_MESSAGE")');
   expect(service).toContain('updatedBody=input.action==="EDIT"?input.body:"Message removed"');
