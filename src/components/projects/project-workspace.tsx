@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
+import {WorkspaceBriefEditor} from "./workspace-brief-editor";
+import {parseWorkspaceBrief} from "@/modules/projects/workspace-brief-model";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
@@ -185,7 +187,14 @@ export function ProjectWorkspace({
   readOnlyOverride?: boolean;
 }) {
   const { readiness } = workspace;
-  const brief = mentorAuthoredBrief(workspace.templateOverview);
+  const authoredBrief=parseWorkspaceBrief(workspace.project.authoredBrief);
+  const templateBrief=mentorAuthoredBrief(workspace.templateOverview);
+  const isAuthored=Boolean(authoredBrief.goal||authoredBrief.description||
+    authoredBrief.deliverables.length||authoredBrief.completionConditions.length||authoredBrief.personas.length);
+  const brief=isAuthored?{
+    goal:authoredBrief.goal,description:authoredBrief.description,
+    deliverables:authoredBrief.deliverables,
+  }:templateBrief;
   const mentorReviewHref = mode === "MENTOR"
     ? mentorReviewSubmissionHref(workspace.project.id, workspace.finalDelivery.submissions)
     : null;
@@ -414,6 +423,18 @@ export function ProjectWorkspace({
               Review submission
             </Link> : null}
           </div>
+          {mode==="ADMIN"&&!readOnly?<WorkspaceBriefEditor
+            projectId={workspace.project.id} initial={authoredBrief}
+            updatedAt={workspace.project.updatedAt}/>:null}
+          {(isAuthored&&authoredBrief.completionConditions.length>0)||
+            (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div><h3 className="text-sm font-semibold">Completion conditions</h3>
+              <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.completionConditions.map((v,i)=><li key={i}>{v}</li>)}</ul>
+            </div>
+            <div><h3 className="text-sm font-semibold">Personas</h3>
+              <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.personas.map((v,i)=><li key={i}>{v}</li>)}</ul>
+            </div>
+          </div>:null}
           {mode==="LEARNER"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <section className="rounded-lg border border-border p-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
@@ -456,7 +477,7 @@ export function ProjectWorkspace({
                 </div>)}
             </div>
           </section>:null}
-          {workspace.templateOverview ? (
+          {workspace.templateOverview||isAuthored ? (
             <div className="mt-3 space-y-4 text-sm leading-6 text-body">
               {brief.goal ? <div>
                 <h3 className="font-semibold text-foreground">Project goal</h3>
@@ -1074,10 +1095,11 @@ export function ProjectWorkspace({
                       </StatusBadge>
                     </div>
 
-                    {mode === "ADMIN" ? (
+                    {mode !== "LEARNER" ? (
                       <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
                         <div><dt className="font-semibold">Submission type</dt>
-                          <dd>{submission.sourceUrl && submission.demoUrl ? "File + link" :
+                          <dd>{submission.attachments.some(item=>item?.kind==="FILE") ? "File upload" :
+                            submission.sourceUrl && submission.demoUrl ? "Source + demo" :
                             submission.sourceUrl || submission.demoUrl ? "Link" : "Text"}</dd></div>
                         <div><dt className="font-semibold">Submitted by</dt>
                           <dd>{workspace.members.find(member =>
@@ -1089,12 +1111,12 @@ export function ProjectWorkspace({
                           <dd>{Math.max(0, submission.version - 1)}</dd></div>
                       </dl>
                     ) : null}
-                    {mode === "ADMIN" && submission.notes ? (
+                    {mode !== "LEARNER" && submission.notes ? (
                       <p className="mt-2 whitespace-pre-wrap text-sm text-body">
                         {submission.notes}
                       </p>
                     ) : null}
-                    {mode === "ADMIN" && submission.attachments.length ? (
+                    {mode !== "LEARNER" && submission.attachments.length ? (
                       <section aria-label="Additional evidence" className="mt-3 space-y-2">
                         <h3 className="text-sm font-semibold text-foreground">Additional evidence</h3>
                         {submission.attachments.map((item, index) => {
@@ -1150,6 +1172,20 @@ export function ProjectWorkspace({
                       </div>
                     ) : null}
 
+                    {mode!=="LEARNER"?<details className="mt-3 rounded-lg border border-border p-3">
+                      <summary className="cursor-pointer text-sm font-semibold text-primary-text">
+                        Submission history
+                      </summary>
+                      <ul className="mt-2 space-y-2 text-xs text-body">
+                        {workspace.activity.filter(event=>event.subjectId===submission.id&&
+                          event.eventType.includes("delivery")).map(event=>
+                            <li key={event.id} className="border-l-2 border-border pl-2">
+                              {event.summary} · {event.actorDisplayName??"System"} · {formatDateTime(event.occurredAt)}
+                            </li>)}
+                        {submission.reopenedAt?<li>Reopened · {formatDateTime(submission.reopenedAt)}</li>:null}
+                        {submission.lockedAt?<li>Locked · {formatDateTime(submission.lockedAt)}</li>:null}
+                      </ul>
+                    </details>:null}
                     {mode === "ADMIN" && !readOnly &&
                       (submission.status === "SUBMITTED" || submission.status === "APPROVED") ? (
                       <ProjectAdminSubmissionReview projectId={workspace.project.id}
