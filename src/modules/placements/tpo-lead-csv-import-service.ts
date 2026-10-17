@@ -4,7 +4,7 @@ import { and, eq, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "@/db/client";
-import { activityEvents, placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
+import { activityEvents, inAppNotifications,collegeMemberships,membershipRoles,users, placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -119,14 +119,33 @@ export async function importTpoLeadsCsv(
     // result. Never log raw CSV contents, email addresses or telephone numbers.
     const counts=summarizeTpoLeadImport(rows);
     const created=rows.filter(row=>row.status==="created");
-    if(created.length)await tx.insert(activityEvents).values({
+    if(created.length){
+     const [event]=await tx.insert(activityEvents).values({
       organizationId:college.organizationId,collegeId:college.id,
       actorUserId:context.user.id,actorMembershipId:ownerMembershipId,
       module:"PLACEMENTS",eventType:"RECRUITER_LEADS_IMPORTED",
       subjectType:"placement_tpo_lead",subjectId:created[0].leadId!,
       summary:"Recruiter leads imported",
       metadata:{counts,importedLeadIds:created.map(row=>row.leadId)},
-    });
+     }).returning({id:activityEvents.id});
+     if(event){
+      const team=await tx.selectDistinct({userId:collegeMemberships.userId})
+       .from(collegeMemberships)
+       .innerJoin(users,eq(users.id,collegeMemberships.userId))
+       .innerJoin(membershipRoles,and(
+        eq(membershipRoles.membershipId,collegeMemberships.id),
+        eq(membershipRoles.role,"TPO")))
+       .where(and(eq(collegeMemberships.collegeId,college.id),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(users.platformStatus,"ACTIVE"))).limit(501);
+      if(team.length>500)throw new Error("TPO_NOTIFICATION_RECIPIENT_LIMIT");
+      if(team.length)await tx.insert(inAppNotifications).values(team.map(({userId})=>({
+       userId,eventId:event.id,title:"Recruiter leads imported",
+       body:created.length+" new recruiter leads were added to Engage.",
+       actionHref:"/tpo/recruiters",
+      }))).onConflictDoNothing();
+     }
+    }
     return rows;
   });
 
