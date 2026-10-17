@@ -919,7 +919,7 @@ export async function actOnPlacementOffer(
             input.reason ?? null,
         });
 
-      await recordActivityEventInTransaction(
+      const declinedNoticeEvent=await recordActivityEventInTransaction(
         tx,
         context,
         {
@@ -943,6 +943,11 @@ export async function actOnPlacementOffer(
             `placement-offer:${updated.id}:declined`,
         },
       );
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:declinedNoticeEvent.id,collegeId:current.job.collegeId,
+        membershipId:current.application.membershipId,
+        kind:"APPLICATION_STATUS_CHANGED",subject:"Offer declined for "+current.job.title,
+      });
 
       return updated;
     }
