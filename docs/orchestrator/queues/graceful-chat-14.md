@@ -13,3 +13,4 @@ Shell note: `src/components/shell` belongs to chat-9. Where a GR item needs a sh
 
 ## Notes (blockers, one line each)
 
+- GR-51: provider-side automatic resend awaits verified delivery idempotency guarantees and real provider acceptance; existing receipts persist QUEUED/FAILED but unacknowledged sends must not be retried blindly.

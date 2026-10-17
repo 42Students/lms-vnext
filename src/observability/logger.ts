@@ -1,3 +1,6 @@
+import { reportErrorForAlert } from "@/modules/log-alerts/reporter";
+import { createRequestId } from "@/lib/request-id";
+
 export type LogSeverity =
   | "DEBUG"
   | "INFO"
@@ -33,6 +36,7 @@ export function createStructuredLogRecord(
   now = new Date(),
 ): StructuredLogRecord {
   return {
+    requestId: typeof fields.requestId === "string" ? fields.requestId : createRequestId(),
     ...fields,
     severity,
     event,
@@ -80,8 +84,20 @@ export function logError(
   error: unknown,
   fields: Record<string, unknown> = {},
 ) {
-  writeStructuredLog("ERROR", event, {
-    ...fields,
-    ...createErrorLogFields(error),
-  });
+  const requestId = typeof fields.requestId === "string" ? fields.requestId : createRequestId();
+  writeStructuredLog("ERROR", event, { ...fields, requestId, ...createErrorLogFields(error) });
+  void reportErrorForAlert({
+    event, error, requestId,
+    component: typeof fields.component === "string" ? fields.component : undefined,
+    path: typeof fields.path === "string" ? fields.path :
+      typeof fields.route === "string" ? fields.route : undefined,
+    status: typeof fields.status === "number" ? fields.status : undefined,
+    userId: typeof fields.userId === "string" ? fields.userId : undefined,
+    collegeId: typeof fields.collegeId === "string" ? fields.collegeId : undefined,
+  }).catch(() => undefined);
+}
+
+/** GR-05: informational lines also have a searchable request reference. */
+export function logInfo(event: string, fields: Record<string, unknown> = {}) {
+  writeStructuredLog("INFO", event, fields);
 }

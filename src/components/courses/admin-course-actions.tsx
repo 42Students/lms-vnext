@@ -14,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 async function mutate(
   path: string,
@@ -64,9 +65,7 @@ function useCourseMutation() {
           tone: "error",
           title: "Course update failed",
           description:
-            error instanceof Error
-              ? error.message
-              : "The request could not be completed.",
+            academicSetupErrorMessage(error, "Course was not saved. Review your changes and retry."),
         });
       }
     });
@@ -98,6 +97,13 @@ export function CourseActions({
     useState(course.description ?? "");
   const { pending, run } =
     useCourseMutation();
+  const dirty = name!==course.name || code!==course.code ||
+    description!==(course.description??"");
+  function closeEdit(next:boolean) {
+    if(!next && pending)return;
+    if(!next && dirty && !window.confirm("Discard unsaved course changes?"))return;
+    setEditOpen(next);
+  }
 
   function openEdit() {
     setName(course.name);
@@ -132,7 +138,7 @@ export function CourseActions({
 
       <Dialog
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={closeEdit}
         title="Edit Course"
         description="Department ownership is immutable after Course creation."
         footer={

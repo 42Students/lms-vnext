@@ -13,6 +13,7 @@ import {
   tpoInboxPageHref,
   tpoInboxQuerySchema,
   tpoInboxEmptyNavigation,
+  tpoEffectiveReadAt,
 } from "@/modules/activity/tpo-notifications-model";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
 
@@ -57,7 +58,7 @@ export default async function TpoNotificationsPage({
     title: notification.title,
     body: notification.body,
     actionHref: notification.actionHref,
-    readAt: notification.readAt?.toISOString() ?? null,
+    readAt: tpoEffectiveReadAt(notification.readAt,notification.createdAt,inbox.recentCutoff)?.toISOString()??null,
     createdAt: notification.createdAt.toISOString(),
     module: event.module,
     importance: event.importance,
@@ -71,7 +72,7 @@ export default async function TpoNotificationsPage({
       <PageHeader
         eyebrow="TPO"
         title="Notifications"
-        description="Your own placement and college notifications, grouped by time. Only notifications addressed to you in your current college appear here."
+        description="A clean history of what happened across placements. Actionable work stays on Home under Needs you."
       />
       <NotificationToolbar
         view={inbox.query.view}
@@ -89,6 +90,7 @@ export default async function TpoNotificationsPage({
       ) : (
         <>
           <NotificationList
+            variant="tpo"
             items={items}
             readEndpoint="/api/tpo/notifications"
             emptyText={inbox.query.view === "unread" ? "No unread notifications." : "No notifications yet."}

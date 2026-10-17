@@ -385,7 +385,7 @@ export function LearnerQuizAttempt() {
           <p role="status" className="mt-4 rounded-lg border border-success p-3 text-sm font-semibold text-body">
             {latestAttempt?.resultsVisible&&latestAttempt.score!==null&&latestAttempt.maxScore!==null
               ?"Quiz submitted! Score: "+latestAttempt.score+"/"+latestAttempt.maxScore
-              :"Quiz submitted. Results will be visible after faculty review."}
+              :"Quiz submitted. Results will be visible after faculty releases them."}
           </p>
         ) : null}
         {error ? <p role="alert" className="mt-4 text-sm font-semibold text-error">{error}</p> : null}

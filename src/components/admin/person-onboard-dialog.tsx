@@ -98,7 +98,7 @@ export function PersonOnboardDialog({
       reset();
       showToast({
         tone: "success",
-        title: forcedRole === "FACULTY" ? "Faculty onboarded" : "Person onboarded",
+        title: forcedRole === "FACULTY" ? "Faculty registered successfully! They can now login with their mobile number." : "Person onboarded",
         description:
           "The canonical user and college membership are ready. No invitation or message was sent.",
       });
@@ -109,12 +109,12 @@ export function PersonOnboardDialog({
   return (
     <>
       <Button onClick={() => setOpen(true)}>
-        {forcedRole === "FACULTY" ? "Add faculty" : "Onboard person"}
+        {forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title={forcedRole === "FACULTY" ? "Add faculty" : "Onboard person"}
+        title={forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
         description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
           <>

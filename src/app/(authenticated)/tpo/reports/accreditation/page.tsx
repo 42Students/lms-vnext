@@ -10,6 +10,7 @@ import {getPlacementAccreditationReport} from "@/modules/placements/report-accre
 import {getTpoAccreditationStudentExport} from "@/modules/placements/tpo-accreditation-students-service";
 import {listTpoBatches} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {accreditationStudentCompleteness} from "@/modules/placements/tpo-accreditation-completeness";
+import {accreditationPackageLpa,accreditationOfferStatusLabel,accreditationJoiningLabel} from "@/modules/placements/tpo-accreditation-students-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -63,7 +64,7 @@ export default async function TpoAccreditationReportPage({
       <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/accreditation" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Accreditation evidence export"
+        title="Accreditation export"
         description="Download a college-scoped working CSV of recorded placement outcomes. This is not a NAAC/NIRF-approved submission template."
         actions={selectedBatch&&studentReport&&studentReport.rows.length>0?
           <a href={"/api/placements/reports?"+query.toString()}
@@ -103,19 +104,20 @@ export default async function TpoAccreditationReportPage({
          <ul className="grid gap-1 text-sm sm:grid-cols-2">{completeness.fields.map(field=>
           <li key={field.key}>{field.label} — missing for {field.missing}</li>)}</ul>
          <p className="text-xs text-muted-foreground">This checks seven fields in the recorded placed-student export, not all graduating learners or external placement evidence.</p>
-         <a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-10 items-center text-primary-text underline">
+         {studentReport.rows.length>0?<a href={"/api/placements/reports?"+query.toString()} className="inline-flex min-h-10 items-center text-primary-text underline">
           Export anyway
-         </a>
+         </a>:null}
         </div>:null}
         <p className="text-sm">{studentReport.rows.length} placed students in this batch.</p>
         <p className="text-sm text-muted-foreground">{studentReport.warning}</p>
         <div className="overflow-x-auto">
          <table className="min-w-[52rem] w-full text-left text-sm">
-          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
+          <thead><tr>{["Name","Roll no.","Programme","Branch","Batch","Employer","Employer contact","Package (best offer)","Offers held","Offer status","Joining"].map(h=>
            <th key={h} scope="col" className="border-b px-3 py-2">{h}</th>)}</tr></thead>
           <tbody>{studentReport.rows.slice(0,50).map(student=><tr key={student.membershipId} className="border-b">
            {[student.name,student.rollNumber,student.programme,student.branch,student.batch,
-            student.employer,student.packageInr,student.offersHeld,student.offerStatus,student.joining].map((value,index)=>
+            student.employer,student.employerContact??"Not recorded",accreditationPackageLpa(student.packageInr),student.offersHeld,
+            accreditationOfferStatusLabel(student.offerStatus),accreditationJoiningLabel(student.joining)].map((value,index)=>
             <td key={index} className="px-3 py-2">{value??"—"}</td>)}
           </tr>)}</tbody>
          </table>

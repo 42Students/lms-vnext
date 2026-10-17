@@ -12,7 +12,7 @@ export function contentTypesForKind(kind:AdminContentKind) {
   kind==="RESOURCES"?["RESOURCE"] as const:["LIVE_CLASS"] as const;
 }
 export const ADMIN_CONTENT_LABELS:Record<AdminContentKind,string>={
- VIDEOS:"Videos",RESOURCES:"Resources",LIVE_CLASSES:"Live Classes",
+ VIDEOS:"Videos",RESOURCES:"Resources",LIVE_CLASSES:"Live classes",
 };
 export function adminContentHref(kind:AdminContentKind,raw:unknown) {
  const query=adminContentQuerySchema.parse(raw),p=new URLSearchParams();
@@ -26,6 +26,6 @@ export function adminContentPages(total:number) {
  return Math.max(1,Math.ceil(total/ADMIN_CONTENT_PAGE_SIZE));
 }
 export function adminContentTypeLabel(type:string) {
- return type==="YOUTUBE"?"YouTube":type==="VIDEO"?"Hosted video":
-  type==="RESOURCE"?"Learning resource":type==="LIVE_CLASS"?"Live class":"Unknown content";
+ return type==="YOUTUBE"?"YouTube Video":type==="VIDEO"?"Video (Upload)":
+  type==="RESOURCE"?"Resource":type==="LIVE_CLASS"?"Live Class":"Unknown content";
 }

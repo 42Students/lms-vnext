@@ -872,10 +872,15 @@ export async function getTpoStudentsIntelligence(
   const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
     workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
       input.afterCollege==="NOT_DECIDED"&&!outcomeMatches.assigned.has(row.membershipId));
+  // Journey tiles follow the same scoped filter as the roster rather than
+  // reporting whole-college counts after a branch or program is selected.
+  const scopedRows=filterTpoStudentRoster(filteredRows,{
+    ...input,page:1,pageSize:Math.max(1,filteredRows.length),
+  }).items;
   return {
     collegeId: college.id,
     season: activeSeason ?? null,
-    summary: summarizeTpoStudents(workingRows),
+    summary: summarizeTpoStudents(scopedRows),
     branches: summarizeTpoStudentBranches(workingRows),
     classChoices:[...new Map(activeSections.filter(section=>
       cohortByEnrollment.get(section.enrollmentId)===section.cohortId)

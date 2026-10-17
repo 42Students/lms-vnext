@@ -1,0 +1,37 @@
+# 2-minute tick, requires orchestrator-provisioned INTERNAL_ALERT_TICK_SECRET
+apiVersion: batch/v1
+kind: CronJob
+metadata: { name: vnext-alert-tick, namespace: lms-dev-2026 }
+spec:
+  schedule: "*/2 * * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 30 -o /dev/null \
+                    -X POST -H "x-internal-alerts-key: $INTERNAL_ALERT_TICK_SECRET" \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/alerts/tick
+              env:
+                - name: INTERNAL_ALERT_TICK_SECRET
+                  valueFrom:
+                    secretKeyRef: { name: vnext-integrations, key: INTERNAL_ALERT_TICK_SECRET }
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }

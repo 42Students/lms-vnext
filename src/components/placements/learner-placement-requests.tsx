@@ -63,6 +63,10 @@ type OfferOption = {
 const textareaClass =
   "min-h-24 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none transition placeholder:text-[var(--lms-placeholder)] focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
+function legacyRequestStatus(value:RequestItem["status"]):string{
+ return value==="PENDING"?"Waiting for the placement cell":
+  value==="REJECTED"?"Not approved":value==="APPROVED"?"Approved":"Cancelled";
+}
 function humanize(value: string) {
   return value
     .toLowerCase()
@@ -325,7 +329,7 @@ export function LearnerPlacementRequests({
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
-              Requests & exceptions
+              Your requests
             </h2>
             <p className="mt-1 text-sm text-body">
               Ask for schedule or offer exceptions without silently changing shared placement data. Approved requests apply their effect atomically.
@@ -467,7 +471,7 @@ export function LearnerPlacementRequests({
               <textarea
                 aria-label="Reschedule reason"
                 className={textareaClass}
-                placeholder="Why do you need this exception?"
+                placeholder="Tell the placement cell why"
                 value={roundReason}
                 onChange={(event) =>
                   setRoundReason(
@@ -613,7 +617,7 @@ export function LearnerPlacementRequests({
                     </p>
                     {item.decisionNote ? (
                       <p className="mt-2 text-xs text-muted-foreground">
-                        Decision note:{" "}
+                        Reply:{" "}
                         {item.decisionNote}
                       </p>
                     ) : null}
@@ -633,7 +637,7 @@ export function LearnerPlacementRequests({
                               : "neutral"
                       }
                     >
-                      {humanize(item.status)}
+                      {legacyRequestStatus(item.status)}
                     </StatusBadge>
                     {item.status ===
                     "PENDING" ? (
@@ -656,7 +660,7 @@ export function LearnerPlacementRequests({
                   </div>
                 </div>
                 <p className="mt-2 text-xs text-muted-foreground">
-                  Requested{" "}
+                  Sent{" "}
                   {when(item.requestedAt)}
                   {item.decidedAt
                     ? " · decided " +

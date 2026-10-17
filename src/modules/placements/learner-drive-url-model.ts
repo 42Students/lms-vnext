@@ -12,13 +12,14 @@ export const learnerDriveUrlSchema=z.object({
   soon:z.literal("1").optional(),
   availability:learnerDriveAvailabilitySchema.optional().default("all"),
   page:z.coerce.number().int().min(1).max(10_000).optional().default(1),
+  saved:z.literal("1").optional(),
 }).strict();
 export function readLearnerDriveUrl(raw:string):{
-  filters:LearnerJobBrowseFilters;page:number;
+  filters:LearnerJobBrowseFilters;page:number;savedOnly:boolean;
 } {
   const query=new URLSearchParams(raw.startsWith("?")?raw.slice(1):raw);
   const safe: Record<string,string> = {};
-  for (const key of ["q","type","loc","sort","eligible","soon","availability","page"]) {
+  for (const key of ["q","type","loc","sort","eligible","soon","availability","page","saved"]) {
     const values = query.getAll(key);
     if (values.length === 1 && learnerDriveUrlSchema.safeParse({ [key]: values[0] }).success) {
       safe[key] = values[0]!;
@@ -29,12 +30,12 @@ export function readLearnerDriveUrl(raw:string):{
   return {filters:{
     search:v.q,employmentType:v.type,location:v.loc,sort:v.sort,
     eligibleOnly:v.eligible==="1",closingSoon:v.soon==="1",availability:v.availability,
-  },page:v.page};
+  },page:v.page,savedOnly:v.saved==="1"};
 }
 export function learnerDriveQueryWithChanges(
   current:string,changes:Record<string,string|null>,
 ):string {
-  const allowed=["q","type","loc","sort","eligible","soon","availability","page"];
+  const allowed=["q","type","loc","sort","eligible","soon","availability","page","saved"];
   const query=new URLSearchParams();
   const prev=new URLSearchParams(current);
   for(const key of allowed){

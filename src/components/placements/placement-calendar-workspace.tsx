@@ -27,6 +27,9 @@ import {
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
+import {toTpoBlockedCalendarEvents} from "@/modules/placements/tpo-blocked-calendar-model";
+import {summarizeTpoCalendarNeeds} from "@/modules/placements/tpo-calendar-needs-model";
+import {tpoLegacyCalendarEventTitle,TPO_CALENDAR_SUBTITLE,TPO_EMPTY_AGENDA} from "@/modules/placements/tpo-calendar-display-model";
 import { calendarDueAtToIstLocal } from "@/modules/placements/tpo-calendar-followup-model";
 import { placementRoundKinds } from "@/modules/placements/validation";
 
@@ -61,6 +64,7 @@ const EVENT_FILTERS: ReadonlyArray<{
   label: string;
 }> = [
   { value: "", label: "All events" },
+  { value: "BLOCKED", label: "Blocked (exam) dates" },
   { value: "ROUND", label: "Rounds and talks" },
   {
     value: "APPLICATION_DEADLINE",
@@ -290,6 +294,7 @@ function eventDateTime(value: Date): string {
 function eventTypeLabel(
   event: PlacementCalendarEvent,
 ): string {
+  if (event.kind === "BLOCKED") return "Blocked";
   if (event.kind === "APPLICATION_DEADLINE") {
     return "Deadline";
   }
@@ -306,6 +311,7 @@ function eventTypeLabel(
 function eventTone(
   event: PlacementCalendarEvent,
 ): "neutral" | "info" | "success" | "warning" {
+  if (event.kind === "BLOCKED") return "neutral";
   if (
     event.status === "DONE" ||
     event.status === "COMPLETED"
@@ -473,24 +479,23 @@ export async function PlacementCalendarWorkspace({
         )
       : response.events;
 
+  const audienceEvents=audience==="TPO"?events.map(event=>({...event,title:tpoLegacyCalendarEventTitle(event)})):events;
   const needsWindow=audience==="TPO"?await listPlacementCalendarEvents(context,{
     collegeId,
     from:placementCalendarDayKey(new Date(now.getTime()-90*86400000)),
     to:placementCalendarDayKey(new Date(now.getTime()+7*86400000)),
   }):null;
   const blockedDays=audience==="TPO"?await getTpoBlockedDates(context):null;
+  const blockedEvents=audience==="TPO"&&blockedDays?.ready&&(!state.kind||state.kind==="BLOCKED")?
+    toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to):[];
+  const visibleEvents=state.kind==="BLOCKED"?blockedEvents:[...audienceEvents,...blockedEvents];
+  if(audience==="TPO"&&blockedDays?.ready)
+   eventTypeCounts.set("BLOCKED",toTpoBlockedCalendarEvents(blockedDays.rows,window.from,window.to).length);
   const needsEvents=needsWindow?.events??[];
-  const overdue=needsEvents.filter(item=>item.kind==="FOLLOW_UP"&&item.status==="OPEN"&&item.startsAt<now);
   const blockedSet=new Set(blockedDays?.rows.map(item=>item.day)??[]);
-  const blockedRounds=needsEvents.filter(item=>item.kind==="ROUND"&&blockedSet.has(placementCalendarDayKey(item.startsAt)));
-  const byBusyDay=new Map<string,number>();
-  for(const item of needsEvents){
-    const day=placementCalendarDayKey(item.startsAt);
-    byBusyDay.set(day,(byBusyDay.get(day)??0)+1);
-  }
-  const busyDays=[...byBusyDay].filter(([,count])=>count>=3);
+  const {overdue,blockedRounds,busyDays}=summarizeTpoCalendarNeeds(needsEvents,blockedSet,now);
   const groups =
-    groupPlacementCalendarEvents(events);
+    groupPlacementCalendarEvents(visibleEvents);
 
   const byDay = new Map(
     groups.map((group) => [
@@ -501,7 +506,7 @@ export async function PlacementCalendarWorkspace({
 
   const summary =
     summarizePlacementCalendar(
-      events,
+      visibleEvents,
       now,
     );
 
@@ -548,7 +553,7 @@ export async function PlacementCalendarWorkspace({
         }
         description={
           isTpo
-            ? "College-wide rounds, application deadlines and recruiter follow-ups. Dates and times are shown in Indian Standard Time."
+            ? TPO_CALENDAR_SUBTITLE
             : audience === "SUPER_ADMIN"
               ? "Review the interview schedule, conflicts and candidate context without leaving the placements workspace."
               : "Interview rounds and other employer events across your college, with company and job filters. Dates and times are shown in Indian Standard Time."
@@ -892,10 +897,19 @@ export async function PlacementCalendarWorkspace({
         </div>
       </section>
 
+      {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
+        aria-label="All-day blocked dates" className="rounded-xl border border-border bg-surface-subtle p-4">
+        <h2 className="text-sm font-semibold text-foreground">Blocked (exam) dates · All day</h2>
+        <ul className="mt-2 flex flex-wrap gap-2">{blockedEvents.map(event=>
+         <li key={event.id} className="rounded-md border border-border bg-muted px-3 py-2 text-sm text-body">
+          <strong>{dateLabel(placementCalendarDayKey(event.startsAt))} · Blocked</strong>
+          {event.note?<p className="text-xs">{event.note}</p>:null}
+         </li>)}</ul>
+       </section>:null}
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
-       events={events.map(item=>({
+       events={(state.kind==="BLOCKED"?[]:audienceEvents).map(item=>({
         id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
         roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,followupId:item.followupId,
         startsAt:item.startsAt.toISOString(),endsAt:item.endsAt?.toISOString()??null,
@@ -1023,8 +1037,8 @@ export async function PlacementCalendarWorkspace({
                 : "Events in visible period"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {events.length} matching event
-              {events.length === 1 ? "" : "s"} ·{" "}
+              {visibleEvents.length} matching event
+              {visibleEvents.length === 1 ? "" : "s"} ·{" "}
               {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)}
             </p>
@@ -1036,8 +1050,8 @@ export async function PlacementCalendarWorkspace({
 
         {groups.length === 0 ? (
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
-            No calendar events match this date range and these filters.
-            Try another date, company or event type.
+            {state.view==="agenda"?TPO_EMPTY_AGENDA:
+             "No calendar events match this date range and these filters. Try another date, company or event type."}
           </div>
         ) : (
           groups.map((group) => (
