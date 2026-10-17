@@ -112,3 +112,15 @@ Tests were authored but not executed here. Browser, PostgreSQL and CI verificati
 | TPO-companies-17 | DONE (source) | Engage Companies lists linked People names or “Add a contact” with company prefill, plus “Drives that ran” and student-placement counts. Same file `TPO-companies-17`. |
 
 All five named source regressions were added; integration, mobile and browser acceptance remain unrun.
+
+## Chat-3 final sprint — company exports, accessibility and privacy
+
+| Gap ID | Disposition | Evidence |
+| --- | --- | --- |
+| TPO-companies-18 | DONE (source) | Engage Companies presents `Companies (n)` and exports matching company rows as CSV with a dedicated action. `tests/unit/chat3-final-sprint-company-accessibility.test.ts`, named `TPO-companies-18`. |
+| TPO-companies-24 | DONE (source) | The shared legacy sidebar active resolver treats `/tpo/companies` and descendant company detail URLs as Engage, without an unauthorized chat-3 shell edit. Same test file `TPO-companies-24`. |
+| TPO-companies-26 | DONE (source, create modal) | The Add company dialog uses `role=dialog`, `aria-modal`, Escape, a Tab focus loop, and returns focus to the launch button; no `window.confirm` in this form. Other company actions should retain their existing focus/confirmation contracts in browser acceptance. Same test file `TPO-companies-26`. |
+| TPO-companies-27 | DONE (source) | Canonical company directory exposes sorting, a matching scoped CSV export and Create drive actions; backend export authorization is independent of the UI. Same test file `TPO-companies-27`. |
+| TPO-companies-28 | DONE (source, safer behavior) | Canonical hiring rows show role, pay, offer and joining statuses, without adding learner-name fields to the Company screen; sensitive learner profile details belong to separately authorized placement flows. Same test file `TPO-companies-28`. |
+
+These named regressions were authored, not run; responsive and keyboard browser acceptance is outstanding.
