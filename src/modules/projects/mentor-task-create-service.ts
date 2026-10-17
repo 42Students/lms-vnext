@@ -70,10 +70,12 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         estimatePoints:input.estimatePoints??null,taskType:input.taskType??null,
       }).returning();
       if(!created)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      // Invalidate other forms holding the old sprint timestamp.
-      const updatedAt=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
-      await tx.update(projectSprints).set({updatedAt})
-        .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
+      // Invalidate other forms holding the old sprint timestamp, if any.
+      if(sprint){
+        const updatedAt=new Date(Math.max(Date.now(),sprint.updatedAt.getTime()+1));
+        await tx.update(projectSprints).set({updatedAt})
+          .where(and(eq(projectSprints.id,sprint.id),eq(projectSprints.projectId,scope.project.id)));
+      }
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TASK_CREATED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
