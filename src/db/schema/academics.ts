@@ -147,6 +147,10 @@ export const cohorts = pgTable(
     status: cohortStatusEnum("status")
       .notNull()
       .default("PLANNED"),
+    academicYear: varchar("academic_year", { length: 16 }),
+    startDate: date("start_date", { mode: "string" }),
+    endDate: date("end_date", { mode: "string" }),
+    inactiveAt: timestamp("inactive_at", { withTimezone: true }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -159,6 +163,10 @@ export const cohorts = pgTable(
       .defaultNow(),
   },
   (table) => [
+    check(
+      "cohorts_legacy_date_order_ck",
+      sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`,
+    ),
     uniqueIndex("cohorts_program_code_uq").on(
       table.programId,
       sql`lower(${table.code})`,
