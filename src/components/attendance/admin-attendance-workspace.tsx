@@ -35,6 +35,7 @@ type DeliveryOption = {
   courseCode: string;
   academicPeriodId: string;
   academicPeriodName: string;
+  isPast:boolean;
   offeringType:"CORE"|"ELECTIVE";
 };
 
@@ -386,7 +387,7 @@ export function AdminAttendanceWorkspace({
           <Select className="mt-1.5" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>
             {termDeliveries.map(item=><option key={item.deliveryId} value={item.deliveryId}>
-              {item.academicPeriodName} · {item.sectionName}{item.offeringType==="ELECTIVE"?" (elective)":""}
+              {item.academicPeriodName} · {item.sectionName}{item.isPast?" · past":""}{item.offeringType==="ELECTIVE"?" (elective)":""}
             </option>)}
           </Select>
         </label>:null}

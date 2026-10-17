@@ -327,3 +327,12 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 ## Round 10 — recovery of archived tenants
 
 `SA-tenants-modules-R02` source-DONE. Both archived organizations and archived colleges can be restored by Super Admin in an authorized scope through same-origin POST endpoints, guarded accessible confirmation, archived-state optimistic SQL and audit events. Parent organization must be ACTIVE before restoring college; organization name cannot conflict with another active one. Organization list and College detail expose recovery. `tests/unit/superadmin-tenants-gap-closure.test.ts` has named R02 test; PostgreSQL/runtime and browser testing remain **unexecuted**. Do not treat this as automatic restoration of child membership, DNS, credential, or runtime readiness.
+
+## Chat-3 round 12 — owner UX freeze honored; source checks are not closures
+
+- Merged `main` commit `40fb893d` into the chat-3 branch before edits; UX page styling is frozen pending a signed-off and three-times-audited playbook. No new teacher-page UX styling was pushed after that owner instruction.
+- Corrected the four `tests/integration/courses-c3-progress.test.ts` missing `points` fixtures from the typecheck report; no tests or typecheck could be executed in this connector-only lane.
+- Existing reported COL-people-20, TPO-drives-47, TPO-drives-51 test assertions match current source on the branch; do not delete or weaken the feature to make an old snapshot appear green.
+- Source review: 39 distinct queued gap IDs have additive, ID-named **sub-contract** tests in `tests/unit/chat3-{tpo,learner,college}-round12-parity-contracts.test.ts`; 18 TPO, 11 learner, 10 college. Full gaps still OPEN/FIXED-ON-MAIN where the legacy workflow is incomplete. The page acceptance files record each ID without inflating DONE counts.
+- Functional code progressed: `TPO-drives-R05`/`TPO-drives-44` validate known field keys using predefined safe text; `COL-attendance-09` now includes tenant-scoped ended deliveries and orders active first, with persisted `past` labels, but archived-term coverage remains incomplete. Added or strengthened ID-named tests. No migrations and no edits to the shared shell, auth or UX playbook.
+- Delegated UNCONFIRMED `MEN-projects-meetings-71` decision is documented in `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md` with an ID-named partial-source failure test; intentional fail-soft delivery is retained.
