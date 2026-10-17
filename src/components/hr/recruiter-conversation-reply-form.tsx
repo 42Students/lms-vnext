@@ -1,9 +1,10 @@
 "use client";
-import {useState,type FormEvent} from "react";
+import {useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {hrReplySuccess,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
  const router=useRouter();
+ const formRef=useRef<HTMLFormElement>(null);
  const [body,setBody]=useState("");
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
@@ -52,16 +53,17 @@ export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
   }else setNotice("Could not send. "+feedback);
   setSending(false);
  }
- return <form onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
+ return <form ref={formRef} onSubmit={submit} className="space-y-3 rounded-xl border border-border bg-surface p-4">
   <h2 className="font-semibold text-foreground">Reply to placement cell</h2>
   <label className="grid gap-2 text-sm text-body">Message
    <textarea value={body} onChange={event=>setBody(event.target.value)}
+    onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
     required maxLength={4000} rows={4} disabled={sending}
     className="rounded-md border border-border bg-surface p-3"
     placeholder="Write a message to the placement cell"/>
   </label>
   <p className="text-xs text-muted-foreground">
-   Replies stay in this employer-college thread and are reauthorized when sent.
+   {body.length}/4000 characters · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
   {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
   <button type="submit" disabled={sending}
