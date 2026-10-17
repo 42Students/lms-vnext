@@ -1,13 +1,20 @@
 import "server-only";
-import {and,count,eq,sql} from "drizzle-orm";
+import {and,count,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobRounds,placementJobs,placementOffers,placementSeasons} from "@/db/schema";
+import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {endDriveApplicants,settleDriveWithdrawalRequests,tellRecruiterDriveStopped} from "./tpo-drive-stop-effects";
 import {placementJobIdSchema} from "./validation";
 import {auditTpoJobChange,requireTpoJobActor,requireTpoJobCollege,type TpoJobTx} from "./tpo-job-write-base";
 import {evaluateTpoDriveClosure,tpoDriveCloseSchema} from "./tpo-drive-close-preview-model";
+async function unreleasedSelections(tx:TpoJobTx,jobId:string){
+ const [entry]=await tx.select({n:count()}).from(placementDriveSelections)
+  .where(and(eq(placementDriveSelections.jobId,jobId),
+   inArray(placementDriveSelections.status,["SELECTED","VERIFIED"])));
+ return entry?.n??0;
+}
 async function impact(tx:TpoJobTx,jobId:string){
  const [applications,rounds,offers]=await Promise.all([
   tx.select({n:count()}).from(placementApplications).where(eq(placementApplications.jobId,jobId)),
@@ -32,9 +39,10 @@ export async function getTpoDriveClosePreview(context:RequestContext,rawJobId:un
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .where(and(eq(placementApplications.jobId,job.id),eq(placementOffers.status,"ISSUED")));
   const issuedOffers=unreleased?.n??0;
+  const pendingSelections=await unreleasedSelections(tx,job.id);
   return {id:job.id,title:job.title,status:job.status,expectedUpdatedAt:job.updatedAt.toISOString(),
-   canClose:job.status==="PUBLISHED"&&season?.status==="ACTIVE"&&issuedOffers===0,
-   issuedOffers,counts:await impact(tx,job.id)};
+   canClose:job.status==="PUBLISHED"&&season?.status==="ACTIVE"&&issuedOffers===0&&pendingSelections===0,
+   issuedOffers,pendingSelections,counts:await impact(tx,job.id)};
  });
 }
 export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -51,9 +59,11 @@ export async function closeTpoDriveWithPreview(context:RequestContext,rawJobId:u
   const [season]=await tx.select({status:placementSeasons.status}).from(placementSeasons)
    .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
   const counts=await impact(tx,job.id);
+  const pendingSelections=await unreleasedSelections(tx,job.id);
   const decision=evaluateTpoDriveClosure(job.status,season?.status??null,
-   counts,input.expectedCounts);
+   counts,input.expectedCounts,pendingSelections);
   if(decision==="PREVIEW_STALE")throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+  if(decision==="UNRELEASED_SELECTIONS")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   if(decision!=="ALLOW")throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
   const [issued]=await tx.select({n:count()}).from(placementOffers)
    .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
