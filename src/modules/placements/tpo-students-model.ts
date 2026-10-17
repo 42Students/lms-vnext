@@ -95,6 +95,7 @@ export type TpoStudentRow = {
   applicationCount: number;
   activeApplicationCount: number;
   offerCount: number;
+  offersAwaitingAnswer: number;
   acceptedOfferCount: number;
   verifiedExternalOfferCount: number;
   placed: boolean;
@@ -129,7 +130,11 @@ export type TpoStudentRosterFilter = {
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   minApplications?:number;maxApplications?:number;
+  minCgpa?:number;maxCgpa?:number;
+  maxActiveBacklogs?:number;maxPastBacklogs?:number;
+  cgpaRecorded?:boolean;
   minOffers?:number;maxOffers?:number;
+  offerWaiting?:boolean;
   classId?:string;
   search?: string;
   page: number;
@@ -202,6 +207,8 @@ export function deriveTpoStudent(
   const placed =
     acceptedOfferCount > 0 ||
     source.verifiedExternalOfferCount > 0;
+
+  const offersAwaitingAnswer=source.offers.filter(offer=>offer.status==="ISSUED").length;
 
   const offerCount = source.offers.filter(
     (offer) =>
@@ -299,6 +306,7 @@ export function deriveTpoStudent(
     applicationCount: source.applications.length,
     activeApplicationCount: dashboard.activeApplicationCount,
     offerCount,
+    offersAwaitingAnswer,
     acceptedOfferCount,
     verifiedExternalOfferCount:
       source.verifiedExternalOfferCount,
@@ -428,6 +436,12 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.maxApplications===undefined||row.applicationCount<=filter.maxApplications)
     .filter(row=>filter.minOffers===undefined||row.offerCount>=filter.minOffers)
     .filter(row=>filter.maxOffers===undefined||row.offerCount<=filter.maxOffers)
+    .filter(row=>filter.offerWaiting===undefined||(row.offersAwaitingAnswer>0)===filter.offerWaiting)
+    .filter(row=>filter.minCgpa===undefined||(row.cgpa!==null&&row.cgpa>=filter.minCgpa))
+    .filter(row=>filter.maxCgpa===undefined||(row.cgpa!==null&&row.cgpa<=filter.maxCgpa))
+    .filter(row=>filter.maxActiveBacklogs===undefined||(row.activeBacklogs!==null&&row.activeBacklogs<=filter.maxActiveBacklogs))
+    .filter(row=>filter.maxPastBacklogs===undefined||(row.pastBacklogs!==null&&row.pastBacklogs<=filter.maxPastBacklogs))
+    .filter(row=>filter.cgpaRecorded===undefined||(row.cgpa!==null)===filter.cgpaRecorded)
     .filter((row) => {
       if (!search) return true;
 
