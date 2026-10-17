@@ -20,6 +20,8 @@ import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer
 import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/placements/recruiter-drive-progress-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
+import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
+import {getOwnRecruiterCandidateRating} from "@/modules/placements/recruiter-private-rating-service";
 import { focusedReviewNavigation } from "@/modules/placements/hr-focused-review-model";
 import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter-focused-review-shortcuts";
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
@@ -143,6 +145,9 @@ export default async function HrPlacementJobPage({
       if (!(error instanceof PlacementsServiceError && error.code === "PLACEMENT_APPLICATION_NOT_FOUND")) throw error;
     }
   }
+  const privateRating=selectedApplicant?.status==="SUBMITTED"
+    ? await getOwnRecruiterCandidateRating(context,workspace.job.id,selectedApplicant.id)
+    : null;
   const selectedRound = workspace.rounds.find(round => round.id === filters.roundId) ??
     (filters.roundId ? null : workspace.rounds[0] ?? null);
   if (filters.roundId && !selectedRound) notFound();
@@ -567,6 +572,9 @@ export default async function HrPlacementJobPage({
                   />
                 </div>
               ) : null}
+              {privateRating?<RecruiterPrivateRatingEditor
+                jobId={workspace.job.id} applicationId={selectedApplicant.id}
+                initial={privateRating}/>:null}
               {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
                 <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
                 <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
