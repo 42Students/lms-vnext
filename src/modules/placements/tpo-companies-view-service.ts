@@ -40,6 +40,7 @@ export const tpoCompaniesQuerySchema = z
   .object({
     collegeId: uuid,
     search: z.string().trim().max(150).optional(),
+    sort: z.enum(["NAME","CONTACTS","DRIVES","JOINS"]).default("NAME"),
     page: z.coerce.number().int().min(1).max(100000).default(1),
     pageSize: z.coerce.number().int().min(1).max(100).default(25),
   })
@@ -264,6 +265,18 @@ export async function getTpoCompaniesView(
     ).length,
     page: filterTpoCompanyRows(all, input),
   };
+}
+
+/** Use one authorized college read for the complete bounded directory export. */
+export async function exportTpoCompanyDirectory(
+ context:RequestContext,raw:unknown,
+){
+ const input=tpoCompaniesQuerySchema.parse(raw);
+ const source=await loadCompanySources(context,input.collegeId);
+ const all=buildTpoCompanyRows(source);
+ const result=filterTpoCompanyRows(all,{...input,page:1,pageSize:2001});
+ if(result.total>2000)throw new Error("COMPANY_EXPORT_TOO_LARGE");
+ return result.items;
 }
 
 /**
