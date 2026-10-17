@@ -59,3 +59,5 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | TPO-requests-verification-14 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-requests-verification-14` contract; see earlier code evidence in this file. |
 | TPO-requests-verification-15 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-requests-verification-15` contract; see earlier code evidence in this file. |
 | TPO-requests-verification-32 | DONE (source verified; CI pending) | `tests/unit/chat5-fixed-on-main-more-evidence.test.ts` — named `TPO-requests-verification-32` contract; see earlier code evidence in this file. |
+
+| TPO-requests-verification-29 | OPEN (additional delegated decision) | Keep identity values masked; add an authorized audited section/history timeline, named decision actor and student roll, and verified document evidence, but no unsecured resume URLs. `tests/unit/chat5-queue-unconfirmed-decisions.test.ts` — `TPO-requests-verification-29`. Tests authored, CI pending. |
