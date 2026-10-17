@@ -391,6 +391,17 @@ export function RecruiterLeadDetailWorkspace({
           {lead.companyName?<section aria-label="Company" className="rounded-lg border border-border bg-surface p-5">
              <h2 className="font-semibold text-foreground">Company</h2>
              <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
+             {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
+               <p>{companySummary.drivesRan} drives that ran · {companySummary.acceptedOfferDrives} accepted-offer drives</p>
+               <p className="text-xs text-muted-foreground">Applied and offers below are stored drive counts, not verified placements.</p>
+               <ul className="space-y-1">
+                 {companySummary.drives.slice(0,5).map(drive=><li key={drive.id}>
+                   <Link className="text-primary-text underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   {" · "+drive.applied+" applied · "+drive.offers+" offers"}
+                 </li>)}
+               </ul>
+             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning">{companyError}</p>:
+               <p role="status" className="mt-2 text-xs text-muted-foreground">Loading company drives…</p>}
              <p className="mt-1 text-xs text-muted-foreground">
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
