@@ -2,7 +2,7 @@ import "server-only";
 import {and,asc,count,eq,ilike,or,exists,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
-import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,users,learnerProgramEnrollments,programs,departments,cohorts} from "@/db/schema";
+import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,placementApplicationScreenings,users,learnerProgramEnrollments,programs,departments,cohorts} from "@/db/schema";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
@@ -14,7 +14,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   status:aliasedColumn(placementApplications.status,"admin_application_status"),
   eligibilityStatus:placementApplications.eligibilityStatus,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
-  pipelineStage:sql<string>`coalesce(${placementCollegeApplicationStages.stage}, 'APPLIED')`.as("admin_application_pipeline_stage"),
+  pipelineStage:sql<string>`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end)`.as("admin_application_pipeline_stage"),
   jobId:aliasedColumn(placementJobs.id,"admin_application_job_id"),
   jobTitle:aliasedColumn(placementJobs.title,"admin_application_job_title"),
   roleTitle:aliasedColumn(placementJobRoleOptions.title,"admin_application_role_title"),
@@ -29,10 +29,12 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   eq(collegeMemberships.collegeId,selected.collegeId)))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
  .leftJoin(placementCollegeApplicationStages,and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),eq(placementCollegeApplicationStages.jobId,placementJobs.id)))
+ .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
  .where(and(
   query.status==="ALL"?undefined:eq(placementApplications.status,query.status as "SUBMITTED"|"WITHDRAWN"),
   query.jobId?eq(placementApplications.jobId,query.jobId):undefined,
-  query.pipelineStage!=="ALL"?sql`coalesce(${placementCollegeApplicationStages.stage}, 'APPLIED') = ${query.pipelineStage}`:undefined,
+  query.source!=="ALL"?eq(placementApplications.channel,query.source):undefined,
+  query.pipelineStage!=="ALL"?sql`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end) = ${query.pipelineStage}`:undefined,
   query.departmentId||query.programId||query.cohortId?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
    .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
    .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
@@ -52,11 +54,14 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  ]);
  const total=counts[0]?.total??0;
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"});
+ const now=Date.now();
  return {query,total,totalPages:superAdminReadPages(total,query.pageSize),items:rows.map(row=>({
   id:row.id,title:row.learnerName||"Unnamed applicant",
   subtitle:row.jobTitle+" · "+row.roleTitle,
   status:row.status,details:["Channel: "+row.channel,"Eligibility: "+row.eligibilityStatus,
-   "Submitted: "+fmt.format(row.submittedAt)+" IST","Stage: "+row.pipelineStage],
+   "Submitted: "+fmt.format(row.submittedAt)+" IST","Age: "+Math.max(0,Math.floor((now-row.submittedAt.getTime())/86400000))+" day(s)","Stage: "+row.pipelineStage],
   href:`/admin/placements/applications/${encodeURIComponent(row.id)}`,
+  secondaryHref:`/admin/placements/jobs/${encodeURIComponent(row.jobId)}/applications`,
+  secondaryLabel:"Manage hiring stage →",
  }))};
 }

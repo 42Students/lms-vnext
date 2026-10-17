@@ -3,7 +3,8 @@ import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-member
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
 import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
 import Link from "next/link";
-import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
+import {CollegeStudentRegisterForm} from "@/components/college/college-student-register-form";
+import {getSuperAdminStudentRegisterOptions} from "@/modules/admin-ui/super-admin-student-register-options-service";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {listAdminScopedPeople} from "@/modules/admin-ui/super-admin-scoped-people-service";
 import {getSuperAdminPeopleFilterOptions} from "@/modules/admin-ui/super-admin-people-filter-options";
@@ -13,13 +14,15 @@ export default async function SuperAdminStudentsPage({searchParams}:{
 }){
  const context=await getCurrentRequestContext();
  const peopleFilters=context.adminScope?.collegeId?await getSuperAdminPeopleFilterOptions(context):null;
+ const choices=context.adminScope?.collegeId?await getSuperAdminStudentRegisterOptions(context):null;
  return <div className="space-y-4">
   {context.adminScope?.collegeId?<div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
-    <PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="LEARNER"/>
+    <a href="#register-student" className="inline-flex min-h-10 items-center font-semibold text-primary-text">Register student ↓</a>
     <Link className="inline-flex min-h-10 items-center font-semibold text-primary-text" href="/admin/people">
       Manage memberships, profiles and account status →
     </Link>
   </div>:null}
+  {choices?<section id="register-student" className="space-y-2"><h2 className="text-lg font-semibold">Register student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Read-only learner memberships in the selected college, without private contact details. Use the scoped membership detail for authorized contact."
