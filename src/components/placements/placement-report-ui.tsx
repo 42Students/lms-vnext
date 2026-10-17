@@ -225,7 +225,12 @@ export function ReportNavigation({
     { href: "/tpo/reports/accreditation", label: "Accreditation export" },
   ];
 
-  return (
+  const m=workspace.report.metrics;
+  return (<>
+    <p role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm font-semibold">
+     For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
+     {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
+    </p>
     <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
       {links.map((link) => (
         <Link
@@ -237,7 +242,7 @@ export function ReportNavigation({
         </Link>
       ))}
     </nav>
-  );
+   </>);
 }
 
 export function ReportCsvLink({
