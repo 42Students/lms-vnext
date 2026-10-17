@@ -34,7 +34,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
     const parsed=JSON.parse(raw) as {recipient?:string;topic?:string};
     createKey.current=sessionStorage.getItem(draftKey+":createKey");
-    if(parsed.topic&&parsed.topic.length<=160)setTopic(parsed.topic);
+    if(parsed.topic&&parsed.topic.length<=200)setTopic(parsed.topic);
     if(parsed.recipient&&members.some(member=>member.membershipId===parsed.recipient))setRecipient(parsed.recipient);
    }catch{/* Storage is optional. */}
   },0);
@@ -76,7 +76,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    </select>
   </label>
   <label className="grid gap-1 text-sm text-body">Topic
-   <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={160} disabled={busy}
+   <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3" placeholder="Drive coordination"/>
   </label>
   <p className="text-xs text-muted-foreground">Only named active TPO members can take part.</p>
