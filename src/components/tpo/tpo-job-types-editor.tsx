@@ -3,9 +3,10 @@ import {TpoCustomJobTypeRename} from "./tpo-custom-job-type-rename";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import {filterTpoJobTypes,tpoJobTypesEmptyMessage,type TpoJobTypeStatusFilter} from "@/modules/placements/tpo-job-type-filter-model";
-type JobType={id:string;label:string;active:boolean;updatedAt:string};
+type JobType={id:string;label:string;active:boolean;updatedAt:string;countsAsPlaced:boolean|null;isBuiltin:boolean};
 export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
  const router=useRouter(),[label,setLabel]=useState("");
+ const [countsAsPlaced,setCountsAsPlaced]=useState<boolean|null>(null);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
  const [search,setSearch]=useState(""),[status,setStatus]=useState<TpoJobTypeStatusFilter>("ALL");
  const visible=filterTpoJobTypes(types,search,status);
@@ -26,21 +27,25 @@ export function TpoJobTypesEditor({types}:{types:readonly JobType[]}){
     data.error??"Job types were not saved."
    );
    setMessage("Job types saved");router.refresh();
-   if(method==="POST")setLabel("");
+   if(method==="POST"){setLabel("");setCountsAsPlaced(null);}
   }catch(e){setError(e instanceof Error?e.message:"Unable to save setting.");}
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4 rounded-xl border border-border bg-surface p-4">
   <h3 className="font-semibold">Manage job types</h3>
   <form className="flex flex-wrap items-end gap-2" onSubmit={event=>{
-   event.preventDefault();if(label.trim().length<2||atLimit||busy)return;
-   void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim()});
+   event.preventDefault();if(label.trim().length<2||countsAsPlaced===null||atLimit||busy)return;
+   void send("/api/placements/tpo/settings/job-types","POST",{label:label.trim(),countsAsPlaced});
   }}>
    <label className="min-w-0 flex-1 text-sm">New job type
     <input className="mt-1 min-h-11 w-full rounded border border-border bg-surface px-3"
      maxLength={40} minLength={2} value={label} disabled={busy} onChange={event=>setLabel(event.target.value)}/>
    </label>
-   <button type="submit" disabled={label.trim().length<2||atLimit||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
+   <fieldset className="space-x-3 text-sm"><legend>Does an offer of this type count as placed?</legend>
+    <label><input name="placed" type="radio" checked={countsAsPlaced===true} onChange={()=>setCountsAsPlaced(true)}/> Yes</label>
+    <label><input name="placed" type="radio" checked={countsAsPlaced===false} onChange={()=>setCountsAsPlaced(false)}/> No</label>
+   </fieldset>
+   <button type="submit" disabled={label.trim().length<2||countsAsPlaced===null||atLimit||busy} className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Add job type</button>
   </form>
   <p className="text-sm text-muted-foreground">Custom job types are college-local configuration only; drive forms and reports use their own registered employment types until the integration is completed.</p>
   <p className="text-sm text-muted-foreground">2-40 letters, digits or simple punctuation · {types.length} of 30 custom types</p>
