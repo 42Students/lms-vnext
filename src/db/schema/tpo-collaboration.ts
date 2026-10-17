@@ -78,7 +78,6 @@ export const placementTpoMessages = pgTable(
         onDelete: "restrict",
       }),
     senderType: varchar("sender_type", { length: 10 }).notNull(),
-    deliveryChannel: varchar("delivery_channel", { length: 8 }).notNull().default("APP"),
     senderUserId: uuid("sender_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -97,8 +96,6 @@ export const placementTpoMessages = pgTable(
       "placement_tpo_messages_sender_ck",
       sql`${table.senderType} in ('TPO', 'RECRUITER')`,
     ),
-    check("placement_tpo_messages_delivery_ck",
-      sql`${table.deliveryChannel} in ('APP','EMAIL')`),
     check(
       "placement_tpo_messages_body_ck",
       sql`length(trim(${table.body})) between 1 and 4000`,
