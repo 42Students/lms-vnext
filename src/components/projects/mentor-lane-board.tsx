@@ -89,10 +89,9 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <h1 className="text-xl font-semibold">Board</h1>
    <div className="flex flex-wrap items-center gap-2">
      {!readOnly?<MentorTaskCreate projectId={projectId}
-       sprintId={(sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.id??""}
-       updatedAt={new Date((sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.updatedAt??0).toISOString()}
-       sprints={sprints.filter(item=>item.status!=="COMPLETED"&&
-         releases.some(release=>release.id===item.releaseId&&release.status!=="SHIPPED")).map(item=>({
+       sprintId={creationDefault?.id??""}
+       updatedAt={creationDefault?new Date(creationDefault.updatedAt).toISOString():""}
+       sprints={creationSprints.map(item=>({
            id:item.id,title:item.title,status:item.status,updatedAt:new Date(item.updatedAt).toISOString(),
          }))}
        learners={members.filter(member=>member.role==="LEARNER").map(member=>({
