@@ -33,6 +33,12 @@ export default async function IndependentFindingsPage({searchParams}:{
  return <div className="min-w-0 space-y-5">{header}
   <section aria-label="Findings import status" className="rounded-xl border border-border bg-surface p-4 text-sm">
    <h2 className="font-semibold">Findings import status</h2>
+   <p role="status" className="mt-1 text-body">
+    {sync?.lastResult==="SUCCESS"?"Last sync succeeded.":
+      sync?.lastResult==="FAILED"?"The last sync failed. Existing imported findings remain available.":
+      sync?.lastResult==="PARTIAL"?"The last sync was partial; review refused files.":
+      "Sync isn't set up on this server."}
+   </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
    <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
@@ -44,6 +50,14 @@ export default async function IndependentFindingsPage({searchParams}:{
       {value==="OPEN"?"Open":value==="RELEASE"?"Release (critical & high)":"All"}
     </Link>)}
   </nav>
+  <section aria-label="Finding status counts" className="flex flex-wrap items-center gap-2 text-sm">
+   <p className="font-semibold">Critical open: {data.criticalOpen}</p>
+   {FINDING_STATUSES.map(status=><Link key={status}
+    href={independentFindingHref({...parsed,statuses:[status],page:1})}
+    className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-primary-text">
+    {status.replaceAll("_"," ")}: {data.statusCounts[status]??0}
+   </Link>)}
+  </section>
   <form method="get" className="grid min-w-0 gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3">
    <input type="hidden" name="view" value={parsed.view}/>
    <label className="text-sm font-semibold">Search

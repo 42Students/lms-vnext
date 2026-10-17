@@ -133,6 +133,18 @@ export function formatTpoAuditEventType(
 ): string {
   const legacy:Record<string,string>={
    PLACEMENTS_COLLEGE_RULES_UPDATED:"Placement rules changed",
+   RECRUITER_LEADS_CREATED:"Recruiter lead added",
+   RECRUITER_LEADS_CONTACT_UPDATED:"Recruiter contact updated",
+   RECRUITER_LEADS_STAGE_SET:"Recruiter lead stage changed",
+   RECRUITER_LEADS_INVITE_LINK_CREATED:"Recruiter invite link created",
+   RECRUITER_LEADS_OWNER_SET:"Recruiter lead owner changed",
+   RECRUITER_LEADS_IMPORTED:"Recruiter leads imported",
+   RECRUITER_LEADS_INVITED_BY_EMAIL:"Recruiter invitation emailed",
+   PLACEMENTS_RECRUITER_BULK_STAGE:"Bulk recruiter stages updated",
+   PLACEMENTS_RECRUITER_BULK_OWNER:"Recruiter lead owner changed",
+   PLACEMENTS_RECRUITER_BULK_UNDO:"Bulk recruiter update undone",
+   "placements.tpo_team.work_handed_over":"Placement ownership handed over",
+   "placements.tpo_team.unowned_assigned":"Unowned placement work assigned",
    "placements.tpo_job_type.created":"Job types changed",
    "placements.tpo_job_type.updated":"Job types changed",
    "placements.tpo_job_type.deleted":"Job types changed",

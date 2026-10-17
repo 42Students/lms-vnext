@@ -1,0 +1,30 @@
+import {describe,it,expect} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+import {parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
+const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
+describe("SA-tenants-modules-48 persisted board filter states",()=>{
+ it("SA-tenants-modules-48 validates the legacy open/release/all views and multi-select facets",()=>{
+  const parsed=parseIndependentFindingFilters({view:"RELEASE",status:["NEW","IN_PROGRESS"],
+   severity:["CRITICAL","HIGH"],kind:["BUG","SECURITY"],area:"courses",page:"2"});
+  expect(parsed).not.toBeNull();
+  if(!parsed)return;
+  expect(independentFindingHref(parsed)).toContain("view=RELEASE");
+  expect(independentFindingHref(parsed)).toContain("status=NEW");
+  expect(independentFindingHref(parsed)).toContain("status=IN_PROGRESS");
+  expect(independentFindingHref(parsed)).toContain("kind=SECURITY");
+  expect(parseIndependentFindingFilters({status:["UNSAFE"]})).toBeNull();
+ });
+ it("SA-tenants-modules-48 calculates counts from SQL-scoped full matches, not one displayed page",()=>{
+  const service=source("src/modules/bug-tracker/independent-audit-findings-service.ts");
+  const page=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
+  expect(service).toContain("statusCounts");
+  expect(service).toContain("criticalOpen");
+  expect(service).toContain(".groupBy(db10AuditFindings.status,db10AuditFindings.severity)");
+  expect(service).toContain("requireIndependentFindingAccess(context)");
+  expect(page).toContain("Critical open: {data.criticalOpen}");
+  expect(page).toContain("Finding status counts");
+  expect(page).toContain("data.statusCounts[status]");
+  expect(page).toContain("independentFindingHref({...parsed,statuses:[status],page:1})");
+ });
+});

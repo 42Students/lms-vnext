@@ -19,6 +19,7 @@ describe("TPO Team message mutations and actor notifications",()=>{
   expect(change).toContain('eq(collegeMemberships.collegeId,college.id)');
   expect(change).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(change).toContain('eq(users.platformStatus,"ACTIVE")');
+  expect(change).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
   expect(change).toContain("tx.insert(inAppNotifications)");
   expect(change).toContain('actionHref:"/tpo/team/"+thread.id+"?m="+message.id');
   expect(reply).toContain('input.markDecision?"Decision from "+actorName:"New message from "+actorName');

@@ -12,6 +12,10 @@ describe("chat-16 independent audit findings sync evidence",()=>{
   expect(page).toContain("readIndependentFindingSyncState(ctx)");
   expect(page).toContain("No verified import has been recorded.");
   expect(page).toContain("No sync was performed by opening this page.");
+  expect(page).toContain('sync?.lastResult==="FAILED"');
+  expect(page).toContain("The last sync failed.");
+  expect(page).toContain('sync?.lastResult==="PARTIAL"');
+  expect(page).toContain("Sync isn't set up on this server.");
   expect(page).not.toContain("Sync completed successfully");
  });
 });

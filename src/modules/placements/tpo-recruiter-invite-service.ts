@@ -88,7 +88,7 @@ export async function issueTpoRecruiterInvite(
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(collegeIdInput);
   const leadId = tpoCrmLeadIdSchema.parse(leadIdInput);
-  await requirePlacementManageScope(context, collegeId);
+  const college=await requirePlacementManageScope(context, collegeId);
 
   return getDb().transaction(async (tx) => {
     const [lead] = await tx
@@ -154,6 +154,15 @@ export async function issueTpoRecruiterInvite(
       isSystem: false,
       createdByUserId: context.user.id,
       createdAt: credential.issuedAt,
+    });
+    await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+      module:"PLACEMENTS",eventType:"RECRUITER_LEADS_INVITE_LINK_CREATED",
+      subjectType:"placement_tpo_lead",subjectId:leadId,
+      summary:"Recruiter invite link created",
+      // A generated link is not an emailed invitation; never claim delivery.
+      metadata:{delivery:"NOT_SENT",hasVerifiedEmail:Boolean(updated?.emailNorm??lead.emailNorm)},
     });
 
     return {

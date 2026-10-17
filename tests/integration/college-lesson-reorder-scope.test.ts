@@ -88,4 +88,28 @@ describe.skipIf(!enabled)("College Admin lesson create/edit/move PostgreSQL",()=
     expect(events.rows.map(row=>row.summary)).toContain("Restored lesson");
   });
 
+  it("COL-course-tabs-15 never overwrites a newer active lesson with the same name",async()=>{
+    const name=prefix+" conflict";
+    const original=await createCourseLesson(admin,{learningPathId:ids.path,name,sequence:11});
+    lessonIds.push(original.id);
+    await archiveCourseLesson(admin,original.id);
+    const replacement=await createCourseLesson(admin,{learningPathId:ids.path,name,sequence:12});
+    lessonIds.push(replacement.id);
+    await expect(restoreCourseLesson(admin,original.id))
+      .rejects.toMatchObject({code:"LESSON_NAME_CONFLICT"});
+    const rows=await pool!.query("SELECT id,status FROM course_lessons WHERE id=ANY($1::uuid[])",[[original.id,replacement.id]]);
+    expect(rows.rows.find(row=>row.id===original.id)?.status).toBe("ARCHIVED");
+    expect(rows.rows.find(row=>row.id===replacement.id)?.status).toBe("ACTIVE");
+  });
+  it("COL-course-tabs-15 does not generate extra audit events for an already active lesson",async()=>{
+    const created=await createCourseLesson(admin,{learningPathId:ids.path,name:prefix+" idempotent",sequence:15});
+    lessonIds.push(created.id);
+    await archiveCourseLesson(admin,created.id);
+    await restoreCourseLesson(admin,created.id);
+    const before=await pool!.query("SELECT count(*)::int AS n FROM activity_events WHERE subject_type='course_lesson' AND subject_id=$1 AND summary='Restored lesson'",[created.id]);
+    await expect(restoreCourseLesson(admin,created.id)).rejects.toMatchObject({code:"LESSON_NOT_FOUND"});
+    const after=await pool!.query("SELECT count(*)::int AS n FROM activity_events WHERE subject_type='course_lesson' AND subject_id=$1 AND summary='Restored lesson'",[created.id]);
+    expect(after.rows[0]?.n).toBe(before.rows[0]?.n);
+  });
+
 });

@@ -7,6 +7,7 @@ import {can} from "@/modules/permissions/policy";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {requireProjectReadAccess} from "./access";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {ProjectsServiceError} from "./errors";
 import {projectMeetingIdSchema} from "./validation";
 import {mentorMeetingDecisionSchema,mentorMeetingDecisionStatus} from "./mentor-meeting-decision-model";
@@ -22,11 +23,14 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
   !hasMembershipRole(context,"MENTOR")||!can(context,"projects.read",{
    collegeId:scope.collegeId,organizationId:scope.organizationId,
   }))throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
+ if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+  throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
  const meetingId=projectMeetingIdSchema.parse(rawMeetingId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
    .where(eq(projectInstances.id,scope.project.id)).for("update").limit(1);
-  if(!project||project.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  if(!project||project.status==="ARCHIVED"||project.status==="COMPLETED")
+   throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   const [current]=await tx.select().from(projectMeetings).where(and(
    eq(projectMeetings.id,meetingId),eq(projectMeetings.projectId,scope.project.id),
   )).for("update").limit(1);
