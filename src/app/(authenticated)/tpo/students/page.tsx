@@ -261,7 +261,6 @@ export default async function TpoStudentsPage({
       profileStatus:query.profileStatus,
       minApplications:query.minApplications,maxApplications:query.maxApplications,
       minOffers:query.minOffers,maxOffers:query.maxOffers,
-    offerWaiting:query.offerWaiting,
       offerWaiting:query.offerWaiting,
       classId:query.classId,
       search: query.search,
