@@ -65,6 +65,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   setBusy(true);setError("");setMessage("");
   try{
    if(url.trim()){
+    if(url.trim().length>2048)throw Error("Link must be at most 2048 characters.");
     let target:URL;
     try{target=new URL(url);}catch{throw Error("Enter a valid HTTPS link.");}
     if(target.protocol!=="https:")throw Error("Enter a valid HTTPS link.");
@@ -168,7 +169,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     <input required maxLength={200} className="mt-1 w-full rounded border bg-background p-2"
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
    <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
-    <input type="url" required={kind!=="RESOURCE"&&!editing} className="mt-1 w-full rounded border bg-background p-2"
+    <input type="url" maxLength={2048} required={kind!=="RESOURCE"&&!editing} className="mt-1 w-full rounded border bg-background p-2"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
    {kind==="RESOURCE"?<label className="text-sm">Notes
      <textarea rows={3} maxLength={5000} value={notes} onChange={e=>setNotes(e.target.value)}
