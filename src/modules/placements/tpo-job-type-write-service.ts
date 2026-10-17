@@ -10,7 +10,7 @@ import {placementTableExists} from "./staged-tables";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 const createSchema=z.object({label:tpoJobTypeNameSchema}).strict();
 export class TpoConfigError extends Error{
- constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"){
+ constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"){
   super(code);this.name="TpoConfigError";
  }
 }
@@ -25,6 +25,9 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),
     sql`lower(${placementTpoJobTypes.label}) = lower(${input.label}::text)`)).limit(1);
   if(existing)throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+  const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
+   .where(eq(placementTpoJobTypes.collegeId,collegeId));
+  if(count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
   const [created]=await tx.insert(placementTpoJobTypes).values({
    collegeId,label:input.label,active:true,
   }).returning({id:placementTpoJobTypes.id,label:placementTpoJobTypes.label});
@@ -54,6 +57,11 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
   if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
   if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
   if(current.active===input.active)return {changed:false,updatedAt:current.updatedAt.toISOString()};
+  if(!input.active){
+   const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
+    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.active,true)));
+   if(count<=1)throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
+  }
   const [updated]=await tx.update(placementTpoJobTypes).set({active:input.active,updatedAt:new Date()})
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
