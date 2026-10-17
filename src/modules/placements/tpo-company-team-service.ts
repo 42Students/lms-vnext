@@ -175,7 +175,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
       eventId:event.id,userId:member.userId,
       title:input.assigneeId===member.id?"A teammate asked you":"Company Team update",
       body:input.body.slice(0,120),
-      actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+      actionHref:"/tpo/companies/"+companyId+"/team#team-message-"+message.id,
     })));
    }
    if(!message)throw new TpoCompanyTeamError("STALE");
@@ -230,7 +230,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
        userId:recipient.userId,eventId:event.id,
        title:input.action==="ASK_DONE"?"Company Team ask completed":"Company Team ask cancelled",
        body:message.body.slice(0,120),
-       actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
+       actionHref:"/tpo/companies/"+companyId+"/team#team-message-"+message.id,
       });
     }
   }
