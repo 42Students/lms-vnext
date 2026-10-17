@@ -61,7 +61,7 @@ export function MentorTaskStatusTransition(props:{
             aria-label={"Blocker note for task "+props.taskId} disabled={pending}
             className="min-h-10 rounded-md border border-border bg-surface px-3"/>
         </label>:null}
-      <Button variant="secondary" size="sm" disabled={!valid||pending||
+      <Button variant="secondary" size="sm" aria-label={"Review status change: "+mentorTaskQuickActionLabel(selected)} disabled={!valid||pending||
         (selected==="BLOCKED"&&!props.blockerReason?.trim()&&!newBlockerReason.trim())}
         onClick={()=>{setError(null);setConfirm(true);}}>{mentorTaskQuickActionLabel(selected)}</Button>
     </div>

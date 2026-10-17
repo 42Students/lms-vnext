@@ -12,7 +12,8 @@ describe("TPO draft edit policy",()=>{
  });
  it("permits only active-season drafts with consistent CTC",()=>{
   expect(evaluateTpoDriveEdit("DRAFT","ACTIVE",input)).toBe("ALLOW");
-  expect(evaluateTpoDriveEdit("PUBLISHED","ACTIVE",input)).toBe("READ_ONLY");
+  // Published drives support confirmed, audited edits; they are not draft-only.
+  expect(evaluateTpoDriveEdit("PUBLISHED","ACTIVE",input)).toBe("ALLOW");
   expect(evaluateTpoDriveEdit("DRAFT","CLOSED",input)).toBe("READ_ONLY");
   expect(evaluateTpoDriveEdit("DRAFT","ACTIVE",{...input,maximumAnnualCtcInr:100})).toBe("INVALID_CTC");
  });

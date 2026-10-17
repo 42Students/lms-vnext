@@ -357,7 +357,7 @@ export function ProjectWorkspace({
           className="rounded-xl border border-border bg-muted p-4"
         >
           <p className="m-0 text-sm font-semibold text-foreground">
-            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
+            {archived && mode==="LEARNER"?"This workspace is archived, so it is read-only.":archived?"Archived workspace · read only":workspace.project.status==="COMPLETED"?"Completed project · read only":"Read-only project access"}
           </p>
           <p className="mt-1 text-sm leading-6 text-body">
             {archived && mode==="MENTOR"?"This workspace is archived. You can read everything here, but tasks, resources, meetings and the submission can no longer be changed.":workspace.project.status==="COMPLETED"?"This project is complete. Existing work and meetings remain available to read; editing is disabled.":"Team, execution, delivery, resources, meetings and activity remain available for review. Mutations are disabled."}
