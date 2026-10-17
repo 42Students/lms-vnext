@@ -257,6 +257,7 @@ export function FacultyAssessmentOverview({
                     {" "}{item.resultsPublished ? "Results published" : "Results private"}
                   </p>
                   <FacultyQuizReview
+                    quizTitle={item.title}
                     quizId={item.id}
                     autoOpen={kind==="QUIZ"&&initialQuizId===item.id}
                     deliveryId={item.deliveryId}
