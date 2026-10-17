@@ -17,6 +17,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
+import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
@@ -673,8 +674,7 @@ export function ProjectWorkspace({
             </p>:null}
           </div>
           {mode === "ADMIN" && !readOnly ? (
-            <Link href={"/college/projects/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-              className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Reassign mentor</Link>
+            <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
           ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
