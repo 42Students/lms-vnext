@@ -69,23 +69,41 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 - TPO-recruiters-33 [FIXED-ON-MAIN] tpo/recruiters
 - TPO-recruiters-37 [FIXED-ON-MAIN] tpo/recruiters
 
+
+### chat-4 source closeout (18/18; branch chatgpt/chat-4-b)
+
+All 18 `TPO-recruiters` IDs above have ID-named cases in
+`tests/unit/chat4-final-sprint-tpo-recruiters-a.test.ts` (9) and
+`tests/unit/chat4-final-sprint-tpo-recruiters-b.test.ts` (9), plus individual
+`DONE` records and owner decisions in
+`docs/audit/acceptance/tpo-recruiters-verification.md`.
+The final sprint commits cite each five-item batch. The deliberate safer
+differences are recorded for manual-only board changes, explicit actions
+instead of a hidden More menu, direct non-mutating duplicate navigation,
+and refusal to infer verification from invitation history.
+Functional draft navigation and keyboard Escape/focus gaps were also repaired.
+Source contracts were checked against the branch (107 literal source assertions);
+the test suite, typecheck, database integrations, and browser accessibility
+were **not run**. Acceptance therefore means source-verified, not CI-green.
+No page UI/UX restyling was introduced.
+
 ## chat-5 (15)
 
-- FAC-courses-02 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-10 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-17 [WRONG] faculty/courses
-- FAC-courses-28 [WRONG] faculty/courses
-- FAC-courses-30 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-32 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-33 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-35 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R03 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R04 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R05 [OPEN] faculty/courses
-- FAC-courses-R06 [OPEN] faculty/courses
-- FAC-courses-R07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R08 [FIXED-ON-MAIN] faculty/courses
+- FAC-courses-02 [OPEN] faculty/courses
+- FAC-courses-07 [OPEN] faculty/courses
+- FAC-courses-10 [DONE] faculty/courses
+- FAC-courses-17 [NOT-A-GAP] faculty/courses
+- FAC-courses-28 [NOT-A-GAP] faculty/courses
+- FAC-courses-30 [DONE] faculty/courses
+- FAC-courses-32 [DONE] faculty/courses
+- FAC-courses-33 [DONE] faculty/courses
+- FAC-courses-35 [DONE] faculty/courses
+- FAC-courses-R03 [DONE] faculty/courses
+- FAC-courses-R04 [DONE] faculty/courses
+- FAC-courses-R05 [DONE] faculty/courses
+- FAC-courses-R06 [DONE] faculty/courses
+- FAC-courses-R07 [DONE] faculty/courses
+- FAC-courses-R08 [DONE] faculty/courses
 
 ## chat-6 (11)
 

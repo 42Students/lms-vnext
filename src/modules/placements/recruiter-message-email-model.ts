@@ -16,8 +16,18 @@ export function isRecruiterUnreadReminderDue(value:RecruiterReminderWindow){
  return now-first>=RECRUITER_MAIL_FIRST_UNREAD_MS &&
   (now-last>=RECRUITER_MAIL_QUIET_MS||now-first>=RECRUITER_MAIL_MAX_WAIT_MS);
 }
+/** Never pass uncontrolled HTML/control characters into ZeptoMail template variables. */
+export function safeRecruiterEmailMergeText(value:string,limit=4000){
+ const max=Math.min(4000,Math.max(0,Number.isFinite(limit)?Math.trunc(limit):4000));
+ const escaped=value.replace(/[\u0000-\u001f\u007f]/g," ").trim()
+   .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+   .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+ if(escaped.length<=max)return escaped;
+ // Never leave a cut-off HTML character entity at the excerpt boundary.
+ return escaped.slice(0,max).replace(/&(?:#[0-9]*|#x[0-9a-f]*|[a-z]*)?$/i,"");
+}
 export function safeRecruiterDigestMessages(messages:readonly {body:string}[]){
- return messages.slice(-3).map(row=>row.body.replace(/[\u0000-\u001f\u007f]/g," ").trim().slice(0,4000));
+ return messages.slice(-3).map(row=>safeRecruiterEmailMergeText(row.body));
 }
 /** Stable, opaque per-thread address: older unread digest emails remain replyable.
  * The secret lives only in worker config; we persist only the derived token hash.
@@ -30,6 +40,13 @@ export function recruiterReplyTokenForThread(secret:string,threadId:string):stri
 export function makeRecruiterReplyAddress(token:string,domain:string):string|null{
  if(!/^[a-f0-9]{32}$/.test(token)||!/^([a-z0-9-]+\.)+[a-z]{2,}$/i.test(domain))return null;
  return "r-"+token+"@"+domain.toLowerCase();
+}
+/** Verify Reply-To before it leaves the outbound mail provider boundary. */
+export function isRecruiterReplyAddress(value:string,domain:string):boolean{
+ const parts=/^r-([a-f0-9]{32})@([a-z0-9.-]+)$/i.exec(value);
+ if(!parts)return false;
+ const expected=makeRecruiterReplyAddress(parts[1].toLowerCase(),domain.trim().toLowerCase());
+ return expected!==null&&expected===value.toLowerCase();
 }
 export function recruiterMailBridgeSignature(secret:string,rawBody:string):string{
  return createHmac("sha256",secret).update(rawBody,"utf8").digest("hex");

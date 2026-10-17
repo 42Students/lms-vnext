@@ -15,6 +15,7 @@ import { verifyClassTeamPreview } from "./class-team-preview-validation";
 import { previewVersion } from "./class-team-preview-token";
 import { classRosterRevision, loadClassTeamRoster, requireTeamCreationAuthority } from "./class-team-roster-service";
 import { classTeamCapacity } from "./class-team-capacity";
+import {cohortCreationResultRows} from "./cohort-creation-outcome-model";
 import { planClassTeamWorkspaceNames } from "./class-team-workspace-names";
 import { publishableProjectTemplateBlueprintSchema } from "./validation";
 import { ProjectsServiceError, postgresConstraintName } from "./errors";
@@ -150,8 +151,10 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         created.push({projectId:project.id,teamGroupId:team.id,title:project.title,
           memberCount:group.membershipIds.length,learnerMembershipId:group.membershipIds[0]});
       }
+      const individualResults=input.cohortMode?
+        cohortCreationResultRows(groups,created,covered):[];
       return {created,teamCount:created.length,learnerCount:members.length,
-        alreadyCovered:covered.size,requested:groups.length};
+        alreadyCovered:covered.size,requested:groups.length,individualResults};
     },{isolationLevel:"serializable"});
   } catch(error) {
     if(postgresConstraintName(error)==="project_instances_college_slug_uq")throw new ProjectsServiceError("PROJECT_SLUG_CONFLICT");

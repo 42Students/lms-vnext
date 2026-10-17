@@ -28,6 +28,7 @@ describe("TPO supplemental job metadata",()=>{
    {studentsRegisterSeparately:true,name:"",url:"https://careers.example.com"},
    {studentsRegisterSeparately:true,name:"Careers",url:""},
    {studentsRegisterSeparately:true,name:"Careers",url:"http://careers.example.com"},
+   {studentsRegisterSeparately:true,name:"Careers",url:"https://user:password@careers.example.com/jobs"},
   ])expect(placementLegacyPostingDetailsSchema.safeParse({...details,portal}).success).toBe(false);
  });
  it("TPO-drives-38 skill tags reject duplicates, overlong tags and more than 30 skills",()=>{
@@ -47,4 +48,82 @@ describe("TPO supplemental job metadata",()=>{
   expect(show).toContain("job.legacyPostingDetails.skillsWanted");
   expect(show).toContain('rel="noopener noreferrer"');
  });
+ it("TPO-drives-41 blocks both native unload and in-app navigation while unsaved",()=>{
+  const guard=source("src/components/placements/use-unsaved-drive-guard.ts");
+  expect(guard).toContain('window.addEventListener("beforeunload", beforeUnload)');
+  expect(guard).toContain('document.addEventListener("click",onAnchorClick,true)');
+  expect(guard).toContain("window.confirm");
+  expect(guard).toContain("event.preventDefault()");
+  expect(guard).toContain("event.stopPropagation()");
+ });
+ it("TPO-drives-41 exposes an honest IST local-save timestamp distinct from server persistence",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain("setLastLocalSaveAt(Date.now())");
+  expect(form).toContain("Local draft saved at ");
+  expect(form).toContain("not yet submitted to the server.");
+  expect(form).toContain("timeZone:\"Asia/Kolkata\"");
+ });
+
+ it("TPO-drives-43 stores an uncertain create outcome after timeout instead of retrying blindly",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  expect(form).toContain('if(reason instanceof FriendlyFetchError&&[0,499,504].includes(reason.status))');
+  expect(form).toContain('localStorage.setItem(uncertainKey,"1")');
+  expect(form).toContain('disabled={pending || !activeSeason || uncertainCreate}');
+  expect(form).toContain("The previous create request may have succeeded.");
+  expect(form).toContain("I checked Drives — allow another attempt");
+  expect(form).toContain('createDriveWithKnownResponse({');
+ });
+
+ it("TPO-drives-31 lists only the current college's outside records without publishing them as jobs",()=>{
+  const service=source("src/modules/placements/recorded-outside-service.ts");
+  const page=source("src/app/(authenticated)/tpo/placements/recorded-outside/page.tsx");
+  const drives=source("src/app/(authenticated)/tpo/placements/lifecycle/page.tsx");
+  expect(service).toContain("listTpoRecordedOutsideDrives");
+  expect(service).toContain('eq(placementOutsideDriveRecords.collegeId,collegeId)');
+  expect(service).toContain('eq(placementCompanyRelationships.collegeId,collegeId)');
+  expect(service).toContain('eq(membershipRoles.role,"TPO")');
+  expect(service).toContain(".limit(101)");
+  expect(page).toContain("Recorded: happened outside");
+  expect(page).toContain("These are historical records, not live jobs.");
+  expect(page).toContain("No outside-platform drives recorded for this college.");
+  expect(drives).toContain('href="/tpo/placements/recorded-outside"');
+ });
+
+ it("TPO-drives-52 quick draft shares strict IST parsing and safe errors with full create",()=>{
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  expect(quick).toContain("driveDeadlineIstToIso(deadline)");
+  expect(quick).toContain('apiFetch<{id:string;status:string}>');
+  expect(quick).toContain("tpoDriveFormErrorMessage(cause)");
+  expect(quick).toContain("title.trim().length < 3");
+ });
+ it("TPO-drives-43/52 quick create requires a duplicate check after unknown POST outcome",()=>{
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  expect(quick).toContain("setUnknownCreate(true)");
+  expect(quick).toContain('[0,499,504].includes(cause.status)');
+  expect(quick).toContain('disabled={pending || unknownCreate || !companyRelationshipId}');
+  expect(quick).toContain("I checked for duplicates");
+ });
+
+ it("TPO-drives-39 persists actual pending preset rounds with readback dedupe",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  const presets=source("src/modules/placements/tpo-drive-round-presets.ts");
+  expect(presets).toContain("TALK_TEST_INTERVIEW");
+  expect(presets).toContain("TEST_TECHNICAL_HR");
+  expect(presets).toContain("TEST_GD_INTERVIEW");
+  expect(form).toContain("plannedTpoRoundRows(roundPreset)");
+  expect(form).toContain("saved.rounds.length");
+  expect(form).toContain("planned.slice(saved.rounds.length)");
+  expect(form).toContain('"POST",{kind:round.kind,name:round.name}');
+ });
+ it("TPO-drives-44 quick and full create both format safe API messages",()=>{
+  const full=source("src/components/placements/placement-job-create-form.tsx");
+  const quick=source("src/components/tpo/tpo-draft-drive-step-one-form.tsx");
+  const messages=source("src/modules/placements/tpo-drive-form-error-copy.ts");
+  expect(full).toContain("tpoDriveFormErrorMessage(error)");
+  expect(quick).toContain("tpoDriveFormErrorMessage(cause)");
+  expect(messages).toContain("PLACEMENT_JOB_INVALID_DEADLINE");
+  expect(messages).toContain("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+  expect(messages).toContain('const FALLBACK = "We could not save this drive. Check your drafts and try again."');
+ });
+
 });

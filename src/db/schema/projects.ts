@@ -1205,5 +1205,11 @@ export const projectMeetings = pgTable(
       "project_meetings_schedule_shape_ck",
       sql`${table.status} not in ('SCHEDULED', 'RESCHEDULED', 'COMPLETED') or (${table.scheduledByUserId} is not null and ${table.meetingUrl} is not null)`,
     ),
+    // MEN-projects-meetings-27: enforce the exact shape registered by the
+    // unnumbered facilitation proposal once the orchestrator migrates it.
+    check(
+      "project_meetings_facilitation_object_ck",
+      sql`jsonb_typeof(${table.facilitation}) = 'object'`,
+    ),
   ],
 );
