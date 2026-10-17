@@ -13,7 +13,7 @@ describe("TPO-inbox-team-15 Everyone conversation",()=>{
   expect(everyoneConversationIsVisible({active:true,isTpo:false,canManage:true})).toBe(false);
  });
  it("TPO-inbox-team-15 validates messages and mute-only membership preference",()=>{
-  expect(everyoneMessageSchema.safeParse({body:" Update for our team "}).data).toEqual({body:"Update for our team"});
+  expect(everyoneMessageSchema.safeParse({body:" Update for our team "})).toMatchObject({success:true,data:{body:"Update for our team"}});
   expect(everyoneMessageSchema.safeParse({body:"  "}).success).toBe(false);
   expect(everyoneMessageSchema.safeParse({body:"x".repeat(4001)}).success).toBe(false);
   expect(everyoneMuteSchema.safeParse({muted:true}).success).toBe(true);
