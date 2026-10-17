@@ -134,7 +134,8 @@ async function requireLearnerQuizAccess(
 ) {
   if (
     quiz.status !== "PUBLISHED" ||
-    quiz.learningPathStatus !== "PUBLISHED"
+    quiz.learningPathStatus !== "PUBLISHED" ||
+    !quiz.lessonVisibleToStudents
   ) {
     throw new CoursesServiceError(
       "QUIZ_NOT_PUBLISHED",

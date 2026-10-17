@@ -25,7 +25,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
   eq(departments.collegeId,collegeId)))
  .where(and(eq(courseLessons.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
-   eq(courseOfferings.status,"ACTIVE")))
+   eq(courseOfferings.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")))
  .orderBy(asc(courses.name),asc(courseLessons.name)).limit(250);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
