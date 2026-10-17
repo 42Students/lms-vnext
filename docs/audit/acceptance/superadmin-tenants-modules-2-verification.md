@@ -30,3 +30,13 @@ Source evidence only; unit, database and browser execution remain with the orche
 | SA-tenants-modules-38 | PARTIAL (source) | Typed interview/application fields persist; active policy consumer enforcement remains unverified. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-38` (written, not run). |
 | SA-tenants-modules-39 | PARTIAL (source) | Typed operational caps persist; enforcement consumers are not wired. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-39` (written, not run). |
 | SA-tenants-modules-40 | DONE (source) | Other stored keys can be added/removed with audit/version checks. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-40` (written, not run). |
+
+
+## chat-13 additional runtime consumer verification — 2026-10-18
+| Gap | Decision | Evidence and remaining work |
+|---|---|---|
+| SA-tenants-modules-37 | PARTIAL — runtime behavior improved | `src/modules/courses/learner-playback-settings.ts` reads strictly global 0119 overrides and validates 5,000–600,000 ms plus watched/in-progress thresholds; `src/modules/courses/progress-service.ts` applies persisted in-progress and completion thresholds to learner read/write; `src/components/courses/learner-course-workspace.tsx` passes the configured save interval to both YouTube and hosted video. `tests/unit/chat13-tenant-settings-runtime-gap37.test.ts` (4 ID-named tests). Classroom chat polling currently has no verified consuming reader, so this gap is not fully closed. |
+| SA-tenants-modules-38 | PARTIAL — validated but not activated | `src/modules/platform-settings/runtime-numeric-model.ts` and `runtime-numeric-service.ts` provide bounded, GLOBAL-only typed numeric values. `tests/unit/chat13-runtime-setting-limits-gap38-gap39.test.ts` verifies placement policy bounds. Existing booking and rate-limit consumers have NOT been wired to these overrides; do not claim behavior changes. |
+| SA-tenants-modules-39 | PARTIAL — announcement cap active in source | `src/modules/announcements/service.ts` queries `ops.announcementMaxPageSize` before scoped page reads, reduces actual query size and keeps an independent 100-row hard ceiling. `tests/unit/chat13-runtime-setting-limits-gap38-gap39.test.ts` (3 ID-named tests). Bulk status, progress bulk and identity JSON caps still need independent runtime integration; do not advertise their overrides as active. |
+
+All tests above are authored, not run; live Postgres, browser and concurrency verification is outstanding. Configured values exceeding the backend safety maximum cannot increase the hard cap.
