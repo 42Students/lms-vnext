@@ -20,6 +20,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const [questions,setQuestions]=useState<Question[]>([empty()]);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
+ const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
  function replaceQuestion(i:number,updated:Question){
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
@@ -54,11 +55,12 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:lesson!.id,deliveryId:deliveryId||null,title:title.trim(),
      description:description.trim()||null,dueAt:dueAt?new Date(dueAt+":00+05:30").toISOString():null,
-     maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:lesson!.nextSequence,
+     maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:nextOverride[lesson!.id]??lesson!.nextSequence,
      questions:questions.map((q,index)=>({...q,sequence:index,
       prompt:q.prompt.trim(),options:q.options.map((o,j)=>({...o,text:o.text.trim(),sequence:j}))}))})});
    const body=await result.json().catch(()=>null);
    if(!result.ok||!body?.quiz?.id)throw new Error(body?.error??"Could not create quiz.");
+   setNextOverride(old=>({...old,[lesson!.id]:(old[lesson!.id]??lesson!.nextSequence)+1}));
    setOpened(false);setTitle("");setDescription("");setDueAt("");setQuestions([empty()]);
    setNotice("Quiz draft created. Publish it when the questions are ready.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
