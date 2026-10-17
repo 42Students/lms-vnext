@@ -27,7 +27,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [sprint,setSprint]=useState(params.get("sprint")??""),[scope,setScope]=useState(params.get("scope")==="all"?"all":"current"),
  [priority,setPriority]=useState(params.get("priority")??""),
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
- [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null);
+ [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null),
+ [visibleLimit,setVisibleLimit]=useState(150);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  function remember(name:string,value:string){
   setVisibleLimit(150);
