@@ -17,7 +17,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-32 | DONE | `src/lib/conflict-recovery.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-32 |
 | GR-33 | DONE | `src/lib/form-validation.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-33 |
 | GR-34 | DONE | `src/lib/action-idempotency.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-34 (server dedupe adoption pending) |
-| GR-50 | DONE | `src/lib/outbound.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-50 (provider adapters adoption pending) |
+| GR-50 | DONE | `src/lib/outbound.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-50; adopted provider paths below |
 | GR-52 | DONE | `src/lib/transaction-retry.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-52 |
 | GR-60 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-action-helpers.test.ts` — GR-60 |
 | GR-11 | DONE | `src/app/global-error.tsx`, `src/app/error.tsx`, `src/app/api/client-errors/route.ts`; `tests/unit/graceful-root-screens.test.ts` — GR-11 |
@@ -31,8 +31,8 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-23 | DONE | `src/components/public/browser-support-notice.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-23 |
 | GR-18 | DONE | `src/lib/db-outage.ts` and `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-18 (central API fallback) |
 | GR-54 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-54 (central error handler only) |
-| GR-19 | DONE | `src/components/ui/graceful-page-loading.tsx`, ${missingLoading.length} new loading boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-19 |
-| GR-20 | DONE | ${missingError.length} new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
+| GR-19 | DONE | `src/components/ui/graceful-page-loading.tsx`, 203 new loading boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-19 |
+| GR-20 | DONE | 207 new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
 | GR-09 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-09; immutable existing-file SHA allowlist in `docs/audit/graceful/raw-error-allowlist.json` |
 | GR-31 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-31 (new violations gate; existing component adoption remains with account lanes) |
 | GR-35 | DONE | `src/components/ui/confirm-action-dialog.tsx`; `tests/unit/graceful-ui-primitives.test.ts` — GR-35 (shared primitive; per-page adoption pending) |
@@ -45,4 +45,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-62 | DONE | `src/hooks/use-form-draft.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-62 (shared primitive; per-page adoption pending) |
 | GR-64 | DONE | `src/lib/safe-download.ts`; `tests/unit/graceful-ui-primitives.test.ts` — GR-64 (shared primitive; per-page adoption pending) |
 | GR-53 | DONE | `src/components/auth/login-form.tsx`; `tests/unit/graceful-login-guards.test.ts` — GR-53 (shared OTP UI) |
-| GR-50 | DONE | Provider adoption: `src/modules/notifications/{exotel-sms,zeptomail-email}.ts`, `src/modules/messaging/providers.ts`; `tests/unit/graceful-provider-adoption.test.ts` — GR-50 |
+
+| GR-55 | DONE | `src/lib/background-job.ts`; `tests/unit/graceful-background-import.test.ts` — GR-55 (worker adoption pending) |
+| GR-63 | DONE | `src/lib/import-preview.ts`; `tests/unit/graceful-background-import.test.ts` — GR-63 (import-route adoption pending) |
+| GR-51 | BLOCKED | Provider acceptance/idempotency verification needed before automatic outbound retry; `src/modules/messaging/service.ts` receipts exist but have no safe retry worker |
