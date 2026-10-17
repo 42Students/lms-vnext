@@ -119,6 +119,16 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
   </form>
+  {applicationFilters?<p role="status" className="text-sm text-body">
+    {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
+    ? "Active filters: "+[
+       data.query.jobId?"Job":null,data.query.departmentId?"Department":null,
+       data.query.programId?"Program":null,data.query.cohortId?"Batch":null,
+       data.query.channel!=="ALL"?data.query.channel:null,
+       data.query.pipelineStage!=="ALL"?data.query.pipelineStage:null,
+      ].filter(Boolean).join(" · ")
+    : "Showing all application sources and stages for the selected college."}
+  </p>:null}
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
   {data.items.length?<div className="grid min-w-0 gap-3 md:grid-cols-2">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
