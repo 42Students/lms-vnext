@@ -51,7 +51,7 @@ export default async function TpoByBranchReportPage({
     <div data-tpo-presentation-report className="space-y-6">
       <PageHeader
         eyebrow="TPO · Reports"
-        title="Placement by branch"
+        title="By branch"
         description="Department-wise registered pool, applicants, offers, placed learners and accepted full-time packages."
         actions={
           <ReportCsvLink workspace={workspace} kind="by-branch" />
