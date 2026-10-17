@@ -1,14 +1,13 @@
 import "server-only";
-import {and,asc,desc,eq,ilike,inArray,or} from "drizzle-orm";
+import {and,asc,desc,eq,ilike,inArray,ne,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,departments,learnerProgramEnrollments,placementApplications,
  placementCompanies,placementCompanyRelationships,placementJobRounds,placementJobs,programs,users}
  from "@/db/schema";
-import {placementCollegeInterviews as interviews} from "@/db/schema/placement-college-interviews";
+import {placementRoundCandidateSlots as interviews} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
-import {placementTableExists} from "./staged-tables";
 export const collegeInterviewFilters=z.object({
  q:z.string().trim().max(100).default(""),
  status:z.enum(["ALL","SCHEDULED","COMPLETED","NO_SHOW","CANCELLED"]).default("ALL"),
@@ -22,8 +21,6 @@ export const collegeInterviewFilters=z.object({
 export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unknown,options:{exportAll?:boolean}={}){
  const filters=collegeInterviewFilters.parse(raw);
  const collegeId=await requireCollegePlacementAdmin(ctx);
- if(!await placementTableExists("placement_college_interviews"))
-  return {ready:false,filters,rows:[],total:0,pageCount:1,summary:null,limited:false,companies:[],departments:[]};
  const db=getDb();
  const [companies,departmentChoices]=await Promise.all([
   db.select({id:placementCompanies.id,name:placementCompanies.name}).from(placementCompanyRelationships)
@@ -35,8 +32,7 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  ]);
 
  const conditions=and(eq(placementJobs.collegeId,collegeId),
-  filters.status==="ALL"?undefined:eq(interviews.status,filters.status),
-  filters.mode==="ALL"?undefined:eq(interviews.mode,filters.mode),
+  eq(interviews.status,"BOOKED"),
   filters.type==="ALL"?inArray(placementJobRounds.kind,["INTERVIEW","GD"]):eq(placementJobRounds.kind,filters.type),
   filters.companyId?eq(placementCompanyRelationships.companyId,filters.companyId):undefined,
   filters.departmentId?eq(departments.id,filters.departmentId):undefined,
@@ -48,9 +44,21 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
   applicationId:interviews.applicationId,studentId:collegeMemberships.id,
   student:users.displayName,company:placementCompanies.name,companyId:placementCompanies.id,
   department:departments.name,job:placementJobs.title,roundName:placementJobRounds.name,
-  kind:placementJobRounds.kind,start:interviews.scheduledAt,duration:interviews.durationMinutes,
-  status:interviews.status,mode:interviews.mode,venue:interviews.venue,
-  meetingUrl:interviews.meetingUrl,version:interviews.version,
+  kind:placementJobRounds.kind,start:interviews.startsAt,
+  duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
+  status:sql<string>`case when exists(select 1 from activity_events ae
+      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}
+       and ae.college_id=${placementJobs.collegeId}
+       and ae.event_type='PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW') then 'NO_SHOW'
+    when exists(select 1 from activity_events ae
+      where ae.subject_type='placement_round_candidate_slot' and ae.subject_id=${interviews.id}
+       and ae.college_id=${placementJobs.collegeId}
+       and ae.event_type='PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED') then 'COMPLETED'
+    else 'SCHEDULED' end`.as("interview_status"),
+  mode:sql<string>`case when ${interviews.room} like 'https://%' then 'VIRTUAL' else 'ON_CAMPUS' end`.as("interview_mode"),
+  venue:interviews.room,meetingUrl:sql<string|null>`case when ${interviews.room} like 'https://%'
+    then ${interviews.room} else null end`.as("meeting_url"),
+  version:interviews.version,
  }).from(interviews)
  .innerJoin(placementJobs,eq(placementJobs.id,interviews.jobId))
  .innerJoin(placementApplications,eq(placementApplications.id,interviews.applicationId))
@@ -65,10 +73,12 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
  .leftJoin(departments,eq(departments.id,programs.departmentId))
  .where(conditions);
- const rows=await source.orderBy(filters.sort==="RECENT"?desc(interviews.scheduledAt):
-  filters.sort==="STUDENT"?asc(users.displayName):asc(interviews.scheduledAt),asc(interviews.id)).limit(5001);
+ const rows=await source.orderBy(filters.sort==="RECENT"?desc(interviews.startsAt):
+  filters.sort==="STUDENT"?asc(users.displayName):asc(interviews.startsAt),asc(interviews.id)).limit(5001);
  const limited=rows.length>5000;
- const selected=rows.slice(0,5000);
+ const selected=rows.filter(row=>
+   (filters.status==="ALL"||row.status===filters.status)&&
+   (filters.mode==="ALL"||row.mode===filters.mode)).slice(0,5000);
  const conflicting=new Set<string>();
  // Conflicts require the same student to be booked in two overlapping
  // active interviews. Same-time college-wide rounds are not a conflict alone.

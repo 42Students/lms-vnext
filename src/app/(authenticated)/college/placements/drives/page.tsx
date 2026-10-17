@@ -5,6 +5,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { driveListHref, driveQueryFromSearch } from "@/modules/placements/college-drive-read-model";
 import { listCollegeDrives } from "@/modules/placements/college-drive-read-service";
+import {CollegeDriveBulkActions} from "@/components/placements/college-drive-bulk-actions";
 
 export default async function CollegeDrivesPage({ searchParams }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -56,6 +57,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       </label>
       <button type="submit" className="min-h-10 self-end rounded-md bg-primary px-3 font-semibold text-on-primary">Filter</button>
     </form>
+    <CollegeDriveBulkActions drives={data.items}/>
     <section className="overflow-x-auto rounded-xl border border-border">
       <p className="p-3 text-sm text-muted-foreground">{data.total} matching persisted drives</p>
       {data.items.length ? <>
@@ -71,6 +73,8 @@ export default async function CollegeDrivesPage({ searchParams }: {
               :"Not specified"}</p>
             <Link href={`/college/placements/jobs/${item.id}/overview`}
               className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive</Link>
+            <Link href={`/college/placements/jobs/${item.id}/applications`} className="ml-3 text-sm text-primary-text underline">Applications</Link>
+            <Link href={`/college/placements/jobs/${item.id}/settings`} className="ml-3 text-sm text-primary-text underline">Edit</Link>
           </article>)}
         </div>
         <table className="hidden w-full min-w-[76rem] text-left text-sm sm:table">
@@ -93,7 +97,9 @@ export default async function CollegeDrivesPage({ searchParams }: {
             <td className="p-3">{item.status}</td>
             <td className="p-3">
               <Link href={`/college/placements/jobs/${item.id}/overview`}
-                className="font-semibold text-primary-text underline">Open</Link>
+                className="font-semibold text-primary-text underline">View applications</Link>
+              <Link href={`/college/placements/jobs/${item.id}/settings`}
+                className="ml-3 font-semibold text-primary-text underline">Edit</Link>
             </td>
           </tr>)}</tbody>
         </table>

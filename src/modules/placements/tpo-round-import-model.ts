@@ -7,9 +7,18 @@ export const roundImportActionSchema=z.object({
  missingPolicy:z.enum(["LEAVE_PENDING","MARK_NOT_CLEARED"]),
  overrides:z.array(z.object({line:z.number().int().positive(),applicationId:z.string().uuid()}).strict()).max(1000),
  skippedLines:z.array(z.number().int().positive()).max(1000),
-}).strict();
+}).strict().superRefine((command,ctx)=>{
+ const lines=command.overrides.map(item=>item.line);
+ const ids=command.overrides.map(item=>item.applicationId);
+ if(new Set(lines).size!==lines.length)ctx.addIssue({code:"custom",path:["overrides"],message:"Only one override per source row is permitted"});
+ if(new Set(ids).size!==ids.length)ctx.addIssue({code:"custom",path:["overrides"],message:"A learner may be matched only once"});
+ if(new Set(command.skippedLines).size!==command.skippedLines.length)
+  ctx.addIssue({code:"custom",path:["skippedLines"],message:"Duplicate skipped rows are not permitted"});
+ if(lines.some(line=>command.skippedLines.includes(line)))
+  ctx.addIssue({code:"custom",path:["skippedLines"],message:"A source row cannot be both matched and skipped"});
+});
 export type ImportRow={line:number;identity:string;applicationId:string;email:string;roll:string;companyId:string;name:string;
- outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;message:string|null};
+ outcome:"PASS"|"FAIL"|"HOLD"|"ABSENT"|null;rank:number|null;invalidRank:boolean;message:string|null};
 function outcome(value:string):ImportRow["outcome"]{
  const token=value.toUpperCase().replace(/[^A-Z]/g,"");
  if(["PASS","PASSED","CLEAR","CLEARED","SELECTED","SHORTLISTED"].includes(token))return "PASS";
@@ -30,7 +39,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
   status=locate("result","outcome","status","decision"),rank=locate("waitlistrank","rank"),
   message=locate("reason","message","studentmessage","comment"),name=locate("student","studentname","name");
- if(status<0||Math.max(app,email,roll,company)<0)throw Error("Include Result and an Application ID, Email, Roll number or Company ID column.");
+ if(status<0||Math.max(app,email,roll)<0)throw Error("Include Result and an Application ID, Email or Roll number column. Company portal IDs are not mapped to internal applicants.");
  if(grid.length>1000)throw Error("Import up to 1,000 student rows per file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
   const value=(col:number)=>col>=0?parts[col]?.trim()??"":"";
@@ -38,9 +47,10 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   const result=outcome(value(status));
   return {line:i+2,identity:value(app)||value(company)||value(email)||value(roll),
    applicationId:value(app),email:value(email),roll:value(roll),companyId:value(company),name:value(name),
-   outcome:result,rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
+   outcome:result,invalidRank:rankValue!==null&&(!Number.isInteger(rankValue)||rankValue<1||rankValue>100000),
+   rank:rankValue===null||Number.isInteger(rankValue)&&rankValue>0&&rankValue<=100000?rankValue:null,
    message:value(message)||null};
  });
  return rows;
 }
-export const ROUND_IMPORT_TEMPLATE="Application ID,Email,Roll number,Company ID,Result,Waitlist rank,Student message\n";
+export const ROUND_IMPORT_TEMPLATE="Application ID,Email,Roll number,Result,Waitlist rank,Student message\n";
