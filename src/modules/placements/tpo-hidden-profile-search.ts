@@ -24,3 +24,17 @@ export function tpoHiddenProfileMatchesSearch(document:unknown,search:string):bo
  }
  return values.some(value=>typeof value==="string"&&value.toLocaleLowerCase("en-IN").includes(term));
 }
+
+/** Dedicated skill filter; matching is performed only inside the scoped server read. */
+export function tpoProfileSkillNameMatches(document:unknown,rawName:string):boolean {
+ const search=rawName.trim().toLocaleLowerCase("en-IN");
+ if(!search)return false;
+ if(!document||typeof document!=="object"||Array.isArray(document))return false;
+ const items=(document as Record<string,unknown>).skills;
+ return Array.isArray(items)&&items.some(value=>{
+  if(!value||typeof value!=="object"||Array.isArray(value))return false;
+  const entry=value as Record<string,unknown>;
+  return ["name","title"].some(key=>typeof entry[key]==="string"&&
+   entry[key].toLocaleLowerCase("en-IN").includes(search));
+ });
+}

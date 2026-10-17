@@ -54,6 +54,7 @@ export type TpoStudentSource = {
   registrationChoice: string | null;
   profileDocument?:unknown;
   hiddenSearchMatched?:boolean;
+  skillNameMatched?:boolean;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
     cgpaHundredths: number | null;
@@ -98,6 +99,7 @@ export type TpoStudentRow = {
   debarred?:boolean|null;
   profileFacts?:TpoStudentProfileFacts;
   hiddenSearchMatched?:boolean;
+  skillNameMatched?:boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
   participationLevel?:ResolvedPlacementParticipation["level"];
   participationReason?:string|null;
@@ -151,7 +153,7 @@ export type TpoStudentRosterFilter = {
   minRoundReached?:number;needsAttention?:boolean;
   interviewedWith?:string;
   debarred?:boolean;
-  gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
+  gender?:string;birthYear?:number;skillName?:string;minSkills?:number;minProjects?:number;
   minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
   branchId?: string;
   programId?: string;
@@ -357,6 +359,7 @@ export function deriveTpoStudent(
     bestSoFar,
     profileFacts:tpoStudentProfileFacts(source.profileDocument),
     hiddenSearchMatched:source.hiddenSearchMatched??false,
+    skillNameMatched:source.skillNameMatched??false,
     bestDriveResults:[...source.applications].sort((a,b)=>{
       const depth=(id:string)=>Math.max(0,...source.appliedResults.filter(result=>result.applicationId===id).map(result=>result.sequence));
       return depth(b.id)-depth(a.id)||a.id.localeCompare(b.id);
@@ -495,6 +498,7 @@ export function filterTpoStudentRoster(
     .filter(row=>!filter.gender||row.profileFacts?.gender===filter.gender)
     .filter(row=>filter.birthYear===undefined||row.profileFacts?.birthYear===filter.birthYear)
     .filter(row=>filter.minSkills===undefined||(row.profileFacts?.skills??0)>=filter.minSkills)
+    .filter(row=>!filter.skillName||row.skillNameMatched===true)
     .filter(row=>filter.minProjects===undefined||(row.profileFacts?.projects??0)>=filter.minProjects)
     .filter(row=>filter.minCertifications===undefined||(row.profileFacts?.certifications??0)>=filter.minCertifications)
     .filter(row=>filter.minExperiences===undefined||(row.profileFacts?.experiences??0)>=filter.minExperiences)
