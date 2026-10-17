@@ -48,7 +48,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   return <div className="space-y-6">
       <AcademicSetupSteps step={3} />
     <PageHeader eyebrow="Super Admin" title="Semesters"
-      description="Create and manage semesters in the selected college." />
+      description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
@@ -105,7 +105,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
             <td className="p-3">{row.programName}</td>
             <td className="p-3">Sem {row.termNumber}</td>
             <td className="p-3 font-semibold">{row.name}</td>
-            <td className="p-3">{row.totalCredits ?? "—"}</td>
+            <td className="p-3">{row.mappedCredits ?? "—"}</td>
             <td className="p-3">{row.mappedCourses}</td>
             <td className="p-3">{row.isActive ? "Active" : "Inactive"}</td>
             <td className="p-3"><CollegeSemesterRowActions row={row} /></td>
