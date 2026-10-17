@@ -6,6 +6,7 @@ import { initialCareerCalendarDay } from "@/modules/placements/learner-career-ca
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
+import {LearnerRoundConfirmAttendance} from "@/components/placements/learner-round-confirm-attendance";
 import {listOwnAppliedPlacementResults} from "@/modules/placements/result-service";
 
 /** Dev legacy combines all learner rounds on one authorized Schedule page. */
@@ -26,9 +27,11 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
   };
   const today = initialCareerCalendarDay();
+  const needsConfirmation=ahead.filter(row=>row.booked&&!row.learnerConfirmedAt).length;
   const rounds = workspace.rounds.map(row => ({
     ...row,
     scheduledAt: row.scheduledAt?.toISOString() ?? null,
+    learnerConfirmedAt:row.learnerConfirmedAt?.toISOString()??null,
     exception: row.exception ? {
       scheduledAt: row.exception.scheduledAt.toISOString(),
       timezone: row.exception.timezone,
@@ -78,6 +81,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
       <p className="text-xs font-semibold text-body">
         {row.booked ? "Booked for this round" : "Round scheduled · Individual booking not yet recorded"}
       </p>
+      {row.booked&&!outcomeText&&
+        (row.exception?.scheduledAt??row.scheduledAt)?.getTime()!>now.getTime()?
+         <LearnerRoundConfirmAttendance applicationId={row.applicationId}
+           roundId={row.roundId} confirmed={Boolean(row.learnerConfirmedAt)}/>:null}
       {outcomeText==="Marked absent" ? (
         <p className="rounded-lg border border-warning bg-surface-subtle p-3 text-sm text-body">
           Marked absent. If this is wrong, tell the placement cell.
@@ -94,6 +101,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   return (
     <div className="space-y-6">
       <p className="text-sm text-body">Your tests, talks and interviews. When the placement cell books you, it shows here and you get a notice.</p>
+      {needsConfirmation>0?<p role="status" className="rounded border border-warning bg-surface-subtle p-3 text-sm font-semibold">{needsConfirmation} rounds need your confirmation</p>:null}
       <nav aria-label="Schedule view" className="flex flex-wrap gap-2">
         {([
           ["coming","Coming up"],["past","Past"],["calendar","Calendar"],
