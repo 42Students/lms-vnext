@@ -70,7 +70,10 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    const exact=matchSource(row,roster);
    if(exact.length===1)used.add(exact[0]!.applicationId);
    unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
-  if(!row.outcome){unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
+  if(!row.outcome){
+   const exact=matchSource(row,roster);
+   if(exact.length===1)used.add(exact[0]!.applicationId);
+   unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
   const candidates=matchSource(row,roster);
   if(candidates.length!==1){
    unmatched.push({line:row.line,identity:row.identity,
