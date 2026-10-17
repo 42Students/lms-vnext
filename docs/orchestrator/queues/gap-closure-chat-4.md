@@ -246,7 +246,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 |---|---|---|---|
 | COL-attendance-R01 | S2 | VALIDATION | DONE |
 | COL-attendance-R02 | S3 | SIDE-EFFECT | OPEN |
-| COL-attendance-R03 | S3 | PERMISSION | OPEN |
+| COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | OPEN |
 | COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-R02 | S3 | MISSING-FIELD | OPEN |
