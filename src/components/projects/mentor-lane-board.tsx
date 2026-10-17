@@ -53,15 +53,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   if(!task||!sp||sp.status!=="ACTIVE"||readOnly||busy||
     !editable.includes(task.status as typeof editable[number])||
     !editable.includes(status as typeof editable[number])||task.status===status)return;
-  if(status==="BLOCKED"&&!task.blockerReason?.trim()){
-   setError("Record a blocker reason in task details before moving to Blocked.");return;
-  }
+  const blockerReason=status==="BLOCKED"&&!task.blockerReason?.trim()
+    ? window.prompt("What's blocking this task?")?.trim() : undefined;
+  if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason)return;
   if(!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
     "/tasks/"+encodeURIComponent(id)+"/mentor-transition","PATCH",{
      status,expectedUpdatedAt:new Date(task.updatedAt).toISOString(),confirmed:true,
+     ...(blockerReason?{blockerReason}:{}),
     }) as {task:Task};
    setUndo({id,status:task.status});
    setTasks(rows=>rows.map(row=>row.id===id?{...row,...result.task}:row));
