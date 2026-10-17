@@ -108,4 +108,20 @@ describe("chat-4 College Course Tabs gap closure",()=>{
   expect(notice).toContain("Ask a Super Admin to assign a college");
  });
 
+ it("COL-course-tabs-17 permits only metadata in authorized admin content preview",()=>{
+  const preview=source("src/components/courses/college-content-preview.tsx");
+  expect(preview).toContain('aria-label="Content preview"');
+  expect(preview).toContain("Private files, meeting links and signed playback addresses are not exposed here.");
+  expect(preview).not.toContain("storageKey");
+  expect(preview).not.toContain("signedUrl");
+  expect(source("src/components/courses/college-content-aggregate.tsx")).toContain("CollegeContentPreview");
+ });
+ it("COL-course-tabs-19 exports page-scoped safe Video Resource and Live Class CSV",async()=>{
+  const {collegeContentCsv}=await import("@/modules/courses/college-content-csv-model");
+  const csv=collegeContentCsv([{title:"=HYPERLINK(1)",course:"CS101",lesson:"Lesson 1",status:"DRAFT",scope:"Shared",visible:"Hidden",details:"No materials"}]);
+  expect(csv).toContain("\"'=HYPERLINK(1)\"");
+  expect(source("src/components/courses/college-content-aggregate.tsx")).toContain("CollegeContentCsvExport");
+  expect(source("src/components/courses/college-live-classes-directory.tsx")).toContain("CollegeContentCsvExport");
+ });
+
 });
