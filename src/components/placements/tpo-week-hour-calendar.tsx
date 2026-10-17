@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useEffect,useMemo,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import type {TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
@@ -24,6 +24,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const router=useRouter();
  const blocked=new Set(blockedDates);
  const [slot,setSlot]=useState<string|null>(null);
+ const triggerRef=useRef<HTMLButtonElement|null>(null);
  const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
  const [loadingLeads,setLoadingLeads]=useState(false);
  const [leadQuery,setLeadQuery]=useState("");
@@ -40,7 +41,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  const current=new Date(nowIso),hourParts=new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(current);
  const nowMinutes=Number(hourParts.find(p=>p.type==="hour")?.value??0)*60+Number(hourParts.find(p=>p.type==="minute")?.value??0);
  const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(current);
- async function open(day:string,hour:number){
+ async function open(day:string,hour:number,trigger?:HTMLButtonElement){
+  triggerRef.current=trigger??null;
   if(!canCreate)return;
   setMessage("");setLeadId("");setLeadQuery("");setNote("");
   setSlot(day+"T"+String(hour).padStart(2,"0")+":00");
@@ -88,7 +90,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
     credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({leadId,dueAt,note:note.trim()||null})});
    if(!response.ok)throw Error("Could not create recruiter follow-up.");
-   setSlot(null);router.refresh();
+   setSlot(null);triggerRef.current?.focus();router.refresh();
   }catch(error){setMessage(error instanceof Error?error.message:"Could not create follow-up.");}
   finally{setSaving(false);}
  }
@@ -96,12 +98,20 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  useEffect(()=>{
   if(!hasDraft)return;
   const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  const protectLinks=(event:MouseEvent)=>{
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   if(target.closest("a[href]")&&!window.confirm("Discard this unfinished follow-up?")){
+    event.preventDefault();event.stopPropagation();
+   }
+  };
   window.addEventListener("beforeunload",prevent);
-  return ()=>window.removeEventListener("beforeunload",prevent);
+  document.addEventListener("click",protectLinks,true);
+  return ()=>{window.removeEventListener("beforeunload",prevent);document.removeEventListener("click",protectLinks,true);};
  },[hasDraft]);
  function cancelDraft(){
   if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;
-  setSlot(null);setMessage("");
+  setSlot(null);setMessage("");triggerRef.current?.focus();
  }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
@@ -131,7 +141,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      return <div key={day} className="relative border-r border-border" style={{height}} aria-label={label(day)+" events"}>
       {Array.from({length:LAST-FIRST},(_,offset)=><button key={offset} type="button"
        aria-label={"Add follow-up on "+label(day)+" at "+clock(FIRST+offset)}
-       disabled={!canCreate||saving} onClick={()=>void open(day,FIRST+offset)}
+       disabled={!canCreate||saving} onClick={clickEvent=>void open(day,FIRST+offset,clickEvent.currentTarget)}
        onDragOver={event=>{if(canCreate){event.preventDefault();event.dataTransfer.dropEffect="move";}}}
        onDrop={event=>{
         event.preventDefault();const followupId=event.dataTransfer.getData("application/x-tpo-followup");
