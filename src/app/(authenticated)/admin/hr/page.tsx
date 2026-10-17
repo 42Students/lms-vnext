@@ -11,6 +11,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
   listSuperAdminHrAccounts,
+  getSuperAdminHrStatusSummary,
 } from "@/modules/placements/super-admin-hr-service";
 import {
   parseSuperAdminHrPageParams,
@@ -115,6 +116,8 @@ export default async function SuperAdminHrPage({
       "The recruiter directory could not be loaded. Retry the request or check the selected administrative scope.";
   }
 
+  const statusSummary=await getSuperAdminHrStatusSummary(context);
+  const scopeDescription=context.adminScope?.collegeId?"Viewing selected college.":context.adminScope?.organizationId?"Viewing selected organization.":"Viewing platform-wide accounts.";
   const filters: HrListFilters = {
     q: query.q ?? "",
     status: query.status ?? "",
@@ -171,6 +174,8 @@ export default async function SuperAdminHrPage({
       list={list}
       filters={filters}
       loadError={loadError}
+      statusSummary={statusSummary}
+      scopeDescription={scopeDescription}
     />
   );
 }
