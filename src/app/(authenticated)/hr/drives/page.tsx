@@ -6,7 +6,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import { filterRecruiterDrives, recruiterDriveListQuerySchema, recruiterDrivesHref, summarizeRecruiterDrives, paginateRecruiterDrives, sortRecruiterDrives } from "@/modules/placements/recruiter-drive-list-model";
+import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
+import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import { listOwnRecruiterPlacementJobs } from "@/modules/placements/recruiter-service";
 import { recruiterVisiblePortfolioCounts } from "@/modules/placements/recruiter-portfolio-counts-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
@@ -57,10 +58,15 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     .filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
-  const totals = {...summarizeRecruiterDrives(jobs),
-    all:summarizeRecruiterDrives(jobs).all+requests.length,
+  // eslint-disable-next-line react-hooks/purity -- the request clock drives IST deadline filters.
+  const now = new Date();
+  const pageResult=await searchOwnRecruiterDrives(context,selectedCollege,{
+    ...query.data,collegeId:selectedCollege,
+  },now);
+  const totals = {...pageResult.totals,
+    all:pageResult.totals.all+requests.length,
     waiting:requests.filter(req=>["REQUEST","SENT_BACK","DRAFT"].includes(req.status)).length,
-    closed:summarizeRecruiterDrives(jobs).closed+
+    closed:pageResult.totals.closed+
       requests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
   };
   const viewOptions = [
@@ -69,11 +75,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {view: "WAITING", label: "Sent for review", count: totals.waiting},
     {view: "CLOSED", label: "Completed and cancelled", count: totals.closed},
   ] as const;
-  // eslint-disable-next-line react-hooks/purity -- recruiter deadline urgency needs request-time current instant.
-  const now = new Date();
-  const filtered = filterRecruiterDrives(jobs, {...query.data, collegeId: selectedCollege},now);
   const attention=hrDriveAttention(jobs,selectedCollege,now);
-  const pageResult = paginateRecruiterDrives(sortRecruiterDrives(filtered,query.data.sort),query.data.page);
   const visibleCounts=await recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id));
   return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
