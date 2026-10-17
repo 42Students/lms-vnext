@@ -115,7 +115,7 @@ export default async function TpoHome(){
    ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
    ...(teamThreads.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
     {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
-   ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
+   ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,
