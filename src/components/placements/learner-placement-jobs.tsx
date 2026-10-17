@@ -12,6 +12,7 @@ import { safeLearnerPlacementUrl } from "@/modules/placements/learner-job-detail
 import { learnerDriveApplyGate, learnerDriveApplySelectionSchema } from "@/modules/placements/learner-drive-apply-model";
 import {learnerDriveDeadlineUrgency} from "@/modules/placements/learner-drive-deadline-urgency-model";
 import {learnerJobDetailFromDrivesHref} from "@/modules/placements/learner-drives-return-model";
+import {LearnerSaveDriveButton} from "@/components/placements/learner-save-drive-button";
 
 type EligibilityStatus =
   | "ELIGIBLE"
@@ -479,11 +480,12 @@ function JobActions({
 }
 
 export function LearnerPlacementJobs({
-  items,snapshotNowIso=null,returnQuery="",
+  items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
 }: {
   items: readonly LearnerPlacementJobItem[];
   snapshotNowIso?:string|null;
   returnQuery?:string;
+  savedJobIds?:readonly string[];
 }) {
   if (items.length === 0) {
     return (
@@ -535,6 +537,8 @@ export function LearnerPlacementJobs({
                   {item.job.description}
                 </p>
               </div>
+              <div className="flex flex-wrap items-center gap-3">
+              <LearnerSaveDriveButton jobId={item.job.id} initialSaved={savedJobIds.includes(item.job.id)}/>
               <StatusBadge
                 tone={eligibilityTone(
                   item.eligibility.status,
@@ -542,6 +546,7 @@ export function LearnerPlacementJobs({
               >
                 {humanize(item.eligibility.status)}
               </StatusBadge>
+              </div>
             </div>
 
             <div className="mt-4 grid gap-3 text-sm sm:grid-cols-2 xl:grid-cols-4">
