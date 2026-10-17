@@ -41,7 +41,13 @@ export async function listTpoRecruiterSavedViews(context:RequestContext){
  }>(sql`SELECT id,name,note,query_json,columns_json,pinned,updated_at
  FROM placement_tpo_recruiter_saved_views WHERE college_id=${college.id}::uuid
  AND owner_user_id=${context.user.id}::uuid ORDER BY pinned DESC,updated_at DESC LIMIT 100`);
- return {ready:true as const,views:result.rows};
+ return {ready:true as const,views:result.rows.map(row=>({
+  ...row,
+  query_json:Object.fromEntries(Object.entries(row.query_json??{}).filter(
+   ([key,value])=>SAVED_FILTER_KEYS.some(allowed=>allowed===key)&&typeof value==="string")),
+  columns_json:Array.isArray(row.columns_json)&&row.columns_json.includes("Contact")?
+   ENGAGE_COLUMNS.filter(column=>row.columns_json.includes(column)):[...ENGAGE_DEFAULT_COLUMNS],
+ }))};
 }
 export async function changeTpoRecruiterSavedView(context:RequestContext,raw:unknown){
  const input=viewBody.parse(raw),college=await scope(context),db=getDb();
