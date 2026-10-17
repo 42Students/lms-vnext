@@ -33,6 +33,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [result, setResult] = useState<ImportResponse | null>(null);
   const [skipRows,setSkipRows]=useState<number[]>([]);
   const [reviewReady,setReviewReady]=useState(false);
+  const [existing,setExisting]=useState<{row:number;leadId:string;name:string}[]>([]);
+  const [previewStatus,setPreviewStatus]=useState<"idle"|"checking"|"ready"|"error">("idle");
+  const previewSeq=useRef(0);
   const launchRef=useRef<HTMLButtonElement>(null);
   const modalRef=useRef<HTMLElement>(null);
   const fileRef=useRef<HTMLInputElement>(null);
@@ -54,6 +57,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   },[open,busy]);
 
   async function chooseFile(file: File | undefined) {
+    const sequence=++previewSeq.current;
+    setExisting([]);
+    setPreviewStatus("idle");
     setResult(null);
     setSkipRows([]);
     setPreview(null);
@@ -73,20 +79,32 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     try {
       const content = /\.xlsx$/i.test(file.name)?await recruiterXlsxToCsv(file):await file.text();
       const parsed = previewTpoLeadCsv(content);
+      if(sequence!==previewSeq.current)return;
       setPreview(parsed);
       setCsv(content);
+      setPreviewStatus("checking");
+      const response=await fetch("/api/placements/tpo/leads/import/preview",{
+        method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({csv:content}),
+      });
+      const data=await response.json() as {collisions?:{row:number;leadId:string;name:string}[];error?:string};
+      if(!response.ok||!Array.isArray(data.collisions))throw new Error(data.error??"Could not check existing recruiters");
+      if(sequence===previewSeq.current){setExisting(data.collisions);setPreviewStatus("ready");}
     } catch (cause) {
+      if(sequence!==previewSeq.current)return;
+      setPreviewStatus("error");
       setError(
         cause instanceof Error && cause.message.startsWith("CSV_")
           ? "Invalid import format: " + cause.message.replaceAll("_", " ")
-          : "Could not read or validate the CSV file.",
+          : "Could not validate this file or check existing recruiters. Choose it again to retry.",
       );
     }
   }
 
   async function commit() {
-    const included=(preview?.valid??0)-skipRows.length;
-    if (!preview || !csv || included<=0 || busy) return;
+    const existingNumbers=new Set(existing.map(item=>item.row));
+    const included=preview?.rows.filter(item=>item.lead&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)).length??0;
+    if (!preview || !csv || included<=0 || busy || previewStatus!=="ready") return;
     if (!reviewReady) {
       setReviewReady(true);
       return;
@@ -99,7 +117,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
         method: "POST",
         credentials: "same-origin",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ confirmed: true, csv, skipRows }),
+        body: JSON.stringify({ confirmed: true, csv, skipRows:[...new Set([...skipRows,...existingNumbers])] }),
       });
       const data = await response.json() as ImportResponse & { error?: string };
       if (!response.ok || !Array.isArray(data.results)) {
@@ -119,6 +137,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
 
   function close() {
     if (busy) return;
+    previewSeq.current++;
     setOpen(false);
     setPreview(null);
     setCsv("");
@@ -127,9 +146,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setFileName("");
     setSkipRows([]);
     setReviewReady(false);
+    setExisting([]);
+    setPreviewStatus("idle");
     launchRef.current?.focus();
   }
 
+  const existingNumbers=new Set(existing.map(item=>item.row));
+  const newRows=preview?.rows.filter(item=>item.lead&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)).length??0;
   return (
     <>
       <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
@@ -178,10 +201,10 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
               <div className="space-y-3">
                 <p className="text-sm text-body" role="status">
                   {preview.total} rows: {preview.valid} valid, {preview.invalid} invalid.
-                  Duplicate contacts are determined by the database when the import commits.
+                  {previewStatus==="checking"?" Checking for existing recruiters…":previewStatus==="ready"?" Existing contacts checked in this college.":" Existing recruiter check is required before import."}
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
-                <p className="text-sm text-body">New: {preview.valid-skipRows.length} to import · Already recruiters: checked on submit · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <p className="text-sm text-body">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
                 <div className="max-h-56 overflow-auto rounded-lg border border-border">
                   <table className="w-full text-left text-sm">
                     <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
@@ -197,9 +220,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         <tr key={item.row} className="border-t border-border">
                           <td className="px-3 py-2">{item.row}</td>
                           <td className="px-3 py-2">{item.name || "Unnamed"}</td>
-                          <td className="px-3 py-2">{item.error ?? (skipRows.includes(item.row)?"Skip row":"New")}</td>
+                          <td className="px-3 py-2">{item.error ?? (existingNumbers.has(item.row)?"Already recruiter":skipRows.includes(item.row)?"Skip row":"New")}{existing.find(entry=>entry.row===item.row)? <Link className="ml-2 text-primary-text underline" href={"/tpo/recruiters/"+existing.find(entry=>entry.row===item.row)!.leadId}>Open</Link>:null}</td>
                           <td className="px-3 py-2"><input type="checkbox" aria-label={"Include row "+item.row}
-                            disabled={!item.lead || busy || Boolean(result)} checked={Boolean(item.lead)&&!skipRows.includes(item.row)}
+                            disabled={!item.lead || existingNumbers.has(item.row) || busy || Boolean(result)} checked={Boolean(item.lead)&&!existingNumbers.has(item.row)&&!skipRows.includes(item.row)}
                             onChange={e=>{setReviewReady(false);setSkipRows(previous=>e.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/></td>
                         </tr>
                       ))}
@@ -207,13 +230,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   </table>
                 </div>
                 {reviewReady&&!result ? <p role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm text-foreground">
-                  Import {preview.valid-skipRows.length} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
+                  Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
                   <button
                     type="button"
                     className={primaryClass}
-                    disabled={busy || preview.valid-skipRows.length <= 0}
+                    disabled={busy || previewStatus!=="ready" || newRows <= 0}
                     onClick={() => void commit()}
                   >
                     {busy ? "Importing…" : reviewReady ? "Confirm import" : "Review and confirm import"}
