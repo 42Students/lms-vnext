@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {tenantCreationScopeRequest} from "@/modules/colleges/admin-tenant-create-handoff";
 
 export type OrganizationOption = {
@@ -39,46 +40,38 @@ export function CollegeCreateForm({
     setError(null);
 
     startTransition(async () => {
-      const response = await fetch("/api/colleges", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ organizationId, name, code,
-          city,state,addressLine1,addressLine2,landmark,postalCode,country }),
-      });
-
-      if (!response.ok) {
-        const payload = await response.json().catch(() => null);
-        setError(payload?.error==="COLLEGE_CODE_CONFLICT"
-          ?"uniqueId '"+code.trim().toLowerCase()+"' is already used by another college"
-          :payload?.error ?? "Could not create college");
-        return;
-      }
-
-      if (advanceToSetup) {
-        const payload: unknown = await response.json().catch(() => null);
-        const request = tenantCreationScopeRequest(payload);
-        if (!request) {
-          setError("College created, but the setup handoff was unavailable. Select it from the scope switcher.");
-          router.refresh();
-          return;
-        }
-        const scopeResponse = await fetch("/api/auth/admin-scope", {
-          method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(request),
+      try {
+        const payload=await apiFetch<unknown>("/api/colleges",{
+          method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify({organizationId,name,code,city,state,addressLine1,
+            addressLine2,landmark,postalCode,country}),
         });
-        if (!scopeResponse.ok) {
-          setError("College created, but selecting it failed. Choose the new college in the scope switcher before setup.");
-          router.refresh();
-          return;
+        if(advanceToSetup){
+          const request=tenantCreationScopeRequest(payload);
+          if(!request){
+            setError("College created, but the setup handoff was unavailable. Select it from the scope switcher.");
+            router.refresh();return;
+          }
+          try{
+            await apiFetch<void>("/api/auth/admin-scope",{
+              method:"POST",headers:{"content-type":"application/json"},
+              body:JSON.stringify(request),
+            });
+          }catch{
+            setError("College created, but selecting it failed. Choose the new college in the scope switcher before setup.");
+            router.refresh();return;
+          }
+          router.push("/admin/tenants/setup");router.refresh();return;
         }
-        router.push("/admin/tenants/setup");
-        router.refresh();
-        return;
+        setName("");setCode("");setCity("");setState("");
+        setAddressLine1("");setAddressLine2("");setLandmark("");setPostalCode("");
+        setCountry("India");router.refresh();
+      }catch(cause){
+        setError(cause instanceof FriendlyFetchError && cause.status===409
+          ? "uniqueId '"+code.trim().toLowerCase()+"' is already used by another college"
+          :cause instanceof Error?cause.message:
+          "Could not create college. Please try again.");
       }
-      setName("");
-      setCode("");
-      setCity("");setState("");setAddressLine1("");setAddressLine2("");
-      setLandmark("");setPostalCode("");setCountry("India");
-      router.refresh();
     });
   }
 
