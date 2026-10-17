@@ -14,10 +14,11 @@ import type { VerificationQueueCard } from "@/components/verification/Verificati
 import {submittedMarksheets} from "@/modules/verification/queue-mark-sheets";
 import {verificationDocumentManifest} from "@/modules/verification/document-manifest";
 import {verificationAttentionFlags} from "@/modules/verification/attention-flags";
+import {tpoVerificationStatuses,type TpoVerificationQuery} from "@/modules/verification/tpo-queue-server-model";
 const statusSchema=z.enum(["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]);
 const sectionSchema=z.enum(["EDUCATION","IDENTITY"]);
-export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
- available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];
+export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerificationQuery):Promise<{
+ available:boolean;enabled:boolean;permitted:boolean;rows:VerificationQueueCard[];hasMore?:boolean;
 }>{
  const collegeId=await requireTpoBatchActor(ctx);
  const names=["profile_verifications","profile_verification_settings","profile_verification_tpo_grants"];
@@ -47,9 +48,15 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
    eq(membershipRoles.role,"LEARNER")))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
-   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
-  .orderBy(desc(profileVerifications.submittedAt)).limit(100);
- const memberIds=[...new Set(records.map(row=>row.id))];
+   eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+   ...(query?[
+    inArray(profileVerifications.status,tpoVerificationStatuses(query)),
+    ...(query.kind!=="ALL"?[eq(profileVerifications.section,query.kind)]:[]),
+   ]:[])))
+  .orderBy(desc(profileVerifications.submittedAt))
+  .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
+ const selected=query?records.slice(0,query.pageSize):records;
+ const memberIds=[...new Set(selected.map(row=>row.id))];
  const enrollments=memberIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
   batchName:cohorts.name,branchName:departments.name,
@@ -61,7 +68,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
    eq(learnerProgramEnrollments.status,"ACTIVE"))):[];
  const byMember=new Map(enrollments.map(row=>[row.membershipId,row]));
  const evaluatedAt=new Date();
- const rows:VerificationQueueCard[]=records.flatMap(row=>{
+ const rows:VerificationQueueCard[]=selected.flatMap(row=>{
   const status=statusSchema.safeParse(row.status),section=sectionSchema.safeParse(row.section);
   if(!status.success||!section.success)return [];
   const marks=submittedMarksheets(row.submittedSnapshot);
@@ -77,5 +84,5 @@ export async function getTpoVerificationQueue(ctx:RequestContext):Promise<{
    submittedAt:row.submittedAt,version:row.version,missingMarksheet,missingIdentityProof,
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},attention}];
  });
- return {available:true,enabled:true,permitted:true,rows};
+ return {available:true,enabled:true,permitted:true,rows,hasMore:Boolean(query&&records.length>query.pageSize)};
 }
