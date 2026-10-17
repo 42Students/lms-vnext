@@ -15,5 +15,7 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 | MEN-projects-meetings-61 | DONE | src/modules/projects/mentor-activity-display-model.ts, src/components/projects/project-activity-filtered-list.tsx; tests/unit/mentor-activity-round4.test.ts — `it("MEN-projects-meetings-61 humanizes activity type, category and empties")` |
 | MEN-projects-meetings-62 | DONE | src/modules/projects/mentor-activity-display-model.ts, src/components/projects/project-activity-filtered-list.tsx; tests/unit/mentor-activity-round4.test.ts — `it("MEN-projects-meetings-62 renders relative time with exact timestamp on hover")` |
 
+| MEN-projects-meetings-71 | DONE | src/app/(authenticated)/mentor/notifications/page.tsx; tests/unit/mentor-meetings-round4-source-failure.test.ts — `it("MEN-projects-meetings-71 preserves other sources and shows Retry sources when a feed fails")` |
+
 ## Remaining
-MEN-projects-meetings-53/55/56/57/58/60/63/64/65/66/71/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+MEN-projects-meetings-53/55/56/57/58/60/63/64/65/66/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
