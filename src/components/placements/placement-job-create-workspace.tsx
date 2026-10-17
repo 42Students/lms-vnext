@@ -96,6 +96,7 @@ export async function PlacementJobCreateWorkspace({
         </ul>
       </details>:null}
       <PlacementJobCreateForm
+        userId={context.user.id}
         collegeId={collegeId}
         activeSeason={
           seasons.find(

@@ -57,3 +57,5 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-51 | NOT-A-GAP (role alternative) | College Admin has a permission-gated separate `/college/placements/new` with the same `PlacementJobCreateWorkspace`; TPO URL does not need to grant College Admin role. Test TPO-drives-51. Broader college-admin action feature parity not asserted. |
 
 | TPO-drives-26 | DONE (create-picker route) | `placement-job-create-workspace.tsx` now offers a college-scoped last-20 closed/cancelled drive picker with `TpoDriveCloneAction`; existing API creates a fresh draft, drops dates/outcomes/offer history and stores `sourceJobId` audit. Full legacy clone UX still subject to browser acceptance; named test TPO-drives-26. |
+
+| TPO-drives-41 | OPEN | Create form now stores a per-user/college browser draft, restores field/selection values and clears backup after success, with a discard option and existing unload/double-submit guard. Server-side autosave + last-saved-by/time and route-change interception remain incomplete. Named test TPO-drives-41. |
