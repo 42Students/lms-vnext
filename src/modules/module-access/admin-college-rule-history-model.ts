@@ -32,7 +32,7 @@ export function safeFullModuleHistory(rows:readonly (AuditRow & {
  eventType:string;subjectType:string;subjectId:string;
 })[]){
  return rows.map(row=>{
-  const module=["projects","placements","electives"].includes(String(row.metadata.module))?
+  const moduleName=["projects","placements","electives"].includes(String(row.metadata.module))?
    String(row.metadata.module):"Optional module";
   const category=row.eventType==="MODULE_ACCESS_BULK_SET"?"Student bulk access":
    row.eventType==="COLLEGE_FEATURE_TOGGLE"?"College feature toggle":"Access changed";
@@ -41,7 +41,7 @@ export function safeFullModuleHistory(rows:readonly (AuditRow & {
   const size=typeof row.metadata.studentCount==="number"&&
    Number.isSafeInteger(row.metadata.studentCount)?row.metadata.studentCount:null;
   return {id:row.id,at:row.occurredAt,actorName:row.actorName||"Unknown actor",
-   module,change:state(row.metadata.before)+" → "+state(row.metadata.after),
+   module:moduleName,change:state(row.metadata.before)+" → "+state(row.metadata.after),
    category,scope:scopeLabel+" · "+row.subjectId,
    ...(size===null?{}:{studentCount:size})};
  });

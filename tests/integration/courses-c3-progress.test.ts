@@ -352,7 +352,6 @@ async function createStructure() {
         contentType: "RESOURCE",
         points: 1,
         title: "C3 Array Notes",
-        points: 1,
         notes: "Read the shared notes",
         sequence: 0,
       },
@@ -365,7 +364,6 @@ async function createStructure() {
       contentType: "VIDEO",
       points: 1,
       title: "C3 Arrays Walkthrough",
-        points: 1,
       storageKey:
         "courses/c3/arrays-walkthrough.mp4",
       durationSeconds: 100,
@@ -381,7 +379,6 @@ async function createStructure() {
         contentType: "RESOURCE",
         points: 1,
         title: "C3 Section B Notes",
-        points: 1,
         notes: "Section B only",
         sequence: 2,
       },
@@ -653,7 +650,6 @@ describe("courses C3 learner progress against PostgreSQL", () => {
           contentType: "LIVE_CLASS",
           points: 1,
           title: "C3 Future Live Class",
-        points: 1,
           externalUrl:
             "https://meet.example.com/c3-future",
           startsAt:
