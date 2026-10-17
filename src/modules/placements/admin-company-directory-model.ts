@@ -18,6 +18,8 @@ export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
   collegeName: string; organizationId: string; relationshipStatus: string;
   companyStatus: string; trusted: boolean; website: string | null;
+  primaryDomain?:string|null; companyCollegeCount?:number; driveCount?:number;
+  lastActiveAt?:Date|null; createdAt?:Date;
 };
 export function projectAdminCompanies(rows: readonly AdminCompanyRow[]) {
   return {
