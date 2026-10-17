@@ -317,6 +317,16 @@ export default async function TpoStudentsPage({
             {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </select>
         </label>
+        <label className="text-sm font-semibold">Profile verified
+          <select name="profileStatus" defaultValue={query.profileStatus??""}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">All verification states</option>
+            <option value="VERIFIED">Verified</option>
+            <option value="WAITING">Waiting to verify</option>
+            <option value="SENT_BACK">Sent back</option>
+            <option value="NOT_VERIFIED">Not verified</option>
+          </select>
+        </label>
         <label className="text-sm font-semibold">After college
           <select name="afterCollege" defaultValue={query.afterCollege??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
