@@ -7,7 +7,9 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
   onChange: (keys: string[]) => void;
 }) {
   const available = columns.filter((column) => !column.exportOnly);
-  const visibleCount=countVisibleTpoColumns(available.map(column=>column.key),selected);
+  const defaultKeys=available.map(column=>column.key);
+  const visibleCount=countVisibleTpoColumns(defaultKeys,selected);
+  const atDefaults=selected.length===defaultKeys.length&&selected.every((key,index)=>key===defaultKeys[index]);
   return <fieldset className="min-w-0 space-y-2 rounded-md border border-border p-3">
     <legend className="px-1 text-sm font-semibold">Visible columns</legend>
     <p role="status" className="text-xs text-muted-foreground">{visibleCount} of {available.length} display columns visible. Export-only fields remain hidden.</p>
@@ -41,10 +43,12 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
         </div>;
       })}
     </div>
-    <button type="button" disabled={selected.length === available.length}
-      onClick={() => onChange(available.map(column => column.key))}
-      className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
-      Show all columns
-    </button>
+    <div className="flex flex-wrap gap-2">
+      <button type="button" disabled={selected.length===available.length}
+        onClick={()=>onChange([...selected,...defaultKeys.filter(key=>!selected.includes(key))])}
+        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Show all columns</button>
+      <button type="button" disabled={atDefaults} onClick={()=>onChange(defaultKeys)}
+        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">Reset columns</button>
+    </div>
   </fieldset>;
 }

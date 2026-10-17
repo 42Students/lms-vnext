@@ -121,7 +121,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
-    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen)).catch(()=>{});
+    setDownloadError("");
+    void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen)).catch(()=>{
+      setDownloadError("Could not copy student rows. Check browser clipboard permissions.");
+    });
    }
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
