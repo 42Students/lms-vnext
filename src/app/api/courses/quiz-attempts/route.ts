@@ -12,6 +12,9 @@ export async function GET(request: Request) {
     const context =
       await getCurrentRequestContext();
     const url = new URL(request.url);
+    const pageRaw=url.searchParams.get("page")??"1";
+    if(!/^[1-9][0-9]{0,2}$/.test(pageRaw))return NextResponse.json({error:"INVALID_PAGE"},{status:400});
+    const page=Number(pageRaw);
     const attempts = await listQuizAttempts(
       context,
       url.searchParams.get("quizId") ?? "",
