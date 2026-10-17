@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
+import { activityEvents, placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -90,6 +90,15 @@ export async function bulkChangeTpoLeadStages(
       if (!result) throw new Error("TPO_CRM_BULK_STAGE_RESULT_MISSING");
       return result;
     });
-    return { results, counts: summarizeTpoBulkLeadStages(results) };
+    const counts=summarizeTpoBulkLeadStages(results);
+    await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:college.id,
+      actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+      module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_STAGE",
+      subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
+      summary:"Bulk recruiter lead stage update",
+      metadata:{action:input.action,leadIds:results.map(r=>r.leadId),counts},
+    });
+    return { results, counts };
   });
 }
