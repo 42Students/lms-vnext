@@ -441,6 +441,7 @@ export function FinalReviewControl({
     useState("");
   const [pending, setPending] =
     useState(false);
+  const [staleReview, setStaleReview] = useState(false);
 
   async function review() {
     if (
@@ -463,6 +464,7 @@ export function FinalReviewControl({
         },
       );
       setOpen(false);
+      setStaleReview(false);
       setFeedback("");
       showToast({
         tone: "success",
@@ -473,6 +475,9 @@ export function FinalReviewControl({
       });
       router.refresh();
     } catch (caught) {
+      if (caught instanceof Error && caught.message.includes("This changed while you were working")) {
+        setStaleReview(true);
+      }
       showToast({
         tone: "error",
         title: "Submission review could not be saved",
@@ -488,18 +493,30 @@ export function FinalReviewControl({
 
   return (
     <>
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={() => setOpen(true)}
-      >
-        Review final delivery
-      </Button>
+      {mode==="MENTOR" ? (
+        <div className="flex flex-wrap gap-2">
+          <Button size="sm" variant="secondary" onClick={() => {
+            setDecision("APPROVED"); setStaleReview(false); setOpen(true);
+          }}>Accept submission</Button>
+          <Button size="sm" variant="secondary" onClick={() => {
+            setDecision("CHANGES_REQUESTED"); setStaleReview(false); setOpen(true);
+          }}>Request changes</Button>
+        </div>
+      ) : (
+        <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>
+          Review final delivery
+        </Button>
+      )}
       <Dialog
         open={open}
         onOpenChange={setOpen}
-        title="Review submission"
-        description="Confirm your decision and feedback. The review will be saved in this project's history."
+        title={mode==="MENTOR" ? (decision==="APPROVED"
+          ? "Accept this submission?" : "Request changes on this submission?") : "Review submission"}
+        description={mode==="MENTOR"
+          ? (decision==="APPROVED"
+            ? "The learner will be notified their submission was accepted."
+            : "The learner will see your feedback and be able to edit and resubmit it.")
+          : "Confirm your decision and feedback. The review will be saved in this project's history."}
         footer={
           <>
             <Button
@@ -528,7 +545,11 @@ export function FinalReviewControl({
         }
       >
         <div className="grid gap-4">
-          <label>
+          {staleReview ? <div role="alert" className="rounded-lg border border-warning-border bg-warning-subtle p-3 text-sm text-body">
+            <p className="font-semibold">This submission may have changed since you opened this review</p>
+            <p>Refresh the page to load the latest version before accepting, requesting changes, or locking.</p>
+          </div> : null}
+          {mode!=="MENTOR" ? <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Decision
             </span>
@@ -549,7 +570,7 @@ export function FinalReviewControl({
                 Request changes
               </option>
             </Select>
-          </label>
+          </label> : null}
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Feedback
