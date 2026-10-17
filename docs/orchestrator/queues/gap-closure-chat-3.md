@@ -372,3 +372,16 @@ The new `docs/orchestrator/queues/final-sprint.md` assigns 18 additional, non-ov
 - **17 FIXED-ON-MAIN**: TPO-companies-07, -08, -10, -11, -12, -13, -14, -15, -16, -17, -18, -24, -26, -27, -28, -R02, -R05. These already exist in source; the missing acceptance/test evidence is now authored, not yet executed in CI. R02 copy/domain error and Retry behavior were additionally repaired on this branch.
 - **1 OPEN**: TPO-companies-05. Existing TPO Team conversations are scoped to two membership IDs, not a company object; no audited company group conversation, mentions, due tasks or explicit decision thread exists. Do **not** pretend a pairwise private chat is the legacy company conversation, and do not add a dangerous generic company link. Requires a registered college-scoped object-thread model, permissions, message/task service and runtime testing.
 - No page UI restyling, no fake joins/learners, no guessed migrations, and no privacy relaxation. Company hiring cards were additionally checked not to render learner full names. The external orchestrator still must run `tsc`, ID-named Vitest cases, and college-isolation integration/browser tests.
+
+## Chat-3 final sprint (2026-10-18): TPO Companies — 18/18 addressed
+
+Source and acceptance: `docs/audit/acceptance/tpo-companies-verification.md`; tests:
+`chat3-final-sprint-company-memory.test.ts`,
+`chat3-final-sprint-company-engage.test.ts`,
+`chat3-final-sprint-company-accessibility.test.ts`,
+`chat3-final-sprint-company-team-and-review.test.ts` under `tests/unit/`.
+
+- **17 FIXED-ON-MAIN verified or repaired:** `TPO-companies-07/08/10/11/12/13/14/15/16/17/18/24/26/27/28/R02/R05`; each has an ID-named test and a page acceptance line. Company hiring bars and the join-link accessible replacement/status retry needed additional code; all were committed to this branch.
+- **TPO-companies-05 (original OPEN):** implemented a college-scoped company Team feature with actual service, API, client conversation, both company surfaces, full Team deep link, 30 s refresh, mentions with verified recipient notifications, decisions, asks, follow, edit/delete, and proposed SQL. This is **source-complete but not deployed**. `docs/proposed-migrations/chat3-tpo-company-team.sql` must be registered on main and applied before runtime use; code checks table existence and shows a truthful pending state.
+- **Validation:** 18 distinct test IDs and 18 acceptance IDs verified by source inspection; test suite, TypeScript, lint, PostgreSQL integration and browser were NOT executed in this connector-only session. Orchestrator must run CI and database migration and review the new Team notification flows.
+- Owner UX freeze honored: new UI exists only to implement missing functions, no restyling of existing page visual system and no shared-shell edits.
