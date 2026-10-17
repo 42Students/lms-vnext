@@ -37,3 +37,10 @@ Tests authored, **not executed**, for every source-checked gap below: `tests/uni
 ## Notes
 
 Canonical `users` login email/phone/name cannot be mutated by a College Admin membership editor without a verified identity workflow. Contact privacy remains restrictive pending the owner's explicit contact-unmasking decision; a student contact cell is never filled with a guessed phone number. The mentor workload/reassign side effects remain OPEN until scoped service and persisted notification evidence is independently verified.
+
+## Round 3 — graceful handling and safety hardening (tests not run)
+
+- `COL-people-03`: Faculty CSV PREVIEW/IMPORT now uses `apiFetch` and `useGuardedAction`; malformed HTML, timeout and network errors cannot become raw alerts. Additional test `COL-people-03 import preview/import use the guarded request helper without echoing API codes`.
+- `COL-people-04`: Student registration now uses `apiFetch` and in-flight action guard, preserving draft on failure. Test `COL-people-04 student register uses guarded network calls and keeps the form after failed submit`.
+- `COL-people-05`: Student CSV preview/import is guarded and still exports its per-row report. Test `COL-people-05 learner CSV preview and import use safe JSON, with per-row report retained`.
+- `COL-people-25` remains **OPEN**: partial-registration failures are now summarized rather than leaking raw server codes, but exact identity duplicate/field validation parity is not yet complete. Test `COL-people-25 untrusted partial registration failures are never shown verbatim to learners`.
