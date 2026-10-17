@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
+import {facultyContentExternalHref} from "@/modules/courses/faculty-content-preview-model";
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null};
@@ -24,6 +25,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const [title,setTitle]=useState(item.title),[order,setOrder]=useState(String(item.sequence+1));
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
  const [notes,setNotes]=useState(item.notes??"");
+ const [replacementUrl,setReplacementUrl]=useState("");
  const [startsAt,setStartsAt]=useState(localDate(item.startsAt)),[endsAt,setEndsAt]=useState(localDate(item.endsAt));
  async function save(){
   if(busy)return;
@@ -32,6 +34,11 @@ export function SuperAdminContentActions({item}:{item:Content}){
    setError("Enter a title and valid Order.");return;
   }
   let changes:Record<string,unknown>={title:title.trim(),sequence:index-1};
+  if(["YOUTUBE","LIVE_CLASS","RESOURCE"].includes(item.contentType)&&replacementUrl.trim()){
+   const href=facultyContentExternalHref(item.contentType,replacementUrl.trim());
+   if(!href){setError("Enter a secure HTTPS link for this content.");return;}
+   changes={...changes,externalUrl:href};
+  }
   if(item.contentType==="RESOURCE"){
    if(!notes.trim()&&!(item.notes??"").trim()){
     // The database may still hold private FILE/LINK materials. Keep them untouched.
