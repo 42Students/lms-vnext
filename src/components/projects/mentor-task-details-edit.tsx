@@ -34,6 +34,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==props.title ||
     (description.trim()||null)!==(props.description??null) ||
+    (approach.trim()||null)!==(props.approach??null) ||
     (criteria.trim()||null)!==(props.acceptanceCriteria??null) ||
     priority!==props.priority || taskType!==(props.taskType??"") ||
     estimate!==(props.estimatePoints?.toString()??"") || dueDate!==(props.dueDate??"") ||
