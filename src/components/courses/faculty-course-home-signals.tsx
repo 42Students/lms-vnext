@@ -147,8 +147,8 @@ export function FacultyCourseHomeSignals({
                 Needs attention
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {signals.atRisk.filter(row=>row.severity>=3).length} critical ·{" "}
-                {signals.atRisk.filter(row=>row.severity<3).length} moderate
+                {signals.atRiskCounts.critical} critical ·{" "}
+                {signals.atRiskCounts.moderate} moderate
                 {signals.atRiskTotal>signals.atRisk.length?" · View all for remaining students":""}
               </p>
             </div>
