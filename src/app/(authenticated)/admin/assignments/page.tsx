@@ -23,5 +23,9 @@ export default async function SuperAdminAssignmentsPage({
     <EmptyState title="Choose a college" description="Select a college scope before opening its assignments directory." />
   </div>;
   const data = await listCollegeAssessmentAggregate(context, "ASSIGNMENT", query.data);
-  return <AdminAssessmentDirectory data={data} />;
+  return <div className="space-y-4">
+    <a href={"/api/admin/assignments/export?"+new URLSearchParams({q:query.data.q,status:query.data.status}).toString()}
+     className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export assignments.csv</a>
+    <AdminAssessmentDirectory data={data} />
+  </div>;
 }

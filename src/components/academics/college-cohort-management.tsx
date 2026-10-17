@@ -9,7 +9,7 @@ import {
 } from "@/modules/academics/college-cohort-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
-type Option = { id: string; name: string; code: string };
+type Option = { id: string; name: string; code: string; startDate?:string; endDate?:string };
 type Batch = {
   id: string;
   name: string;
@@ -48,10 +48,15 @@ export function CollegeCohortCreateForm({ programs, periods }: {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [notice, setNotice] = useState("");
+  const start=periods.find(period=>period.id===startPeriodId);
+  const end=periods.find(period=>period.id===expectedEndPeriodId);
+  const dateInvalid=Boolean(start&&end&&end.endDate&&start.startDate&&end.endDate<start.startDate);
+  const year=start?.startDate?Number(start.startDate.slice(0,4)):null;
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setNotice("");
+    if(dateInvalid){setNotice("End date cannot be before start date.");return;}
     const parsed = createCollegeCohortSchema.safeParse({
       programId, startPeriodId, expectedEndPeriodId: expectedEndPeriodId || null,
       name, code,
@@ -105,14 +110,19 @@ export function CollegeCohortCreateForm({ programs, periods }: {
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
         </label>
         <label className="grid gap-1 text-sm font-medium text-body">Expected end period (optional)
-          <select disabled={endDateLocked} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
+          <select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">Not specified</option>
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </select>
         </label>
+        <div className="sm:col-span-2 lg:col-span-5 text-sm text-body">
+          <p>Start Date: {start?.startDate??"Choose start period"} · End Date: {end?.endDate??"Not specified"}</p>
+          <p>Academic Year: {year?`${year}–${year+1}`:"Select a start period to see the academic year."}</p>
+          {dateInvalid?<p role="alert" className="text-error">End date cannot be before start date.</p>:null}
+        </div>
         <div className="sm:col-span-2 lg:col-span-5">
-          <button disabled={pending} type="submit"
+          <button disabled={pending||dateInvalid} type="submit"
             className="min-h-11 rounded-md bg-primary px-5 text-sm font-semibold text-on-primary disabled:opacity-50">
             {pending ? "Creating…" : "Create batch"}
           </button>

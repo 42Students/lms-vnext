@@ -29,30 +29,27 @@ export default async function TpoHome(){
    {[["Drives","/college/placements/drives"],["Calendar","/college/placements/calendar"],["Placements","/college/placements"]].map(([label,href])=><li key={href} className="p-4"><Link href={href} className="min-h-10 inline-flex items-center text-sm text-primary-text underline">{label}</Link></li>)}
   </ul>
  </main>;
- const batches=await listTpoBatches(ctx);
- const operations=await getPlacementTpoOperations(ctx,ctx.membership!.collegeId);
- const pendingRequestCount=await getPendingTpoRequestsCount(ctx);
- const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
- const [studentStats,unreadMessages,crmReady]=await Promise.all([
-  getTpoStudentsIntelligence(ctx,{collegeId:ctx.membership!.collegeId,page:1,pageSize:1}),
-  countTpoUnreadRecruiterMessages(ctx),
-  tpoCrmTablesReady(),
- ]);
- const [collegeRules,placementTeam,teamThreads]=await Promise.all([
-  getCollegePlacementRules(ctx,ctx.membership!.collegeId),
-  getTpoPlacementTeam(ctx,ctx.membership!.collegeId),
-  listMyTpoInternalThreads(ctx),
- ]);
- const [recruiters,dueFollowups]=crmReady?await Promise.all([
-  listTpoLeads(ctx,ctx.membership!.collegeId),
-  listDueTpoFollowups(ctx,ctx.membership!.collegeId),
- ]):[null,null];
+ const collegeId=ctx.membership!.collegeId;
  const calendarNow=new Date();
  const weekEnd=new Date(calendarNow.getTime()+7*86400000);
- const weekEvents=await listPlacementCalendarEvents(ctx,{
-  collegeId:ctx.membership!.collegeId,from:placementCalendarDayKey(calendarNow),
-  to:placementCalendarDayKey(weekEnd),
- });
+ // Independent reads run concurrently; Home no longer serially awaits the full
+ // operations graph before requests, unread messages or the week calendar.
+ const [batches,operations,pendingRequestCount,studentStats,unreadMessages,
+  crmReady,collegeRules,placementTeam,teamThreads,weekEvents]=await Promise.all([
+   listTpoBatches(ctx),getPlacementTpoOperations(ctx,collegeId),
+   getPendingTpoRequestsCount(ctx),
+   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}),
+   countTpoUnreadRecruiterMessages(ctx),tpoCrmTablesReady(),
+   getCollegePlacementRules(ctx,collegeId),
+   getTpoPlacementTeam(ctx,collegeId),
+   listMyTpoInternalThreads(ctx),
+   listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
+    to:placementCalendarDayKey(weekEnd)}),
+ ]);
+ const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
+ const [recruiters,dueFollowups]=crmReady?await Promise.all([
+   listTpoLeads(ctx,collegeId),listDueTpoFollowups(ctx,collegeId),
+ ]):[null,null];
  const weekNext=weekEvents.events.filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())

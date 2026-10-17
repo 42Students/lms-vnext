@@ -98,8 +98,10 @@ export function PlacementOfferControls({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [pendingKey, setPendingKey] =
-    useState<string | null>(null);
+  const [pendingKey, setPendingKey] = useState<string | null>(null);
+  const [withdrawTarget,setWithdrawTarget]=useState<PlacementOfferCandidateItem|null>(null);
+  const [withdrawReason,setWithdrawReason]=useState("Company withdrew the offer");
+  const [withdrawDetail,setWithdrawDetail]=useState("");
 
   const initialDrafts = useMemo(
     () =>
@@ -247,10 +249,7 @@ export function PlacementOfferControls({
     item: PlacementOfferCandidateItem,
   ) {
     if (!item.offer) return;
-    const reason =
-      window.prompt(
-        "Reason for withdrawing this offer",
-      )?.trim();
+    const reason = (withdrawReason==="Other"?withdrawDetail:withdrawReason+(withdrawDetail.trim()?": "+withdrawDetail.trim():"")).trim();
     if (!reason) return;
 
     const key =
@@ -273,6 +272,7 @@ export function PlacementOfferControls({
         description:
           "The withdrawal is retained in offer history.",
       });
+      setWithdrawTarget(null);
       router.refresh();
     } catch (error) {
       toastError(
@@ -657,9 +657,7 @@ export function PlacementOfferControls({
                       disabled={
                         pendingKey !== null
                       }
-                      onClick={() =>
-                        withdraw(item)
-                      }
+                      onClick={() => {setWithdrawTarget(item);setWithdrawReason("Company withdrew the offer");setWithdrawDetail("");}}
                     >
                       Withdraw offer
                     </Button>
@@ -840,6 +838,25 @@ export function PlacementOfferControls({
           })}
         </div>
       )}
+      {withdrawTarget?.offer?<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div role="dialog" aria-modal="true" aria-label="Withdraw offer confirmation"
+          className="w-full max-w-lg space-y-4 rounded-xl border border-border bg-surface p-6">
+          <h3 className="font-semibold">Withdraw offer for {withdrawTarget.displayName??"learner"}?</h3>
+          <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
+          <label className="grid gap-2 text-sm">Reason<select className={inputClass} value={withdrawReason}
+            onChange={e=>setWithdrawReason(e.target.value)}>
+            {["Company withdrew the offer","Hiring freeze","Duplicate offer issued","Offer details were incorrect","Other"].map(v=><option key={v}>{v}</option>)}
+          </select></label>
+          <label className="grid gap-2 text-sm">Additional details
+           <textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
+          </label>
+          <div className="flex gap-3">
+            <Button variant="danger" disabled={pendingKey!==null||(withdrawReason==="Other"&&withdrawDetail.trim().length<3)}
+              onClick={()=>void withdraw(withdrawTarget)}>Confirm withdrawal</Button>
+            <Button variant="secondary" disabled={pendingKey!==null} onClick={()=>setWithdrawTarget(null)}>Keep offer</Button>
+          </div>
+        </div>
+      </div>:null}
     </section>
   );
 }

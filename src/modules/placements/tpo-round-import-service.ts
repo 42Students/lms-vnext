@@ -1,6 +1,6 @@
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,eq,ne} from "drizzle-orm";
+import {and,eq,inArray,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,learnerProfiles,placementApplications,placementApplicationScreenings,
  placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
@@ -62,7 +62,10 @@ function previewData(rows:ImportRow[],roster:Roster[]){
  const matched:Array<{line:number;identity:string;applicationId:string;name:string;outcome:ImportRow["outcome"];status:string|null;rank:number|null;message:string|null}>=[];
  const unmatched:Array<{line:number;identity:string;reason:string;suggestions:ReturnType<typeof suggested>}>=[];
  for(const row of rows){
-  if(row.invalidRank){unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
+  if(row.invalidRank){
+   const exact=matchSource(row,roster);
+   if(exact.length===1)used.add(exact[0]!.applicationId);
+   unmatched.push({line:row.line,identity:row.identity,reason:"Waitlist rank must be a positive whole number",suggestions:[]});continue;}
   if(!row.outcome){unmatched.push({line:row.line,identity:row.identity,reason:"Unrecognized outcome",suggestions:[]});continue;}
   const candidates=matchSource(row,roster);
   if(candidates.length!==1){
@@ -115,6 +118,7 @@ export async function stageTpoRoundImport(
  if([...skippedLines,...override.keys()].some(line=>!knownLines.has(line)))
   throw new Error("A skipped or matched row is not present in the uploaded file. Preview the file again.");
  const explicitlySkippedApplications=new Set<string>();
+ const problemApplications=new Set<string>();
  for(const row of inputRows){
   if(skippedLines.has(row.line)){
    const unique=matchSource(row,roster.roster);
@@ -131,6 +135,9 @@ export async function stageTpoRoundImport(
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
   if(reason){
+   // Invalid or ambiguous rows must never turn a matched student's missing
+   // result into an automatic failure under MARK_NOT_CLEARED.
+   if(match&&candidates.has(match))problemApplications.add(match);
    rejected.push({applicationId:match??"",line:row.line,status:"skipped",reason});
    continue;
   }
@@ -145,18 +152,42 @@ export async function stageTpoRoundImport(
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   for(const candidate of roster.roster){
    if(!used.has(candidate.applicationId)&&
-     !explicitlySkippedApplications.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
+     !explicitlySkippedApplications.has(candidate.applicationId)&&
+     !problemApplications.has(candidate.applicationId)&&candidate.currentStatus!=="APPLIED"){
     entries.push({line:0,applicationId:candidate.applicationId,outcome:"FAIL",rank:null,
      message:"No passing result was reported by the company."});
    }
   }
  }
  const results:Array<{applicationId:string;line:number;status:"staged"|"skipped";reason?:string}>=[...rejected];
+ // Preserve unique ranks in an import even when another row supplies an
+ // explicit rank or an earlier result is already applied.
+ const existingRanks=await getDb().select({
+  applicationId:placementRoundResults.applicationId,rank:placementRoundResults.waitlistRank,
+ }).from(placementRoundResults).where(and(
+   eq(placementRoundResults.roundId,preview.roundId),
+   eq(placementRoundResults.outcome,"HOLD"),
+   inArray(placementRoundResults.status,["STAGED","APPLIED"])));
+ const importing=new Set(entries.map(e=>e.applicationId));
+ const occupied=new Set(existingRanks.filter(r=>r.rank!==null&&!importing.has(r.applicationId)).map(r=>r.rank!));
  let nextWaitlistRank=1;
  for(const entry of entries){
   try{
    const candidate=candidates.get(entry.applicationId)!;
-   const waitlistRank=entry.outcome==="HOLD"?(entry.rank??nextWaitlistRank++):null;
+   let waitlistRank:number|null=null;
+   if(entry.outcome==="HOLD"){
+    if(entry.rank!==null)waitlistRank=entry.rank;
+    else{
+     while(occupied.has(nextWaitlistRank))nextWaitlistRank++;
+     waitlistRank=nextWaitlistRank++;
+    }
+    if(occupied.has(waitlistRank)){
+     results.push({applicationId:entry.applicationId,line:entry.line,status:"skipped",
+      reason:"Waitlist rank "+waitlistRank+" is already assigned in this round"});
+     continue;
+    }
+    occupied.add(waitlistRank);
+   }
    const candidateMessage=entry.outcome==="PASS"?null:entry.message??
     (entry.outcome==="HOLD"?"You are waitlisted for this round.":
      entry.outcome==="ABSENT"?"You were marked absent for this round. Contact the placement cell if this is incorrect.":

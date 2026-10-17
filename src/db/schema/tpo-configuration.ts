@@ -85,7 +85,7 @@ export const placementTpoAfterCollege = pgTable(
     }).onDelete("restrict"),
     check(
       "placement_tpo_after_college_outcome_ck",
-      sql`${table.outcome} in ('HIGHER_STUDIES','ENTREPRENEURSHIP','COMPETITIVE_EXAMS','LOOKING_FOR_JOB','NOT_DECIDED')`,
+      sql`${table.outcome} in ('PLACED_ON_CAMPUS','PLACED_OFF_CAMPUS','HIGHER_STUDIES','ENTREPRENEURSHIP','COMPETITIVE_EXAMS','NOT_INTERESTED','LOOKING_FOR_JOB','DEBARRED','NOT_DECIDED')`,
     ),
   ],
 );

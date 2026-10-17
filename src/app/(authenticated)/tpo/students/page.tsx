@@ -2,6 +2,7 @@ import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {getTpoAfterCollegeForRoster} from "@/modules/placements/tpo-after-college-roster-service";
@@ -244,6 +245,7 @@ export default async function TpoStudentsPage({
           "Read-only college-wide placement participation, branch performance and student journeys."}
         actions={
           <div className="flex flex-wrap items-center gap-2">
+            {manageAllowed ? <TpoStudentSavedViews /> : null}
             {manageAllowed ? <TpoAcademicImportWorkspace /> : null}
             <Link
               href="/tpo/students/requests"

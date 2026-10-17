@@ -62,6 +62,11 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     companyStatus: placementCompanies.status,
     trusted: placementCompanyRelationships.isTrusted,
     website: placementCompanies.websiteUrl,
+    primaryDomain:placementCompanies.primaryDomain,
+    companyCollegeCount:sql<number>`(select count(*)::integer from placement_company_relationships cr where cr.company_id = ${placementCompanies.id})`.mapWith(Number),
+    driveCount:sql<number>`(select count(*)::integer from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id} and j.status != 'ARCHIVED')`.mapWith(Number),
+    lastActiveAt:sql<Date|null>`(select max(j.updated_at) from placement_jobs j where j.company_relationship_id = ${placementCompanyRelationships.id})`,
+    createdAt:placementCompanies.createdAt,
   }).from(placementCompanyRelationships)
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))

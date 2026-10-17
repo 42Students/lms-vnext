@@ -276,6 +276,7 @@ const educationSchema = z
     program: textValue(200),
     specialization: textValue(200),
     institution: textValue(300),
+    isCurrentlyPursuing: z.boolean().default(false),
     startYear: z
       .string()
       .trim()

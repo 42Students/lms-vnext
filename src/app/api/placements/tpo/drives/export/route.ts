@@ -5,7 +5,8 @@ import {exportTpoDriveLifecycle} from "@/modules/placements/tpo-drive-list-expor
 export const runtime="nodejs";export const dynamic="force-dynamic";
 export async function GET(request:Request){
  try{
-  const query=Object.fromEntries(new URL(request.url).searchParams);
+  const params=new URL(request.url).searchParams;
+  const query={...Object.fromEntries(params),ids:params.getAll("ids")};
   const result=await exportTpoDriveLifecycle(await getCurrentRequestContext(),query);
   return new Response("\uFEFF"+result.csv,{
    status:200,headers:{"Content-Type":"text/csv; charset=utf-8",

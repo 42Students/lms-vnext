@@ -54,6 +54,7 @@ export function HrDriveDraftForm({
   const [notice, setNotice] = useState("");
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
+  const submittedRef=useRef(false);
   const result = hrDriveDraftSchema.safeParse(draft);
   const inputClass = "min-h-11 w-full rounded-md border border-border bg-surface px-3 py-2 text-sm text-foreground";
   const selectOptions = [
@@ -80,12 +81,21 @@ export function HrDriveDraftForm({
   // REC-home-drives-29: scope the draft to this signed-in user and college.
   useEffect(()=>{
     if(fixRequestId)return;
-    const timer=window.setTimeout(()=>{
+    const persist=()=>{
+      if(submittedRef.current)return;
       const saved=saveHrUnsentDraft(draft,Date.now());
       if(!saved)return;
       try{window.localStorage.setItem(storageKey,saved);}catch{/* Storage disabled */ }
-    },600);
-    return ()=>window.clearTimeout(timer);
+    };
+    const timer=window.setTimeout(persist,600);
+    const onVisibility=()=>{if(document.visibilityState==="hidden")persist();};
+    window.addEventListener("pagehide",persist);
+    document.addEventListener("visibilitychange",onVisibility);
+    return ()=>{
+      window.clearTimeout(timer);
+      window.removeEventListener("pagehide",persist);
+      document.removeEventListener("visibilitychange",onVisibility);
+    };
   },[draft,storageKey,fixRequestId]);
 
   function saveForThisTab(){
@@ -158,6 +168,7 @@ export function HrDriveDraftForm({
         setNotice("Could not verify the saved request. Check Drives before retrying.");
         return;
       }
+      submittedRef.current=true;
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
