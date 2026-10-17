@@ -7,7 +7,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 
 /** College-only metadata for adding/scheduling link-based lesson content.
  * Never return private storage keys to the catalog or the editor. */
-export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"){
+export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
  const membership=ctx.membership;
  if(!membership||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.manage");
