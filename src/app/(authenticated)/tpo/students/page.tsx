@@ -357,6 +357,11 @@ export default async function TpoStudentsPage({
         </section>
       ) : null}
 
+      {query.afterCollege&&!data.definitions.afterCollegeAvailable?<section role="status"
+        className="rounded-xl border border-border bg-surface p-4 text-sm text-warning-text">
+        Saved after-college outcome records are unavailable. The selected outcome cannot be filtered until its registered table is available.
+        <Link href="/tpo/students" className="ml-2 text-primary-text underline">Clear outcome filter</Link>
+      </section>:null}
       {!data.definitions.externalOffersAvailable ? (
         <section
           role="status"
