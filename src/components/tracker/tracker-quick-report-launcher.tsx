@@ -5,6 +5,7 @@ export function TrackerQuickReportLauncher(){
  const [open,setOpen]=useState(false),[context,setContext]=useState("");
  useEffect(()=>{
   function onKey(event:KeyboardEvent){
+   if(event.key==="Escape"){setOpen(false);return;}
    if(event.altKey&&!event.repeat&&event.key.toLowerCase()==="b"){
     if((event.target as HTMLElement|null)?.closest("input,textarea,select,[contenteditable=true]"))return;
     event.preventDefault();setOpen(x=>!x);
