@@ -72,3 +72,9 @@ Tests were authored but not run in this builder session.
 | TPO-recruiters-34 | **Intentional restricted permission.** Mutations require explicit scoped placement permission, not merely being a college user. No silent widening during UX freeze. |
 
 No e-mail was sent and no CI tests were executed by this builder.
+
+
+## 2026-10-18 recruiter event producers
+| ID | Verdict | Implementation / test |
+| --- | --- | --- |
+| TPO-recruiters-R05 | **PARTIAL — OPEN.** CSV import now records a transaction-atomic count and created-row IDs without raw contact PII in `RECRUITER_LEADS_IMPORTED`, plus college-scoped TPO bell. Recruiter lead create/Contacted/Not now/implicit contact-stage transitions now fan out immutable audited TPO notifications via `tpo-recruiter-bell-service.ts`. Current active team membership is rechecked on every emission. Tests `chat2-recruiter-import-audit.test.ts`, `chat2-engage-immutable-audit.test.ts`; remaining owner/invite/undo event parity not verified. |
