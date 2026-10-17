@@ -36,6 +36,7 @@ export function RecruiterBulkOwnerControls({
   const [error, setError] = useState("");
   const [results, setResults] = useState<Result[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
+  const [runAuditId,setRunAuditId]=useState("");
 
   const assignable = rows;
   const selections = assignable
@@ -95,7 +96,7 @@ export function RecruiterBulkOwnerControls({
 
     setBusy(true);
     setError("");
-    setResults([]);
+    setResults([]);setRunAuditId("");
     try {
       const response = await fetch("/api/placements/tpo/leads/bulk-owner", {
         method: "POST",
@@ -107,11 +108,13 @@ export function RecruiterBulkOwnerControls({
           selections,
         }),
       });
-      const data = await response.json() as { results?: Result[]; error?: string };
+      const data = await response.json() as { results?: Result[];
+        runAuditId?: string; error?: string };
       if (!response.ok || !Array.isArray(data.results)) {
         throw new Error(data.error || "Bulk owner reassignment failed.");
       }
       setResults(data.results);
+      setRunAuditId(data.runAuditId??"");
       setChosen([]);
       onUpdated();
     } catch {
@@ -210,6 +213,7 @@ export function RecruiterBulkOwnerControls({
       {results.length > 0 ? (
         <section aria-live="polite">
           <h3 className="text-sm font-semibold text-foreground">Per-lead results</h3>
+          {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
           <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
             unchanged: {results.filter(row=>row.status==="unchanged").length};
             ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
