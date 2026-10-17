@@ -91,3 +91,49 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   </button>
  </form>;
 }
+
+export function RecruiterInterviewSlotActions({action,slot}:{
+ action:string;slot:{id:string;version:number;status:string;bookedCount:number;capacity:number};
+}){
+ const router=useRouter();
+ const [busy,setBusy]=useState<string|null>(null);
+ const [error,setError]=useState<string|null>(null);
+ async function act(kind:"OFFER"|"BOOK"|"CANCEL"){
+  if(busy)return;
+  if(kind==="CANCEL"&&!window.confirm("Cancel this proposed interview time block?"))return;
+  setBusy(kind);setError(null);
+  try{
+   const form=new FormData();
+   form.set("action",kind);
+   form.set("slotId",slot.id);
+   form.set("expectedVersion",String(slot.version));
+   const response=await fetch(action,{method:"POST",body:form,credentials:"same-origin"});
+   const expectedPath=action.replace(/^\/api\/placements\/recruiter/,"/recruiter");
+   if(!response.ok||!response.redirected||new URL(response.url).pathname!==expectedPath){
+    const payload=await response.json().catch(()=>null) as {error?:string}|null;
+    setError(payload?.error==="SLOT_STALE"?"This time block changed. Refresh before retrying.":
+     payload?.error==="SLOT_FULL"?"No more reservations are available.":
+     payload?.error==="SLOT_OVERLAP"?"The reservation conflicts with another recorded slot.":
+     "This time block could not be updated. Refresh and try again.");
+    return;
+   }
+   router.refresh();
+  }catch{
+   setError("Connection interrupted. Refresh this time block and retry.");
+  }finally{setBusy(null);}
+ }
+ return <div className="space-y-2">
+  <div className="flex flex-wrap gap-2">
+   {slot.status==="PROPOSED"?<button type="button" disabled={busy!==null} onClick={()=>void act("OFFER")}
+    className="min-h-11 rounded-md border border-border px-4 text-primary-text disabled:opacity-50">Offer time to college</button>:null}
+   {(slot.status==="OFFERED"||slot.status==="BOOKED")&&slot.bookedCount<slot.capacity?
+    <button type="button" disabled={busy!==null} onClick={()=>void act("BOOK")}
+     className="min-h-11 rounded-md border border-border px-4 text-primary-text disabled:opacity-50">Reserve one internal slot</button>:null}
+   {(slot.status==="PROPOSED"||slot.status==="OFFERED")?<button type="button" disabled={busy!==null}
+    onClick={()=>void act("CANCEL")}
+    className="min-h-11 rounded-md border border-border px-4 text-primary-text disabled:opacity-50">Cancel time block</button>:null}
+  </div>
+  {busy?<p role="status" className="text-xs text-body">Updating time block…</p>:null}
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+ </div>;
+}
