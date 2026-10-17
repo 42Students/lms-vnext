@@ -77,7 +77,7 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
    eq(attendanceRecords.scheduleEventId,entry.scheduleEventId),
    eq(attendanceRecords.membershipId,entry.membershipId))).limit(1);
  const actualAbsent=currentAttendance?.status==="ABSENT";
- const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:!actualAbsent;
+ const eventStillCurrent=entry.kind==="ABSENT"?actualAbsent:currentAttendance===undefined;
  if(!eventStillCurrent){
   await db.update(attendanceParentSmsOutbox).set({status:"SKIPPED"}).where(and(
    eq(attendanceParentSmsOutbox.id,id),eq(attendanceParentSmsOutbox.status,"QUEUED")));
