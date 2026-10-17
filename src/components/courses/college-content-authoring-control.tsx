@@ -64,6 +64,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:kind==="RESOURCE"?{notes:notes.trim()||null}:{startsAt:isoIst(start,timeZone),endsAt:isoIst(end,timeZone)};
    if(kind==="YOUTUBE"&&(!duration.trim()||!Number.isInteger(Number(duration))||Number(duration)<1||
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
+   if(kind==="LIVE_CLASS"&&(!start||!end))throw Error("Enter Start Date and End Date.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end,timeZone)).getTime()<=new Date(isoIst(start,timeZone)).getTime())
     throw Error("End time must be after start time");
    if(editing&&deliveryId&& !allowedDeliveries.some(row=>row.deliveryId===deliveryId)){
