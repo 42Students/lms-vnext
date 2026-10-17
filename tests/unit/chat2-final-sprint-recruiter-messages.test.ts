@@ -123,4 +123,11 @@ describe("Final sprint recruiter conversations verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-18 |");
  });
 
+ it("REC-calendar-messages-profile-20 independent final-sprint acceptance regression",()=>{
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("[...result.messages].reverse()");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("Newest messages");
+  expect(src("src/app/(authenticated)/hr/conversations/[threadId]/page.tsx")).toContain("Oldest messages");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-20 |");
+ });
+
 });
