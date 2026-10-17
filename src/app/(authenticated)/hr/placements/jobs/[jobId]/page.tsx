@@ -521,6 +521,7 @@ export default async function HrPlacementJobPage({
                 <p className="m-0 break-words font-semibold text-foreground">{applicant.name || "Unnamed applicant"}</p>
                 <p className="mt-1 break-words text-sm text-body">{applicant.role}</p>
                 {applicant.rollNumber?<p className="mt-1 text-xs text-body">Roll no. {applicant.rollNumber}</p>:null}
+                {applicant.branch?<p className="mt-1 text-xs text-body">Branch: {applicant.branch}</p>:null}
                 {applicant.ugPercentage?<p className="mt-1 text-xs text-body">UG %: {applicant.ugPercentage}</p>:null}
                 {applicant.tenthPercentage?<p className="mt-1 text-xs text-body">10th %: {applicant.tenthPercentage}</p>:null}
                 {applicant.twelfthOrDiplomaPercentage?<p className="mt-1 text-xs text-body">12th / diploma %: {applicant.twelfthOrDiplomaPercentage}</p>:null}
@@ -559,6 +560,8 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Role</dt><dd className="text-foreground">{selectedApplicant.role}</dd></div>
                 <div><dt className="text-muted-foreground">Shared email</dt><dd className="break-all text-foreground">{selectedApplicant.email ?? "Not provided"}</dd></div>
                 {selectedApplicant.rollNumber?<div><dt className="text-muted-foreground">Roll no.</dt><dd className="text-foreground">{selectedApplicant.rollNumber}</dd></div>:null}
+                {selectedApplicant.branch?<div><dt className="text-muted-foreground">Branch</dt><dd className="text-foreground">{selectedApplicant.branch}</dd></div>:null}
+                {selectedApplicant.phone?<div><dt className="text-muted-foreground">Shared phone</dt><dd className="text-foreground">{selectedApplicant.phone}</dd></div>:null}
                 {selectedApplicant.ugPercentage?<div><dt className="text-muted-foreground">UG %</dt><dd className="text-foreground">{selectedApplicant.ugPercentage}</dd></div>:null}
                 {selectedApplicant.tenthPercentage?<div><dt className="text-muted-foreground">10th %</dt><dd className="text-foreground">{selectedApplicant.tenthPercentage}</dd></div>:null}
                 {selectedApplicant.twelfthOrDiplomaPercentage?<div><dt className="text-muted-foreground">12th / diploma %</dt><dd className="text-foreground">{selectedApplicant.twelfthOrDiplomaPercentage}</dd></div>:null}
