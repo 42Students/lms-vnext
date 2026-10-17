@@ -1,5 +1,6 @@
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
+import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
@@ -328,7 +329,7 @@ export default async function TpoStudentsPage({
         {manageAllowed?<TpoStudentSavedViews />:null}
         <Link href="/tpo/students/requests" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Preparation support</Link>
-        <a href={exportHref} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Export filtered CSV</a>
+        <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
       </nav>
 
       <form action="/tpo/students" method="get"

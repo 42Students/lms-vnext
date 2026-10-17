@@ -46,6 +46,7 @@ export function TpoAcademicImportWorkspace() {
     if (!response.ok) throw new Error(response.status===409
       ?"This changed while you were working. Your academic import choices are kept below. Refresh and try again."
       :"Could not process the academic details. Please review your file and try again.");
+    if(!body || typeof body!=="object") throw new Error("Could not process the academic details. Please try again.");
     return body;
   }
 
@@ -59,6 +60,7 @@ export function TpoAcademicImportWorkspace() {
     setBusy(true); setError(""); setNotice("");
     try {
       const result = await send("PREVIEW", parsed);
+      if(!Array.isArray(result.preview?.rows))throw Error("Could not load the import preview. Please try again.");
       const rows = result.preview.rows as PreviewRow[];
       setPreview(rows);
       setExcluded(rows.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode));
@@ -80,6 +82,7 @@ export function TpoAcademicImportWorkspace() {
       const result = await send("IMPORT", matched.map(row => ({
         studentCode: row.studentCode, cgpa: row.cgpa, activeBacklogs: row.activeBacklogs,
       })));
+      if(typeof result.result?.updated!=="number" || typeof result.result?.skipped!=="number")throw Error("Could not confirm the import results. Please check the records before retrying.");
       const receipt = result.result as { updated: number; skipped: number };
       setNotice("Updated " + receipt.updated + " academic record(s). " +
         (receipt.skipped ? receipt.skipped + " unmatched skipped." : "All selected rows saved."));

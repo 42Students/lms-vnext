@@ -33,7 +33,7 @@ export function TpoStudentSavedViews(){
  const [notice,setNotice]=useState("");
  async function load(){
   setBusy(true);setError("");
-  try{const res=await fetch(api,{cache:"no-store"}),body=await res.json();
+  try{const res=await fetch(api,{cache:"no-store"}),body=await res.json().catch(()=>null);
    if(!res.ok||!Array.isArray(body))throw Error("Could not load saved views. Try again.");
    setRows(body as View[]);
   }catch(e){setError(e instanceof Error?e.message:"Could not load saved views");}
