@@ -95,6 +95,27 @@ export function RecruiterResultControls({
     useState<string | null>(null);
   const [selected,setSelected]=useState<Record<string,string[]>>({});
   const [bulkPending,setBulkPending]=useState<string|null>(null);
+  const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
+  const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
+  function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
+    const ids=selected[roundId]??[];
+    if(!ids.length)return;
+    setUndoHistory(prev=>[drafts,...prev].slice(0,50));
+    setDrafts(prev=>{
+      const next={...prev};
+      for(const id of ids){
+        const key=roundId+":"+id;
+        if(prev[key])next[key]={...prev[key],outcome};
+      }
+      return next;
+    });
+  }
+  function undoDraftOutcome(){
+    if(!undoHistory.length)return;
+    setDrafts(undoHistory[0]!);
+    setUndoHistory(prev=>prev.slice(1));
+  }
+
 
   const initial = useMemo(() => {
     const entries: Array<
@@ -408,6 +429,7 @@ export function RecruiterResultControls({
                           <div>
                             {canStage&&!applied?<label className="mb-2 flex items-center gap-2 text-xs text-body">
                               <input type="checkbox" checked={(selected[round.id]??[]).includes(participant.applicationId)}
+                                onFocus={()=>setActiveRoundId(round.id)}
                                 onChange={event=>setSelected(old=>{
                                   const current=old[round.id]??[];
                                   return {...old,[round.id]:event.target.checked?
