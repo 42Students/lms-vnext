@@ -72,7 +72,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
 | TPO-settings-audit-53 | S1 | STATE | FIXED-ON-MAIN |
-| TPO-settings-audit-03 | S2 | COPY | OPEN |
+| TPO-settings-audit-03 | S2 | COPY | DONE-BRANCH |
 | TPO-settings-audit-05 | S2 | PERMISSION | UNCONFIRMED |
 | TPO-settings-audit-12 | S2 | MISSING-FIELD | UNCONFIRMED |
 | TPO-settings-audit-20 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -104,7 +104,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
 | TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
-| TPO-settings-audit-13 | S3 | COPY | OPEN |
+| TPO-settings-audit-13 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
@@ -348,3 +348,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Round 6 source close TPO-calendar-reports-25/-38 and TPO-settings-audit-06/-11; proof in tests/unit/chat9-round6-calendar-settings.test.ts; tests NOT RUN.
 
 - TPO-settings-audit-33/-73/-75 DONE source-level; -03/-94/-96 still OPEN with partial improvements. `tests/unit/chat9-round6-tpo-settings-and-audit.test.ts` written; not run.
+
+- TPO-settings-audit-03/-13 DONE source, -42 improved but OPEN (course list cap 200). Tests authored; orchestrator runs.

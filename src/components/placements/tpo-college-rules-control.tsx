@@ -19,13 +19,15 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
     minResponseHours: String(rules.minResponseHours),
   });
   const [saved, setSaved] = useState(form);
+  const held = Number(form.maxHeldOffers);
+  const nextLpa = (5 * (1 + Number(form.upliftPct) / 100)).toFixed(2);
   const dirty = (Object.keys(form) as (keyof typeof form)[]).some(key=>form[key]!==saved[key]);
   useEffect(()=>{
     if(!dirty)return;
     const onUnload=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
     const onLink=(event:MouseEvent)=>{
       const target=event.target;
-      if(target instanceof Element && target.closest("a[href]") && !window.confirm("Leave without saving placement rules?")){
+      if(target instanceof Element && target.closest("a[href]") && !window.confirm("You have unsaved placement settings. Leave without saving them?")){
         event.preventDefault();event.stopPropagation();
       }
     };
@@ -66,20 +68,19 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   }
   return (
     <section className="rounded-xl border border-border bg-surface p-5">
-      <h3 className="text-base font-semibold text-foreground">Edit college offer rules</h3>
+      <h3 className="text-base font-semibold text-foreground">Offers and placed</h3>
       <p className="mt-2 text-sm text-body">
-        Save requires confirmation and rejects stale rule versions. Registration
-        deadlines and learner consent are not modified.
+        The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
       <div className="mt-4 grid gap-3 sm:grid-cols-2">
         {dirty?<p role="status" className="sm:col-span-2 text-sm text-warning-text">Unsaved changes</p>:null}
         <label className="grid gap-1 text-sm font-semibold text-body">
-          Count as placed when
+          A student counts as placed when the offer is
           <select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => setForm((current) => ({ ...current, countsAsPlacedAt: event.target.value }))}
             className="min-h-10 rounded-md border border-border bg-surface px-3">
-            <option value="OFFER_RELEASED">Offer released</option>
-            <option value="OFFER_ACCEPTED">Offer accepted</option>
+            <option value="OFFER_RELEASED">released</option>
+            <option value="OFFER_ACCEPTED">accepted</option>
           </select>
         </label>
         {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
@@ -92,6 +93,12 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           </label>
         ))}
       </div>
+      <section role="status" className="mt-4 rounded-lg border border-border bg-surface-subtle p-3 text-sm text-body">
+        <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
+        <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
+        <p className="mt-2 font-semibold">For example</p>
+        <p>A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
+      </section>
       <button type="button" disabled={busy} onClick={() => void save()}
         className="mt-4 min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-60">
         {busy ? "Saving..." : "Review and confirm rules"}
