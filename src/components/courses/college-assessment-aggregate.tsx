@@ -5,6 +5,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FacultyItemActions } from "./faculty-item-actions";
 import { AdminQuizResultsActions } from "./admin-learning-structure-actions";
 import { CollegeAssignmentReview } from "./college-assignment-review";
+import {CollegeAssignmentActions} from "./college-assignment-actions";
 import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import {collegeAssessmentExportHref} from "@/modules/courses/college-assessment-export-model";
 import {
@@ -217,6 +218,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd>{item.resultsPublished?"Published":"Hidden"}</dd></div>:null}
                 </dl>
                 {!isAssignment?<QuizListActions item={item}/>:null}
+                {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
                 {isAssignment?<CollegeAssignmentReview
                  assignmentId={item.id} offeringId={item.offeringId}
                  specificDeliveryId={item.deliveryId} maxPoints={item.points}
@@ -268,6 +270,7 @@ export function CollegeAssessmentAggregate({ data }: { data: Data }) {
                   </td>
                   {isAssignment?<td className="px-4 py-4 tabular-nums text-body">{item.gradedLearners} graded</td>:null}
                   <td className="px-4 py-4">
+                    {isAssignment?<CollegeAssignmentActions assignment={item}/>:null}
                     {isAssignment?<CollegeAssignmentReview
                      assignmentId={item.id} offeringId={item.offeringId}
                      specificDeliveryId={item.deliveryId} maxPoints={item.points}
