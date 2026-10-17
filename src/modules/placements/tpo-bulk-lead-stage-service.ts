@@ -3,7 +3,7 @@ import "server-only";
 import { and, eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
+import { type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import {
@@ -23,7 +23,7 @@ export async function bulkChangeTpoLeadStages(
   context: RequestContext,
   rawPayload: unknown,
 ) {
-  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+  if (!context.membership) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = context.membership.collegeId;

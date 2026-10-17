@@ -10,7 +10,7 @@ export async function GET(request:Request){
      context.adminScope?.collegeId||context.adminScope?.organizationId)
     return NextResponse.json({message:"Not authorized."},{status:403});
   const url=new URL(request.url);
-  const keys=["windowMinutes","pageToken","query"] as const;
+  const keys=["windowMinutes","pageToken","query","minimumSeverity"] as const;
   if([...url.searchParams.keys()].some(key=>!keys.includes(key as typeof keys[number]))||
     keys.some(key=>url.searchParams.getAll(key).length>1))
     return NextResponse.json({message:"Check the log filters."},{status:400});

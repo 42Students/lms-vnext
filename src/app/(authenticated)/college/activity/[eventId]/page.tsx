@@ -12,10 +12,10 @@ export default async function CollegeActivityDetailPage({
   const date = new Intl.DateTimeFormat("en-IN", {
     dateStyle: "full", timeStyle: "medium", timeZone: "Asia/Kolkata",
   }).format(event.occurredAt);
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Activity Log" title="Activity detail"
       description={event.summary}
-      actions={<Link href="/college/activity" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+      actions={<Link href="/college/activity" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Back to Activity Log
       </Link>} />
     <dl className="grid gap-4 rounded-xl border border-border bg-surface p-5 text-sm sm:grid-cols-2">

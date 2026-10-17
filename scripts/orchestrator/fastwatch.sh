@@ -4,7 +4,7 @@ cd /c/Users/LENOVO/Desktop/lms-vnext
 while true; do
   git fetch -q origin 2>/dev/null
   now=$(date +%s); out=""
-  for n in 2 3 4 5 6 7 9 11 12 13 14 15 16; do
+  for n in 2 3 4 5 6 7 9 11 12 13 14 15 16 17; do
     t1=$(git log origin/main --grep="^\[chat-$n\]" -1 --format=%ct 2>/dev/null)
     t2=$(git log "origin/chatgpt/chat-$n-b" -1 --format=%ct 2>/dev/null)
     ts=$t1; if [ -n "$t2" ] && { [ -z "$ts" ] || [ "$t2" -gt "$ts" ]; }; then ts=$t2; fi

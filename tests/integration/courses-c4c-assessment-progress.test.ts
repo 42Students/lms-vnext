@@ -402,6 +402,7 @@ async function createStructure() {
     {
       lessonId: lesson.id,
       contentType: "RESOURCE",
+      points: 1,
       title: "C4C Notes",
       notes: "Read the notes",
       sequence: 0,
