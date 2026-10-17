@@ -100,7 +100,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-92 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-93 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
 | TPO-settings-audit-96 | S2 | COPY | OPEN |
-| TPO-settings-audit-R03 | S2 | STATE | UNCONFIRMED |
+| TPO-settings-audit-R03 | S2 | STATE | NOT-A-GAP |
 | TPO-settings-audit-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-06 | S3 | STATE | DONE-BRANCH |
 | TPO-settings-audit-11 | S3 | VALIDATION | DONE-BRANCH |
@@ -108,7 +108,7 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-14 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-settings-audit-24 | S3 | VALIDATION | FIXED-ON-MAIN |
 | TPO-settings-audit-25 | S3 | COPY | FIXED-ON-MAIN |
-| TPO-settings-audit-42 | S3 | COPY | OPEN |
+| TPO-settings-audit-42 | S3 | COPY | DONE-BRANCH |
 | TPO-settings-audit-45 | S3 | COPY | FIXED-ON-MAIN |
 | TPO-settings-audit-58 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-settings-audit-59 | S3 | COPY | FIXED-ON-MAIN |
@@ -122,10 +122,10 @@ Audit: `docs/audit/pages/tpo/settings-audit.md` (and `settings-audit-review.md` 
 | TPO-settings-audit-97 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-settings-audit-98 | S3 | STATE | OPEN |
 | TPO-settings-audit-99 | S3 | SIDE-EFFECT | OPEN |
-| TPO-settings-audit-R02 | S3 | VALIDATION | OPEN |
-| TPO-settings-audit-07 | S4 | RESPONSIVE | OPEN |
+| TPO-settings-audit-R02 | S3 | VALIDATION | DONE-BRANCH |
+| TPO-settings-audit-07 | S4 | RESPONSIVE | DONE-BRANCH |
 | TPO-settings-audit-80 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-settings-audit-81 | S4 | MISSING-ACTION | UNCONFIRMED |
+| TPO-settings-audit-81 | S4 | MISSING-ACTION | NOT-A-GAP |
 | TPO-settings-audit-R04 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 
 ## superadmin/placements-projects-a-placements (50: FIXED-ON-MAIN 27, OPEN 20, UNCONFIRMED 3)
@@ -252,15 +252,15 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-05 | S3 | MISSING-PAGE | OPEN |
 | COL-projects-08 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-15 | S3 | MISSING-MODAL | OPEN |
-| COL-projects-16 | S3 | MISSING-COLUMN | OPEN |
-| COL-projects-17 | S3 | MISSING-FILTER | UNCONFIRMED |
-| COL-projects-19 | S3 | COPY | OPEN |
-| COL-projects-20 | S3 | STATE | OPEN |
-| COL-projects-09 | S4 | STATE | UNCONFIRMED |
-| COL-projects-18 | S4 | MISSING-FILTER | UNCONFIRMED |
+| COL-projects-16 | S3 | MISSING-COLUMN | DONE-BRANCH |
+| COL-projects-17 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| COL-projects-19 | S3 | COPY | DONE-BRANCH |
+| COL-projects-20 | S3 | STATE | DONE-BRANCH |
+| COL-projects-09 | S4 | STATE | FIXED-ON-MAIN |
+| COL-projects-18 | S4 | MISSING-FILTER | DONE-BRANCH |
 | COL-projects-21 | S4 | COPY | OPEN |
-| COL-projects-22 | S4 | MISSING-FILTER | OPEN |
-| COL-projects-23 | S4 | RESPONSIVE | OPEN |
+| COL-projects-22 | S4 | MISSING-FILTER | NOT-A-GAP |
+| COL-projects-23 | S4 | RESPONSIVE | DONE-BRANCH |
 
 ## Notes (blockers, one line each)
 - BLOCKED TPO-calendar-reports-23: ROUND_REMINDER provider-backed delivery and evening-before verification require real configured email provider credentials; no fake sends or delivery success claimed.
@@ -350,3 +350,15 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-settings-audit-33/-73/-75 DONE source-level; -03/-94/-96 still OPEN with partial improvements. `tests/unit/chat9-round6-tpo-settings-and-audit.test.ts` written; not run.
 
 - TPO-settings-audit-03/-13 DONE source, -42 improved but OPEN (course list cap 200). Tests authored; orchestrator runs.
+
+- COL-projects-16/-19/-20 DONE source and COL-projects-22 NOT-A-GAP; tests/unit/chat9-round6-college-projects-parity.test.ts authored, tests NOT run.
+
+- Round 6: TPO-settings-audit-42/-07 DONE-BRANCH; no 200-course truncation and responsive grouped navigation; tests written not run.
+
+- COL-projects-10/-11 VERIFIED-ON-MAIN, -18/-23 DONE-BRANCH. Tests authored, not run; browser narrow-width acceptance outstanding.
+
+- Round 6 evidence: R02 DONE-BRANCH, R03/81 NOT-A-GAP, COL-projects-09/17 FIXED-ON-MAIN verified. Test file chat9-round6-reviewed-not-a-gaps.test.ts, not run.
+
+- Round 6: TPO-settings-audit-94/-96 and COL-projects-21 improved but OPEN. TPO-settings-audit-07 sticky left desktop layout refined. Source tests unrun.
+
+- Unit CI `api-origin-guard` resolved source-level: Telegram provider webhook uses mandatory x-telegram-bot-api-secret-token and is a documented ALLOWED exception (not a cookie endpoint). `tests/unit/api-origin-guard.test.ts` — `api-origin-guard telegram webhook accepts only the provider secret without a browser session`. Tests authored, NOT run.
