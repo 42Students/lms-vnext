@@ -5,6 +5,7 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {PageHeader} from "@/components/ui/page-header";
 import {RecordedOutsideForm} from "@/components/placements/recorded-outside-form";
 import {recordedOutsideChoices,verifyRecordedOutsideConfirmation} from "@/modules/placements/recorded-outside-service";
+import {listTpoOutsideDriveRecords} from "@/modules/placements/recorded-outside-participation-service";
 export default async function TpoRecordedOutsidePage({searchParams}:{searchParams:Promise<{saved?:string}>}){
  const context=await getCurrentRequestContext();
  if(
@@ -15,6 +16,7 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
  }
  const collegeId=context.membership.collegeId;
  const result=await recordedOutsideChoices(context,collegeId);
+ const recorded=await listTpoOutsideDriveRecords(context);
  const savedId=(await searchParams).saved;
  const saved=savedId?await verifyRecordedOutsideConfirmation(context,collegeId,savedId):false;
  return <main className="space-y-5">
@@ -25,5 +27,17 @@ export default async function TpoRecordedOutsidePage({searchParams}:{searchParam
    External drive record saved. It was not published as a job.
   </p>:null}
   <RecordedOutsideForm collegeId={collegeId} choices={result.choices}/>
+  <section aria-label="Recorded outside drives" className="space-y-3 rounded-md border border-border p-4">
+   <h2 className="font-semibold">Recorded outside drives</h2>
+   <p className="text-sm text-body">These are historic records, not published jobs; they are excluded from learner application reminders.</p>
+   {recorded.length?<ul className="space-y-2">
+    {recorded.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b border-border py-2 text-sm">
+     <span>{item.company} · {item.title} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.occurredAt)} · Recorded outside LMS</span>
+     <Link href={"/tpo/placements/recorded-outside/"+item.id} className="font-semibold text-primary-text underline">
+      Add students and results
+     </Link>
+    </li>)}
+   </ul>:<p role="status" className="text-sm text-muted-foreground">No outside-platform drives have been recorded yet.</p>}
+  </section>
  </main>;
 }
