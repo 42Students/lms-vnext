@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
+import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
 import {GLOBAL_TPO_REQUEST_TYPES,TPO_REQUEST_STATUSES,tpoRequestStatusCounts,tpoRequestAgeLabel,tpoRequestContextLink,tpoNextRoundCue,parseGlobalTpoRequestFilters,globalTpoRequestFirstPageHref,tpoRequestClearAdvancedHref} from "@/modules/placements/tpo-global-requests-model";
@@ -100,6 +101,10 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         reason:row.reason,jobTitle:row.jobTitle,companyName:row.companyName,
         expectedUpdatedAt:row.updatedAt.toISOString(),
       }))}/>:null}
+    {data.query.status==="PENDING"?<TpoStudentNudgePanel
+      rows={Array.from(new Map(data.requests.filter(row=>row.status==="PENDING")
+        .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
+    />:null}
     <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export filtered requests CSV</Link>
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
