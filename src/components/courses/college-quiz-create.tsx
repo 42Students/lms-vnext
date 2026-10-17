@@ -111,6 +111,8 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
       onChange={e=>setShuffleOptions(e.target.checked)}/>Shuffle answer options per learner</label>
    </div>
+   <p role="status" className="text-sm text-muted-foreground">{questions.length} question(s) ·
+    {questions.reduce((sum,question)=>sum+question.points,0)} total points · Max 100 questions and 10,000 points.</p>
    {questions.map((question,i)=><fieldset key={i} className="space-y-2 rounded border border-border p-3">
     <legend className="text-sm font-semibold">Question {i+1}</legend>
     <div className="flex flex-wrap gap-2">
