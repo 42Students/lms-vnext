@@ -31,13 +31,13 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
 function safeDriveReturnTo(raw:string|undefined){
- if(!raw)return "/hr/drives";
+ if(!raw)return "/recruiter/drives";
  try{
   const url=new URL(raw,"https://internal.invalid");
   if(url.origin!=="https://internal.invalid" ||
-      !["/hr/drives","/recruiter/drives"].includes(url.pathname))return "/hr/drives";
+      !["/hr/drives","/recruiter/drives"].includes(url.pathname))return "/recruiter/drives";
   return url.pathname+url.search;
- }catch{return "/hr/drives";}
+ }catch{return "/recruiter/drives";}
 }
 function formatCtc(
   value: number | null,
