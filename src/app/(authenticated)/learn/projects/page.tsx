@@ -167,7 +167,7 @@ export default async function LearnerProjectsPage({
             phase: row.project.phase,
             dueLabel: row.project.dueLabel,
             memberCount: teamsByProject.get(row.project.id)?.memberCount,
-            progressPercent: progressByProject.get(row.project.id)?.percentage ?? undefined,
+            progressPercent: progressByProject.get(row.project.id)?.percentage ?? row.project.progressPercent ?? undefined,
             dueState: dueByProject.get(row.project.id)?.state,
             dueDate: dueByProject.get(row.project.id)?.date,
             progressDetail: progressByProject.has(row.project.id)
@@ -176,7 +176,7 @@ export default async function LearnerProjectsPage({
               : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
             actionLine: projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
-              blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open project",
+              blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open workspace",
             blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&taskStatus=BLOCKED" : undefined,
             attention:
               projectAttention === "CHANGES_REQUESTED"

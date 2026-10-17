@@ -97,6 +97,17 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
+ it("COL-course-tabs-27 shows both lesson and progress mobile cards without invalid ternary JSX",()=>{
+  const directory=source("src/components/courses/college-learning-directory.tsx");
+  expect(directory).toContain('aria-label={title+" mobile records"}');
+  expect(directory).toContain('className="space-y-3 p-3 md:hidden"');
+  expect(directory).toContain('{data.kind==="LESSONS" ? (');
+  expect(directory).toMatch(/\{data\.kind==="LESSONS"\s*\?\s*\(\s*<>/);
+  expect(directory).toMatch(/<\/>(\s*)\)\s*:\s*\(\s*<>/);
+  expect(directory).toContain("collegeLessonVisibilityLabel(item)");
+  expect(directory).toContain("collegeProgressDescription(item)");
+  expect(directory).toContain('className="hidden overflow-x-auto md:block"');
+ });
  it("COL-course-tabs-22 keeps all College Course pages usable when no college is assigned",()=>{
   const files=["src/app/(authenticated)/college/assignments/page.tsx","src/app/(authenticated)/college/course-progress/page.tsx","src/app/(authenticated)/college/courses/page.tsx","src/app/(authenticated)/college/lessons/page.tsx","src/app/(authenticated)/college/live-classes/page.tsx","src/app/(authenticated)/college/quizzes/page.tsx","src/app/(authenticated)/college/resources/page.tsx","src/app/(authenticated)/college/videos/page.tsx"];
   for(const path of files){

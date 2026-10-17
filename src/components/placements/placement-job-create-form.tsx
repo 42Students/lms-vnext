@@ -12,7 +12,8 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
-import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -23,6 +24,8 @@ export type PlacementAcademicTargetingChoice = {
     code: string;
     departmentName: string;
   }>;
+  sections:Array<{id:string;name:string;code:string;cohortId:string;cohortName:string;
+    programId:string;departmentName:string}>;
   cohorts: Array<{
     id: string;
     name: string;
@@ -140,6 +143,12 @@ export function PlacementJobCreateForm({
   // TPO-drives-43: never POST a second draft on retry after a partial create.
   const createdJobRef=useRef<{jobId:string;relationshipId:string;fingerprint:string}|null>(null);
   const [partialJobId,setPartialJobId]=useState<string|null>(null);
+  const [departmentFilter,setDepartmentFilter]=useState("ALL");
+  const [selectedSectionIds,setSelectedSectionIds]=useState<string[]>([]);
+  const departments=[...new Set(academicOptions.programs.map(program=>program.departmentName))]
+    .sort((a,b)=>a.localeCompare(b));
+  const visiblePrograms=departmentFilter==="ALL"?academicOptions.programs:
+    academicOptions.programs.filter(program=>program.departmentName===departmentFilter);
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -148,6 +157,18 @@ export function PlacementJobCreateForm({
     selectedCohortIds,
     setSelectedCohortIds,
   ] = useState<string[]>([]);
+  // Child choices narrow when their parent is checked. Previously selected
+  // children outside a changed parent filter are never posted to the policy.
+  const visibleCohorts=academicOptions.cohorts.filter(cohort=>
+    visiblePrograms.some(program=>program.id===cohort.programId) &&
+    (!selectedProgramIds.length||selectedProgramIds.includes(cohort.programId)));
+  const visibleSections=academicOptions.sections.filter(section=>
+    visibleCohorts.some(cohort=>cohort.id===section.cohortId) &&
+    (!selectedCohortIds.length||selectedCohortIds.includes(section.cohortId)));
+  const effectiveProgramIds=selectedProgramIds.length?selectedProgramIds:
+    departmentFilter==="ALL"?[]:visiblePrograms.map(program=>program.id);
+  const effectiveCohortIds=selectedCohortIds.filter(id=>visibleCohorts.some(c=>c.id===id));
+  const effectiveSectionIds=selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id));
 
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
@@ -162,9 +183,9 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset}));
+        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset}));
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,selectedProgramIds,selectedCohortIds,eligibilityPreset]);
+  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -173,14 +194,17 @@ export function PlacementJobCreateForm({
         if(!raw||!formRef.current)return;
         const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
-          selectedProgramIds?:string[];selectedCohortIds?:string[];
-          eligibilityPreset?:DriveEligibilityPreset};
+          selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
+          departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
         if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
           setCompanyRelationshipId(saved.companyRelationshipId);
         setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
         setSelectedCohortIds((saved.selectedCohortIds??[]).filter(id=>academicOptions.cohorts.some(c=>c.id===id)));
+        setSelectedSectionIds((saved.selectedSectionIds??[]).filter(id=>academicOptions.sections.some(c=>c.id===id)));
+        if(saved.departmentFilter==="ALL"||departments.includes(saved.departmentFilter??""))
+          setDepartmentFilter(saved.departmentFilter??"ALL");
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
         setEnteredDriveTitle(String(saved.values.title??""));
@@ -196,7 +220,7 @@ export function PlacementJobCreateForm({
     },0);
     return ()=>window.clearTimeout(task);
     // One-time restore scoped to this actor and college only.
-  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,markDirty]);
+  },[backupKey,companies,academicOptions.programs,academicOptions.cohorts,academicOptions.sections,markDirty]);
   useEffect(()=>{
     if(!dirty||!formRef.current||clearedBackup.current)return;
     const task=window.setTimeout(()=>{if(formRef.current)saveBrowserDraft(formRef.current);},400);
@@ -256,6 +280,11 @@ export function PlacementJobCreateForm({
         throw new Error("Openings must be a whole number between 1 and 100,000.");
       }
       if(reviewPublish){
+        // TPO-drives-42: verify company selection before any employer or job is written.
+        if(companyMode==="EXISTING"&&!companies.some(company=>company.relationshipId===companyRelationshipId))
+          throw new Error("Pick the company from the list before publishing.");
+        if(companyMode==="NEW"&&String(data.get("companyName")??"").trim().length<2)
+          throw new Error("Enter the company name before publishing.");
         const dueTime=deadlineIso?Date.parse(deadlineIso):Number.NaN;
         if(!Number.isFinite(dueTime)||dueTime<=Date.now())
           throw new Error("Set a future application deadline before publishing.");
@@ -297,8 +326,9 @@ export function PlacementJobCreateForm({
       }
       const fingerprint=JSON.stringify({
         fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
-        selectedProgramIds:[...selectedProgramIds].sort(),
-        selectedCohortIds:[...selectedCohortIds].sort(),
+        selectedProgramIds:[...effectiveProgramIds].sort(),
+        selectedCohortIds:[...effectiveCohortIds].sort(),
+        selectedSectionIds:[...effectiveSectionIds].sort(),
         companyMode,companyRelationshipId,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
@@ -445,10 +475,9 @@ export function PlacementJobCreateForm({
         `/api/placements/jobs/${jobId}/eligibility-policy`,
         "PUT",
         {
-          allowedProgramIds:
-            selectedProgramIds,
-          allowedCohortIds:
-            selectedCohortIds,
+          allowedProgramIds:effectiveProgramIds,
+          allowedCohortIds:effectiveCohortIds,
+          allowedSectionIds:effectiveSectionIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -523,10 +552,7 @@ export function PlacementJobCreateForm({
       showToast({
         tone: "error",
         title: "Could not create opportunity",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+        description: tpoDriveFormErrorMessage(error),
       });
     }
     });
@@ -933,18 +959,38 @@ export function PlacementJobCreateForm({
             />
             <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
           </label>
-          <label>
-            <span className="mb-1.5 block text-xs font-semibold text-body">
-              Application deadline
-            </span>
-            <input
-              className={inputClass}
-              name="applicationDeadline"
-              type="datetime-local"
-              aria-describedby="drive-deadline-ist-help"
-            />
-            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Choose 11:59 PM if applications close at the end of the day.</span>
-          </label>
+          <div>
+            <label>
+              <span className="mb-1.5 block text-xs font-semibold text-body">
+                Application deadline
+              </span>
+              <input id="tpo-drive-application-deadline"
+                className={inputClass}
+                name="applicationDeadline"
+                type="datetime-local"
+                aria-describedby="drive-deadline-ist-help"
+              />
+            </label>
+            <span id="drive-deadline-ist-help" className="mt-1 block text-xs text-body">Times are in IST (Asia/Kolkata). Select a date and time, or use the end-of-day action for 11:59 PM.</span>
+            <button type="button" aria-controls="tpo-drive-application-deadline"
+              className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline"
+              onClick={()=>{
+                const form=formRef.current;
+                const field=form?.elements.namedItem("applicationDeadline");
+                if(!(field instanceof HTMLInputElement)||!form||!field.value){
+                  showToast({tone:"error",title:"Choose a date first",description:"Select a date in IST before using the 11:59 PM deadline."});
+                  return;
+                }
+                try{
+                  field.value=driveDeadlineIstEndOfDay(field.value);
+                  clearedBackup.current=false;
+                  saveBrowserDraft(form);
+                  markDirty();
+                }catch{
+                  showToast({tone:"error",title:"Deadline not updated",description:"Enter a valid application deadline in IST."});
+                }
+              }}>Use 11:59 PM IST</button>
+          </div>
         </div>
       </section>
 
@@ -958,6 +1004,19 @@ export function PlacementJobCreateForm({
           </p>
         </div>
         <div className="grid gap-5 p-5">
+          <label className="grid gap-1 text-sm font-semibold">Department · Target Audience
+            <select className={inputClass} value={departmentFilter} onChange={event=>{
+              setDepartmentFilter(event.target.value);setSelectedProgramIds([]);
+              setSelectedCohortIds([]);setSelectedSectionIds([]);
+            }}>
+              <option value="ALL">All departments</option>
+              {departments.map(department=><option key={department} value={department}>{department}</option>)}
+            </select>
+            <span className="text-xs font-normal text-muted-foreground">
+              Department selection targets every active program in that department.
+              Choose specific programs, batches and classes below to narrow the audience.
+            </span>
+          </label>
           <div className="grid gap-4 lg:grid-cols-2">
             <fieldset className="rounded-lg border border-border bg-muted p-4">
               <legend className="px-1 text-xs font-semibold text-body">
@@ -966,13 +1025,13 @@ export function PlacementJobCreateForm({
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
                 Leave all unchecked to make the opportunity available across programs.
               </p>
-              {academicOptions.programs.length === 0 ? (
+              {visiblePrograms.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active programs are available in this college yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.programs.map(
+                  {visiblePrograms.map(
                     (program) => (
                       <label
                         key={program.id}
@@ -1014,13 +1073,13 @@ export function PlacementJobCreateForm({
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
                 Cohorts can narrow the opportunity further before it is published.
               </p>
-              {academicOptions.cohorts.length === 0 ? (
+              {visibleCohorts.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active or planned cohorts are available yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.cohorts.map(
+                  {visibleCohorts.map(
                     (cohort) => (
                       <label
                         key={cohort.id}
@@ -1057,6 +1116,25 @@ export function PlacementJobCreateForm({
             </fieldset>
           </div>
 
+          <fieldset className="rounded-lg border border-border bg-muted p-4">
+            <legend className="px-1 text-xs font-semibold text-body">Classes (sections)</legend>
+            <p className="mb-3 text-xs text-muted-foreground">
+              Leave unselected to include all classes in the selected programs and batches.
+              Class targeting uses the persisted section whitelist.
+            </p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {visibleSections.slice(0,500).map(section=><label key={section.id}
+                className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={selectedSectionIds.includes(section.id)}
+                 disabled={!selectedSectionIds.includes(section.id)&&selectedSectionIds.length>=100}
+                 onChange={()=>toggleId(section.id,selectedSectionIds,setSelectedSectionIds)}/>
+                {section.name} · {section.cohortName}
+              </label>)}
+              {!visibleSections.length?<p className="text-sm text-muted-foreground">No active classes in this selection.</p>:null}
+              {visibleSections.length>500?<p className="text-sm text-muted-foreground">Showing first 500 classes. Narrow your program and batch selection to target later classes.</p>:null}
+              {selectedSectionIds.length>=100?<p className="text-sm text-muted-foreground">Maximum 100 classes selected. Deselect a class to choose another.</p>:null}
+            </div>
+          </fieldset>
           <label className="block text-sm font-semibold text-body">Eligibility preset
             <select className={inputClass} value={eligibilityPreset} onChange={event=>setEligibilityPreset(event.target.value as DriveEligibilityPreset)}>
               <option value="OPEN">Open to all</option>
@@ -1151,7 +1229,7 @@ export function PlacementJobCreateForm({
       <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Who this reaches</h2>
         <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
-        <p className="mt-2 text-xs text-muted-foreground">Interview rounds are configured in the saved drive workspace; recruiter lead invitations are managed separately under Engage.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace. Recruiter lead invitations are managed separately under Engage. No rounds are created on this form.</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">

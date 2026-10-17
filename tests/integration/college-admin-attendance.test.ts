@@ -198,6 +198,22 @@ describe("College Admin attendance tenant isolation with PostgreSQL", () => {
     expect(check.rows[0]?.status).toBe("ABSENT");
   });
 
+  it("COL-attendance-R01 corrects an individual absence without marking an unmarked session", async () => {
+    const input = {collegeId:SEED_IDS.collegeA,deliveryId:own.delivery,membershipId:own.learner};
+    const before = await pool.query("select schedule_event_id from attendance_sessions where schedule_event_id=$1",[own.event]);
+    expect(before.rows).toHaveLength(0);
+    await correctAdminAttendance(admin,own.event,{...input,status:"ABSENT"});
+    const [sessionRows,recordRows] = await Promise.all([
+      pool.query("select status from attendance_sessions where schedule_event_id=$1",[own.event]),
+      pool.query("select status from attendance_records where schedule_event_id=$1 and membership_id=$2",[own.event,own.learner]),
+    ]);
+    expect(sessionRows.rows).toHaveLength(0);
+    expect(recordRows.rows).toMatchObject([{status:"ABSENT"}]);
+    await correctAdminAttendance(admin,own.event,{...input,status:"PRESENT"});
+    const cleaned = await pool.query("select id from attendance_records where schedule_event_id=$1 and membership_id=$2",[own.event,own.learner]);
+    expect(cleaned.rows).toHaveLength(0);
+  });
+
   it("keeps PRESENT as no record and prevents inactive-member corrections", async () => {
     const input = {
       collegeId: SEED_IDS.collegeA,

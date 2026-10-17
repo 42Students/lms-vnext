@@ -11,6 +11,7 @@ export function buildHrApplicantDrawer(
     name:selected.name?.trim() || "Unnamed applicant",
     role:selected.role,
     email:selected.email,
+    rollNumber:selected.rollNumber??null,
     status:selected.status,
     screening:selected.screening,
     submittedAt:selected.submittedAt,

@@ -81,6 +81,7 @@ export async function getPublicPlacementStatistics(collegeId:string){
   return {
     publishedAt:row.publishedAt.toISOString(),
     placed:publicMetricRelease({...input,count:placedCount}),
+    population:publicMetricRelease({...input,count:row.population}),
     offers:publicIndependentPlacementCount(actual?.offers ?? 0,row.population),
     employers:publicIndependentPlacementCount(actual?.employers ?? 0,row.population),
     medianCtcInr: publicSalaryMetricsAllowed(actual?.ctcStudentCount ?? 0,row.population) ? Number(actual?.medianCtc ?? 0) : null,

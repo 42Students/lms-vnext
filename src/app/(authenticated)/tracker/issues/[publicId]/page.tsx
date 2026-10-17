@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {TrackerIssueCopyActions} from "@/components/tracker/tracker-issue-copy-actions";
+import {TrackerIssueLogsPanel} from "@/components/tracker/tracker-issue-logs-panel";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
@@ -123,6 +124,7 @@ export default async function TrackerIssueDetailPage({
       </section>
 
       <TrackerWorkflowPanel issue={workflow} />
+      <TrackerIssueLogsPanel publicId={issue.publicId}/>
 
       <section className="space-y-3">
         <h2 className="m-0 text-lg font-semibold text-foreground">Screenshots</h2>

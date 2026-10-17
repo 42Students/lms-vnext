@@ -2,6 +2,7 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
 import {
   createCollegeSectionSchema, sectionIdentityChanged,
@@ -72,7 +73,9 @@ export function CollegeClassCreate({ cohorts, periods }: {
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {!cohorts.length
           ? "No planned or active batches in this college. Create a batch first."
-          : "No usable academic periods in this college. Create a period first."}
+          : <>No usable academic periods in this college. Create a period first.{" "}
+            <Link href="/college/academics" className="font-semibold text-primary-text underline">Set up academic periods</Link>
+          </>}
       </p>
       : <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         <label className="grid gap-1 text-sm font-medium text-body">Program

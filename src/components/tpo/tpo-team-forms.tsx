@@ -67,11 +67,11 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 rounded-lg border border-border p-4">
-  <h3 className="font-semibold text-foreground">Start a private TPO conversation</h3>
+  <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
   <label className="grid gap-1 text-sm text-body">Team member
    <select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3">
-    <option value="">Choose an active TPO colleague</option>
+    <option value="">Choose an active placement team colleague</option>
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </select>
   </label>
@@ -79,7 +79,7 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
    <input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 rounded-md border border-border bg-surface px-3" placeholder="Drive coordination"/>
   </label>
-  <p className="text-xs text-muted-foreground">Only named active TPO members can take part.</p>
+  <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
   {error?<p role="alert" className="text-sm text-danger">{error}</p>:null}
   <button type="submit" disabled={busy||!recipient||!topic.trim()}
    className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">

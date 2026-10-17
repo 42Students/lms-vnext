@@ -1,21 +1,24 @@
 import "server-only";
 
 import { createHash, createHmac } from "node:crypto";
+import {resolveMx} from "node:dns/promises";
 import { and, count, eq, gte, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges, organizations, placementPublicJoinLinks, placementPublicJoinChallenges,
+  placementCompanies,
 } from "@/db/schema";
 import { publicJoinTablesReady } from "./readiness";
 import { publicJoinSendCodeSchema, publicJoinCodeDigest,
   publicJoinCodeSendAllowed, newPublicJoinCode, PUBLIC_JOIN_CODE_TTL_MS,
 } from "./code-policy";
 import { companyJoinEmailCandidate } from "./company-preview-policy";
+import {registrableWorkDomain} from "./domain-model";
 
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinCodeError extends Error {
   constructor(readonly code: "INVALID_LINK" | "RATE_LIMITED" |
-    "NETWORK_GUARD_NOT_READY" | "DELIVERY_FAILED") {
+    "NETWORK_GUARD_NOT_READY" | "DELIVERY_FAILED" | "EMAIL_NO_MX" | "EMAIL_MX_UNAVAILABLE") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinCodeError";
   }
@@ -35,7 +38,7 @@ export function opaqueNetworkTag(ip: string, secret: string) {
 export async function requestPublicJoinCode(
   scope: Scope, raw: unknown, verifiedClientIp: string | null,
   deliver: (email: string, code: string) => Promise<boolean>,
-): Promise<{ sent: true }> {
+): Promise<{ sent: true;companyName:string|null }> {
   const input = publicJoinSendCodeSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinCodeError("INVALID_LINK");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
@@ -50,6 +53,23 @@ export async function requestPublicJoinCode(
   }
   const digest = createHash("sha256").update(input.data.token).digest("hex");
   const email = input.data.email;
+  // Delivery must be possible at the domain before recording a challenge.
+  const host=email.split("@")[1];
+  let records:{exchange:string;priority:number}[];
+  try{
+   records=await Promise.race([
+    resolveMx(host),
+    new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error("DNS_TIMEOUT")),3500)),
+   ]);
+  }catch(error){
+   if(error instanceof Error&&("code" in error)&&error.code==="ENODATA")
+    throw new PublicJoinCodeError("EMAIL_NO_MX");
+   if(error instanceof Error&&("code" in error)&&error.code==="ENOTFOUND")
+    throw new PublicJoinCodeError("EMAIL_NO_MX");
+   throw new PublicJoinCodeError("EMAIL_MX_UNAVAILABLE");
+  }
+  if(records.length===0||!records.some(x=>x.exchange.trim()))
+   throw new PublicJoinCodeError("EMAIL_NO_MX");
   const code = newPublicJoinCode();
   const issued = await getDb().transaction(async tx => {
     const now = new Date();
@@ -109,5 +129,13 @@ export async function requestPublicJoinCode(
       .where(eq(placementPublicJoinChallenges.id, issued.challengeId));
   }
   if (!sent) throw new PublicJoinCodeError("DELIVERY_FAILED");
-  return { sent: true };
+  // Show a company only after we have successfully sent a verification code
+  // to the provided mailbox, never as an unauthenticated domain oracle.
+  const domain=registrableWorkDomain(email);
+  const [known]=domain?await getDb().select({name:placementCompanies.name})
+   .from(placementCompanies).where(and(
+    eq(placementCompanies.primaryDomain,domain),
+    eq(placementCompanies.status,"ACTIVE"),
+   )).limit(1):[];
+  return { sent: true,companyName:known?.name??null };
 }

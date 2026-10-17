@@ -196,6 +196,7 @@ export const ACTIVITY_EVENT_TYPES = {
     "placements.job.draft_created",
   PLACEMENTS_JOB_PUBLISHED:
     "placements.job.published",
+  PLACEMENTS_APPLICATION_RESCREENED: "placements.application.rescreened",
   PLACEMENTS_JOB_PUBLISHED_EDITED: "placements.job.published_edited",
   PLACEMENTS_JOB_ARCHIVED: "placements.job.archived",
   PLACEMENTS_JOB_REOPENED: "placements.job.reopened",

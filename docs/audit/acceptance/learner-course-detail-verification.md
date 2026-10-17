@@ -17,3 +17,17 @@ These are source-level checks and ID-named tests; orchestration must execute uni
 
 ## Remaining
 LEARNER-course-detail-03/04/05/10/11/12/17/18 and other audit entries are not claimed by this batch.
+
+## Chat-15 group A — tests authored, not executed
+
+| LEARNER-course-detail-08 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-08` test; existing implementation reviewed. |
+| LEARNER-course-detail-09 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-09` test; existing implementation reviewed. |
+| LEARNER-course-detail-13 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-13` test; existing implementation reviewed. |
+| LEARNER-course-detail-14 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-14` test; existing implementation reviewed. |
+| LEARNER-course-detail-15 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-15` test; existing implementation reviewed. |
+| LEARNER-course-detail-16 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-16` test; existing implementation reviewed. |
+| LEARNER-course-detail-20 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-20` test; existing implementation reviewed, corrected roadmap copy. |
+
+| LEARNER-course-detail-12 | PARTIAL | `tests/unit/chat15-player-and-placement-copy.test.ts`, playback-rate selector present; server tunables for progress cadence and threshold remain. |
+
+| LEARNER-course-detail-17 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` missed quiz read-only released answer key. |

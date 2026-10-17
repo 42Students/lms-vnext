@@ -68,6 +68,7 @@ export default async function LearnerAssignmentsPage() {
       <LearnerAssessmentOverview
         fileUploadsEnabled={assignmentFilesRuntimeEnabled()}
         courses={overview.courses}
+        classScope={overview.classScope}
         items={items}
         kind="ASSIGNMENT"
         snapshotNowMs={overview.snapshotNowMs}
