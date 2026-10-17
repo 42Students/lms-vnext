@@ -50,6 +50,20 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      <p>Attempt {item.attemptNumber} · {item.score}/{item.maxScore} points</p>
      <p className="text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{
       dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(item.submittedAt))} IST</p>
+    <details className="mt-2 rounded border border-border p-2">
+      <summary className="cursor-pointer font-semibold">View Answers ({item.answers.length})</summary>
+      {item.answers.length===0?<p className="mt-2 text-muted-foreground">No saved answers for this attempt.</p>:null}
+      <ol className="mt-2 space-y-3">{item.answers.map((answer,index)=><li key={answer.id} className="rounded border border-border p-2">
+       <p className="font-semibold">Question {index+1}: {answer.promptSnapshot}</p>
+       <p>{answer.pointsAwarded}/{answer.pointsPossible} points · {answer.correct?"Correct":"Incorrect"}</p>
+       <ul className="mt-1 space-y-1">{[...(answer.optionsSnapshot??[])].sort((a,b)=>a.sequence-b.sequence).map(option=><li key={option.id}>
+        <span className={(answer.selectedOptionIds??[]).includes(option.id)?"font-semibold text-primary-text":""}>
+         {(answer.selectedOptionIds??[]).includes(option.id)?"Selected: ":""}{option.text}
+        </span>
+        {option.correct?<span className="ml-2 text-success">(Correct answer)</span>:null}
+       </li>)}</ul>
+      </li>)}</ol>
+     </details>
     </li>)}</ul>
    </>:null}
   </div>:null}
