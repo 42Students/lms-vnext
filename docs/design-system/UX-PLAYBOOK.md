@@ -537,6 +537,48 @@ Use existing copy from `docs/audit/legacy-copy-A.md`, `legacy-copy-B.md`, or the
 
 **Benchmark scorecards (example evidence, not claimed test runs):** A 320px TPO student page with horizontal table, 40px actions and no error recovery scores BR=10, MO=0, ST=7, FO=7, AX=10, HI=6, PE=4 → **44/100 BLOCKED**. A Faculty profile editor with correct labels but no saved draft on disconnect scores 15+18+8+7+15+10+6 = **79/100 BLOCKED**. A fully verified modern directory meeting every test atom, with 25-row pagination and all eight fixture states, scores **100/100 candidate PASS** only after the three audits; this is a hypothetical benchmark, not a claim that a current route earned 100.
 
+
+
+### 16.1. Atomic point checklist (no subjective 3–6-point lump scores)
+
+Each semicolon-delimited subcheck is exactly **one point**. Award 1 only for linked observable evidence on the specific source revision and role/viewport; otherwise 0. If an interaction cannot occur on this route, award the point only with a screenshot or DOM scan **proving the trigger is absent**, plus a negative test confirming that no reachable modal, form, table or mutation route has been overlooked. **No N/A point redistribution** and no “looks good” partial credit. A reviewer must record the 25 row subtotals and each atomic result; two reviewers are within five points when both use the same evidence ledger.
+
+| ID | Atomic 1-point checks (number of semicolon-separated checks = row maximum) |
+|---|---|
+| BR1 (5) | primary fill computed exactly `#26bac7`; no unreviewed blue class in active controls; no invented neutral on page; exact sidebar selected fill; dark theme scoped tokens remain canonical |
+| BR2 (5) | h1 exact legacy string; navigation items exact labels; navigation order matches role manifest; primary CTA string matches legacy; status/empty/error public text matches parity source |
+| BR3 (5) | every sampled normal text pair measured ≥4.5; large text ≥3; active control boundaries/focus ≥3; primary text contrast both light and tracker-dark; status chips text contrast ≥4.5 |
+| MO1 (6) | 320 no document horizontal scroll; 360 no scroll; 390 no scroll; 320 header not clipped; 360 primary action not clipped; 390 full row action reachable |
+| MO2 (4) | all primary taps ≥44×44; all secondary taps ≥44×44; icon-only target ≥44×44; neighbouring controls have ≥8px separation or nonoverlapping hit areas |
+| MO3 (4) | top safe-area notch clearance; home indicator/footer clearance; keyboard shows focused field; keyboard leaves Save and Back reachable |
+| MO4 (4) | desktop table to mobile cards/disclosure per explicit priority; filters from stable subtree; modal/sheet full screen with correct focus; sticky action and secondary actions usable |
+| MO5 (2) | modal closes before native Back navigation; file picker/external URL has accessible fallback (or no such affordance exists, proved by source+DOM) |
+| ST1 (3) | loading displays skeleton not empty; skeleton width/height reserves final content within 20%; 12s slow fallback interactive |
+| ST2 (4) | true empty mode has next authorized action; error displays safe message; error has working Retry/Back; filters/draft persist after Retry |
+| ST3 (4) | partial data never hides healthy data; denied view has no unauthorized retry; read-only has visible reason; stale conflict banner identifies authoritative refresh |
+| ST4 (4) | offline injection visibly marked; unsent data survives failed request; uncertain receipt not reported success; retry cannot duplicate a mutation |
+| FO1 (4) | all visible labels associated; blur validation near field; submit validation near field; first invalid field receives focus |
+| FO2 (3) | one synchronous write lock; pending button visibly disabled; screen reader hears save success/failure without focus theft |
+| FO3 (3) | irreversible writes have consequence dialog; unsafe route navigation prompts about unsaved work; cancel/discard keeps or intentionally discards correct draft |
+| AX1 (3) | exactly one main; exactly one h1; headings/landmark order follows DOM |
+| AX2 (6) | Tab and Shift+Tab traverse all actions; Enter/Space activations work; Escape closes overlay; Arrow/Home/End tabs work; focus trapped inside dialog; trigger regains focus on close |
+| AX3 (5) | icon buttons named; `aria-describedby` ties errors; status live region announces update; page change announces route; pagination current page announced |
+| AX4 (3) | statuses have textual meaning; error states don't rely on red; active/selected controls use visible shape/label in addition to colour |
+| AX5 (3) | reduced-motion disables shimmer; overlay motion has no essential information; no auto-scrolling or autoplay violation |
+| HI1 (3) | one primary CTA at entry; PageHeader h1/actions anatomy correct; real legacy CTA/title strings retained |
+| HI2 (3) | type classes from §2 scale; spacing matches 4px base scale; card/control radius from scale |
+| HI3 (4) | button from shared component; form field from shared component; overlay from shared component; table or phone card from shared renderer |
+| PE1 (4) | server page size ≤100; rows beyond 100 use pagination/virtualization; no double cell formatter execution; no visible layout shift ≥0.1 CLS in measured transition |
+| PE2 (3) | optional reads fail independently; bounded loading shows retry at 12s; healthy content interactive during auxiliary error |
+| PE3 (3) | passing typecheck+lint linked to commit; passing unit + Playwright linked; manual native WebView + VoiceOver/TalkBack report linked |
+
+For FO3 on a purely read-only directory, for example, earn the three points only if an audited DOM interaction sweep shows no destructive action, no edit route from that page, and no unsaved entry. For MO5 on a public error page, earn two points only when DOM/source prove no dialogs and no uploads/external links; if any appears after an async change, re-test. Record source hash and a zero on missing evidence; do not transfer points to unrelated rows.
+
+**Annotated benchmark rows, not executed findings:** 
+- TPO student directory with an 832px side-scrolling phone table: MO1=0/6 (all widths/content failed), MO4=0/4 (table rule broken), MO2=0/4 if raw 40px targets; even correct 15/15 brand cannot override the BLOCKER.
+- Faculty editor with labels correctly associated but unsaved edits discarded after offline error: FO1=4/4, ST4≤1/4 (only offline detected), FO3≤1/3 (only consequence dialog); accessibility may score separately but page remains BLOCKED on data loss.
+- Directory with full synthetic eight states, 320–1280 screenshots, passing typecheck and mobile AT evidence: may score 100/100 only if all 100 atomic checks linked; absence of native host report must score MO5=0, AX3 may partially score, PE3≤2, not a PASS.
+
 ## 17. Anti-drift enforcement and reference screenshots
 
 The repository `scripts/check-ux-anti-drift.mjs` and `npm run ux:guard` are normative for changed shared UI and audited critical routes. Forbidden native confirm/popup and 40px interaction classes must be resolved or enter an explicit expiring waiver recorded in `docs/design-system/UX-GUARD-WAIVERS.md`. Every page PR must attach `320/360/390/768/1280` screenshots, state/permissions fixtures, en-IN/IST and legacy-copy diff, and confirm the per-page §16 ledger. Raw screenshot baselines require an actual Playwright/browser runner and manual approval; **no screenshot hash is invented by documentation**. Golden fixtures are stored at `tests/fixtures/ux-reference-states.json`, with role scope and never real student data. The approval owner is the UX orchestrator after audits 1, 2 and 3.
