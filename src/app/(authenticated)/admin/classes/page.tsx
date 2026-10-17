@@ -75,7 +75,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
               <td className="p-2">{row.programName}</td>
               <td className="p-2">{row.cohortName}</td>
               <td className="p-2">{row.description?.trim() || "—"}</td>
-              <td className="p-2">{row.activeLearners}</td>
+              <td className="p-2">{row.activeLearners}{row.capacity!==null && row.activeLearners>=row.capacity ? <span className="ml-2 rounded border border-border px-2 text-xs font-semibold text-error" title="Class is full; learners cannot be moved into it.">Class full</span> : null}</td>
               <td className="p-2">{row.capacity ?? "—"}</td>
               <td className="p-2"><CollegeClassRowActions row={row} /></td>
             </tr>)}</tbody>
