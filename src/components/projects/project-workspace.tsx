@@ -18,6 +18,7 @@ import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
+import {MentorMeetingHistory} from "./mentor-meeting-history";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
@@ -107,6 +108,8 @@ function tone(status: string) {
     case "SCHEDULED":
     case "SUBMITTED":
       return "info" as const;
+    case "MISSED":
+      return "error" as const;
     case "BLOCKED":
     case "CHANGES_REQUESTED":
     case "REQUESTED":
@@ -164,6 +167,8 @@ function formatDateTime(value: Date | null) {
   return new Intl.DateTimeFormat("en-IN", {
     dateStyle: "medium",
     timeStyle: "short",
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
   }).format(value);
 }
 
@@ -744,7 +749,10 @@ export function ProjectWorkspace({
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
                   {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
-                      releaseId={release.id} />
+                      releaseId={release.id}
+                      releases={workspace.releases.map(item=>({
+                        id:item.id,title:item.title,status:item.status,
+                      }))} />
                   ) : null}
                   {mode !== "LEARNER" && !readOnly ? (
                     <ReleaseLifecycleActions
@@ -1329,7 +1337,7 @@ export function ProjectWorkspace({
                       <a
                         href={href}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="mt-3 inline-flex text-sm font-semibold text-primary-text hover:text-primary-hover"
                       >
                         Open resource ↗
@@ -1402,21 +1410,25 @@ export function ProjectWorkspace({
               .sort((a,b)=>new Date(a.startsAt).getTime()-new Date(b.startsAt).getTime());
             return <section aria-label="Upcoming project meetings" className="rounded-xl border border-border bg-surface p-4">
               <h3 className="text-sm font-semibold">Next meeting</h3>
-              {upcoming[0]?<p className="mt-1 text-sm">{upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}</p>:
+              {upcoming[0]?<p className="mt-1 text-sm">
+                {upcoming[0].title} · {formatDateTime(upcoming[0].startsAt)}
+                {upcoming[0].meetingType?" · "+label(upcoming[0].meetingType):""}
+              </p>:
                 <p className="mt-1 text-sm text-muted-foreground">No upcoming meeting.</p>}
               {upcoming.length>1?<details className="mt-2 text-sm">
                 <summary className="cursor-pointer font-semibold text-primary-text">Also scheduled ({upcoming.length-1})</summary>
                 <ul className="mt-2 space-y-1">{upcoming.slice(1).map(m=>
-                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}</li>)}</ul>
+                  <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)}
+                    {m.meetingType?" · "+label(m.meetingType):""}</li>)}</ul>
               </details>:null}
-              <details className="mt-3 text-sm">
-                <summary className="cursor-pointer font-semibold text-primary-text">Past meetings / Meeting history</summary>
-                <ul className="mt-2 space-y-1">
-                  {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
-                    (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
-                    <li key={m.id}>{m.title} · {label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
-                </ul>
-              </details>
+              <MentorMeetingHistory meetings={workspace.meetings
+                .filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
+                  (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime))
+                .sort((a,b)=>new Date(b.startsAt).getTime()-new Date(a.startsAt).getTime())
+                .map(m=>({id:m.id,title:m.title,
+                  startsAt:new Date(m.startsAt).toISOString(),
+                  status:label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime)),
+                }))}/>
             </section>;
           })():null}
           <div className="space-y-3">
@@ -1440,10 +1452,10 @@ export function ProjectWorkspace({
                           {meeting.title}
                         </p>
                         <p className="mt-1 text-xs text-muted-foreground">
-                          {formatDateTime(
-                            meeting.startsAt,
-                          )}{" "}
-                          · {meeting.timeZone}
+                          {formatDateTime(meeting.startsAt)} – {formatDateTime(meeting.endsAt)}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground">
+                          Meeting zone: {meeting.timeZone}
                         </p>
                       </div>
                       <StatusBadge
@@ -1452,6 +1464,17 @@ export function ProjectWorkspace({
                         {label(mentorMeetingDisplayStatus(meeting.status, meeting.endsAt, renderTime))}
                       </StatusBadge>
                     </div>
+                    {meeting.status==="REQUESTED"? (
+                      <p className="mt-2 text-xs font-semibold text-warning-text">
+                        Waiting for a mentor response
+                      </p>
+                    ) : null}
+                    {meeting.requestedByMembershipId ? (
+                      <p className="mt-2 text-xs text-body">
+                        Organised by {" "}
+                        {workspace.members.find(member=>member.membershipId===meeting.requestedByMembershipId)?.displayName??"Project member"}
+                      </p>
+                    ) : null}
                     {meeting.agenda ? (
                       <p className="mt-2 text-sm leading-6 text-body">
                         {meeting.agenda}
@@ -1461,6 +1484,14 @@ export function ProjectWorkspace({
                       <p className="mt-2 rounded-lg bg-muted p-3 text-sm leading-6 text-body">
                         Outcome: {meeting.outcome}
                       </p>
+                    ) : null}
+                    {mode==="MENTOR"? (
+                      <Link
+                        href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
+                          "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
+                        className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        {meeting.outcome?"View notes":"Add notes"}
+                      </Link>
                     ) : null}
                     {href ? (
                       <a
