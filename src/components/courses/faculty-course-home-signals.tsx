@@ -147,7 +147,9 @@ export function FacultyCourseHomeSignals({
                 Needs attention
               </h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                {signals.atRiskTotal} student{signals.atRiskTotal === 1 ? "" : "s"} need attention.
+                {signals.atRisk.filter(row=>row.severity>=3).length} critical ·{" "}
+                {signals.atRisk.filter(row=>row.severity<3).length} moderate
+                {signals.atRiskTotal>signals.atRisk.length?" · View all for remaining students":""}
               </p>
             </div>
             <Link
@@ -166,9 +168,16 @@ export function FacultyCourseHomeSignals({
                 <span className="text-sm font-semibold text-foreground">
                   {learner.name}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  {learner.reasons.join(" · ")}
-                </span>
+                <details className="min-w-40 rounded-md border border-border bg-surface-subtle p-2 text-xs">
+                  <summary className="cursor-pointer font-semibold text-body">
+                    {learner.severity>=3?"Critical":"Moderate"} · View snapshot
+                  </summary>
+                  <ul className="mt-2 space-y-1 text-muted-foreground">
+                    {learner.reasons.map(reason=><li key={reason}>{reason}</li>)}
+                  </ul>
+                  <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
+                    className="mt-2 inline-block text-primary-text underline">View students</Link>
+                </details>
               </li>
             ))}
           </ul>
@@ -192,10 +201,9 @@ export function FacultyCourseHomeSignals({
               (bucket.count / total) * 100,
             );
             return (
-              <div
-                key={bucket.label}
-                className="grid grid-cols-[6rem_1fr_2rem] items-center gap-3 text-sm"
-              >
+              <details key={bucket.label} className="rounded-md border border-border p-2 text-sm">
+                <summary className="grid cursor-pointer grid-cols-[6rem_1fr_2rem] items-center gap-3">
+
                 <span className="text-body">
                   {bucket.label}
                 </span>
@@ -205,10 +213,17 @@ export function FacultyCourseHomeSignals({
                     style={{ width: `${width}%` }}
                   />
                 </span>
-                <strong className="text-right text-foreground">
-                  {bucket.count}
-                </strong>
-              </div>
+                <strong className="text-right text-foreground">{bucket.count}</strong>
+                </summary>
+                {bucket.count>0?<ul className="mt-2 space-y-1 border-t border-border pt-2">
+                  {signals.performance.studentAverages.filter(student=>
+                    student.averagePercent>=bucket.min&&student.averagePercent<=bucket.max
+                  ).map(student=><li key={student.membershipId}
+                    className="flex justify-between gap-3 text-body">
+                    <span>{student.name}</span><span>{student.averagePercent}%</span>
+                  </li>)}
+                </ul>:<p className="mt-2 text-xs text-muted-foreground">No graded learners in this range.</p>}
+              </details>
             );
           })}
         </div>
