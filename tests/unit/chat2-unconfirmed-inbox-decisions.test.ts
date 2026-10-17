@@ -4,7 +4,7 @@ const source=(path:string)=>readFileSync(path,"utf8");
 describe("TPO inbox ambiguous legacy behaviours resolved by safer policy",()=>{
  it("TPO-inbox-team-08 does not claim provider email delivery without an active relay",()=>{
   const service=source("src/modules/placements/tpo-messages-service.ts");
-  expect(service).toContain("outboundDeliveryDataAvailable: false");
+  expect(service).toContain("outboundDeliveryDataAvailable:false");
   const page=source("src/app/(authenticated)/tpo/messages/page.tsx");
   expect(page).toContain('source === "RECRUITER_THREADS"');
  });

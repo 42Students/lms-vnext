@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS placement_tpo_company_team_messages (
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   company_id uuid NOT NULL REFERENCES placement_companies(id) ON DELETE RESTRICT,
   author_membership_id uuid NOT NULL,
+  idempotency_key uuid,
   body text NOT NULL,
   decision boolean NOT NULL DEFAULT false,
   ask_assignee_membership_id uuid,
@@ -30,6 +31,8 @@ CREATE TABLE IF NOT EXISTS placement_tpo_company_team_messages (
     CHECK ((ask_assignee_membership_id IS NULL AND ask_status IS NULL)
         OR (ask_assignee_membership_id IS NOT NULL AND ask_status IS NOT NULL))
 );
+CREATE UNIQUE INDEX IF NOT EXISTS tpo_company_team_message_send_dedupe_uq
+  ON placement_tpo_company_team_messages(college_id,company_id,author_membership_id,idempotency_key);
 CREATE INDEX IF NOT EXISTS tpo_company_team_messages_college_company_time_idx
   ON placement_tpo_company_team_messages(college_id,company_id,created_at);
 
