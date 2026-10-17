@@ -67,3 +67,12 @@ ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS burst_minute_at timestampt
 ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS burst_count bigint NOT NULL DEFAULT 0;
 ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS overflow_count bigint NOT NULL DEFAULT 0;
 ALTER TABLE log_alert_states ADD COLUMN IF NOT EXISTS last_digest_day varchar(10);
+
+-- A request seen by logError and the Cloud Logging fallback must count once.
+-- Store only SHA-256 event identifiers (environment/signature/opaque request id).
+CREATE TABLE IF NOT EXISTS log_alert_observed_events (
+  event_hash varchar(64) PRIMARY KEY CHECK (event_hash ~ '^[0-9a-f]{64}$'),
+  observed_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS db10_log_alert_observed_at_idx
+  ON log_alert_observed_events (observed_at);

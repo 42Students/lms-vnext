@@ -130,3 +130,16 @@ export const db10LogAlertDailyCounts = pgTable(
     check("db10_log_alert_daily_count_ck", sql`${t.occurrenceCount} >= 1`),
   ],
 );
+
+/** SHA-256 of opaque request reference, signature and environment, never raw IDs. */
+export const db10LogAlertObservedEvents = pgTable(
+  "log_alert_observed_events",
+  {
+    eventHash: varchar("event_hash", { length: 64 }).primaryKey(),
+    observedAt: timestamp("observed_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    index("db10_log_alert_observed_at_idx").on(t.observedAt),
+    check("db10_log_alert_observed_hash_ck", sql`${t.eventHash} ~ '^[0-9a-f]{64}$'`),
+  ],
+);
