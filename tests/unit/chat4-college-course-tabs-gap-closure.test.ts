@@ -97,4 +97,15 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
+ it("COL-course-tabs-22 keeps all College Course pages usable when no college is assigned",()=>{
+  const files=["src/app/(authenticated)/college/assignments/page.tsx","src/app/(authenticated)/college/course-progress/page.tsx","src/app/(authenticated)/college/courses/page.tsx","src/app/(authenticated)/college/lessons/page.tsx","src/app/(authenticated)/college/live-classes/page.tsx","src/app/(authenticated)/college/quizzes/page.tsx","src/app/(authenticated)/college/resources/page.tsx","src/app/(authenticated)/college/videos/page.tsx"];
+  for(const path of files){
+   const s=source(path);
+   expect(s).toContain("CollegeCourseMissingScope");
+  }
+  const notice=source("src/components/courses/college-course-missing-scope.tsx");
+  expect(notice).toContain("Admin not assigned to a college");
+  expect(notice).toContain("Ask a Super Admin to assign a college");
+ });
+
 });

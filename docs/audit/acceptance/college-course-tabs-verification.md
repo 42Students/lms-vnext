@@ -21,3 +21,4 @@ In particular, COL-course-tabs-19 still lacks full CSV parity for Videos, Resour
 Classes; COL-course-tabs-16 still lacks registered Section ordering. Do not mark either DONE.
 Lesson bulk changes now call the shared `apiFetch` helper so failed writes preserve
 the selection and return plain retry guidance.
+| COL-course-tabs-22 | DONE | `src/components/courses/college-course-missing-scope.tsx`, eight College Courses & Content pages; `tests/unit/chat4-college-course-tabs-gap-closure.test.ts` test `COL-course-tabs-22` |

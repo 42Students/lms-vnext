@@ -1,5 +1,5 @@
+import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
 import { CollegeLessonCreateControl } from "@/components/courses/college-lesson-create-control";
@@ -16,7 +16,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function CollegeLessonsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
   const params = await searchParams;
   const parsed = collegeLessonQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
