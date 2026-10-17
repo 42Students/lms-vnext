@@ -10,6 +10,7 @@ import {requireProjectReadAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
 import {projectMeetingIdSchema} from "./validation";
 import {mentorMeetingDecisionSchema,mentorMeetingDecisionStatus} from "./mentor-meeting-decision-model";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 
 /** Mentor-only, locked and audited alternative to legacy non-versioned transitions. */
 export async function decideMentorProjectMeeting(context:RequestContext,rawProjectId:string,
