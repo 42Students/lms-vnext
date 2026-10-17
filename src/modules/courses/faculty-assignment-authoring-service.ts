@@ -112,7 +112,8 @@ export async function commandFacultyAssignment(
             title:input.title,description:input.description,
             dueAt:input.dueAt?new Date(input.dueAt):null,
             maxPoints:input.maxPoints,updatedAt:now,
-            ...(input.allowedMethods?{allowedSubmissionMethods:input.allowedMethods}:{}),
+            ...(input.allowedMethods&&facultyAssignmentMethodsChanged(current.allowedSubmissionMethods,input.allowedMethods)
+              ?{allowedSubmissionMethods:input.allowedMethods}:{}),
           }:{status:input.action==="PUBLISH"?"PUBLISHED":"ARCHIVED",updatedAt:now},
         ).where(and(eq(courseAssignments.id,current.id),
           eq(courseAssignments.deliveryId,deliveryId),
