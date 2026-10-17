@@ -13,7 +13,7 @@ export function TpoReportSavedFilters({path,collegeId,userId}:{path:string;colle
  const [name,setName]=useState(""),[picked,setPicked]=useState("");
  const [message,setMessage]=useState("");
  useEffect(()=>{
-  try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));if(stored)setViews(clean(JSON.parse(stored)));}catch{/* Private browsing can disable storage. */}
+  try{const stored=localStorage.getItem(keyFor(path,collegeId,userId));setViews(stored?clean(JSON.parse(stored)):[]);}catch{setViews([]);setMessage("Browser storage is unavailable.");}
  },[path,collegeId,userId]);
  function persist(next:SavedView[]){
   try{localStorage.setItem(keyFor(path,collegeId,userId),JSON.stringify(next));setViews(next);return true;}
