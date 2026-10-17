@@ -22,7 +22,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
  {key:"stage",label:"Stage",read:row=>row.journeyState.replaceAll("_"," ")},
- {key:"profile",label:"Profile",read:row=>row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academic evidence missing":row.readinessSignal==="PARTICIPATION_NOT_ELIGIBLE"?"Participation not eligible":"Academic evidence present"},
+ {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>row.readinessSignal.replaceAll("_"," ")},
