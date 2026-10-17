@@ -81,11 +81,11 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 - FAC-courses-33 [DONE] faculty/courses
 - FAC-courses-35 [DONE] faculty/courses
 - FAC-courses-R03 [DONE] faculty/courses
-- FAC-courses-R04 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R05 [OPEN] faculty/courses
-- FAC-courses-R06 [OPEN] faculty/courses
-- FAC-courses-R07 [FIXED-ON-MAIN] faculty/courses
-- FAC-courses-R08 [FIXED-ON-MAIN] faculty/courses
+- FAC-courses-R04 [DONE] faculty/courses
+- FAC-courses-R05 [DONE] faculty/courses
+- FAC-courses-R06 [DONE] faculty/courses
+- FAC-courses-R07 [DONE] faculty/courses
+- FAC-courses-R08 [DONE] faculty/courses
 
 ## chat-6 (11)
 
