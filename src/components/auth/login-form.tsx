@@ -257,7 +257,8 @@ export function LoginForm({
       if (!result.ok) return fail(result.data.error);
       saveLoginAttempt(null);
       const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
-      window.location.assign(returnTo ?? result.data.next ?? "/dashboard");
+      const defaultLanding = safeReturnTo(result.data.next) ?? "/dashboard";
+      window.location.assign(returnTo ?? defaultLanding);
     } catch (reason) {
       setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
     } finally {

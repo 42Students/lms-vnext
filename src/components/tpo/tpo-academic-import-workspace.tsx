@@ -1,5 +1,8 @@
 "use client";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {Dialog} from "@/components/ui/dialog";
+import {Button} from "@/components/ui/button";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -23,6 +26,8 @@ export function TpoAcademicImportWorkspace() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [confirmOpen,setConfirmOpen] = useState(false);
+  const {run:runGuarded,pending:guardedPending}=useGuardedAction();
 
   async function upload(file: File | null) {
     if (!file) return;
@@ -56,7 +61,7 @@ export function TpoAcademicImportWorkspace() {
     setBusy(true); setError(""); setNotice("");
     try {
       const result = await send("PREVIEW", parsed);
-      if(!Array.isArray(result.preview?.rows))throw Error("Could not load the import preview. Please try again.");
+      if(!Array.isArray(result.preview?.rows))throw Error("Could not process the academic details. Please try again.");
       const rows = result.preview.rows as PreviewRow[];
       setPreview(rows);
       setExcluded(rows.filter(row => row.match !== "WILL_UPDATE").map(row => row.studentCode));
@@ -71,8 +76,6 @@ export function TpoAcademicImportWorkspace() {
     const selected = preview.filter(row => !excluded.includes(row.studentCode));
     const matched = selected.filter(row => row.match === "WILL_UPDATE");
     if (!matched.length) { setError("Select at least one matched academic record."); return; }
-    if (!window.confirm("Import verified academic details for " + matched.length +
-        " student(s)? This updates their recorded CGPA and active backlogs.")) return;
     setBusy(true); setError("");
     try {
       const result = await send("IMPORT", matched.map(row => ({
@@ -84,7 +87,9 @@ export function TpoAcademicImportWorkspace() {
         (receipt.skipped ? receipt.skipped + " unmatched skipped." : "All selected rows saved."));
       setPreview(null); setExcluded([]); router.refresh();
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Academic import failed");
+      setError(cause instanceof FriendlyFetchError && cause.status===409
+        ? "This changed while you were working. Your academic import choices are kept below. Preview again before importing."
+        : "Could not process the academic details. Review your selections and try again.");
     } finally { setBusy(false); }
   }
 
@@ -155,11 +160,18 @@ export function TpoAcademicImportWorkspace() {
           Select all matched students
         </label>
         <button type="button" disabled={busy || preview.every(row => excluded.includes(row.studentCode))}
-          onClick={() => void commit()}
+          onClick={() => setConfirmOpen(true)}
           className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
           Confirm import
         </button>
       </div>}
+      <Dialog open={confirmOpen} onOpenChange={value=>{if(!busy&&!guardedPending)setConfirmOpen(value);}}
+        title="Import verified academic details"
+        description={"Import "+(preview?.filter(row=>row.match==="WILL_UPDATE"&&!excluded.includes(row.studentCode)).length??0)+" selected academic records? This updates their recorded CGPA and active backlogs."}
+        footer={<><Button variant="secondary" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button disabled={busy||guardedPending} onClick={()=>void runGuarded(async()=>{setConfirmOpen(false);await commit();})}>Confirm import</Button></>}>
+        <p className="text-sm">Your academic import choices are kept below if the import cannot be completed.</p>
+      </Dialog>
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       {notice && <p role="status" className="text-sm text-body">{notice}</p>}
     </section>}

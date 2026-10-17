@@ -9,6 +9,7 @@ import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboa
 import {learnerDashboardMetricView} from "@/modules/placements/learner-dashboard-metric-view-model";
 import {learnerDashboardDateLabel} from "@/modules/placements/learner-dashboard-date-label-model";
 import {learnerWaitingOnYou} from "@/modules/placements/learner-waiting-on-you-model";
+import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboard-hero-priority-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
@@ -42,16 +43,18 @@ function Metric({
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,
+  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,profileFixes=[],acceptedOffer=null,
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
   learnerName?:string|null;
   applicationFunnel?:ReturnType<typeof learnerPlacementApplicationFunnel>|null;
   registration?:{stage:string;choice:string|null}|null;
+  profileFixes?:readonly {label:string;href:string}[];
+  acceptedOffer?:boolean|null;
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
-  const next = display.nextAction;
+  const next = learnerPlacementHeroPriority({pendingOffers:display.activeOffers,registration,acceptedOffer,fallback:display.nextAction});
   const safeFallback=learnerDashboardSafeFallback(availability);
   const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
@@ -62,6 +65,7 @@ export function LearnerPlacementsDashboard({
     urgentInterview:display.urgentInterview,
     nextAction:next,
     registration,
+    profileFixes,
     eligibleToApply:display.eligibleJobs,
     applications:display.applications,
   });
@@ -311,6 +315,10 @@ export function LearnerPlacementsDashboard({
                           {event.companyName} · {event.roundName}
                           <span className="mt-1 block text-xs font-normal text-body">{formatWhen(event.when)}</span>
                         </Link>
+                         <Link href={"/learn/my-placements?requestRoundId="+encodeURIComponent(event.roundId)}
+                           className="mt-1 inline-flex min-h-10 items-center text-xs font-semibold text-primary-text underline">
+                           Ask to reschedule →
+                         </Link>
                       </li>
                     ))}</ul>}
                   {day.total>day.events.length?<p className="mt-1 text-xs text-muted-foreground">{day.total-day.events.length} more that day · open full calendar</p>:null}

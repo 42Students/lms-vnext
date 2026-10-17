@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SuperAdminCompanyMerge } from "@/components/admin/super-admin-company-merge";
 import {SuperAdminCompanyRestore} from "@/components/admin/super-admin-company-restore";
+import {SuperAdminCompanyVerification} from "@/components/admin/super-admin-company-verification";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -16,7 +17,7 @@ export default async function SuperAdminCompaniesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await searchParams;
   const parsed = adminCompaniesQuerySchema.safeParse({
-    q: params.q, owner: params.owner, website: params.website, changedWithin: params.changedWithin, status: params.status, companyStatus: params.companyStatus, trust: params.trust, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId, companyId: params.companyId,
+    q: params.q, owner: params.owner, website: params.website, changedWithin: params.changedWithin, status: params.status, companyStatus: params.companyStatus, trust: params.trust, verified: params.verified, sort: params.sort, searchField: params.searchField, page: params.page, collegeId: params.collegeId === "" ? undefined : params.collegeId, companyId: params.companyId,
   });
   if (!parsed.success) return <div className="space-y-4">
     <PageHeader eyebrow="Super Admin · Placements" title="Companies" />
@@ -83,6 +84,13 @@ export default async function SuperAdminCompaniesPage({
           <option value="ALL">All</option><option value="TRUSTED">Trusted</option><option value="UNTRUSTED">Not trusted</option>
         </select>
       </label>
+      <label className="grid gap-1 text-sm font-semibold text-body">Global verification
+        <select name="verified" defaultValue={data.query.verified}
+          className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="ALL">All companies</option><option value="NOT_VERIFIED">Only not verified</option>
+          <option value="VERIFIED">Verified by 42</option>
+        </select>
+      </label>
       <label className="grid gap-1 text-sm font-semibold text-body">College
         <select name="collegeId" defaultValue={data.query.collegeId ?? ""} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
           <option value="">All permitted colleges</option>
@@ -112,7 +120,7 @@ export default async function SuperAdminCompaniesPage({
       </label>
       <button type="submit" className="min-h-11 self-end rounded-md bg-primary px-5 text-sm font-semibold text-on-primary">Filter</button>
     </form>
-    <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
+    <Link href={"/api/admin/companies/export?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,companyStatus:data.query.companyStatus,trust:data.query.trust,verified:data.query.verified,sort:data.query.sort,searchField:data.query.searchField,page:String(data.query.page),...(data.query.collegeId?{collegeId:data.query.collegeId}:{}),...(data.query.companyId?{companyId:data.query.companyId}:{})}).toString()}
       className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
       Export matching companies as CSV →
     </Link>
@@ -162,7 +170,11 @@ export default async function SuperAdminCompaniesPage({
           <StatusBadge>{row.companyStatus}</StatusBadge>
           <StatusBadge>{row.relationshipStatus} relationship</StatusBadge>
           {row.trusted ? <StatusBadge tone="success">Trusted</StatusBadge> : null}
+          {row.verifiedAt ? <StatusBadge tone="success">Verified by 42</StatusBadge> : null}
         </div>
+        {!context.adminScope?.collegeId&&!context.adminScope?.organizationId&&row.companyStatus==="ACTIVE"
+          ? <SuperAdminCompanyVerification companyId={row.companyId} name={row.name}
+              verified={Boolean(row.verifiedAt)} />:null}
         {row.website ? <p className="mt-2 break-all text-sm text-body">Website: {row.website}</p> : null}
         <dl className="mt-2 grid grid-cols-2 gap-2 text-xs text-body">
           <div><dt className="text-muted-foreground">Domain</dt><dd>{row.primaryDomain??"Not provided"}</dd></div>

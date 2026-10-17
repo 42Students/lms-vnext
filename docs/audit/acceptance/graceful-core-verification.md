@@ -56,3 +56,14 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 - GR-60 / GR-62: `src/hooks/use-form-draft.ts` now installs exit handlers on mount, flushes the latest edit synchronously on `pagehide` and `beforeunload`, and does not replace a user edit that arrives before late local-storage restoration.
 - GR-40 / GR-54: `src/lib/upload-progress.ts` now translates all failed XHR statuses through `friendlyApiError`, including rate limit and session failures; selected files remain caller-owned for retry.
 - **Queue disposition:** no OPEN GR entries remain in the chat-14 core queue at this revision. GR-51 remains BLOCKED pending provider delivery idempotency and acceptance, and cannot be truthfully reported DONE; cross-application adoption and live browser acceptance remain responsibilities of the assigned lanes and orchestrator.
+
+## Unit-failures-r1 response (2026-10-17)
+
+The cloud report `docs/orchestrator/unit-failures-r1.md` lists seven chat-14 assertions. This branch contains **source or assertion repairs for GR-11, GR-53, GR-35, GR-19, GR-20**, and tighter GR-09/GR-31 scan semantics. All 509 detected page/layout segments now have `loading.tsx` and `error.tsx` as inspected from the branch Git tree; live execution is still pending.
+
+- GR-11: `tests/unit/graceful-merge-syntax.test.ts` checks supported browser-report fields, rejects malformed/unknown ones.
+- GR-53: `src/components/auth/login-form.tsx` now sanitizes the API-provided fallback destination, matching the existing named regression.
+- GR-35: `src/components/ui/confirm-action-dialog.tsx` no longer contains a misleading browser-confirm pattern in its comment; accessible dialog retained.
+- GR-19, GR-20: eight new route boundaries under admin placements student lookup and TPO discussion, overview, team; `tests/unit/graceful-route-coverage.test.ts` enforces both IDs across the entire app.
+- GR-09, GR-31: `tests/unit/graceful-raw-error-scan.test.ts` adds ID-named regressions for safe local Zod issue trees and telemetry exemptions. **Known global failing conditions in account-lane components remain; not represented as passing or as BLOCKED under the strict protocol.** Account lanes must address real raw-code sinks and unguarded writes, not widen the baseline.
+- No new OPEN GR item was found in `graceful-chat-14.md`; GR-51 continues to need verified provider-side acceptance and idempotency. Existing DONE labels describe authored implementations, not executed acceptance. Tests were not run by this lane.

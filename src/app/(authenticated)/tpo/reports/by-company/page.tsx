@@ -1,3 +1,4 @@
+import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -61,7 +62,7 @@ export default async function TpoByCompanyReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="By company"
-        description="Compare companies by drives, applicants, accepted offers, unique placed learners and accepted full-time packages."
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/by-company"].description}
         actions={<div className="flex flex-wrap items-center gap-2">
           <ReportCsvLink workspace={workspace} kind="by-company" />
           <a href={tpoCompanyPageCsvHref({seasonId:workspace.selectedSeasonId??undefined,

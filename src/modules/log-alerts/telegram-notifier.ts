@@ -7,6 +7,19 @@ export type TelegramAlertOptions = {
   botApiUrl?: string;
 };
 
+/** Keep only tightly validated diagnostic labels that are not personal data. */
+export function sanitizeTelegramLine(line: string): string {
+  // The phone scrubber correctly removes unknown numerical strings, but
+  // ISO date metadata, short signature digests and commit hashes are generated
+  // by our code and must remain legible to operators.
+  if (/^Request ID: (?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(line)) return line;
+  if (/^Time: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(line)) return line;
+  if (/^vNext daily error digest \(\d{4}-\d{2}-\d{2}, IST\)$/.test(line)) return line;
+  if (/^Deploy: [0-9a-f]{7,64}$/i.test(line)) return line;
+  if (/^[0-9a-f]{12}: \d{1,16} occurrences$/i.test(line)) return line;
+  return redactAlertText(line);
+}
+
 let notedAbsentConfiguration = false;
 
 export function telegramAlertsConfigured(): boolean {
@@ -42,12 +55,7 @@ export async function sendTelegramAlert(
   const production = process.env.APP_ENV === "production";
   const tag = production ? "" : "[vnext dev] ";
   // Never send a raw stack or untrusted text. Lines are individually redacted.
-  const safe = text.split(/\r?\n/).map((line) => {
-    // These metadata fields are generated and format-validated by our server.
-    if (/^Request ID: (?:[0-9a-f]{8}|[0-9a-f-]{36})$/i.test(line)) return line;
-    if (/^Time: \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(line)) return line;
-    return redactAlertText(line);
-  }).filter(Boolean).join("\n");
+  const safe = text.split(/\r?\n/).map(sanitizeTelegramLine).filter(Boolean).join("\n");
   const message = limitTelegramAlert(tag + safe);
   const payload: {
     chat_id: string;

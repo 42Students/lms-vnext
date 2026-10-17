@@ -30,7 +30,7 @@ describe("public sign-in verified gap closure",()=>{
  it("PUB-auth-public-04 uses exact legacy guidance for wrong and expired OTP",()=>{
   const s=login();
   for(const phrase of ["That code isn't right. Check it and try again.",
-   "This code has expired. Ask for a new one.",
+   "This code can't be used any more. Ask for a new one to continue.",
    "Too many wrong codes. Ask for a new one.",
    "Too many codes were requested. Try again in about 10 minutes.",
    "Something went wrong. Try again in a moment.",
@@ -65,7 +65,11 @@ describe("public sign-in verified gap closure",()=>{
   expect(s).toContain("window.fetch = guarded");
   expect(s).toContain("response.status === 401");
   expect(s).toContain('reason === "SESSION_EXPIRED"');
-  expect(s).toContain("/?auth=expired");
+  expect(s).toContain("sessionExpiredHref(");
+  expect(s).toContain('reason === "SESSION_REVOKED" ? "revoked" : "expired"');
+  const helper=source("src/lib/return-to.ts");
+  expect(helper).toContain("export function sessionExpiredHref(");
+  expect(helper).toContain("safeReturnTo(currentPath)");
  });
  it("PUB-auth-public-13 restores an unexpired one-time-code attempt after refresh",()=>{
   const s=login();expect(s).toContain("window.sessionStorage.setItem(ATTEMPT_KEY");

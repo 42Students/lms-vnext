@@ -20,13 +20,22 @@ function blobHash(content: string) {
 const rawErrorPatterns = [
   /\{\s*(?:result|body)\.error\b/,
   /\{\s*reason\.message\b/,
-  /set(?:Error|Notice)\(\s*(?:result|body)\.error\b/,
+  // A local Zod issue tree is field-validation data, not a server error code.
+  // Keep direct result.error assignments forbidden, including optional chaining.
+  /set(?:Error|Notice)\(\s*(?:result|body)\.error\b(?!\s*\.)/,
   /set(?:Error|Notice)\(\s*reason\.message\b/,
   /set(?:Error|Notice)\(\s*["'][A-Z][A-Z0-9_]{5,}["']/,
   /\{\s*["'][A-Z][A-Z0-9_]{5,}["']\s*\}/,
   /<(?:p|div|span|small|strong|label|h[1-6])[^>]*>\s*[A-Z][A-Z0-9_]{5,}\s*</,
 ];
-const mutatingFetch = /fetch\([\s\S]{0,350}?\bmethod:\s*["'](?:POST|PUT|PATCH|DELETE)["']/;
+const mutatingFetch = /fetch\([\s\S]{0,350}?\bmethod:\s*["'](?:POST|PUT|PATCH|DELETE)["']/g;
+
+function hasInteractiveMutation(source: string): boolean {
+  // A browser crash report is best-effort telemetry, not a business mutation.
+  // Do not require the UI submit hook inside an error boundary.
+  return [...source.matchAll(mutatingFetch)]
+    .some((match) => !match[0].includes('"/api/client-errors"'));
+}
 
 describe("new raw-error and mutation regression gate", () => {
   it("GR-09 rejects new renderings of API codes or internal error messages", () => {
@@ -37,10 +46,21 @@ describe("new raw-error and mutation regression gate", () => {
     });
     expect(offenders, `New unsafe error rendering in: ${offenders.join(", ")}`).toEqual([]);
   });
+  it("GR-09 distinguishes direct raw API errors from client Zod issue details", () => {
+    const pattern = rawErrorPatterns[2];
+    expect(pattern.test('setNotice(result.error)')).toBe(true);
+    expect(pattern.test('setError(body.error)')).toBe(true);
+    expect(pattern.test('setNotice(result.error.issues[0]?.message)')).toBe(false);
+  });
+  it("GR-31 excludes error telemetry but keeps detecting interactive writes", () => {
+    expect(hasInteractiveMutation('fetch("/api/client-errors", {method: "POST"})')).toBe(false);
+    expect(hasInteractiveMutation('fetch("/api/records", {method: "POST"})')).toBe(true);
+    expect(hasInteractiveMutation('fetch("/api/client-errors", {method: "POST"})\\nfetch("/api/records", {method: "PATCH"})')).toBe(true);
+  });
   it("GR-31 inventories newly changed unguarded mutating components", () => {
     const offenders = allComponentFiles().filter((file) => {
       const content = readFileSync(file, "utf8");
-      return mutatingFetch.test(content) && !content.includes("useGuardedAction(") &&
+      return hasInteractiveMutation(content) && !content.includes("useGuardedAction(") &&
         blobHash(content) !== baseline[file];
     });
     expect(offenders, `Mutating fetch without useGuardedAction: ${offenders.join(", ")}`).toEqual([]);

@@ -5,6 +5,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   companyStatus: z.enum(["MATCH","ALL","ACTIVE","ARCHIVED"]).default("MATCH"),
   trust: z.enum(["ALL", "TRUSTED", "UNTRUSTED"]).default("ALL"),
+  verified: z.enum(["ALL", "VERIFIED", "NOT_VERIFIED"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(10000).default(1),
   collegeId: z.uuid().optional(),
   companyId: z.uuid().optional(),
@@ -17,7 +18,7 @@ export const adminCompaniesQuerySchema = z.strictObject({
 export type AdminCompanyRow = {
   relationshipId: string; companyId: string; name: string; collegeId: string;
   collegeName: string; organizationId: string; relationshipStatus: string;
-  companyStatus: string; trusted: boolean; website: string | null;
+  companyStatus: string; trusted: boolean; verifiedAt?: Date | null; website: string | null;
   primaryDomain?:string|null; companyCollegeCount?:number; driveCount?:number;
   lastActiveAt?:Date|null; createdAt?:Date;
 };

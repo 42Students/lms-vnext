@@ -3,7 +3,9 @@ import {useState} from "react";
 import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
 
 /** Learner resource opening must never render an unsafe URL or silently fail on a blocked popup. */
-export function ProjectResourceOpenLink({url}:{url:string|null}){
+export function ProjectResourceOpenLink({url,linkText="Open resource ↗"}:{
+ url:string|null;linkText?:string;
+}){
  const [notice,setNotice]=useState("");
  const safe=url?safeProjectExternalHref(url):null;
  if(!url)return <p role="status" className="mt-3 text-sm text-muted-foreground">
@@ -21,7 +23,7 @@ export function ProjectResourceOpenLink({url}:{url:string|null}){
  }
  return <div className="mt-3 space-y-2 text-sm">
   <button type="button" onClick={open} className="min-h-10 font-semibold text-primary-text underline">
-   Open resource ↗
+   {linkText}
   </button>
   {notice?<div role="status" className="rounded-md border border-border p-2 text-body">
    <p>{notice}</p><a href={safe} target="_blank" rel="noopener noreferrer"
