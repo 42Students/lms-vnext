@@ -22,8 +22,10 @@ describe("Learner profile checklist and offer confirmation source contracts", ()
 
   it("requires explicit offer acceptance confirmation with recorded terms", () => {
     const offers = read("src/components/placements/learner-placement-offers.tsx");
-    expect(offers).toContain("Review offer before accepting");
-    expect(offers).toContain("Confirm acceptance");
+    expect(offers).toContain("Review the recorded offer terms. Acceptance is only submitted after you confirm.");
+    expect(offers).toContain("What accepting this offer changes");
+    expect(offers).toContain("Yes, accept");
+    expect(offers).toContain("blockedByAnotherAcceptedOffer");
     expect(offers).toContain("setConfirmOffer(item)");
     expect(offers).toContain('respond(preview.offerId, "ACCEPT")');
     expect(offers).not.toContain('respond(\n                      item.offerId,\n                      "ACCEPT",');
