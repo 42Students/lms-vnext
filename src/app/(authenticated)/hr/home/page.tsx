@@ -281,7 +281,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
       <p className="mt-2 text-sm text-body">Formal requests awaiting a college decision. Results and selections require recorded submissions.</p>
       {waitingRequests.length?<ul className="mt-4 grid gap-3 sm:grid-cols-2">
         {waitingRequests.map(request=><li key={request.id}>
-          <Link href={"/hr/drives?collegeId="+encodeURIComponent(selectedId)+"&view=WAITING"}
+          <Link href={"/recruiter/drives/new?collegeId="+encodeURIComponent(selectedId)+(request.status==="SENT_BACK"?"&fix=":"&edit=")+encodeURIComponent(request.id)}
             className="block rounded-md border border-border p-4 text-sm text-primary-text">
             <span className="block font-semibold">{request.title}</span>
             <span className="mt-1 block text-xs text-body">
