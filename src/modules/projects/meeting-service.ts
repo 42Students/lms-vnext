@@ -26,6 +26,7 @@ import {
 } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
+import {mentorMeetingFacilitationSchema} from "./mentor-meeting-facilitation-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -293,7 +294,9 @@ export async function scheduleProjectMeeting(
       scheduledByUserId: context.user.id,
       scheduledByMembershipId: context.membership?.id ?? null,
       linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
-      outcome: null, cancellationNote: null, updatedAt: new Date(),
+      outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
+      facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
+      cancellationNote: null, updatedAt: new Date(),
     };
     if (!existing) {
       const [created] = await tx.insert(projectMeetings).values({
