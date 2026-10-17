@@ -21,7 +21,7 @@ export default async function CollegeHiringDashboardPage({
   }
   const query = collegeHiringAnalyticsQuery(await searchParams);
   if (!query.success) {
-    return <div className="space-y-4">
+    return <div className="min-w-0 space-y-4">
       <PageHeader eyebrow="Placements" title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
