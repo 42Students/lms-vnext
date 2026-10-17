@@ -5,7 +5,6 @@ import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
 import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
-import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
 import {TpoDriveActOnPanel} from "@/components/placements/tpo-drive-act-on-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
