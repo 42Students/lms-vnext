@@ -26,17 +26,20 @@ export function ProjectMentorReassignment({
   workspaces,
   mentors,
   matchingWorkspaces,
+  initialProjectId,
 }: {
   collegeId: string;
+  initialProjectId?: string;
   matchingWorkspaces: { id: string; mentorMembershipId: string | null }[];
   workspaces: Workspace[];
   mentors: Mentor[];
 }) {
   const router = useRouter();
   const { showToast } = useToast();
-  const [selected, setSelected] = useState<
-    string[]
-  >([]);
+  const [selected, setSelected] = useState<string[]>(
+    () => initialProjectId && workspaces.some(item => item.id === initialProjectId)
+      ? [initialProjectId] : [],
+  );
   const [mentorMembershipId, setMentor] =
     useState("");
   const [roleLabel, setRoleLabel] =

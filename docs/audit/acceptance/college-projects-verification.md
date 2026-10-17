@@ -30,3 +30,5 @@ Round 4: College workspace list now offers formula-safe visible-page CSV, table/
 ## Round 5 (2026-10-17)
 | COL-projects-16 | DONE | Section-count table, GET search and filtered, formula-safe BOM CSV: `src/app/(authenticated)/college/projects/templates/page.tsx`, `src/modules/projects/project-template-catalogue-model.ts`, `tests/unit/chat9-college-projects-template-catalogue.test.ts` — `COL-projects-16 counts all template sections, filters on the server and exports only visible rows`. |
 | COL-projects-08 | OPEN | Added template labels to cards/table from college-assigned template identity, `tests/unit/chat9-college-projects-template-catalogue.test.ts` — `COL-projects-08 renders template tags in both list and cards without introducing a new status`; legacy READY/BLOCKED status mapping still unresolved. |
+
+| COL-projects-15 | OPEN | Workspace Team now links to preselected, UUID-validated tenant-scoped reassignment; `tests/unit/chat9-college-project-team-entry.test.ts` — `COL-projects-15 links workspace Team to an authorized preselected reassignment without inferring a different tenant`. Roster/change-role modal parity remains. |

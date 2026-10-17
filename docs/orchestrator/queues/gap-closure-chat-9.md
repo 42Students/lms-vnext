@@ -315,3 +315,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - Tests authored but NOT run; orchestrator executes. Other gaps are not marked DONE by this source patch.
 
 - TPO-calendar-reports-11 DONE source-level: multi-select calendar chips, independent Talks and Rounds, backward-compatible single-kind URLs. Test authored, not run.
+
+- COL-projects-15 OPEN: Team tab has validated preselected bulk-reassignment deep link; full per-member legacy roster actions remain unverified.
