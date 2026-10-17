@@ -94,4 +94,30 @@ describe("chat-3 Drives round 4",()=>{
   expect(body).toContain("open the existing draft");
   expect(body).toContain("if (companyMode === \"NEW\" && !createdJobRef.current)");
  });
+ it("TPO-drives-15 first deadline is writable and explains the consequence",()=>{
+  const service=source("src/modules/placements/tpo-drive-deadline-service.ts");
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(service).toContain('extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"');
+  expect(service).toContain('action:job.applicationDeadline===null?"SET":"EXTEND"');
+  expect(form).toContain("Set first application deadline?");
+ });
+ it("TPO-drives-45 deadline edit uses same IST validator as creation",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain('driveDeadlineIstToIso(String(values.get("newDeadline")??""))');
+ });
+ it("GR-04 TPO-drives-15 deadline mutation handles non-JSON and 5xx responses",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("await apiFetch(");
+  expect(form).not.toContain("body?.error");
+ });
+ it("GR-30 TPO-drives-15 deadline mutation uses guarded pending lock",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("useGuardedAction");
+  expect(form).toContain("await run(async()=>");
+ });
+ it("GR-35 TPO-drives-15 deadline consequences use accessible ConfirmDialog",()=>{
+  const form=source("src/components/placements/tpo-drive-deadline-form.tsx");
+  expect(form).toContain("<ConfirmDialog");
+  expect(form).not.toContain("window.confirm");
+ });
 });
