@@ -31,6 +31,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"best",label:"Best so far",read:row=>row.bestSoFar},
  {key:"applications",label:"Applications",read:row=>row.applicationCount},
  {key:"offers",label:"Offers",read:row=>row.offerCount},
+ {key:"offersAwaiting",label:"Offers awaiting answer",read:row=>row.offersAwaitingAnswer},
  {key:"journey",label:"Journey",read:row=>row.journeyState.replaceAll("_"," ")},
  {key:"email",label:"Email (export only)",read:row=>row.email,exportOnly:true},
 ];
@@ -66,8 +67,18 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+  {key:"maxActiveBacklogs",urlKey:"maxActiveBacklogs",label:"Max active backlogs",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
+  {key:"maxPastBacklogs",urlKey:"maxPastBacklogs",label:"Max past backlogs",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
+  {key:"cgpaRecorded",urlKey:"cgpaRecorded",label:"CGPA recorded",options:[
+   {value:"YES",label:"Recorded"},{value:"NO",label:"No recorded CGPA"},
+  ]},
+  {key:"minCgpa",urlKey:"minCgpa",label:"Minimum CGPA",options:[0,6,7,7.5,8,8.5,9].map(value=>({value:String(value),label:String(value)}))},
+  {key:"maxCgpa",urlKey:"maxCgpa",label:"Maximum CGPA",options:[5,6,7,8,9,10].map(value=>({value:String(value),label:String(value)}))},
   {key:"minApplications",urlKey:"minApplications",label:"At least applications",options:[0,1,2,3,5,10,20,50].map(value=>({value:String(value),label:String(value)}))},
   {key:"minOffers",urlKey:"minOffers",label:"At least offers",options:[0,1,2,3,5,10].map(value=>({value:String(value),label:String(value)}))},
+  {key:"offerWaiting",urlKey:"offerWaiting",label:"Offer waiting on answer",options:[
+   {value:"YES",label:"Yes"},{value:"NO",label:"No"},
+  ]},
   {key:"profileStatus",urlKey:"profileStatus",label:"Profile verified",options:[
    {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting to verify"},
    {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},

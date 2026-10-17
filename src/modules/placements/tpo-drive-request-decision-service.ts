@@ -17,7 +17,7 @@ export class TpoDriveRequestDecisionError extends Error {
   constructor(public readonly code:
     "REQUEST_NOT_FOUND" | "REQUEST_STALE" | "NO_ACTIVE_SEASON" |
     "AMBIGUOUS_ACTIVE_SEASONS" | "COMPANY_INACTIVE" |
-    "WORK_MODE_REVIEW_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
+    "WORK_MODE_REVIEW_REQUIRED" | "EXTERNAL_APPLICATION_URL_REQUIRED" | "REQUEST_ALREADY_DECIDED") {
     super(code);this.name="TpoDriveRequestDecisionError";
   }
 }
@@ -64,16 +64,28 @@ export async function decideTpoRecruiterDriveRequest(
       if(draft.workMode==="NO_PREFERENCE")
         throw new TpoDriveRequestDecisionError("WORK_MODE_REVIEW_REQUIRED");
       const workMode=draft.workMode;
+      const legacyAnnualCtc=draft.ctcLpa?Math.round(Number(draft.ctcLpa)*100000):null;
+      // REC-home-drives-26: off-campus applications must not be silently
+      // converted into an internal LMS apply flow on TPO approval.
+      if(draft.driveMode==="OFF_CAMPUS"&&!draft.externalApplicationUrl)
+        throw new TpoDriveRequestDecisionError("EXTERNAL_APPLICATION_URL_REQUIRED");
       const [job]=await tx.insert(placementJobs).values({
         collegeId,seasonId:seasons[0].id,
         companyRelationshipId:request.companyRelationshipId,
         title:draft.title,description:draft.description,
         employmentType:draft.employmentType,workMode,
         locations:[draft.location],
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr),
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr),
+        recruiterDriveMode:draft.driveMode,eligibleBranches:draft.branches,
+        eligiblePassingYear:draft.passingYear?Number(draft.passingYear):null,
+        ctcLpa:draft.ctcLpa||null,
+        fixedCtcLpa:draft.fixedLpa||null,variableCtcLpa:draft.variableLpa||null,
+        stipendPerMonthInr:draft.stipendMonthlyInr?Number(draft.stipendMonthlyInr):null,
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
+        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
+          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
         createdByUserId:context.user.id,
-        status:"DRAFT",applicationMode:"INTERNAL",
+        status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
+        externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
       }).returning({id:placementJobs.id});
       if(!job)throw new TpoDriveRequestDecisionError("REQUEST_STALE");
       approvedJobId=job.id;
@@ -81,10 +93,11 @@ export async function decideTpoRecruiterDriveRequest(
         jobId:job.id,title:draft.title,
         employmentType:draft.employmentType,workMode,
         locations:[draft.location],isPrimary:true,
-        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr),
-        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr),
-        fixedLpa:draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null,
-        variableLpa:draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null,
+        minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
+        maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
+          (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
+        fixedLpa:draft.fixedLpa|| (draft.fixedAnnualCtcInr?(Number(draft.fixedAnnualCtcInr)/100000).toFixed(2):null),
+        variableLpa:draft.variableLpa|| (draft.variableAnnualCtcInr?(Number(draft.variableAnnualCtcInr)/100000).toFixed(2):null),
         bondMonths:inr(draft.bondMonths),
         bondAmount:draft.bondAmountInr||null,
       });

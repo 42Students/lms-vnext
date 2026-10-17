@@ -92,6 +92,7 @@ export async function bulkAssignTpoLeadOwner(
     if (!target) throw new AuthorizationError("placements.manage");
 
     const byId = new Map<string, TpoBulkOwnerResult>();
+    const changed: Array<{leadId:string;beforeOwnerId:string|null;afterOwnerId:string;afterUpdatedAt:string}> = [];
     const ordered = [...input.selections].sort((a, b) => a.id.localeCompare(b.id));
     for (const selected of ordered) {
       const [current] = await tx.select({
@@ -121,8 +122,10 @@ export async function bulkAssignTpoLeadOwner(
       }).where(and(
         eq(placementTpoLeads.id, selected.id),
         eq(placementTpoLeads.collegeId, collegeId),
-      )).returning({ id: placementTpoLeads.id });
+      )).returning({ id: placementTpoLeads.id,updatedAt:placementTpoLeads.updatedAt });
       if (!updated) throw new Error("TPO_OWNER_UPDATE_CONFLICT");
+      changed.push({leadId:selected.id,beforeOwnerId:current.ownerMembershipId,afterOwnerId:target.id,
+       afterUpdatedAt:updated.updatedAt.toISOString()});
       await tx.insert(placementTpoLeadActivities).values({
         leadId: current.id,
         collegeId,
@@ -146,7 +149,7 @@ export async function bulkAssignTpoLeadOwner(
       module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_OWNER",
       subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
       summary:"Bulk recruiter lead ownership update",
-      metadata:{ownerMembershipId:target.id,leadIds:results.map(r=>r.leadId),counts},
+      metadata:{ownerMembershipId:target.id,leadIds:results.map(r=>r.leadId),counts,undoVersion:1,changed},
     }).returning({id:activityEvents.id});
     if(!runAudit)throw new Error("TPO_RECRUITER_BULK_AUDIT_MISSING");
     return { results, counts, runAuditId:runAudit.id };

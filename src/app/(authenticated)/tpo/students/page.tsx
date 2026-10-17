@@ -42,6 +42,10 @@ type SearchParams = {
   profileStatus?:string|string[];
   minApplications?:string|string[];maxApplications?:string|string[];
   minOffers?:string|string[];maxOffers?:string|string[];
+  offerWaiting?:string|string[];
+  minCgpa?:string|string[];maxCgpa?:string|string[];
+  maxActiveBacklogs?:string|string[];maxPastBacklogs?:string|string[];
+  cgpaRecorded?:string|string[];
   classId?:string|string[];
   batchId?: string | string[];
   search?: string | string[];
@@ -71,6 +75,10 @@ function studentsHref(
     afterCollege?:string;
     profileStatus?:string;
     minApplications?:number;maxApplications?:number;minOffers?:number;maxOffers?:number;
+    offerWaiting?:boolean;
+    minCgpa?:number;maxCgpa?:number;
+    maxActiveBacklogs?:number;maxPastBacklogs?:number;
+    cgpaRecorded?:boolean;
     classId?:string;
     batchId?: string;
     search?: string;
@@ -92,6 +100,11 @@ function studentsHref(
   if(filters.programId)params.set("programId",filters.programId);
   if(filters.afterCollege)params.set("afterCollege",filters.afterCollege);
   if(filters.profileStatus)params.set("profileStatus",filters.profileStatus);
+  if(filters.offerWaiting!==undefined)params.set("offerWaiting",filters.offerWaiting?"YES":"NO");
+  if(filters.cgpaRecorded!==undefined)params.set("cgpaRecorded",filters.cgpaRecorded?"YES":"NO");
+  for(const key of ["minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs"] as const){
+   if(filters[key]!==undefined)params.set(key,String(filters[key]));
+  }
   for(const key of ["minApplications","maxApplications","minOffers","maxOffers"] as const){
    if(filters[key]!==undefined)params.set(key,String(filters[key]));
   }
@@ -166,6 +179,10 @@ export default async function TpoStudentsPage({
     maxApplications:first(raw.maxApplications)||undefined,
     minOffers:first(raw.minOffers)||undefined,
     maxOffers:first(raw.maxOffers)||undefined,
+    offerWaiting:first(raw.offerWaiting)||undefined,
+    minCgpa:first(raw.minCgpa)||undefined,maxCgpa:first(raw.maxCgpa)||undefined,
+    maxActiveBacklogs:first(raw.maxActiveBacklogs)||undefined,maxPastBacklogs:first(raw.maxPastBacklogs)||undefined,
+    cgpaRecorded:first(raw.cgpaRecorded)||undefined,
     classId:first(raw.classId)||undefined,
     batchId: first(raw.batchId) || undefined,
     search: first(raw.search) || undefined,
@@ -247,7 +264,7 @@ export default async function TpoStudentsPage({
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
     studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
       minApplications:filters.minApplications??query.minApplications,maxApplications:filters.maxApplications??query.maxApplications,
-      minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
+      minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,offerWaiting:filters.offerWaiting??query.offerWaiting,minCgpa:filters.minCgpa??query.minCgpa,maxCgpa:filters.maxCgpa??query.maxCgpa,maxActiveBacklogs:filters.maxActiveBacklogs??query.maxActiveBacklogs,maxPastBacklogs:filters.maxPastBacklogs??query.maxPastBacklogs,cgpaRecorded:filters.cgpaRecorded??query.cgpaRecorded,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
     {
       journeyState: query.journeyState,
@@ -257,6 +274,10 @@ export default async function TpoStudentsPage({
       profileStatus:query.profileStatus,
       minApplications:query.minApplications,maxApplications:query.maxApplications,
       minOffers:query.minOffers,maxOffers:query.maxOffers,
+      offerWaiting:query.offerWaiting,
+    minCgpa:query.minCgpa,maxCgpa:query.maxCgpa,
+    maxActiveBacklogs:query.maxActiveBacklogs,maxPastBacklogs:query.maxPastBacklogs,
+    cgpaRecorded:query.cgpaRecorded,
       classId:query.classId,
       search: query.search,
     },
@@ -272,6 +293,10 @@ export default async function TpoStudentsPage({
     profileStatus:query.profileStatus,
     minApplications:query.minApplications,maxApplications:query.maxApplications,
     minOffers:query.minOffers,maxOffers:query.maxOffers,
+    offerWaiting:query.offerWaiting,
+    minCgpa:query.minCgpa,maxCgpa:query.maxCgpa,
+    maxActiveBacklogs:query.maxActiveBacklogs,maxPastBacklogs:query.maxPastBacklogs,
+    cgpaRecorded:query.cgpaRecorded,
     classId:query.classId,
     batchId: query.batchId,
     search: query.search,
@@ -341,6 +366,38 @@ export default async function TpoStudentsPage({
             <option value="WAITING">Waiting to verify</option>
             <option value="SENT_BACK">Sent back</option>
             <option value="NOT_VERIFIED">Not verified</option>
+          </select>
+        </label>
+        {([
+          ["minCgpa","CGPA from",query.minCgpa],
+          ["maxCgpa","CGPA to",query.maxCgpa],
+        ] as const).map(([name,label,value])=>
+         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+          <input type="number" name={name} min={0} max={10} step="0.01"
+           defaultValue={value??""} placeholder="Any"
+           className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+         </label>)}
+        {([
+          ["maxActiveBacklogs","Max active backlogs",query.maxActiveBacklogs],
+          ["maxPastBacklogs","Max past backlogs",query.maxPastBacklogs],
+        ] as const).map(([name,label,value])=>
+         <label key={name} className="grid gap-1 text-sm font-semibold">{label}
+          <input type="number" name={name} min={0} max={100} step={1}
+           defaultValue={value??""} placeholder="Any"
+           className="min-h-11 w-28 rounded border border-border bg-surface px-3"/>
+         </label>)}
+        <label className="text-sm font-semibold">CGPA recorded
+          <select name="cgpaRecorded" defaultValue={query.cgpaRecorded===undefined?"":query.cgpaRecorded?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option><option value="YES">Recorded</option>
+            <option value="NO">No recorded CGPA</option>
+          </select>
+        </label>
+        <label className="text-sm font-semibold">Offer waiting on answer
+          <select name="offerWaiting" defaultValue={query.offerWaiting===undefined?"":query.offerWaiting?"YES":"NO"}
+            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
+            <option value="">Any</option>
+            <option value="YES">Yes</option><option value="NO">No</option>
           </select>
         </label>
         <label className="text-sm font-semibold">After college

@@ -35,14 +35,18 @@ export function TpoBulkRoundResultRecorder({
   const [outcome, setOutcome] = useState<"PASS" | "FAIL" | "HOLD" | "ABSENT">("PASS");
   const [message, setMessage] = useState("");
   const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
+  const [failUnselected,setFailUnselected]=useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
+  const [reportedOutcomeByApplicant,setReportedOutcomeByApplicant]=useState<Record<string,string>>({});
 
   if (round.kind === "TALK" ||
     (round.status !== "SCHEDULED" && round.status !== "COMPLETED")) return null;
 
   const available = rows.filter((row) => row.resultStatus === null);
+  const unselected=available.filter(row=>!selected.includes(row.applicationId));
+  const pendingTotal=selected.length+(failUnselected?unselected.length:0);
   const visible=available.filter(row=>!search.trim()||row.displayName.toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN"))||row.applicationId.includes(search.trim()));
 
   function toggle(id: string, checked: boolean) {
@@ -56,13 +60,13 @@ export function TpoBulkRoundResultRecorder({
   }
 
   async function stageSelected() {
-    if (busy || selected.length === 0 || selected.length > 25 ||
-      (outcome !== "PASS" && message.trim().length === 0) ||
+    if (busy || selected.length === 0 || pendingTotal > 25 ||
+      ((outcome !== "PASS" || failUnselected) && message.trim().length === 0) ||
       (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
       setError(outcome==="HOLD"&&(!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000)
         ? "Choose a valid first waitlist rank. Ranks must be 1–100000."
         : selected.length===0?"Select at least one learner."
-        : selected.length>25?"Select at most 25 learners."
+        : pendingTotal>25?"This bulk action exceeds 25 results. Stage a smaller group or use the reviewed CSV import."
         : "Enter a learner-facing message before staging this outcome.");
       return;
     }
@@ -79,18 +83,22 @@ export function TpoBulkRoundResultRecorder({
         },
       }];
     });
-    if (entries.length !== selected.length) {
+    if(failUnselected)for(const row of unselected)entries.push({expectedCurrentResultId:null,
+      result:{applicationId:row.applicationId,outcome:"FAIL",candidateMessage:message.trim()}});
+    if (entries.length !== pendingTotal) {
       setError("The selected rows changed; refresh before staging.");
       return;
     }
     if (!window.confirm(
       "Stage " + entries.length + " result(s) as " +
       ({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome]) +
-      "? Each successful result will be audited individually. " +
+      "? " + (failUnselected?unselected.length+" additional unmarked applicants will be staged Not cleared. ":"") +
+      "Each successful result will be audited individually. " +
       "This does NOT publish results; a completed round requires separate APPLY confirmation. " +
       "Some rows may succeed even if others fail. Continue?",
     )) return;
 
+    setReportedOutcomeByApplicant(Object.fromEntries(entries.map(entry=>[entry.result.applicationId,entry.result.outcome])));
     setBusy(true);
     setError(null);
     setResults([]);
@@ -110,7 +118,7 @@ export function TpoBulkRoundResultRecorder({
       }
       const body = (await response.json()) as { results: Result[] };
       setResults(body.results);
-      setSelected([]);
+      setSelected([]);setFailUnselected(false);
       router.refresh();
     } catch {
       setError(
@@ -198,7 +206,18 @@ export function TpoBulkRoundResultRecorder({
               <option value="ABSENT">Marked absent (ABSENT)</option>
             </select>
           </label>
-          {outcome !== "PASS" ? (
+          <fieldset className="space-y-2 rounded-md border border-warning p-3">
+            <legend className="text-sm font-semibold text-foreground">Everyone I did not mark</legend>
+            <label className="flex items-start gap-2 text-sm text-body">
+              <input type="checkbox" disabled={busy||available.length>25}
+                checked={failUnselected}
+                onChange={e=>setFailUnselected(e.target.checked)}
+                className="mt-1 h-4 w-4 accent-primary"/>
+              Stage Not cleared for every other unmarked applicant ({unselected.length})
+            </label>
+            <p className="text-xs text-body">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
+          </fieldset>
+          {(outcome !== "PASS" || failUnselected) ? (
             <label className="block text-sm font-semibold text-foreground">
               Learner-facing message (required)
               <textarea
@@ -220,6 +239,7 @@ export function TpoBulkRoundResultRecorder({
           </label>:null}
           {selected.length>0?<div role="status" className="rounded-md border border-border bg-surface-subtle p-3 text-sm text-body">
             <p className="font-semibold">Result staging preview</p>
+            <p>{pendingTotal} total staged outcomes · {selected.length} explicitly selected · {failUnselected?unselected.length:0} additional Not cleared.</p>
             <p>{selected.length} unmarked applicant(s) selected · {outcome==="PASS"?"Cleared":outcome==="FAIL"?"Not cleared":outcome==="HOLD"?"Waitlisted":"Marked absent"}.</p>
             {outcome==="HOLD"?<p>Ranks {firstWaitlistRank}–{firstWaitlistRank+selected.length-1} in selection order. Existing rank collisions are rejected.</p>:null}
             <p>Saved as staged only. Learners are not told until the separate Apply results step.</p>
@@ -228,7 +248,8 @@ export function TpoBulkRoundResultRecorder({
             type="button"
             onClick={() => void stageSelected()}
             disabled={busy || selected.length === 0 ||
-              (outcome !== "PASS" && !message.trim()) ||
+              ((outcome !== "PASS" || failUnselected) && !message.trim()) ||
+              pendingTotal > 25 ||
               (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
             className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
           >
@@ -247,7 +268,7 @@ export function TpoBulkRoundResultRecorder({
             const lines=[["Application ID","Learner","Outcome","Status","Reason"].join(","),
              ...results.map(row=>[row.applicationId,
               rows.find(item=>item.applicationId===row.applicationId)?.displayName??"Learner",
-              outcome,row.status,row.reason??""].map(cell).join(","))];
+              reportedOutcomeByApplicant[row.applicationId]??outcome,row.status,row.reason??""].map(cell).join(","))];
             const url=URL.createObjectURL(new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
             const link=document.createElement("a");link.href=url;
             link.download="round-"+roundId+"-bulk-results.csv";link.click();URL.revokeObjectURL(url);
@@ -262,7 +283,7 @@ export function TpoBulkRoundResultRecorder({
                   {rows.find((row) => row.applicationId === item.applicationId)?.displayName ??
                     "Learner"}
                 </span>
-                <span>{item.status}</span>
+                <span>{reportedOutcomeByApplicant[item.applicationId]??outcome} · {item.status}</span>
                 {item.reason ? <span>{item.reason.replaceAll("_", " ")}</span> : null}
               </li>
             ))}

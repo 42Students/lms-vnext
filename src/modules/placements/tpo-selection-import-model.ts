@@ -1,15 +1,21 @@
 /** TPO-drive-workspace-48: parse small company selection CSVs before explicit review. */
 export function parseSelectionCsv(text:string,strictBlankRows=false):string[][] {
- const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;
+ const rows:string[][]=[];let row:string[]=[];let field="";let quoted=false;let startedQuoted=false;let closedQuote=false;
  for(let i=0;i<text.length;i++){
   const char=text[i];
+  if(strictBlankRows&&quoted&&(char==="\n"||char==="\r"))
+   throw Error("Multiline CSV fields are not supported for round results; keep one learner per line.");
+  if(closedQuote && char!=='"'&&char!==","&&char!=="\r"&&char!=="\n"&&char!==" "&&char!=="\t")
+   throw Error("Unexpected text after a closing CSV quote.");
   if(char==='"'){
    if(quoted&&text[i+1]==='"'){field+='"';i++;}
-   else quoted=!quoted;
-  }else if(char===","&&!quoted){row.push(field.trim());field="";}
+   else if(quoted){quoted=false;closedQuote=true;}
+   else if(field===""&&!startedQuoted){quoted=true;startedQuoted=true;}
+   else throw Error("Unexpected quote inside a CSV field.");
+  }else if(char===","&&!quoted){row.push(field.trim());field="";startedQuoted=false;closedQuote=false;}
   else if((char==="\n"||char==="\r")&&!quoted){
    if(char==="\r"&&text[i+1]==="\n")i++;
-   row.push(field.trim());field="";
+   row.push(field.trim());field="";startedQuoted=false;closedQuote=false;
    if(row.some(value=>value!==""))rows.push(row);
    else if(strictBlankRows)throw Error("Remove blank data rows from the file.");
    row=[];

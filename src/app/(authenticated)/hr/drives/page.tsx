@@ -9,6 +9,7 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import { recruiterVisiblePortfolioCounts } from "@/modules/placements/recruiter-portfolio-counts-service";
+import {countRecruiterAnswerableDriveRequests} from "@/modules/placements/hr-recruiter-open-change-counts-service";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-drive-request-service";
@@ -81,7 +82,10 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     }),
   ]);
   const attention={soon:soon.rows,past:past.rows};
-  const visibleCounts=await recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id));
+  const [visibleCounts,unansweredRequests]=await Promise.all([
+    recruiterVisiblePortfolioCounts(context,selectedCollege,pageResult.rows.map(row=>row.job.id)),
+    countRecruiterAnswerableDriveRequests(selectedCollege,pageResult.rows.map(row=>row.job.id)),
+  ]);
   return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Drives"
       description="Hiring drives for the selected college and your exact employer relationship. Includes submitted requests, drafts and published drives for this employer."
@@ -211,7 +215,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
           </Link>
         </div>
         : null}
-    {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
+    {query.data.view!=="WAITING" && pageResult.rows.length>0?<RecruiterPlacementPortfolio now={now} jobs={pageResult.rows} counts={visibleCounts} unansweredRequests={unansweredRequests} returnTo={recruiterDrivesHref({...query.data,collegeId:selectedCollege})} />:null}
     {query.data.view !== "WAITING" ? <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
       <p className="text-sm text-body">{pageResult.total===0?"No matching drives":
         "Showing "+(Math.min(pageResult.total,(pageResult.page-1)*pageResult.pageSize+1))+"–"+
