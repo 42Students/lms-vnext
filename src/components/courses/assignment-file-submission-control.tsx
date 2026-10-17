@@ -178,6 +178,7 @@ export function AssignmentFileSubmissionControl({
         className="mt-2 block min-h-11 w-full max-w-full text-sm"
         onChange={event => { select(event.currentTarget.files); event.currentTarget.value = ""; }} />
     </label>:null}
+    {uploadsAllowed?<p role="status" className="text-xs text-muted-foreground">Google Drive import is not configured. To add a file from Google Drive, download it to your device first, then use Choose a file to upload. The uploaded file must pass private-storage security checks.</p>:null}
     {uploadsAllowed?<Button type="button" disabled={busy || loading || selected.length === 0} onClick={upload}>
       {busy && activeName ? "Uploading…" : staged.length > 0 ? "Add another file" : "Choose a file to upload"}
     </Button>:null}
