@@ -551,6 +551,8 @@ export async function updateCourseQuiz(
           if(attempt || lockedQuiz.status==="CLOSED")
             throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
         }
+        if(input.questions&&(lockedQuiz.status!=="DRAFT"||liveAttempts>0))
+          throw new CoursesServiceError("QUIZ_HAS_ATTEMPTS");
         if (input.questions) {
           const questionRows = await tx
             .select({ id: quizQuestions.id })
