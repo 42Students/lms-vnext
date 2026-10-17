@@ -1,6 +1,7 @@
 "use client";
 
 import {useRef,useState,type FormEvent} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {acceptAttributeFor,formatFileSize,isSafeSignedUrl,limitsSummary} from "@/modules/storage/ui-models";
 import {
   fileStatusDescriptor,projectFileUsable,projectResourceFileDeclaration,
@@ -58,6 +59,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
   const [busy,setBusy]=useState(false);
   const [feedback,setFeedback]=useState<string|null>(null);
   const [editing,setEditing]=useState<string|null>(null);
+  const [deleteTarget,setDeleteTarget]=useState<ProjectResourceFile|null>(null);
   const [editTitle,setEditTitle]=useState("");
   const [editDescription,setEditDescription]=useState("");
   const xhrRef=useRef<XMLHttpRequest|null>(null);
@@ -142,11 +144,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   async function remove(file:ProjectResourceFile){
-    if(!window.confirm('Delete "'+file.title+'"?'))return;
+    if(busy)return;
     setBusy(true);setFeedback(null);
     try{
       await jsonRequest<FileResponse>(fileEndpoint(file.id),"DELETE");
       setFiles(rows=>rows.filter(row=>row.id!==file.id));
+      setDeleteTarget(null);
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   return <section className="space-y-4 rounded-xl border border-border bg-surface p-4">
@@ -208,7 +211,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
                   onClick={()=>void retryComplete(file)} className="rounded border border-border px-3 py-1.5 text-sm">Retry</button>}
                 <button type="button" disabled={busy} onClick={()=>beginEdit(file)}
                   className="rounded border border-border px-3 py-1.5 text-sm">Edit resource</button>
-                <button type="button" disabled={busy} onClick={()=>void remove(file)}
+                <button type="button" disabled={busy} onClick={()=>setDeleteTarget(file)}
                   className="rounded border border-border px-3 py-1.5 text-sm">Delete</button>
               </>}
             </div>
@@ -236,5 +239,10 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,canManage,canU
       })}
     </ul>}
     {feedback&&<p role="status" className="text-sm text-body">{feedback}</p>}
+    <ConfirmDialog open={deleteTarget!==null} onOpenChange={open=>{if(!open&&!busy)setDeleteTarget(null);}}
+      title={deleteTarget?`Delete "${deleteTarget.title}"?`:"Delete resource?"}
+      description="This permanently removes the resource for everyone on the project."
+      confirmLabel="Delete resource" confirmVariant="danger" pending={busy}
+      onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
   </section>;
 }
