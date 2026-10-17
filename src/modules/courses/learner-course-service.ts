@@ -743,14 +743,16 @@ export async function getLearnerCourseWorkspace(
       continue;
     }
 
+    // End-of-session takes priority if authored start/end times conflict.
+    // At the exact end boundary learners must no longer join or copy.
     const contentAvailability =
-      row.contentStartsAt &&
-      row.contentStartsAt.getTime() > now
-        ? "SCHEDULED"
-        : row.contentType === "LIVE_CLASS" &&
-            row.contentEndsAt &&
-            row.contentEndsAt.getTime() < now
-          ? "ENDED"
+      row.contentType === "LIVE_CLASS" &&
+      row.contentEndsAt &&
+      row.contentEndsAt.getTime() <= now
+        ? "ENDED"
+        : row.contentStartsAt &&
+            row.contentStartsAt.getTime() > now
+          ? "SCHEDULED"
           : "AVAILABLE";
 
     lesson.contents.push({
