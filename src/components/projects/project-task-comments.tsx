@@ -67,6 +67,9 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
         }).format(new Date(row.createdAt))}
       </p>
+      <p className="mb-1 text-xs font-semibold text-body">
+        {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind]??"Note"}
+      </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
    </article>)}
      {canPost?<label className="grid gap-1 text-sm text-body">Add a note before posting
