@@ -15,8 +15,8 @@ export async function listCollegeCompanyDirectory(
   const collegeId=await requireCollegePlacementAdmin(context);
   const where=and(
     eq(placementCompanyRelationships.collegeId,collegeId),
-    eq(placementCompanyRelationships.status,"ACTIVE"),
-    isNull(placementCompanyRelationships.archivedAt),
+    eq(placementCompanyRelationships.status,query.status),
+    query.status==="ACTIVE"?isNull(placementCompanyRelationships.archivedAt):undefined,
     eq(placementCompanies.status,"ACTIVE"),
     query.q?ilike(placementCompanies.name,literalCompanySearch(query.q)):undefined,
   );
