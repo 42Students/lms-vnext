@@ -116,6 +116,7 @@ export async function ProjectAdminSubmissionsPage({
           Locked
         </Link>
         <Link href={queuePath+"?submissionStatus=DRAFT_REVISING"}
+          aria-current={query.submissionStatus==="DRAFT_REVISING"?"page":undefined}
           className="min-h-10 rounded-md border border-border px-3 py-2 text-primary-text">
           Draft (revising)
         </Link>
