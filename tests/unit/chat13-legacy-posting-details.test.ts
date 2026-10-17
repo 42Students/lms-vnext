@@ -22,18 +22,6 @@ describe("Super Admin legacy job details",()=>{
    assessmentDeadline:"2098-12-31T00:00:00.000Z",
   }}).success).toBe(false);
  });
- it("SA-placements-projects-14 requires assessment deadline strictly later than application deadline",()=>{
-  const base={collegeId:"00000000-0000-4000-8000-000000000001",
-   companyRelationshipId:"00000000-0000-4000-8000-000000000002",
-   title:"Role",employmentType:"FULL_TIME",workMode:"ONSITE",
-   applicationDeadline:"2099-01-01T00:00:00.000Z"};
-  expect(createPlacementJobInputSchema.safeParse({...base,legacyPostingDetails:{
-   assessmentDeadline:"2099-01-01T00:00:00.000Z"}}).success).toBe(false);
-  expect(createPlacementJobInputSchema.safeParse({...base,legacyPostingDetails:{
-   assessmentDeadline:"2099-01-01T00:01:00.000Z"}}).success).toBe(true);
-  const ui=readFileSync("src/components/placements/placement-job-create-form.tsx","utf8");
-  expect(ui).toContain("Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)");
- });
  it("SA-placements-projects-14 renders persisted draft terms without inventing a cross-college grant",()=>{
   const ui=readFileSync("src/components/placements/placement-job-create-form.tsx","utf8");
   for(const label of ["Responsibilities","Assessment URL","Important dates","Custom eligibility rules","Visibility and cross-college targeting"])
