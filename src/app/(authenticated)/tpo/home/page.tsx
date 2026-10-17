@@ -16,6 +16,7 @@ import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-reque
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatTile } from "@/components/ui/stat-tile";
+import { InlineNotice } from "@/components/ui/inline-notice";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
@@ -49,19 +50,20 @@ export default async function TpoHome(){
  const [batches,operations,pendingRequestCount,studentStats,unreadMessages,
   crmReady,collegeRules,placementTeam,teamThreads,weekEvents,profileRows]=await Promise.all([
    listTpoBatches(ctx),getPlacementTpoOperations(ctx,collegeId),
-   getPendingTpoRequestsCount(ctx),
-   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}),
-   countTpoUnreadRecruiterMessages(ctx),tpoCrmTablesReady(),
-   getCollegePlacementRules(ctx,collegeId),
-   getTpoPlacementTeam(ctx,collegeId),
-   listMyTpoInternalThreads(ctx),
+   getPendingTpoRequestsCount(ctx).catch(()=>null),
+   getTpoStudentsIntelligence(ctx,{collegeId,page:1,pageSize:1}).catch(()=>null),
+   countTpoUnreadRecruiterMessages(ctx).catch(()=>null),tpoCrmTablesReady().catch(()=>false),
+   getCollegePlacementRules(ctx,collegeId).catch(()=>null),
+   getTpoPlacementTeam(ctx,collegeId).catch(()=>null),
+   listMyTpoInternalThreads(ctx).catch(()=>null),
    listPlacementCalendarEvents(ctx,{collegeId,from:placementCalendarDayKey(calendarNow),
     to:placementCalendarDayKey(weekEnd),includeDraftDeadlines:true}).catch(()=>null),
    getDb().select({displayName:users.displayName}).from(users)
-    .where(eq(users.id,ctx.user.id)).limit(1),
+    .where(eq(users.id,ctx.user.id)).limit(1).catch(()=>[]),
  ]);
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
- const pendingRequests=pendingTpoRequestsAction(pendingRequestCount);
+ const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
+ const optionalDataUnavailable=[pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads].some(value=>value===null);
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
  const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
@@ -74,24 +76,25 @@ export default async function TpoHome(){
  let inviteCandidate:typeof firstBatch|undefined;
  let candidateEligible:number|null=null;
  let candidateRegistered:number|null=null;
- for(const candidate of inviteCandidates){
-  const [eligibility,registration]=await Promise.all([
-   getTpoBatchEligibilitySummary(ctx,candidate.id),
-   getTpoBatchRegistrationSummary(ctx,candidate.id),
-  ]);
-  const eligible=eligibility.summary.complete?eligibility.summary.eligible:null;
-  const registered=registration.available?registration.registered:null;
-  if(eligible!==null&&registered!==null&&eligible>registered){
-   inviteCandidate=candidate;candidateEligible=eligible;candidateRegistered=registered;
-   break;
-  }
+ for(let offset=0;offset<inviteCandidates.length;offset+=4){
+  const candidates=inviteCandidates.slice(offset,offset+4);
+  const checked=await Promise.all(candidates.map(async candidate=>{
+   const [eligibility,registration]=await Promise.all([
+    getTpoBatchEligibilitySummary(ctx,candidate.id).catch(()=>null),
+    getTpoBatchRegistrationSummary(ctx,candidate.id).catch(()=>null),
+   ]);
+   return {candidate,eligible:eligibility?.summary.complete?eligibility.summary.eligible:null,
+     registered:registration?.available?registration.registered:null};
+  }));
+  const found=checked.find(item=>item.eligible!==null&&item.registered!==null&&item.eligible>item.registered);
+  if(found){inviteCandidate=found.candidate;candidateEligible=found.eligible;candidateRegistered=found.registered;break;}
  }
  const inviteReady=!!inviteCandidate;
  // TPO-home-04: the visible batch must show its own persisted eligible and
  // registered totals, even when an invitation has already been sent.
  const [shownEligibility,shownRegistrations]=firstBatch?await Promise.all([
-  getTpoBatchEligibilitySummary(ctx,firstBatch.id),
-  getTpoBatchRegistrationSummary(ctx,firstBatch.id),
+  getTpoBatchEligibilitySummary(ctx,firstBatch.id).catch(()=>null),
+  getTpoBatchRegistrationSummary(ctx,firstBatch.id).catch(()=>null),
  ]):[null,null];
  const shownEligible=shownEligibility?.summary.complete?shownEligibility.summary.eligible:null;
  const shownRegistered=shownRegistrations?.available?shownRegistrations.registered:null;
@@ -121,12 +124,12 @@ export default async function TpoHome(){
   })(),
   driveHref:operations.workQueue.some(item=>item.code==="DRIVE_REQUESTS"&&item.count>0)
    ?"/tpo/placements?tab=requests":"/tpo/placements",
-  registered:studentStats.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
-  placedUnique:studentStats.summary.placed,recruiterLeads:crmCounts?.leads??null,
+  registered:studentStats?.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
+  placedUnique:studentStats?.summary.placed??null,recruiterLeads:crmCounts?.leads??null,
   followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
-  pendingRequests:pendingRequestCount,
+  pendingRequests:pendingRequestCount??0,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
-  teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
+  teamUnread:teamThreads?.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,
  });
  const next=buildTpoLegacyNextUp({
@@ -136,35 +139,36 @@ export default async function TpoHome(){
       link:"/tpo/batches/"+inviteCandidate!.id}]:[]),
    ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
-   ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
-   ...(teamThreads.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
+   ...((unreadMessages??0)>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages!,link:"/tpo/messages"}]:[]),
+   ...(teamThreads?.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
     {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
-      count:pendingRequestCount,link:"/tpo/requests"}]:[]),
+      count:pendingRequestCount!,link:"/tpo/requests"}]:[]),
   ],
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,
    eligible:candidateEligible!,registered:candidateRegistered!,invitedAt:null}]:[],
   checklist:[
    {label:"Decide who is in placements",done:batches.ready&&batches.batches.length>0,link:"/tpo/batches"},
-   {label:"Import academic details",done:studentStats.summary.activeLearners>0,link:"/tpo/students"},
-   {label:"Choose the placement rules",done:collegeRules.updatedAt!==null,link:"/tpo/settings/rules"},
+   {label:"Import academic details",done:(studentStats?.summary.activeLearners??0)>0,link:"/tpo/students"},
+   {label:"Choose the placement rules",done:collegeRules?.updatedAt!=null,link:"/tpo/settings/rules"},
    {label:"Invite a batch to register",done:batches.batches.some(batch=>Boolean(batch.invitedAt)),link:"/tpo/batches"},
    {label:"Add your first recruiter",done:(crmCounts?.leads??0)>0,link:"/tpo/recruiters"},
-   {label:"Pick your team",done:placementTeam.summary.total>1,link:"/tpo/settings/team"},
+   {label:"Pick your team",done:(placementTeam?.summary.total??0)>1,link:"/tpo/settings/team"},
   ],
  });
  return <div data-testid="tpo.home" className="min-w-0 space-y-5">
  <TpoHomeReturnRefresh/>
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader eyebrow="TPO" title={greeting.title}/>
+ {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
  <div aria-label="Placement overview" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
   <StatTile label={rows[1]?.title ?? "Drives"} value={operations.summary.publishedJobs}
     detail={rows[1]?.status} href={rows[1]?.href}/>
-  <StatTile label={rows[2]?.title ?? "Students"} value={studentStats.summary.placementPool}
+  <StatTile label={rows[2]?.title ?? "Students"} value={studentStats?.summary.placementPool??"—"}
     detail={rows[2]?.status} href={rows[2]?.href}/>
-  <StatTile label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount + unreadMessages}
+  <StatTile label={rows[4]?.title ?? "Inbox"} value={pendingRequestCount!==null&&unreadMessages!==null?pendingRequestCount+unreadMessages:"—"}
     detail={rows[4]?.status} href={rows[4]?.href}/>
-  <StatTile label={rows[5]?.title ?? "Team"} value={teamThreads.status === "READY"
+  <StatTile label={rows[5]?.title ?? "Team"} value={teamThreads?.status === "READY"
       ? teamThreads.items.reduce((total, item) => total + item.unreadCount, 0) : "—"}
     detail={rows[5]?.status} href={rows[5]?.href}/>
  </div>
