@@ -185,7 +185,7 @@ export default async function TpoRecruiterAccessPage({
                       ? "All grants"
                       : status === "ACTIVE"
                         ? "Active grants"
-                        : "Revoked grants"}
+                        : status==="REVOKED"?"Revoked grants":status==="ENDING_SOON"?"Ending in 30 days":"Ended or removed"}
                   </option>
                 ),
               )}
@@ -275,12 +275,9 @@ export default async function TpoRecruiterAccessPage({
                   >
                     Granted
                   </th>
-                  <th
-                    scope="col"
-                    className="px-4 py-3"
-                  >
-                    Revoked
-                  </th>
+                  <th scope="col" className="px-4 py-3">Valid through (IST)</th>
+                  <th scope="col" className="px-4 py-3">Access & verification</th>
+                  <th scope="col" className="px-4 py-3">Revoked</th>
                 </tr>
               </thead>
 
@@ -306,9 +303,7 @@ export default async function TpoRecruiterAccessPage({
                             : "neutral"
                         }
                       >
-                        {item.status === "ACTIVE"
-                          ? "Active"
-                          : "Revoked"}
+                        {item.ended?"Ended or removed":item.status === "ACTIVE"?"Active":"Revoked"}
                       </StatusBadge>
                       {item.status === "ACTIVE" && item.grantId && item.expectedUpdatedAt ? (
                         <TpoRecruiterRevoke
@@ -323,6 +318,8 @@ export default async function TpoRecruiterAccessPage({
                       {item.grantedDate}
                     </td>
 
+                    <td className="px-4 py-4 text-body">{item.validUntilDate??"No expiry on record"}</td>
+                    <td className="px-4 py-4 text-body">{item.capabilities.join(", ")||"No capabilities"} · {item.verificationStatus}</td>
                     <td className="px-4 py-4 text-body">
                       {item.revokedDate ?? "—"}
                     </td>
