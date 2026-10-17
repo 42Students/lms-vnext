@@ -56,9 +56,10 @@ describe("TPO verification round6 source regressions",()=>{
   expect(s).toContain("Education");
  });
  it("TPO-requests-verification-31 current behavior covered",()=>{
-  const s=src("app/(authenticated)/tpo/verification/page.tsx");
-  expect(s).toContain("Check students&apos; education and identity");
-  expect(s).toContain("<h1");
+  const s=src("components/verification/VerificationWorkspace.tsx");
+  expect(s).toContain("Check students");
+  expect(s).toContain("legacyTpoCopy");
+  expect(src("app/(authenticated)/tpo/verification/page.tsx")).toContain("legacyTpoCopy");
  });
  it("TPO-requests-verification-32 current behavior covered",()=>{
   const s=src("app/(authenticated)/tpo/verification/page.tsx");
