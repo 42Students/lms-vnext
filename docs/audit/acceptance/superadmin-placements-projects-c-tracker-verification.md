@@ -51,3 +51,9 @@
 ## Chat-6 UNCONFIRMED decisions, 2026-10-18
 
 | SA-placements-projects-115 | OPEN (partial) | Sanitized Copy for Claude and prefilled tracker report; no unscoped production logs or SQL; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-115` |
+
+## Chat-16 2026-10-18 follow-up: SA-placements-projects-120 sync state
+
+The independent audit findings page displays the **persisted** `audit_finding_syncs.last_result` without inferring a completed import. It distinguishes `SUCCESS`, `FAILED`, `PARTIAL`, and unconfigured/unknown states; it also retains the verified import timestamp, total accepted and refused counts. Test: `tests/unit/chat16-tracker-findings-sync-r6.test.ts` → SA-placements-projects-120. The active GitHub connection returned **404 Not Found** for `42Students/lms-findings` on this round. Therefore no import or successful source synchronization can be claimed. The central gap register intentionally remains OPEN; do not close it until a real authenticated source, validated mapping, and server-side import are exercised.
+
+The source-level feature statuses for SA-placements-projects-101/103/104/106/107/109/112/113/114/116/117/118/119/121/122 have been reconciled in `docs/audit/gap-register.md`; source-complete is not a passing DB/browser/provider test.

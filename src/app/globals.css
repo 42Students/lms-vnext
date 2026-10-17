@@ -11,6 +11,9 @@
  */
 :root {
   --lms-primary: #26bac7;
+  /* Contrast-safe semantic foreground; canonical legacy teal remains unchanged. */
+  --lms-on-primary: #1a1d21;
+  --lms-link-text: #0e7c87;
   --lms-primary-hover: #1e9aa8;
   --lms-primary-text: #1a95a1;
   --lms-primary-subtle: #eff8fa;
@@ -72,7 +75,7 @@
   --popover: var(--lms-surface);
   --popover-foreground: var(--lms-foreground);
   --primary: var(--lms-primary);
-  --primary-foreground: var(--lms-white);
+  --primary-foreground: var(--lms-on-primary);
   --secondary: var(--lms-neutral-50);
   --secondary-foreground: var(--lms-foreground);
   --muted: var(--lms-neutral-100);
@@ -98,7 +101,8 @@
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-hover: var(--lms-primary-hover);
-  --color-primary-text: var(--lms-primary-text);
+  --color-primary-text: var(--lms-link-text);
+  --color-link: var(--lms-link-text);
   --color-primary-subtle: var(--lms-primary-subtle);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
@@ -146,5 +150,8 @@ body {
   --lms-neutral-100: #1e293b;
   --lms-neutral-50: #172337;
   --lms-primary-text: #75dce3;
+  /* On-primary stays dark even when page foreground flips to light in tracker. */
+  --lms-on-primary: #1a1d21;
+  --lms-link-text: #75dce3;
   --lms-primary-subtle: #164e57;
 }

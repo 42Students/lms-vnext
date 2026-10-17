@@ -77,3 +77,9 @@ These source and API-wiring contracts record earlier implementation claims; **te
 ## Chat-6 UNCONFIRMED decisions, 2026-10-18
 
 | SA-academics-people-R04 | OPEN | Audit coverage for all Super Admin academic mutations requires integration verification; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-academics-people-R04` |
+
+## 2026-10-18 chat-13 verified-source sweep A (not CI)
+| ID | Result | Evidence |
+|---|---|---|
+| SA-academics-people-R03 | DONE | Protected legacy-bookmark routing to canonical pages. `tests/unit/chat13-superadmin-gap-register-reconcile-a.test.ts` (`SA-academics-people-R03`). |
+| SA-academics-people-R05 | DONE | Attendance correction uses drawer/guarded action. `tests/unit/chat13-superadmin-gap-register-reconcile-a.test.ts` (`SA-academics-people-R05`). |

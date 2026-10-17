@@ -34,7 +34,11 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
     const ui = read("src/components/projects/project-meeting-controls.tsx");
     expect(service).toContain('inArray(projectMeetings.status, ["DRAFT", "REQUESTED", "SCHEDULED","RESCHEDULED"])');
     expect(service).toContain('if (meeting.status === "DRAFT") return cancelled;');
-    expect(service).toContain('scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")]');
+    expect(service).toContain('scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [');
+    expect(service).toContain('not(and(eq(projectMeetings.status,"CANCELLED")');
+    expect(service).toContain('isNull(projectMeetings.requestedByMembershipId)');
+    expect(service).toContain('isNull(projectMeetings.scheduledByUserId)');
+    expect(service).toContain('rows.map(row=>({...row,facilitation:emptyMentorMeetingFacilitation}))');
     expect(ui).toContain('meeting.status === "DRAFT" || meeting.status === "REQUESTED"');
     expect(ui).toContain('draftDiscard?"Discard draft":"Cancel meeting"');
     expect(ui).toContain('Drafts are visible to mentors only; no invitations are sent.');
@@ -42,5 +46,11 @@ describe("MEN-projects-meetings-27 meeting draft lifecycle", () => {
       endsAt: "2099-03-01T10:30:00Z", timeZone: "Asia/Kolkata", status: "DRAFT" };
     expect(scheduleProjectMeetingInputSchema.safeParse(draft).success).toBe(true);
     expect(scheduleProjectMeetingInputSchema.safeParse({ ...draft, status: "SCHEDULED" }).success).toBe(false);
+  });
+  it("MEN-projects-meetings-27 refuses mentor lifecycle changes on completed projects", () => {
+    const code=read("src/modules/projects/mentor-meeting-decision-service.ts");
+    expect(code).toContain('project.status==="ARCHIVED"||project.status==="COMPLETED"');
+    expect(code).toContain('resolveOptionalModuleAccess(context)).projects.enabled');
+    expect(code).toContain('if(current.status==="DRAFT")return updated;');
   });
 });

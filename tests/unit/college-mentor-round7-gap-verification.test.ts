@@ -23,8 +23,10 @@ describe("chat-11 college and mentor interaction contracts",()=>{
  it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows",()=>{
   const open=src("src/components/projects/project-resource-open-link.tsx");
   expect(open).toContain('linkText="Open resource ↗"');
-  expect(open).toContain("Your browser blocked the new tab. Allow pop-ups for this site to open resources.");
-  expect(open).toContain("This resource\'s link is not a valid web address, so it can\'t be opened.");
+  expect(open).toContain("Your browser blocked the resource window. Allow pop-ups for this site to open resources.");
+  expect(open).toContain("This resource has an invalid address.");
+  expect(open).toContain('rel="noopener noreferrer"');
+  expect(open).toContain("popup.opener=null");
   expect(src("src/components/projects/project-workspace.tsx")).toContain("<ProjectResourceList projectId=");
   expect(src("src/components/projects/project-resource-list.tsx")).toContain('linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}');
   expect(src("src/components/projects/project-resource-controls.tsx")).toContain('"Resource added."');

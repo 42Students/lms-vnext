@@ -633,7 +633,7 @@ export function LearnerClassSchedule({
         {filteredEvents.length === 0 && view !== "month" ? (
           <div className="mt-5">
             <EmptyState
-              title="No scheduled classes in this view"
+              title={view==="week"?"No scheduled classes this week.":"No scheduled classes in this view"}
               description="Try another date, view, section, Course filter or session search. General Section events remain visible unless a search excludes them."
             />
           </div>

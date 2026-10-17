@@ -14,7 +14,7 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
    });
    const result=await response.json() as {error?:string};
    if(!response.ok)throw Error(result.error==="TPO_SETTINGS_STALE"?"Settings changed. Refresh before retrying.":
-    result.error??"Could not save threshold.");
+    "Could not save threshold. Refresh and try again.");
    setMessage("Readiness bar saved");router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not save threshold.");}
   finally{setBusy(false);}
