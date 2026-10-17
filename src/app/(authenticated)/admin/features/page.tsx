@@ -72,7 +72,7 @@ export default async function SuperAdminFeaturesPage({
         <PageHeader
           eyebrow="Super Admin · Tenant Controls"
           title="Feature Controls"
-          description="Read-only college module access."
+          description="College module access, policy inheritance and guarded inline changes."
         />
         <ErrorState
           title="Invalid feature filters"
@@ -389,8 +389,7 @@ export default async function SuperAdminFeaturesPage({
         Lower-level Projects/Electives overrides,
         placement participation decisions, and other
         authorization gates may affect a learner&apos;s
-        actual experience. No toggles or policy writes
-        are available here.
+        actual experience. Guarded inline college-policy editors are available from each cell. Every change still requires fresh impact review and server-side authorization.
       </p>
     </div>
   );
