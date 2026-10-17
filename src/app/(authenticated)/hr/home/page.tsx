@@ -54,7 +54,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
     const visible=grants.filter(item=>byId.has(item.id));
     return <div className="space-y-6">
     <PageHeader eyebrow="Recruiter" title="Today" description={"College access for " + recruiter.companyName} />
-    {visible.length === 0 ? <EmptyState title="Open this on your college\u0027s placement address" description="Your recruiter account works inside one college\u0027s placement site. Ask the placement cell that invited you to restore access." /> :
+    {visible.length === 0 ? <EmptyState title="Open this on your college&apos;s placement address" description="Your recruiter account works inside one college&apos;s placement site. Ask the placement cell that invited you to restore access." /> :
     <section className="grid gap-3 sm:grid-cols-2">{visible.map(grant => {
       const detail=byId.get(grant.id)!;
       return <article key={grant.id} className="space-y-3 rounded-lg border border-border bg-surface p-5">
