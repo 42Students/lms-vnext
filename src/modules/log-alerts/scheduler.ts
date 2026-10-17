@@ -130,9 +130,9 @@ export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
         if (spent >= 5) return; // Leave pending for the next in-cluster tick.
         const ok = await sendTelegramAlert(
           "vNext regression detected after fix. Environment: " + environment +
-          "\\nSignature: " + current.signatureHash.slice(0, 12) +
-          "\\nCount: " + current.occurrenceCount.toString() +
-          "\\nSee the Logs page.",
+          "\nSignature: " + current.signatureHash.slice(0, 12) +
+          "\nCount: " + current.occurrenceCount.toString() +
+          "\nSee the Logs page.",
           { acknowledgeSignatureId: current.id },
         );
         if (!ok) return; // Delivery-gated transition, retry next tick.
