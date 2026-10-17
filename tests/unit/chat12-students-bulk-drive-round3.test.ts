@@ -7,7 +7,8 @@ describe("Chat-12 Add to Drive notifications and confirmation",()=>{
   expect(c).toContain('title="Add selected students to a drive"');
   expect(c).toContain('onClick={()=>void runGuarded(submit)}');
   expect(c).toContain("useGuardedAction()");
-  expect(c).toContain("Ineligible learners will not be added and existing applications are preserved.");
+  expect(c).toContain("Ineligible learners will not be added.");
+  expect(c).toContain("Existing applications are preserved.");
   expect(c).not.toContain("window.confirm(");
  });
  it("TPO-students-15 persists a learner-facing notification in the same transaction as the new application",()=>{

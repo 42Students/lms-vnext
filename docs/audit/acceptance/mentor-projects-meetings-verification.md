@@ -81,4 +81,64 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-R07 | DONE | `src/modules/projects/resource-service.ts`, `meeting-service.ts`, `lifecycle-service.ts` plus versioned UI/API routes; `tests/unit/chat7-mentor-version-conflicts.test.ts` — `MEN-projects-meetings-R07 requires version tokens for resource edit and archive`, `MEN-projects-meetings-R07 prevents stale new scheduling and existing meeting overwrite`, `MEN-projects-meetings-R07 checks release ship and unship against the locked row`. Tests authored, not run; database conflicts need orchestrator integration. |
 | MEN-projects-meetings-R09 | DONE | `src/modules/projects/mentor-estimation-unit-model.ts`, `src/components/projects/mentor-task-create.tsx`, `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-mentor-estimation-units.test.ts` — `MEN-projects-meetings-R09 follows recorded HOURS or POINTS scale and renders units`. Uses already persisted `project_instances.estimation_unit`; no migration. |
 | MEN-projects-meetings-10 | DONE (common-path pagination) | `src/modules/projects/mentor-paged-project-list-service.ts`, `src/app/(authenticated)/mentor/projects/page.tsx`; `tests/unit/chat7-mentor-db-pagination.test.ts` — `MEN-projects-meetings-10 pages common filters in SQL and only falls back for advanced attention/sorts`. Advanced sorts and attention filters still use scoped in-memory rollups. Tests authored, not run. |
-| MEN-projects-meetings-27 | OPEN (partial) | Structured notes, action items, outcome, retrospective and follow-up implemented in `src/modules/projects/mentor-meeting-facilitation-model.ts`, `project-meeting-controls.tsx` and `meeting-service.ts`. Migration proposal `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql`. `tests/unit/chat7-mentor-meeting-facilitation.test.ts` — `MEN-projects-meetings-27 persists retrospective notes action items and follow-up`. Full legacy Draft/Rescheduled/Completed/Cancelled status-select behavior needs verified workflow transitions; do not claim closed. |
+| MEN-projects-meetings-27 | OPEN (partial) | `src/components/projects/project-meeting-controls.tsx` now keeps structured notes, outcome, retrospective, follow-up time/status (Open, In progress, Done, Blocked) in the **mentor Schedule** dialog, rather than erroneously rendering them in the learner Request dialog. `src/modules/projects/mentor-meeting-facilitation-model.ts`, `src/modules/projects/meeting-service.ts` save the structured payload. Tests `tests/unit/chat7-project-typecheck-regressions.test.ts` — `MEN-projects-meetings-27 keeps retrospective and follow-up inputs inside the mentor schedule form`, and `tests/unit/chat7-mentor-meeting-facilitation.test.ts` — `MEN-projects-meetings-27 accepts each legacy follow-up status and retrospective label` (authored, not run). Migration proposal `docs/proposed-migrations/chat7-mentor-meeting-facilitation.sql` requires orchestrator registration and DB replay before claiming runtime closure; full status-select and final lifecycle parity still require verification. |
+
+## Chat-7 round 2 — card and archive source re-verification (authored tests, not executed)
+
+| Gap ID | Status | Verified code and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-03 | DONE (source checked; execution pending) | `src/components/projects/project-list.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-03 grounded course and due metadata`. Confirms grounded course and due metadata; orchestrator test run pending. |
+| MEN-projects-meetings-04 | DONE (source checked; execution pending) | `src/components/projects/project-list.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-04 blocked-work board navigation`. Confirms blocked-work board navigation; orchestrator test run pending. |
+| MEN-projects-meetings-05 | DONE (source checked; execution pending) | `src/components/projects/project-list.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-05 visible review and workspace actions`. Confirms visible review and workspace actions; orchestrator test run pending. |
+| MEN-projects-meetings-14 | DONE (source checked; execution pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-14 real mentor/course subtitle`. Confirms real mentor/course subtitle; orchestrator test run pending. |
+| MEN-projects-meetings-15 | DONE (source checked; execution pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-01.test.ts` — `MEN-projects-meetings-15 archived/completed read-only message`. Confirms archived/completed read-only message; orchestrator test run pending. |
+
+## Chat-7 round 2 — filter/route re-verification (tests authored, not executed)
+
+| Gap ID | Status | Verified source and regression test |
+|---|---|---|
+| MEN-projects-meetings-06 | DONE (source checked; CI pending) | `src/components/projects/project-participant-list-controls.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-06 legacy mentor status filter choices`. legacy mentor status filter choices. |
+| MEN-projects-meetings-07 | DONE (source checked; CI pending) | `src/components/projects/project-participant-list-controls.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-07 mentor-specific page sizes and total-range text`. mentor-specific page sizes and total-range text. |
+| MEN-projects-meetings-09 | DONE (source checked; CI pending) | `src/modules/projects/mentor-project-order-model.ts`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-09 number-aware Team ordering`. number-aware Team ordering. |
+| MEN-projects-meetings-12 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-12 distinct legacy navigation tabs`. distinct legacy navigation tabs. |
+| MEN-projects-meetings-13 | DONE (source checked; CI pending) | `src/components/projects/mentor-project-tabs.tsx`; `tests/unit/chat7-round2-mentor-02.test.ts` — `MEN-projects-meetings-13 legacy task and meeting deep-link aliases`. legacy task and meeting deep-link aliases. |
+
+## Chat-7 round 2 — mentor overview/release evidence (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-18 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-18 author-entered definition-of-done and persona evidence`. |
+| MEN-projects-meetings-19 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-19 recorded project due, next action and blocker shortcut`. |
+| MEN-projects-meetings-21 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-21 task lane visualization and final signoff rule`. |
+| MEN-projects-meetings-23 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-23 legacy overview and deliverables vocabulary`. |
+| MEN-projects-meetings-24 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-24 team card with explainer and count`. |
+
+## Chat-7 round 2 — meetings and release source contracts (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-26 | DONE (source checked; CI pending) | `src/components/projects/mentor-meeting-history.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-26 bounded historic meetings with reveal control`. |
+| MEN-projects-meetings-30 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-30 meeting-specific notes access`. |
+| MEN-projects-meetings-31 | DONE (source checked; CI pending) | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-31 tenant-scoped team meeting notifications`. |
+| MEN-projects-meetings-32 | DONE (source checked; CI pending) | `src/components/projects/mentor-release-editor.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-32 release CRUD controls`. |
+| MEN-projects-meetings-34 | DONE (source checked; CI pending) | `src/components/projects/mentor-sprint-write.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-34 release-first sprint scheduling and definition of done`. |
+
+## Chat-7 round 2 — sprint and board controls (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-35 | DONE (source checked; CI pending) | `src/components/projects/mentor-sprint-delete-control.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-35 sprint deletion warns about returning tasks to backlog`. |
+| MEN-projects-meetings-36 | DONE (source checked; CI pending) | `src/components/projects/mentor-product-backlog.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-36 backlog and sprint-pull actions with velocity`. |
+| MEN-projects-meetings-37 | DONE (source checked; CI pending) | `src/components/projects/project-lifecycle-actions.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-37 release shipment and reversal confirmations`. |
+| MEN-projects-meetings-39 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-39 task board includes backlog and status lanes`. |
+| MEN-projects-meetings-40 | DONE (source checked; CI pending) | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round2-mentor-05.test.ts` — `MEN-projects-meetings-40 board filters expose clear-all and priority/member state`. |
+
+## Chat-7 round 2 — task details source verification (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-42 | DONE (source checked; CI pending) | `src/components/projects/mentor-board-task-detail-dialog.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-42 mentor detail dialog retains edits, attribution, and submission`. |
+| MEN-projects-meetings-43 | DONE (source checked; CI pending) | `src/components/projects/project-task-comments.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-43 typed and timestamped comments with filtering`. |
+| MEN-projects-meetings-44 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-create.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-44 task builder supports backlog, assignee and approach`. |
+| MEN-projects-meetings-45 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-details-edit.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-45 task editor supports approach and acceptance criteria`. |
+| MEN-projects-meetings-47 | DONE (source checked; CI pending) | `src/components/projects/mentor-task-status-transition.tsx`; `tests/unit/chat7-round2-mentor-06.test.ts` — `MEN-projects-meetings-47 blocker reason is collected when blocking a task`. |

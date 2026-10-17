@@ -19,6 +19,7 @@ import {
 import { OPTIONAL_MODULE_KEYS } from "@/modules/module-access/service";
 import {placementFeatureEffects} from "@/modules/platform-settings/placement-feature-controls-model";
 import {CollegeFeatureRuleEditor} from "@/components/admin/college-feature-rule-editor";
+import {LearnerModuleAccessDrawer} from "@/components/admin/learner-module-access-drawer";
 import {DescendantFeatureRuleEditor} from "@/components/admin/descendant-feature-rule-editor";
 import {AcademicModuleScopeInventory} from "@/components/admin/academic-module-scope-inventory";
 import {listCollegeModuleScopeChoices} from "@/modules/module-access/admin-descendant-rule-write";
@@ -125,6 +126,8 @@ export default async function SuperAdminCollegeModuleAccessPage({
         title={`${college.name} · Access hierarchy`}
         description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
       />
+
+      <LearnerModuleAccessDrawer collegeId={college.id}/>
 
       <section className="rounded-xl border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -25,3 +25,14 @@ describe("SA-tenants-modules-32 complete module access history",()=>{
   expect(page).toContain("Recent module-access changes");
  });
 });
+
+describe("SA-tenants-modules-32 bulk history producer",()=>{
+ it("SA-tenants-modules-32 records the actual applied student count and explicitly discloses a summary-audit failure",()=>{
+  const src=read("src/modules/module-access/super-admin-student-bulk-rule-service.ts");
+  expect(src).toContain('eventType:"MODULE_ACCESS_BULK_SET"');
+  expect(src).toContain('studentCount:applied.length');
+  expect(src).toContain('requestedCount:input.membershipIds.length');
+  expect(src).toContain("auditRecorded");
+  expect(src).toContain("Review learner history.");
+ });
+});

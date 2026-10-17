@@ -13,11 +13,13 @@ import {
   type SQL,
 } from "drizzle-orm";
 import { z } from "zod";
+import {resolvePlacementParticipationFromDecisions} from "@/modules/placements/access-service";
 
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   colleges,
+  placementEligibilityDecisions,
   learnerProfiles,
   membershipRoles,
   moduleAccessRules,
@@ -306,6 +308,11 @@ export async function getSuperAdminLearnerAccessTrace(
     modules: ReturnType<
       typeof explainLearnerModuleAccess
     >;
+    placementParticipation:{
+      status:"ELIGIBLE"|"INELIGIBLE"|"NOT_DECIDED";
+      level:"MEMBERSHIP"|"SECTION"|"COHORT"|null;
+      reason:string|null;actorName:string|null;decidedAt:Date|null;
+    };
   } | null = null;
 
   if (query.membershipId) {
@@ -410,7 +417,42 @@ export async function getSuperAdminLearnerAccessTrace(
     const storedRules =
       await readRulesForChain(chain);
 
+    // SA-tenants-modules-31: a placement-cell decision is independent of
+    // module-access inheritance. Query exact pairs within the authorized
+    // learner chain; never infer it from the "placements" module setting.
+    const placementScopes=chain.filter(s=>["MEMBERSHIP","SECTION","COHORT"].includes(s.scopeType)&&s.scopeId);
+    const participationRows=placementScopes.length?await db.select({
+      scopeType:placementEligibilityDecisions.scopeType,
+      scopeId:placementEligibilityDecisions.scopeId,
+      status:placementEligibilityDecisions.status,
+      reason:placementEligibilityDecisions.reason,
+      note:placementEligibilityDecisions.note,
+      decidedByUserId:placementEligibilityDecisions.decidedByUserId,
+      decidedAt:placementEligibilityDecisions.decidedAt,
+    }).from(placementEligibilityDecisions).where(and(
+      eq(placementEligibilityDecisions.collegeId,college.id),
+      or(...placementScopes.map(scope=>and(
+        eq(placementEligibilityDecisions.scopeType,scope.scopeType),
+        eq(placementEligibilityDecisions.scopeId,scope.scopeId!),
+      ))),
+    )):[];
+    const resolvedParticipation=resolvePlacementParticipationFromDecisions(chain,participationRows);
+    const winningPlacement=resolvedParticipation.level?participationRows.find(row=>
+      row.scopeType===resolvedParticipation.level &&
+      chain.some(scope=>scope.scopeType===row.scopeType&&scope.scopeId===row.scopeId)):null;
+    const [placementActor]=winningPlacement?.decidedByUserId?await db.select({
+      name:users.displayName,
+    }).from(users).where(eq(users.id,winningPlacement.decidedByUserId)).limit(1):[];
+    const placementParticipation={
+      status:resolvedParticipation.status,
+      level:resolvedParticipation.level,
+      reason:resolvedParticipation.reason,
+      actorName:placementActor?.name??null,
+      decidedAt:winningPlacement?.decidedAt??null,
+    };
+
     selected = {
+      placementParticipation,
       membershipId:
         learner.membershipId,
       displayName:

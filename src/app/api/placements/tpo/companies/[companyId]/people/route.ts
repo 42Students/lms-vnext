@@ -13,9 +13,6 @@ export async function POST(request: Request, { params }: Context) {
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
-  if (!await placementTableExists("placement_tpo_leads") || !await placementTableExists("placement_tpo_lead_activities")) {
-    return NextResponse.json({ error: "DATABASE_NOT_READY" }, { status: 503 });
-  }
   try {
     const { companyId } = await params;
     const context = await getCurrentRequestContext();

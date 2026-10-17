@@ -48,7 +48,7 @@ export default async function CollegeLectureHallsPage({
   const query = parseCollegeLectureHallSearchParams(await searchParams);
   if (!query) {
     return (
-      <div className="space-y-6">
+      <div className="min-w-0 space-y-6">
         <PageHeader eyebrow="College Admin" title="Lecture Halls" />
         <ErrorState
           title="Invalid lecture hall filters"
@@ -198,13 +198,13 @@ export default async function CollegeLectureHallsPage({
         <div className="flex gap-2">
           {query.page > 1 ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page - 1 })}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
               Previous
             </Link>
           ) : null}
           {query.page < totalPages ? (
             <Link href={collegeLectureHallHref({ ...query, page: query.page + 1 })}
-              className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
               Next
             </Link>
           ) : null}

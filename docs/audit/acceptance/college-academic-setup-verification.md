@@ -47,10 +47,12 @@
 - COL-academic-setup-16: Styled class lifecycle and recurring schedule confirmations now exist; other create/edit and keyboard-modality parity is not yet verified. Source test: `it("COL-academic-setup-16 uses styled confirmation for class lifecycle and recurring schedules")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
 
 ## Outstanding and partial
-COL-academic-setup-16/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
+COL-academic-setup-16 remains subject to the orchestrator's runtime/browser review of historical partial work; COL-academic-setup-41 now has source-and-test responsive evidence below. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
 
 Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integration coverage for S1/S2 behavior.
 
 | COL-academic-setup-16 | PARTIAL — focus-managed dialogs for batch and class edit/discard/lifecycle | college-cohort-management.tsx and college-section-management.tsx; tests/unit/chat11-college-academic-dialog-round8.test.ts — `it("COL-academic-setup-16 uses focus-managed editing dialogs and discard confirmation for batches and classes")`. Semester edit/delete flows pending. |
 
 | COL-academic-setup-16 | DONE | src/components/academics/college-cohort-management.tsx, college-section-management.tsx, college-semester-management.tsx, college-section-lifecycle-action.tsx; tests/unit/chat11-college-academic-dialog-round8.test.ts, chat11-college-semester-dialog-round8.test.ts — `it("COL-academic-setup-16 guards edited semester fields with focus-managed dialog and confirmation")` verifies create remains immediate while edits, deletes, status changes and dirty discard use accessible focus-managed dialogs. Execution pending. |
+
+| COL-academic-setup-41 | DONE | src/components/academics/college-academic-directory.tsx, college-semester-management.tsx, college-cohort-management.tsx, college-section-management.tsx, college-structure-directory.tsx; tests/unit/chat11-college-academic-responsive-round9.test.ts — `it("COL-academic-setup-41 stacks create and filter forms at 375px and preserves scrollable tables")`. Source-backed responsive contracts; browser validation remains with orchestrator. |
