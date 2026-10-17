@@ -21,13 +21,19 @@ export const tpoNoticeCreateSchema=z.object({
  buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
  audience:z.enum(["COLLEGE","PLACEMENTS","BATCHES","BRANCHES","DRIVE"]).default("COLLEGE"),
  targetId:z.string().uuid().optional(),
+ targetIds:z.array(z.string().uuid()).max(50).optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().superRefine((data,ctx)=>{
  if(Boolean(data.buttonLabel)!==Boolean(data.buttonUrl))
   ctx.addIssue({code:"custom",path:["buttonUrl"],message:"The link has to start with https://"});
- const target=["BATCHES","BRANCHES","DRIVE"].includes(data.audience);
- if(target&&!data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Choose an audience target"});
- if(!target&&data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Unexpected audience target"});
+ const grouped=data.audience==="BATCHES"||data.audience==="BRANCHES";
+ const targets=data.targetIds??[];
+ if(grouped&&!targets.length&&!data.targetId)ctx.addIssue({code:"custom",path:["targetIds"],message:"Choose an audience target"});
+ if(grouped&&targets.length&&data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Select targets in one format"});
+ if(new Set(targets).size!==targets.length)ctx.addIssue({code:"custom",path:["targetIds"],message:"Choose distinct audience targets"});
+ if(data.audience==="DRIVE"&&!data.targetId)ctx.addIssue({code:"custom",path:["targetId"],message:"Choose an audience target"});
+ if(["COLLEGE","PLACEMENTS"].includes(data.audience)&&(data.targetId||targets.length)||
+    !grouped&&targets.length)ctx.addIssue({code:"custom",path:["targetIds"],message:"Unexpected audience target"});
 });
 
 export async function createTpoNotice(context:RequestContext,raw:unknown){
@@ -54,7 +60,7 @@ export async function createTpoNotice(context:RequestContext,raw:unknown){
   if(!notice)throw new Error("NOTICE_CREATE_FAILED");
   if(data.audience!=="COLLEGE"){
    const matched=await tx.execute<{id:string}>(tpoTargetedRecipientQuery(college.id,{
-    kind:data.audience,targetId:data.targetId,
+    kind:data.audience,targetId:data.targetId,targetIds:data.targetIds,
    }));
    const recipients=freezeTpoNoticeRecipients(matched.rows.map(row=>row.id));
    if(recipients.length===0)throw new Error("TPO_NOTICE_NO_RECIPIENTS");
