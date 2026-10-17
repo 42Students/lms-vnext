@@ -94,7 +94,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
         <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-10 w-full rounded-md border border-border bg-background p-2"/>
       </label>
-      <div className="flex items-end gap-2"><button type="submit" disabled={busy||!title.trim()}
+      <div className="flex items-end gap-2"><button type="submit"
+        disabled={busy||!title.trim()||(points!==""&&
+          (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
         className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
       <button type="button" onClick={()=>setAdding(false)}
         className="min-h-10 rounded-md border border-border px-3 text-sm">Cancel</button></div>
