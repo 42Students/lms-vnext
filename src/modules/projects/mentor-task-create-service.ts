@@ -56,7 +56,8 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
       }
 
       const [last]=await tx.select({sequence:projectTasks.sequence})
-        .from(projectTasks).where(eq(projectTasks.sprintId,sprint.id))
+        .from(projectTasks).where(and(eq(projectTasks.projectId,scope.project.id),
+          sprint?eq(projectTasks.sprintId,sprint.id):isNull(projectTasks.sprintId)))
         .orderBy(desc(projectTasks.sequence)).limit(1);
       const [created]=await tx.insert(projectTasks).values({
         projectId:scope.project.id,sprintId:sprint.id,
