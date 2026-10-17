@@ -36,6 +36,15 @@ describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
   expect(code).toContain('created.id,input.draft.title,approvedJobId?"AUTO_APPROVED":"NEW"');
   expect(code).toContain('status:"REQUEST",draft:input.draft');
  });
+ it("REC-home-drives-33 handles legacy mixed internship/fulltime before job SQL constraints",()=>{
+  const writer=src("src/modules/placements/recruiter-approved-draft-job-service.ts");
+  const tpo=src("src/modules/placements/tpo-drive-request-decision-service.ts");
+  expect(writer).toContain('draft.employmentType==="INTERNSHIP_FULL_TIME"');
+  expect(writer).toContain('throw new RecruiterDraftApprovalError("UNSUPPORTED_EMPLOYMENT_TYPE")');
+  expect(tpo).toContain('"UNSUPPORTED_EMPLOYMENT_TYPE"');
+  expect(writer.indexOf('throw new RecruiterDraftApprovalError("UNSUPPORTED_EMPLOYMENT_TYPE")'))
+   .toBeLessThan(writer.indexOf('const [job]=await tx.insert(placementJobs)'));
+ });
  it("REC-home-drives-33 never opens an autoapproved job to candidates",()=>{
   const code=src("src/modules/placements/recruiter-approved-draft-job-service.ts");
   expect(code).toContain('status:"DRAFT"');
