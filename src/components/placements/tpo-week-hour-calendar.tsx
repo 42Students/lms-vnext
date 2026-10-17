@@ -13,11 +13,12 @@ const clock=(hour:number)=>new Intl.DateTimeFormat("en-IN",{timeZone:"UTC",hour:
 const kinds:Record<string,string>={ROUND:"Round",FOLLOW_UP:"Follow-up",APPLICATION_DEADLINE:"Deadline",INTERVIEW_SLOT:"Interview"};
 const tone=(kind:string)=>kind==="APPLICATION_DEADLINE"?"bg-warning-subtle text-warning-text":kind==="FOLLOW_UP"?
  "bg-success-subtle text-success-text":"bg-primary-subtle text-primary-text";
-export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
+export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,blockedDates,blockedDatesAvailable}:{
  days:readonly string[];events:readonly WeekGridEvent[];collegeId:string;
- canCreate:boolean;nowIso:string;
+ canCreate:boolean;nowIso:string;blockedDates:readonly string[];blockedDatesAvailable:boolean;
 }){
  const router=useRouter();
+ const blocked=new Set(blockedDates);
  const [slot,setSlot]=useState<string|null>(null);
  const [leads,setLeads]=useState<TpoCalendarLeadOption[]>([]);
  const [loadingLeads,setLoadingLeads]=useState(false);
@@ -56,6 +57,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
   try{dueAt=calendarLocalIstToOffset(day+"T"+String(hour).padStart(2,"0")+":00");}
   catch{setMessage("The selected IST time is invalid.");return;}
   if(new Date(dueAt).getTime()<=Date.now()){setMessage("Choose a future time to reschedule.");return;}
+  if(blocked.has(day)&&!window.confirm("This date is blocked in placement settings. Move the follow-up here anyway?"))return;
+  if(!blockedDatesAvailable&&!window.confirm("Blocked dates could not be checked. Move this follow-up anyway?"))return;
   if(!window.confirm("Move this follow-up to "+label(day)+" at "+clock(hour)+" IST?"))return;
   setSaving(true);setMessage("");
   try{
@@ -73,6 +76,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
   let dueAt:string;
   try{dueAt=calendarLocalIstToOffset(slot);}catch{setMessage("Invalid IST time.");return;}
   if(new Date(dueAt).getTime()<=Date.now()){setMessage("Follow-up must be in the future.");return;}
+  if(blocked.has(slot.slice(0,10))&&!window.confirm("This date is blocked in placement settings. Add the follow-up anyway?"))return;
+  if(!blockedDatesAvailable&&!window.confirm("Blocked dates are unavailable. Add the follow-up without checking?"))return;
   setSaving(true);setMessage("");
   try{
    const response=await fetch("/api/placements/tpo/calendar/follow-ups",{method:"POST",
@@ -97,7 +102,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
    <div className="grid min-w-[63rem] grid-cols-[5rem_repeat(7,minmax(0,1fr))]">
     <div className="sticky left-0 z-10 border-b border-r border-border bg-surface p-2 text-xs">IST</div>
     {days.map(day=><div key={day} className="border-b border-r border-border p-3 text-center text-xs font-semibold">
-     {label(day)}{day===today?" · Today":""}
+     {label(day)}{day===today?" · Today":""}{blocked.has(day)?" · Blocked":""}
     </div>)}
     <div className="relative border-r border-border bg-surface" style={{height}}>
      {Array.from({length:LAST-FIRST},(_,offset)=><div key={offset} className="absolute w-full border-t border-border pl-1 text-xs text-muted-foreground"
@@ -151,6 +156,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5">
     <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
+    {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded border border-warning px-3 py-2 text-sm text-warning-text">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
+    {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
     <label className="grid gap-1 text-sm">Date and time (IST)
      <input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
       className="min-h-11 rounded border border-border px-3"/></label>

@@ -2,6 +2,7 @@ import {TpoReportPresentation} from "@/components/placements/tpo-report-presenta
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
+import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -57,6 +58,7 @@ export default async function TpoLeadsReportPage({
   ]);
 
   const { leads, health } = result;
+  const companyEngagement=joinTpoCompanyEngagementWithPlacement(result.companyEngagement,workspace.report.byCompany);
 
   const metrics = [
     ["Recruiter leads", leads.totals.leads],
@@ -108,6 +110,21 @@ export default async function TpoLeadsReportPage({
        <Link href="/tpo/companies" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Company memory →</Link>
       </nav>
 
+
+      <section aria-label="Recruiter engagement by company" className="space-y-3">
+       <h2 className="text-lg font-semibold">Recruiter engagement by company</h2>
+       <p className="text-sm text-body">Contacts, invitations and joined recruiter accounts use college-wide Engage records. Recorded drives and students placed use the selected placement season or drive. A company without matching recorded drives shows zero for that selected scope; a recorded drive is not proof it ran.</p>
+       <a href={"/api/placements/tpo/reports/engagement?"+new URLSearchParams({
+        ...(workspace.selectedSeasonId?{seasonId:workspace.selectedSeasonId}:{}),
+        ...(workspace.selectedJobId?{jobId:workspace.selectedJobId}:{}),
+       }).toString()} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Export company engagement CSV</a>
+       <ReportTable title="Engage and placement outcomes by company"
+        headings={["Company","Contacts","Invited","Joined","Drives that ran","Students placed"]}
+        rows={companyEngagement.map(row=>{
+         return [row.companyName,row.contacts,row.invited,row.joined,row.drives,row.placed];
+        })}
+        emptyDescription="No college-linked recruiter leads are recorded. Contact, invitation and placement counts are not inferred."/>
+      </section>
 
       <section
         aria-label="Lead reporting scope"
