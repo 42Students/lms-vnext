@@ -828,6 +828,19 @@ export async function updateSuperAdminHrAccount(
         );
       }
 
+      const outside=outsideHrScopeCondition(context);
+      if(outside){
+       const outOfScope=await tx.select({id:placementRecruiterCollegeGrants.id})
+        .from(placementRecruiterCollegeGrants)
+        .innerJoin(placementCompanyRelationships,
+          eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
+        .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
+        .where(and(eq(placementRecruiterCollegeGrants.recruiterUserId,userId),
+          eq(placementRecruiterCollegeGrants.status,"ACTIVE"),outside))
+        .for("share",{of:placementRecruiterCollegeGrants}).limit(1);
+       if(outOfScope.length)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
+      }
+
       const now = new Date();
 
       if (
@@ -1239,6 +1252,9 @@ export async function terminateSuperAdminHrSessions(
     context,
     userId,
   );
+
+  const access=await hrAccountManageability(context,[userId]);
+  if(access.get(userId)===false)throw new PlacementsServiceError("PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE");
 
   const {
     revokeAllSessionsForUser,
