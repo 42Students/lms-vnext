@@ -121,3 +121,7 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | --- | --- | --- |
 | TPO-inbox-team-37 | PARTIAL — OPEN | `src/app/(authenticated)/tpo/team/page.tsx` no longer advertises legacy faculty/student coordinator duties as standing Team roles and restores the exact TPO-admin membership note. Named test **TPO-inbox-team-37** in `tests/unit/tpo-team-legacy-people-chat2.test.ts`. College-admin inclusion and membership policy still require R02/38 work. |
 | TPO-inbox-team-32 | PARTIAL — OPEN | People count now matches shown permanent members; existing Work and Name sort preserved. Named test **TPO-inbox-team-32** in the same suite. Overdue-first cannot be truthful until ask workload is persisted. |
+
+### PostgreSQL evidence for TPO-inbox-team-57
+
+`tests/integration/tpo-inbox-team-colleague-notices-chat2.test.ts` named test **TPO-inbox-team-57 permits a different authorized same-college TPO to edit then delete without losing optimistic concurrency** creates a notice under one actor, edits/deletes under a distinct persisted TPO actor and checks stale-version rejection and persisted state. It runs only on the orchestrator's approved disposable DB10 target. **Not executed by builder.**
