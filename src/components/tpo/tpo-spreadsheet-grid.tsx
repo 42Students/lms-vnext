@@ -4,7 +4,7 @@ import type {ReactNode} from "react";
 import {chosenTpoGridColumns,displayTpoGridCell,parseTpoGridColumns,updateTpoGridQuery,type TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoGridColumnChooser} from "./tpo-grid-column-chooser";
 
-export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;
+export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrimary,mobileActionsCollapsible=false}:{rows:readonly Row[];columns:readonly TpoGridColumn<Row>[];rowKey:(row:Row)=>string;rowActions?:(row:Row)=>ReactNode;mobileActionsCollapsible?:boolean;
  openPrimary?:{columnKey:string;onOpen:(row:Row)=>void;ariaLabel:(row:Row)=>string}
 }){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
@@ -13,7 +13,8 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
  const active=selected.length?selected:permitted;
  const display=chosenTpoGridColumns(columns,active);
  function choose(keys:string[]){
-  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:keys.length===permitted.length?"":keys.join(",")},false);
+  const defaults=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
+  const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:defaults?"":keys.join(",")},false);
   router.replace(pathname+(next.size?"?"+next.toString():""));
  }
  return <section className="min-w-0 space-y-3" aria-label="Spreadsheet grid">
@@ -25,7 +26,10 @@ export function TpoSpreadsheetGrid<Row>({rows,columns,rowKey,rowActions,openPrim
    </table></div>
    <ul aria-label="Current page TPO spreadsheet records" className="space-y-2 md:hidden">{rows.map(row=><li key={rowKey(row)} className="min-w-0 space-y-2 rounded border border-border p-3">
     {display.map(col=><div key={col.key} className="flex flex-wrap justify-between gap-2 text-sm"><strong>{col.label}</strong><span className="min-w-0 break-words [overflow-wrap:anywhere]">{openPrimary?.columnKey===col.key?<button type="button" className="min-h-10 text-left font-semibold text-primary-text underline" aria-label={openPrimary.ariaLabel(row)} onClick={()=>openPrimary.onOpen(row)}>{displayTpoGridCell(col.read(row))}</button>:displayTpoGridCell(col.read(row))}</span></div>)}
-    {rowActions&&<div aria-label="Row actions">{rowActions(row)}</div>}
+    {rowActions&&(mobileActionsCollapsible?<details className="rounded-md border border-border p-2">
+      <summary className="min-h-10 cursor-pointer font-semibold">Actions</summary>
+      <div aria-label="Row actions" className="mt-2">{rowActions(row)}</div>
+    </details>:<div aria-label="Row actions">{rowActions(row)}</div>)}
    </li>)}</ul>
   </>}
  </section>;

@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoParticipationDecisionForm } from "@/components/tpo/tpo-participation-decision-form";
 import { TpoDebarControl } from "@/components/tpo/tpo-debar-control";
+import {TpoTimedDebarControl} from "@/components/tpo/tpo-timed-debar-control";
+import {listTpoMemberDebarments} from "@/modules/placements/debarment-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -22,6 +24,7 @@ export default async function TpoLearnerParticipationPage({
   const { membershipId } = await params;
   const learner = await getTpoLearnerParticipation(context, membershipId);
   const journey=tpoStudentJourneyLinks(learner.membershipId);
+  const timedDebarments=await listTpoMemberDebarments(context,learner.membershipId);
 
   return (
     <div className="space-y-6">
@@ -85,6 +88,7 @@ export default async function TpoLearnerParticipationPage({
         membershipId={learner.membershipId}
         initial={learner.direct}
       />
+      <TpoTimedDebarControl membershipId={learner.membershipId} initial={timedDebarments}/>
 
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-lg font-semibold text-foreground">

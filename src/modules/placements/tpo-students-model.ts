@@ -48,6 +48,7 @@ export type TpoStudentSource = {
   cohortName: string;
   classIds:readonly string[];
   fromFinishedBatch?: boolean;
+  registrationOpen?:boolean|null;
   registrationChoice: string | null;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
@@ -83,6 +84,7 @@ export type TpoStudentRow = {
   cohortName: string;
   classIds:readonly string[];
   fromFinishedBatch?: boolean;
+  registrationOpen?:boolean|null;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
   participationStatus: ResolvedPlacementParticipation["status"];
@@ -159,8 +161,9 @@ export function deriveTpoStudent(
   source: TpoStudentSource,
   now: Date,
 ): TpoStudentRow {
-  const registeredForPlacements =
-    source.registrationChoice === "PLACEMENTS";
+  const registeredForPlacements=tpoStudentRegisteredForPlacements(
+    source.registrationChoice,source.applications.length,
+  );
 
   const participationEligible =
     !source.ambiguousSection &&
@@ -291,7 +294,8 @@ export function deriveTpoStudent(
     cohortName: source.cohortName,
     classIds:source.classIds,
     fromFinishedBatch: Boolean(source.fromFinishedBatch),
-    registrationChoice: source.registrationChoice,
+    registrationChoice:source.registrationChoice??(registeredForPlacements?"PLACEMENTS":null),
+    registrationOpen:source.registrationOpen??null,
     registeredForPlacements,
     participationStatus: source.participation.status,
     readinessSignal,
@@ -486,4 +490,9 @@ export function selectTpoStudentWorkingSet(
 ):TpoStudentRow[]{
   return rows.filter(row=>row.participationStatus==="ELIGIBLE" ||
     Boolean(explicitBatch && row.fromFinishedBatch));
+}
+
+/** An actual application counts as legacy placement registration when no explicit choice exists. */
+export function tpoStudentRegisteredForPlacements(choice:string|null,applicationCount:number):boolean{
+ return choice==="PLACEMENTS"||(choice===null&&applicationCount>0);
 }

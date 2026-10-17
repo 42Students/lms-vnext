@@ -15,3 +15,15 @@ Tests were authored but not executed by this lane. These entries describe touche
 | GR-91 | DONE (touched retry and export) | Keyboard-visible focus and Retry; `tests/unit/chat12-tpo-safe-export.test.ts`, `GR-91` |
 
 Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 helpers land; independent orchestrator browser failures for final acceptance.
+
+| GR-04 | DONE (chat-12 Students controls) | eight client components use `apiFetch`; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-04` |
+| GR-09 | DONE (chat-12 Students controls) | no raw `body.error` or `result.error` used in touched TPO students controls; `tests/unit/chat12-round3-api-fetch.test.ts` named test `GR-09` |
+
+| GR-04 | DONE (chat-12 Requests & Verification) | decision POST, review GET and review POST use apiFetch; `tests/unit/chat12-round3-requests-api-fetch.test.ts` named test `GR-04` |
+| GR-32 | DONE (chat-12 Requests & Verification) | 409 keeps edits in Requests and resets stale review details for safe retry; named test `GR-32` |
+
+| GR-04 | DONE (TPO debar forms) | Tagged participation and timed debar forms use shared apiFetch with safe 409/no-JSON paths; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-04` |
+| GR-32 | DONE (TPO debar forms) | Stale decision retains reason and offers retry; `tests/unit/chat12-debar-error-round3.test.ts` named `GR-32` |
+
+| GR-30 | DONE (four chat-12 mutation controls) | `src/hooks/use-guarded-action.ts` invoked on Notes, Nudges, Bulk Verify and Add-to-Drive; `tests/unit/chat12-round3-guarded-actions.test.ts`, named `GR-30` |
+| GR-31 | OPEN (partial) | Four covered controls use synchronous in-flight locking; other TPO actions still require adoption; `tests/unit/chat12-round3-guarded-actions.test.ts`, named `GR-31` |

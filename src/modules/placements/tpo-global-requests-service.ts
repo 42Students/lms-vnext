@@ -20,7 +20,7 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
   await requirePlacementManageScope(context, member.collegeId);
   const result = await listTpoStudentRequests(context, {
     collegeId: member.collegeId,
-    status: query.status,
+    status: query.status==="ALL"?undefined:query.status,
     requestType:query.requestType==="ALL"?undefined:query.requestType,
     sort:query.sort,
     requestedBefore:tpoRequestDateBounds(query.age,new Date()).before,

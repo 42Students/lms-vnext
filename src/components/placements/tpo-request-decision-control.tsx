@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
@@ -45,26 +46,20 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
     if(pending)return;
     setPending(true);setError(null);
     try{
-      const response=await fetch("/api/placements/tpo/requests/"+encodeURIComponent(requestId)+"/decision",{
+      await apiFetch("/api/placements/tpo/requests/"+encodeURIComponent(requestId)+"/decision",{
         method:"POST",credentials:"same-origin",headers:{"content-type":"application/json"},
         body:JSON.stringify({confirmed:true,action,note:decisionText||null,expectedUpdatedAt}),
       });
-      if(!response.ok){
-        if(response.status===409){
-          // Map a known domain refusal to the old LMS sentence; never show the raw API code.
-          const refusal=await response.json().catch(()=>null) as {error?:string}|null;
-          if(requestType==="APPLICATION_WITHDRAWAL"&&refusal?.error==="PLACEMENT_REQUEST_EFFECT_INVALID")
-            throw Error("This student is placed: reverse the acceptance on the Offers tab first, then approve.");
-          throw Error("This changed while you were working. Your decision is kept below. Refresh and try again.");
-        }
-        throw Error(action==="APPROVE"?"Couldn't approve this request. Check the current state and try again.":
-          "Couldn't reject this request. Your reason is preserved; retry after reviewing the request.");
-      }
       showToast({tone:"success",title:action==="APPROVE"
         ?"Approved. The student has been told."
         :"Rejected. The student has been told, with your reason."});
       setMode(null);setReason("");setNote("");onSuccess?.();router.refresh();
-    }catch(e){setError(e instanceof Error?e.message:"Could not record the decision.");}
+    }catch(e){
+      setError(e instanceof FriendlyFetchError && requestType==="APPLICATION_WITHDRAWAL"&&
+        e.code==="PLACEMENT_REQUEST_EFFECT_INVALID"
+        ?"This student is placed: reverse the acceptance on the Offers tab first, then approve."
+        :e instanceof Error?e.message:"Could not record the decision. Please try again.");
+    }
     finally{setPending(false);}
   }
   function decide(){if(!mode||!valid)return;void decideWith(mode,decisionNote);}

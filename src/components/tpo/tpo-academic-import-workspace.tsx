@@ -1,4 +1,5 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
 
 import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -38,16 +39,11 @@ export function TpoAcademicImportWorkspace() {
   }
 
   async function send(action: "PREVIEW" | "IMPORT", rows: AcademicRow[]) {
-    const response = await fetch("/api/placements/tpo/students/academic-import", {
-      method: "POST", headers: { "content-type": "application/json" },
-      body: JSON.stringify({ action, rows, skipUnmatched: action === "IMPORT" }),
-    });
-    const body = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(response.status===409
-      ?"This changed while you were working. Your academic import choices are kept below. Refresh and try again."
-      :"Could not process the academic details. Please review your file and try again.");
-    if(!body || typeof body!=="object") throw new Error("Could not process the academic details. Please try again.");
-    return body;
+    return apiFetch<{preview?:{rows:PreviewRow[]};result?:{updated:number;skipped:number}}>(
+      "/api/placements/tpo/students/academic-import", {
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({action,rows,skipUnmatched:action==="IMPORT"}),
+      });
   }
 
   async function validate() {

@@ -1,4 +1,6 @@
 "use client";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useState } from "react";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
@@ -11,6 +13,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  const [template,setTemplate]=useState<TpoStudentNudgeTemplate>("REGISTRATION");
  const [message,setMessage]=useState<string>(tpoStudentNudgeTemplates.REGISTRATION);
  const [pending,setPending]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  const eligible=new Set(rows.map(row=>row.id));
@@ -27,16 +30,11 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
   if(!window.confirm("Send an in-app message to "+validSelected.length+" learner(s)? The message will be audited."))return;
   setPending(true);setError("");setNotice("");
   try{
-   const response=await fetch("/api/placements/tpo/students/nudges",{
+   const data=await apiFetch<{sent?:number;skipped?:number}>("/api/placements/tpo/students/nudges",{
     method:"POST",credentials:"same-origin",cache:"no-store",
     headers:{"Content-Type":"application/json"},
     body:JSON.stringify(parsed.data),
    });
-   const data=await response.json().catch(()=>null) as {sent?:number;skipped?:number}|null;
-   if(!response.ok)throw new Error(
-    response.status===403?"Your TPO access is no longer active.":
-    response.status===409?"This changed while you were working. Your message is kept below. Review the recipients and try again.":
-    "Could not send the message. Review the recipients and try again.");
    setNotice(String(data?.sent??0)+" sent; "+String(data?.skipped??0)+" already delivered today.");
    setSelected([]);
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not send follow-up.");}
@@ -73,9 +71,9 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     className="w-full rounded border border-border bg-surface p-3"
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
-  <button type="button" disabled={pending||!validSelected.length}
+  <button type="button" disabled={pending||guardedPending||!validSelected.length}
    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-   onClick={()=>void send()}>{pending?"Sending…":"Send to "+validSelected.length+" selected"}</button>
+   onClick={()=>void runGuarded(send)}>{pending?"Sending…":"Send to "+validSelected.length+" selected"}</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;

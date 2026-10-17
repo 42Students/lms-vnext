@@ -21,10 +21,30 @@ export function TpoGridColumnChooser({ columns, selected, onChange }: {
         <span>{column.label}</span>
       </label>)}
     </div>
+    <div role="group" aria-label="Column order" className="space-y-1">
+      {selected.map((key,index)=>{
+        const column=available.find(item=>item.key===key);
+        if(!column)return null;
+        const move=(direction:-1|1)=>{
+          const next=[...selected];const target=index+direction;
+          if(target<0||target>=next.length)return;
+          [next[index],next[target]]=[next[target]!,next[index]!];onChange(next);
+        };
+        return <div key={key} className="flex flex-wrap items-center gap-2">
+          <span className="min-w-24 text-sm">{column.label}</span>
+          <button type="button" disabled={index===0} onClick={()=>move(-1)}
+            className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50"
+            aria-label={"Move "+column.label+" earlier"}>Earlier</button>
+          <button type="button" disabled={index===selected.length-1} onClick={()=>move(1)}
+            className="min-h-10 rounded border border-border px-3 text-xs disabled:opacity-50"
+            aria-label={"Move "+column.label+" later"}>Later</button>
+        </div>;
+      })}
+    </div>
     <button type="button" disabled={selected.length === available.length}
       onClick={() => onChange(available.map(column => column.key))}
       className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
-      Show all columns
+      Reset columns
     </button>
   </fieldset>;
 }
