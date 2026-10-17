@@ -238,7 +238,7 @@ export default async function HrPlacementJobPage({
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
-              <p className="mt-1 text-sm text-body">Persisted employer-visible pipeline. Applicant counts use all authorized shared records; offer counts reflect all authorized shared offer versions.</p></div>
+              <p className="mt-1 text-sm text-body">Employer-visible pipeline for this college. Applicants are limited to records shared by the placement cell; offer history may contain multiple versions per recipient.</p></div>
             {driveOverview.readOnly ? <StatusBadge tone="neutral">Read-only closed drive</StatusBadge> :
               <StatusBadge tone={driveOverview.deadlineState === "DUE_SOON" ? "warning":"info"}>
                 {driveOverview.deadlineState.replaceAll("_"," ")}
