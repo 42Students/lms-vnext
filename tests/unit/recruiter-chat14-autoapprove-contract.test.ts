@@ -58,6 +58,11 @@ describe("REC-home-drives-33 recruiter formal request auto approval",()=>{
   expect(recruiterDriveApprovalPolicy({...baseline,approvalRequired:false}))
    .toEqual({autoApprove:true,reason:"APPROVAL_OFF"});
  });
+ it("REC-home-drives-33 refuses malformed or whitespace-padded email identities",()=>{
+  expect(trustedRecruiterDomain("hi @acme.example","acme.example",["acme.example"])).toBe(false);
+  expect(trustedRecruiterDomain("hiring@acme.example evil","acme.example",["acme.example"])).toBe(false);
+  expect(trustedRecruiterDomain("hiring@@acme.example","acme.example",["acme.example"])).toBe(false);
+ });
  it("REC-home-drives-33 trusted-domain match requires both employer ownership and exact email suffix",()=>{
   expect(trustedRecruiterDomain("hiring@acme.example","acme.example",["ACME.EXAMPLE"])).toBe(true);
   expect(trustedRecruiterDomain("hiring@notacme.example","acme.example",["acme.example"])).toBe(false);
