@@ -59,3 +59,5 @@ TPO-students-36: the authorized filtered CSV is now downloaded through a guarded
 
 | TPO-students-32 | DONE (batch lifecycle source, runtime acceptance pending) | Filter-scoped uninvited count and legacy banner with eligibility link; `tests/unit/chat12-registration-invitation-round3.test.ts` `TPO-students-32` |
 | TPO-students-50 | OPEN (historic applications and outcomes remain) | Missing registration row falls back to current persisted application; explicit choice remains authoritative; `tests/unit/chat12-registration-invitation-round3.test.ts` `TPO-students-50` |
+
+| TPO-students-06 | OPEN (timed workflow implemented, original tagged restriction retained) | Legacy learner-level Debar form now also uses shared apiFetch, preserving typed reason on 409; `tests/unit/chat12-debar-error-round3.test.ts` `TPO-students-06` |
