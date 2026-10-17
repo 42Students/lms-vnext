@@ -16,7 +16,9 @@ const viewBody=z.strictObject({
  name:z.string().trim().min(1).max(100).optional(),
  note:z.string().trim().max(500).nullable().optional(),
  query:z.record(z.enum(SAVED_FILTER_KEYS),z.string().max(250)).optional(),
- columns:z.array(z.enum(ENGAGE_COLUMNS)).max(ENGAGE_COLUMNS.length).optional(),
+ columns:z.array(z.enum(ENGAGE_COLUMNS)).max(ENGAGE_COLUMNS.length)
+  .refine(columns=>columns.includes("Contact")&&new Set(columns).size===columns.length,
+   "Contact must stay visible and columns must be unique").optional(),
  pinned:z.boolean().optional(),
 });
 export class TpoSavedViewError extends Error{
