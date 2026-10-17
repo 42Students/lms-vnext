@@ -40,6 +40,7 @@ export const createCourseInputSchema = z.object({
   shortTitle:courseShortTitleSchema.optional(),
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
+  takeaways:z.string().trim().max(2000).nullable().optional(),
   description: z
     .string()
     .trim()
@@ -55,6 +56,7 @@ export const updateCourseInputSchema = z
     shortTitle:courseShortTitleSchema.optional(),
     officialCode:courseOfficialCodeSchema.optional(),
     cardColor:courseCardColorSchema.optional(),
+    takeaways:z.string().trim().max(2000).nullable().optional(),
     description: z
       .string()
       .trim()

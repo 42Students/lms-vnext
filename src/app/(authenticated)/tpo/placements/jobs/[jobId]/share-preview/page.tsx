@@ -8,6 +8,7 @@ import { tpoShareableShortlistQuerySchema } from "@/modules/placements/tpo-share
 import { getTpoShareableShortlist } from "@/modules/placements/tpo-shareable-shortlist-service";
 import { listTpoCompanyApplicantShares } from "@/modules/placements/company-share/manage-service";
 import { CompanyShareControls } from "./company-share-controls";
+import {companySharePreferenceKey} from "@/modules/placements/company-share/remembered-settings-model";
 import {tpoFilteredSharePreviewExportHref} from "@/modules/placements/tpo-share-preview-export-href";
 import {companyShareStatusSchema,companyShareStatusLabel} from "@/modules/placements/company-share/status-model";
 import {companyShareLinksHref,recoverCompanyShareLinkPage,companySharePreviewSearchState} from "@/modules/placements/company-share/link-page-model";
@@ -126,7 +127,7 @@ export default async function TpoShortlistSharePreviewPage({
       className="rounded border border-border bg-surface p-3 text-sm text-body">
       An invalid company-share status or page was reset to the default view.
     </p>:null}
-    <CompanyShareControls jobId={data.job.id} ready={shares.ready} status={shareStatus} linkPage={shares.page}
+    <CompanyShareControls jobId={data.job.id} preferenceKey={companySharePreferenceKey(data.job.collegeId,data.job.companyRelationshipId)} ready={shares.ready} status={shareStatus} linkPage={shares.page}
       initialLinks={shares.links.map(link => ({
         id: link.id, expiresAt: link.expiresAt.toISOString(),
         revokedAt: link.revokedAt?.toISOString() ?? null,

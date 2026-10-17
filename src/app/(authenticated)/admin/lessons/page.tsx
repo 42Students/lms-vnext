@@ -5,6 +5,8 @@ import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-l
 import {LessonActions} from "@/components/courses/admin-learning-structure-actions";
 import {CollegeLessonReorderActions} from "@/components/courses/college-lesson-reorder-actions";
 import {SuperAdminLessonCreate} from "@/components/courses/super-admin-lesson-create";
+import {listSuperAdminLearningPathPicker} from "@/modules/courses/super-admin-learning-path-picker";
+import {CollegeLessonVisibilityControl} from "@/components/courses/college-lesson-visibility-controls";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -28,7 +30,7 @@ export default async function SuperAdminLessonsPage({
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons" />
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
   </div>;
-  const [data,filters] = await Promise.all([listCollegeLessons(context, parsed.data),getSuperAdminLearningFilterOptions(context)]);
+  const [data,filters,paths] = await Promise.all([listCollegeLessons(context, parsed.data),getSuperAdminLearningFilterOptions(context),listSuperAdminLearningPathPicker(context)]);
   const summary = adminLessonStats(data.items);
   return <div className="space-y-5">
     <PageHeader eyebrow="Super Admin · Courses" title="Lessons"
@@ -50,10 +52,7 @@ export default async function SuperAdminLessonsPage({
     </form>
     <Link className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text" href="/admin/lessons">Clear filters</Link>
     <p className="text-sm text-muted-foreground">{data.total} matching lessons · on this page: {summary.authored} content records, {summary.published} published</p>
-    <SuperAdminLessonCreate paths={data.items.filter((lesson,index,rows)=>
-       rows.findIndex(row=>row.learningPathId===lesson.learningPathId)===index)
-       .map(lesson=>({id:lesson.learningPathId,courseName:lesson.courseName,
-        cohortName:lesson.cohortName,periodName:lesson.periodName}))}/>
+    <SuperAdminLessonCreate paths={paths}/>
     {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items}/>:null}
     {data.items.length ? <div className="grid gap-3 md:grid-cols-2">
       {data.items.map(lesson => <article key={lesson.id} className="min-w-0 rounded-xl border border-border bg-surface p-4">
@@ -67,6 +66,8 @@ export default async function SuperAdminLessonsPage({
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
         {lesson.status==="ACTIVE"?<div className="mt-3 flex flex-wrap items-center gap-3">
           <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
+          <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lesson.name,
+            visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
           <CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
             expectedSequence={lesson.sequence} canMoveUp={lesson.sequence>0} canMoveDown={true}/>
         </div>:null}

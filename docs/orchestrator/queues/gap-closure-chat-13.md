@@ -216,3 +216,18 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-54 — BLOCKED on verified inbound mail provider credentials/signature before live ingest.
 - The latest `docs/orchestrator/typecheck-errors.md` (2026-10-18 01:15) has **zero chat-13-owned errors**; no files in other lanes were modified to hide failures. The unit-failures-r1 report is dated 2026-10-17 and already has the six Super Admin test corrections on this branch. Only the orchestrator can report a new pass.
 - The source runtime edits and tests have not been executed by this lane. No CSS/page restyling performed.
+
+## FINAL SPRINT — chat-13 (2026-10-18) — eleven IDs adjudicated
+- PUB-auth-public-50: **DONE in source, requires proposed migration** — six-digit salted code and signed cookie proof, protected page and export. Gap-named unit test and page-specific acceptance rows recorded.
+- PUB-auth-public-52: **DONE in source, requires proposed migration** — 10 attempts/hour, lock event and issuer notification. Gap-named unit test and page-specific acceptance rows recorded.
+- PUB-auth-public-53: **DONE in source, resume withheld** — TPO-chosen whitelist up to 11 columns, scoped display and CSV. Gap-named unit test and page-specific acceptance rows recorded.
+- PUB-auth-public-55: **BLOCKED** — owner OD-09 waits for private signed scanner-backed storage before resume ZIP. Gap-named unit test and page-specific acceptance rows recorded.
+- PUB-auth-public-57: **DONE in source, requires proposed migration** — stored shortlistBy and public IST date. Gap-named unit test and page-specific acceptance rows recorded.
+- LEARNER-placements-19: **NOT-A-GAP** — existing 20 per page source plus new independent unit test. Gap-named unit test and page-specific acceptance rows recorded.
+- LEARNER-placements-24: **DONE in source** — own cancelled/closed drive journey and selection process. Gap-named unit test and page-specific acceptance rows recorded.
+- LEARNER-placements-35: **DONE in source, requires proposed migration** — separate learner round acknowledgment, CAS, audit and schedule. Gap-named unit test and page-specific acceptance rows recorded.
+- SA-academics-people-92: **DONE in existing source** — separate legacy first/last name, validated Indian phone and demographic fields. Gap-named unit test and page-specific acceptance rows recorded.
+- SA-academics-people-94: **DONE in existing source** — roster Edit Student guarded existing college profile action. Gap-named unit test and page-specific acceptance rows recorded.
+- TPO-home-R08: **DONE in source** — fail isolation in independent concurrent TPO home reads. Gap-named unit test and page-specific acceptance rows recorded.
+- Proposed SQL: `docs/proposed-migrations/chat13-public-company-share-code-and-columns.sql` and `docs/proposed-migrations/chat13-learner-round-attendance-confirmation.sql`. Until migrations are registered public company sharing fails closed; learner attendance writes fail closed. Never represent either as deployed.
+- Tests written, **not run** by lane. Full typecheck, integration, concurrency, UI and browser verification pending orchestrator. No page UX restyling.

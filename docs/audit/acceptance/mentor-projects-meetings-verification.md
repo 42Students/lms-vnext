@@ -223,3 +223,11 @@ Implementation decision: private draft cancellation retains an internal history 
 |---|---|---|
 | MEN-projects-meetings-27 | OPEN — proposed migration still unregistered | Meeting links are prevalidated outside the transaction to avoid nested pool lookups, then preserved when a partial edit omits them. The combined task/sprint relationship is rechecked using the active transaction. Previously RESCHEDULED meetings can receive notes-only updates without a false "must change meeting time" rejection. `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-mentor-meeting-draft-lifecycle.test.ts` with gap-named assertions. This does not replace an unskipped PostgreSQL run. |
 
+## Final sprint — chat-12 mentor implementation
+
+| ID | Status | Evidence |
+|---|---|---|
+| MEN-projects-meetings-20 | DONE (code authored; runtime acceptance pending) | Mentor About now exposes `Edit details` (summary, milestone/due, next step, blocker), and the existing authored brief editor for goal, description, deliverables, definition of done and personas. Persisted mentor editing is separate from privileged Admin status/section mutation and requires `requireProjectLifecycleMutationAccess`, tenant-scope and `expectedUpdatedAt` CAS; archived/completed workspaces remain read-only. Paths: `src/components/projects/project-workspace.tsx`, `mentor-project-about-editor.tsx`, `src/modules/projects/mentor-overview-edit-{model,service}.ts`, `src/modules/projects/workspace-brief-service.ts`, `src/app/api/projects/[projectId]/mentor-overview/route.ts`. `tests/unit/chat12-final-mentor-projects.test.ts`: six named `MEN-projects-meetings-20` cases. |
+| MEN-projects-meetings-48 | DONE (code authored; runtime acceptance pending) | `mentorTaskQuickActionLabel` maps progress, blocked, review and completion to legacy wording, and the transition toast says `Task updated.`. Confirm and blocker reason remain. `mentor-task-status-transition.tsx`, `mentor-task-quick-action-copy.ts`; `tests/unit/chat12-final-mentor-projects.test.ts`: three named `MEN-projects-meetings-48` cases. |
+
+Tests authored, not executed; browser, integration and TypeScript validation are outstanding.

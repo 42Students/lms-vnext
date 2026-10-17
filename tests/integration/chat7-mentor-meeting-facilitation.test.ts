@@ -92,13 +92,12 @@ async function projectToken(id:string){
 }
 const window={
  title:"Sprint review",agenda:"Discuss finished work",startsAt:"2099-02-01T10:00:00+05:30",
- endsAt:"2099-02-01T10:30:00+05:30",timeZone:"Asia/Kolkata",
+ endsAt:"2099-02-01T10:30:00+05:30",timeZone:"Asia/Kolkata" as const,
 };
 describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
  it("MEN-projects-meetings-27 keeps saved and cancelled private drafts hidden from learners",async({skip})=>{
   if(!(await migrationReady()))skip();
   const project=await fixture();
-  // @ts-ignore input type is widened by the facilitation fields
   const draft=await scheduleProjectMeeting(mentor,project.id,null,{
    ...window,status:"DRAFT",expectedProjectUpdatedAt:await projectToken(project.id),
    facilitation:{...emptyMentorMeetingFacilitation,notes:"Unsent private draft"},
@@ -122,7 +121,6 @@ describe("MEN-projects-meetings-27 persisted facilitator lifecycle",()=>{
   if(!(await migrationReady()))skip();
   const project=await fixture();
   const workspace=await getProjectInstanceWorkspace(mentor,project.id);
-  // @ts-ignore input type is widened by the facilitation fields
   const meeting=await scheduleProjectMeeting(mentor,project.id,null,{
    ...window,status:"SCHEDULED",outcome:"Work reviewed",meetingUrl:"https://meet.example.edu/room",
    expectedProjectUpdatedAt:await projectToken(project.id),
