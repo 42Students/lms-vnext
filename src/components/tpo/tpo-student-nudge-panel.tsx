@@ -1,5 +1,6 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useState } from "react";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
@@ -12,6 +13,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
  const [template,setTemplate]=useState<TpoStudentNudgeTemplate>("REGISTRATION");
  const [message,setMessage]=useState<string>(tpoStudentNudgeTemplates.REGISTRATION);
  const [pending,setPending]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [notice,setNotice]=useState("");
  const [error,setError]=useState("");
  const eligible=new Set(rows.map(row=>row.id));
@@ -69,9 +71,9 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
     className="w-full rounded border border-border bg-surface p-3"
     disabled={pending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>
-  <button type="button" disabled={pending||!validSelected.length}
+  <button type="button" disabled={pending||guardedPending||!validSelected.length}
    className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-   onClick={()=>void send()}>{pending?"Sending…":"Send to "+validSelected.length+" selected"}</button>
+   onClick={()=>void runGuarded(send)}>{pending?"Sending…":"Send to "+validSelected.length+" selected"}</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
  </section>;

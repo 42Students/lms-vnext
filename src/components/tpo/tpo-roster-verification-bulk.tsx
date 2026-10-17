@@ -1,5 +1,6 @@
 "use client";
 import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 import type {VerificationQueueCard} from "@/components/verification/VerificationWorkspace";
@@ -16,6 +17,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
  const [ack,setAck]=useState(false);
  const [reason,setReason]=useState("Marksheet is missing or unreadable");
  const [busy,setBusy]=useState(false);
+ const {run:runGuarded,pending:guardedPending}=useGuardedAction();
  const [error,setError]=useState("");
  const [outcomes,setOutcomes]=useState<BulkReviewOutcome[]>([]);
  const [receiptRows,setReceiptRows]=useState<VerificationQueueCard[]>([]);
@@ -99,8 +101,8 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    {action==="VERIFY"?<label className="flex gap-2 text-sm"><input type="checkbox" checked={ack} disabled={busy} onChange={event=>setAck(event.target.checked)}/>
     I have checked their documents another way (for example the college&apos;s own records).
    </label>:null}
-   <button type="button" disabled={busy||eligible.length===0||action==="VERIFY"&&!ack}
-    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50" onClick={()=>void save()}>
+   <button type="button" disabled={busy||guardedPending||eligible.length===0||action==="VERIFY"&&!ack}
+    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50" onClick={()=>void runGuarded(save)}>
     {busy?"Saving…":action==="VERIFY"?"Confirm verify selected":"Confirm send back selected"}
    </button>
    <button type="button" disabled={busy} className="ml-2 min-h-11 rounded border border-border px-3" onClick={()=>setPreview(false)}>Cancel preview</button>
