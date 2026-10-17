@@ -542,14 +542,20 @@ export function RecruiterLeadDetailWorkspace({
               <h3 className="font-semibold">Timeline</h3>
               {activities.length ? (
                 <ol className="space-y-3">
-                  {activities.map(a => (
-                    <li key={a.id} className="border-l-2 border-border pl-3 text-sm">
+                  {activities.map((a,index) => (
+                    <li key={a.id} className="text-sm">
+                      {(!index||activityDayIst(activities[index-1].createdAt)!==activityDayIst(a.createdAt))?
+                        <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          {activityDayIst(a.createdAt)}
+                        </h4>:null}
+                      <div className="border-l-2 border-border pl-3">
                       <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
                         {formatDateTimeIst(a.createdAt)}
                       </time>
                       {a.note ? <p className="mt-1 whitespace-pre-wrap">{a.note}</p> : null}
+                      </div>
                     </li>
                   ))}
                 </ol>
