@@ -12,4 +12,20 @@
 | TPO-inbox-team-08 | BLOCKED | Email relay needs verified provider credentials and inbound reply webhook; `docs/orchestrator/queues/gap-closure-chat-2.md` blocker. No production access or emails attempted. |
 | TPO-inbox-team-10 | DONE | `src/app/(authenticated)/tpo/messages/page.tsx` exact legacy subtitle and no internal migration jargon; `tests/unit/tpo-inbox-team-copy.test.ts` **TPO-inbox-team-10 uses the exact legacy Messages subtitle…**. |
 
+| TPO-inbox-team-09 | DONE | Messages 4-second + focus refresh; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-09**. |
+| TPO-inbox-team-11 | DONE | no notification-as-message fallback; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-11**. |
+| TPO-inbox-team-13 | DONE | mobile recruiter cards and back control; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-13**. |
+| TPO-inbox-team-14 | DONE | canonical notifications redirect; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-14**. |
+| TPO-inbox-team-27 | DONE | Team 30-second + focus refresh; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-27**. |
+| TPO-inbox-team-39 | DONE | safe inline Team create and reply errors; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-39**. |
+| TPO-inbox-team-40 | DONE | exact Team subtitle; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-40**. |
+| TPO-inbox-team-56 | DONE | exact announcement tabs/subtitles; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-56**. |
+| TPO-inbox-team-58 | DONE | 200/8000 create and edit limits; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-58**. |
+| TPO-inbox-team-65 | DONE | exact Notifications subtitle; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-65**. |
+| TPO-inbox-team-66 | DONE | mark-all no-confirm with zero guard; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-66**. |
+| TPO-inbox-team-R01 | DONE | scoped recruiter message TPO bell notification; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-R01**. |
+| TPO-inbox-team-R03 | DONE | legacy announcement tab aliases; `tests/unit/tpo-inbox-team-round2.test.ts` test **TPO-inbox-team-R03**. |
+
+Source-level follow-up still required for `TPO-inbox-team-48/52/53/55/64`: named tests capture implemented pieces, but full legacy acceptance has not yet been demonstrated. These remain queued.
+
 Other queued gaps remain outstanding until individually inspected and recorded.
