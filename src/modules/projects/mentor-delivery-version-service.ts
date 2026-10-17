@@ -33,6 +33,7 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
     sourceUrl:projectSubmissions.sourceUrl,demoUrl:projectSubmissions.demoUrl,
     lockedAt:projectSubmissions.lockedAt,reopenedAt:projectSubmissions.reopenedAt,
     decision:projectSubmissionReviews.decision,reviewedAt:projectSubmissionReviews.reviewedAt,
+    reviewedByUserId:projectSubmissionReviews.reviewedByUserId,
     feedback:projectSubmissionReviews.feedback,
   }).from(projectSubmissions)
     .leftJoin(projectSubmissionReviews,and(
