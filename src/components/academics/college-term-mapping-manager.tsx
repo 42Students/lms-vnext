@@ -122,7 +122,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <form onSubmit={prepare} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-1 text-sm font-semibold text-body">Program
         <select required value={programId} onChange={event => {
-          if (selectedIds.length && !window.confirm("Switch program? Unsaved course choices are retained for this semester.")) return;
+          if(selectedIds.length)setNotice("Unsaved course choices are retained for this semester.");
           setProgramId(event.target.value); setTermId("");
         }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
@@ -132,7 +132,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       </label>
       <label className="grid gap-1 text-sm font-semibold text-body">Semester
         <select required value={termId} onChange={event => {
-          if (selectedIds.length && !window.confirm("Switch semester? Unsaved course choices are retained.")) return;
+          if(selectedIds.length)setNotice("Unsaved course choices are retained.");
           setTermId(event.target.value);
         }} className="min-h-11 rounded-md border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>

@@ -19,10 +19,20 @@ export default async function CollegeAdminProfilePage({
   if (!context.membership) return <main className="space-y-3 p-6"><PageHeader eyebrow="College Admin" title="Profile"/><p role="alert" className="rounded border border-border p-4">Admin not assigned to a college. Contact a Super Admin to access college staff profile controls.</p></main>;
   if (context.membership.status !== "ACTIVE" ||
       !hasMembershipRole(context, "COLLEGE_ADMIN")) redirect("/dashboard");
-  const [account, profile] = await Promise.all([
+  const [accountResult,profileResult]=await Promise.allSettled([
     getOwnAccountSummary(context),
     loadCollegeOwnProfile(context),
   ]);
+  if(profileResult.status==="rejected")return <main className="mx-auto w-full max-w-5xl space-y-4 p-4">
+    <PageHeader eyebrow="College Admin" title="Profile"/>
+    <div role="alert" className="space-y-2 rounded-xl border border-border bg-surface p-5">
+      <p className="font-semibold">Failed to load profile.</p>
+      <p className="text-sm text-body">Couldn't refresh profile. Your existing details have not been changed.</p>
+      <Link href="/college/profile" prefetch={false} className="inline-flex min-h-10 items-center rounded border border-border px-4 font-semibold text-primary-text">Retry</Link>
+    </div>
+  </main>;
+  const profile=profileResult.value;
+  const account=accountResult.status==="fulfilled"?accountResult.value:null;
   return <main className="mx-auto w-full min-w-0 max-w-5xl space-y-6">
     <PageHeader eyebrow="College Admin" title="Profile"
       description="Your personal and contact details. College contact information is managed separately."

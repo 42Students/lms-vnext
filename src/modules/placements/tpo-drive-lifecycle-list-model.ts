@@ -2,6 +2,7 @@ import { z } from "zod";
 export const tpoDriveLifecycleQuerySchema = z.object({
   seasonId: z.string().uuid().optional(),
   companyId:z.string().uuid().optional(),
+  cohortId:z.string().uuid().optional(),
   ownerUserId:z.string().uuid().optional(),
   view: z.enum(["ALL", "REQUESTS", "DRAFT", "LIVE", "CLOSED"]).default("ALL"),
   search:z.string().trim().max(100).default(""),
@@ -9,14 +10,21 @@ export const tpoDriveLifecycleQuerySchema = z.object({
   workMode:z.enum(["ALL","ONSITE","REMOTE","HYBRID"]).default("ALL"),
   employmentType:z.enum(["ALL","FULL_TIME","INTERNSHIP","CONTRACT"]).default("ALL"),
   minApplied:z.coerce.number().int().min(0).max(100000).optional(),
+  maxApplied:z.coerce.number().int().min(0).max(100000).optional(),
   minOffers:z.coerce.number().int().min(0).max(100000).optional(),
+  maxOffers:z.coerce.number().int().min(0).max(100000).optional(),
   payCategory:z.enum(["ALL","REGULAR","DREAM"]).default("ALL"),
   attention:z.enum(["ALL","NO_APPLICANTS","NO_DEADLINE","DUE_SOON","OVERDUE"]).default("ALL"),
   journey:z.enum(["ALL","TAKING_APPLICATIONS","RUNNING_ROUNDS","OFFERS_ISSUED","COMPLETE"]).default("ALL"),
   display:z.enum(["DETAILED","COMPACT"]).default("DETAILED"),
   sort:z.enum(["COMPANY","DEADLINE_ASC","DEADLINE_DESC"]).default("COMPANY"),
   page:z.coerce.number().int().min(1).max(100000).default(1),
-}).strict();
+}).strict().superRefine((query,ctx)=>{
+ if(query.minApplied!==undefined&&query.maxApplied!==undefined&&query.maxApplied<query.minApplied)
+  ctx.addIssue({code:"custom",path:["maxApplied"],message:"Maximum applied cannot be below minimum applied"});
+ if(query.minOffers!==undefined&&query.maxOffers!==undefined&&query.maxOffers<query.minOffers)
+  ctx.addIssue({code:"custom",path:["maxOffers"],message:"Maximum offers cannot be below minimum offers"});
+});
 export const TPO_DRIVE_PAGE_SIZE=25;
 export function tpoDriveLifecyclePage(total:number,requestedPage:number){
  const totalPages=Math.max(1,Math.ceil(total/TPO_DRIVE_PAGE_SIZE));

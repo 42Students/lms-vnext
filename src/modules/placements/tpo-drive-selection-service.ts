@@ -142,6 +142,10 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});continue;
     }
     const candidate=candidateMap.get(selection.applicationId);
+   if(!candidate){
+    results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",
+     reason:"Learner is no longer a candidate for this drive"});continue;
+   }
     // A previous request can issue the canonical offer and time out before
     // marking the selection RELEASED. Reconcile the exact issued offer first.
     if(selection.status==="VERIFIED"&&candidate?.offer&&
@@ -200,7 +204,9 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
         await requireTpoJobActor(tx,context);
         const [updated]=await tx.update(placementDriveSelections).set({
           status:"RELEASED",releasedOfferId:offer.id,releasedAt:new Date(),updatedAt:new Date(),
-        }).where(and(eq(placementDriveSelections.id,id),eq(placementDriveSelections.status,"VERIFIED")))
+        }).where(and(eq(placementDriveSelections.id,id),
+          eq(placementDriveSelections.jobId,job.id),
+          eq(placementDriveSelections.status,"VERIFIED")))
           .returning({id:placementDriveSelections.id});
         if(!updated)throw new Error("Offer issued but selection status needs reconciliation");
         await auditTpoJobChange(tx,context,job,"PLACEMENTS_TPO_SELECTION_RELEASED","released a verified selection for",{

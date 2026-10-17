@@ -33,6 +33,7 @@ export type TpoRecruiterGrantSourceRow = {
   grantId?: string;
   updatedAt?: Date;
   displayName: string | null;
+  designation?:string|null;
   companyName: string;
   status: string;
   grantedAt: Date;
@@ -46,6 +47,7 @@ export type TpoRecruiterGrantView = {
   grantId?: string;
   expectedUpdatedAt?: string;
   displayName: string;
+  designation:string|null;
   companyName: string;
   status: TpoRecruiterGrantStatus;
   grantedDate: string;
@@ -98,6 +100,7 @@ export function toTpoRecruiterGrantView(
       row.displayName?.trim() ||
       "Unnamed recruiter",
     companyName: row.companyName,
+    designation:row.designation?.trim()||null,
     status,
     grantedDate:
       formatTpoRecruiterGrantDate(
