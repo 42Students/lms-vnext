@@ -49,4 +49,23 @@ describe("chat-6 cross-page gap source verification", () => {
     expect(actions).toContain("apiFetch");
     expect(actions).not.toContain("data?.error");
   });
+
+  it("COL-placements-26 exposes a persisted Hired count and Mark Hired action without inferring joining", () => {
+    const overview = source("src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx");
+    const pipeline = source("src/components/placements/college-application-pipeline-controls.tsx");
+    const funnel = source("src/modules/placements/college-hiring-funnel-service.ts");
+    expect(overview).toContain("funnel.totals.HIRED");
+    expect(overview).toContain("View hired candidates");
+    expect(overview).toContain("stage=HIRED");
+    expect(pipeline).toContain('stage==="HIRED"?"Mark Hired"');
+    expect(funnel).toContain('"HIRED"');
+  });
+
+  it("SA-academics-people-72 guards unsaved resource changes and uses legacy resource confirmations", () => {
+    const actions = source("src/components/courses/super-admin-content-actions.tsx");
+    expect(actions).toContain("Discard resource changes?");
+    expect(actions).toContain("Delete this resource? Students will no longer see it.");
+    expect(actions).toContain("Resource updated.");
+    expect(actions).toContain("Resource deleted.");
+  });
 });
