@@ -117,7 +117,7 @@ export function ProjectList({
 
           {item.courseLabel || item.phase || item.dueLabel ? (
             <p className="mt-2 text-xs font-semibold text-body">
-              {item.courseLabel ?? "Project"} · {item.mentorName ?? "Mentor not assigned"}
+              {item.courseLabel ?? "Project"} • {item.mentorName ?? "Mentor not assigned"}
               {item.phase ? " · " + item.phase : ""}
               {item.dueLabel ? " · " + item.dueLabel : ""}
             </p>
