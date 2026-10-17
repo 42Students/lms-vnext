@@ -72,12 +72,13 @@ export function mentorRequiredResourceLinkState(resource:{
 
 /** Derived only from the rows already loaded by the authorized Project workspace. */
 export function buildMentorWorkspaceEvidence(input:{
- tasks:readonly {sprintId:string;status:string}[];
+ tasks:readonly {sprintId:string|null;status:string}[];
  members:readonly {role:string;isPrimary:boolean}[];
  submissions:readonly {version:number;status:string}[];
 }){
  const bySprint=new Map<string,{status:string}[]>();
  for(const task of input.tasks){
+  if(task.sprintId===null)continue;
   const rows=bySprint.get(task.sprintId)??[];
   rows.push({status:task.status});
   bySprint.set(task.sprintId,rows);

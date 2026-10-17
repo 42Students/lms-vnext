@@ -51,6 +51,7 @@ export async function moveOwnLearnerProjectTask(context:RequestContext,rawProjec
    task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt) ||
    !canLearnerMoveOwnTask(task.status,input.status))
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  if(task.sprintId===null)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [sprint]=await tx.select({status:projectSprints.status,releaseId:projectSprints.releaseId})
    .from(projectSprints).where(and(eq(projectSprints.id,task.sprintId),
     eq(projectSprints.projectId,projectId))).for("share").limit(1);

@@ -51,13 +51,13 @@ export async function getCollegeRoundSlotAppointments(ctx:RequestContext,raw:unk
  ]);
  const ids=bookings.map(b=>b.id);
  const events=ids.length?await db.select({id:activityEvents.id,subjectId:activityEvents.subjectId,
-  eventType:activityEvents.eventType,createdAt:activityEvents.createdAt})
+  eventType:activityEvents.eventType,occurredAt:activityEvents.occurredAt})
   .from(activityEvents).where(and(eq(activityEvents.collegeId,collegeId),
     eq(activityEvents.subjectType,"placement_round_candidate_slot"),
     inArray(activityEvents.subjectId,ids),
     inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
       "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW"])))
-  .orderBy(asc(activityEvents.createdAt)): [];
+  .orderBy(asc(activityEvents.occurredAt)): [];
  const outcomes=new Map<string,string>();
  for(const event of events)if(event.subjectId)outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");

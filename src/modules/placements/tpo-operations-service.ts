@@ -546,6 +546,9 @@ export async function getPlacementTpoOperations(
         status: job.status,
         applicationDeadline:
           job.applicationDeadline,
+        employmentType: job.employmentType,
+        locations: job.locations,
+        publishedAt: job.publishedAt,
         company: {
           id: company.id,
           name: company.name,

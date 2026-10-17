@@ -167,6 +167,7 @@ export async function stageTpoRoundImport(
    rejected.push({applicationId:match??"",line:row.line,status:"skipped",reason});
    continue;
   }
+  if(!match)continue;
   const current=candidates.get(match)!;
   if(current.currentStatus==="APPLIED"){
    used.add(match);

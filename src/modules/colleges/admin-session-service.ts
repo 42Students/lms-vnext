@@ -27,6 +27,7 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
 }
 
 /** Only administrators associated with this college may be selected. */
+type AdminSessionTarget={userId:string;membershipId:string;status:string;name:string|null;email:string|null;roles:string[]};
 export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawCollegeId:unknown){
  if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
  const collegeId=z.uuid().parse(rawCollegeId);
@@ -40,9 +41,9 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
    inArray(membershipRoles.role,["COLLEGE_ADMIN","TPO"])))
   .where(and(eq(collegeMemberships.collegeId,collegeId),
     inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]))).limit(501);
- const map=new Map<string,{userId:string;membershipId:string;status:string;name:string;email:string|null;roles:string[]}>();
+ const map=new Map<string,AdminSessionTarget>();
  for(const row of rows.slice(0,500)){
-  const item=map.get(row.userId)??{userId:row.userId,membershipId:row.membershipId,status:row.status,name:row.name,email:row.email,roles:[]};
+  const item:AdminSessionTarget=map.get(row.userId)??{userId:row.userId,membershipId:row.membershipId,status:row.status,name:row.name,email:row.email,roles:[]};
   if(!item.roles.includes(row.role))item.roles.push(row.role);
   map.set(item.userId,item);
  }

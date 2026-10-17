@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,count,eq,gt,lte} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {courseQuizzes,courseLessons,courseLearningPaths,courses,departments} from "@/db/schema";
+import {courseQuizzes,courseLessons,courseLearningPaths,courseOfferings,courses,departments} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 /** COL-dashboard-09: quiz due dates are authoritative, never fabricated. */
@@ -15,7 +15,8 @@ export async function getCollegeClosingQuizzes(ctx:RequestContext,now=new Date()
  .from(courseQuizzes)
  .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
- .innerJoin(courses,eq(courses.id,courseLearningPaths.courseId))
+ .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+ .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
  .innerJoin(departments,eq(departments.id,courses.departmentId))
  .where(and(eq(departments.collegeId,member.collegeId),
   eq(courseQuizzes.status,"PUBLISHED"),gt(courseQuizzes.dueAt,now),

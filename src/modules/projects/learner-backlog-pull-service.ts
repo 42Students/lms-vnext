@@ -18,6 +18,7 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
  const input=inputSchema.parse(raw),scope=await requireProjectReadAccess(context,projectIdInput);
  if(scope.access!=="LEARNER"||!context.membership)
   throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const membership=context.membership;
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({status:projectInstances.status}).from(projectInstances)
     .where(and(eq(projectInstances.id,scope.project.id),eq(projectInstances.collegeId,scope.collegeId)))
@@ -27,7 +28,7 @@ export async function pullOwnBacklogTask(context:RequestContext,projectIdInput:s
     .where(and(eq(projectTasks.id,input.taskId),eq(projectTasks.projectId,scope.project.id)))
     .for("update").limit(1);
   if(!task||task.sprintId!==null||task.status!=="TODO"||
-    task.assigneeMembershipId!==context.membership.id||
+    task.assigneeMembershipId!==membership.id||
     task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [sprint]=await tx.select().from(projectSprints)

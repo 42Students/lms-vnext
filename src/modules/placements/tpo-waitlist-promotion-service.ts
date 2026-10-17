@@ -149,7 +149,7 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
   eq(placementOffers.applicationId,next.applicationId),
   inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(2);
  if(active.length){
-  const found=active.length===1&&active[0]!.issuedAt>=existing.createdAt&&
+  const found=active.length===1&&active[0]!.issuedAt>=existing.promotedAt&&
    active[0]!.kind==="OFFER"&&
    active[0]!.roleTitle===next.roleTitle&&active[0]!.annualCtcInr===next.annualCtcInr
    ?active[0]:null;
