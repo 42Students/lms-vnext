@@ -131,3 +131,9 @@ Seven reported failures reviewed against merged source:
 - recruiter-drive-request-model / REC-home-drives-21: corrected old DRAFT label test; approved draft awaits publication rather than another review.
 
 Source and tests reviewed, but not executed in this GitHub connector session.
+
+## Round 3 (2 reported unit failures) — 2026-10-18
+
+- `chat16-gap-register-reconciliation-r7.test.ts`: independently checked the 32 assigned queue IDs against the current `gap-register.md`. All 32 unique rows are present, have acceptance/commit citations, and carry canonical later review status/ownership. The historical R3 failing snapshot no longer reproduces by source inspection following R2; do not revert other lanes' register decisions. Added a duplicate/missing-record regression in `tests/unit/chat16-round3-two-unit-regressions.test.ts`.
+- `rec-notification-bell.test.ts` / `REC-calendar-messages-profile-21`: current source passes the report's static assertions for 30-second polling, caller-only mark read, authorized college/employer job scope and correct text. Restored a previously lost edge case in `src/components/hr/hr-recruiter-bell.tsx`: advance relative notification time in a `finally` block even if a poll fails, without clearing retained notifications or weakening authorization. Added a source/behavior regression in `tests/unit/chat16-round3-two-unit-regressions.test.ts`.
+- No R3 test was weakened or deleted. Vitest and TypeScript have not been executed in this GitHub-only session; a CI green run must still confirm.
