@@ -469,9 +469,19 @@ export function AdminCourseOverview({
         </form>:null}
         <DataTable
           columns={courseColumns}
-          rows={workspace.courses}
+          rows={catalogue?catalogue.items:workspace.courses}
           getRowKey={(course) => course.id}
         />
+        {catalogue&&catalogueQuery?<nav aria-label="Course catalogue pages"
+          className="flex flex-wrap items-center justify-between gap-3 text-sm">
+          <p className="text-muted-foreground">{catalogue.total} matching courses · page {catalogue.page} of {catalogue.pages} · 25 per page</p>
+          <div className="flex gap-3">
+           {catalogue.page>1?<Link className="font-semibold text-primary-text"
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page-1})}>Previous</Link>:null}
+           {catalogue.page<catalogue.pages?<Link className="font-semibold text-primary-text"
+            href={collegeCourseCatalogueHref({...catalogueQuery,page:catalogue.page+1})}>Next</Link>:null}
+          </div>
+         </nav>:null}
       </section>
 
       <section className="space-y-3">
