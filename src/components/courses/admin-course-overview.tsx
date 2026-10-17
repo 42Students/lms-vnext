@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {collegeCourseCatalogueHref,paginateCollegeCourses,type CollegeCourseCatalogueQuery} from "@/modules/courses/college-course-catalogue-model";
+import {collegeCourseCatalogueExportHref} from "@/modules/courses/college-course-catalogue-export-model";
 import { COLLEGE_COURSES_COPY, courseVisibleToStudentsLabel, facultyAssignmentRoleLabel } from "@/modules/courses/college-courses-copy";
 import { CollegeOfferingLifecycleAction } from "@/components/college/college-offering-lifecycle-action";
 import { CollegeOfferingMetadataAction } from "@/components/college/college-offering-metadata-action";
