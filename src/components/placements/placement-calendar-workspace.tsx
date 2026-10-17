@@ -863,9 +863,11 @@ export async function PlacementCalendarWorkspace({
          aria-current={active?"page":undefined}
          className={active?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":
           "inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
+         <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-full "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
          {filter.label} ({count})
         </Link>;
        })}
+       <p className="self-center text-xs text-muted-foreground">Legend: rounds and talks · deadlines · follow-ups · blocked days (IST).</p>
        {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
         {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
        </p>:null}
