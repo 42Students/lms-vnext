@@ -94,6 +94,7 @@ export type TpoStudentRow = {
   registrationOpen?:boolean|null;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
+  debarred?:boolean|null;
   profileFacts?:TpoStudentProfileFacts;
   participationStatus: ResolvedPlacementParticipation["status"];
   readinessSignal: TpoStudentReadinessSignal;
@@ -142,6 +143,7 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   legacyStage?:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED";
   minRoundReached?:number;needsAttention?:boolean;
+  debarred?:boolean;
   gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
   minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
   branchId?: string;
@@ -467,6 +469,7 @@ export function filterTpoStudentRoster(
         row.branchId === filter.branchId,
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>filter.debarred===undefined||row.debarred===filter.debarred)
     .filter(row=>!filter.gender||row.profileFacts?.gender===filter.gender)
     .filter(row=>filter.birthYear===undefined||row.profileFacts?.birthYear===filter.birthYear)
     .filter(row=>filter.minSkills===undefined&&(row.profileFacts?.skills??0)>=filter.minSkills)
@@ -559,7 +562,7 @@ export function tpoStudentMatchesLegacyStage(row:TpoStudentRow,stage:"ELIGIBLE"|
  }
 }
 export function tpoStudentNeedsAttention(row:TpoStudentRow):boolean{
- return row.participationStatus==="INELIGIBLE"||
+ return row.debarred===true||row.participationStatus==="INELIGIBLE"||
   row.verification.status==="WAITING"||row.verification.status==="SENT_BACK"||
   row.offersAwaitingAnswer>0||row.ambiguousSection||
   row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING";

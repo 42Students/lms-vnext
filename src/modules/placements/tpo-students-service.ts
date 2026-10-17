@@ -44,6 +44,9 @@ import {
 import { placementEligibilityDecisions } from "@/db/schema/placement-access";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import {placementBatchLifecycles} from "@/db/schema/placement-batches";
+import {placementDebarments} from "@/db/schema/placement-debarments";
+import {isDebarmentActive} from "./batch-registration-policy";
+import {placementCollegeDateInIndia} from "./placement-debarment-gate";
 import { placementExternalOffers } from "@/db/schema/placement-external";
 
 import { sortTpoRequestRows,tpoRequestUrgent } from "@/modules/placements/tpo-global-requests-model";
@@ -90,6 +93,7 @@ export const tpoStudentsQuerySchema = z
     legacyStage:z.enum(["ELIGIBLE","INVITED","REGISTERED","VERIFIED","PLACED"]).optional(),
     minRoundReached:z.coerce.number().int().min(0).max(10000).optional(),
     needsAttention:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
+    debarred:z.enum(["YES","NO"]).transform(x=>x==="YES").optional(),
     gender:z.enum(["Male","Female","Other"]).optional(),
     birthYear:z.coerce.number().int().min(1900).max(2100).optional(),
     minSkills:z.coerce.number().int().min(0).max(100).optional(),
@@ -912,7 +916,20 @@ export async function getTpoStudentsIntelligence(
 
   // Legacy working set: placement-eligible learners only; a completed
   // academic enrollment reappears only when its finished cohort is selected.
-  const workingRows=selectTpoStudentWorkingSet(studentRows,Boolean(input.batchId));
+  const debarmentAvailable=await placementTableExists("placement_debarments");
+  const debarmentRecords=debarmentAvailable?await db.select({
+    membershipId:placementDebarments.membershipId,
+    untilDate:placementDebarments.untilDate,
+    untilDrives:placementDebarments.untilDrives,
+    drivesCounted:placementDebarments.drivesCounted,
+    liftedAt:placementDebarments.liftedAt,
+  }).from(placementDebarments).where(eq(placementDebarments.collegeId,college.id)):[];
+  const debarredIds=new Set(debarmentRecords.filter(record=>
+    isDebarmentActive(record,placementCollegeDateInIndia(now))).map(record=>record.membershipId));
+  const rowsWithDebarment=studentRows.map(row=>({...row,
+    debarred:debarmentAvailable?debarredIds.has(row.membershipId):null,
+  }));
+  const workingRows=selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
   const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
   const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
     workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||
@@ -926,6 +943,8 @@ export async function getTpoStudentsIntelligence(
     collegeId: college.id,
     season: activeSeason ?? null,
     summary: summarizeTpoStudents(scopedRows),
+    debarmentAvailable,
+    debarredCount:debarmentAvailable?scopedRows.filter(row=>row.debarred===true).length:null,
     uninvitedCount:scopedRows.filter(row=>row.registrationOpen===false&&!row.registeredForPlacements&&!row.fromFinishedBatch).length,
     branches: summarizeTpoStudentBranches(workingRows),
     classChoices:[...new Map(activeSections.filter(section=>
