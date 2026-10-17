@@ -147,3 +147,30 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - `REC-calendar-messages-profile-41`: recruiter invite clarifies controlled candidate visibility without fabricating a drive name that the current invite token does not contain.
 - `TPO-recruiters-23`: importer requires CSV/XLSX, uses a truthful 10 MB byte-size guard, traps keyboard focus in the import modal, handles Escape and restores launch-button focus.
 - **Still open**: WP-05 complete drag/drop semantics, CRM import duplicates discovered *before* commit, WP-06 multi-domain company identity and actual invite-drive context, company provider/worker confirmation, and every owner-blocked item above. No WP marked DONE. No checks run (FAST v2).
+
+## FAST v2 chat-2-b checkpoint — new commits after main lane integration
+
+- Fast-forwarded `chatgpt/chat-2-b` to integrated `origin/main` `6a1ace8` at start (old chat-2-b commits had already reached main). New commits remain isolated on chat-2-b.
+- **WP-01 / `TPO-recruiters-21`:** optional first follow-up/date note now validated and created *atomically* with a newly added lead and its audit activity; back-end prevents past due times, client offers future IST date and in-dialog review, duplicate preflight retained. This closes only the first-follow-up slice of the larger modal gap.
+- **WP-01 / `TPO-recruiters-14`:** bulk Stage and Owner now persist a scoped, actor-attributed run-level audit event in the same transaction as per-lead changes, return the audit ID and expose it with per-lead successes and failures. Undo/restore and durable provider-backed bulk invites remain open.
+- **WP-01 / `TPO-recruiters-19`:** exported CSV/XLSX filenames include view, selection scope and filters.
+- **WP-01 / `TPO-campaigns-public-31`:** public enquiry supports replacing an OTP and rejects invalid work email/OTP format before network calls; persisted public enquiry and TPO bell flows were already present.
+- **WP-04 / `TPO-inbox-team-49/50/53`:** announcements show stored author and last-updated metadata, expiry/time detail, Now/Later schedule selection, and short-lived Undo toast on post-send redirect using the authoritative 30-second server CAS rule. Optional action-button schema and modal editing remain open.
+- **WP-05/08 / `TPO-recruiters-32/37`:** `?due=1` now maps to a due-now filter; explicit filters clear stale legacy shortcut. Add-lead modal traps focus, handles Escape and restores launch focus.
+- **WP-07 / `TPO-home-R07`:** finder student result uses membership ID for the student panel, drive rows display stored status. Other finder details remain.
+- **WP-07 / `TPO-inbox-team-32`:** People list has active count and stable sort by recorded drive-day duties/name. Ask-based overdue sorting is not represented as available without the underlying ask data.
+- **WP statuses:** WP-01 through WP-08 all remain **IN-PROGRESS** because the remaining nonblocked gaps and live acceptance are not closed; source-only changes are not production certification.
+
+### Blockers (one line per dependency; skip until available)
+- `PUB-auth-public-50/52/53/54/55`: OD-09 share OTP/disclosure/PII/resume ZIP consent and protected file-storage policy are not approved; do not expand output.
+- `TPO-campaigns-public-01/02/05`: production sending, provider receipts/retries and worker rollouts require configured secrets/templates/verified dispatch.
+- `TPO-recruiters-13/14/17`: durable bulk undo/replay and invite-reminder emails require approved delivery worker/provider acceptance; link-only remains.
+- `TPO-campaigns-public-27`: multiple company domains require registered collision-safe identity schema; current single-domain check stays fail-closed.
+- `TPO-companies-05` / `TPO-inbox-team-23/26/34`: shared Team discussions, decisions and asks need persisted scoped object-thread/ask model and user-approved design.
+- `TPO-inbox-team-08` / `REC-calendar-messages-profile-R01`: inbound reply-to relay requires verified webhooks, routing and consent.
+- `TPO-settings-audit-52`: no-end-date recruiter grant conflicts with time-bounded authorization and requires owner lifetime-access decision.
+- `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 broad college admin/faculty placement team access remains a security permission decision.
+- `TPO-companies-06`: full counts-as-placed interpretation requires W04 policy evidence; distinct verified joins are displayed separately, not mislabelled as all placed.
+- `SA-academics-people-86`: auth-layer OTP-lockout mutation is outside the lane and requires privileged identity workflow verification.
+
+No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct pushes to main or pull requests.
