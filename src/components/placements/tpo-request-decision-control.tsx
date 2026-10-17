@@ -19,8 +19,8 @@ function impact(requestType:string){
     return "Approval may change the learner's recorded offer response deadline.";
   return "Approval may change the learner's recorded placement status.";
 }
-export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestType}:{
-  requestId:string;expectedUpdatedAt:string;requestType:string;
+export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestType,onSuccess}:{
+  requestId:string;expectedUpdatedAt:string;requestType:string;onSuccess?:()=>void;
 }){
   const router=useRouter();
   const {showToast}=useToast();
@@ -50,7 +50,7 @@ export function TpoRequestDecisionControl({requestId,expectedUpdatedAt,requestTy
       }
       showToast({tone:"success",title:mode==="APPROVE"?"Approved":"Rejected",
         description:"The decision is recorded in the learner's placement request history."});
-      setMode(null);setReason("");setNote("");router.refresh();
+      setMode(null);setReason("");setNote("");onSuccess?.();router.refresh();
     }catch(e){setError(e instanceof Error?e.message:"Could not record the decision.");}
     finally{setPending(false);}
   }
