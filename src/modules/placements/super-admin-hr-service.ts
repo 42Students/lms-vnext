@@ -218,6 +218,7 @@ function toAccount(row: AccountRow) {
 async function loadAccountGrants(
   context: RequestContext,
   userIds: string[],
+  includeHistory = false,
 ) {
   if (userIds.length === 0) {
     return [];
@@ -261,7 +262,7 @@ async function loadAccountGrants(
           placementRecruiterCollegeGrants.recruiterUserId,
           userIds,
         ),
-        eq(
+        includeHistory ? undefined : eq(
           placementRecruiterCollegeGrants.status,
           "ACTIVE",
         ),
@@ -465,13 +466,14 @@ export async function getSuperAdminHrAccount(
     );
   }
 
-  const grants = await loadAccountGrants(
-    context,
-    [userId],
-  );
+  const [grants,grantHistory] = await Promise.all([
+    loadAccountGrants(context,[userId]),
+    loadAccountGrants(context,[userId],true),
+  ]);
 
   return {
     ...toAccount(row),
+    grantHistory:grantHistory.filter(grant=>grant.companyId===row.companyId),
     accountManageable:(await hrAccountManageability(context,[userId])).get(userId)??false,
     grants: grants.filter(
       (grant) =>
