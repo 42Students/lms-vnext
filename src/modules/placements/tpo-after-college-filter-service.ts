@@ -14,7 +14,8 @@ export async function readTpoAfterCollegeMatches(collegeId:string,outcome:AfterC
   membershipId:placementTpoAfterCollege.learnerMembershipId,
   outcome:placementTpoAfterCollege.outcome,
  }).from(placementTpoAfterCollege)
-  .where(eq(placementTpoAfterCollege.collegeId,collegeId));
+  .where(and(eq(placementTpoAfterCollege.collegeId,collegeId),
+   outcome==="NOT_DECIDED"?undefined:eq(placementTpoAfterCollege.outcome,outcome)));
  return {
   available:true,
   matched:new Set(rows.filter(row=>row.outcome===outcome).map(row=>row.membershipId)),
