@@ -117,7 +117,8 @@ export default async function TpoTeamPage({searchParams}:{
     </nav>:null}
     <Link href="/tpo/team/everyone" className="mt-3 block rounded-lg border border-border bg-surface-secondary p-4 font-semibold text-primary-text">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
     {conversations?.status==="READY"?<TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
-      member=>member.membershipId!==context.membership?.id&&member.roles.includes("TPO"))
+      member=>member.membershipId!==context.membership?.id&&
+      (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
     {conversations?.status==="FAILED"?<div role="alert" className="mt-3 rounded-lg border border-border p-3 text-sm">
      Could not load conversations right now. Your search has been kept.
