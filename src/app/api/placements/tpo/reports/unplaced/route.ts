@@ -4,6 +4,8 @@ import {hasMembershipRole} from "@/modules/identity/context";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {apiErrorResponse} from "@/lib/api-error";
 import {getPlacementReportDetails} from "@/modules/placements/report-service";
+import {getTpoUnplacedAcademicEvidence} from "@/modules/placements/tpo-unplaced-academic-evidence-service";
+import {formatUnplacedPercentage} from "@/modules/placements/tpo-unplaced-academic-evidence-model";
 import {getTpoUnplacedLastApplications} from "@/modules/placements/tpo-unplaced-activity-read-service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
 import {unplacedFilteredExportQuerySchema,tpoUnplacedFilteredCsv}
@@ -32,10 +34,16 @@ export async function GET(request:Request){
    return NextResponse.json({error:"INVALID_BRANCH"},{status:400});
   const roster=new Map((students.exportRows??[]).map(row=>[row.membershipId,row]));
   const matching=workspace.details.unplaced.filter(row=>roster.has(row.membershipId));
-  const rows=matching.slice(0,5000).map(student=>{
+  const visible=matching.slice(0,5000);
+  const academic=await getTpoUnplacedAcademicEvidence(context,collegeId,visible.map(row=>row.membershipId));
+  const rows=visible.map(student=>{
    const item=roster.get(student.membershipId)!;
    return {displayName:student.displayName,rollNumber:item.rollNumber??null,
-    batch:item.cohortName,branch:item.branchName,applications:activity.get(student.membershipId)?.applications??0,
+    batch:item.cohortName,branch:item.branchName,
+    lowestRecordedPercent:formatUnplacedPercentage(academic.get(student.membershipId)?.lowestRecordedPercent??null),
+    undergraduatePercent:formatUnplacedPercentage(academic.get(student.membershipId)?.undergraduatePercent??null),
+    marksVerified:academic.get(student.membershipId)?.verification??"Not recorded",
+    applications:activity.get(student.membershipId)?.applications??0,
     stillInDrive:activity.get(student.membershipId)?.stillInDrive??false,
     lastApplied:activity.get(student.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{
      timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",

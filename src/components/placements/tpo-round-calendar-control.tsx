@@ -46,6 +46,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     if(action==="SCHEDULE"&&blockedDay&&!window.confirm(
       "This is a blocked date ("+blockedDay+"). Schedule this round anyway?"
     ))return;
+    if(action==="SCHEDULE"&&!blockedDatesAvailable){setError("Blocked-date settings are unavailable. Round scheduling is disabled until conflicts can be checked.");return;}
     if (!window.confirm(
       (action === "CANCEL" ? "Cancel " : "Create or reschedule ") +
       round.name + " for " + round.companyName +
@@ -60,7 +61,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           expectedUpdatedAt: round.updatedAt,
           action,
           ...(action === "SCHEDULE" ? {
-            localDateTime: dateInput, mode,
+            localDateTime: dateInput, mode, acknowledgedBlockedDate:Boolean(blockedDay),
             ...(mode === "ON_CAMPUS" ? { venue } : { meetingUrl }),
           } : { reason: note }),
         }),

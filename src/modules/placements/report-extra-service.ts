@@ -9,6 +9,9 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  departments,
+  learnerProgramEnrollments,
+  programs,
   placementCompanyRelationships,
   placementApplicationScreenings,
   placementApplicationStatusHistory,
@@ -36,7 +39,7 @@ import {
   type PlacementReportQuery,
 } from "./report-service";
 import { listTpoLeads } from "./tpo-crm-service";
-import {summarizeFailedRoundShares} from "./tpo-failure-round-share-model";
+import {summarizeFailedRoundShares,summarizeFailedRoundSharesByBranch} from "./tpo-failure-round-share-model";
 import {buildTpoCompanyEngagement} from "./tpo-company-engagement-model";
 import { summarizeTpoLeadHealth } from "./tpo-lead-health-model";
 
@@ -71,6 +74,7 @@ export async function getPlacementFailureReasonsReport(
       ...workspace,
       failures: summarizePlacementFailureReasons([]),
       roundFailureShares:[],
+      roundBranchFailureShares:[],
     };
   }
 
@@ -282,6 +286,7 @@ export async function getPlacementFailureReasonsReport(
     id:placementRoundResults.id,roundId:placementJobRounds.id,
     roundName:placementJobRounds.name,jobId:placementApplications.jobId,
     outcome:placementRoundResults.outcome,
+    branchId:departments.id,branchName:departments.name,
   }).from(placementRoundResults)
    .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementRoundResults.roundId))
    .innerJoin(placementApplications,and(
@@ -289,8 +294,12 @@ export async function getPlacementFailureReasonsReport(
     eq(placementApplications.jobId,placementJobRounds.jobId)))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),eq(learnerProgramEnrollments.status,"ACTIVE")))
+   .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+   .leftJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,workspace.collegeId)))
    .where(and(scopedJob,eq(placementRoundResults.status,"APPLIED")));
   const byRound=summarizeFailedRoundShares(appliedRoundRows);
+  const byRoundBranch=summarizeFailedRoundSharesByBranch(appliedRoundRows);
 
   const facts: PlacementFailureFact[] = [];
 
@@ -357,6 +366,7 @@ export async function getPlacementFailureReasonsReport(
     ...workspace,
     failures: summarizePlacementFailureReasons(facts),
     roundFailureShares:byRound,
+    roundBranchFailureShares:byRoundBranch,
     failureScopeNote:
       "This report counts persisted adverse events or current decisions, " +
       "not unique learners. Screening rejection uses the current screening " +

@@ -1,6 +1,7 @@
 import { z } from "zod";
 export const tpoRoundCalendarMutationSchema = z.object({
   confirmed: z.literal(true),
+  acknowledgedBlockedDate:z.boolean().optional(),
   roundId: z.string().uuid(),
   expectedUpdatedAt: z.iso.datetime({ offset: true }).transform(value=>new Date(value).toISOString()),
   action: z.enum(["SCHEDULE", "CANCEL"]),

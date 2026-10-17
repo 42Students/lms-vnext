@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,inArray,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {getSuperAdminTenantLifecycleDetail} from "./admin-tenant-lifecycle-service";
@@ -23,7 +23,7 @@ async function authorizedTarget(ctx:RequestContext,collegeIdInput:unknown,userId
   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.userId,userId),
    inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]))).limit(1);
  if(!member)throw new AuthorizationError("college.manage");
- return {college,userId,name:member.name};
+ return {college,userId,name:member.name,membershipId:member.id};
 }
 
 /** Only administrators associated with this college may be selected. */
@@ -93,4 +93,23 @@ export async function revokeCollegeAdminSessions(ctx:RequestContext,collegeId:un
   });
   return {revoked:rows.rows.length};
  });
+}
+
+/** SA-tenants-modules-17. Only persisted identity/platform actions with this
+ * exact college AND user or membership subject are surfaced; no raw metadata.
+ * Actor activity elsewhere and other colleges' membership events are excluded.
+ */
+export async function listCollegeAdminHistory(ctx:RequestContext,collegeId:unknown,userId:unknown,rawPage:unknown=1){
+ const page=z.coerce.number().int().min(1).max(10000).parse(rawPage);
+ const target=await authorizedTarget(ctx,collegeId,userId);
+ const rows=await getDb().select({
+  id:activityEvents.id,eventType:activityEvents.eventType,
+  occurredAt:activityEvents.occurredAt,summary:activityEvents.summary,
+ }).from(activityEvents)
+  .where(and(eq(activityEvents.collegeId,target.college.id),
+   inArray(activityEvents.module,["IDENTITY","PLATFORM"]),
+   or(eq(activityEvents.subjectId,target.userId),
+    eq(activityEvents.subjectId,target.membershipId))))
+  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(101).offset((page-1)*100);
+ return {target,events:rows.slice(0,100),page,truncated:rows.length>100};
 }
