@@ -2,9 +2,9 @@
 import {useRouter} from "next/navigation";
 import {useState} from "react";
 type Lesson={id:string;name:string;course:string;courseCode:string};
-type Existing={id:string;lessonId:string;title:string;externalUrl:string|null;
+type Existing={id:string;lessonId:string;title:string;externalUrl:string|null;notes:string|null;
  durationSeconds:number|null;startsAt:string|null;endsAt:string|null;status:string;sequence:number};
-type Kind="YOUTUBE"|"LIVE_CLASS";
+type Kind="YOUTUBE"|"LIVE_CLASS"|"RESOURCE";
 const dateInput=(iso:string|null)=>iso?new Intl.DateTimeFormat("sv-SE",{
  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
  hour:"2-digit",minute:"2-digit",hourCycle:"h23",
@@ -19,21 +19,22 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??""),[title,setTitle]=useState(""),
-  [url,setUrl]=useState(""),[duration,setDuration]=useState("60"),
+  [url,setUrl]=useState(""),[notes,setNotes]=useState(""),[duration,setDuration]=useState("60"),
   [start,setStart]=useState(""),[end,setEnd]=useState(""),
   [busy,setBusy]=useState(false),[error,setError]=useState(""),[message,setMessage]=useState("");
- const text=kind==="YOUTUBE"?"Import from link":"Schedule live class";
+ const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
-  setUrl(item.externalUrl??"");setDuration(String(item.durationSeconds??60));
+  setUrl(item.externalUrl??"");setNotes(item.notes??"");setDuration(String(item.durationSeconds??60));
   setStart(dateInput(item.startsAt));setEnd(dateInput(item.endsAt));setError("");setMessage("");
  }
  function fresh(){
-  setEditing(null);setOpen(true);setTitle("");setUrl("");setDuration("60");setStart("");setEnd("");
+  setEditing(null);setOpen(true);setTitle("");setUrl("");setNotes("");setDuration("60");setStart("");setEnd("");
   setError("");setMessage("");
  }
  async function save(){
-  if(busy||!title.trim()||!lessonId||(!editing&&!url.trim()))return;
+  if(busy||!title.trim()||!lessonId||(kind!=="RESOURCE"&&!editing&&!url.trim()))return;
+  if(kind==="RESOURCE"&&!url.trim()&&!notes.trim()){setError("Add resource notes or an HTTPS link.");return;}
   setBusy(true);setError("");setMessage("");
   try{
    if(url.trim()){
@@ -43,8 +44,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
     if(kind==="YOUTUBE"&&!["youtube.com","youtu.be"].includes(target.hostname.toLowerCase())&&
       !target.hostname.toLowerCase().endsWith(".youtube.com"))throw Error("Enter a YouTube URL.");
    }
-   const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:
-    {startsAt:isoIst(start),endsAt:isoIst(end)};
+   const extra=kind==="YOUTUBE"?{durationSeconds:Number(duration)}:kind==="RESOURCE"?{notes:notes.trim()||null}:{startsAt:isoIst(start),endsAt:isoIst(end)};
    if(kind==="YOUTUBE"&&(!Number.isInteger(Number(duration))||Number(duration)<1||
     Number(duration)>86400))throw Error("Video length must be 1–86400 seconds.");
    if(kind==="LIVE_CLASS"&&new Date(isoIst(end)).getTime()<=new Date(isoIst(start)).getTime())
@@ -54,7 +54,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
     "/api/courses/lesson-contents",{method:editing?"PATCH":"POST",
      headers:{"Content-Type":"application/json"},body:JSON.stringify(editing?
       {title:title.trim(),...(url.trim()?{externalUrl:url.trim()}:{}),...extra}:
-      {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim(),
+      {lessonId,title:title.trim(),contentType:kind,externalUrl:url.trim()||null,
        sequence:0,...extra})});
    if(!res.ok){const problem=await res.json().catch(()=>({error:"Unable to save content"}));
     throw Error(problem.error??"Unable to save content");}
@@ -84,7 +84,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
  }
  return <section className="space-y-3 rounded border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center gap-3">
-   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":"Live Classes"}</h2>
+   <h2 className="font-semibold">{kind==="YOUTUBE"?"Video Content":kind==="RESOURCE"?"Resources":"Live Classes"}</h2>
    <button type="button" className="min-h-10 rounded border px-3 text-sm" disabled={!lessons.length}
     onClick={fresh}>{text}</button>
   </div>
@@ -99,10 +99,13 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
    <label className="text-sm">Title
     <input required maxLength={200} className="mt-1 w-full rounded border bg-background p-2"
      value={title} onChange={e=>setTitle(e.target.value)}/></label>
-   <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":"Meeting Link"}
-    <input type="url" required className="mt-1 w-full rounded border bg-background p-2"
+   <label className="text-sm">{kind==="YOUTUBE"?"YouTube URL":kind==="RESOURCE"?"HTTPS resource link (optional with notes)":"Meeting Link"}
+    <input type="url" required={kind!=="RESOURCE"&&!editing} className="mt-1 w-full rounded border bg-background p-2"
      value={url} onChange={e=>setUrl(e.target.value)} placeholder={editing?"Leave blank to keep saved link":"https://"}/></label>
-   {kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
+   {kind==="RESOURCE"?<label className="text-sm">Notes
+     <textarea rows={3} maxLength={10000} value={notes} onChange={e=>setNotes(e.target.value)}
+       className="mt-1 w-full rounded border bg-background p-2"/>
+    </label>:kind==="YOUTUBE"?<label className="text-sm">Video length (seconds)
     <input type="number" min={1} max={86400} value={duration} onChange={e=>setDuration(e.target.value)}
      className="mt-1 w-full rounded border bg-background p-2"/></label>:<>
     <label className="text-sm">Start date and time (IST)
@@ -124,7 +127,7 @@ export function CollegeContentAuthoringControl({kind,lessons,existing}:{
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.status})</span></span>
     <div className="flex gap-2">
      {item.externalUrl&&<a className="underline" target="_blank" rel="noopener noreferrer" href={item.externalUrl}>
-      {kind==="YOUTUBE"?"View":"Join"}</a>}
+      {kind==="YOUTUBE"?"View":kind==="RESOURCE"?"Open link":"Join"}</a>}
      <button type="button" className="underline" disabled={busy} onClick={()=>select(item)}>Edit</button>
      {item.status==="DRAFT"&&<button type="button" className="underline" disabled={busy}
        onClick={()=>void transition(item,"PUBLISH")}>Publish</button>}
