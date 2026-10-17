@@ -277,6 +277,14 @@ export function RecruiterResultControls({
       return (index+1)+". "+(person.displayName||"Applicant")+" — "+
         decision.outcome+(decision.outcome==="HOLD"?" (rank "+decision.waitlistRank+")":"");
     }).join("\n");
+    for(const participant of participants){
+      const draft=drafts[round.id+":"+participant.applicationId]!;
+      const raw=draft.scorePercent.trim();
+      if(raw && (!Number.isFinite(Number(raw))||Number(raw)<0||Number(raw)>100)){
+        showToast({tone:"error",title:"Invalid score",description:"Every selected score must be between 0 and 100."});
+        return;
+      }
+    }
     if(!window.confirm("Send "+participants.length+" results to the placement cell?\n\n"+
       summary+(participants.length>12?"\n…and "+(participants.length-12)+" more":"")+
       "\n\nNo result is final until the placement cell applies it."))return;
