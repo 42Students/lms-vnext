@@ -5,7 +5,7 @@ type Saved={name:string;query:string};
 const MAX=8;
 export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
  const router=useRouter(),key="tpo-drive-views:"+scopeKey;
- const [views,setViews]=useState<Saved[]>([]),[name,setName]=useState(""),[error,setError]=useState("");
+ const [views,setViews]=useState<Saved[]>([]),[name,setName]=useState(""),[error,setError]=useState(""),[copied,setCopied]=useState("");
  useEffect(()=>{
   try{const raw=JSON.parse(localStorage.getItem(key)??"[]") as unknown;
    if(Array.isArray(raw))setViews(raw.filter((item):item is Saved=>
@@ -39,11 +39,13 @@ export function TpoDriveSavedViews({scopeKey}:{scopeKey:string}){
     Save current filters
    </button>
   </div>
-  {error?<p role="alert" className="mt-2 text-xs text-error">{error}</p>:null}
+  {error?<p role="alert" className="mt-2 text-xs text-error">{error}</p>:null}{copied?<p role="status" className="mt-2 text-xs text-body">Link copied for {copied}.</p>:null}
   {views.length?<ul className="mt-3 flex flex-wrap gap-2">{views.map(view=>
    <li key={view.name} className="inline-flex items-center gap-1 rounded border border-border">
     <button type="button" onClick={()=>router.push("/tpo/placements/lifecycle"+(view.query?"?"+view.query:""))}
      className="min-h-9 px-3 text-sm font-semibold text-primary-text">{view.name}</button>
+    <button type="button" onClick={()=>{if(!navigator.clipboard){setError("Clipboard unavailable. Open the view and copy its URL.");return;}void navigator.clipboard.writeText(window.location.origin+"/tpo/placements/lifecycle"+(view.query?"?"+view.query:"")).then(()=>{setCopied(view.name);setError("");}).catch(()=>setError("Copy failed. Open the view and copy its URL."));}}
+     aria-label={"Copy link for saved view "+view.name} className="min-h-9 px-2 text-sm text-primary-text">Copy link</button>
     <button type="button" onClick={()=>remove(view.name)}
      aria-label={"Delete saved view "+view.name} className="min-h-9 px-2 text-sm text-body">×</button>
    </li>)}</ul>:<p className="mt-2 text-sm text-body">No views saved in this browser yet.</p>}
