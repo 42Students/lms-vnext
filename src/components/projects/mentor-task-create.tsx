@@ -47,6 +47,7 @@ export function MentorTaskCreate({
         sprintId:selectedSprintId||null,
         expectedSprintUpdatedAt:chosenSprint?.updatedAt??null,
         title:title.trim(),description:description.trim()||null,
+        approach:approach.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
         priority,status,assigneeMembershipId:assigneeMembershipId||null,
         estimatePoints:estimate!==""?Number(estimate):null,
