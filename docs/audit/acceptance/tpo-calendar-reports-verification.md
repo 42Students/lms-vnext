@@ -108,3 +108,10 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-32 | DONE source reverified | After-college report enforces batch and college-scoped branch selection, explicit unavailable state, recorded-only counts and CSV. `tests/unit/chat9-round9-report-evidence.test.ts` case TPO-calendar-reports-32. |
 | TPO-calendar-reports-35 | DONE source reverified | Seven-field, per-learner completeness logic and per-field missing counts retain missing data rather than turning it into zero. `tests/unit/chat9-round9-report-evidence.test.ts` case TPO-calendar-reports-35. |
 | TPO-calendar-reports-43 | BLOCKED (storage); partial data DONE | Academic and application evidence shown with unknown marks/resume marked unavailable; private resume verification requires storage integration. `tests/unit/chat9-round9-report-evidence.test.ts` case TPO-calendar-reports-43. |
+
+## Round 9 report action acceptance (tests not executed)
+| TPO-calendar-reports-44 | DONE source | Filtered Students shortcut is explicitly a subset, not all unplaced students. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-44. |
+| TPO-calendar-reports-48 | DONE source | Round-and-branch failures dedupe applied result IDs and use recorded denominators. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-48. |
+| TPO-calendar-reports-49 | DONE source | Company engagement counts recorded events and completed rounds only. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-49. |
+| TPO-calendar-reports-50 | DONE source | Up to 12 browser-local filters keyed by user/college/report; error state on storage failure. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-50. |
+| TPO-calendar-reports-51 | DONE source | Fullscreen presentation has exit and failure state; no fake success. `tests/unit/chat9-round9-report-actions.test.ts`, case TPO-calendar-reports-51. |
