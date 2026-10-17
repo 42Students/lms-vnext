@@ -148,30 +148,7 @@ export async function getAdminCourseWorkspace(
         })),
     );
 
-  const faculty = people
-    .filter(
-      (person) =>
-        person.membership.status ===
-          "ACTIVE" &&
-        person.membership.roles.includes(
-          "FACULTY",
-        ),
-    )
-    .map((person) => ({
-      membershipId:
-        person.membership.id,
-      displayName:
-        person.user.displayName ??
-        person.user.email ??
-        "Unnamed Faculty",
-      email: person.user.email,
-    }))
-    .sort((a, b) =>
-      a.displayName.localeCompare(
-        b.displayName,
-      ),
-    );
-
+  const faculty=facultyChoices.faculty;
   return {
     collegeId,
     departments: academics.departments,
