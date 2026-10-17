@@ -68,6 +68,15 @@ export function LearnerAddOwnTask({projectId,sprints}:{projectId:string;sprints:
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(x=><option key={x} value={x}>{x}</option>)}
     </select></label>
+   <label className="text-sm font-semibold">Status
+    <select value={status} disabled={!sprintId}
+      onChange={e=>setStatus(e.target.value as typeof status)}
+      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+      <option value="TODO">To Do</option>
+      {sprintId?<><option value="IN_PROGRESS">In Progress</option>
+        <option value="BLOCKED">Blocked</option></>:null}
+    </select>
+   </label>
    <label className="text-sm font-semibold">Type
     <select value={type} onChange={e=>setType(e.target.value)}
      className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
