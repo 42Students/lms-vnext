@@ -419,7 +419,7 @@ export function SuperAdminHrAccounts({
           description:
             values.status === "ARCHIVED" &&
             existing.status !== "ARCHIVED"
-              ? "The recruiter was archived and active college grants were revoked."
+              ? "The recruiter was suspended, signed out everywhere and retains existing college access."
               : "Account changes were saved.",
         });
       }
@@ -437,8 +437,8 @@ export function SuperAdminHrAccounts({
     if(!account.accountManageable||pending||account.status==="DISABLED")return;
     const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
     const question=next==="ARCHIVED"
-      ? "Suspend "+hrDisplayName(account)+"? Their college access will be revoked."
-      : "Reactivate "+hrDisplayName(account)+"? College access is not automatically restored.";
+      ? "Suspend "+hrDisplayName(account)+"? They are signed out everywhere and cannot sign in until reactivated. College access is kept."
+      : "Reactivate "+hrDisplayName(account)+"? Their existing college access is kept.";
     if(!window.confirm(question))return;
     setPending(true);setActionError(null);
     try{
