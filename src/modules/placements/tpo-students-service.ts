@@ -91,6 +91,7 @@ export const tpoStudentsQuerySchema = z
     maxApplications:z.coerce.number().int().min(0).max(10000).optional(),
     minOffers:z.coerce.number().int().min(0).max(10000).optional(),
     maxOffers:z.coerce.number().int().min(0).max(10000).optional(),
+    offerWaiting:z.enum(["YES","NO"]).transform(value=>value==="YES").optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
