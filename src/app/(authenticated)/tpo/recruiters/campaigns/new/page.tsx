@@ -8,7 +8,7 @@ import {tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-dra
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 export const dynamic="force-dynamic";
-export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string}>}){
+export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string|string[]}>}){
  const raw=(await searchParams).selected??"";
  const selectedLeadIds=[...new Set(raw.split(",").filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))].slice(0,100);
  const ctx=await getCurrentRequestContext();
