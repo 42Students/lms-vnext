@@ -15,7 +15,7 @@ export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],stat
  return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
   (kind==="ALL"||f.offer.kind===kind)&&
   (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
-  [f.candidate.displayName,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
+  [f.candidate.displayName,f.candidate.email,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
