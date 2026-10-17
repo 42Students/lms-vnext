@@ -48,6 +48,11 @@ export const db10LogAlertSignatures = pgTable(
     lastSeenCommit: varchar("last_seen_commit", { length: 64 }),
     regressedAt: timestamp("regressed_at", { withTimezone: true }),
     samplePath: varchar("sample_path", { length: 255 }),
+    alertedAt: timestamp("alerted_at", { withTimezone: true }),
+    acknowledgedAt: timestamp("acknowledged_at", { withTimezone: true }),
+    lastSpikeAlertAt: timestamp("last_spike_alert_at", { withTimezone: true }),
+    recentWindowAt: timestamp("recent_window_at", { withTimezone: true }),
+    recentWindowCount: bigint("recent_window_count", { mode: "number" }).notNull().default(1),
   },
   (t) => [
     uniqueIndex("db10_log_alert_signature_env_hash_uq")
@@ -97,6 +102,10 @@ export const db10LogAlertStates = pgTable(
     stateKey: varchar("state_key", { length: 64 }).notNull(),
     pollCursorAt: timestamp("poll_cursor_at", { withTimezone: true }),
     adminLastViewedAt: timestamp("admin_last_viewed_at", { withTimezone: true }),
+    burstMinuteAt: timestamp("burst_minute_at", { withTimezone: true }),
+    burstCount: bigint("burst_count", { mode: "number" }).notNull().default(0),
+    overflowCount: bigint("overflow_count", { mode: "number" }).notNull().default(0),
+    lastDigestDay: varchar("last_digest_day", { length: 10 }),
   },
   (t) => [
     uniqueIndex("db10_log_alert_states_key_uq").on(t.stateKey),
