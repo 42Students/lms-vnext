@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PlacementEmployerRelationships } from "@/components/placements/placement-employer-relationships";
+import {CollegeCompanyCreate} from "@/components/placements/college-company-create";
 import {
   listPlacementRelationshipOwners,
 } from "@/modules/placements/company-service";
@@ -34,6 +35,7 @@ export default async function CollegeCompaniesPage({
 
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
+    <CollegeCompanyCreate collegeId={collegeId}/>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
