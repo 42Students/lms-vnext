@@ -44,7 +44,7 @@ const stageLabels:Record<string,string>={
  NEW:"New",CONTACTED:"Contacted",INVITED:"Invited",JOINED:"Joined",
  DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",NOT_NOW:"Not now",
 };
-export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]){
+export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[], columns?:readonly EngageColumn[]){
  return {
   headers:[...RECRUITER_TABLE_HEADERS],
   values:rows.map(row=>[
