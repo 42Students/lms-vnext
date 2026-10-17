@@ -50,7 +50,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
-        setAdding(false);setTitle("");setDescription("");setCriteria("");router.refresh();
+        setAdding(false);setTitle("");setDescription("");setCriteria("");
+        setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
+        router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
       finally{setBusy(false);}
     }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
