@@ -45,10 +45,19 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
  const isPreview=result.status==="READY"&&tab.data==="yours";
  const selected=query.success?announcementPreviewScope(query.data):null;
- const audience=isPreview&&query.success
-  ?selected?await previewTpoPlacementAudience(context,selected)
-   :await previewTpoCollegeAnnouncementVisibility(context)
-  :null;
+ const previewRequest=isPreview&&query.success?
+  (selected?previewTpoPlacementAudience(context,selected):
+   previewTpoCollegeAnnouncementVisibility(context)):null;
+ const preview=previewRequest?
+  await previewRequest.then(value=>({value,failed:false as const}))
+   .catch(()=>({value:null,failed:true as const})):
+  {value:null,failed:false as const};
+ const audience=preview.value;
+ const retryPreviewHref=query.success?
+  "/tpo/announcements?"+new URLSearchParams({
+   tab:"yours",audience:query.data.audience,
+   ...(query.data.targetId?{targetId:query.data.targetId}:{}),
+  }).toString():"/tpo/announcements";
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description={tab.data==="from-42"?"What 42 tells placement cells.":
