@@ -95,7 +95,13 @@ export const tpoStudentsQuerySchema = z
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
-  .strict();
+  .strict()
+  .superRefine((value,ctx)=>{
+    if(value.minApplications!==undefined&&value.maxApplications!==undefined&&value.minApplications>value.maxApplications)
+     ctx.addIssue({code:"custom",path:["maxApplications"],message:"Maximum applications must be at least the minimum"});
+    if(value.minOffers!==undefined&&value.maxOffers!==undefined&&value.minOffers>value.maxOffers)
+     ctx.addIssue({code:"custom",path:["maxOffers"],message:"Maximum offers must be at least the minimum"});
+  });
 
 export const tpoStudentRequestsQuerySchema = z
   .object({
