@@ -5,7 +5,7 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,learnerProgramEnrollments,membershipRoles,
  placementBatchRegistrationEvents,placementBatchRegistrations,placementExternalOfferEvents,placementExternalOffers,
- placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementOffers,users} from "@/db/schema";
+ placementLearnerGeneralRequestEvents,placementLearnerGeneralRequests,placementApplications,placementOffers,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
@@ -83,10 +83,10 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
     status:placementOffers.status,
     acceptanceChannel:placementOffers.acceptanceChannel,
     acceptedDisputableUntil:placementOffers.acceptedDisputableUntil,
-   }).from(placementOffers).where(and(
+   }).from(placementOffers).innerJoin(placementApplications,
+     eq(placementApplications.id,placementOffers.applicationId)).where(and(
     eq(placementOffers.id,input.offerId),
-    eq(placementOffers.membershipId,member.id),
-    eq(placementOffers.collegeId,member.collegeId),
+    eq(placementApplications.membershipId,member.id),
    )).for("update").limit(1);
    if(!offer||offer.status!=="ACCEPTED"||offer.acceptanceChannel!=="EXTERNAL_IMPORT"||
      !offer.acceptedDisputableUntil||offer.acceptedDisputableUntil.getTime()<=Date.now())
