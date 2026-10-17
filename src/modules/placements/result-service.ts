@@ -32,6 +32,7 @@ import {
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 import {
   placementResultIdSchema,
   placementRoundIdSchema,
@@ -482,6 +483,12 @@ export async function stagePlacementRoundResult(
       throw new PlacementsServiceError("PLACEMENT_RESULT_NOT_FOUND");
     }
 
+    if(recruiterCanStage){
+      await notifyTpoOfRecruiterAction(tx,context,{
+        collegeId:job.collegeId,jobId:job.id,roundId:round.id,
+        subjectId:staged.id,action:"RESULT_STAGED",
+      });
+    }
     if (expectedCurrentResultId !== undefined) {
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_RESULT_STAGED,

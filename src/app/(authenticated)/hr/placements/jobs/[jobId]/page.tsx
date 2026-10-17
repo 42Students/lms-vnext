@@ -142,6 +142,73 @@ export default async function HrPlacementJobPage({
   const formatRoundTime=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
     timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(d);
 
+  // Use one authorized mapping for both normal round editing and focused review.
+  const resultControlRounds = workspace.rounds.map(
+            (round) => ({
+              id: round.id,
+              sequence: round.sequence,
+              kind: round.kind,
+              name: round.name,
+              status: round.status,
+              scheduledAt:
+                round.scheduledAt?.toISOString() ??
+                null,
+              timezone: round.timezone,
+              mode: round.mode,
+              venue: round.venue,
+              meetingUrl: round.meetingUrl,
+              resultsDueAt:
+                round.resultsDueAt?.toISOString() ??
+                null,
+              participants:
+                round.participants.map(
+                  (participant) => ({
+                    applicationId:
+                      participant.applicationId,
+                    displayName:
+                      participant.displayName,
+                    email:
+                      participant.email,
+                    result:
+                      participant.result
+                        ? {
+                            id:
+                              participant
+                                .result.id,
+                            status:
+                              participant
+                                .result.status,
+                            outcome:
+                              participant
+                                .result.outcome as
+                                | "PASS"
+                                | "FAIL"
+                                | "HOLD"
+                                | "ABSENT",
+                            waitlistRank:
+                              participant
+                                .result.waitlistRank,
+                            scorePercent:
+                              participant
+                                .result.scorePercent,
+                            reasonCategory:
+                              participant
+                                .result.reasonCategory as
+                                | "APTITUDE"
+                                | "TECHNICAL"
+                                | "COMMUNICATION"
+                                | "OTHER"
+                                | null,
+                            candidateMessage:
+                              participant
+                                .result.candidateMessage,
+                          }
+                        : null,
+                  }),
+                ),
+            }),
+          );
+
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
       null ||
@@ -479,7 +546,15 @@ export default async function HrPlacementJobPage({
                   />
                 </div>
               ) : null}
-              <p className="mt-5 text-sm text-muted-foreground">Round-specific review decisions are not persisted by this drawer. The placement team controls official screening.</p>
+              {focused&&!driveOverview.readOnly?<div className="mt-5 space-y-3">
+                <h4 className="font-semibold text-foreground">Round results for this applicant</h4>
+                <p className="text-xs text-muted-foreground">Draft decisions are sent for placement-cell verification. Only the placement cell can apply official outcomes.</p>
+                <RecruiterResultControls key={selectedApplicant.id} focusApplicantId={selectedApplicant.id} rounds={resultControlRounds
+                  .filter(round=>round.participants.some(person=>person.applicationId===selectedApplicant.id))
+                  .map(round=>({...round,participants:round.participants.filter(person=>person.applicationId===selectedApplicant.id)}))}/>
+              </div>:<p className="mt-5 text-sm text-muted-foreground">
+                {driveOverview.readOnly?"This drive is finished. Results can no longer be sent.":"Official screening is controlled by the placement cell. Open Focused review to stage results for this applicant."}
+              </p>}
               <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=rounds"+returnQuery}
                 className="mt-4 inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Review rounds</Link>
             </section>
@@ -627,71 +702,7 @@ export default async function HrPlacementJobPage({
         </section>:null}
         {!driveOverview.readOnly ? (
         <RecruiterResultControls
-          rounds={workspace.rounds.map(
-            (round) => ({
-              id: round.id,
-              sequence: round.sequence,
-              kind: round.kind,
-              name: round.name,
-              status: round.status,
-              scheduledAt:
-                round.scheduledAt?.toISOString() ??
-                null,
-              timezone: round.timezone,
-              mode: round.mode,
-              venue: round.venue,
-              meetingUrl: round.meetingUrl,
-              resultsDueAt:
-                round.resultsDueAt?.toISOString() ??
-                null,
-              participants:
-                round.participants.map(
-                  (participant) => ({
-                    applicationId:
-                      participant.applicationId,
-                    displayName:
-                      participant.displayName,
-                    email:
-                      participant.email,
-                    result:
-                      participant.result
-                        ? {
-                            id:
-                              participant
-                                .result.id,
-                            status:
-                              participant
-                                .result.status,
-                            outcome:
-                              participant
-                                .result.outcome as
-                                | "PASS"
-                                | "FAIL"
-                                | "HOLD"
-                                | "ABSENT",
-                            waitlistRank:
-                              participant
-                                .result.waitlistRank,
-                            scorePercent:
-                              participant
-                                .result.scorePercent,
-                            reasonCategory:
-                              participant
-                                .result.reasonCategory as
-                                | "APTITUDE"
-                                | "TECHNICAL"
-                                | "COMMUNICATION"
-                                | "OTHER"
-                                | null,
-                            candidateMessage:
-                              participant
-                                .result.candidateMessage,
-                          }
-                        : null,
-                  }),
-                ),
-            }),
-          )}
+          rounds={resultControlRounds}
         />
         ) : null}
 

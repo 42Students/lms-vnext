@@ -247,3 +247,17 @@ round. Shared shell paths remain owned by chat-9 and were not edited during this
 - **WP-05 / REC-home-drives-R08:** recruiter Drives listing now applies employer/college grant scope, search, lifecycle, work-mode, employment, deadline, ordering and 20-row paging in PostgreSQL; deadline previews are separately scoped and bounded; the CSV endpoint queries only its 201-row export cap instead of reading unbounded jobs. Manual/browser verification and data-volume acceptance still outstanding.
 - **BLOCKED (move on):** LEARNER-profile-misc-01/-02/-03/-04, REC-home-drives-23/-43 (private scanned storage); REC-home-drives-38 (consent-based applicant disclosure); REC-home-drives-51 (registered selection-list verification lifecycle not confirmed); REC-home-drives-21/-33/-R03 (security/product approval and ownership policy); REC-calendar-messages-profile-25/-46 and REC-home-drives-09 (identity/invitation authorization); LEARNER-profile-misc-18 (no authoritative per-viewer data-access disclosure feed).
 - **WP states:** 01–05 remain **IN-PROGRESS**, not DONE; nonblocked parity items remain. As explicitly required by FAST v2, no tests, typecheck, lint, build or CI were run, and none of these changes constitutes verified audit closure.
+
+
+## FAST v2 chat-7 continuation — 2026-10-17 (after merged main 9c4cdf5)
+
+- **Sync:** fast-forwarded `chatgpt/chat-7-b` from prior merged lane tip to `main` at `9c4cdf54` before editing; all new commits use `[chat-7]` and stay on builder branch.
+- **WP-01 S1 and WP-02 S2:** `REC-home-drives-12/-21/-22` recruiter-request cancellation now uses the registered scoped PATCH/CAS flow, actionable list controls, truthful approved-draft states, distinct TPO decision-change activity/bells, and one-time post-persistence Save/Resend receipts.
+- **WP-02 S2:** `REC-home-drives-24/-25/-26` draft branches now preserve comma typing and deduplicate names; internship + full-time requires a positive stipend; off-campus draft records a validated HTTPS application website with live preview and safe Hire Again copies, clearing the link when returning to on-campus mode. Job-publication integration is not certified.
+- **WP-02 S2:** `REC-home-drives-R01` new transactional TPO event/bell service is wired for recruiter round create/update/remove, results staging and slot proposals/offers/cancellation. TPO slot acknowledgment/viewer still needs producer integration.
+- **WP-02 S2:** `REC-home-drives-42` focused applicant review reuses authorized recruiter round-result controls for its selected applicant, including initial keyboard decision selection, with official result application remaining TPO-controlled.
+- **BLOCKED LEARNER-profile-misc-01/-02/-03/-04, REC-home-drives-23/-43:** private scanner-attested file, media and resume ZIP storage/retrieval is unavailable; skip.
+- **BLOCKED REC-home-drives-38/-51:** applicant-data disclosure consent and registered recruiter-selection-list verification lifecycle are unresolved; skip.
+- **BLOCKED REC-home-drives-21/-33/-R03:** trusted-recruiter auto-approval and per-recruiter drive ownership rules require security/product decisions; skip.
+- **BLOCKED REC-calendar-messages-profile-25/-46, REC-home-drives-09, LEARNER-profile-misc-18:** verified phone/invite authority and authoritative per-viewer disclosure feed are unavailable; skip.
+- **WP-01..05:** IN-PROGRESS; remaining S1/S2 blockers and S2 completeness not certified. Source-only FAST v2 round, no checks run.

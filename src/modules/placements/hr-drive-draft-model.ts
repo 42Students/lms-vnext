@@ -21,6 +21,11 @@ export const hrDriveDraftSchema = z.strictObject({
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
+  externalApplicationUrl: z.string().trim().max(2000).refine(value=>{
+    if(!value)return true;
+    try{const url=new URL(value);return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password;}
+    catch{return false;}
+  },"Enter a valid https application link").default(""),
   ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
@@ -37,6 +42,10 @@ export const hrDriveDraftSchema = z.strictObject({
   passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
+  if(data.driveMode==="ON_CAMPUS"&&data.externalApplicationUrl){
+    ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
+      message:"An application website is only valid for off-campus drives"});
+  }
   const uniqueRoundNames = new Set<string>();
   for (const [index, item] of data.rounds.entries()) {
     const label = item.name.trim().replace(/\s+/g," ").toLocaleLowerCase("en");
@@ -46,7 +55,7 @@ export const hrDriveDraftSchema = z.strictObject({
     }
     uniqueRoundNames.add(label);
   }
-  if (data.employmentType==="INTERNSHIP" && !data.stipendMonthlyInr) {
+  if ((data.employmentType==="INTERNSHIP"||data.employmentType==="INTERNSHIP_FULL_TIME") && (!data.stipendMonthlyInr||Number(data.stipendMonthlyInr)<=0)) {
     ctx.addIssue({code:"custom",path:["stipendMonthlyInr"],message:"Students need to know the stipend"});
   }
   if (data.employmentType!=="INTERNSHIP" && !data.ctcLpa &&
@@ -88,7 +97,7 @@ export type HrDriveDraft = z.input<typeof hrDriveDraftSchema>;
 export function emptyHrDriveDraft(): HrDriveDraft {
   return {
     title: "", description: "", location: "",
-    employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",
+    employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",externalApplicationUrl:"",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
     bondAmountInr: "", maximumActiveBacklogs: "", branches: [], passingYear: "",
@@ -99,9 +108,17 @@ export function emptyHrDriveDraft(): HrDriveDraft {
 export function hrDraftFromAuthorizedJob(job: {
   title: string; description: string; locations: readonly string[];
   employmentType: string; workMode: string;
+  recruiterDriveMode?: string; externalApplicationUrl?:string|null;
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
 }, rounds: readonly { kind: string; name: string }[]): HrDriveDraft {
   const base = emptyHrDriveDraft();
+  const safeExternalLink=(()=>{
+    try{
+      const candidate=new URL(job.externalApplicationUrl??"");
+      return candidate.protocol==="https:"&&Boolean(candidate.hostname)&&
+        !candidate.username&&!candidate.password?candidate.toString():"";
+    }catch{return "";}
+  })();
   const type = z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]).safeParse(job.employmentType);
   const mode = z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]).safeParse(job.workMode);
   const allowedRoundKinds = z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]);
@@ -117,6 +134,8 @@ export function hrDraftFromAuthorizedJob(job: {
     location: job.locations[0] ?? "",
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
+    driveMode:job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
+    externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
     rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,

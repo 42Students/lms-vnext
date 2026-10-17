@@ -33,6 +33,7 @@ export function HrDriveDraftForm({
   branchSuggestions,
   sourceJobTitle,
   storageKey,
+  feedbackKey,
   collegeId,
   sourceJobId,
   fixRequestId=null,
@@ -43,6 +44,7 @@ export function HrDriveDraftForm({
   branchSuggestions:readonly string[];
   sourceJobTitle: string | null;
   storageKey:string;
+  feedbackKey:string;
   collegeId:string;
   sourceJobId:string|null;
   fixRequestId?:string|null;
@@ -50,6 +52,7 @@ export function HrDriveDraftForm({
   editMode?:"EDIT"|"RESUBMIT";
 }) {
   const [draft, setDraft] = useState<HrDriveDraft>(initial);
+  const [branchInput,setBranchInput]=useState(initial.branches.join(", "));
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
   const [submitting,setSubmitting] = useState(false);
@@ -74,7 +77,7 @@ export function HrDriveDraftForm({
       const saved=(restoreHrUnsentDraft(window.localStorage.getItem(storageKey),Date.now())??restoreHrUnsentDraft(window.sessionStorage.getItem(storageKey),Date.now()));
       if(!saved)return;
       // Adopt only a matching college/user browser draft. Never overwrite an edit/resubmit.
-      queueMicrotask(()=>{setDraft(saved);setNotice("We restored your unsent draft");});
+      queueMicrotask(()=>{setDraft(saved);setBranchInput(saved.branches.join(", "));setNotice("We restored your unsent draft");});
     }catch{/* Browser storage unavailable */ }
   },[storageKey,fixRequestId,sourceJobId]);
 
@@ -111,7 +114,7 @@ export function HrDriveDraftForm({
       if(!saved){setNotice("No unexpired saved draft for this college and job was found.");return;}
       if(hrDraftContainsWork(draft)&&JSON.stringify(draft)!==JSON.stringify(saved)&&
         !window.confirm("Replace your current unsent changes with the draft saved on this device?"))return;
-      setDraft(saved);setShowPreview(false);
+      setDraft(saved);setBranchInput(saved.branches.join(", "));setShowPreview(false);
       setNotice("Restored local draft. It has not been submitted or sent.");}
     catch{setNotice("Unable to access saved drafts in this browser.");}
   }
@@ -171,6 +174,11 @@ export function HrDriveDraftForm({
         return;
       }
       submittedRef.current=true;
+      try{
+        window.sessionStorage.setItem(feedbackKey,fixRequestId
+          ? editMode==="EDIT"?"Saved. The placement cell sees the new version.":"Request resent to the placement cell."
+          : "Sent for review.");
+      }catch{/* A verified save must not depend on flash storage. */}
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
@@ -217,11 +225,21 @@ export function HrDriveDraftForm({
           <label className="grid gap-1 text-sm text-body">
             Mode
             <select className={inputClass} value={draft.driveMode??"ON_CAMPUS"}
-              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS"}))}>
+              onChange={event=>setDraft(current=>({...current,driveMode:event.target.value as "ON_CAMPUS"|"OFF_CAMPUS",
+                ...(event.target.value==="ON_CAMPUS"?{externalApplicationUrl:""}:{})}))}>
               <option value="ON_CAMPUS">On campus</option>
               <option value="OFF_CAMPUS">Off campus (students apply on your site)</option>
             </select>
           </label>
+          {draft.driveMode==="OFF_CAMPUS"?<label className="grid gap-1 text-sm text-body sm:col-span-2">
+            Application website (HTTPS)
+            <input className={inputClass} type="url" inputMode="url" maxLength={2000}
+              placeholder="https://example.com/apply" value={draft.externalApplicationUrl??""}
+              onChange={event=>setDraft(current=>({...current,externalApplicationUrl:event.target.value}))}/>
+            <span className="text-xs text-muted-foreground">
+              The placement cell reviews the application website before publishing.
+            </span>
+          </label>:null}
           <label className="grid gap-1 text-sm text-body">
             Work mode
             <select className={inputClass} value={draft.workMode}
@@ -282,9 +300,10 @@ export function HrDriveDraftForm({
           <label className="grid gap-1 text-sm text-body">
             Branches
             <input className={inputClass} list="recruiter-eligible-branches"
-              value={(draft.branches??[]).join(", ")} placeholder="e.g. CSE, ECE, Mechanical"
-              onChange={event=>setDraft(current=>({...current,
-                branches:event.target.value.split(",").map(value=>value.trim()).filter(Boolean)}))}/>
+              value={branchInput} placeholder="e.g. CSE, ECE, Mechanical"
+              onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
+                branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
+                  .map(value=>[value.toLocaleLowerCase("en"),value] as const)).values()]}));}}/>
             <datalist id="recruiter-eligible-branches">
               {branchSuggestions.map(name=><option key={name} value={name}/>)}
             </datalist>
@@ -391,7 +410,7 @@ export function HrDriveDraftForm({
             onClick={() => {
               if(hrDraftContainsWork(draft)&&!window.confirm("Discard all unsent draft changes and clear this tab's saved copy?"))return;
               try{window.sessionStorage.removeItem(storageKey);window.localStorage.removeItem(storageKey);}catch{/* Storage may be disabled; reset form regardless. */}
-              setDraft(emptyHrDriveDraft());setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
+              setDraft(emptyHrDriveDraft());setBranchInput("");setShowPreview(false);setNotice("Cleared this tab’s saved draft.");
             }}>Start over</button>
         </div>
         {showPreview && !result.success ? (
@@ -409,6 +428,11 @@ export function HrDriveDraftForm({
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
+            {draft.driveMode==="OFF_CAMPUS"?
+              <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
+                ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
+                  className="font-semibold text-primary-text underline">{result.data.externalApplicationUrl}</a>
+                : "Not specified"}</p>:null}
             <h4 className="font-semibold text-foreground">Planned hiring process</h4>
             <ol className="list-inside list-decimal space-y-1">
               {hrDraftPreviewRounds(draft).map(step=>(

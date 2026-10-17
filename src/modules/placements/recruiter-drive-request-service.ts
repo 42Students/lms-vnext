@@ -48,12 +48,15 @@ async function lockedRelationship(tx:Tx,context:RequestContext,collegeId:string)
    throw new RecruiterDriveRequestError("FORBIDDEN");
  return row;
 }
-async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string){
+async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId:string;organizationId:string},id:string,title:string,action:"NEW"|"UPDATED"|"CANCELLED"="NEW"){
+ const headline=action==="NEW"?"New drive request from "+context.recruiter!.companyName:
+  action==="UPDATED"?"Recruiter updated a drive request":"Recruiter cancelled a drive request";
  const [event]=await tx.insert(activityEvents).values({
   organizationId:scope.organizationId,collegeId:scope.collegeId,
-  actorUserId:context.user.id,module:"PLACEMENTS",eventType:"placements.recruiter.drive.requested",
+  actorUserId:context.user.id,module:"PLACEMENTS",eventType:action==="NEW"?"placements.recruiter.drive.requested":
+    action==="UPDATED"?"placements.recruiter.drive.updated":"placements.recruiter.drive.cancelled",
   subjectType:"placement_recruiter_drive_request",subjectId:id,subjectLabel:title,
-  summary:"New drive request from "+context.recruiter!.companyName,metadata:{requestId:id},
+  summary:headline,metadata:{requestId:id,action},
  }).returning({id:activityEvents.id});
  if(!event)throw new RecruiterDriveRequestError("STORAGE_NOT_READY");
  const recipients=await tx.selectDistinct({userId:collegeMemberships.userId})
@@ -62,8 +65,10 @@ async function informPlacementCell(tx:Tx,context:RequestContext,scope:{collegeId
   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
   .where(and(eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")));
  if(recipients.length) await tx.insert(inAppNotifications).values(recipients.map(recipient=>({
-  userId:recipient.userId,eventId:event.id,title:"New drive request from "+context.recruiter!.companyName,
-  body:"A recruiter sent a formal drive request. Open Drive lifecycle to inspect the recorded request.",actionHref:"/tpo/placements/lifecycle?view=REQUESTS",
+  userId:recipient.userId,eventId:event.id,title:headline,
+  body:action==="NEW"?"A recruiter sent a formal drive request. Open Drive lifecycle to inspect the recorded request.":
+    action==="UPDATED"?"A recruiter saved changes to a drive request. Open Drive lifecycle to review the new version.":
+    "A recruiter cancelled a drive request. Open Drive lifecycle to review its history.",actionHref:"/tpo/placements/lifecycle?view=REQUESTS",
  }))).onConflictDoNothing();
 }
 /** REC-home-drives-21: writes registered 0101 table and TPO bell transactionally. */
@@ -141,9 +146,11 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
    decisionNote:null,decidedAt:null,decidedByUserId:null,updatedAt:new Date(),
   }).where(eq(placementRecruiterDriveRequests.id,original.id)).returning();
   if(!updated)throw new RecruiterDriveRequestError("STALE");
-  if(input.action==="RESUBMIT"||input.action==="EDIT")await informPlacementCell(tx,context,{
+  // A cancelled request must leave an audit/bell trail as well as an updated row.
+  await informPlacementCell(tx,context,{
    collegeId:input.collegeId,organizationId:scope.organizationId},updated.id,
-   String(input.draft?.title??"Updated drive request"));
+   String(input.draft?.title??(original.draft as {title?:string})?.title??"Drive request"),
+   input.action==="CANCEL"?"CANCELLED":"UPDATED");
   return updated;
  });
 }
