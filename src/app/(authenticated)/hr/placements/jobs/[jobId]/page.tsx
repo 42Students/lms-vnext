@@ -376,7 +376,7 @@ export default async function HrPlacementJobPage({
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-lg border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
-                {message.senderType==="RECRUITER"?"You":"Placement cell"} ·
+                {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
                 {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
               </p>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
