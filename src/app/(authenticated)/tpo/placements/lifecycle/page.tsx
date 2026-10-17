@@ -36,7 +36,6 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(data.companyId?{companyId:data.companyId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
-   display:data.display,
     display:data.display,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
