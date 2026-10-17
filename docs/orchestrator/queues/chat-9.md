@@ -141,3 +141,20 @@ Merged latest `origin/main` by fast-forward at start. Small `[chat-9]` gap-tagge
 - BLOCKED `TPO-settings-audit-80`: notification delivery/suppression consumers are separately owned and must not suppress mandatory alerts.
 - BLOCKED `TPO-calendar-reports-07`: drag-and-drop follow-up rescheduling requires a verified writable calendar interaction and conflict behavior; current recorded move flow remains available.
 - BLOCKED Remaining independently owned producer/security/schema/deployment/live-verification gaps remain open and are not certified by this fast source pass.
+
+
+## FAST v2 continuation 7 — S1/S2 priority pass (2026-10-17)
+
+Fast-forwarded `chatgpt/chat-9-b` to the latest `origin/main@2e69a866811cd85e49ffe07883e5ce919358f94f` before editing; no tests, typecheck, lint, builds or CI. Every commit uses `[chat-9]` with its specific S2 gap ID; pushed to this branch only. This is an **unverified source pass**, not a claim that deferred WPs have achieved runtime parity.
+
+- WP-02 `TPO-calendar-reports-49`: added company-wise Engage lead/contact/invite/linked-recruiter counts from college-authorized CRM records; mapped relationship IDs to college company IDs; joined selected-season/drive company's recorded drives and placed learner totals; added privacy-safe, formula-safe filtered CSV. **Partial**: recorded drives are not proven to have run, and contacts refer to recorded outreach events; never label unobserved work as complete.
+- WP-02 `TPO-calendar-reports-48`: added audited-scope read of APPLIED round outcomes and a per-round FAIL share with an explicit all-applied-decisions denominator; added round table and chart. **Partial**: historical branch dimensions and college-specific round participation eligibility denominator remain open.
+- WP-02 `TPO-calendar-reports-43` / `-31`: unplaced page and CSV now read actual last submission, submitted/withdrawn application counts and current submitted application flags scoped to selected season/drive, with same TPO-role and authorized batch/branch validation on export. **Partial**: academic Lowest %, UG %, marks verified and resume evidence still require the authoritative academic/document service rather than placeholders presented as truth.
+- WP-04 `TPO-settings-audit-44`: college blocked dates now flow into the weekly hour-grid; blocked days are labelled, creation and drag/drop moves show warnings and request override confirmation, and missing blocked-date storage is disclosed. **Partial**: every other drive/round scheduling writer must consume the same policy.
+- WP-01 `SA-tenants-modules-17`: suspended administrators with an additional mentor role can be reactivated; conservative suspension safeguards remain. **Partial**: server-side active-project mentor assignment guard, per-admin history and safe delete still require source-owner verification.
+- BLOCKED `SA-tenants-modules-20/33/35`: live DNS/TLS, cookie-domain and network-policy activation require deployment/security owner approval; no safe source-only substitute.
+- BLOCKED `SA-tenants-modules-34`: high-impact per-college attendance rule writes and 8760-hour persistence ceiling require schema/policy review before registration.
+- BLOCKED `TPO-settings-audit-12/22/23/31/33/41/50/51/74`: learner marks conversion, drive-linked job-type FK usage/removal, Students outcome/readiness consumers, recruiter auto-approval, and public-page copy schema require owning producer or policy; do not infer these features from config alone.
+- BLOCKED `TPO-calendar-reports-48/49`: round-by-branch failures and true 'drives that ran' require independent authoritative participant and completed-drive producers.
+- BLOCKED Browser/mobile acceptance, service credentials, dependent migrations and background-delivery tests remain outside FAST mode; none were run.
+
