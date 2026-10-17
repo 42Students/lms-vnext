@@ -18,10 +18,9 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const collegeId=query.collegeId??(unique.length===1?unique[0]:null);
  if(!collegeId)return {status:unique.length?"CHOOSE_COLLEGE" as const:"NO_ACCESS" as const,
   choices:grants,items:[],collegeId:null};
- const [threads,jobs]=await Promise.all([
-  listMessageThreads(context,collegeId),
-  listOwnRecruiterPlacementJobs(context,collegeId),
- ]);
+ const threads=await listMessageThreads(context,collegeId);
+ const relevantJobIds=[...new Set(threads.flatMap(thread=>thread.jobId?[thread.jobId]:[]))];
+ const jobs=await listOwnRecruiterPlacementJobs(context,collegeId,{jobIds:relevantJobIds});
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
  const titles=new Map(allowed.map(j=>[j.job.id,j.job.title]));
