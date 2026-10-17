@@ -260,6 +260,20 @@ export function buildFacultyCourseHomeSignals(
         )
       : null;
 
+  const contentPerformance=input.assignments.flatMap(assignment=>{
+    if(assignment.status==="ARCHIVED"||assignment.maxPoints<=0)return [];
+    const scores=assignment.submissions.filter(sub=>
+      rosterIds.has(sub.membershipId)&&sub.gradingStatus==="GRADED"&&
+      sub.pointsAwarded!==null&&Number.isFinite(sub.pointsAwarded)&&
+      sub.pointsAwarded>=0&&sub.pointsAwarded<=assignment.maxPoints
+    ).map(sub=>Math.round(100*(sub.pointsAwarded!)/assignment.maxPoints));
+    if(scores.length<3)return [];
+    return [{id:assignment.id,title:assignment.title,graded:scores.length,
+      averagePercent:Math.round(scores.reduce((a,b)=>a+b,0)/scores.length)}];
+  }).sort((a,b)=>a.averagePercent-b.averagePercent||a.title.localeCompare(b.title));
+  const weakestContent=contentPerformance[0]??null;
+  const strongestContent=contentPerformance.length>1?contentPerformance[contentPerformance.length-1]:null;
+
   const missingCounts = new Map<
     string,
     number
@@ -374,6 +388,8 @@ export function buildFacultyCourseHomeSignals(
           ),
         ),
       studentAverages,
+      weakestContent,
+      strongestContent,
     },
     atRisk,
     atRiskCounts,
