@@ -32,7 +32,7 @@ export default async function CollegeHiringDashboardPage({
   }
   const workspace = await getPlacementReportWorkspace(context, {
     collegeId: context.membership.collegeId,
-    ...query.data,
+    seasonId:query.data.seasonId,jobId:query.data.jobId,
   });
   const funnel=await getCollegeHiringFunnel(context,{
     ...query.data,seasonId:query.data.seasonId??workspace.selectedSeasonId??undefined,
