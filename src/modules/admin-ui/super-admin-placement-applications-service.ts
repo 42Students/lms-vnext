@@ -1,8 +1,9 @@
 import "server-only";
-import {and,asc,count,eq,ilike,or} from "drizzle-orm";
+import {and,asc,count,eq,ilike,or,exists,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {aliasedColumn} from "@/db/aliased-column";
-import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,users} from "@/db/schema";
+import {colleges,collegeMemberships,placementApplications,placementJobs,placementJobRoleOptions,users,learnerProgramEnrollments,programs,departments,cohorts} from "@/db/schema";
+import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {scopedSearchLike,superAdminReadPages,superAdminReadQuerySchema,SUPER_ADMIN_READ_PAGE_SIZE,type SuperAdminReadResult} from "./super-admin-read-directory-model";
@@ -13,6 +14,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   status:aliasedColumn(placementApplications.status,"admin_application_status"),
   eligibilityStatus:placementApplications.eligibilityStatus,
   channel:placementApplications.channel,submittedAt:placementApplications.submittedAt,
+  pipelineStage:sql<string>`coalesce(${placementCollegeApplicationStages.stage}, 'APPLIED')`.as("admin_application_pipeline_stage"),
   jobId:aliasedColumn(placementJobs.id,"admin_application_job_id"),
   jobTitle:aliasedColumn(placementJobs.title,"admin_application_job_title"),
   roleTitle:aliasedColumn(placementJobRoleOptions.title,"admin_application_role_title"),
@@ -26,9 +28,19 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
  .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
   eq(collegeMemberships.collegeId,selected.collegeId)))
  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .leftJoin(placementCollegeApplicationStages,and(eq(placementCollegeApplicationStages.applicationId,placementApplications.id),eq(placementCollegeApplicationStages.jobId,placementJobs.id)))
  .where(and(
   query.status==="ALL"?undefined:eq(placementApplications.status,query.status as "SUBMITTED"|"WITHDRAWN"),
   query.jobId?eq(placementApplications.jobId,query.jobId):undefined,
+  query.pipelineStage!=="ALL"?sql`coalesce(${placementCollegeApplicationStages.stage}, 'APPLIED') = ${query.pipelineStage}`:undefined,
+  query.departmentId||query.programId||query.cohortId?exists(db.select({id:learnerProgramEnrollments.id}).from(learnerProgramEnrollments)
+   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
+   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,selected.collegeId)))
+   .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
+   .where(and(eq(learnerProgramEnrollments.membershipId,placementApplications.membershipId),
+    query.departmentId?eq(departments.id,query.departmentId):undefined,
+    query.programId?eq(programs.id,query.programId):undefined,
+    query.cohortId?eq(cohorts.id,query.cohortId):undefined))):undefined,
   query.q?or(ilike(placementJobs.title,scopedSearchLike(query.q)),
    ilike(placementJobRoleOptions.title,scopedSearchLike(query.q)),
    ilike(users.displayName,scopedSearchLike(query.q))):undefined,
@@ -44,7 +56,7 @@ export async function listAdminPlacementApplications(context:RequestContext,raw:
   id:row.id,title:row.learnerName||"Unnamed applicant",
   subtitle:row.jobTitle+" · "+row.roleTitle,
   status:row.status,details:["Channel: "+row.channel,"Eligibility: "+row.eligibilityStatus,
-   "Submitted: "+fmt.format(row.submittedAt)+" IST"],
+   "Submitted: "+fmt.format(row.submittedAt)+" IST","Stage: "+row.pipelineStage],
   href:`/admin/placements/applications/${encodeURIComponent(row.id)}`,
  }))};
 }
