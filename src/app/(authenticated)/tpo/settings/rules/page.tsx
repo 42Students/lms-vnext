@@ -104,7 +104,7 @@ export default async function TpoPlacementRulesSettingsPage({
         <p className="text-sm leading-6 text-body">
           The college-wide offer policy and
           job-specific eligibility criteria.
-          Values labelled Source default are supplied
+          Default values are supplied
           by the existing placement services, not by
           an inferred database record.
         </p>
@@ -149,8 +149,8 @@ export default async function TpoPlacementRulesSettingsPage({
 
         <p className="mb-0 mt-5 text-xs leading-5 text-muted-foreground">
           {rules.source === "PERSISTED"
-            ? "These values were read from this college's placement_college_rules row."
-            : "This college has no placement_college_rules row. Values shown are the effective source defaults: offer released, one held offer, 40% uplift, and a 48-hour minimum response period."}
+            ? "These are your saved college placement rules."
+            : "No custom rules are saved yet. Current defaults count released offers, allow one held offer, require a 40% uplift and at least 48 hours to respond."}
         </p>
       </section>
 
