@@ -206,7 +206,8 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     </select>
    </label>
    <label className="grid gap-1 text-sm font-semibold">Section
-    <select value={listSectionId} onChange={e=>setListSectionId(e.target.value)}
+    <select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
+     onChange={e=>setListSectionId(e.target.value)}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">Showing every section&apos;s content together</option>
      {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
