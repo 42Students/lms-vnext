@@ -27,3 +27,15 @@ Audit `docs/audit/pages/superadmin/tenants-modules.md`. Protocol `docs/orchestra
 | SA-tenants-modules-R03 | NOT-A-GAP (conservative access model) | Audit Findings intentionally require active Super Admin plus centrally authorized admin scope, rather than inheriting the broader legacy logs-access role. No college member or public access. `tests/unit/superadmin-tenants-gap-closure.test.ts`: `SA-tenants-modules-R03 Audit Findings requires an active Super Admin rather than a broad logs role`. |
 
 New mutation tests check real typed request validation and current source contract, not claimed production SMTP, DNS, image-bucket or active-session behavior. Protected wildcard-DNS live provisioning is outside this page queue and cannot be called working solely because the UI displays an Allot control.
+
+
+## Round 6 — source contracts and setup navigation (tests not executed)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| SA-tenants-modules-06 | OPEN | Scoped setup now links two named steps Tenant structure and Launch setup, with no implicit unrelated-tenant selection. It is still not the legacy fully co-located two-tab editor. `admin/tenants/setup/page.tsx`. |
+| SA-tenants-modules-19 | OPEN | A college detail now exposes Activity and Export activity CSV entries with explicit `collegeId`, and Tenant Setup links to the same authorized scoped endpoints. Global Activity route persists the filter. Embedded detail-page audit grid is still not cloned. `admin/colleges/[collegeId]/page.tsx` and `admin/tenants/setup/page.tsx`. |
+| SA-tenants-modules-04 | DONE | Four described unscoped global cards including recruiter accounts; named SA-tenants-modules-04 unit test. |
+| SA-tenants-modules-07 | NOT-A-GAP | Approved archive-not-delete safety model; named SA-tenants-modules-07 test. |
+| SA-tenants-modules-14 | NOT-A-GAP | Approved archive-not-delete dependency-preserving model; named SA-tenants-modules-14 test. |
+| SA-tenants-modules-R03 | NOT-A-GAP | Deliberately restricted Audit Findings to active Super Admin with scoped permission; named SA-tenants-modules-R03 test. |
