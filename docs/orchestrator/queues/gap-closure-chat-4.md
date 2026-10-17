@@ -256,9 +256,9 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 
 - Super Admin Projects: 19 source-backed outcomes recorded in `docs/audit/acceptance/superadmin-placements-projects-b-projects-verification.md` with individual `SA-placements-projects-*` test names; includes 1 owner-approved `NOT-A-GAP` (archive/restore instead of an additional deleted bin). Exact copy restored for SA-placements-projects-52/57/63/73/78/79; 57 remains partially open because the one-workspace-per-student flow is missing.
 - Super Admin Projects nonblocked remaining (not claimed DONE): SA-placements-projects-53/55/56/57/58/65/66/67/68/71/72/75/77/81/82/86/87/88/89/91/92/93; other IDs not in the acceptance file remain open pending full source and acceptance checks. Do not mark these BLOCKED merely because they are large.
-- TPO Home: 9 source-backed outcomes in `docs/audit/acceptance/tpo-home-verification.md`, including new TPO-home-01 server-time IST greeting and persisted current-user display name; individual `TPO-home-*` behavioral tests or source contracts added.
-- TPO Home nonblocked remaining: TPO-home-04/26/27/28 plus later S3/S4 gap rows not yet accepted; live source data must not be invented, and shell edits are chat-9 only.
-- No private storage, malware-scanner, provider-secret or owner-old-LMS-sign-in blocker encountered in these two verification groups. No tests, typecheck, lint, builds or CI runs by chat-4; orchestrator owns independent execution and final acceptance.
+- TPO Home: 11 source-backed outcomes in `docs/audit/acceptance/tpo-home-verification.md`, including new TPO-home-01 server-time IST greeting and persisted current-user display name; individual `TPO-home-*` behavioral tests or source contracts added.
+- TPO Home nonblocked remaining: TPO-home-04/07/09/26/27/28 plus later S3/S4 gap rows not yet accepted; the 07 recruiter-access and 09 team-ask/overdue sources are not wired despite presentational row models. Live source data must not be invented; shell edits are chat-9 only.
+- Aggregate verification recorded this round: 29 DONE and 1 NOT-A-GAP (30 gaps) across the first two page areas. No private storage, malware-scanner, provider-secret or owner-old-LMS-sign-in blocker encountered in these two verification groups. No tests, typecheck, lint, builds or CI runs by chat-4; orchestrator owns independent execution and final acceptance.
 
 ## Notes (blockers, one line each)
 
