@@ -6,6 +6,22 @@ import {deriveMentorProjectAttention} from "@/modules/projects/mentor-attention"
 const read=(path:string)=>readFileSync(path,"utf8");
 
 describe("chat-16 reassigned mentor legacy parity",()=>{
+  it("MEN-projects-meetings-56 reorders only owned active resources in two collision-safe phases",()=>{
+    const service=read("src/modules/projects/resource-service.ts");
+    const route=read("src/app/api/projects/[projectId]/resources/reorder/route.ts");
+    const list=read("src/components/projects/project-resource-list.tsx");
+    expect(service).toContain("requireProjectLifecycleAccess(context,projectIdInput)");
+    expect(service).toContain("active.some(row=>!orderIds.includes(row.id))");
+    expect(service).toContain("maxSequence+1+i");
+    expect(service).toContain("sequence:active[i]!.sequence");
+    expect(service).toContain("new Set(ids).size===ids.length");
+    expect(route).toContain("isSameOriginRequest(request)");
+    expect(list).toContain("onDragStart");
+    expect(list).toContain("onDrop");
+    expect(list).toContain("Move up");
+    expect(list).toContain("Move down");
+    expect(list).toContain("Clear filters");
+  });
   it("MEN-projects-meetings-60 pages beyond 100 without dropping or duplicating activity",()=>{
     const code=read("src/components/projects/project-activity-filtered-list.tsx");
     expect(code).toContain("Load more activity");
