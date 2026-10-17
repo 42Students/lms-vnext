@@ -6,7 +6,9 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  activityEvents,
   cohorts,
+  colleges,
   collegeMemberships,
   departments,
   learnerProgramEnrollments,
@@ -173,6 +175,7 @@ export type PlacementEligibilityResult = {
     | "INELIGIBLE";
   checks: PlacementEligibilityCheck[];
   override: {
+    id:string;
     decision: "INCLUDE" | "EXCLUDE";
     reason: string;
   } | null;
@@ -672,6 +675,24 @@ export async function upsertJobEligibilityPolicy(
   });
 }
 
+async function recordEligibilityOverrideAudit(
+ tx:Tx,context:RequestContext,collegeId:string,jobId:string,membershipId:string,
+ overrideId:string,action:"SET"|"CLEARED",reason:string,
+){
+ const [college]=await tx.select({organizationId:colleges.organizationId}).from(colleges)
+  .where(eq(colleges.id,collegeId)).limit(1);
+ if(!college)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ await tx.insert(activityEvents).values({
+  organizationId:college.organizationId,collegeId,
+  actorUserId:context.user.id,
+  actorMembershipId:context.membership?.collegeId===collegeId?context.membership.id:null,
+  module:"PLACEMENTS",eventType:action==="SET"?"PLACEMENT_OVERRIDE_SET":"PLACEMENT_OVERRIDE_CLEARED",
+  subjectType:"placement_eligibility_override",subjectId:overrideId,
+  summary:action==="SET"?"Drive eligibility override saved":"Drive eligibility override cleared",
+  metadata:{jobId,membershipId,reason},
+ });
+}
+
 export async function setEligibilityOverride(
   context: RequestContext,
   jobIdInput: string,
@@ -727,6 +748,8 @@ export async function setEligibilityOverride(
         createdByUserId: context.user.id,
       })
       .returning();
+    await recordEligibilityOverrideAudit(tx,context,liveJob.collegeId,jobId,membershipId,
+      row.id,"SET",input.reason);
     return row;
   });
 }
@@ -735,6 +758,7 @@ export async function revokeEligibilityOverride(
   context: RequestContext,
   jobIdInput: string,
   membershipId: string,
+  options:{expectedOverrideId?:string;reason?:string}={},
 ) {
   const jobId = placementJobIdSchema.parse(jobIdInput);
   const job = await loadJob(jobId);
@@ -748,18 +772,16 @@ export async function revokeEligibilityOverride(
     if (liveJob.collegeId !== job.collegeId) {
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
     }
-
     const [row] = await tx
       .update(placementEligibilityOverrides)
       .set({ revokedAt: new Date() })
       .where(
         and(
           eq(placementEligibilityOverrides.jobId, jobId),
-          eq(
-            placementEligibilityOverrides.membershipId,
-            membershipId,
-          ),
+          eq(placementEligibilityOverrides.membershipId, membershipId),
           isNull(placementEligibilityOverrides.revokedAt),
+          // An undo must not revoke another staff member's later override.
+          options.expectedOverrideId?eq(placementEligibilityOverrides.id,options.expectedOverrideId):undefined,
         ),
       )
       .returning();
@@ -769,6 +791,8 @@ export async function revokeEligibilityOverride(
         "PLACEMENT_ELIGIBILITY_OVERRIDE_NOT_FOUND",
       );
     }
+    await recordEligibilityOverrideAudit(tx,context,liveJob.collegeId,jobId,membershipId,
+      row.id,"CLEARED",options.reason??"Placement eligibility override cleared");
     return row;
   });
 }
@@ -1058,6 +1082,7 @@ export async function evaluatePlacementEligibility(
           : "INELIGIBLE",
       checks: [],
       override: {
+        id: override.id,
         decision:
           override.decision as "INCLUDE" | "EXCLUDE",
         reason: override.reason,

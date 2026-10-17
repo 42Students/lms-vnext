@@ -21,7 +21,8 @@ export function TpoBatchInlineDecision({membershipId,batchId,expected}:{membersh
  const [actionId,setActionId]=useState<string|null>(null);
  const valid=decision!=="INELIGIBLE"||(reason.trim().length>=3&&reason.trim().length<=200);
  async function save(){
-  if(!valid||busy||!reviewed)return;
+  if(!valid||busy)return;
+  if(!reviewed)return;
   await run(async()=>{setBusy(true);setError("");setNotice("");setActionId(null);
   try{
    const result=await apiFetch<{changed:boolean;actionId?:string|null}>("/api/placements/tpo/students/"+encodeURIComponent(membershipId)+"/participation",{

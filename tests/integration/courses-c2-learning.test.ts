@@ -391,6 +391,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
         {
           lessonId: lesson.id,
           contentType: "RESOURCE",
+          points: 1,
           title: "C2 Array Notes",
           notes: "Shared notes",
           sequence: 0,
@@ -405,6 +406,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
           deliveryId:
             structure.deliveryA.id,
           contentType: "YOUTUBE",
+          points: 1,
           title: "C2 Section A Walkthrough",
           externalUrl:
             "https://www.youtube.com/watch?v=abc123",
@@ -417,6 +419,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       createLessonContent(faculty, {
         lessonId: lesson.id,
         contentType: "RESOURCE",
+        points: 1,
         title: "C2 Unsafe Generic",
         notes: "Faculty cannot create shared content",
         sequence: 2,
@@ -452,6 +455,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
           deliveryId:
             structure.deliveryB.id,
           contentType: "RESOURCE",
+          points: 1,
           title: "C2 Section B Notes",
           notes: "Only Section B",
           sequence: 2,
@@ -633,6 +637,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
       createLessonContent(collegeAdmin, {
         lessonId: lesson.id,
         contentType: "YOUTUBE",
+        points: 1,
         title: "C2 Bad Video Link",
         externalUrl:
           "https://example.com/video",
@@ -709,6 +714,7 @@ describe("courses C2 learning structure against PostgreSQL", () => {
         lessonId: lesson.id,
         deliveryId: otherDelivery.id,
         contentType: "RESOURCE",
+        points: 1,
         title: "C2 Wrong Scope",
         notes: "Must be rejected",
         sequence: 0,
