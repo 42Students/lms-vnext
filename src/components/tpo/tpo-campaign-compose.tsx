@@ -45,7 +45,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <input value={title} maxLength={160} required className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
-   {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Sending to {selectedLeadIds.length} selected recruiter contacts (subject to eligibility and suppression checks)</p>:null}
+   {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
    <label className="block text-sm font-semibold">To
     <select className={field} value={segment} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
