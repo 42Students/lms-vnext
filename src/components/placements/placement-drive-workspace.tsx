@@ -282,7 +282,7 @@ export async function PlacementDriveWorkspace({
                 Close drive
               </Link>
             ) : null}
-            {isTpo && job.status === "PUBLISHED" ? (
+            {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
                 Cancel drive

@@ -141,3 +141,7 @@ Source areas: `src/modules/placements/tpo-delete-draft-{model,service}.ts`, `src
 | TPO-drive-workspace-09 | OPEN (copy partial) | `src/components/placements/placement-drive-workspace.tsx`, `src/components/placements/tpo-delete-draft-action.tsx`; `tests/unit/tpo-drive-workspace-chat5-round6.test.ts` — `TPO-drive-workspace-09 partial or implemented scope is recorded without inferring unsupported parity`. Exact legacy Delete draft, Applicants, Close drive and company/job heading restored; remaining workspace headings not all checked. |
 
 This test file uses `DB09_ISOLATED_TEST_DATABASE` and `TEST_DATABASE_URL` and follows the existing disposable-database guard. The test was not executed by chat-5.
+
+## Chat-5 draft cancellation (2026-10-17)
+
+| TPO-drive-workspace-R06 | DONE | `src/modules/placements/tpo-drive-cancel-model.ts`, `src/modules/placements/tpo-drive-cancel-service.ts` permit audited, versioned draft cancellation without an active season while published drives still require an active season; UI opens existing impact/confirmation page for either; `tests/unit/tpo-drive-workspace-r06-chat5.test.ts` — `TPO-drive-workspace-R06 can cancel drafts with audited preview while published drives respect season`. |
