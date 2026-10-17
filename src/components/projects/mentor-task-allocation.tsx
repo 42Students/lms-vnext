@@ -21,6 +21,13 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  const [priority,setPriority]=useState(searchParams.get("priority")??"");
  const [status,setStatus]=useState(searchParams.get("status")??"");
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
+ function remember(name:string,value:string){
+  const query=new URLSearchParams(window.location.search);
+  if(value)query.set(name,value);else query.delete(name);
+  query.delete("page");
+  window.history.replaceState(null,"",window.location.pathname+
+    (query.toString()?"?"+query.toString():""));
+ }
  const learners=members.filter(member=>member.role==="LEARNER");
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
