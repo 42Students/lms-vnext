@@ -1,0 +1,261 @@
+# Gap closure queue: chat-5
+
+Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-5-b`. 225 gaps on 4 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
+
+## tpo/drive-workspace (72: FIXED-ON-MAIN 33, OPEN 34, UNCONFIRMED 5)
+
+Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-drive-workspace-verification.md`.
+
+| ID | Sev | Type | Status now |
+|---|---|---|---|
+| TPO-drive-workspace-17 | S1 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-drive-workspace-18 | S1 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-drive-workspace-28 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-40 | S1 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-drive-workspace-42 | S1 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-drive-workspace-44 | S1 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-drive-workspace-47 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-48 | S1 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-drive-workspace-53 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-60 | S1 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-drive-workspace-62 | S1 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-drive-workspace-65 | S1 | MISSING-FIELD | OPEN |
+| TPO-drive-workspace-R01 | S1 | PERMISSION | FIXED-ON-MAIN |
+| TPO-drive-workspace-01 | S2 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-drive-workspace-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-05 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-10 | S2 | VALIDATION | OPEN |
+| TPO-drive-workspace-11 | S2 | PERMISSION | OPEN |
+| TPO-drive-workspace-12 | S2 | MISSING-ACTION | UNCONFIRMED |
+| TPO-drive-workspace-14 | S2 | VALIDATION | FIXED-ON-MAIN |
+| TPO-drive-workspace-16 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-drive-workspace-21 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-22 | S2 | MISSING-COLUMN | OPEN |
+| TPO-drive-workspace-23 | S2 | MISSING-FILTER | OPEN |
+| TPO-drive-workspace-26 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-drive-workspace-27 | S2 | MISSING-MODAL | OPEN |
+| TPO-drive-workspace-29 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drive-workspace-38 | S2 | MISSING-FIELD | UNCONFIRMED |
+| TPO-drive-workspace-41 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-45 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-drive-workspace-49 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-drive-workspace-50 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-drive-workspace-51 | S2 | MISSING-ACTION | UNCONFIRMED |
+| TPO-drive-workspace-52 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-54 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-55 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-59 | S2 | MISSING-TAB | OPEN |
+| TPO-drive-workspace-61 | S2 | MISSING-MODAL | OPEN |
+| TPO-drive-workspace-63 | S2 | MISSING-MODAL | OPEN |
+| TPO-drive-workspace-67 | S2 | MISSING-MODAL | OPEN |
+| TPO-drive-workspace-68 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-drive-workspace-69 | S2 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-R02 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-drive-workspace-R03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-06 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-07 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-08 | S3 | STATE | OPEN |
+| TPO-drive-workspace-09 | S3 | COPY | OPEN |
+| TPO-drive-workspace-19 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-drive-workspace-24 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-30 | S3 | MISSING-COLUMN | OPEN |
+| TPO-drive-workspace-31 | S3 | MISSING-FIELD | OPEN |
+| TPO-drive-workspace-32 | S3 | COPY | OPEN |
+| TPO-drive-workspace-34 | S3 | VALIDATION | OPEN |
+| TPO-drive-workspace-36 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drive-workspace-39 | S3 | STATE | OPEN |
+| TPO-drive-workspace-43 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-46 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-56 | S3 | MISSING-EXPORT | OPEN |
+| TPO-drive-workspace-57 | S3 | COPY | OPEN |
+| TPO-drive-workspace-58 | S3 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-drive-workspace-64 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-70 | S3 | A11Y | OPEN |
+| TPO-drive-workspace-72 | S3 | RESPONSIVE | OPEN |
+| TPO-drive-workspace-73 | S3 | PERFORMANCE | OPEN |
+| TPO-drive-workspace-R04 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-drive-workspace-R05 | S3 | COPY | FIXED-ON-MAIN |
+| TPO-drive-workspace-R06 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-66 | S4 | MISSING-FIELD | OPEN |
+| TPO-drive-workspace-71 | S4 | A11Y | OPEN |
+| TPO-drive-workspace-74 | S4 | STATE | UNCONFIRMED |
+
+## tpo/batches (63: FIXED-ON-MAIN 27, OPEN 34, UNCONFIRMED 2)
+
+Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-batches-verification.md`.
+
+| ID | Sev | Type | Status now |
+|---|---|---|---|
+| TPO-batches-19 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-02 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-03 | S2 | COPY | OPEN |
+| TPO-batches-04 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-05 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-07 | S2 | STATE | OPEN |
+| TPO-batches-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-20 | S2 | MISSING-ACTION | OPEN |
+| TPO-batches-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-22 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-26 | S2 | VALIDATION | OPEN |
+| TPO-batches-33 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-batches-34 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-batches-35 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-batches-36 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-37 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-38 | S2 | VALIDATION | FIXED-ON-MAIN |
+| TPO-batches-39 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-batches-41 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-42 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-batches-44 | S2 | MISSING-ACTION | OPEN |
+| TPO-batches-45 | S2 | MISSING-EXPORT | OPEN |
+| TPO-batches-53 | S2 | MISSING-TAB | OPEN |
+| TPO-batches-54 | S2 | SIDE-EFFECT | OPEN |
+| TPO-batches-58 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-59 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-06 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-09 | S3 | STATE | OPEN |
+| TPO-batches-10 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-11 | S3 | MISSING-FILTER | OPEN |
+| TPO-batches-13 | S3 | COPY | OPEN |
+| TPO-batches-14 | S3 | COPY | OPEN |
+| TPO-batches-15 | S3 | STATE | UNCONFIRMED |
+| TPO-batches-16 | S3 | STATE | OPEN |
+| TPO-batches-23 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-batches-25 | S3 | MISSING-ACTION | OPEN |
+| TPO-batches-27 | S3 | COPY | OPEN |
+| TPO-batches-28 | S3 | STATE | OPEN |
+| TPO-batches-29 | S3 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-batches-40 | S3 | COPY | OPEN |
+| TPO-batches-43 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-batches-46 | S3 | MISSING-ACTION | OPEN |
+| TPO-batches-47 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-batches-48 | S3 | STATE | FIXED-ON-MAIN |
+| TPO-batches-50 | S3 | STATE | OPEN |
+| TPO-batches-52 | S3 | COPY | OPEN |
+| TPO-batches-55 | S3 | MISSING-ACTION | OPEN |
+| TPO-batches-56 | S3 | COPY | OPEN |
+| TPO-batches-60 | S3 | COPY | OPEN |
+| TPO-batches-61 | S3 | MISSING-ACTION | OPEN |
+| TPO-batches-63 | S3 | SIDE-EFFECT | OPEN |
+| TPO-batches-64 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-batches-R04 | S3 | VALIDATION | OPEN |
+| TPO-batches-12 | S4 | STATE | OPEN |
+| TPO-batches-17 | S4 | STATE | OPEN |
+| TPO-batches-24 | S4 | MISSING-FIELD | OPEN |
+| TPO-batches-30 | S4 | A11Y | FIXED-ON-MAIN |
+| TPO-batches-49 | S4 | MISSING-ACTION | OPEN |
+| TPO-batches-51 | S4 | COPY | OPEN |
+| TPO-batches-57 | S4 | VALIDATION | OPEN |
+| TPO-batches-62 | S4 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-batches-65 | S4 | RESPONSIVE | OPEN |
+| TPO-batches-R06 | S4 | COPY | OPEN |
+
+## tpo/students (56: FIXED-ON-MAIN 24, OPEN 29, UNCONFIRMED 3)
+
+Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-students-verification.md`.
+
+| ID | Sev | Type | Status now |
+|---|---|---|---|
+| TPO-students-33 | S1 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-06 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-07 | S2 | SIDE-EFFECT | OPEN |
+| TPO-students-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-09 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-10 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-11 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-12 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-14 | S2 | MISSING-FIELD | OPEN |
+| TPO-students-15 | S2 | SIDE-EFFECT | UNCONFIRMED |
+| TPO-students-16 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-17 | S2 | MISSING-ACTION | OPEN |
+| TPO-students-18 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-21 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-22 | S2 | MISSING-FILTER | OPEN |
+| TPO-students-23 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-students-26 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-students-28 | S2 | MISSING-COLUMN | OPEN |
+| TPO-students-29 | S2 | MISSING-FIELD | OPEN |
+| TPO-students-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-31 | S2 | MISSING-FIELD | OPEN |
+| TPO-students-32 | S2 | STATE | OPEN |
+| TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
+| TPO-students-35 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
+| TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-13 | S3 | MISSING-ACTION | OPEN |
+| TPO-students-24 | S3 | MISSING-FILTER | OPEN |
+| TPO-students-25 | S3 | MISSING-FILTER | OPEN |
+| TPO-students-27 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-students-37 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-38 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-39 | S3 | MISSING-ACTION | OPEN |
+| TPO-students-40 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-students-41 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-students-42 | S3 | MISSING-TAB | FIXED-ON-MAIN |
+| TPO-students-43 | S3 | MISSING-TAB | OPEN |
+| TPO-students-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-46 | S3 | COPY | OPEN |
+| TPO-students-47 | S3 | COPY | OPEN |
+| TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-students-50 | S3 | STATE | UNCONFIRMED |
+| TPO-students-51 | S3 | RESPONSIVE | OPEN |
+| TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
+| TPO-students-R03 | S3 | STATE | OPEN |
+| TPO-students-R04 | S3 | STATE | OPEN |
+| TPO-students-R05 | S3 | COPY | OPEN |
+| TPO-students-R06 | S3 | COPY | OPEN |
+| TPO-students-R07 | S3 | STATE | OPEN |
+| TPO-students-R08 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-students-48 | S4 | STATE | OPEN |
+| TPO-students-53 | S4 | MISSING-FIELD | OPEN |
+
+## tpo/requests-verification (34: OPEN 15, FIXED-ON-MAIN 18, UNCONFIRMED 1)
+
+Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verification-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/tpo-requests-verification-verification.md`.
+
+| ID | Sev | Type | Status now |
+|---|---|---|---|
+| TPO-requests-verification-01 | S1 | MISSING-ACTION | OPEN |
+| TPO-requests-verification-02 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-requests-verification-03 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-requests-verification-04 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-05 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-07 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-13 | S2 | MISSING-ACTION | OPEN |
+| TPO-requests-verification-22 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-requests-verification-23 | S2 | STATE | OPEN |
+| TPO-requests-verification-24 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-requests-verification-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-requests-verification-36 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-requests-verification-37 | S2 | MISSING-ACTION | OPEN |
+| TPO-requests-verification-38 | S2 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-R02 | S2 | MISSING-FIELD | OPEN |
+| TPO-requests-verification-06 | S3 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-09 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-requests-verification-10 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| TPO-requests-verification-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-requests-verification-12 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-requests-verification-14 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-requests-verification-15 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-requests-verification-17 | S3 | COPY | OPEN |
+| TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-requests-verification-27 | S3 | COPY | OPEN |
+| TPO-requests-verification-28 | S3 | COPY | OPEN |
+| TPO-requests-verification-29 | S3 | MISSING-FIELD | UNCONFIRMED |
+| TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| TPO-requests-verification-R01 | S3 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-16 | S4 | PERFORMANCE | OPEN |
+| TPO-requests-verification-18 | S4 | STATE | OPEN |
+| TPO-requests-verification-21 | S4 | PERMISSION | OPEN |
+
+## Notes (blockers, one line each)
+
+## Needs shell (chat-9 only)
+
