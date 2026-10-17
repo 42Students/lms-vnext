@@ -40,10 +40,11 @@ export async function createBlockedDate(ctx:RequestContext,raw:unknown){
   if(existing.length)throw new BlockedDateError("DATE_EXISTS");
   const rows=await tx.insert(placementTpoBlockedDates).values(days.map(day=>({day,reason,collegeId})))
    .returning({id:placementTpoBlockedDates.id,day:placementTpoBlockedDates.day});
-  if(rows.length!==days.length)throw new BlockedDateError("DATE_NOT_FOUND");
+  const firstRow=rows[0];
+  if(!firstRow||rows.length!==days.length)throw new BlockedDateError("DATE_NOT_FOUND");
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
-   eventType:"placements.tpo_blocked_date.created",subjectType:"BLOCKED_DATE",subjectId:rows[0].id,
+   eventType:"placements.tpo_blocked_date.created",subjectType:"BLOCKED_DATE",subjectId:firstRow.id,
    summary:"TPO blocked placement scheduling dates",metadata:{startDay:start,endDay:end,days:days.length,reason}});
   return {rows,created:rows.length};
  });
