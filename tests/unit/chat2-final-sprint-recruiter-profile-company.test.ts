@@ -125,4 +125,11 @@ describe("Final sprint recruiter profile/company verification",()=>{
   expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-36 |");
  });
 
+ it("REC-calendar-messages-profile-41 independent final-sprint acceptance regression",()=>{
+  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("readOnly value={invite.contactEmail??\"\"}");
+  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("Contact details are shared only as the placement cell allows.");
+  expect(src("src/components/tpo/recruiter-invite-landing.tsx")).toContain("You can request placement drives and review the students who apply.");
+  expect(src("docs/audit/acceptance/recruiter-calendar-messages-profile-verification.md")).toContain("| REC-calendar-messages-profile-41 |");
+ });
+
 });
