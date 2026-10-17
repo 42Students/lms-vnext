@@ -59,9 +59,14 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
  const promoByApplication=new Map(promotions.map(x=>[x.applicationId,x]));
  const reservedCount=promotions.filter(p=>p.status==="PENDING").length;
  const freeSeats=job.openings==null?null:Math.max(0,job.openings-activeOffers.length-reservedCount);
+ const rankCounts=new Map<number,number>();
+ for(const candidate of waitlist){if(candidate.rank!==null)
+  rankCounts.set(candidate.rank,(rankCounts.get(candidate.rank)??0)+1);}
  const rows=waitlist.map(w=>{
   const reasons:string[]=[];
   const existing=promoByApplication.get(w.applicationId);
+  if(w.rank===null||w.rank<1)reasons.push("Waitlist rank missing");
+  else if((rankCounts.get(w.rank)??0)>1)reasons.push("Duplicate waitlist rank requires correction");
   // Released promotions must never win the "next" ranking again.
   if(existing?.status==="RELEASED")reasons.push("An offer was already released to this waitlisted learner");
   if(w.applicationStatus!=="SUBMITTED"||w.screeningStatus!=="SHORTLISTED")
