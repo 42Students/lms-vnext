@@ -34,3 +34,5 @@ Source reviewed on `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. Tests w
 | TPO-students-48 | DONE | Announced in-view count and visible selected count; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-48` |
 | TPO-students-52 | DONE | Student panel shows profile check, stage, outcome, placement decision, offers and explicit unavailable prep metric; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-52` |
 | TPO-students-53 | DONE | Issued offers map to legacy released/waiting-on-answer, with exact display wording; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-students-53` |
+
+TPO-students-36: the authorized filtered CSV is now downloaded through a guarded client control; selection-only export and XLSX parity remain open. `tests/unit/chat12-tpo-safe-export.test.ts` test `TPO-students-36`.

@@ -29,3 +29,5 @@ TPO-requests-verification-28: result toast now includes the verified section (Ed
 | TPO-requests-verification-18 | DONE | Requests page now has loading, recoverable friendly error screen and Retry; `tests/unit/chat12-graceful-tpo.test.ts` test `TPO-requests-verification-18` |
 
 | TPO-requests-verification-15 | DONE | CSV deliberately bounded at 5,000 authorized filtered requests (owner-approved safer vNext design); reason, what asked and decision, formula escaped; `tests/unit/chat12-tpo-journey-export.test.ts` test `TPO-requests-verification-15` |
+
+TPO-requests-verification-15 / -32: exports use guarded downloads, so HTML or JSON failures cannot be downloaded as CSV. `tests/unit/chat12-tpo-safe-export.test.ts` tests contain both IDs.

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {TpoVerificationPanel} from "@/components/verification/TpoVerificationPanel";
 import {getTpoVerificationQueue} from "@/modules/placements/tpo-verification-queue-service";
@@ -31,12 +32,11 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
     {queue.available&&queue.enabled&&queue.permitted?
      <div className="flex flex-wrap gap-2">
        {([["WAITING","Waiting"],["SENT_BACK","Sent back"],["VERIFIED","Verified"]] as const).map(([tab,label])=>
-        <a key={tab} href={"/api/tpo/verification/export?"+new URLSearchParams({
+        <TpoSafeCsvDownload key={tab} href={"/api/tpo/verification/export?"+new URLSearchParams({
          tab,kind:query.kind,search:query.search,
          ...(query.batchId?{batchId:query.batchId}:{}),
          ...(query.branchId?{branchId:query.branchId}:{}),
-        }).toString()}
-          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label} CSV</a>)}
+        }).toString()} filename={"tpo-verification-"+tab.toLowerCase()+".csv"} label={label+" CSV"} />)}
      </div>:null}
   </nav>
   <form method="get" action="/tpo/verification" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">

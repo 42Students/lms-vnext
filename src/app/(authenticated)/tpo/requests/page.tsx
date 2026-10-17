@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -105,7 +106,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       rows={Array.from(new Map(data.requests.filter(row=>row.status==="PENDING")
         .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
     />:null}
-    <Link href={tpoRequestsExportHref(data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Export filtered requests CSV</Link>
+    <TpoSafeCsvDownload href={tpoRequestsExportHref(data.query)} filename="tpo-requests.csv" label="Export filtered requests CSV" />
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
       {data.total>0?"This page is past the available request results.":data.query.status==="PENDING"?"Nothing is waiting for you.":"No requests in this period."}
