@@ -50,9 +50,11 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
   if(input.sprintId&&(!sprint||sprint.status!=="ACTIVE"||
    sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
    throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
-   .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,projectId))).limit(1);
-  if(!release||release.status==="SHIPPED")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  if(sprint){
+   const [release]=await tx.select({status:projectReleases.status}).from(projectReleases)
+    .where(and(eq(projectReleases.id,sprint.releaseId),eq(projectReleases.projectId,projectId))).limit(1);
+   if(!release||release.status==="SHIPPED")throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+  }
   const [last]=await tx.select({sequence:projectTasks.sequence}).from(projectTasks)
    .where(eq(projectTasks.sprintId,sprint.id)).orderBy(desc(projectTasks.sequence)).limit(1);
   const [task]=await tx.insert(projectTasks).values({
