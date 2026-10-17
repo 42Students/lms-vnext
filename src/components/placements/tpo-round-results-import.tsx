@@ -79,7 +79,7 @@ export function TpoRoundResultsImport({jobId,roundId}:{jobId:string;roundId:stri
      onChange={()=>setMissingPolicy("LEAVE_PENDING")}/> Leave pending (do not change their result)</label>
     <label className="flex gap-2"><input type="radio" checked={missingPolicy==="MARK_NOT_CLEARED"}
      onChange={()=>setMissingPolicy("MARK_NOT_CLEARED")}/> Mark everyone missing as Not cleared</label>
-    {missingPolicy==="MARK_NOT_CLEARED"?<p className="text-error">This also stages Not cleared for all currently eligible applicants missing from the file. Review carefully.</p>:null}
+    {missingPolicy==="MARK_NOT_CLEARED"?<p className="text-error">This also stages Not cleared for all currently eligible applicants missing from the file. All unmatched rows must be matched or unambiguously skipped before this can proceed.</p>:null}
    </fieldset>
    <button type="button" disabled={busy||!preview.matched.length&&missingPolicy==="LEAVE_PENDING"&&
     !Object.values(overrides).some(Boolean)} onClick={()=>void send("STAGE_IMPORT")}
