@@ -130,10 +130,12 @@ function Metric({
   label,
   value,
   detail,
+  history,
 }: {
   label: string;
   value: string | number;
   detail: string;
+  history?:readonly {at:string;label:string}[];
 }) {
   return (
     <section className="rounded-xl border border-border bg-surface p-4">
@@ -146,6 +148,12 @@ function Metric({
       <p className="mt-1 text-xs leading-5 text-body">
         {detail}
       </p>
+      {history?.length?<details className="mt-2">
+        <summary className="cursor-pointer text-xs font-semibold text-primary-text">Recent dates ({history.length})</summary>
+        <ol className="mt-2 max-h-40 space-y-1 overflow-y-auto text-xs text-body">
+          {history.map(item=><li key={item.at+":"+item.label}><time dateTime={item.at}>{item.label}</time></li>)}
+        </ol>
+      </details>:null}
     </section>
   );
 }
@@ -196,6 +204,14 @@ export function LearnerAttendanceWorkspace({
     [monthRows,historyFilter,historyOrder],
   );
   const attendanceCsv = useMemo(() => learnerAttendanceHistoryCsv(historyRows), [historyRows]);
+  const recentStatusDates=(status:RecordRow["status"])=>monthRows
+    .filter(row=>row.status===status)
+    .sort((a,b)=>Date.parse(b.startsAt)-Date.parse(a.startsAt))
+    .slice(0,10).map(row=>({
+      at:row.startsAt,
+      label:new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.startsAt)),
+    }));
+
   const recovery = learnerAttendanceRecoveryProjection(summary.markedSessions,summary.present,threshold);
 
   function updateUrl(
@@ -346,7 +362,9 @@ export function LearnerAttendanceWorkspace({
         ) : null}
       </section>
 
-      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+        <Metric label="Total" value={monthRows.length}
+          detail="All scheduled and held classes in the selected month."/>
         <Metric
           label="Held"
           value={summary.heldSessions}
@@ -356,11 +374,13 @@ export function LearnerAttendanceWorkspace({
           label="Present"
           value={summary.present}
           detail="Marked sessions where you are present."
+          history={recentStatusDates("PRESENT")}
         />
         <Metric
           label="Absent"
           value={summary.absent}
           detail="Only explicitly absent records. Excused, medical and late sessions keep their distinct statuses."
+          history={recentStatusDates("ABSENT")}
         />
         <Metric
           label="Attendance"
