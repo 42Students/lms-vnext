@@ -3,9 +3,9 @@ import {readFileSync} from "node:fs";
 import {join} from "node:path";
 const s=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
 describe("chat9 safer gap decisions",()=>{
- it("TPO-settings-audit-05 keeps settings writes restricted to persisted active TPO memberships and centralized placement permission",()=>{
+ it("TPO-settings-audit-05 retains persisted active TPO or College Admin membership and centralized placement permission",()=>{
   const v=s("src/modules/placements/tpo-batch-workspace-read-service.ts");
-  expect(v).toContain('eq(membershipRoles.role,"TPO")');
+  expect(v).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
   expect(v).toContain('eq(collegeMemberships.status,"ACTIVE")');
   expect(v).toContain('requirePermission(ctx,"placements.manage"');
  });
