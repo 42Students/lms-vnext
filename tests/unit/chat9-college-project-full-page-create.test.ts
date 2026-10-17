@@ -14,6 +14,8 @@ describe("College Admin legacy workspace creation navigation",()=>{
   expect(create).toContain("<CreateProjectControl standalone");
   expect(create).toContain("listAssignedProjectTemplates");
   expect(control).toContain("standalone = false");
+  expect(control).toContain("if (submitLock.current) return;");
+  expect(control).toContain("submitLock.current = false;");
   expect(control).toContain("const [open, setOpen] = useState(standalone)");
   expect(control).toContain('"/api/projects"');
   expect(control).toContain('"POST",');
