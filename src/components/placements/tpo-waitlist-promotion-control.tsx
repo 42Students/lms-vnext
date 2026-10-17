@@ -50,6 +50,8 @@ export function TpoWaitlistPromotionControl({jobId,preview}:{jobId:string;previe
     {busy?"Verifying…":"Verify and release next offer"}</button>
   </div>:null}
   {success?<p role="status">{success}</p>:null}
+  <button type="button" disabled={busy} onClick={()=>router.refresh()}
+    className="min-h-10 rounded border border-border px-3 text-sm font-semibold">Refresh waitlist and seats</button>
   {error?<p role="alert" className="text-error">{error} Refresh the preview before retrying.</p>:null}
  </section>;
 }
