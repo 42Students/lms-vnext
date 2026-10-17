@@ -139,7 +139,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
   :([{value:"SHORTLISTED",label:"Shortlist for review"},{value:"REJECTED",label:"Reject with candidate message"},{value:"ADD_NOTE",label:"Add a note"},{value:"SEND_MESSAGE",label:"Send a message"},{value:"MOVE_TEST",label:"Move to test"},{value:"MOVE_INTERVIEW",label:"Move to interview"}] as const);
  const suggested=suggestTpoBulkAction(actionCounts);
  async function undoLastRun(){
-  if(!runAuditId||busy||guardedPending)return;
+  if(!runAuditId||busy)return;
   setBusy(true);setUndoNotice("");setError("");
   try{
    const result=await apiFetch<{restored:number}>("/api/placements/tpo/bulk-actions/undo",{
