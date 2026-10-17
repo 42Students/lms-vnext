@@ -166,7 +166,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-11 | S2 | MISSING-ACTION | DONE |
 | TPO-students-12 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-14 | S2 | MISSING-FIELD | OPEN |
-| TPO-students-15 | S2 | SIDE-EFFECT | OPEN |
+| TPO-students-15 | S2 | SIDE-EFFECT | DONE |
 | TPO-students-16 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-17 | S2 | MISSING-ACTION | OPEN |
 | TPO-students-18 | S2 | MISSING-FILTER | DONE |
