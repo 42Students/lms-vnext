@@ -16,7 +16,7 @@ export function learnerProjectTaskReviewNotice(input:{
 export function learnerProjectDeliveryReviewNotice(projectId:string,decision:string){
  const approved=decision==="APPROVED";
  return {
-  title:approved?"Final project submission approved":"Changes requested on final submission",
+  title:approved?"Delivery accepted":"Changes requested",
   body:approved?"The mentor approved your team's final project submission.":
    "The mentor has requested changes to your team's final submission.",
   actionHref:"/learn/projects/"+encodeURIComponent(projectId)+"?tab=delivery",
