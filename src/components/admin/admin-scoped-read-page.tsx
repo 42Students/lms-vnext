@@ -9,12 +9,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions}:{
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,peopleFilters}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
  exportPath?:string;exportFilename?:string;renderRowActions?:(row:SuperAdminReadRow)=>ReactNode;
+ peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
  const parsed=readAdminQuery(await searchParams);
  if(!parsed.success || !statuses.includes(parsed.data.status))
@@ -41,6 +42,27 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      {statuses.map(status=><option key={status} value={status}>{status}</option>)}
     </select>
    </label>
+   {peopleFilters ? <>
+    <label className="grid gap-1 text-sm font-semibold text-body">Department
+     <select name="departmentId" defaultValue={data.query.departmentId??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+      <option value="">All departments</option>{peopleFilters.departments.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+     </select>
+    </label>
+    {peopleFilters.kind==="FACULTY"?<label className="grid gap-1 text-sm font-semibold text-body">Faculty type
+      <input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
+       className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground"/>
+     </label>:<>
+      {(["programId","cohortId","sectionId"] as const).map((key)=>{
+        const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
+        const label=key==="programId"?"Program":key==="cohortId"?"Batch":"Class";
+        return <label key={key} className="grid gap-1 text-sm font-semibold text-body">{label}
+         <select name={key} defaultValue={data.query[key]??""} className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">All {label.toLowerCase()}s</option>{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+         </select>
+        </label>;
+      })}
+     </>}
+   </>:null}
    <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
     <select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">
@@ -53,6 +75,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
     <input type="hidden" name="status" value={data.query.status} />
     {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {(["departmentId","programId","cohortId","sectionId","employmentType"] as const).map(key=>data.query[key]?<input key={key} type="hidden" name={key} value={data.query[key]}/>:null)}
     <input type="hidden" name="page" value={String(data.query.page)} />
     <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
     <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>

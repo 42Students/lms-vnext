@@ -48,7 +48,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   return <div className="space-y-6">
       <AcademicSetupSteps step={3} />
     <PageHeader eyebrow="Super Admin" title="Semesters"
-      description="Create and manage semesters in the selected college." />
+      description="Create and manage semesters. Credits sum the mapped courses; unmapped semesters show —." />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="rounded-xl border border-border bg-surface p-4" aria-label="Semester filters">
       <form method="get" action="/admin/semesters" className="flex flex-wrap items-end gap-3">
@@ -88,6 +88,13 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <input type="hidden" name="pageSize" value={String(data.query.pageSize)} />
       <button type="submit" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Refresh</button>
     </form>
+    <a href={"/api/admin/semesters/export?"+new URLSearchParams({
+      ...(data.query.q?{q:data.query.q}:{}),
+      ...(data.query.programId?{programId:data.query.programId}:{}),
+      ...(data.query.status!=="ALL"?{status:data.query.status}:{})
+    }).toString()} className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+      Export semesters.csv
+    </a>
     <section aria-label="Semesters" className="overflow-x-auto rounded-xl border border-border bg-surface">
       <p className="border-b border-border px-4 py-3 text-sm text-muted-foreground">{data.total} matching semesters</p>
       {data.items.length === 0 ? <p className="p-5 text-sm text-body">No semesters found. Create a program first, then add semesters.</p> :
@@ -105,7 +112,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
             <td className="p-3">{row.programName}</td>
             <td className="p-3">Sem {row.termNumber}</td>
             <td className="p-3 font-semibold">{row.name}</td>
-            <td className="p-3">{row.totalCredits ?? "—"}</td>
+            <td className="p-3">{row.mappedCredits ?? "—"}</td>
             <td className="p-3">{row.mappedCourses}</td>
             <td className="p-3">{row.isActive ? "Active" : "Inactive"}</td>
             <td className="p-3"><CollegeSemesterRowActions row={row} /></td>

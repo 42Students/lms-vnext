@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, inArray } from "drizzle-orm";
+import { and, asc, eq, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohortProgressionState, cohorts, collegeMemberships,
@@ -56,8 +56,12 @@ export async function listCollegePromotionOptions(context: RequestContext, raw: 
     db.select({
       id: cohorts.id, name: cohorts.name, status: cohorts.status,
       programId: programs.id, programName: programs.name,
+      currentTermNumber: cohortProgressionState.currentTermNumber,
+      currentAcademicYearStart: cohortProgressionState.currentAcademicYearStart,
+      activeLearners: sql<number>`(select count(*)::integer from learner_program_enrollments lpe where lpe.cohort_id = ${cohorts.id} and lpe.status = 'ACTIVE')`.as("promotion_active_learners"),
     }).from(cohorts)
       .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .leftJoin(cohortProgressionState,eq(cohortProgressionState.cohortId,cohorts.id))
       .innerJoin(departments, and(
         eq(departments.id, programs.departmentId),
         eq(departments.collegeId, member.collegeId),
