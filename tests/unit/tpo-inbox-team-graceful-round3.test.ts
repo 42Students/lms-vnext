@@ -76,4 +76,44 @@ describe("Chat-2 graceful messaging and TPO action acceptance",()=>{
   const edit={noticeId:"10000000-0000-4000-8000-000000000001",expectedVersion:1,...base};
   expect(editTpoNoticeSchema.safeParse({...edit,buttonLabel:"Read",buttonUrl:"javascript:alert(1)"}).success).toBe(false);
  });
+ it("TPO-inbox-team-20 follows by default, permits muting and un-following, and excludes their unread badges",()=>{
+  const schema=source("src/db/schema/tpo-internal.ts");
+  const query=source("src/modules/placements/tpo-team-internal-read-service.ts");
+  const service=source("src/modules/placements/tpo-team-preferences-service.ts");
+  const panel=source("src/components/tpo/tpo-team-follow-controls.tsx");
+  expect(schema).toContain('following:boolean("following").notNull().default(true)');
+  expect(schema).toContain('mutedAt:timestamp("muted_at"');
+  expect(query).toContain("row.following&&!row.muted?Number(row.unreadMessages):0");
+  expect(service).toContain("assertPersistedPlatformPermission");
+  expect(service).toContain("eq(placementTpoInternalThreads.collegeId,college.id)");
+  expect(panel).toContain('state.following?"UNFOLLOW":"FOLLOW"');
+  expect(panel).toContain('state.muted?"UNMUTE":"MUTE"');
+ });
+ it("TPO-inbox-team-67 counts only recent unread personal notifications",()=>{
+  const svc=source("src/modules/activity/tpo-notifications-service.ts");
+  expect(svc).toContain("tpoUnreadCutoff(new Date())");
+  expect(svc).toContain("gte(inAppNotifications.createdAt,recentCutoff)");
+ });
+ it("TPO-inbox-team-68 provides calm loading and failure screens with Retry",()=>{
+  expect(source("src/app/(authenticated)/tpo/notifications/loading.tsx")).toContain('aria-busy="true"');
+  const fail=source("src/app/(authenticated)/tpo/notifications/error.tsx");
+  expect(fail).toContain('role="alert"');expect(fail).toContain("Retry");
+  expect(fail).not.toContain("{error.message}");
+ });
+ it("TPO-inbox-team-R04 paginates announcements instead of silently dropping the hundred-and-first",()=>{
+  const svc=source("src/modules/announcements/tpo-placement-read-service.ts");
+  const page=source("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(svc).toContain(".limit(101).offset((safePage-1)*100)");
+  expect(svc).toContain("hasMore:rows.length>100");
+  expect(page).toContain("result.hasMore");
+ });
+ it("TPO-inbox-team-54 and GR-90 never surface a read-cell API error code",()=>{
+  const view=source("src/components/tpo/tpo-placement-cell-read-action.tsx");
+  expect(view).toContain('role="alert"');
+  expect(view).toContain("pending.current");
+  expect(view).toContain("30000");
+  expect(view).not.toContain("body?.error");
+  expect(view).not.toContain("setError(data.error)");
+ });
+
 });

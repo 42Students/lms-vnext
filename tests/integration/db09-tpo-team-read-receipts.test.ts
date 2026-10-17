@@ -60,4 +60,41 @@ describe.skipIf(!enabled)("TPO-inbox-team-R05 read receipts PostgreSQL",()=>{
    client.release();
   }
  });
+ it("TPO-inbox-team-20 persists follow/mute toggles on the same member receipt without changing read time",async()=>{
+  if(!pool)throw new Error("Disposable PostgreSQL is required");
+  const client=await pool.connect();
+  try{
+   await client.query("BEGIN");
+   const created=await client.query<{id:string}>(
+    "INSERT INTO placement_tpo_internal_threads(college_id,started_by_membership_id,invited_membership_id,topic) VALUES($1,$2,$3,$4) RETURNING id",
+    [SEED_IDS.collegeA,SEED_IDS.facultyCollegeAMembership,SEED_IDS.collegeAdminMembership,"Follow preference test"],
+   );
+   const threadId=created.rows[0]?.id;
+   if(!threadId)throw new Error("Thread fixture missing");
+   await client.query(
+    "INSERT INTO placement_tpo_internal_reads(college_id,thread_id,membership_id,read_through,following,muted_at) VALUES($1,$2,$3,$4,false,$5)",
+    [SEED_IDS.collegeA,threadId,SEED_IDS.facultyCollegeAMembership,
+      "2099-06-01T00:00:00.000Z","2099-06-02T00:00:00.000Z"],
+   );
+   const current=await client.query<{following:boolean;muted:boolean}>(
+    "SELECT following,muted_at is not null AS muted FROM placement_tpo_internal_reads WHERE thread_id=$1 AND membership_id=$2",
+    [threadId,SEED_IDS.facultyCollegeAMembership],
+   );
+   expect(current.rows[0]).toMatchObject({following:false,muted:true});
+   await client.query(
+    "UPDATE placement_tpo_internal_reads SET following=true,muted_at=null WHERE thread_id=$1 AND membership_id=$2",
+    [threadId,SEED_IDS.facultyCollegeAMembership],
+   );
+   const restored=await client.query<{following:boolean;muted:boolean;through:string}>(
+    "SELECT following,muted_at is not null AS muted,read_through::text AS through FROM placement_tpo_internal_reads WHERE thread_id=$1 AND membership_id=$2",
+    [threadId,SEED_IDS.facultyCollegeAMembership],
+   );
+   expect(restored.rows[0]?.following).toBe(true);
+   expect(restored.rows[0]?.muted).toBe(false);
+   expect(restored.rows[0]?.through).toContain("2099-06-01");
+  }finally{
+   await client.query("ROLLBACK");client.release();
+  }
+ });
+
 });
