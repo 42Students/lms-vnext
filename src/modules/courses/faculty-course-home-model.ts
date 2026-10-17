@@ -337,6 +337,9 @@ export function buildFacultyCourseHomeSignals(
         name: learnerName(learner),
         reasons,
         severity,
+        attendancePercent:attendance?.attendancePercent??null,
+        missingSubmissionCount:missing,
+        averageGradePercent:studentAverages.find(row=>row.membershipId===learner.membershipId)?.averagePercent??null,
       }];
     })
     .sort(
