@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { learnerOfferAnchor, learnerOfferHref } from "@/modules/placements/learner-offer-deep-link-model";
@@ -20,6 +20,11 @@ import {learnerOfferDisplayDate} from "@/modules/placements/learner-offer-displa
 import {learnerOfferActionErrorMessage} from "@/modules/placements/learner-offer-action-error-model";
 import { useToast } from "@/components/ui/toast";
 
+type OfferAcceptImpact={
+ offerId:string;offerStatus:string;expiresAt:string|null;blockedByAnotherAcceptedOffer:boolean;
+ withdrawn:Array<{id:string;title:string}>;declined:Array<{id:string;title:string}>;
+ stayed:Array<{id:string;title:string}>;previewOnly:boolean;
+};
 export type LearnerPlacementOfferItem = {
   offerId: string;
   applicationId: string;
@@ -87,6 +92,10 @@ export function LearnerPlacementOffers({
   const [pendingId, setPendingId] =
     useState<string | null>(null);
   const [confirmOffer, setConfirmOffer] = useState<LearnerPlacementOfferItem | null>(null);
+  const [acceptImpact,setAcceptImpact]=useState<OfferAcceptImpact|null>(null);
+  const [acceptImpactBusy,setAcceptImpactBusy]=useState(false);
+  const [acceptImpactError,setAcceptImpactError]=useState<string|null>(null);
+  const impactRequest=useRef(0);
   const [declineOffer, setDeclineOffer] = useState<LearnerPlacementOfferItem | null>(null);
   const [declineReason, setDeclineReason] = useState("");
   const [extensionOffer,setExtensionOffer]=useState<LearnerPlacementOfferItem|null>(null);
