@@ -37,7 +37,6 @@ export async function getProjectWorkspaceView(
   const [
     workspace,
     members,
-    mentorRoster,
     readiness,
     meetings,
     finalDelivery,
@@ -114,6 +113,7 @@ export async function getProjectWorkspaceView(
     templateOverview: templateVersion?.blueprint.overview ?? null,
     ...workspace,
     members,
+    mentorRoster,
     readiness,
     meetings,
     finalDelivery,
