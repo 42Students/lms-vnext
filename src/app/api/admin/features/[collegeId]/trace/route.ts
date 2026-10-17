@@ -28,7 +28,8 @@ export async function GET(request:Request,{params}:{params:Promise<{collegeId:st
    selected:student?{
     membershipId:student.membershipId,
     displayName:student.displayName,rollNumber:student.rollNumber,
-    placementParticipation:student.placementParticipation,
+    placementParticipation:{...student.placementParticipation,
+     decidedAtDisplay:student.placementParticipation.decidedAt?.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})??null},
     modules:student.modules.map(item=>({
      module:item.module,label:item.label,enabled:item.enabled,
      winnerLevel:item.winnerLevel,winnerLocked:item.winnerLocked,
