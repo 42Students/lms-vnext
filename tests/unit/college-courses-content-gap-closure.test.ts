@@ -39,6 +39,8 @@ describe("College Courses & Content gap closure",()=>{
  it("COL-courses-content-05 existing course table shows student-visibility indicator and department",()=>{
   expect(catalogue()).toContain("COLLEGE_COURSES_COPY.studentsSeeIt");
   expect(catalogue()).toContain('header: "Department"');
+  expect(catalogue()).toContain('header: "Dependencies"');
+  expect(catalogue()).toContain("activeOfferingCountByCourse");
  });
  it("COL-courses-content-07 setup wizard preserves mapped Course Offering Delivery and Teaching order",()=>{
   for(const step of ["1. Create Course","2. Course Offering","3. Section Delivery","4. Assign Course Faculty"])expect(creation()).toContain(step);
@@ -94,10 +96,15 @@ describe("College Courses & Content gap closure",()=>{
   const actions=read("src/components/courses/admin-course-actions.tsx");
   expect(actions).toContain("A Course with active Offerings cannot be archived.");
   expect(actions).toContain("Archive Course");
+  expect(actions).toContain("activeOfferingCount>0");
+  expect(actions).toContain("useGuardedAction");
   expect(actions).toContain("academicSetupErrorMessage");
  });
  it("COL-courses-content-15 raw machine codes are not rendered in Course mutation errors",()=>{
   expect(read("src/components/courses/admin-course-actions.tsx")).toContain("academicSetupErrorMessage(error");
   expect(read("src/components/courses/learner-course-api.ts")).toContain("COURSE_NAME_CONFLICT");
+  expect(actions).toContain("apiFetch<unknown>");
+  expect(creation()).toContain("apiFetch<unknown>");
+  expect(read("src/components/courses/admin-course-display-editor.tsx")).toContain("apiFetch<void>");
  });
 });
