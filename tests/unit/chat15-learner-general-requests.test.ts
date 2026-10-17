@@ -50,7 +50,8 @@ describe("chat-15 learner general placement requests",()=>{
   expect(journey).toContain("roundId:result.roundId");
   const page=source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
   expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
-  expect(page).toContain('initialKind={prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
+  expect(page).toContain('initialKind={prefillAcceptance?"OFFER_ACCEPTANCE_DISPUTE":prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
+  expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
  });
  it("LEARNER-placements-43 only offers externally-reported acceptance dispute before the persisted cutoff",()=>{
   const schema=tpoGeneralRequestInputSchema.safeParse({kind:"OFFER_ACCEPTANCE_DISPUTE",
