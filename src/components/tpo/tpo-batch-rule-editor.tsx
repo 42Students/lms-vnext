@@ -14,7 +14,8 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
  const [draft,setDraft]=useState<TpoBatchRuleOverrides>(initialOverride);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const [expected,setExpected]=useState(expectedVersion);
- const changed=JSON.stringify(draft)!==JSON.stringify(initialOverride);
+ const [baseline,setBaseline]=useState<TpoBatchRuleOverrides>(initialOverride);
+ const changed=JSON.stringify(draft)!==JSON.stringify(baseline);
  useEffect(()=>{
   if(!changed)return;
   const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
@@ -40,6 +41,7 @@ export function TpoBatchRuleEditor({batchId,batchName,college,initialOverride,ex
     });
     setExpected(response.version);
     setDraft(values);
+    setBaseline(values);
     setNotice(Object.keys(values).length?"Rules saved for "+batchName:batchName+" follows the college rules");
     router.refresh();
    }catch(cause){
