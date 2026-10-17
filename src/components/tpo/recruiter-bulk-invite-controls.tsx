@@ -8,9 +8,16 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false);
  const [results,setResults]=useState<Entry[]>([]);
  const [notice,setNotice]=useState("");
+ const [reviewSnapshot,setReviewSnapshot]=useState<string|null>(null);
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
+ const eligibleSnapshot=eligible.map(row=>row.id).sort().join("|");
  async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
+  if(!retryOnly&&reviewSnapshot!==eligibleSnapshot){
+    setReviewSnapshot(eligibleSnapshot);
+    setNotice("Review the recipients and confirm. Existing invitation links for these recruiters will be replaced.");
+    return;
+  }
   setBusy(true);if(!retryOnly)setResults([]);setNotice("");
   const outcome:Entry[]=[];
   for(const lead of target){
@@ -28,6 +35,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    }catch(e){outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
     url:null,reason:e instanceof Error?e.message:"Could not create link",emailed:false});}
   }
+  if(!retryOnly)setReviewSnapshot(null);
   setResults(previous=>retryOnly?[
     ...previous.filter(item=>!target.some(lead=>lead.id===item.id)),
     ...outcome,
@@ -41,7 +49,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const linkLines=results.filter(row=>row.url).map(row=>row.name+" ("+row.email+")\t"+row.url).join("\n");
  return <section className="rounded-lg border border-border bg-surface p-4" aria-label="Invite selected recruiters">
   <button type="button" className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold"
-   disabled={busy||rows.length===0} onClick={()=>setOpen(value=>!value)}>
+   disabled={busy||rows.length===0} onClick={()=>{setReviewSnapshot(null);setOpen(value=>!value);}}>
    Invite selected recruiters ({rows.length})
   </button>
   {open?<div className="mt-3 space-y-3">
@@ -51,12 +59,18 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
     Create one-time links only, then share them directly. This will not send any email. Retrying failed rows leaves previously created links unchanged.
    </p>
    <p className="text-sm">{eligible.length} eligible · {rows.length-eligible.length} left out</p>
+   <p className="text-xs text-muted-foreground">{eligible.filter(row=>Boolean(row.inviteSentAt)).length} eligible recruiters have an earlier invite. Issuing a new link invalidates their previous link.</p>
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
     {rows.map(row=><li key={row.id}>{row.name} · {bulkInviteDisposition(row)??"Ready"}</li>)}
    </ul>
+   {reviewSnapshot===eligibleSnapshot&&eligible.length>0?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
+      Confirm issuing {eligible.length} new one-time invitation links. {eligible.filter(row=>Boolean(row.inviteSentAt)).length} previous link(s) will stop working.
+      <button type="button" className="ml-3 underline" onClick={()=>{setReviewSnapshot(null);setNotice("");}}>Cancel</button>
+    </div>:null}
    <button type="button" disabled={busy||eligible.length===0||eligible.length>100}
     className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
-    onClick={()=>void createLinks(eligible)}>{busy?"Working…":"Create "+eligible.length+" invite links"}</button>
+    onClick={()=>void createLinks(eligible)}>{busy?"Working…":reviewSnapshot===eligibleSnapshot?"Confirm "+eligible.length+" new invite links":"Review "+eligible.length+" invite links"}</button>
+   {eligible.length===0&&rows.length>0?<p role="status" className="text-sm">No selected recruiters can receive an invite link. The reasons are shown above.</p>:null}
    {eligible.length>100?<p role="alert" className="text-sm">Select at most 100 eligible recruiters.</p>:null}
    {results.length>0?<div aria-live="polite" className="space-y-2">
     <p className="text-sm">{results.filter(item=>item.url).length} links · No invitation emails sent · {failed.length} failed</p>

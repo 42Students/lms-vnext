@@ -2,6 +2,7 @@
 export type TpoBulkInviteCandidate={
  id:string;name:string;emailNorm:string|null;companyRelationshipId:string|null;
  recruiterUserId:string|null;unsubscribedAt:string|null;manualStage:string;
+ inviteSentAt?:string|null;
 };
 export function bulkInviteDisposition(row:TpoBulkInviteCandidate){
  if(row.recruiterUserId)return "Already joined";

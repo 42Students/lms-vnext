@@ -8,11 +8,22 @@ import {tpoCampaignDraftStorageReady} from "@/modules/messaging/tpo-campaign-dra
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 export const dynamic="force-dynamic";
-export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string}>}){
- const raw=(await searchParams).selected??"";
- const selectedLeadIds=[...new Set(raw.split(",").filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))].slice(0,100);
+export default async function NewTpoCampaignPage({searchParams}:{searchParams:Promise<{selected?:string|string[]}>}){
+ const requested=(await searchParams).selected;
+ const raw=typeof requested==="string"?requested:"";
+ const invalidSelection=Array.isArray(requested);
+ const candidateIds=raw?raw.split(","):[];
+ const validIds=candidateIds.filter(id=>/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id));
+ const selectedLeadIds=[...new Set(validIds)];
+ const unsafeSelection=invalidSelection||(requested!==undefined&&raw.length===0)||(raw.length>0&&(candidateIds.length>100||
+   validIds.length!==candidateIds.length||selectedLeadIds.length===0));
  const ctx=await getCurrentRequestContext();
  if(!ctx.membership||!hasMembershipRole(ctx,"TPO"))redirect("/dashboard");
+ if(unsafeSelection)return <main className="space-y-4">
+  <PageHeader eyebrow="Engage · Campaigns" title="Review recipients"/>
+  <p role="alert">Some selected recruiters could not be identified. No campaign draft was created. Return to Engage and select up to 100 recruiters again.</p>
+  <Link href="/tpo/recruiters" className="text-primary-text underline">Return to Engage</Link>
+ </main>;
  const ready=await tpoCampaignDraftStorageReady();
  const deliveryReady=ready&&await tpoCampaignDispatchReady();
  return <main className="space-y-5">

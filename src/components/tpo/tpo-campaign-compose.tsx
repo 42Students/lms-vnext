@@ -17,7 +17,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
  async function save(){
-  const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
+  const parsed=tpoCampaignDraftSchema.safeParse({title,subject,body,segment:selectedLeadIds.length?"ALL_ELIGIBLE":segment,templateKey,selectedLeadIds:selectedLeadIds.length?selectedLeadIds:undefined});
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
   }
@@ -45,12 +45,13 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     <input value={title} maxLength={160} required className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
-   {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Sending to {selectedLeadIds.length} selected recruiter contacts (subject to eligibility and suppression checks)</p>:null}
+   {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
    <label className="block text-sm font-semibold">To
-    <select className={field} value={segment} onChange={e=>setSegment(e.target.value as typeof segment)}>
+    <select className={field} value={selectedLeadIds.length?"ALL_ELIGIBLE":segment} disabled={selectedLeadIds.length>0} onChange={e=>setSegment(e.target.value as typeof segment)}>
      {SEGMENTS.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
     </select>
    </label>
+   {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
    <label className="block text-sm font-semibold">Subject
     <input value={subject} maxLength={200} required className={field}
      onChange={e=>setSubject(e.target.value)}/>
@@ -77,10 +78,13 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
      Authentication or OTP templates cannot be used for recruitment campaigns.
     </span>
    </label>
-   <Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
+   {!selectedLeadIds.length?<Link href={"/tpo/recruiters/campaigns/preview?segment="+segment}
     className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
     Preview audience
-   </Link>
+   </Link>:<Link href="/tpo/recruiters"
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+    Change selected recruiters in Engage
+   </Link>}
    {!deliveryReady?<p role="alert" className="rounded-md border border-border p-3 text-sm text-body"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:<p role="status" className="text-sm text-body">Save a draft, then review eligible recipients before sending.</p>}
    <button type="submit" disabled={busy} className="block min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {busy?"Saving…":"Save draft"}
