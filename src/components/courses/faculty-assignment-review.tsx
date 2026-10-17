@@ -382,7 +382,7 @@ function SubmissionGradeCard({
             <Button size="sm" type="button"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
-              {saving?"Submitting…":"Submit grade"}
+              {saving?"Submitting…":submission.gradingStatus==="GRADED"?"Edit grade":"Submit grade"}
             </Button>
           ):null}
           {actions.canGrade ? (

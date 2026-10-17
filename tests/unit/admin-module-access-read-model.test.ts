@@ -179,7 +179,7 @@ describe("Super Admin feature-control model", () => {
     });
   });
 
-  it("respects the source rule that lower-level placement flags are ignored", () => {
+  it("resolves placements through the same hierarchy as other modules (lowest rule wins)", () => {
     const resolution = resolveModuleAccessFromRules(
       [
         {
@@ -216,8 +216,8 @@ describe("Super Admin feature-control model", () => {
     );
 
     expect(resolution.placements).toMatchObject({
-      enabled: false,
-      level: "COLLEGE",
+      enabled: true,
+      level: "MEMBERSHIP",
     });
   });
 

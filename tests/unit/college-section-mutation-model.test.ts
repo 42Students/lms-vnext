@@ -13,11 +13,13 @@ const input = {
 describe("College Admin class mutation model", () => {
   it("requires strict validated registered fields and bounded capacity", () => {
     expect(createCollegeSectionSchema.parse({ ...input, name: "  A  " }).name).toBe("A");
-    expect(createCollegeSectionSchema.parse({ ...input, capacity: null }).capacity).toBeNull();
+    expect(createCollegeSectionSchema.safeParse({ ...input, capacity: null }).success).toBe(false);
+    expect(createCollegeSectionSchema.parse({ ...input, capacity: 200 }).capacity).toBe(200);
     for (const invalid of [
       { ...input, collegeId: id },
       { ...input, capacity: 0 },
       { ...input, capacity: -1 },
+      { ...input, capacity: 201 },
       { ...input, capacity: 10001 },
       { ...input, capacity: 1.5 },
       { ...input, name: "" },

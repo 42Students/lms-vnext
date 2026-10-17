@@ -4,7 +4,7 @@ import { placementReportCsvCell } from "@/modules/placements/report-model";
 
 describe("College drive applicant filters and CSV protection", () => {
   it("validates bounded status filters and forbids caller college", () => {
-    expect(driveApplicationsQuerySchema.parse({})).toEqual({q:"",status:"ALL",screening:"ALL",page:1});
+    expect(driveApplicationsQuerySchema.parse({})).toEqual({q:"",status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",page:1});
     for(const input of [{collegeId:"bad"},{page:0},{page:1001},{status:"UNKNOWN"},{screening:"SCORED"}]) {
       expect(driveApplicationsQuerySchema.safeParse(input).success).toBe(false);
     }

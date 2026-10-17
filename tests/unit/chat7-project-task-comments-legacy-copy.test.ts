@@ -10,7 +10,7 @@ describe("Mentor and Learner 0090 task comments exact legacy copy",()=>{
  });
  it("keeps writes gated by canPost and a versioned mutation",()=>{
    expect(source).toContain("canPost?<Button");
-   expect(source).toContain("expectedTaskUpdatedAt:updatedAt");
+   expect(source).toContain("expectedTaskUpdatedAt:currentToken");
    expect(source).toContain('credentials:"same-origin"');
    expect(source).toContain('disabled={busy||!body.trim()}');
  });

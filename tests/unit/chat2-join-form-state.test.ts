@@ -10,6 +10,7 @@ describe("TPO-campaigns-public-R03 TPO-campaigns-public-R06 join states",()=>{
   expect(s).toContain('autoComplete="one-time-code"');
   expect(s).toContain('autoComplete="name"');
   expect(s).toContain("onSubmit={event=>");
-  expect(s).toContain("You already have access to ");
+  expect(s).toContain("One more step");
+  expect(s).toContain("You already have an account. Sign in on ");
  });
 });

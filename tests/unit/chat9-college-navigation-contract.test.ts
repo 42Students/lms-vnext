@@ -51,7 +51,7 @@ describe("legacy College Admin full sidebar + group href contract",()=>{
     const anchors=[
       ["college/page.tsx",'/college/announcements'],
       ["college/profile/page.tsx",'/college/domains'],
-      ["college/people/page.tsx",'/college/groups'],
+      ["college/people/manage/page.tsx",'/college/groups'],
       ["college/projects/page.tsx",'/college/projects/reassign-mentor'],
       ["college/attendance/page.tsx",'/college/attendance/departments'],
       ["college/hiring-dashboard/page.tsx",'/college/placements/readiness-by-department'],

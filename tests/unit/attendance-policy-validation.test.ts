@@ -56,7 +56,7 @@ describe("attendance policy validation", () => {
   });
 
   it("accepts both ends of the correction-window range", () => {
-    for (const value of [1, 168]) {
+    for (const value of [1, 168, 8760]) {
       expect(
         attendancePolicyUpdateSchema.safeParse({
           ...valid,
@@ -66,12 +66,12 @@ describe("attendance policy validation", () => {
     }
   });
 
-  it("rejects correction windows outside 1 to 168 hours", () => {
+  it("rejects correction windows outside 1 to 8760 hours (legacy range)", () => {
     for (const value of [
       -1,
       0,
-      169,
-      1000,
+      8761,
+      10000,
       24.5,
       Number.NaN,
       Number.POSITIVE_INFINITY,

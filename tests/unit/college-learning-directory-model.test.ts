@@ -32,10 +32,10 @@ describe("College Admin lessons and course progress pure models", () => {
 
   it("defaults to active rows and strict college-independent query boundaries", () => {
     expect(collegeLearningQuerySchema.parse({}))
-      .toEqual({ q: "", status: "ACTIVE", page: 1 });
+      .toEqual({ q: "", status: "ACTIVE", page: 1, pageSize: 25 });
     expect(collegeLearningQuerySchema.parse({
       q: "  sample  ", status: "ARCHIVED", page: "3",
-    })).toEqual({ q: "sample", status: "ARCHIVED", page: 3 });
+    })).toEqual({ q: "sample", status: "ARCHIVED", page: 3, pageSize: 25 });
     for (const invalid of [
       { collegeId: "foreign" },
       { page: -1 },

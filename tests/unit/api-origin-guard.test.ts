@@ -17,6 +17,10 @@ import { describe, expect, it } from "vitest";
  */
 const ALLOWED: Record<string, string> = {
   // "src/app/api/example/route.ts POST": "authenticated by provider signature",
+  "src/app/api/internal/placements/tpo/notices/deliver/route.ts POST":
+    "scheduler endpoint; authenticated by the x-tpo-scheduler-key secret (timing-safe), no cookie",
+  "src/app/api/internal/placements/tpo/withdrawal-escalations/run/route.ts POST":
+    "scheduler endpoint; authenticated by the x-tpo-scheduler-key secret (timing-safe), no cookie",
 };
 
 /** GET handlers whose names look mutating but only read. Each needs a reason. */

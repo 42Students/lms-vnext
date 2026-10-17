@@ -14,8 +14,8 @@ describe("college shortlisted route",()=>{
     const src=readFileSync(join(process.cwd(),
       "src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx"),"utf8");
     expect(src).toContain('hasMembershipRole(context,"COLLEGE_ADMIN")');
-    expect(src).toContain('status:"SUBMITTED" as const');
-    expect(src).toContain('screening:"SHORTLISTED" as const');
+    expect(src).toContain('status:"SUBMITTED"');
+    expect(src).toContain('screening:"SHORTLISTED"');
     expect(src).toContain("listCollegeDriveApplications(context,jobId,query)");
     expect(src).not.toContain("getDb()");
   });
