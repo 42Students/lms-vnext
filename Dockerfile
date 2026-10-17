@@ -10,9 +10,8 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json tsconfig.json ./
 COPY drizzle ./drizzle
 COPY scripts ./scripts
-COPY src/lib ./src/lib
-COPY src/observability ./src/observability
-COPY src/modules/auth/retention.ts ./src/modules/auth/retention.ts
+# The logger imports the log-alerts reporter, which pulls further src modules; copy all of src.
+COPY src ./src
 CMD ["npm", "run", "db:migrate"]
 
 FROM migrator AS nsrit-loader
