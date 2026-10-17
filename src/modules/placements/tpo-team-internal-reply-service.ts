@@ -61,7 +61,8 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     )).limit(1);
    if(existing){
     const saved=existing.metadata.messageId;
-    if(existing.metadata.bodyHash!==bodyHash||typeof saved!=="string")
+    if(existing.metadata.bodyHash!==bodyHash||
+     Boolean(existing.metadata.markDecision)!==Boolean(input.markDecision)||typeof saved!=="string")
      throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
     return {id:saved,threadId:thread.id};
    }
@@ -77,9 +78,20 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    module:"PLACEMENTS",eventType:"placements.tpo_team.message_sent",
    subjectType:"team_thread",subjectId:thread.id,
    summary:"Private team message created",
-   metadata:{messageId:message.id,bodyLength:input.body.length,bodyHash},
+   metadata:{messageId:message.id,bodyLength:input.body.length,bodyHash,
+    markDecision:Boolean(input.markDecision)},
    dedupeKey:key,
   }).returning({id:activityEvents.id});
+  if(input.markDecision){
+   await tx.insert(activityEvents).values({
+    organizationId:college.organizationId,collegeId:college.id,
+    actorUserId:context.user.id,actorMembershipId:membership.id,
+    module:"PLACEMENTS",eventType:"placements.tpo_team.decision_marked",
+    subjectType:"team_thread",subjectId:thread.id,
+    summary:"Team marked message as a decision",
+    metadata:{messageId:message.id},
+   });
+  }
   const other=active.find(member=>member.id!==membership.id);
   if(!event||!other)throw new Error("TEAM_PARTICIPANT_INACTIVE");
   const [actor]=await tx.select({displayName:users.displayName})

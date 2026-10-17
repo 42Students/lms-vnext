@@ -11,7 +11,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-04 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-06 | S2 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-placements-13 | S2 | MISSING-ACTION | OPEN |
+| LEARNER-placements-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | LEARNER-placements-20 | S2 | MISSING-FIELD | OPEN |
 | LEARNER-placements-21 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
 | LEARNER-placements-24 | S2 | STATE | FIXED-ON-MAIN |
@@ -26,10 +26,10 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-49 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | LEARNER-placements-51 | S2 | MISSING-FIELD | OPEN |
 | LEARNER-placements-52 | S2 | MISSING-ACTION | OPEN |
-| LEARNER-placements-53 | S2 | MISSING-FIELD | OPEN |
+| LEARNER-placements-53 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-R01 | S2 | STATE | FIXED-ON-MAIN |
 | LEARNER-placements-R02 | S2 | MISSING-MODAL | FIXED-ON-MAIN |
-| LEARNER-placements-R03 | S2 | SIDE-EFFECT | OPEN |
+| LEARNER-placements-R03 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
 | LEARNER-placements-R04 | S2 | SIDE-EFFECT | OPEN |
 | LEARNER-placements-R05 | S2 | VALIDATION | FIXED-ON-MAIN |
 | LEARNER-placements-01 | S3 | MISSING-FIELD | OPEN |
@@ -37,7 +37,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-05 | S3 | COPY | OPEN |
 | LEARNER-placements-08 | S3 | MISSING-FIELD | UNCONFIRMED |
 | LEARNER-placements-09 | S3 | STATE | OPEN |
-| LEARNER-placements-11 | S3 | COPY | OPEN |
+| LEARNER-placements-11 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-12 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-14 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-15 | S3 | STATE | FIXED-ON-MAIN |
@@ -52,27 +52,27 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-38 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-39 | S3 | MISSING-FIELD | UNCONFIRMED |
 | LEARNER-placements-40 | S3 | STATE | FIXED-ON-MAIN |
-| LEARNER-placements-41 | S3 | MISSING-FIELD | OPEN |
+| LEARNER-placements-41 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-42 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-43 | S3 | STATE | OPEN |
 | LEARNER-placements-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-placements-46 | S3 | MISSING-TAB | OPEN |
 | LEARNER-placements-48 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-54 | S3 | COPY | OPEN |
-| LEARNER-placements-55 | S3 | COPY | OPEN |
-| LEARNER-placements-R06 | S3 | MISSING-FIELD | OPEN |
-| LEARNER-placements-R07 | S3 | STATE | OPEN |
-| LEARNER-placements-02 | S4 | RESPONSIVE | OPEN |
-| LEARNER-placements-10 | S4 | COPY | OPEN |
+| LEARNER-placements-55 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-placements-R06 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| LEARNER-placements-R07 | S3 | STATE | FIXED-ON-MAIN |
+| LEARNER-placements-02 | S4 | RESPONSIVE | FIXED-ON-MAIN |
+| LEARNER-placements-10 | S4 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-16 | S4 | MISSING-FIELD | UNCONFIRMED |
-| LEARNER-placements-18 | S4 | COPY | OPEN |
+| LEARNER-placements-18 | S4 | COPY | FIXED-ON-MAIN |
 | LEARNER-placements-19 | S4 | PERFORMANCE | WRONG |
-| LEARNER-placements-23 | S4 | VALIDATION | OPEN |
-| LEARNER-placements-33 | S4 | COPY | OPEN |
-| LEARNER-placements-56 | S4 | VALIDATION | OPEN |
-| LEARNER-placements-57 | S4 | MISSING-PAGE | OPEN |
-| LEARNER-placements-58 | S4 | MISSING-PAGE | OPEN |
-| LEARNER-placements-R08 | S4 | STATE | OPEN |
+| LEARNER-placements-23 | S4 | VALIDATION | FIXED-ON-MAIN |
+| LEARNER-placements-33 | S4 | COPY | FIXED-ON-MAIN |
+| LEARNER-placements-56 | S4 | VALIDATION | FIXED-ON-MAIN |
+| LEARNER-placements-57 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
+| LEARNER-placements-58 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
+| LEARNER-placements-R08 | S4 | STATE | FIXED-ON-MAIN |
 
 ## mentor/projects-meetings (58: FIXED-ON-MAIN 28, OPEN 30)
 
@@ -92,11 +92,11 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-01 | S3 | STATE | OPEN |
 | MEN-projects-meetings-03 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-04 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| MEN-projects-meetings-05 | S3 | COPY | OPEN |
-| MEN-projects-meetings-06 | S3 | COPY | OPEN |
+| MEN-projects-meetings-05 | S3 | COPY | FIXED-ON-MAIN |
+| MEN-projects-meetings-06 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-08 | S3 | STATE | OPEN |
 | MEN-projects-meetings-14 | S3 | COPY | OPEN |
-| MEN-projects-meetings-15 | S3 | COPY | OPEN |
+| MEN-projects-meetings-15 | S3 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-18 | S3 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-19 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-20 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -122,22 +122,22 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | MEN-projects-meetings-R02 | S3 | VALIDATION | OPEN |
 | MEN-projects-meetings-R03 | S3 | VALIDATION | OPEN |
-| MEN-projects-meetings-R04 | S3 | STATE | OPEN |
+| MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R05 | S3 | STATE | OPEN |
 | MEN-projects-meetings-R06 | S3 | STATE | OPEN |
 | MEN-projects-meetings-R07 | S3 | VALIDATION | OPEN |
 | MEN-projects-meetings-R08 | S3 | VALIDATION | OPEN |
 | MEN-projects-meetings-02 | S4 | COPY | OPEN |
-| MEN-projects-meetings-07 | S4 | COPY | OPEN |
-| MEN-projects-meetings-09 | S4 | STATE | OPEN |
+| MEN-projects-meetings-07 | S4 | COPY | FIXED-ON-MAIN |
+| MEN-projects-meetings-09 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-10 | S4 | PERFORMANCE | OPEN |
-| MEN-projects-meetings-13 | S4 | STATE | OPEN |
-| MEN-projects-meetings-24 | S4 | COPY | OPEN |
+| MEN-projects-meetings-13 | S4 | STATE | FIXED-ON-MAIN |
+| MEN-projects-meetings-24 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-25 | S4 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-29 | S4 | VALIDATION | OPEN |
 | MEN-projects-meetings-R09 | S4 | MISSING-FIELD | OPEN |
-| MEN-projects-meetings-R10 | S4 | STATE | OPEN |
-| MEN-projects-meetings-R11 | S4 | STATE | OPEN |
+| MEN-projects-meetings-R10 | S4 | STATE | FIXED-ON-MAIN |
+| MEN-projects-meetings-R11 | S4 | STATE | FIXED-ON-MAIN |
 
 ## recruiter/home-drives (58: OPEN 22, FIXED-ON-MAIN 32, UNCONFIRMED 4)
 

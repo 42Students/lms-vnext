@@ -36,7 +36,9 @@ DONE below means implemented plus a named acceptance test written, **not that th
 
 | PUB-auth-public-36 | DONE | src/modules/notifications/exotel-sms.ts, zeptomail-email.ts, src/modules/auth/login-service.ts; tests/unit/chat11-provider-copy-round5.test.ts — `it("PUB-auth-public-36 preserves registered DLT SMS and the legacy ZeptoMail OTP merge fields")` |
 
+| PUB-auth-public-35 | NOT-A-GAP | docs/audit/decisions/session-absolute-expiry.md; src/modules/auth/config.ts, session-service.ts; tests/unit/chat11-session-course-gap-verification.test.ts — `it("PUB-auth-public-35 documents five-day absolute session expiry without sliding tokens")`. Deliberately favors shorter absolute device-session expiry and per-device revocation over legacy 30-day refresh. |
+
 ## Outstanding gaps (not claimed closed)
-`PUB-auth-public-20/21/22/23/24/26/29/30/31/35/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
+`PUB-auth-public-20/21/22/23/24/26/29/30/31/38/39` remain pending implementation, context verification or other lane integration. They are not classified BLOCKED merely for complexity. The shared graceful error / guarded-action helpers are not yet present on this branch, so page adoption awaits their merge.
 
 No test execution in this builder lane; orchestrator owns test runs.

@@ -17,6 +17,8 @@ describe("chat-12 after-college graceful outcomes",()=>{
  });
  it("GR-90 uses an announced role alert for failed requests",()=>{
   expect(source).toContain('role="alert"');
-  expect(source).toContain("setError(cause instanceof Error?cause.message");
+  expect(source).toContain("cause instanceof FriendlyFetchError && cause.status===409");
+  expect(source).toContain("Your outcome selection is kept below");
+  expect(source).toContain("Could not save outcome. Please try again.");
  });
 });

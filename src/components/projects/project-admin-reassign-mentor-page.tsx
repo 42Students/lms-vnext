@@ -11,6 +11,7 @@ import { z } from "zod";
 import { listProjectMentorCandidates } from "@/modules/projects/member-service";
 import { listCollegeProjectMentorWorkload, listCollegeReassignmentWorkspaces } from "@/modules/projects/mentor-reassignment-workload-service";
 import Link from "next/link";
+import { isProjectMentorOverloaded } from "@/modules/projects/mentor-overload-model";
 
 function one(
   value: string | string[] | undefined,
@@ -62,6 +63,7 @@ export async function ProjectAdminReassignMentorPage({
       listCollegeProjectMentorWorkload(context, collegeId),
     ]);
 
+  const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="space-y-6">
       <ProjectAdminNav
@@ -71,8 +73,9 @@ export async function ProjectAdminReassignMentorPage({
       <PageHeader
         eyebrow={eyebrow}
         title="Bulk mentor reassignment"
-        description="Move selected non-archived project workspaces to a new primary mentor."
+        description="Move multiple active workspaces to a new mentor at once."
       />
+      <Link className="inline-flex min-h-10 items-center rounded-md border border-border px-3 py-2 text-sm font-semibold" href={basePath}>Back</Link>
       <section className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold">Mentor workload</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -85,7 +88,7 @@ export async function ProjectAdminReassignMentorPage({
               <p className="font-semibold">{mentor?.displayName ?? mentor?.email ?? "Unassigned"}</p>
               <p className="text-sm">{row.activeWorkspaces} active workspaces</p>
               <p className="text-sm">{row.atRisk} at risk</p>
-              {row.activeWorkspaces >= 8 && row.mentorMembershipId ?
+              {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
                 <span className="text-xs font-semibold text-warning-text">Overloaded</span> : null}
             </Link>;
           })}
