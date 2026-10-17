@@ -216,7 +216,7 @@ Audit: `docs/audit/pages/learner/profile-misc.md` (and `profile-misc-review.md` 
 | LEARNER-profile-misc-11 | S4 | STATE | FIXED-ON-MAIN |
 | LEARNER-profile-misc-12 | S4 | STATE | FIXED-ON-MAIN |
 | LEARNER-profile-misc-18 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| LEARNER-profile-misc-23 | S4 | COPY | OPEN |
+| LEARNER-profile-misc-23 | S4 | COPY | DONE |
 | LEARNER-profile-misc-24 | S4 | COPY | FIXED-ON-MAIN |
 | LEARNER-profile-misc-25 | S4 | STATE | FIXED-ON-MAIN |
 | LEARNER-profile-misc-26 | S4 | COPY | FIXED-ON-MAIN |
@@ -233,11 +233,11 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 | COL-dashboard-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-dashboard-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-dashboard-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-10 | S2 | STATE | OPEN |
+| COL-dashboard-10 | S2 | STATE | DONE |
 | COL-dashboard-09 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-dashboard-14 | S3 | COPY | OPEN |
-| COL-dashboard-15 | S3 | STATE | OPEN |
-| COL-dashboard-16 | S4 | A11Y | OPEN |
+| COL-dashboard-14 | S3 | COPY | DONE |
+| COL-dashboard-15 | S3 | STATE | DONE |
+| COL-dashboard-16 | S4 | A11Y | DONE |
 | COL-dashboard-17 | S4 | RESPONSIVE | UNCONFIRMED |
 
 ## Notes (blockers, one line each)
@@ -298,3 +298,5 @@ Audit: `docs/audit/pages/college/dashboard.md` (and `dashboard-review.md` if pre
 
 - College Placements -16/-23/-24/-25/-26: prior source contracts, responsive cards, Hired stage and intentional placement-policy boundary verified against `docs/audit/acceptance/college-placements-verification.md` and named tests. Browser/DB tests pending.
 - Super Admin Tracker -104/-105/-108/-110/-111: prior named tests and acceptance verified; -106/-107: new named source-contract tests in `tests/unit/chat6-tracker-bulk-saved-views-verification.test.ts`, acceptance appended. No tests executed by lane; browser/DB workflows await orchestrator.
+
+- College Dashboard -10/-14/-15/-16 matched existing failure-isolation and copy/a11y tests, with dispositions in `docs/audit/acceptance/college-dashboard-verification.md`. Learner -23 matched notification copy and named test under `docs/audit/acceptance/learner-profile-misc-verification.md`. No tests run.
