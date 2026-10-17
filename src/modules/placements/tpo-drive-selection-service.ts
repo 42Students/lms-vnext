@@ -170,6 +170,9 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       }
       continue;
     }
+    if(candidate?.offer&&["ISSUED","ACCEPTED"].includes(candidate.offer.status)){
+      results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"An active offer already exists with different terms or an unreconciled selection. Review the offer before release."});continue;
+    }
     if(!candidate?.offerReady){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Final round or eligibility check is not ready"});continue;
     }

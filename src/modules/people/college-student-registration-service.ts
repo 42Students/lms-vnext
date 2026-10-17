@@ -5,6 +5,7 @@ import { getDb } from "@/db/client";
 import { collegeMemberships, learnerProfiles } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import { createLearnerProgramEnrollment } from "@/modules/academics/enrollment-service";
 import { placeImportedLearnerInSection } from "./college-student-import-placement";
 import { learnerProfileDocumentSchema } from "./profile-validation";
@@ -27,8 +28,7 @@ export const collegeStudentRegistrationSchema = z.object({
  * academic enrollment are separate writers and cannot be rolled back together. */
 export async function registerCollegeStudent(context: RequestContext, raw: unknown) {
   const input = collegeStudentRegistrationSchema.parse(raw);
-  const member = context.membership;
-  if (!member || member.status !== "ACTIVE") throw Error("COLLEGE_MEMBERSHIP_REQUIRED");
+  const member = await resolveActingCollege(context,"people.manage");
   requirePermission(context, "people.manage", {
     collegeId: member.collegeId, organizationId: member.organizationId,
   });

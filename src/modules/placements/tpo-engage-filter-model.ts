@@ -17,8 +17,9 @@ function isInRange(value:string|null|undefined,kind:string,now:number):boolean{
  const time=value?new Date(value).getTime():NaN;
  if(kind==="NONE"||kind==="NEVER")return !Number.isFinite(time);
  if(!Number.isFinite(time))return false;
- const start=new Date(now);start.setHours(0,0,0,0);
- const midnight=start.getTime();
+ // Roster dates are college-local IST, not the browser machine timezone.
+ const ist=new Date(now+330*60_000);
+ const midnight=Date.UTC(ist.getUTCFullYear(),ist.getUTCMonth(),ist.getUTCDate())-330*60_000;
  switch(kind){
   case "DUE":return time<=now;
   case "OVERDUE":return time<midnight;
@@ -59,7 +60,7 @@ export function filterEngageRoster<T extends EngageRosterRow>(
   if(filters.added&&filters.added!=="ALL"&&
     !isInRange(row.createdAt,filters.added,now))return false;
   if(!query)return true;
-  return [row.name,row.companyName,row.emailNorm,row.phoneNorm].filter(Boolean)
+  return [row.name,row.companyName,row.emailNorm,row.phoneNorm,row.designation,row.source].filter(Boolean)
    .join(" ").toLowerCase().includes(query);
  });
 }

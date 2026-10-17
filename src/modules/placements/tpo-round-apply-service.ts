@@ -39,7 +39,7 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
   .orderBy(asc(placementJobRounds.sequence));
  const currentIndex=evaluativeRounds.findIndex(x=>x.id===roundId);
  const next=currentIndex>=0?evaluativeRounds[currentIndex+1]??null:null;
- const passDestination=next?next.kind==="INTERVIEW"?"Interview":"Next test":"Final round cleared";
+ const passDestination=next?next.kind==="INTERVIEW"?"Interview":next.kind==="GD"?"Group discussion":next.kind==="VENDOR_TEST"?"External assessment":"Next test":"Final round cleared";
  const rows=facts.map(x=>({...x,student:x.student??"Learner",
   destination:x.outcome==="PASS"?passDestination:x.outcome==="FAIL"?"Not cleared":
    x.outcome==="HOLD"?"Waitlisted":"Absent"}));

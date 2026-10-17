@@ -84,7 +84,7 @@ export default async function RecruiterConversationDetail({params,searchParams}:
   <ol aria-label="Employer and placement cell messages" className="space-y-3">
    {messages.map(message=><li key={message.id}
     className="rounded-xl border border-border bg-surface p-4">
-    <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":"Placement cell"} · {dateTime(message.createdAt)} IST</p>
+    <p className="text-xs font-semibold text-muted-foreground">{message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} · {dateTime(message.createdAt)} IST</p>
     {message.proposal?<div className="mt-2 rounded-md border border-border bg-surface-secondary p-3 text-xs text-body">
       <p className="font-semibold text-foreground">Drive proposal · sent as discussion message</p>
       <p>Role: {message.proposal.title}</p>

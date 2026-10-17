@@ -4,12 +4,17 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {projectMutation} from "./project-api";
-type Comment={id:string;body:string;createdAt:string;authorMembershipId:string;authorName:string|null};
+import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
+ type ProjectTaskCommentKind} from "@/modules/projects/task-comment-kind-staged";
+type Comment={id:string;body:string;commentKind:ProjectTaskCommentKind;createdAt:string;
+ authorMembershipId:string;authorName:string|null};
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
  const router=useRouter();const [open,setOpen]=useState(false);
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
+ const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
+ const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
  const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
  const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
@@ -30,11 +35,11 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   setBusy(true);setError(null);
   try{
    const result=await projectMutation(url,"POST",{
-     body:body.trim(),expectedTaskUpdatedAt:currentToken,
+     body:body.trim(),commentKind:kind,expectedTaskUpdatedAt:currentToken,
    }) as {comment:{updatedTaskAt?:string|Date}};
    const nextToken=result.comment.updatedTaskAt;
    if(nextToken)setLastPosted({taskId,updatedAt:new Date(nextToken).toISOString()});
-   setBody("");await show();router.refresh();
+   setBody("");setKind("NOTE");await show();router.refresh();
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not add comment");}
   finally{setBusy(false);}
  }
@@ -44,15 +49,38 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    </Button>
    {open?<div className="space-y-2 rounded border border-border p-3" aria-label="Task comments">
      <p className="text-xs text-muted-foreground">Notes and progress updates people on this task have written.</p>
+     <label className="block text-xs font-semibold text-body">Filter comments
+       <select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
+         className="mt-1 min-h-10 rounded border border-border bg-background px-2">
+         <option value="ALL">All comments</option>
+         {PROJECT_TASK_COMMENT_KINDS.map(value=><option key={value} value={value}>
+           {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
+         </option>)}
+       </select>
+     </label>
      {rows.length===0?<p role="status" className="text-sm text-muted-foreground">No comments yet.</p>:null}
-     {rows.map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
+     {rows.length>0&&!rows.some(row=>filter==="ALL"||row.commentKind===filter)?
+       <p role="status" className="text-sm text-muted-foreground">No comments match this filter.</p>:null}
+     {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="rounded-lg border border-border p-3 text-sm text-body">
       <p className="mb-1 text-xs font-semibold text-muted-foreground">
         {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
         }).format(new Date(row.createdAt))}
       </p>
+      <p className="mb-1 text-xs font-semibold text-body">
+        {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind]??"Note"}
+      </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
    </article>)}
+     {canPost?<label className="grid gap-1 text-sm font-semibold text-body">Comment type
+       <select value={kind} disabled={busy}
+         onChange={event=>setKind(event.target.value as ProjectTaskCommentKind)}
+         className="min-h-10 rounded border border-border bg-background px-2">
+         {PROJECT_TASK_COMMENT_KINDS.map(value=><option key={value} value={value}>
+           {PROJECT_TASK_COMMENT_KIND_LABELS[value]}
+         </option>)}
+       </select>
+     </label>:null}
      {canPost?<label className="grid gap-1 text-sm text-body">Add a note before posting
        <Textarea maxLength={4000} value={body} disabled={busy}
          placeholder="Share a progress update or note..."
