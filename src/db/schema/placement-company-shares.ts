@@ -46,6 +46,7 @@ export const placementCompanyApplicantShares = pgTable(
     uniqueIndex("pcas_token_hash_uq").on(t.tokenHash),
     uniqueIndex("pcas_share_id_college_uq").on(t.id, t.collegeId),
     index("pcas_college_job_idx").on(t.collegeId, t.jobId),
+    check("pcas_wrong_code_count_ck", sql`${t.wrongCodeCount} between 0 and 10`),
     check("pcas_hash_shape_ck", sql`${t.tokenHash} ~ '^[a-f0-9]{64}$'`),
     check("pcas_expiry_ck", sql`${t.expiresAt} > ${t.createdAt}`),
     foreignKey({
@@ -76,7 +77,7 @@ export const placementCompanyApplicantShareViews = pgTable(
   },
   (t) => [
     index("pcas_views_share_idx").on(t.shareId, t.occurredAt.desc()),
-    check("pcas_views_kind_ck", sql`${t.eventKind} IN ('VIEW','CSV')`),
+    check("pcas_views_kind_ck", sql`${t.eventKind} IN ('VIEW','CSV','LOCKED')`),
     foreignKey({
       columns: [t.shareId, t.collegeId],
       foreignColumns: [placementCompanyApplicantShares.id, placementCompanyApplicantShares.collegeId],
