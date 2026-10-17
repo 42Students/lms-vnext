@@ -33,3 +33,12 @@ These findings record **source assertions only**; tests have not been run by thi
 | TPO-settings-audit-71 | OPEN | `src/app/(authenticated)/tpo/settings/notices/page.tsx`; `tests/unit/chat9-tpo-settings-source-closure.test.ts` — `TPO-settings-audit-71 verifies partial implementation in src/app/(authenticated)/tpo/settings/notices/page.tsx` |
 | TPO-settings-audit-82 | DONE | `src/components/placements/tpo-settings-nav.tsx`; `tests/unit/chat9-tpo-settings-source-closure.test.ts` — `TPO-settings-audit-82 verifies existing implementation in src/components/placements/tpo-settings-nav.tsx` |
 | TPO-settings-audit-97 | OPEN | `src/components/tpo/tpo-audit-grid.tsx`; `tests/unit/chat9-tpo-settings-source-closure.test.ts` — `TPO-settings-audit-97 verifies partial implementation in src/components/tpo/tpo-audit-grid.tsx` |
+
+## Round 3: shared friendly request adoption
+
+| Gap | Status | Evidence |
+|---|---|---|
+| TPO-settings-audit-21 | Authored | `tests/unit/chat9-tpo-settings-friendly-saves.test.ts` — `TPO-settings-audit-21 preserves the edited job type after a failed network write`; shared `apiFetch` and `InlineNotice` adopted |
+| TPO-settings-audit-31 | Authored | `tests/unit/chat9-tpo-settings-friendly-saves.test.ts` — `TPO-settings-audit-31 applies friendly save errors and retains outcome label edits`; shared `apiFetch` and `InlineNotice` adopted |
+| TPO-settings-audit-43 | Authored | `tests/unit/chat9-tpo-settings-friendly-saves.test.ts` — `TPO-settings-audit-43 keeps blocked-date form input on a failed save`; shared `apiFetch` and `InlineNotice` adopted |
+| TPO-settings-audit-72 | Authored | `tests/unit/chat9-tpo-settings-friendly-saves.test.ts` — `TPO-settings-audit-72 turns permission or conflict errors into safe notices without clearing switches`; shared `apiFetch` and `InlineNotice` adopted |
