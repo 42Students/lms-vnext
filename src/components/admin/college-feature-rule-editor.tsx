@@ -13,7 +13,10 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  const [busy,setBusy]=useState(false);
  const [feedback,setFeedback]=useState("");
  const [impact,setImpact]=useState<string|null>(null);
+ const [students,setStudents]=useState<number|null>(null);
+ const [acknowledgedPopulation,setAcknowledgedPopulation]=useState(false);
  const [impactBusy,setImpactBusy]=useState(false);
+ const lockChanged=observed!==null&&(choice==="INHERIT"?observed.locked:locked!==observed.locked);
  const endpoint="/api/admin/features/"+encodeURIComponent(collegeId)+"/rules";
  const disabled=busy||!isCollegeRuleDirty(choice,locked,observed)||(ancestorLocked&&choice!=="INHERIT");
  async function recheck(){
@@ -30,17 +33,19 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
  }
  async function reviewChange(){
   if(busy)return;
-  setImpactBusy(true);setImpact(null);
+  setImpactBusy(true);setImpact(null);setStudents(null);setAcknowledgedPopulation(false);
   try{
    const response=await fetch("/api/admin/features/"+encodeURIComponent(collegeId)+
      "/impact?module="+encodeURIComponent(module),{cache:"no-store"});
    if(!response.ok)throw Error("impact not available");
-   const snapshot=await response.json() as {summary:string};
+   const snapshot=await response.json() as {summary:string;students:number};
    setImpact(snapshot.summary);
+   if(Number.isInteger(snapshot.students)&&snapshot.students>=0)setStudents(snapshot.students);
   }catch{setImpact("Blast-radius counts are unavailable. This is not a safety check.");}
   finally{setImpactBusy(false);setConfirm(true);}
  }
  async function save(){
+  if(students===null||(students>=100&&!acknowledgedPopulation))return;
   setBusy(true);setFeedback("");
   try{
    const response=await fetch(endpoint,{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify(collegeRulePayload(module,choice,locked,observed))});
@@ -67,10 +72,18 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
   <label className="flex items-center gap-2 text-xs text-body"><input type="checkbox" checked={locked} disabled={busy||ancestorLocked||choice==="INHERIT"} onChange={e=>setLocked(e.target.checked)}/>Lock this college rule</label>
   <div className="flex flex-wrap gap-2"><Button size="sm" variant="secondary" disabled={disabled||impactBusy} onClick={()=>{void reviewChange();}}>Review policy change</Button><Button size="sm" variant="ghost" disabled={busy} onClick={()=>{void recheck();}}>Recheck stored rule</Button></div>
   {feedback?<p role="status" className="text-xs text-body">{feedback}</p>:null}
-  <ConfirmDialog open={confirm} onOpenChange={setConfirm} title="Confirm college feature policy"
+  <ConfirmDialog open={confirm} onOpenChange={setConfirm} title={lockChanged?"Confirm college feature lock change":"Confirm college feature policy"}
    description={choice==="INHERIT"?"Remove the stored college override. Inheritance will resume.":"Store "+(choice==="ON"?"On":"Off")+(locked?" and lock it":" without a lock")+". Descendants may be affected."}
-   confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled} onConfirm={()=>{void save();}}>
+   confirmLabel="Apply change" confirmVariant="danger" pending={busy} confirmDisabled={disabled||students===null||(students>=100&&!acknowledgedPopulation)} onConfirm={()=>{void save();}}>
    <p className="text-sm text-body">This affects the selected college. The server checks your scope, current policy and broader locks, and writes an audit event.</p>
+   {lockChanged?<p role="alert" className="mt-2 text-sm font-semibold text-warning-text">You are changing the policy lock. Descendant overrides may gain or lose the ability to take effect.</p>:null}
+   {students!==null?<p className="mt-2 text-sm font-semibold text-body">Active learners in this college: {students.toLocaleString("en-IN")}</p>:
+    <p role="alert" className="mt-2 text-sm text-warning-text">Student population could not be confirmed. The change will not be saved.</p>}
+   {students!==null&&students>=100?<label className="mt-3 flex items-start gap-2 text-sm text-body">
+     <input type="checkbox" checked={acknowledgedPopulation}
+      onChange={e=>setAcknowledgedPopulation(e.target.checked)}/>
+     I understand this may change access for {students.toLocaleString("en-IN")} active learners.
+   </label>:null}
    {impact?<p role="status" className="mt-2 text-sm text-body">{impact}</p>:null}
   </ConfirmDialog>
  </div>;
