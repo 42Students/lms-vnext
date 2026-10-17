@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { SuperAdminContentAuthoring } from "@/components/courses/super-admin-content-authoring";
+import { SuperAdminContentActions } from "@/components/courses/super-admin-content-actions";
 import { listSuperAdminContentAuthoringLessons } from "@/modules/courses/super-admin-content-authoring-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
