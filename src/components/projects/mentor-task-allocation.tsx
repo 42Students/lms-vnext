@@ -135,7 +135,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     setRelease("");setSprint("");setPriority("");setStatus("");setAssignmentScope("");
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
    }} className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
-  </div>
+  </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
   <section className="overflow-x-auto rounded-xl border border-border p-3">
