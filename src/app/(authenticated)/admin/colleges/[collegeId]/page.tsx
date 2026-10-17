@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
 import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifecycle-model";
@@ -33,6 +34,15 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    {fields.map(([label,value])=><div key={label}><dt className="text-xs font-semibold text-muted-foreground">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}
   </dl>
+  {item.status==="ARCHIVED"&&item.organizationStatus==="ACTIVE"?
+   <section aria-label="Restore archived college" className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface p-4">
+    <p className="text-sm text-body">This college is archived. Restore only after checking the organization and its deployment readiness.</p>
+    <TenantRestoreAction kind="college" id={item.id} name={item.name}/>
+   </section>:null}
+  {item.status==="ARCHIVED"&&item.organizationStatus!=="ACTIVE"?
+   <p role="status" className="rounded-xl border border-border p-4 text-sm text-body">
+    Restore the parent organization before restoring this college.
+   </p>:null}
   <div className="flex flex-wrap gap-3">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
    {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="rounded-md border border-border px-4 py-3 text-sm font-semibold text-primary-text">Set up this college</Link> : null}
