@@ -294,6 +294,8 @@ export default async function TpoRecruiterAccessPage({
                   >
                     <td className="px-4 py-4 font-semibold text-foreground">
                       {item.displayName}
+                      {item.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{item.designation}</p>:
+                        <p className="mt-1 text-xs font-normal text-muted-foreground">Designation not recorded</p>}
                     </td>
 
                     <td className="px-4 py-4 text-body">
