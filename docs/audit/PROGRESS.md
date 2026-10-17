@@ -8,17 +8,17 @@ Rounds: Round 0 done; Round A done for all accounts; Round R (independent advers
 
 | Account | Pages audited | Pages reviewed | Rows | Round A | MISSED | S1 | S2 | S3 | S4 | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | CLOSED-SINCE | WRONG | Open work | Closed % |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 136 | 0 | 68 | 462 | 22 | 5 | 1 | 158 | 77.2% |
-| recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 32 | 2 | 30 | 45 | 5 | 2 | 0 | 39 | 66.4% |
-| learner | 6 | 3 | 231 | 208 | 23 | 5 | 57 | 109 | 60 | 49 | 0 | 15 | 156 | 9 | 1 | 1 | 58 | 74.8% |
-| faculty | 3 | 2 | 105 | 87 | 18 | 2 | 14 | 46 | 43 | 19 | 0 | 26 | 54 | 0 | 0 | 6 | 19 | 80.8% |
-| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 39 | 0 | 6 | 177 | 9 | 0 | 1 | 48 | 79.2% |
-| superadmin | 9 | 4 | 309 | 301 | 8 | 13 | 104 | 151 | 41 | 79 | 0 | 22 | 190 | 18 | 0 | 0 | 97 | 68.6% |
-| mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 44 | 0 | 20 | 23 | 1 | 0 | 0 | 45 | 48.9% |
-| public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 12 | 0 | 0 | 49 | 7 | 0 | 0 | 19 | 72.1% |
-| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 410 | 2 | 187 | 1156 | 71 | 8 | 9 | 483 | 73.7% |
+| tpo | 12 | 12 | 694 | 617 | 77 | 71 | 288 | 272 | 63 | 0 | 0 | 0 | 688 | 0 | 5 | 1 | 0 | 100.0% |
+| recruiter | 2 | 2 | 116 | 104 | 12 | 6 | 28 | 64 | 18 | 0 | 0 | 0 | 114 | 0 | 2 | 0 | 0 | 100.0% |
+| learner | 6 | 3 | 231 | 208 | 23 | 5 | 57 | 109 | 60 | 1 | 0 | 0 | 228 | 0 | 1 | 1 | 1 | 99.6% |
+| faculty | 3 | 2 | 105 | 87 | 18 | 2 | 14 | 46 | 43 | 1 | 0 | 0 | 98 | 0 | 0 | 6 | 1 | 99.0% |
+| college | 9 | 0 | 232 | 215 | 17 | 13 | 92 | 90 | 37 | 0 | 0 | 0 | 231 | 0 | 0 | 1 | 0 | 100.0% |
+| superadmin | 9 | 4 | 309 | 301 | 8 | 13 | 104 | 151 | 41 | 2 | 0 | 0 | 307 | 0 | 0 | 0 | 2 | 99.4% |
+| mentor | 2 | 1 | 88 | 77 | 11 | 0 | 17 | 52 | 19 | 0 | 0 | 0 | 88 | 0 | 0 | 0 | 0 | 100.0% |
+| public | 2 | 0 | 68 | 68 | 0 | 3 | 24 | 23 | 18 | 0 | 0 | 0 | 68 | 0 | 0 | 0 | 0 | 100.0% |
+| **all** | 45 | 24 | 1843 | 1677 | 166 | 113 | 624 | 807 | 299 | 4 | 0 | 0 | 1822 | 0 | 8 | 9 | 4 | 99.8% |
 
-Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 2, S2 119, S3 245, S4 117.
+Severity counts are after review severity changes and include every row regardless of status. Open + unconfirmed by severity (all accounts): S1 0, S2 0, S3 3, S4 1.
 
 ## Closure status (git citations since 2026-10-15)
 
@@ -28,24 +28,24 @@ Open work = OPEN + UNCONFIRMED + IN-BRANCH. Closed % = (FIXED-ON-MAIN + VERIFIED
 
 | Account | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| tpo | 694 | 136 | 0 | 68 | 462 | 22 | 1 | 5 | 77.2% |
-| recruiter | 116 | 32 | 2 | 30 | 45 | 5 | 0 | 2 | 66.4% |
-| learner | 231 | 49 | 0 | 15 | 156 | 9 | 1 | 1 | 74.8% |
-| faculty | 105 | 19 | 0 | 26 | 54 | 0 | 6 | 0 | 80.8% |
-| college | 232 | 39 | 0 | 6 | 177 | 9 | 1 | 0 | 79.2% |
-| superadmin | 309 | 79 | 0 | 22 | 190 | 18 | 0 | 0 | 68.6% |
-| mentor | 88 | 44 | 0 | 20 | 23 | 1 | 0 | 0 | 48.9% |
-| public | 68 | 12 | 0 | 0 | 49 | 7 | 0 | 0 | 72.1% |
-| **all** | 1843 | 410 | 2 | 187 | 1156 | 71 | 9 | 8 | 73.7% |
+| tpo | 694 | 0 | 0 | 0 | 688 | 0 | 1 | 5 | 100.0% |
+| recruiter | 116 | 0 | 0 | 0 | 114 | 0 | 0 | 2 | 100.0% |
+| learner | 231 | 1 | 0 | 0 | 228 | 0 | 1 | 1 | 99.6% |
+| faculty | 105 | 1 | 0 | 0 | 98 | 0 | 6 | 0 | 99.0% |
+| college | 232 | 0 | 0 | 0 | 231 | 0 | 1 | 0 | 100.0% |
+| superadmin | 309 | 2 | 0 | 0 | 307 | 0 | 0 | 0 | 99.4% |
+| mentor | 88 | 0 | 0 | 0 | 88 | 0 | 0 | 0 | 100.0% |
+| public | 68 | 0 | 0 | 0 | 68 | 0 | 0 | 0 | 100.0% |
+| **all** | 1843 | 4 | 0 | 0 | 1822 | 0 | 9 | 8 | 99.8% |
 
 ### By severity
 
 | Severity | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| S1 | 113 | 2 | 0 | 1 | 109 | 0 | 0 | 1 | 98.2% |
-| S2 | 624 | 93 | 0 | 61 | 439 | 26 | 2 | 3 | 80.9% |
-| S3 | 807 | 213 | 2 | 97 | 463 | 30 | 0 | 2 | 69.6% |
-| S4 | 299 | 102 | 0 | 28 | 145 | 15 | 7 | 2 | 59.9% |
+| S1 | 113 | 0 | 0 | 0 | 112 | 0 | 0 | 1 | 100.0% |
+| S2 | 624 | 0 | 0 | 0 | 619 | 0 | 2 | 3 | 100.0% |
+| S3 | 807 | 3 | 0 | 0 | 802 | 0 | 0 | 2 | 99.6% |
+| S4 | 299 | 1 | 0 | 0 | 289 | 0 | 7 | 2 | 99.7% |
 
 ### By lane
 
@@ -53,101 +53,101 @@ Lane = the lane branch for IN-BRANCH gaps, else the proposed lane.
 
 | Lane | Rows | OPEN | IN-BRANCH | FIXED-ON-MAIN | VERIFIED | UNCONFIRMED | WRONG | CLOSED-SINCE | Closed % |
 |---|---|---|---|---|---|---|---|---|---|
-| chat-2 | 206 | 60 | 0 | 47 | 88 | 9 | 0 | 2 | 66.5% |
-| chat-5 | 312 | 56 | 0 | 7 | 243 | 5 | 1 | 0 | 80.4% |
-| chat-7 | 608 | 156 | 2 | 91 | 327 | 22 | 7 | 3 | 70.0% |
-| chat-9 | 717 | 138 | 0 | 42 | 498 | 35 | 1 | 3 | 75.8% |
+| chat-2 | 206 | 0 | 0 | 0 | 204 | 0 | 0 | 2 | 100.0% |
+| chat-5 | 312 | 0 | 0 | 0 | 311 | 0 | 1 | 0 | 100.0% |
+| chat-7 | 608 | 2 | 0 | 0 | 596 | 0 | 7 | 3 | 99.7% |
+| chat-9 | 717 | 2 | 0 | 0 | 711 | 0 | 1 | 3 | 99.7% |
 
 ### Throughput per lane
 
-Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-17T11:56:17.059Z).
+Gaps fixed = gaps whose first citing commit (main or lane branch) falls in the window. Last 24 h is measured to the generation time (2026-10-17T21:59:56.575Z).
 
-| Lane | Last 24 h | 2026-10-16 | 2026-10-17 | Total |
-|---|---|---|---|---|
-| chat-2 | 135 | 42 | 93 | 135 |
-| chat-5 | 250 | 44 | 206 | 250 |
-| chat-7 | 420 | 52 | 368 | 420 |
-| chat-9 | 540 | 63 | 477 | 540 |
-| **all** | 1345 | 201 | 1144 | 1345 |
+| Lane | Last 24 h | 2026-10-16 | 2026-10-17 | 2026-10-18 | Total |
+|---|---|---|---|---|---|
+| chat-2 | 115 | 42 | 148 | 14 | 204 |
+| chat-5 | 213 | 44 | 252 | 15 | 311 |
+| chat-7 | 334 | 52 | 499 | 45 | 596 |
+| chat-9 | 491 | 63 | 601 | 47 | 711 |
+| **all** | 1153 | 201 | 1500 | 121 | 1822 |
 
 ### 20 most recent fixes on main
 
 | ID | Severity | Status | Fixed by | Date |
 |---|---|---|---|---|
-| COL-verification-misc-20 | S4 | VERIFIED | aed453bb5 | 2026-10-17 16:53 |
-| COL-verification-misc-18 | S3 | VERIFIED | aed453bb5 | 2026-10-17 16:53 |
-| COL-verification-misc-17 | S2 | VERIFIED | aed453bb5 | 2026-10-17 16:53 |
-| TPO-calendar-reports-11 | S3 | VERIFIED | db858949c | 2026-10-17 16:53 |
-| TPO-drive-workspace-70 | S3 | VERIFIED | 3122acc8d | 2026-10-17 16:52 |
-| TPO-students-54 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-50 | S3 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-49 | S3 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-34 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-33 | S1 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-15 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-14 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-12 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-10 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-07 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| TPO-students-06 | S2 | VERIFIED | d6efe5275 | 2026-10-17 16:52 |
-| COL-projects-23 | S4 | VERIFIED | a0a6bcc56 | 2026-10-17 16:51 |
-| COL-projects-22 | S4 | VERIFIED | a0a6bcc56 | 2026-10-17 16:51 |
-| COL-projects-21 | S4 | VERIFIED | a0a6bcc56 | 2026-10-17 16:51 |
-| COL-projects-20 | S3 | VERIFIED | a0a6bcc56 | 2026-10-17 16:51 |
+| SA-placements-projects-120 | S2 | VERIFIED | 5d90c9c58 | 2026-10-18 03:01 |
+| SA-placements-projects-117 | S3 | VERIFIED | d0de8ded2 | 2026-10-18 03:01 |
+| TPO-batches-12 | S4 | VERIFIED | fcdd044ec | 2026-10-18 02:57 |
+| SA-academics-people-49 | S2 | VERIFIED | ddceddcbc | 2026-10-18 02:56 |
+| FAC-attendance-grades-R02 | S4 | VERIFIED | 5515bdcd3 | 2026-10-18 02:54 |
+| SA-placements-projects-102 | S2 | VERIFIED | 5515bdcd3 | 2026-10-18 02:54 |
+| FAC-assessments-R07 | S4 | VERIFIED | 535671739 | 2026-10-18 02:53 |
+| FAC-assessments-R05 | S4 | VERIFIED | 535671739 | 2026-10-18 02:53 |
+| FAC-assessments-R02 | S2 | VERIFIED | 535671739 | 2026-10-18 02:53 |
+| FAC-assessments-R01 | S2 | VERIFIED | 535671739 | 2026-10-18 02:53 |
+| FAC-assessments-27 | S3 | VERIFIED | 535671739 | 2026-10-18 02:53 |
+| FAC-courses-R08 | S3 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-R07 | S3 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-R04 | S3 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-R03 | S3 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-35 | S4 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-33 | S4 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-32 | S4 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-30 | S4 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
+| FAC-courses-10 | S2 | VERIFIED | 4852a1c71 | 2026-10-18 02:53 |
 
 ### Citation parse problems
 
-None.
+- unknown-prefix: LEARNER-notifications-01 (main 6c37cf0e6)
 
 ## Per page
 
 | Account | Page | Audited | Reviewed | Rows | S1 | S2 | S3 | S4 | Open + unconfirmed | Discrepancy rate | Over 15% |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| tpo | batches | yes | yes | 71 | 5 | 25 | 30 | 11 | 16 | 12.7% |  |
-| tpo | calendar-reports | yes | yes | 61 | 2 | 18 | 27 | 14 | 6 | 21.3% | YES |
-| tpo | campaigns-public | yes | yes | 47 | 9 | 21 | 14 | 3 | 20 | 44.7% | YES |
-| tpo | companies | yes | yes | 35 | 2 | 15 | 14 | 4 | 13 | 22.9% | YES |
-| tpo | drive-workspace | yes | yes | 80 | 18 | 35 | 24 | 3 | 17 | 10.0% |  |
-| tpo | drives | yes | yes | 58 | 2 | 28 | 26 | 2 | 23 | 13.8% |  |
-| tpo | home | yes | yes | 52 | 3 | 22 | 23 | 4 | 9 | 26.9% | YES |
-| tpo | inbox-team | yes | yes | 75 | 4 | 32 | 29 | 10 | 20 | 13.3% |  |
-| tpo | recruiters | yes | yes | 49 | 12 | 16 | 18 | 3 | 16 | 14.3% |  |
-| tpo | requests-verification | yes | yes | 41 | 6 | 15 | 17 | 3 | 4 | 19.5% | YES |
-| tpo | settings-audit | yes | yes | 63 | 2 | 33 | 24 | 4 | 13 | 14.3% |  |
-| tpo | students | yes | yes | 62 | 6 | 28 | 26 | 2 | 1 | 17.7% | YES |
-| recruiter | calendar-messages-profile | yes | yes | 52 | 2 | 13 | 29 | 8 | 16 | 17.3% | YES |
-| recruiter | home-drives | yes | yes | 64 | 4 | 15 | 35 | 10 | 23 | 18.8% | YES |
-| learner | course-detail | yes | no | 20 | 0 | 7 | 8 | 5 | 14 |  |  |
-| learner | home-courses | yes | yes | 28 | 0 | 3 | 14 | 11 | 8 | 14.6% |  |
-| learner | learning-misc | yes | no | 41 | 1 | 8 | 22 | 10 | 17 |  |  |
-| learner | placements | yes | yes | 66 | 1 | 24 | 30 | 11 | 17 | 16.7% | YES |
-| learner | profile-misc | yes | no | 26 | 2 | 4 | 11 | 9 | 2 |  |  |
+| tpo | batches | yes | yes | 71 | 5 | 25 | 30 | 11 | 0 | 12.7% |  |
+| tpo | calendar-reports | yes | yes | 61 | 2 | 18 | 27 | 14 | 0 | 21.3% | YES |
+| tpo | campaigns-public | yes | yes | 47 | 9 | 21 | 14 | 3 | 0 | 44.7% | YES |
+| tpo | companies | yes | yes | 35 | 2 | 15 | 14 | 4 | 0 | 22.9% | YES |
+| tpo | drive-workspace | yes | yes | 80 | 18 | 35 | 24 | 3 | 0 | 10.0% |  |
+| tpo | drives | yes | yes | 58 | 2 | 28 | 26 | 2 | 0 | 13.8% |  |
+| tpo | home | yes | yes | 52 | 3 | 22 | 23 | 4 | 0 | 26.9% | YES |
+| tpo | inbox-team | yes | yes | 75 | 4 | 32 | 29 | 10 | 0 | 13.3% |  |
+| tpo | recruiters | yes | yes | 49 | 12 | 16 | 18 | 3 | 0 | 14.3% |  |
+| tpo | requests-verification | yes | yes | 41 | 6 | 15 | 17 | 3 | 0 | 19.5% | YES |
+| tpo | settings-audit | yes | yes | 63 | 2 | 33 | 24 | 4 | 0 | 14.3% |  |
+| tpo | students | yes | yes | 62 | 6 | 28 | 26 | 2 | 0 | 17.7% | YES |
+| recruiter | calendar-messages-profile | yes | yes | 52 | 2 | 13 | 29 | 8 | 0 | 17.3% | YES |
+| recruiter | home-drives | yes | yes | 64 | 4 | 15 | 35 | 10 | 0 | 18.8% | YES |
+| learner | course-detail | yes | no | 20 | 0 | 7 | 8 | 5 | 0 |  |  |
+| learner | home-courses | yes | yes | 28 | 0 | 3 | 14 | 11 | 1 | 14.6% |  |
+| learner | learning-misc | yes | no | 41 | 1 | 8 | 22 | 10 | 0 |  |  |
+| learner | placements | yes | yes | 66 | 1 | 24 | 30 | 11 | 0 | 16.7% | YES |
+| learner | profile-misc | yes | no | 26 | 2 | 4 | 11 | 9 | 0 |  |  |
 | learner | projects | yes | yes | 44 | 1 | 9 | 21 | 13 | 0 | 13.6% |  |
-| faculty | assessments | yes | yes | 40 | 1 | 8 | 14 | 17 | 4 | 25.8% | YES |
-| faculty | attendance-grades | yes | no | 22 | 0 | 2 | 7 | 13 | 7 |  |  |
-| faculty | courses | yes | yes | 43 | 1 | 4 | 25 | 13 | 8 | 27.9% | YES |
-| college | academic-setup | yes | no | 41 | 2 | 16 | 16 | 7 | 8 |  |  |
+| faculty | assessments | yes | yes | 40 | 1 | 8 | 14 | 17 | 0 | 25.8% | YES |
+| faculty | attendance-grades | yes | no | 22 | 0 | 2 | 7 | 13 | 1 |  |  |
+| faculty | courses | yes | yes | 43 | 1 | 4 | 25 | 13 | 0 | 27.9% | YES |
+| college | academic-setup | yes | no | 41 | 2 | 16 | 16 | 7 | 0 |  |  |
 | college | attendance | yes | no | 17 | 1 | 1 | 9 | 6 | 0 |  |  |
-| college | course-tabs | yes | no | 27 | 7 | 8 | 9 | 3 | 7 |  |  |
+| college | course-tabs | yes | no | 27 | 7 | 8 | 9 | 3 | 0 |  |  |
 | college | courses-content | yes | no | 17 | 0 | 7 | 7 | 3 | 0 |  |  |
-| college | dashboard | yes | no | 17 | 0 | 11 | 4 | 2 | 1 |  |  |
-| college | people | yes | no | 27 | 0 | 12 | 11 | 4 | 4 |  |  |
-| college | placements | yes | no | 26 | 2 | 13 | 10 | 1 | 6 |  |  |
-| college | projects | yes | no | 23 | 1 | 9 | 8 | 5 | 4 |  |  |
-| college | verification-misc | yes | no | 20 | 0 | 8 | 9 | 3 | 2 |  |  |
-| superadmin | academics-people-1-academic-setup | yes | yes | 52 | 6 | 10 | 24 | 12 | 3 | 5.8% |  |
-| superadmin | academics-people-2-courses-content | yes | yes | 30 | 2 | 10 | 13 | 5 | 17 | 5.8% |  |
-| superadmin | academics-people-3-people-recruiters | yes | yes | 39 | 0 | 16 | 20 | 3 | 10 | 5.8% |  |
-| superadmin | placements-projects-a-placements | yes | no | 50 | 1 | 25 | 23 | 1 | 12 |  |  |
-| superadmin | placements-projects-b-projects | yes | no | 43 | 2 | 16 | 23 | 2 | 11 |  |  |
-| superadmin | placements-projects-c-tracker | yes | no | 24 | 1 | 6 | 12 | 5 | 17 |  |  |
-| superadmin | tenants-modules-2 | yes | no | 16 | 1 | 4 | 7 | 4 | 8 |  |  |
-| superadmin | tenants-modules-3 | yes | no | 28 | 0 | 7 | 16 | 5 | 10 |  |  |
-| superadmin | tenants-modules | yes | yes | 27 | 0 | 10 | 13 | 4 | 9 | 8.5% |  |
-| mentor | projects-meetings-part2 | yes | no | 25 | 0 | 3 | 14 | 8 | 17 |  |  |
-| mentor | projects-meetings | yes | yes | 63 | 0 | 14 | 38 | 11 | 28 | n/a |  |
-| public | auth-public-1-login-session | yes | no | 39 | 0 | 10 | 18 | 11 | 10 |  |  |
-| public | auth-public-2-links-marketing | yes | no | 29 | 3 | 14 | 5 | 7 | 9 |  |  |
+| college | dashboard | yes | no | 17 | 0 | 11 | 4 | 2 | 0 |  |  |
+| college | people | yes | no | 27 | 0 | 12 | 11 | 4 | 0 |  |  |
+| college | placements | yes | no | 26 | 2 | 13 | 10 | 1 | 0 |  |  |
+| college | projects | yes | no | 23 | 1 | 9 | 8 | 5 | 0 |  |  |
+| college | verification-misc | yes | no | 20 | 0 | 8 | 9 | 3 | 0 |  |  |
+| superadmin | academics-people-1-academic-setup | yes | yes | 52 | 6 | 10 | 24 | 12 | 0 | 5.8% |  |
+| superadmin | academics-people-2-courses-content | yes | yes | 30 | 2 | 10 | 13 | 5 | 1 | 5.8% |  |
+| superadmin | academics-people-3-people-recruiters | yes | yes | 39 | 0 | 16 | 20 | 3 | 1 | 5.8% |  |
+| superadmin | placements-projects-a-placements | yes | no | 50 | 1 | 25 | 23 | 1 | 0 |  |  |
+| superadmin | placements-projects-b-projects | yes | no | 43 | 2 | 16 | 23 | 2 | 0 |  |  |
+| superadmin | placements-projects-c-tracker | yes | no | 24 | 1 | 6 | 12 | 5 | 0 |  |  |
+| superadmin | tenants-modules-2 | yes | no | 16 | 1 | 4 | 7 | 4 | 0 |  |  |
+| superadmin | tenants-modules-3 | yes | no | 28 | 0 | 7 | 16 | 5 | 0 |  |  |
+| superadmin | tenants-modules | yes | yes | 27 | 0 | 10 | 13 | 4 | 0 | 8.5% |  |
+| mentor | projects-meetings-part2 | yes | no | 25 | 0 | 3 | 14 | 8 | 0 |  |  |
+| mentor | projects-meetings | yes | yes | 63 | 0 | 14 | 38 | 11 | 0 | n/a |  |
+| public | auth-public-1-login-session | yes | no | 39 | 0 | 10 | 18 | 11 | 0 |  |  |
+| public | auth-public-2-links-marketing | yes | no | 29 | 3 | 14 | 5 | 7 | 0 |  |  |
 
 ## Pages whose discrepancy rate is above 15%
 
