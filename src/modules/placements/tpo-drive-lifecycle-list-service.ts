@@ -29,9 +29,10 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     status: placementSeasons.status, startDate: placementSeasons.startDate })
     .from(placementSeasons).where(eq(placementSeasons.collegeId, collegeId))
     .orderBy(desc(placementSeasons.startDate), desc(placementSeasons.createdAt));
+  // TPO-drives-20: default to all college seasons, never silently hide old drives.
   const season = filters.seasonId
     ? seasons.find((s) => s.id === filters.seasonId)
-    : seasons.find((s) => s.status === "ACTIVE") ?? seasons[0] ?? null;
+    : null;
   if (filters.seasonId && !season) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
   if (filters.view === "REQUESTS") {
     const available = await placementTableExists("placement_recruiter_drive_requests");
@@ -85,12 +86,13 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   }
   const target=filters.view==="DRAFT"?"DRAFT":filters.view==="LIVE"?"PUBLISHED":filters.view==="CLOSED"?"CLOSED":null;
   const emptyCounts={total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
-  const projection=season?await db.transaction(async tx=>{
+  const projection=await db.transaction(async tx=>{
    const end=new Date(now.getTime()+7*86400000);
    const deadlineCondition=filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
     filters.deadline==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
     filters.deadline==="UNSET"?isNull(placementJobs.applicationDeadline):undefined;
-   const scope=and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.seasonId,season.id),
+   const scope=and(eq(placementJobs.collegeId,collegeId),
+    season?eq(placementJobs.seasonId,season.id):undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
@@ -164,8 +166,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     ...row, applicationDeadline: row.applicationDeadline?.toISOString() ?? null,
     nextRoundAt:row.nextRoundAt?.toISOString()??null,
    }))};
-  },{isolationLevel:"repeatable read",accessMode:"read only"}):
-   {counts:emptyCounts,...tpoDriveLifecyclePage(0,filters.page),rows:[]};
+  },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
     ...projection, seasons, season, view: filters.view,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,sort:filters.sort,
     minApplied:filters.minApplied,minOffers:filters.minOffers,payCategory:filters.payCategory,attention:filters.attention,
