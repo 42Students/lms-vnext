@@ -62,4 +62,31 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(code).toContain("Add a contact");
   expect(code).toContain("Drives that ran");
  });
+ it("TPO-companies-18 Engage Companies tab includes filtered export and count",()=>{
+  const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(code).toContain("exportCompanies");
+  expect(code).toContain("tpoCompanyDirectoryCsv");
+  expect(code).toContain("Companies (");
+ });
+ it("TPO-companies-24 TPO company route retains parent navigation highlight",()=>{
+  const code=source("src/components/shell/legacy-sidebar-active-model.ts");
+  expect(code).toContain("companies");
+ });
+ it("TPO-companies-26 create-company confirmation provides dialog Escape and keyboard focus trap",()=>{
+  const code=source("src/components/tpo/tpo-company-create-form.tsx");
+  expect(code).toContain("e.key===\"Escape\"");
+  expect(code).toContain("aria-modal");
+  expect(code).toContain("modalRef");
+ });
+ it("TPO-companies-27 canonical directory offers export, sort and create-drive action",()=>{
+  const code=source("src/app/(authenticated)/tpo/companies/page.tsx");
+  expect(code).toContain("Export companies CSV");
+  expect(code).toContain("Create drive");
+  expect(code).toContain("name=\"sort\"");
+ });
+ it("TPO-companies-28 canonical hiring history uses scoped hiring-pulse evidence",()=>{
+  const code=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
+  expect(code).toContain("learner");
+  expect(code).toContain("hiringPulse");
+ });
 });
