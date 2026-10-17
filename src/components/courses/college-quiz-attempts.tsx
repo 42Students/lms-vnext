@@ -40,7 +40,9 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
   </button>
   {opened?<div className="max-h-80 overflow-auto rounded border border-border bg-surface p-2">
-   {error?<p role="alert" className="text-xs text-error">{error}</p>:null}
+   {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-xs text-error">{error}
+    <button type="button" className="underline" disabled={loading} onClick={()=>void open()}>Retry</button>
+   </div>:null}
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     No quiz submissions yet for this Section.</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
