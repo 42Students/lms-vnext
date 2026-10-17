@@ -214,6 +214,13 @@ export default async function ActivityPage({
         ) : undefined}
       />
 
+      {isSuperAdmin(context)?<p role="status" aria-label="Activity scope"
+        className="rounded-lg border border-border bg-surface px-4 py-3 text-sm text-body">
+        {one(params.collegeId)? "College: "+(collegeOptions.find(college=>college.id===one(params.collegeId))?.name??"Selected college")
+         :context.adminScope?.collegeId?"Activity restricted to the selected college."
+         :context.adminScope?.organizationId?"Organization-wide activity."
+         :"Platform-wide activity."}
+      </p>:null}
       {isSuperAdmin(context) ? <Link href="/tracker/audit-findings"
         className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Open audit findings board →

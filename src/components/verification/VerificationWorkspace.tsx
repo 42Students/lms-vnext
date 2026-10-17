@@ -13,6 +13,7 @@ import type {VerificationRecord} from "@/modules/profile-verification/domain";
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
  learnerName:string;batchName:string|null;branchName:string|null;
+ rollNumber?:string|null;decisionNote?:string|null;
  decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
@@ -72,6 +73,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    <ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     {visible.map(row=><li key={row.learnerMembershipId+":"+row.section} className="min-w-0 rounded-lg border p-4">
      <h2 className="break-words font-medium">{row.learnerName}</h2>
+     {row.rollNumber?<p className="text-xs text-muted-foreground">Roll no.: {row.rollNumber}</p>:null}
      <p className="mt-1 text-xs font-semibold text-primary-text">{verificationQueueCardPresentation(row.status).state}</p>
      {allowCollegeStudentLinks&&<Link href={collegeVerificationStudentHref(row.learnerMembershipId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open Student profile</Link>}
      {allowCollegeContactLinks&&<Link href={collegeRoleContactHref(row.learnerMembershipId)} className="ml-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">View masked contact</Link>}
@@ -87,6 +89,8 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
        ?"All "+row.marksheets.uploaded+" uploaded"
        :row.marksheets.missing+" of "+row.marksheets.expected+" missing"}
      </p>:null}
+     {row.decidedAt?<p className="mt-2 text-xs">Decided by {row.decidedByName??"Placement team"} on {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.decidedAt)}</p>:null}
+     {row.status==="SENT_BACK"&&row.decisionNote?<p className="mt-1 text-sm">Reason sent back: {row.decisionNote}</p>:null}
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <button type="button" disabled={!onReview} onClick={()=>onReview?.(row)}

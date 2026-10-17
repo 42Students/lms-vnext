@@ -194,7 +194,7 @@ export async function ProjectAdminAuditPage({
       <PageHeader
         eyebrow="Projects"
         title="Project audit"
-        description="Who changed what, and when — project activity only, inside the current college scope."
+        description="Who changed what, and when — check daily for anything unexpected."
       />
 
       <nav aria-label="Audit time range" className="flex flex-wrap gap-2 text-sm">

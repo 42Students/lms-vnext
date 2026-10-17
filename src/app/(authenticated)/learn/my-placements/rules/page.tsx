@@ -14,7 +14,7 @@ export default async function LearnerPlacementRulesPage({
   // change authorization, learner identity or the data being read.
   const parsed = learnerPlacementRulesQuerySchema.safeParse(query);
   const context = await getCurrentRequestContext();
-  const { evidence, preferences, preparation, back, ruleApplicability } =
+  const { evidence, preferences, preparation, back, ruleApplicability, policyView } =
     await getOwnLearnerPlacementRulesView(context, parsed.success ? parsed.data : {});
   return (
     <div className="space-y-6">
@@ -23,7 +23,7 @@ export default async function LearnerPlacementRulesPage({
         ← {back.label}
       </Link>
       <PageHeader eyebrow="My Placements" title="Placement rules"
-        description="The placement signals vNext can verify today, without inventing College policy that has not been configured." />
+        description="Your placement cell sets these rules. If they change, the new rules apply to applications made after the change." />
       <section aria-labelledby="placement-preparation-heading"
         className="rounded-xl border border-border bg-surface p-4 sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -90,8 +90,8 @@ export default async function LearnerPlacementRulesPage({
         </h2>
         <p className="mt-2 text-sm leading-6 text-body">{ruleApplicability.message}</p>
         <p className="mt-2 text-xs text-muted-foreground">
-          We do not have a versioned College placement-policy record here.
-          No change-effective date or retroactive eligibility decision is inferred.
+          {policyView?"College placement rules are saved; the exact effective date of a change is not inferred.":"A college placement policy is not configured for your membership."}
+          No retroactive eligibility decision is inferred.
         </p>
         <Link href="/learn/my-placements/applications"
           className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
@@ -116,9 +116,18 @@ export default async function LearnerPlacementRulesPage({
           <Link href="/learn/my-placements#placement-job-preferences" className="mt-4 inline-flex text-sm font-semibold text-primary-text">Edit job preferences →</Link>
         </section>
       </div>
-      <section className="rounded-xl border border-warning/40 bg-surface p-5">
-        <h2 className="m-0 text-sm font-semibold text-foreground">College-wide placement policy</h2>
-        <p className="mt-2 text-sm leading-6 text-body">The old LMS exposes a College-authored rules summary. vNext does not yet have a canonical College placement-policy record, so this page deliberately does not fabricate one. Drive-level eligibility remains enforced and explainable.</p>
+      <section className="rounded-xl border border-border bg-surface p-5" aria-label="College-wide placement policy">
+        <h2 className="font-semibold text-foreground">College-wide placement policy</h2>
+        {policyView?<div className="mt-3 space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">Where you stand:</h3>
+          <p role="status" className="text-sm leading-6 text-body">{policyView.personal}</p>
+          <ul className="list-disc space-y-2 pl-5 text-sm leading-6 text-body">
+            {policyView.points.map(point=><li key={point}>{point}</li>)}
+          </ul>
+          <p className="text-xs text-muted-foreground">Drive-level eligibility and the saved terms of each offer remain authoritative. Changes are not assumed to apply retroactively.</p>
+        </div>:<p role="status" className="mt-2 text-sm text-body">
+          The placement cell has not configured a college-wide policy record here yet. No rule amounts have been assumed.
+        </p>}
       </section>
     </div>
   );

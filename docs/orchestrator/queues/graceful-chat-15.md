@@ -14,3 +14,9 @@ Record each item in `docs/audit/acceptance/graceful-e2e-verification.md` (`| GR-
 
 ## Notes (blockers, one line each)
 
+- GR-80: Shared friendly screens/API adoption are being built in parallel; hostile-response assertions are authored but require merged implementation and executed browser evidence.
+- GR-80 Mentor: Existing seed does not guarantee unread notifications, so read-all fault tests skip without a fixture rather than passing vacuously.
+- GR-80 Recruiter: Test recruiter grants must be current, verified, capability-enabled and seeded before messaging fault tests can run.
+- GR-82: Default Playwright server is development; orchestrator must separately serve a production build and supply GRACEFUL_PRODUCTION_BASE_URL.
+- GR-83: Shared helper unit/integration tests are assigned to chat-14 and cannot be certified by chat-15 without execution.
+

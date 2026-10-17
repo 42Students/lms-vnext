@@ -34,9 +34,9 @@ import {
 
 const PAGE_SIZE = 20;
 const viewOptions=[
-  {key:"all",label:"All"},
   {key:"progress",label:"In progress"},
   {key:"completed",label:"Finished"},
+  {key:"all",label:"All"},
 ] as const;
 
 function humanize(value: string) {
@@ -272,7 +272,7 @@ export function LearnerApplicationsBrowse({
             Company or role
             <input type="search" value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search applications…" maxLength={100}
+              placeholder="Search company or role" maxLength={100}
               className="mt-1 min-h-11 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]" />
           </label>
           <label className="text-xs font-semibold text-body">
@@ -377,7 +377,7 @@ export function LearnerApplicationsBrowse({
               {ownApplicationJobHref(selected.jobId) ? <Link
                 href={ownApplicationJobHref(selected.jobId)!}
                 className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
-                View this job
+                View drive
               </Link> : null}
               <Link
                 href={`/learn/my-placements/applications/${encodeURIComponent(selected.applicationId)}`}

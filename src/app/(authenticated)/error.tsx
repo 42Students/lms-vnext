@@ -1,22 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { ErrorState } from "@/components/ui/error-state";
+import { GracefulErrorBoundary } from "@/components/public/graceful-error-boundary";
 
-export default function AuthenticatedError({
-  reset,
-}: {
+/** GR-11: authenticated workspace fallback with Retry and a home link. */
+export default function AuthenticatedError({ error, reset }: {
   error: Error & { digest?: string };
   reset: () => void;
 }) {
-  return (
-    <ErrorState
-      description="The workspace could not be loaded. Your data was not changed."
-      action={
-        <Button variant="secondary" onClick={reset}>
-          Try again
-        </Button>
-      }
-    />
-  );
+  return <GracefulErrorBoundary error={error} reset={reset} />;
 }

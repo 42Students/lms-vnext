@@ -15,7 +15,7 @@ import {loadCourseLessonScope,loadCourseSectionDeliveryScope} from "./scope";
 import {requireDeliveryContentMutation} from "./learning-access";
 import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {assignmentFieldsChanged,facultyAssignmentCommandSchema,facultyAssignmentParamsSchema,
- facultyAssignmentVersionMatches} from "./faculty-assignment-authoring-model";
+ facultyAssignmentVersionMatches,facultyAssignmentEditLockedBySubmissions} from "./faculty-assignment-authoring-model";
 
 /** Own-Section, confirmed text-only commands. Uses row locks + millisecond tokens,
  * which match JS Date precision even when PostgreSQL stores microseconds. */
@@ -89,11 +89,13 @@ export async function commandFacultyAssignment(
         const [submission]=await tx.select({id:assignmentSubmissions.id}).from(assignmentSubmissions)
           .where(eq(assignmentSubmissions.assignmentId,current.id)).limit(1);
         if(input.action==="EDIT"){
-          if(!["DRAFT","PUBLISHED"].includes(current.status)||submission)
+          if(!["DRAFT","PUBLISHED"].includes(current.status))
             throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           changedFields=assignmentFieldsChanged(current,input);
           if(input.allowedMethods!==undefined)changedFields.push("allowedMethods");
           if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+          if(facultyAssignmentEditLockedBySubmissions(changedFields,Boolean(submission)))
+            throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
           eventType=ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_UPDATED;
         }else if(input.action==="PUBLISH"){
           if(current.status!=="DRAFT"||!current.dueAt||current.dueAt.getTime()<=Date.now())

@@ -8,12 +8,15 @@ import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
 
 type Row={
- id:string;student:string|null;role:string;applicationStatus:string;screeningStatus:string|null;
+ id:string;student:string|null;role:string;rollNumber:string|null;email:string|null;phone:string|null;applicationStatus:string;screeningStatus:string|null;
  screeningUpdatedAt:string|null;eligibilityStatus:string;channel:string;submittedAt:string;flags:string[];
 };
 const columns:readonly TpoGridColumn<Row>[]=[
  {key:"student",label:"Student",read:r=>r.student??"Name unavailable"},
  {key:"role",label:"Role",read:r=>r.role},
+ {key:"roll",label:"Roll number",read:r=>r.rollNumber??"Not recorded"},
+ {key:"email",label:"Email",read:r=>r.email??"Not recorded"},
+ {key:"phone",label:"Phone",read:r=>r.phone??"Not recorded"},
  {key:"stage",label:"Stage",read:r=>applicantStage(r)},
  {key:"application",label:"Application",read:r=>r.applicationStatus},
  {key:"channel",label:"Channel",read:r=>r.channel},
