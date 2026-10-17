@@ -95,6 +95,10 @@ export function MentorTaskDetailsEdit(props:Props) {
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Approach (optional)
+          <Textarea maxLength={4000} value={approach}
+            onChange={event=>setApproach(event.target.value)}/>
+        </label>
         <label className="grid gap-1 text-xs font-semibold text-body">Done when (optional)
           <Textarea maxLength={4000} value={criteria}
             onChange={event=>setCriteria(event.target.value)} />
