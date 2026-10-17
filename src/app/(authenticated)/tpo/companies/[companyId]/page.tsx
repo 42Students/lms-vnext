@@ -396,7 +396,6 @@ export default async function TpoCompanyDetailPage({
             <table className="w-full min-w-[65rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Learner</th>
                   <th scope="col" className="px-4 py-3">Role</th>
                   <th scope="col" className="px-4 py-3">Annual CTC</th>
                   <th scope="col" className="px-4 py-3">Offer</th>
@@ -411,9 +410,6 @@ export default async function TpoCompanyDetailPage({
                     key={offer.id}
                     className="border-t border-border align-top"
                   >
-                    <td className="px-4 py-3 font-medium text-foreground">
-                      {offer.candidateName || "Unnamed learner"}
-                    </td>
                     <td className="px-4 py-3 text-body">
                       {offer.roleTitle}
                     </td>
