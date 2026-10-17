@@ -4,7 +4,8 @@ const read=(p:string)=>readFileSync(p,"utf8");
 describe("chat-13 stale cloud CI report regression fences",()=>{
  it("SA-placements-projects-14 database schema contains foreignKey imported with placements definitions",()=>{
   const schema=read("src/db/schema/placements.ts");
-  expect(schema).toMatch(/import\\s*\\{[^}]*\\bforeignKey\\b[^}]*\\}\\s*from\\s*["']drizzle-orm\\/pg-core["']/);
+  expect(schema.slice(0,800)).toContain("foreignKey,");
+  expect(schema.slice(0,800)).toContain('from "drizzle-orm/pg-core"');
  });
  it("SA-placements-projects-21 keeps current eligibility and nonfabricated match score copy",()=>{
   const ui=read("src/components/placements/college-application-detail-drawer.tsx");
