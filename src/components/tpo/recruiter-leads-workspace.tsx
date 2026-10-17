@@ -527,6 +527,7 @@ export function RecruiterLeadsWorkspace({
         if(sequence!==contactCheckSeq.current)return;
         if(result.status===204)continue;
         const data=await result.json() as {lead?:Lead;error?:string};
+        if(sequence!==contactCheckSeq.current)return;
         if(!result.ok)throw new Error(friendlyError(result.status,data));
         if(data.lead){
           setDuplicate(data.lead);
