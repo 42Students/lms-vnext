@@ -203,7 +203,7 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
     })).rejects.toMatchObject({ code: "BATCH_PERIOD_INVALID" });
   });
 
-  it("uses actual dependency rows to block edit, then rejects lifecycle change", async () => {
+  it("uses actual dependency rows to block end-period edits, then rejects edits once archived", async () => {
     const row = await own("GUARD");
     const change = { name: name + "CHANGED", code: payload("CHANGED").code,
       expectedEndPeriodId: null, confirm: true };
@@ -213,18 +213,23 @@ describe.skipIf(!enabled)("College batch create/edit — isolated PostgreSQL", (
       "INSERT INTO sections(id,cohort_id,academic_period_id,name,code) VALUES($1,$2,$3,$4,$5)",
       [fixtures.section, row.id, fixtures.firstPeriod, name, name],
     );
+    // Labels stay editable while the batch is in use; the recorded end period does not.
     await expect(updateCollegeCohort(adminA, row.id, {
-      ...change, name: name + "BLOCKED",
+      ...change, expectedEndPeriodId: fixtures.endPeriod,
     })).rejects.toMatchObject({ code: "BATCH_HAS_DEPENDENCIES" });
-    const read = await pool!.query("SELECT name FROM cohorts WHERE id=$1", [row.id]);
-    expect(read.rows[0]?.name).toBe(name + "CHANGED");
+    await updateCollegeCohort(adminA, row.id, { ...change, name: name + "RELABELED" });
+    const read = await pool!.query("SELECT name, expected_end_period_id FROM cohorts WHERE id=$1", [row.id]);
+    expect(read.rows[0]?.name).toBe(name + "RELABELED");
+    expect(read.rows[0]?.expected_end_period_id).toBeNull();
     const audits = await pool!.query(
       "SELECT count(*)::int AS count FROM activity_events " +
       "WHERE subject_type='cohort' AND subject_id=$1", [row.id],
     );
-    expect(audits.rows[0]?.count).toBe(2);
+    expect(audits.rows[0]?.count).toBe(3);
     await pool!.query("DELETE FROM sections WHERE id=$1", [fixtures.section]);
     await transitionCohort(adminA, row.id, { action: "ACTIVATE" });
+    await transitionCohort(adminA, row.id, { action: "COMPLETE" });
+    await transitionCohort(adminA, row.id, { action: "ARCHIVE" });
     await expect(updateCollegeCohort(adminA, row.id, change))
       .rejects.toMatchObject({ code: "BATCH_NOT_EDITABLE" });
   });

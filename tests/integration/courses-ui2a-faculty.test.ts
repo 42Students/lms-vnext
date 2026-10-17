@@ -696,8 +696,9 @@ describe("courses UI2A faculty read model", () => {
       {
         deliveryId: structure.deliveryA.id,
         title: "FUI2A Attendance Lab",
-        startsAt: new Date(Date.now() - 90 * 60_000).toISOString(),
-        endsAt: new Date(Date.now() - 30 * 60_000).toISOString(),
+        // Scheduling in the past is only allowed inside a short grace window.
+        startsAt: new Date(Date.now() - 3 * 60_000).toISOString(),
+        endsAt: new Date(Date.now() + 57 * 60_000).toISOString(),
         location: "Lab 1",
       },
     );
@@ -886,9 +887,15 @@ describe("courses UI2A faculty read model", () => {
     const expired = await createFacultyAttendanceSession(faculty, {
       deliveryId: structure.deliveryA.id,
       title: "FUI2A Expired Attendance",
-      startsAt: new Date(Date.now() - 72 * 60 * 60_000).toISOString(),
-      endsAt: new Date(Date.now() - 71 * 60 * 60_000).toISOString(),
+      startsAt: new Date(Date.now() + 240 * 60_000).toISOString(),
+      endsAt: new Date(Date.now() + 300 * 60_000).toISOString(),
     });
+    // Past classes cannot be scheduled, so age the row directly.
+    await pool.query(
+      "update section_schedule_events set starts_at = $1, ends_at = $2 where id = $3",
+      [new Date(Date.now() - 72 * 60 * 60_000).toISOString(),
+        new Date(Date.now() - 71 * 60 * 60_000).toISOString(), expired.id],
+    );
     await expect(markFacultyAttendance(faculty, expired.id, {
       deliveryId: structure.deliveryA.id,
       absentMembershipIds: [SEED_IDS.learnerCollegeAMembership],
@@ -917,9 +924,9 @@ describe("courses UI2A faculty read model", () => {
             structure.deliveryA.id,
           title: "Unauthorized session",
           startsAt:
-            "2026-10-01T09:00:00.000Z",
+            "2099-10-01T09:00:00.000Z",
           endsAt:
-            "2026-10-01T10:00:00.000Z",
+            "2099-10-01T10:00:00.000Z",
         },
       ),
     ).rejects.toMatchObject({
@@ -935,9 +942,9 @@ describe("courses UI2A faculty read model", () => {
             structure.deliveryB.id,
           title: "Wrong Section",
           startsAt:
-            "2026-10-01T09:00:00.000Z",
+            "2099-10-01T09:00:00.000Z",
           endsAt:
-            "2026-10-01T10:00:00.000Z",
+            "2099-10-01T10:00:00.000Z",
         },
       ),
     ).rejects.toMatchObject({
@@ -1314,8 +1321,8 @@ describe("courses UI2A faculty read model", () => {
     // This is a live correction path, not an expiry test. Keep the fixture
     // within the configured correction window rather than pinning it to a
     // calendar date that becomes invalid as CI moves forward.
-    const startsAt = new Date(Date.now() - 5 * 60_000);
-    const endsAt = new Date(Date.now() - 60_000);
+    const startsAt = new Date(Date.now() - 3 * 60_000);
+    const endsAt = new Date(Date.now() + 57 * 60_000);
     const localParts = new Intl.DateTimeFormat("en-US", {
       timeZone: "Asia/Kolkata",
       year: "numeric",

@@ -296,19 +296,20 @@ describe("academics A1 against PostgreSQL", () => {
       capacity: 72,
     });
 
+    // Closing a period is confirmed and blocked while it still has active sections.
+    await archiveSection(
+      collegeAdmin,
+      section.id,
+    );
     await transitionAcademicPeriod(
       collegeAdmin,
       period1.id,
-      { action: "CLOSE" },
+      { action: "CLOSE", confirm: true },
     );
     await transitionCohort(
       collegeAdmin,
       cohort.id,
       { action: "COMPLETE" },
-    );
-    await archiveSection(
-      collegeAdmin,
-      section.id,
     );
     await transitionCohort(
       collegeAdmin,
@@ -527,10 +528,10 @@ describe("academics A1 against PostgreSQL", () => {
       transitionAcademicPeriod(
         collegeAdmin,
         period.id,
-        { action: "CLOSE" },
+        { action: "CLOSE", confirm: true },
       ),
     ).rejects.toMatchObject({
-      code: "INVALID_ACADEMIC_PERIOD_TRANSITION",
+      code: "PERIOD_STALE",
     });
 
     const cohort = await createCohort(

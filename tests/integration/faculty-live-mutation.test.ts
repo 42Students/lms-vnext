@@ -83,7 +83,7 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
  it("writes once with actor audit, denies collision, foreign and stale scopes",async()=>{
    const {delivery,lesson}=await fixture();
    const payload={action:"CREATE" as const,lessonId:lesson.id,title:"Faculty C4 Live",
-     meetingUrl:"https://meet.example.org/class",...time,confirm:true as const};
+     meetingUrl:"https://meet.google.com/class",...time,confirm:true as const};
    const created=await commandFacultyLiveClass(faculty,{deliveryId:delivery.id},payload);
    expect(created.status).toBe("PUBLISHED");
    const [audit]=await pool.query("select count(*)::int as total from activity_events where subject_id=$1 and summary=$2",
@@ -97,7 +97,7 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
       .rejects.toBeDefined();
    const edited=await commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
      action:"EDIT",contentId:created.id,expectedUpdatedAt:created.updatedAt.toISOString(),
-     title:"Faculty C4 Rescheduled",meetingUrl:"https://meet.example.org/class-new",
+     title:"Faculty C4 Rescheduled",meetingUrl:"https://meet.google.com/class-new",
      startsAt:"2026-10-21T10:00:00+05:30",
      endsAt:"2026-10-21T11:00:00+05:30",confirm:true,
    });
@@ -112,7 +112,7 @@ describe("Faculty live session create, edit, cancel with PostgreSQL",()=>{
    const row=await pool.query("select count(*)::int as total from activity_events where subject_id=$1 and summary like 'Faculty live class%'",
       [created.id]);
    expect(row.rows[0].total).toBe(3);
-   const leaked=await pool.query("select count(*)::int as total from activity_events where subject_id=$1 and metadata::text like '%meet.example.org%'",
+   const leaked=await pool.query("select count(*)::int as total from activity_events where subject_id=$1 and metadata::text like '%meet.google.com%'",
       [created.id]);
    expect(leaked.rows[0].total).toBe(0);
  });
@@ -130,7 +130,7 @@ describe("Faculty live scheduling persisted revocation",()=>{
   try {
    await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
     action:"CREATE",lessonId:lesson.id,title:"Revoked instructor",
-    meetingUrl:"https://meet.example.org/revoked",
+    meetingUrl:"https://meet.google.com/revoked",
     startsAt:"2026-10-22T09:00:00+05:30",
     endsAt:"2026-10-22T10:00:00+05:30",confirm:true,
    })).rejects.toMatchObject({code:"FACULTY_TEACHING_SCOPE_REQUIRED"});
@@ -149,7 +149,7 @@ describe("Faculty live class schedule event occupancy",()=>{
     "2026-10-23T09:00:00+05:30","2026-10-23T10:00:00+05:30"]);
   await expect(commandFacultyLiveClass(faculty,{deliveryId:delivery.id},{
    action:"CREATE",lessonId:lesson.id,title:"Conflicting online session",
-   meetingUrl:"https://meet.example.org/conflict",
+   meetingUrl:"https://meet.google.com/conflict",
    startsAt:"2026-10-23T09:30:00+05:30",
    endsAt:"2026-10-23T10:30:00+05:30",confirm:true,
   })).rejects.toMatchObject({code:"SCHEDULE_EVENT_CONFLICT"});

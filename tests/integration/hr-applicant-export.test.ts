@@ -28,7 +28,7 @@ describe.skipIf(!enabled)("recruiter CSV exact company scope", () => {
     const job = await createPlacementJob(tpo, {collegeId: SEED_IDS.collegeA,
       companyRelationshipId: a.relationship.id, title: "HR CSV Job " + suffix,
       description: "Fixture", employmentType: "FULL_TIME", workMode: "HYBRID",
-      applicationMode: "INTERNAL"});
+      applicationMode:"INTERNAL",minimumAnnualCtcInr:600000,maximumAnnualCtcInr:900000,applicationDeadline:new Date("2099-01-01T00:00:00Z")});
     await publishPlacementJob(tpo, job.id);
     const userId = randomUUID();
     const recruiter = (companyId: string, relationshipId: string): RequestContext => ({

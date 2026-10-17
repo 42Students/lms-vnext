@@ -74,8 +74,8 @@ describe.skipIf(!enabled)("College Admin drive read views: isolated PostgreSQL",
 
   it("shows persisted own-college drive and its season/company, not to foreign college", async () => {
     const [own, foreign] = await Promise.all([
-      listCollegeDrives(adminA, { q: code }),
-      listCollegeDrives(adminB, { q: code }),
+      listCollegeDrives(adminA, { q: code, status: "ALL" }),
+      listCollegeDrives(adminB, { q: code, status: "ALL" }),
     ]);
     expect(own.items).toContainEqual(expect.objectContaining({ id: ids.job, companyName: code, seasonName: code }));
     expect(foreign.items).toEqual([]);
