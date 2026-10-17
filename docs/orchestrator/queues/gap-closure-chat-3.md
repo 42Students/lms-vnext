@@ -36,7 +36,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-04 | S3 | STATE | DONE |
 | TPO-drives-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-drives-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| TPO-drives-11 | S3 | MISSING-FILTER | DONE |
 | TPO-drives-12 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-16 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-18 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
@@ -130,7 +130,7 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 | COL-people-14 | S3 | MISSING-FIELD | DONE |
 | COL-people-15 | S3 | COPY | DONE |
 | COL-people-16 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| COL-people-18 | S3 | PERMISSION | FIXED-ON-MAIN |
+| COL-people-18 | S3 | PERMISSION | NOT-A-GAP |
 | COL-people-19 | S3 | COPY | DONE |
 | COL-people-24 | S3 | COPY | DONE |
 | COL-people-25 | S3 | VALIDATION | FIXED-ON-MAIN |
@@ -193,7 +193,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 | SA-tenants-modules-17 | S3 | MISSING-TAB | FIXED-ON-MAIN |
 | SA-tenants-modules-19 | S3 | MISSING-TAB | OPEN |
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
-| SA-tenants-modules-R02 | S3 | MISSING-ACTION | OPEN |
+| SA-tenants-modules-R02 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-05 | S4 | A11Y | FIXED-ON-MAIN |
 | SA-tenants-modules-09 | S4 | STATE | DONE |
 | SA-tenants-modules-R01 | S4 | MISSING-FIELD | OPEN |
@@ -319,3 +319,11 @@ Still **OPEN** despite useful code: `TPO-drives-39` round mode/row editor (pendi
 ## Round 8 — verified mentor workspaces, tests unexecuted
 
 `COL-people-21`, `COL-people-22`, and `COL-people-23` source-closed based on the real persisted workload query, cross-page mentor filter/selection, and tenant-scoped reassignment transaction which clears former-mentor task ownership and writes notifications for both mentors and learners. Added 3 gap-ID tests in `tests/unit/college-people-gap-closure.test.ts` and corresponding evidence in `docs/audit/acceptance/college-people-verification.md`. Tests/PG not executed; integration acceptance remains with orchestrator.
+
+## Round 9 — additional verified dispositions
+
+`TPO-drives-11` is source-DONE: the lifecycle dashboard now supplies all five persisted, tenant-scoped Needs doing categories with actual SQL counts and clickable filtered links; ID-named `tests/unit/tpo-drives-gap-closure.test.ts` upgraded and acceptance documented. `COL-people-18` is a deliberate privacy NOT-A-GAP: generic Contacts masks learner email and phone, with a separate need-to-know workflow required. `tests/unit/college-people-gap-closure.test.ts` checks this policy. **Tests have not been run in this lane.**
+
+## Round 10 — recovery of archived tenants
+
+`SA-tenants-modules-R02` source-DONE. Both archived organizations and archived colleges can be restored by Super Admin in an authorized scope through same-origin POST endpoints, guarded accessible confirmation, archived-state optimistic SQL and audit events. Parent organization must be ACTIVE before restoring college; organization name cannot conflict with another active one. Organization list and College detail expose recovery. `tests/unit/superadmin-tenants-gap-closure.test.ts` has named R02 test; PostgreSQL/runtime and browser testing remain **unexecuted**. Do not treat this as automatic restoration of child membership, DNS, credential, or runtime readiness.

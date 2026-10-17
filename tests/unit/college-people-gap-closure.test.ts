@@ -127,9 +127,13 @@ describe("College People legacy audited page contracts",()=>{
   expect(contacts).toContain("Student accounts");
   expect(src("src/app/(authenticated)/college/people/page.tsx")).toContain('redirect("/college/contacts")');
  });
- it("COL-people-18 unauthorised student contacts must remain masked until a policy grants access",()=>{
+ it("COL-people-18 college contacts keep learner phone and email masked without a need-to-know grant",()=>{
   const contacts=src("src/app/(authenticated)/college/contacts/page.tsx");
+  const model=src("src/modules/people/college-contacts-privacy.ts");
   expect(contacts).toContain("Student contact details are masked");
+  expect(model).toContain("input.isLearner?maskedEmail(input.email)");
+  expect(model).toContain("phone:maskedPhone(input.phone)");
+  expect(model).toContain("a separate need-to-know workflow");
  });
  it("COL-people-19 contact directory presents legacy search and tabs before advanced filters",()=>{
   const page=src("src/app/(authenticated)/college/contacts/page.tsx");
