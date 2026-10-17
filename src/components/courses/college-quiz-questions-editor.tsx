@@ -9,6 +9,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
  const router=useRouter();
  const [open,setOpen]=useState(false),[loading,setLoading]=useState(false),[busy,setBusy]=useState(false);
  const [questions,setQuestions]=useState<Question[]>([]),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [dirty,setDirty]=useState(false);
  async function load(){
   if(loading||busy)return;
   setOpen(true);setLoading(true);setError("");setNotice("");
@@ -18,13 +19,14 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
    if(!response.ok||!Array.isArray(body?.quiz?.questions)&&!Array.isArray(body?.questions))
     throw new Error(typeof body?.error==="string"?body.error:"Unable to load quiz questions.");
    const rows=Array.isArray(body?.questions)?body.questions:body.quiz.questions;
+   setDirty(false);
    setQuestions(rows.map((q:Question)=>({type:q.type,prompt:q.prompt,points:q.points,
     options:q.options.map(o=>({text:o.text,correct:Boolean(o.correct)}))})));
   }catch(cause){setOpen(false);setQuestions([]);
    setError(cause instanceof Error?cause.message:"Unable to load quiz questions.");}
   finally{setLoading(false);}
  }
- function update(i:number,question:Question){setQuestions(prev=>prev.map((q,j)=>i===j?question:q));}
+ function update(i:number,question:Question){setDirty(true);setQuestions(prev=>prev.map((q,j)=>i===j?question:q));}
  async function save(){
   if(busy)return;
   if(questions.length<1||questions.length>100){setError("Add 1–100 questions.");return;}
@@ -52,7 +54,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
    });
    const body=await response.json().catch(()=>null);
    if(!response.ok||body?.quiz?.id!==quizId)throw new Error(body?.error??"Quiz questions could not be updated.");
-   setOpen(false);setNotice("Quiz questions updated.");router.refresh();
+   setDirty(false);setOpen(false);setNotice("Quiz questions updated.");router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update questions.");}
   finally{setBusy(false);}
  }
