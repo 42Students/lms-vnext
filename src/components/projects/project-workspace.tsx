@@ -1426,7 +1426,8 @@ export function ProjectWorkspace({
                 <ul className="mt-2 space-y-1">
                   {workspace.meetings.filter(m=>m.status==="COMPLETED"||m.status==="CANCELLED"||
                     (m.status==="SCHEDULED"&&new Date(m.endsAt)<=renderTime)).map(m=>
-                    <li key={m.id}>{m.title} · {label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
+                    <li key={m.id}>{m.title} · {formatDateTime(m.startsAt)} ·
+                      {" "+label(mentorMeetingDisplayStatus(m.status,m.endsAt,renderTime))}</li>)}
                 </ul>
               </details>
             </section>;
