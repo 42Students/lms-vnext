@@ -94,12 +94,13 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
     : null;
+  const requests = await listOwnRecruiterDriveRequests(context,selectedId);
   const actionQueue=buildRecruiterActionQueue({jobs,collegeId:selectedId,companyId:recruiter.companyId,now,
     unread:unreadAction?.value??0,resultsDue:dueResults,
     unreadConversations:conversationSignals?.unread??[],
+    returnedRequests:requests,
   });
   // Pending formal requests count as drives, even before publication.
-  const requests = await listOwnRecruiterDriveRequests(context,selectedId);
   const requestCount=requests.length;
   const waitingRequests=recruiterTodayWaitingRequests(requests);
   const weekEvents=recruiterTodayWeekEvents({events:calendar.events,resultsDue:dueResults,allowedJobs:collegeJobs.map(row=>row.job.id),now});
