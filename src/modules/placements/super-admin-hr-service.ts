@@ -1235,3 +1235,24 @@ export async function terminateSuperAdminHrSessions(
     terminated: true,
   };
 }
+
+/** Current-scope status totals, independently counted across the full directory. */
+export async function getSuperAdminHrStatusSummary(context:RequestContext){
+  requireHrAdmin(context);
+  const rows=await getDb().select({
+    platformStatus:users.platformStatus,
+    recruiterStatus:placementRecruiterProfiles.status,
+    total:count(),
+  }).from(placementRecruiterProfiles)
+   .innerJoin(users,eq(users.id,placementRecruiterProfiles.userId))
+   .where(visibilityClause(context))
+   .groupBy(users.platformStatus,placementRecruiterProfiles.status);
+  const totals={accounts:0,active:0,archived:0,disabled:0};
+  for(const row of rows){
+    totals.accounts+=row.total;
+    if(row.platformStatus==="DISABLED")totals.disabled+=row.total;
+    else if(row.recruiterStatus==="ARCHIVED")totals.archived+=row.total;
+    else totals.active+=row.total;
+  }
+  return totals;
+}
