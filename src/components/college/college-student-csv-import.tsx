@@ -99,7 +99,7 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
             const file = event.currentTarget.files?.[0];
             if (!file) return;
             if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
-            setCsv(await file.text()); setReport(null); setConfirm(false);
+            setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
           }} />
       </label>
       <label className="mt-4 grid gap-2 text-sm font-semibold text-body">
