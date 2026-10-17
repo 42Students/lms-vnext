@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import {recruiterXlsxToCsv} from "@/modules/placements/tpo-lead-xlsx-import-model";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   previewTpoLeadCsv,
   TPO_LEAD_CSV_MAX_CHARACTERS,
@@ -32,6 +32,25 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
   const [busy, setBusy] = useState(false);
   const [result, setResult] = useState<ImportResponse | null>(null);
   const [skipRows,setSkipRows]=useState<number[]>([]);
+  const launchRef=useRef<HTMLButtonElement>(null);
+  const modalRef=useRef<HTMLElement>(null);
+  const fileRef=useRef<HTMLInputElement>(null);
+  useEffect(()=>{
+    if(!open)return;
+    fileRef.current?.focus();
+    const onKey=(event:KeyboardEvent)=>{
+      if(event.key==="Escape"){event.preventDefault();if(!busy)close();return;}
+      if(event.key!=="Tab"||!modalRef.current)return;
+      const items=Array.from(modalRef.current.querySelectorAll<HTMLElement>(
+        'button:not([disabled]),input:not([disabled]),a[href],textarea:not([disabled])'));
+      const first=items[0],last=items[items.length-1];
+      if(!first||!last)return;
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+    };
+    window.addEventListener("keydown",onKey);
+    return ()=>window.removeEventListener("keydown",onKey);
+  },[open,busy]);
 
   async function chooseFile(file: File | undefined) {
     setResult(null);
@@ -106,16 +125,17 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setError("");
     setResult(null);
     setFileName("");
+    launchRef.current?.focus();
   }
 
   return (
     <>
-      <button type="button" className={buttonClass} onClick={() => setOpen(true)}>
+      <button ref={launchRef} type="button" className={buttonClass} onClick={() => setOpen(true)}>
         Import leads CSV
       </button>
       {open ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" role="presentation">
-          <section
+          <section ref={modalRef}
             role="dialog"
             aria-modal="true"
             aria-label="Import recruiter leads"
@@ -143,7 +163,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             </a>
             <label className="block text-sm font-semibold text-foreground">
               Choose CSV or Excel file
-              <input
+              <input ref={fileRef}
                 className={inputClass + " mt-2"}
                 type="file"
                 accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
