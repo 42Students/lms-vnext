@@ -53,7 +53,7 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     .set({updatedAt:new Date(Math.max(Date.now(),task.updatedAt.getTime()+1))})
     .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id),
      sql`date_trunc('milliseconds', ${projectTasks.updatedAt}) = ${new Date(input.expectedTaskUpdatedAt).toISOString()}::timestamptz`))
-    .returning({id:projectTasks.id});
+    .returning({id:projectTasks.id,updatedAt:projectTasks.updatedAt});
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [comment]=await tx.insert(projectTaskComments).values({
    projectId:scope.project.id,taskId,authorMembershipId,body:input.body,
