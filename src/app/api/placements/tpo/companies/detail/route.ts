@@ -7,9 +7,6 @@ import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-ser
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
-  if (!await placementTableExists("placement_tpo_leads") || !await placementTableExists("placement_tpo_lead_activities")) {
-    return NextResponse.json({ error: "DATABASE_NOT_READY" }, { status: 503 });
-  }
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
