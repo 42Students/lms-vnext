@@ -89,7 +89,8 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
        }catch(err){setError(err instanceof Error?err.message:"Unable to auto-assign tasks");}
        finally{setBusy(false);}
      }}>Auto-assign {projectUnassigned} eligible project task(s)</button>:null>
-  <button type="button" aria-expanded={filtersOpen} aria-controls="mentor-allocation-filters"
+  <button type="button" aria-expanded={filtersOpen}
+    aria-controls={filtersOpen?"mentor-allocation-filters":undefined}
     onClick={()=>setFiltersOpen(open=>!open)}
     className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
     Filters{activeFilterCount?" ("+activeFilterCount+")":""}
