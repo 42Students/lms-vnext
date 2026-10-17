@@ -47,3 +47,7 @@
 ### Chat-16 SA-placements-projects-114 linked live log triage (authored, provider unverified)
 
 | SA-placements-projects-114 | DONE (source; integration pending) | `tracker-cloud-logs.ts` matches redacted live errors against persisted Known Error signatures by canonical hash and environment only when DB10 Log Alerts is verified; `tracker-live-logs-explorer.tsx` opens matched detail or prompts before muting/unmuting via authorized origin-checked PATCH; `known-errors-workspace.tsx` adds permalink targets. `tests/unit/chat16-tracker-known-error-link-round4.test.ts` — SA-placements-projects-114. No raw samples or account identities returned by this mapping. |
+
+## Chat-16 provider-independent Telegram digest preview
+
+| SA-placements-projects-116 | PARTIAL (delivery integration gated) | `src/components/tracker/tracker-telegram-manual-panel.tsx` permits read-only daily digest preview with regressions, fixed/muted counts and deploy metadata without Telegram credentials. Test `tests/unit/chat16-telegram-preview-graceful-r5.test.ts` → `SA-placements-projects-116 previews digest offline while disabling only sends`. Both send/test buttons remain disabled without bot/chat configuration; actual Telegram transport needs configured provider and integration validation. Source test authored; no CI executed. |
