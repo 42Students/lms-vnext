@@ -29,5 +29,12 @@ export function HrUnsentDriveAlert({storageKey,collegeId}:{storageKey:string;col
     className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
     Continue
    </Link>
+   <button type="button" className="ml-3 min-h-10 text-sm font-semibold text-body underline"
+    onClick={()=>{
+      if(!window.confirm("Discard the unsent drive request saved on this device?"))return;
+      try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
+      catch{/* Browser storage may be unavailable. */}
+      setHasDraft(false);
+    }}>Discard saved draft</button>
  </aside>;
 }
