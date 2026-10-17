@@ -17,4 +17,8 @@ describe("Super Admin recruiter suspend and reactivate",()=>{
   expect(source).toContain("Their existing college access is kept.");
   expect(source).not.toContain("active college grants were revoked");
  });
+ it("SA-placements-projects-35 denies recruiter context until reactivated",()=>{
+  const context=read("src/modules/identity/context-service.ts");
+  expect(context).toContain('eq(placementRecruiterProfiles.status, "ACTIVE")');
+ });
 });
