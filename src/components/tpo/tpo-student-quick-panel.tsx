@@ -94,7 +94,12 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        {[
         ["Program",student.programName],["Branch",student.branchName],
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
-        ["CGPA",student.cgpa??"Not recorded"],["Active backlogs",student.activeBacklogs??"Not recorded"],
+        ["CGPA",student.cgpa??"Not recorded"],["PG % (profile entry)",student.profileFacts?.pgPercentage??"Not recorded"],
+        ["Degree",student.profileFacts?.degree??"Not recorded"],["Entrance exam",student.profileFacts?.entranceExam??"Not recorded"],
+        ["Phone (last four)",student.profileFacts?.phoneMasked??"Not recorded"],
+        ["LinkedIn",student.profileFacts?.linkedIn??"Not recorded"],["GitHub",student.profileFacts?.github??"Not recorded"],
+        ["Portfolio",student.profileFacts?.portfolio??"Not recorded"],
+        ["Active backlogs",student.activeBacklogs??"Not recorded"],
         ["Past backlogs",student.pastBacklogs??"Not recorded"],
         ["After college",afterCollegeDisplay(recordedOutcome)],
         ["Stage",tpoStudentDisplayLabel(student.journeyState)],

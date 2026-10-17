@@ -315,3 +315,14 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 ## Round 6 — decisions on send
 
 | TPO-inbox-team-23 | DONE (source; tests not run) | `TpoTeamReplyComposer` allows **Mark as decision** before sending. The same scoped message transaction stores the decision event and checks that idempotency retries use the same decision flag, with pinned strip and per-message toggle already available. New **TPO-inbox-team-23** test in `tests/unit/tpo-team-decision-chat2.test.ts`. PostgreSQL acceptance pending orchestrator. |
+
+## Chat-2 next round — announcement delivery lifecycle
+
+| TPO-inbox-team-51 | DONE (source, tests unrun) | Versioned notice edits can optionally Tell them it changed; an atomic edit event only notifies recorded original recipients, never invents delivery or an audience. `tests/unit/chat2-notices-retraction-update.test.ts` has named gap test. |
+| TPO-inbox-team-52 | DONE (source, tests unrun) | Delete/Undo removes existing original delivery alerts in same transaction as deletion, preserves audit record and exact confirmation/toast text, named test in same file. |
+
+| TPO-inbox-team-37 | DONE (source) | Placement Team People roster now includes active COLLEGE_ADMIN alongside TPO with exact legacy note, helper model `src/modules/placements/placement-team-access-model.ts`, named `tests/unit/chat2-team-college-admin-access.test.ts`. |
+| TPO-inbox-team-38 | PARTIAL — OPEN | College Admin can enter Team, appear in roster and create/read existing authorized threads; faculty TPO_ADMIN enrollment and multi-person threads still need full parity. Same test. |
+| TPO-inbox-team-R02 | PARTIAL — OPEN | Team page and detail now accept college admins via centralized placement permission. Messages/Announcements and shared bell producers require further widening. Same test. |
+
+| TPO-inbox-team-38 | PARTIAL — OPEN | Authenticated TPO and COLLEGE_ADMIN Team participants now supported consistently in private create/reply/read/asks/decision/rename/away/follow/everyone with same-college persisted permissions; faculty TPO_ADMIN and handover still require parity. Named `tests/unit/chat2-team-college-admin-workflows.test.ts`. |

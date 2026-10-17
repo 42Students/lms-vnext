@@ -1,9 +1,10 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
-import {and,desc,eq} from "drizzle-orm";
+import {inArray,and,desc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages,placementTpoTeamAsks} from "@/db/schema/tpo-internal";
-import {type RequestContext,hasMembershipRole} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "./scope";
@@ -13,7 +14,7 @@ import {tpoTeamAskActionSchema,tpoTeamAskCanTransition,tpoTeamAskCreateSchema} f
 async function requireScope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-   !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+   !hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  const college=await requirePlacementManageScope(context,member.collegeId);
  return {member,college};
 }
@@ -84,7 +85,7 @@ export async function createTpoTeamAsk(context:RequestContext,raw:unknown){
    .from(collegeMemberships)
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .innerJoin(membershipRoles,and(
-    eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+    eq(membershipRoles.membershipId,collegeMemberships.id),inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
    .where(and(eq(collegeMemberships.id,input.assigneeMembershipId),
     eq(collegeMemberships.collegeId,college.id),
     eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))

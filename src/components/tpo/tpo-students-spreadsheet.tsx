@@ -10,7 +10,7 @@ import {tpoStudentClipboardTsv} from "@/modules/placements/tpo-student-clipboard
 import {exportTpoStudentsCsv} from "@/modules/placements/tpo-students-csv";
 import {usePathname,useRouter,useSearchParams} from "next/navigation";
 import {TpoStudentQuickPanel} from "./tpo-student-quick-panel";
-import {tpoStudentNeedsAttention,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
+import {tpoStudentNeedsAttention,TPO_STUDENT_JOURNEY_STATES,type TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import type {TpoGridColumn} from "@/modules/placements/tpo-grid-model";
 import {TpoSpreadsheetGrid} from "./tpo-spreadsheet-grid";
 import {TpoGridFilterPanel,type TpoFilterField} from "./tpo-grid-filter-panel";
@@ -24,14 +24,28 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"number",label:"Student number",read:row=>row.rollNumber??row.registrationNumber},
  {key:"branch",label:"Branch",read:row=>row.branchName},
  {key:"batch",label:"Batch",read:row=>row.programName+" · "+row.cohortName+(row.fromFinishedBatch?" · From "+row.cohortName:"")},
- {key:"stage",label:"Stage",read:row=>tpoStudentDisplayLabel(row.journeyState)},
+ {key:"stage",label:"Stage",filter:{urlKey:"journeyState",
+  options:TPO_STUDENT_JOURNEY_STATES.map(value=>({value,label:tpoStudentDisplayLabel(value)}))},
+  read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"gender",label:"Gender",read:row=>row.profileFacts?.gender??"Not recorded"},
+ {key:"dob",label:"Birth year",read:row=>row.profileFacts?.birthYear??"Not recorded"},
+ {key:"phone",label:"Phone (last four)",read:row=>row.profileFacts?.phoneMasked??"Not recorded"},
+ {key:"degree",label:"Degree",read:row=>row.profileFacts?.degree??"Not recorded"},
+ {key:"entranceExam",label:"Entrance exam",read:row=>row.profileFacts?.entranceExam??"Not recorded"},
+ {key:"pg",label:"PG % (profile entry)",read:row=>row.profileFacts?.pgPercentage??"Not recorded"},
+ {key:"linkedin",label:"LinkedIn (profile entry)",read:row=>row.profileFacts?.linkedIn??"Not recorded"},
+ {key:"github",label:"GitHub (profile entry)",read:row=>row.profileFacts?.github??"Not recorded"},
+ {key:"portfolio",label:"Portfolio (profile entry)",read:row=>row.profileFacts?.portfolio??"Not recorded"},
+ {key:"experiences",label:"Experience entries",read:row=>row.profileFacts?.experiences??0},
  {key:"skills",label:"Skills",read:row=>row.profileFacts?.skills??0},
  {key:"projects",label:"Projects",read:row=>row.profileFacts?.projects??0},
  {key:"resume",label:"Resume",read:row=>row.profileFacts?.resume?"Provided":"Not provided"},
  {key:"codingProfiles",label:"Coding profiles",read:row=>row.profileFacts?.codingProfiles?"Provided":"Not provided"},
  {key:"certifications",label:"Certifications",read:row=>row.profileFacts?.certifications??0},
- {key:"profile",label:"Profile",read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
+ {key:"profile",label:"Profile",filter:{urlKey:"profileStatus",options:[
+  {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting"},
+  {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"}]},
+  read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
  {key:"tenth",label:"10th %",read:row=>row.tenthPct},
  {key:"twelfth",label:"12th %",read:row=>row.twelfthPct},
@@ -43,8 +57,18 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
  {key:"marksVerified",label:"Marks verified",read:row=>row.marksVerified?"Verified":"Not verified"},
  {key:"backlogs",label:"Active backlogs",read:row=>row.activeBacklogs},
  {key:"readiness",label:"Readiness evidence",read:row=>tpoStudentDisplayLabel(row.readinessSignal)},
+ {key:"readinessNote",label:"Readiness note",read:row=>[
+  !row.profileFacts?.resume?"No resume":"",row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING"?"Academics incomplete":"",
+  row.offersAwaitingAnswer>0?row.offersAwaitingAnswer+" offer(s) waiting on an answer":""
+ ].filter(Boolean).join(" · ")||"No flags recorded"},
+ {key:"eligibilityReason",label:"Eligibility reason",read:row=>row.participationReason??"Not recorded"},
+ {key:"eligibilityLevel",label:"Eligibility set by",read:row=>row.participationLevel??"Not recorded"},
+ {key:"eligibilityDate",label:"Eligibility set at",read:row=>row.participationDecidedAt?
+  row.participationDecidedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"}):"Not recorded"},
  {key:"attention",label:"Needs attention",read:row=>tpoStudentNeedsAttention(row)?"Review needed":"No flags"},
- {key:"debarred",label:"Debarred",read:row=>row.debarred===null?"Unavailable":row.debarred?"Debarred":"No"},
+ {key:"debarred",label:"Debarred",filter:{urlKey:"debarred",
+  options:[{value:"YES",label:"Debarred"},{value:"NO",label:"Not debarred"}]},
+  read:row=>row.debarred===null?"Unavailable":row.debarred?"Debarred":"No"},
  {key:"furthest",label:"Furthest round",read:row=>row.maximumAppliedRoundSequence??"Not recorded"},
  {key:"registration",label:"Placement registration",read:row=>row.registrationChoice??"Not registered"},
  {key:"participation",label:"Participation",read:row=>tpoStudentDisplayLabel(row.participationStatus)},
@@ -73,6 +97,17 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
  });
  const active=sortedRows.find(row=>row.membershipId===selected)??null;
+ const selectedScoped=noteSelection.filter(id=>shared?.allIds?.includes(id)??rows.some(row=>row.membershipId===id));
+ const allSelected=Boolean(shared?.allIds?.length&&selectedScoped.length===shared.allIds.length);
+ const xlsxHref=(()=>{
+  const query=new URLSearchParams(params.toString());
+  query.delete("student");query.delete("page");query.delete("pageSize");
+  if(!selectedScoped.length)return null;
+  if(!allSelected&&selectedScoped.length>200)return null;
+  query.set("ids",allSelected?"ALL":selectedScoped.join(","));
+  query.set("view",params.get("afterCollege")||params.get("journeyState")||"Students");
+  return "/api/placements/tpo/students/export-xlsx?"+query.toString();
+ })();
  function downloadSelection(){
   const permitted=new Set(rows.map(row=>row.membershipId));
   const chosen=sortedRows.filter(row=>noteSelection.includes(row.membershipId)&&permitted.has(row.membershipId));
@@ -94,7 +129,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
   ...columns.slice(0,5),
-  {key:"afterCollege",label:"After college",read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
+  {key:"afterCollege",label:"After college",filter:{urlKey:"afterCollege",options:
+   AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
   ...columns.slice(5),
  ];
  const filters:TpoFilterField[]=[
@@ -125,7 +161,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
-    event.preventDefault();setNoteSelection(rows.slice(0,100).map(row=>row.membershipId));
+    event.preventDefault();setNoteSelection(shared?.allIds??rows.map(row=>row.membershipId));
    }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
@@ -137,7 +173,9 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
-  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{noteSelection.filter(id=>rows.some(row=>row.membershipId===id)).length} selected of {rows.length} on this visible page.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
+   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Export selected XLSX</a>:
+    selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
     onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
     Export selected CSV
@@ -168,7 +206,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    </select>
   </label>
   <TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">

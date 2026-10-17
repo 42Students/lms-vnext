@@ -29,6 +29,34 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
       openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
       updatedAt:job.updatedAt.toISOString(),
     }} />:null}
+  {job.legacyPostingDetails?<section className="space-y-3 rounded-xl border border-border bg-surface p-5"
+    aria-label="Additional job details">
+    <h2 className="font-semibold">Additional job details</h2>
+    <p className="text-xs text-muted-foreground">Informational posting terms; enforceable learner eligibility remains in the drive policy.</p>
+    {job.legacyPostingDetails.responsibilities?<div>
+      <h3 className="text-sm font-semibold">Responsibilities</h3>
+      <p className="whitespace-pre-wrap text-sm text-body">{job.legacyPostingDetails.responsibilities}</p>
+    </div>:null}
+    {job.legacyPostingDetails.assessmentUrl?
+      <p className="text-sm">Assessment URL: <a href={job.legacyPostingDetails.assessmentUrl}
+        target="_blank" rel="noopener noreferrer" className="break-all text-primary-text underline">
+        {job.legacyPostingDetails.assessmentUrl}</a></p>:null}
+    {job.legacyPostingDetails.assessmentDeadline?<p className="text-sm">
+      Assessment deadline (IST): {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+        timeZone:"Asia/Kolkata"}).format(new Date(job.legacyPostingDetails.assessmentDeadline))}
+    </p>:null}
+    {job.legacyPostingDetails.importantDates?.length?<div>
+      <h3 className="text-sm font-semibold">Important dates</h3>
+      <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.importantDates.map((date,i)=>
+        <li key={i}>{date.label}: {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",
+          timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(date.at))}</li>)}</ul>
+    </div>:null}
+    {job.legacyPostingDetails.customEligibilityRules?.length?<div>
+      <h3 className="text-sm font-semibold">Custom eligibility rules (informational)</h3>
+      <ul className="mt-2 space-y-1 text-sm">{job.legacyPostingDetails.customEligibilityRules.map((rule,i)=>
+        <li key={i}>{rule.label}: {rule.value}</li>)}</ul>
+    </div>:null}
+  </section>:null}
   <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status!=="ARCHIVED"?<SuperAdminDriveArchive jobId={jobId} title={job.title}/>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}

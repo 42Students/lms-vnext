@@ -21,6 +21,7 @@ export async function POST(request: Request, {params}: {params: Promise<{noticeI
     buttonLabel:String(form?.get("buttonLabel")??"").trim()||undefined,
     buttonUrl:String(form?.get("buttonUrl")??"").trim()||undefined,
     pinned: form?.get("pinned") === "on",
+    notifyChanged:form?.get("notifyChanged")==="on",
     sendAt:form?.has("sendAt")?String(form.get("sendAt")??""):undefined,
     showUntil:form?.has("showUntil")?String(form.get("showUntil")??""):undefined,
   });

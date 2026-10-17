@@ -14,7 +14,7 @@ import {
   placementCompanyRelationships,
   placementJobs,
   placementJoiningOutcomes,
-  placementOffers,
+  placementOffers,placementCollegeRules,
   placementTpoLeadActivities,
   placementTpoLeads,
 } from "@/db/schema";
@@ -28,6 +28,7 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoCrmCollegeIdSchema } from "./tpo-crm-validation";
 import {listCompanyShareHistory} from "./company-share/company-history-service";
 import {getCompanyDriveCounts} from "./tpo-company-drive-counts-service";
+import {companyPlacedCount,companyHiredByYear,type CountsAsPlacedPolicy} from "./company-placed-count-policy";
 
 export class TpoCompanyMemoryError extends Error {
   constructor(
@@ -169,7 +170,10 @@ async function loadDriveFacts(jobIds: string[]) {
       jobStatus: placementJobs.status,
       archivedAt: placementJobs.archivedAt,
       offerStatus: placementOffers.status,
+      offerKind:placementOffers.kind,
+      membershipId:placementApplications.membershipId,
       joiningStatus: placementJoiningOutcomes.status,
+      joiningDate:placementJoiningOutcomes.joiningDate,
     })
     .from(placementJobs)
     .leftJoin(
@@ -257,6 +261,9 @@ export async function listTpoCompanies(
   const rows = await loadCompanySourceRows(context, collegeIdInput);
   const groups = matchingCompanies(rows);
   const out = [];
+  const collegeRules=await getDb().select({placedAt:placementCollegeRules.countsAsPlacedAt})
+   .from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,rows.collegeId)).limit(1);
+  const placedAt=(collegeRules[0]?.placedAt??"OFFER_RELEASED") as CountsAsPlacedPolicy;
 
   for (const group of groups.values()) {
     const driveRows = await loadDriveFacts(group.jobs.map((row) => row.job.id));
@@ -305,6 +312,9 @@ export async function getTpoCompanyMemory(
   const shareHistory=await listCompanyShareHistory(rows.collegeId,jobIds);
   const driveCounts=await getCompanyDriveCounts(rows.collegeId,jobIds);
   const facts = deriveCompanyDriveFacts(driveRows);
+  const collegeRules=await getDb().select({placedAt:placementCollegeRules.countsAsPlacedAt})
+   .from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,rows.collegeId)).limit(1);
+  const placedAt=(collegeRules[0]?.placedAt??"OFFER_RELEASED") as CountsAsPlacedPolicy;
   const linkedJobs = group.jobs.map((row) => ({
     jobId: row.job.id, relationshipId: row.relationshipId,companyName:row.companyName,
   }));
@@ -387,9 +397,9 @@ export async function getTpoCompanyMemory(
     drivesRan: facts.plannedDriveCount,
     acceptedOfferDrives: facts.acceptedOfferDriveCount,
     confirmedJoinedDrives: facts.confirmedJoinedDriveCount,
-    studentsHired: null as number | null,
-    hiredPerYear: [] as Array<{ year: string; hired: number }>,
-    placedMetricStatus: "PENDING_W04_COUNTS_AS_PLACED_POLICY" as const,
+    studentsHired:companyPlacedCount(driveRows,placedAt),
+    hiredPerYear:companyHiredByYear(driveRows),
+    placedMetricStatus:placedAt==="SELECTED"?"SELECTION_LEDGER_UNAVAILABLE" as const:"COLLEGE_COUNTS_AS_PLACED_POLICY" as const,
     timeline,
     documents: shareHistory.items,
     documentsStatus: shareHistory.ready ? "READY" as const : "STORAGE_PENDING" as const,

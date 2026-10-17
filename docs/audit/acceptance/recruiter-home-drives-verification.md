@@ -55,3 +55,23 @@ Remaining gaps (including private applicant disclosure and ZIP export) require f
 | REC-home-drives-30 | DONE | `src/components/hr/hr-drive-draft-form.tsx`; `tests/unit/recruiter-home-drives-chat7-drafts-r7.test.ts` — `REC-home-drives-30 matches the reviewed contract`. Test authored, not executed. |
 
 | REC-home-drives-32 | DONE | `src/components/hr/hr-drive-draft-form.tsx`; `tests/unit/recruiter-home-drives-chat7-drafts-r7.test.ts` — `REC-home-drives-32 matches the reviewed contract`. Test authored, not executed. |
+
+## Chat-14 reassignment — batch 1 (authored; tests not executed)
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-home-drives-11 | DONE | `src/app/(authenticated)/hr/home/error.tsx` now shows legacy account recovery with Retry; existing no-college screen remains scoped; named test |
+| REC-home-drives-31 | PARTIAL — OPEN | `HR_DRIVE_ROUND_PRESETS` legacy labels verified; Hire again heading/copy still under review; named test |
+| REC-home-drives-54 | DONE | Existing role-scoped `not-found.tsx` shows exact legacy missing-drive copy; named test |
+| REC-home-drives-R07 | NOT-A-GAP | Owner decision IST everywhere takes precedence over viewer-local legacy formatting; `hr/home/page.tsx` and portfolio format IST; named test |
+
+## Chat-14 reassignment — batch 2 (tests authored, not run)
+
+| Gap | Status | Evidence |
+| --- | --- | --- |
+| REC-home-drives-16 | DONE | `src/components/placements/recruiter-placement-portfolio.tsx` stable-sorts unanswered requests first and highlights those cards; named test in `tests/unit/recruiter-chat14-round2.test.ts` |
+| REC-home-drives-27 | DONE | `hrDriveDraftSchema` enforces role title with `Enter a role title`; description and location optional; named unit schema test |
+| REC-home-drives-30 | DONE | `src/components/hr/hr-drive-draft-form.tsx` post-confirmation feedback says `Sent to the placement cell for review`; preserves failed request drafts; named test |
+| REC-home-drives-31 | DONE | `hr-drive-draft-form.tsx` now uses `Hire again` lowercase title, and existing three legacy round presets verified; named tests |
+| REC-home-drives-32 | DONE | `hr-drive-draft-form.tsx` browser beforeunload and accessible `Discard this drive draft?` in-app confirmation, including brand-new drafts; named test |
+| REC-home-drives-52 | PARTIAL — OPEN | Offers now 15/page and `EXPIRED` filter, with persisted scoped count in `hr-job-read-service.ts`. Selection/PENDING/REVOKED are not `placement_offers` statuses, so require separate source; named unit test |

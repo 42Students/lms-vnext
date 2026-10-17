@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { CollegeAttendancePolicyForm } from "@/components/attendance/college-attendance-policy-form";
 import { PageHeader } from "@/components/ui/page-header";
 import {
@@ -12,7 +13,8 @@ export default async function CollegeAttendanceSettingsPage() {
     await getCurrentRequestContext();
 
   const collegeId =
-    context.membership?.collegeId;
+    context.membership?.collegeId ??
+    (isSuperAdmin(context) ? context.adminScope?.collegeId : null);
 
   if (!collegeId) {
     redirect("/dashboard");

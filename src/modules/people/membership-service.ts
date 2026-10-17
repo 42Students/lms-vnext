@@ -2,6 +2,7 @@ import type { MembershipRole } from "@/modules/identity/constants";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { PeopleServiceError } from "./errors";
+import {assertMutableMembershipTarget} from "./membership-protection";
 import type { PersonMembershipView } from "./service";
 import {
   membershipLifecycleInputSchema,
@@ -85,8 +86,7 @@ export async function addMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
-  // COL-people-20 / OD-22: ordinary College Admins may manage other
-  // scoped membership roles, but only Super Admins may change COLLEGE_ADMIN.
+  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
   if (input.role === "COLLEGE_ADMIN") {
     requirePermission(context, "admin-scope.select");
   }
@@ -97,6 +97,7 @@ export async function addMembershipRole(
     repository,
   );
   requireMutableRoleMembership(person);
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},"ROLE_ADD",input.role);
 
   return repository.addMembershipRole(
     person.membership.id,
@@ -112,8 +113,7 @@ export async function removeMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
-  // COL-people-20 / OD-22: ordinary College Admins may manage other
-  // scoped membership roles, but only Super Admins may change COLLEGE_ADMIN.
+  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
   if (input.role === "COLLEGE_ADMIN") {
     requirePermission(context, "admin-scope.select");
   }
@@ -124,6 +124,7 @@ export async function removeMembershipRole(
     repository,
   );
   requireMutableRoleMembership(person);
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},"ROLE_REMOVE",input.role);
 
   return repository.removeMembershipRole(
     person.membership.id,
@@ -145,6 +146,8 @@ export async function updateMembershipLifecycle(
     "membership.lifecycle.manage",
     repository,
   );
+
+  assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},input.action);
 
   return repository.transitionMembershipLifecycle(
     person.membership.id,

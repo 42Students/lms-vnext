@@ -6,6 +6,7 @@ import {notFound,redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
+import {ErrorState} from "@/components/ui/error-state";
 import {hrConversationDetailHref} from "@/modules/placements/hr-conversation-detail-links-model";
 import {recruiterProposalMessageMarker} from "@/modules/placements/hr-proposal-message-marker-model";
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
@@ -29,6 +30,13 @@ export default async function RecruiterConversationDetail({params,searchParams}:
  try{
   result=await readRecruiterThreadMessages(context,parsedId.data,parsedPage.data);
  }catch(error){
+  if(error instanceof TpoMessagingError && error.code==="TPO_MESSAGE_FORBIDDEN"){
+   return <main className="space-y-5"><PageHeader eyebrow="Recruiter" title="Messages"/>
+    <ErrorState title="No access to this college"
+     description="Your access to this college has ended or was removed. Ask the placement cell to give it again."
+     action={<Link href="/hr/home" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Return to Today</Link>}/>
+   </main>;
+  }
   if(error instanceof TpoMessagingError)notFound();
   throw error;
  }

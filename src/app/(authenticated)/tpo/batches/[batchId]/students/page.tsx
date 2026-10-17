@@ -8,7 +8,6 @@ import {summarizeBatchStudentEvidence} from "@/modules/placements/tpo-batch-stud
 import Link from "next/link";
 import { TpoBatchWorkspaceTabs } from "@/components/tpo/tpo-batch-workspace-tabs";
 import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibility-import-scaffold-model";
-import {TpoAcademicImportPreview} from "@/components/tpo/tpo-academic-import-preview";
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
@@ -80,7 +79,6 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
- <TpoAcademicImportPreview activeIds={result.students.map(s=>s.membershipId)}/>
  <Link href={"/tpo/batches/"+batchId+"/nudge-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-primary-text">Prepare follow-up for unrecorded choices</Link>
  <p className="text-sm text-muted-foreground">Registration choices are separate from eligibility; missing choices do not imply consent.</p>
  {!result.registrationAvailable?<p role="status" className="text-sm">Registration records unavailable.</p>:null}

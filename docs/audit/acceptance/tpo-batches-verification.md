@@ -97,3 +97,24 @@ Tests are written but not run. This section supersedes older partial statuses on
 | TPO-batches-37 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-37 partial baseline — further implementation required`. |
 | TPO-batches-45 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-45 partial baseline — further implementation required`. |
 | TPO-batches-53 | OPEN | Existing source contract reviewed; full gap feature remains incomplete. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-batches-53 partial baseline — further implementation required`. |
+
+## Chat-5 filter/navigation and mismatched-preview verification (2026-10-17)
+
+| ID | Status | Evidence (file + named test) |
+|---|---|---|
+| TPO-batches-12 | DONE | `src/components/tpo/tpo-batch-instant-search.tsx` debounces URL updates and clears the search without losing other filters; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-12 debounces URL-synced search and clears its query`. |
+| TPO-batches-16 | DONE | `src/modules/placements/tpo-batch-return-model.ts` and list/detail pages preserve an allowlisted return URL; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-16 preserves filters on back without an unsafe redirect`. |
+| TPO-batches-51 | DONE | Removed the academic CSV preview from the eligibility student page; eligibility sheet import and CSV exports remain; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-51 removes misplaced academic import without hiding eligibility import`. |
+| TPO-batches-57 | DONE | Existing `src/modules/placements/tpo-batch-decision-model.ts` enforces 3–200 characters on ineligibility reasons and strict payloads; `tests/unit/tpo-batches-chat5-navigation-round.test.ts` — `TPO-batches-57 enforces the same strict reason limits in UI and schema`. |
+
+## Chat-5 import preview safety (2026-10-17)
+
+| TPO-batches-R04 | OPEN (partial safety fix) | `src/components/tpo/tpo-batch-eligibility-import.tsx` requires explicit Skip row; `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` rejects any unusable row; `src/modules/placements/tpo-eligibility-sheet-model.ts` renders legacy missing/duplicate/reason messages. `tests/unit/tpo-batches-import-r04-chat5.test.ts` — `TPO-batches-R04 never silently commits unusable eligibility rows`. Full per-row invalid-decision preview still pending (invalid enums currently reject the entire file). |
+
+## Chat-5 batch gap queue consistency (2026-10-17)
+
+The following 17 `FIXED-ON-MAIN` queue rows have existing named regression tests and later DONE evidence in this file. They are now marked DONE in the queue; tests are authored but remain unexecuted by this lane:
+
+`TPO-batches-19`, `TPO-batches-02`, `TPO-batches-04`, `TPO-batches-05`, `TPO-batches-08`, `TPO-batches-22`, `TPO-batches-38`, `TPO-batches-41`, `TPO-batches-42`, `TPO-batches-58`, `TPO-batches-59`, `TPO-batches-06`, `TPO-batches-10`, `TPO-batches-23`, `TPO-batches-47`, `TPO-batches-30`, `TPO-batches-62`.
+
+| TPO-batches-R04 | OPEN (improved invalid-value preview) | `src/modules/placements/tpo-eligibility-sheet-model.ts` preserves unrecognized CSV decisions as noncommittable `INVALID` preview rows, with a precise, per-row reason instead of discarding the whole file. `src/app/api/placements/tpo/batches/[batchId]/import-commit/route.ts` independently refuses invalid rows; `tests/unit/tpo-batches-import-r04-chat5.test.ts` — `TPO-batches-R04 preserves missing-roll and ambiguous-roll review reasons`. Legacy suggestion/replacement editor is still outstanding. |

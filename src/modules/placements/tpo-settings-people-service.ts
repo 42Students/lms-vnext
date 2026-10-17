@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  inArray,
   or,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -24,6 +25,7 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 
 import { listPlacementCompanies } from "./company-service";
 import { requirePlacementManageScope } from "./scope";
@@ -54,7 +56,7 @@ async function requireTpoSettingsScope(
   );
 
   if (
-    !hasMembershipRole(context, "TPO") ||
+    !hasPlacementTeamMembership(context) ||
     context.membership?.collegeId !== collegeId
   ) {
     throw new AuthorizationError("placements.manage");
@@ -103,6 +105,7 @@ export async function getTpoPlacementTeam(
     db
       .select({
         membershipId: collegeMemberships.id,
+        membershipRole:membershipRoles.role,
         displayName: users.displayName,
         membershipStatus: collegeMemberships.status,
         platformStatus: users.platformStatus,
@@ -119,7 +122,7 @@ export async function getTpoPlacementTeam(
             membershipRoles.membershipId,
             collegeMemberships.id,
           ),
-          eq(membershipRoles.role, "TPO"),
+          inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"]),
         ),
       )
       .where(
@@ -256,7 +259,7 @@ export async function getTpoPlacementTeam(
   for (const row of tpoRows) {
     evidence.push({
       ...row,
-      role: "TPO",
+      role: row.membershipRole as "TPO"|"COLLEGE_ADMIN",
     });
   }
 

@@ -24,7 +24,7 @@ export function SuperAdminContentAuthoring({kind,lessons,allowVideoUpload=true}:
      availableModes={modes[kind]}/>:null}
    {kind==="VIDEOS"&&selected&&(allowVideoUpload?
     <FacultyLessonVideoManager key={"video:"+selected.id} lessonId={selected.id} deliveryId={null} nextContentSequence={selected.nextContentSequence}/>:
-    <p className="text-sm text-muted-foreground">Binary video upload requires a real active membership in this selected college. You can still author YouTube video links. Super Admin-only user-owned uploads require the pending storage actor migration.</p>)}
+    <p className="text-sm text-muted-foreground">Binary video upload requires a real active membership in this selected college. You can still author YouTube video links. Super Admin-only user-owned uploads require a private object-storage bucket, malware scanner and the pending storage actor migration.</p>)}
   </>}
  </section>;
 }

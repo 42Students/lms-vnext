@@ -46,6 +46,17 @@ describe("College Admin attendance center", () => {
     expect(adminAttendanceCellState(sessions[0]!, undefined, NOW).label).toBe("Present");
   });
 
+  it("COL-attendance-R01 keeps unmarked classmates uncounted after one admin correction", () => {
+    const notMarked = session("class-1", "2026-10-13T06:00:00Z", null);
+    const absent = {scheduleEventId:notMarked.id,membershipId:"learner-a",status:"ABSENT"};
+    const learnerA = adminAttendanceCellState(notMarked,absent,NOW);
+    const learnerB = adminAttendanceCellState(notMarked,undefined,NOW);
+    expect(learnerA).toMatchObject({code:"A",label:"Absent",counted:false,present:false});
+    expect(learnerB).toMatchObject({code:"—",label:"Not marked",counted:false,present:false});
+    expect(adminAttendancePercent("learner-a",[notMarked],[absent],NOW)).toBeNull();
+    expect(adminAttendancePercent("learner-b",[notMarked],[absent],NOW)).toBeNull();
+  });
+
   it("honors exact correction-window start and end boundaries", () => {
     const base = {
       startsAt: new Date("2026-10-14T07:00:00Z"),

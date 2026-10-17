@@ -7,6 +7,8 @@ import {
   asc,
   desc,
   eq,
+  gte,
+  lt,
   inArray,
   isNull,
   or,
@@ -51,7 +53,13 @@ function requireLearnerMembership(
 
 export async function getLearnerClassSchedule(
   context: RequestContext,
+  visibleWindow?:{from:Date;to:Date},
 ) {
+  if(visibleWindow && (!Number.isFinite(visibleWindow.from.getTime()) ||
+    !Number.isFinite(visibleWindow.to.getTime()) ||
+    visibleWindow.to.getTime() <= visibleWindow.from.getTime() ||
+    visibleWindow.to.getTime()-visibleWindow.from.getTime()>100*86_400_000))
+    throw new AcademicsServiceError("INVALID_LEARNER_SCHEDULE_WINDOW");
   const membership =
     requireLearnerMembership(context);
   requirePermission(context, "academics.read", {
@@ -180,6 +188,10 @@ export async function getLearnerClassSchedule(
     .leftJoin(users, eq(users.id, collegeMemberships.userId))
     .where(and(
       eq(sectionScheduleEvents.status, "SCHEDULED"),
+      ...(visibleWindow?[
+        lt(sectionScheduleEvents.startsAt,visibleWindow.to),
+        gte(sectionScheduleEvents.endsAt,visibleWindow.from),
+      ]:[]),
       or(
         and(
           inArray(sectionScheduleEvents.sectionId, primarySectionIds),

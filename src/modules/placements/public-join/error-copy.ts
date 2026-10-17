@@ -1,4 +1,6 @@
 export const JOIN_ERROR_COPY={
+ EMAIL_NO_MX:"This email domain has no mail server. Check the address.",
+ EMAIL_MX_UNAVAILABLE:"We couldn\x27t verify this email domain right now. Please try again.",
  PHONE_STORAGE_NOT_READY:"Mobile contact storage is not ready. Remove the optional mobile number or ask the placement cell to enable it.",
  INVALID_MOBILE:"Enter a valid 10-digit mobile number, or leave it blank.",
  WRONG_CODE:"That code isn't right. Check the latest email from us.",

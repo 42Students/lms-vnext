@@ -2,6 +2,7 @@ import {TpoBatchUndoControl} from "@/components/tpo/tpo-batch-undo-control";
 import {listTpoBatchRecentCohortActions} from "@/modules/placements/tpo-batch-recent-decision-service";
 import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
 import Link from "next/link";
+import {TpoBatchInstantSearch} from "@/components/tpo/tpo-batch-instant-search";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-service";
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
@@ -68,7 +69,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
-   <label className="min-w-0 flex-1 text-sm">Search batches<input type="search" name="q" defaultValue={parsed.data.q??""} maxLength={100} className="mt-1 block min-h-11 w-full rounded border border-border bg-surface px-3"/></label>
+   <TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/>
    <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></select></label>
    <label className="text-sm">Program<select name="program" defaultValue={programParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</select></label>
    <label className="text-sm">Department<select name="department" defaultValue={departmentParsed.data} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="">All departments</option>{departments.map(d=><option key={d} value={d}>{d}</option>)}</select></label>
@@ -110,7 +111,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
    {data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
       className="inline-flex min-h-11 items-center text-primary-text underline">Clear batch filters</Link>:null}
   </section>:<ul className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-2 rounded-xl border border-border bg-surface p-4">
-    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id} className="text-primary-text underline">{b.name}</Link></h2>
+    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="text-primary-text underline">{b.name}</Link></h2>
     <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
     <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
