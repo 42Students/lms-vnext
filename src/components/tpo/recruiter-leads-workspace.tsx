@@ -913,6 +913,12 @@ export function RecruiterLeadsWorkspace({
             <div className="flex gap-3 overflow-x-auto pb-3" role="region" aria-label="Recruiter stage board">
               {(["NEW", "CONTACTED", "INVITED", "JOINED", "DRIVE_PLANNED", "RECRUITED", "NOT_NOW"] as const).map(column => (
                 <section key={column} className="w-64 min-w-64 shrink-0 rounded-lg border border-border bg-surface p-4">
+                  <p className="mb-2 text-xs text-muted-foreground">
+                    {column==="NEW"?"New contacts are moved when outreach is recorded":
+                     column==="CONTACTED"?"Manually move or log a follow-up":
+                     column==="NOT_NOW"?"Requires a recorded reason":
+                     "Automatically set by invitation and placement activity"}
+                  </p>
                   <h2 className="mb-3 font-semibold">{RECRUITER_STAGE_LEGACY_LABELS[column]} · {visible.filter(x => x.stage === column).length}</h2>
                   <div className="space-y-2">
                     {visible.filter(x => x.stage === column).slice(0, column==="RECRUITED"||column==="NOT_NOW"?5:50).map(lead => (
@@ -922,7 +928,26 @@ export function RecruiterLeadsWorkspace({
                         <span className="block font-medium">{lead.name}</span>
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
                         </Link>
-                        {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                           {lead.nextFollowupAt?<span className="text-xs text-muted-foreground">
+                             Follow-up {new Date(lead.nextFollowupAt).toLocaleDateString("en-IN")}
+                           </span>:null}
+                           {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
+                         </div>
+                         <details className="mt-2 rounded-md border border-border p-2 text-xs">
+                           <summary className="cursor-pointer text-primary-text">Move to… / Actions</summary>
+                           <p className="mt-1 text-muted-foreground">
+                             Invited, Joined, Drive planned and Recruited update automatically.
+                             Not now requires a reason.
+                           </p>
+                           <div className="mt-2 space-y-2">
+                             <RecruiterInlineStage lead={lead} onUpdated={()=>void load()} />
+                             <RecruiterInlineOwner lead={lead} onUpdated={()=>void load()} />
+                             <Link className="inline-block text-primary-text underline"
+                               href={"/tpo/recruiters/"+encodeURIComponent(lead.id)}>Open recruiter</Link>
+                           </div>
+                         </details>
+                         {!lead.recruiterUserId&&!lead.unsubscribedAt&&lead.manualStage!=="NOT_NOW"?
                          <button type="button" className={buttonStyle+" mt-2"}
                           disabled={Boolean(invitingId)||!lead.emailNorm||!lead.companyRelationshipId} onClick={()=>void createInviteLink(lead)}>Create invite link</button>:null}
                       </div>
