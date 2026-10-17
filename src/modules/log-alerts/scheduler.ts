@@ -49,7 +49,7 @@ export async function withScheduledLease(jobName: string, now: Date, task: () =>
   if (!logAlertsRuntimeEnabled()) return false;
   const db = getDb();
   const lockedBy = randomUUID();
-  const lockedUntil = new Date(now.getTime() + 90_000);
+  const lockedUntil = new Date(now.getTime() + 180_000);
   const [acquired] = await db.insert(leases).values({
     jobName, lockedBy, lockedUntil,
   }).onConflictDoUpdate({
