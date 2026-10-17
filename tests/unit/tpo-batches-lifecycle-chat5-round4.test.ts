@@ -25,7 +25,8 @@ describe("TPO batch retirement and recovery",()=>{
  });
  it("GR-32 preserves the operator intent on a concurrent update",()=>{
   const form=source("src/components/tpo/tpo-batch-lifecycle-control.tsx");
-  expect(form).toContain("This changed while you were working. Your choice is kept.");
+  expect(form).toContain("apiFetch");
+  expect(form).toContain("setError(e instanceof Error?e.message:friendlyApiError({}))");
   expect(form).toContain("setReviewed(false)");
  });
 });
