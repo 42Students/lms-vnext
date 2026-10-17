@@ -58,7 +58,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    const response=await fetch(url,{method,headers:{"content-type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
    if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Unable to update quiz.");
-   setEditing(false);setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
+   setEditing(false);setExpectedUpdatedAt("");setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update quiz.");}
   finally{setBusy(false);}
