@@ -408,20 +408,10 @@ export default async function TpoStudentsPage({
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
-        <label className="text-sm font-semibold">Program
-          <select name="programId" defaultValue={query.programId??""}
-            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
-            <option value="">All programs</option>
-            {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
-          </select>
-        </label>
-        <label className="text-sm font-semibold">Class
-          <select name="classId" defaultValue={query.classId??""}
-            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
-            <option value="">All classes</option>
-            {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
-        </label>
+        {/* Program and Class are selected in the single grid filter panel.
+            Preserve them through this separate advanced-filter form. */}
+        <input type="hidden" name="programId" value={query.programId??""}/>
+        <input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-sm font-semibold">Stage
           <select name="legacyStage" defaultValue={query.legacyStage??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
