@@ -123,7 +123,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
    const startOfToday=new Date(day+"T00:00:00+05:30");
    const endOfToday=new Date(startOfToday.getTime()+86400000);
    const deadlineCondition=filters.deadline==="TODAY"?
-    and(gte(placementJobs.applicationDeadline,startOfToday),lt(placementJobs.applicationDeadline,endOfToday)):
+    and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,startOfToday),lt(placementJobs.applicationDeadline,endOfToday)):
     filters.deadline==="LATER"?gte(placementJobs.applicationDeadline,end):
     filters.deadline==="DUE_SOON"?and(eq(placementJobs.status,"PUBLISHED"),gte(placementJobs.applicationDeadline,now),lte(placementJobs.applicationDeadline,end)):
     filters.deadline==="OVERDUE"?and(eq(placementJobs.status,"PUBLISHED"),lt(placementJobs.applicationDeadline,now)):
