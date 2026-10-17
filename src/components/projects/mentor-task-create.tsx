@@ -21,6 +21,7 @@ export function MentorTaskCreate({
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
+  const [approach,setApproach]=useState("");
   const [criteria,setCriteria]=useState("");
   const [priority,setPriority]=useState<"LOW"|"MEDIUM"|"HIGH"|"CRITICAL">("MEDIUM");
   const [estimate,setEstimate]=useState("");
@@ -35,7 +36,7 @@ export function MentorTaskCreate({
   const chosenSprint=choices.find(item=>item.id===selectedSprintId);
   const canSetStatus=status==="TODO"||chosenSprint?.status==="ACTIVE";
   const valid=title.trim().length>0&&title.trim().length<=200&&
-    description.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
+    description.length<=4000&&approach.length<=4000&&criteria.length<=4000&&blockerReason.length<=4000&&
     (estimate===""||(Number.isInteger(Number(estimate))&&Number(estimate)>=0&&Number(estimate)<=1000))&&
     canSetStatus&&(status!=="BLOCKED"||Boolean(blockerReason.trim()));
   async function create(){
@@ -46,13 +47,14 @@ export function MentorTaskCreate({
         sprintId:selectedSprintId||null,
         expectedSprintUpdatedAt:chosenSprint?.updatedAt??null,
         title:title.trim(),description:description.trim()||null,
+        approach:approach.trim()||null,
         acceptanceCriteria:criteria.trim()||null,
         priority,status,assigneeMembershipId:assigneeMembershipId||null,
         estimatePoints:estimate!==""?Number(estimate):null,
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Task added."});
-      setOpen(false);setTitle("");setDescription("");setCriteria("");setPriority("MEDIUM");
+      setOpen(false);setTitle("");setDescription("");setApproach("");setCriteria("");setPriority("MEDIUM");
       setEstimate("");setTaskType("");setDueDate("");setBlockerReason("");
       setSelectedSprintId(sprintId);setStatus("TODO");setAssigneeMembershipId("");
       router.refresh();
@@ -88,7 +90,10 @@ export function MentorTaskCreate({
         <label className="grid gap-1 text-sm font-semibold text-body">Description
           <Textarea value={description} maxLength={4000} onChange={e=>setDescription(e.target.value)} />
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Acceptance criteria
+        <label className="grid gap-1 text-sm font-semibold text-body">Approach (optional)
+          <Textarea value={approach} maxLength={4000} onChange={event=>setApproach(event.target.value)} />
+        </label>
+        <label className="grid gap-1 text-sm font-semibold text-body">Done when (optional)
           <Textarea value={criteria} maxLength={4000} onChange={e=>setCriteria(e.target.value)} />
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Priority

@@ -71,6 +71,7 @@ export async function updateMentorTaskDetails(
     const now=new Date(Math.max(Date.now(),task.updatedAt.getTime()+1));
     const [updated]=await tx.update(projectTasks).set({
       title:input.title,description:input.description,
+      ...(input.approach!==undefined?{approach:input.approach}:{}),
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,
       ...(input.blockerReason!==undefined?{blockerReason:input.blockerReason}:{}),
       ...(input.dueDate!==undefined?{dueDate:input.dueDate}:{}),
@@ -89,7 +90,8 @@ export async function updateMentorTaskDetails(
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_task",subjectId:updated.id,
       subjectLabel:updated.title,summary:"Project task details updated",
-      metadata:{projectId:scope.project.id,taskId:updated.id,changedFields:changed},
+      metadata:{projectId:scope.project.id,taskId:updated.id,changedFields:changed,
+        approachChanged:changed.includes("approach")},
       groupKey:"project:"+scope.project.id,
       dedupeKey:"project-task:"+updated.id+":details:"+randomUUID(),
     });

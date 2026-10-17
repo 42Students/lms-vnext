@@ -11,7 +11,7 @@ import {MentorTaskCreate} from "./mentor-task-create";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
- description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
+ description:string|null;approach:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string;updatedAt:Date};
 type Release={id:string;title:string;status:string};
@@ -216,6 +216,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       <details className="rounded-lg border border-border p-2">
        <summary className="cursor-pointer font-semibold text-primary-text">Task details</summary>
        <p className="mt-2 whitespace-pre-wrap text-xs">{task.description||"No description"}</p>
+       <p className="mt-2 text-xs font-semibold">Approach</p>
+       <p className="whitespace-pre-wrap text-xs">{task.approach||"Not recorded"}</p>
        <p className="mt-2 text-xs font-semibold">Done when</p>
        <p className="whitespace-pre-wrap text-xs">{task.acceptanceCriteria||"Not recorded"}</p>
        <p className="mt-2 text-xs">Assigned to: {members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned"}</p>

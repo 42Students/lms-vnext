@@ -3,13 +3,14 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
+ approach:string|null;
  priority:string;estimatePoints:number|null;};
 type Sprint={id:string;title:string;status:string};
 export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
 }){
  const router=useRouter();
- const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
+ const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
@@ -51,11 +52,12 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       try{
         await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
+          approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
-        setAdding(false);setTitle("");setDescription("");setCriteria("");
+        setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
         setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
         router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
@@ -71,6 +73,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       </select></label>
       <label className="text-sm font-semibold">Description<textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
+        className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
+      <label className="text-sm font-semibold">Approach (optional)<textarea maxLength={4000}
+        value={approach} onChange={event=>setApproach(event.target.value)}
         className="mt-1 w-full rounded-md border border-border bg-background p-2"/></label>
       <label className="text-sm font-semibold">Done when<textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
@@ -107,6 +112,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   <div className="grid gap-3 sm:grid-cols-2">
    {backlog.map(task=><article key={task.id} className="rounded-lg border border-border p-3">
     <p className="font-semibold">{task.title}</p>
+    {task.approach?<p className="mt-2 whitespace-pre-wrap break-words text-xs text-body">
+      Approach: {task.approach}
+    </p>:null}
     <p className="mt-1 text-xs text-body">
       {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
     </p>
