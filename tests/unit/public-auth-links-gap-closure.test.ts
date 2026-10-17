@@ -43,6 +43,7 @@ describe("Public invite, share, marketing, privacy legacy gaps",()=>{
   expect(invite()).toContain("You are joining as ");
   expect(invite()).toContain("invite.companyName");
   expect(invite()).toContain("invite.collegeName");
+  expect(invite()).toContain("Contact details are shared only as the placement cell allows.");
  });
  it("PUB-auth-public-48 declined recruiter subtitle exact legacy wording",()=>{
   expect(invite()).toContain("You will not be contacted about this again.");
