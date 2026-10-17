@@ -242,6 +242,7 @@ export default async function TpoCompanyMemoryPage({
               href={companiesHref({
                 search: query.search,
                 pageSize: query.pageSize,
+                sort: query.sort,
               })}
               className="mt-3 inline-block font-semibold text-primary-text hover:underline"
             >
@@ -332,6 +333,7 @@ export default async function TpoCompanyMemoryPage({
                 href={companiesHref({
                   search: query.search,
                   pageSize: query.pageSize,
+                sort: query.sort,
                   page: page.page - 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
@@ -345,6 +347,7 @@ export default async function TpoCompanyMemoryPage({
                 href={companiesHref({
                   search: query.search,
                   pageSize: query.pageSize,
+                sort: query.sort,
                   page: page.page + 1,
                 })}
                 className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-body hover:text-primary-text"
