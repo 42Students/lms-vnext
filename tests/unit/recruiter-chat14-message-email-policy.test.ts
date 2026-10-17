@@ -1,10 +1,27 @@
 import {describe,expect,it} from "vitest";
 import {isRecruiterUnreadReminderDue,safeRecruiterDigestMessages,makeRecruiterReplyAddress,
- recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature}
+ recruiterMailBridgeSignature,verifyRecruiterMailBridgeSignature,extractRecruiterEmailReply}
  from "@/modules/placements/recruiter-message-email-model";
 const T=Date.parse("2099-01-01T00:00:00Z");
 const at=(m:number)=>new Date(T+m*60_000);
 describe("REC-calendar-messages-profile-R01 unread recruiter mail policy",()=>{
+ it("REC-calendar-messages-profile-R01 extracts reply without duplicating quoted TPO conversation",()=>{
+  expect(extractRecruiterEmailReply("Yes, Thursday works.\nOn Tue, Oct 18 someone wrote:\n> Confidential history"))
+   .toBe("Yes, Thursday works.");
+  expect(extractRecruiterEmailReply("Okay\n-----Original Message-----\nFrom: TPO"))
+   .toBe("Okay");
+ });
+ it("REC-calendar-messages-profile-R01 rejects all-quoted and forwarded replies",()=>{
+  expect(extractRecruiterEmailReply("> Previous message\n> Confidential history")).toBe(null);
+  expect(extractRecruiterEmailReply("-----Original Message-----\nMessage")).toBe(null);
+  expect(extractRecruiterEmailReply(" ".repeat(30))).toBe(null);
+ });
+ it("REC-calendar-messages-profile-R01 preserves new multiline replies while rejecting oversize",()=>{
+  expect(extractRecruiterEmailReply("Line 1\r\nLine 2")).toBe("Line 1\nLine 2");
+  expect(extractRecruiterEmailReply("x".repeat(4001))).toBe(null);
+  expect(extractRecruiterEmailReply("x".repeat(20001))).toBe(null);
+ });
+
  it("REC-calendar-messages-profile-R01 waits at least fifteen minutes and a two-minute quiet period",()=>{
   expect(isRecruiterUnreadReminderDue({firstUnreadAt:at(0),lastMessageAt:at(14),lastSentAt:null,now:at(15)})).toBe(false);
   expect(isRecruiterUnreadReminderDue({firstUnreadAt:at(0),lastMessageAt:at(14),lastSentAt:null,now:at(16)})).toBe(true);
