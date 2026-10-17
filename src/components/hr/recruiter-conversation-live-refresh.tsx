@@ -9,7 +9,7 @@ export function RecruiterConversationLiveRefresh(){
   const update=()=>{
    if(document.visibilityState!=="visible")return;
    const current=document.activeElement;
-   if(current instanceof HTMLElement&&current.closest("textarea,[contenteditable=true]"))return;
+   if(current instanceof HTMLElement&&current.closest("input,textarea,select,[contenteditable=true]"))return;
    router.refresh();
   };
   const id=window.setInterval(update,4000);

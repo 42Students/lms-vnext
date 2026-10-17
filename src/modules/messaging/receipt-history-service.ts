@@ -10,6 +10,36 @@ import { messagingHistoryQuerySchema, projectMessagingHistory } from "./receipt-
 import {messagingHistoryPageWindow} from "./receipt-history-window-model";
 
 const PAGE_SIZE = 25;
+/** A bounded export preserves filtering and tenant checks instead of exporting a page. */
+export async function exportTpoMessagingHistory(context:RequestContext,raw:unknown={}){
+ const collegeId=context.membership?.collegeId;
+ if(!collegeId||!hasMembershipRole(context,"TPO"))
+   throw new AuthorizationError("placements.manage");
+ const college=await requirePlacementManageScope(context,collegeId);
+ const query=messagingHistoryQuerySchema.parse(raw);
+ const where=and(
+   eq(messagingDeliveryBatches.collegeId,college.id),
+   eq(messagingDeliveryBatches.organizationId,college.organizationId),
+   ...(query.purpose?[eq(messagingDeliveryBatches.purpose,query.purpose)]:[]),
+ );
+ return getDb().transaction(async tx=>{
+   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+     organizationId:college.organizationId,collegeId:college.id,
+   });
+   const rows=await tx.select({
+     id:messagingDeliveryBatches.id,purpose:messagingDeliveryBatches.purpose,
+     total:messagingDeliveryBatches.total,queued:messagingDeliveryBatches.queued,
+     sent:messagingDeliveryBatches.sent,failed:messagingDeliveryBatches.failed,
+     suppressed:messagingDeliveryBatches.suppressed,
+     createdAt:messagingDeliveryBatches.createdAt,finalizedAt:messagingDeliveryBatches.finalizedAt,
+   }).from(messagingDeliveryBatches).where(where)
+     .orderBy(desc(messagingDeliveryBatches.createdAt),desc(messagingDeliveryBatches.id))
+     .limit(2001);
+   if(rows.length>2000)throw new Error("CAMPAIGN_EXPORT_TOO_LARGE");
+   return projectMessagingHistory(rows);
+ });
+}
+
 /** Only a live college-scoped placement officer can read aggregate counts. */
 export async function listTpoMessagingHistory(
   context: RequestContext, raw: unknown = {},

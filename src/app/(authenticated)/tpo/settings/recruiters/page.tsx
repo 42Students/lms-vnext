@@ -198,9 +198,9 @@ export default async function TpoRecruiterAccessPage({
           </label>
 
           <label className="grid min-w-44 gap-2 text-sm font-semibold text-body">
-            Search recruiter or company
+            Search name, designation or company
             <input type="search" name="q" defaultValue={query.q} maxLength={80}
-              placeholder="Name contains..."
+              placeholder="Recruiter, role or company"
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground" />
           </label>
           <button
@@ -294,6 +294,8 @@ export default async function TpoRecruiterAccessPage({
                   >
                     <td className="px-4 py-4 font-semibold text-foreground">
                       {item.displayName}
+                      {item.designation?<p className="mt-1 text-xs font-normal text-muted-foreground">{item.designation}</p>:
+                        <p className="mt-1 text-xs font-normal text-muted-foreground">Designation not recorded</p>}
                     </td>
 
                     <td className="px-4 py-4 text-body">

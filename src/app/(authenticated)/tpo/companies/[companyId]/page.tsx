@@ -299,7 +299,7 @@ export default async function TpoCompanyDetailPage({
                           : "neutral"
                       }
                     >
-                      {contact.stage.replaceAll("_", " ")}
+                      {({NOT_NOW:"Not now",DRIVE_PLANNED:"Drive planned",RECRUITED:"Recruited",JOINED:"Joined",INVITED:"Invited",CONTACTED:"Contacted",NEW:"New"} as Record<string,string>)[contact.stage]??"Recorded"}
                     </StatusBadge>
                   </div>
                 </li>
@@ -396,7 +396,6 @@ export default async function TpoCompanyDetailPage({
             <table className="w-full min-w-[65rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
-                  <th scope="col" className="px-4 py-3">Learner</th>
                   <th scope="col" className="px-4 py-3">Role</th>
                   <th scope="col" className="px-4 py-3">Annual CTC</th>
                   <th scope="col" className="px-4 py-3">Offer</th>
@@ -411,9 +410,6 @@ export default async function TpoCompanyDetailPage({
                     key={offer.id}
                     className="border-t border-border align-top"
                   >
-                    <td className="px-4 py-3 font-medium text-foreground">
-                      {offer.candidateName || "Unnamed learner"}
-                    </td>
                     <td className="px-4 py-3 text-body">
                       {offer.roleTitle}
                     </td>
@@ -430,11 +426,11 @@ export default async function TpoCompanyDetailPage({
                               : "neutral"
                         }
                       >
-                        {offer.status}
+                        {({ACCEPTED:"Accepted",DECLINED:"Declined",PENDING:"Pending",WITHDRAWN:"Withdrawn"} as Record<string,string>)[offer.status]??"Recorded"}
                       </StatusBadge>
                     </td>
                     <td className="px-4 py-3">
-                      {offer.joiningStatus ?? "Not recorded"}
+                      {offer.joiningStatus?({JOINED:"Joined",NOT_JOINED:"Not joined",PENDING:"Pending",DEFERRED:"Deferred"} as Record<string,string>)[offer.joiningStatus]??"Recorded":"Not recorded"}
                     </td>
                     <td className="px-4 py-3 text-body">
                       {dateLabel(offer.issuedAt)}

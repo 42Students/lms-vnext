@@ -87,3 +87,9 @@ Scope decision (read this first): the brief names course catalogue, offerings, d
 - Unit: `tests/unit/college-offering-*.test.ts` (metadata/lifecycle models), `tests/unit/admin-course-progress-model.test.ts`. Integration: `tests/integration/college-course-crud-transaction.test.ts`, `college-offering-writes.test.ts`, `college-offering-lifecycle.test.ts`, `college-offering-metadata.test.ts`, `college-learning-directory-scope.test.ts`, `college-mapping-scope.test.ts`, `college-faculty-detail-scope.test.ts`.
 - Missing: tests for course search/pagination/export, visibility bulk actions, duplicate, auto-materialization of offerings from curriculum mapping (if added), bulk teaching-assignment creation and assignment edit.
 - Browser script needed (`scripts/verify/pages/college-courses-content.mjs`): create a course with all legacy fields, duplicate it, hide/show it in bulk, open the course detail, confirm `Who teaches it`, assign faculty to two courses at once, end an assignment, confirm a learner sees/does not see the course, verify export file, 1280px and 375px.
+
+## FAST v2 chat-4-b College Courses catalogue continuation (2026-10-17)
+
+- `COL-courses-content-01` PARTIAL source delivery: College Courses now supports URL-driven search across course name, code and department; four deterministic name/code sort choices; a result counter; filtered empty state; and 25-row pagination with Previous/Next. Filters are applied to the authenticated college workspace.
+- Remaining for complete gap closure: the existing `getAdminCourseWorkspace` still loads all college courses, offerings, section deliveries, faculty assignments and college members. Server-side database query/pagination and a filtered CSV export are **not yet implemented**. The new UI does not claim to solve database-scale loading.
+- No tests, lint, typecheck, build, CI or runtime acceptance under FAST v2; do not mark `COL-courses-content-01` fully DONE.
