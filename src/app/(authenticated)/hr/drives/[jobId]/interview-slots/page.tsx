@@ -83,7 +83,12 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
     <h2 className="font-semibold text-foreground">Time blocks ({slots.items.length})</h2>
     {slots.items.map(slot=><article key={slot.id} className="space-y-3 rounded-xl border border-border bg-surface p-4">
      <p className="font-semibold text-foreground">{when(slot.startAt)} – {when(slot.endAt)}</p>
-     <p className="text-sm text-body">{slot.status} · {slot.mode} · Internal reservations: {slot.bookedCount}/{slot.capacity}</p>
+     <p className="text-sm text-body">
+      {slot.status==="OFFERED"?"Waiting for the placement cell":
+        slot.status==="BOOKED"?"Reserved internally; confirm with placement cell":
+        slot.status==="CANCELLED"?"Cancelled":slot.status==="PROPOSED"?"Not sent yet":slot.status}
+      {" · "}{slot.mode} · Internal reservations: {slot.bookedCount}/{slot.capacity}
+     </p>
      {slot.panelLabel?<p className="text-sm text-body">Panel: {slot.panelLabel}</p>:null}
      {slot.canEdit?<form action={action} method="post" className="flex flex-wrap gap-2">
       <input type="hidden" name="slotId" value={slot.id}/>
