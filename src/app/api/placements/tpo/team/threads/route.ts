@@ -25,6 +25,7 @@ export async function POST(request:Request){
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
   if(error instanceof Error&&error.message==="TEAM_RECIPIENT_NOT_FOUND")
    return NextResponse.json({error:"RECIPIENT_NOT_FOUND"},{status:404});
+  if(error instanceof Error&&error.message==="TEAM_IDEMPOTENCY_CONFLICT")return NextResponse.json({error:"STALE_MESSAGE"},{status:409});
   if(error instanceof Error&&error.message==="TEAM_TABLES_PENDING")
    return NextResponse.json({error:"TEAM_TABLES_PENDING"},{status:503});
   throw error;
