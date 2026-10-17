@@ -36,14 +36,14 @@ Audit: `docs/audit/pages/superadmin/placements-projects-a-placements.md` (and `p
 | SA-placements-projects-49 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-03 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-04 | S3 | COPY | FIXED-ON-MAIN |
-| SA-placements-projects-05 | S3 | MISSING-FIELD | OPEN |
+| SA-placements-projects-05 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-08 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-11 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-14 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-placements-projects-15 | S3 | STATE | FIXED-ON-MAIN |
 | SA-placements-projects-16 | S3 | STATE | FIXED-ON-MAIN |
 | SA-placements-projects-18 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-21 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-placements-projects-21 | S3 | MISSING-ACTION | UNCONFIRMED |
 | SA-placements-projects-23 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | SA-placements-projects-29 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -96,7 +96,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-33 | S3 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-41 | S3 | STATE | FIXED-ON-MAIN |
 | SA-academics-people-46 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| SA-academics-people-R03 | S3 | STATE | OPEN |
+| SA-academics-people-R03 | S3 | STATE | DONE |
 | SA-academics-people-R04 | S3 | SIDE-EFFECT | UNCONFIRMED |
 | SA-academics-people-10 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-academics-people-34 | S4 | STATE | FIXED-ON-MAIN |
@@ -112,11 +112,12 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-R05 | S4 | A11Y | OPEN |
 
 ## Notes (blockers, one line each)
+- SA-placements-projects-21: scoped offer-letter link attachment, history and internal notes exist; resume preview, editing older notes and score-backed re-screen remain unverified, so do not mark complete.
 - SA-placements-projects-37: existing-mobile recruiter reuse now works for a matching company, but the full gap remains OPEN: free-text company creation and optional multiple colleges are not yet supported.
-- SA-academics-people-R03: queue gives STATE but no ID-level legacy evidence in page audit; inspect legacy-copy and reproduce before marking closure.
+- SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
 - SA-academics-people-R04: queue gives SIDE-EFFECT but no ID-level legacy evidence in page audit; do not claim DONE without a persisted mutation contract.
 - SA-placements-projects-35: unit failure exposes real legacy mismatch — current ARCHIVED revokes recruiter grants while legacy Suspend keeps access; pending a separate lifecycle implementation (not just wording).
-- SA-placements-projects-05: fourth legacy offer-letter-evidence category cannot be inferred because no persisted offer letter evidence exists; remaining implementation requires proposed DB mapping.
+- SA-placements-projects-05: four legacy attention flags and attach-link evidence are implemented on this branch; orchestrator must register the proposed offer-letter migration before runtime verification.
 
 ## Needs shell (chat-9 only)
 
