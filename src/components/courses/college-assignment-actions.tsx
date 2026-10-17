@@ -11,6 +11,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
  const [editing,setEditing]=useState(false);
  const [methods,setMethods]=useState<AssignmentMethod[]>(ALL_ASSIGNMENT_METHODS);
  const [methodsLoaded,setMethodsLoaded]=useState(false);
+ const [methodsDirty,setMethodsDirty]=useState(false);
  const [description,setDescription]=useState("");
  const [title,setTitle]=useState(assignment.title);
  const [points,setPoints]=useState(String(assignment.points));
@@ -35,7 +36,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
    path=path;method="PATCH";
    if(!methodsLoaded){setError("Load the saved submission methods before editing.");return;}
-   body={title:title.trim(),description:description.trim()||null,maxPoints,dueAt:due?.toISOString()??null,allowedMethods:methods};
+   body={title:title.trim(),description:description.trim()||null,maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
   }else{
    const question=action==="ARCHIVE"?
     "Delete this assignment? Existing submissions must be preserved and will block deletion.":
@@ -67,7 +68,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
        if(!response.ok||data?.assignment?.id!==assignment.id)throw Error(
         data?.error??"Could not load assignment settings.");
        setDescription(data.assignment.description??"");
-       setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));
+       setMethods(normalizeAssignmentMethods(data.assignment.allowedMethods));setMethodsDirty(false);
        setMethodsLoaded(true);setEditing(true);
       }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load assignment settings.");}
     })()}>Edit</button>:null}
@@ -91,7 +92,7 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    <label className="grid gap-1 text-xs font-semibold">Instructions
     <textarea value={description} disabled={busy} maxLength={10000} rows={3}
      onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/></label>
-   <FacultyAssignmentMethodPicker methods={methods} onChange={setMethods} disabled={busy}/>
+   <FacultyAssignmentMethodPicker methods={methods} onChange={next=>{setMethods(next);setMethodsDirty(true);}} disabled={busy}/>
    <button disabled={busy} className="min-h-10 rounded bg-primary px-3 text-xs font-semibold text-on-primary"
     type="button" onClick={()=>void command("SAVE")}>{busy?"Saving…":"Save changes"}</button>
   </div>:null}
