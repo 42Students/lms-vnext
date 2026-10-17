@@ -215,5 +215,15 @@ export default async function TpoAnnouncements({searchParams}:Props){
    </li>)}
   </ol>:<p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">
    No currently visible college-wide announcements from this sender.</p>}
+  {result.status==="READY"?<nav aria-label="Announcement pages"
+    className="flex flex-wrap items-center justify-between gap-3 text-sm">
+   <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
+   <div className="flex gap-2">
+    {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+"&page="+(result.page-1)}
+      className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Previous</Link>:null}
+    {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+"&page="+(result.page+1)}
+      className="min-h-10 rounded-md border border-border px-4 py-2 text-primary-text">Show older</Link>:null}
+   </div>
+  </nav>:null}
  </main>;
 }
