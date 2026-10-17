@@ -18,7 +18,7 @@ import {
   adminAttendancePercent,
   attendanceCsvCell,
   attendanceIndiaDay,
-  groupAttendanceDays,
+  attendanceMonthDays,
   shiftAttendanceMonth,
 } from "@/modules/attendance/admin-grid-model";
 
@@ -135,6 +135,7 @@ export function AdminAttendanceWorkspace({
     useState(false);
   const [error, setError] =
     useState<string | null>(null);
+  const [notice,setNotice]=useState<string|null>(null);
   const [sectionId, setSectionId] = useState(data.selectedSectionId ?? "");
   const [courseId, setCourseId] = useState(data.selectedCourseId ?? "");
   const [showAllCourses, setShowAllCourses] = useState(data.showAllCourses);
@@ -173,8 +174,8 @@ export function AdminAttendanceWorkspace({
   }, [data.courses, data.deliveries, sectionId]);
   const visibleCourses = showAllCourses ? data.courses : offeredCourses;
   const sessionDays = useMemo(() =>
-    groupAttendanceDays(data.grid?.sessions ?? []),
-    [data.grid?.sessions],
+    attendanceMonthDays(data.month,data.grid?.sessions ?? []),
+    [data.grid?.sessions,data.month],
   );
 
   function navigate(month = data.month) {
@@ -229,10 +230,6 @@ export function AdminAttendanceWorkspace({
     ) {
       return;
     }
-    if (!window.confirm(
-      "Mark " + learnerName(target.learner) + " " + status.toLowerCase() +
-      " for " + target.session.title + "? This change is recorded."
-    )) return;
     setError(null);
     setCorrecting(true);
     try {
@@ -261,12 +258,17 @@ export function AdminAttendanceWorkspace({
           .json()
           .catch(() => null);
         setError(
-          body?.message ||
-            body?.error ||
-            "Attendance correction failed.",
+          response.status===409
+            ? "This changed while you were working. Refresh the attendance grid and re-apply the correction."
+            :response.status===403
+            ? "You do not have access to correct this attendance. Ask a college administrator."
+            :typeof body?.message==="string" && !/^[A-Z0-9_]{6,}$/.test(body.message)
+            ? body.message
+            : "Attendance could not be corrected. Check the record and retry.",
         );
         return;
       }
+      setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
       setTarget(null);
       router.refresh();
     } catch {
@@ -326,6 +328,7 @@ export function AdminAttendanceWorkspace({
 
   return (
     <div className="space-y-5">
+      {notice?<p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm font-semibold text-body">{notice}</p>:null}
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border bg-surface p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -479,17 +482,16 @@ export function AdminAttendanceWorkspace({
 
           <section className="overflow-x-auto rounded-xl border border-border bg-surface">
             <table className="w-full min-w-[56rem] border-collapse text-left text-sm">
+              <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead className="bg-surface-subtle text-xs uppercase tracking-[0.06em] text-muted-foreground">
                 <tr>
                   <th className="sticky left-0 z-20 bg-surface-subtle px-4 py-3">
                     Learner
                   </th>
-                  {sessionDays.map(({ day, sessions }) => (
-                    <th key={day} className="min-w-24 px-3 py-3 text-center"
-                      title={String(sessions.length) + " session(s)"}>
-                      {new Intl.DateTimeFormat("en-IN", {
-                        timeZone: "Asia/Kolkata", day: "2-digit", month: "short",
-                      }).format(new Date(sessions[0]!.startsAt))}
+                  {sessionDays.map(({ day, sessions, weekday, isSunday }) => (
+                    <th key={day} scope="col" className={"min-w-16 px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}
+                      title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
+                      <span className="block">{day.slice(8)}</span><span className="block text-xs font-normal">{weekday}</span>
                       {sessions.length > 1 ? (
                         <span className="block text-[11px] normal-case">
                           {sessions.length} sessions
@@ -528,7 +530,8 @@ export function AdminAttendanceWorkspace({
                                 "Roll unavailable"}
                           </p>
                         </td>
-                        {sessionDays.map(({ day, sessions }) => {
+                        {sessionDays.map(({ day, sessions, isSunday }) => {
+                          if(!sessions.length)return <td key={day} className={"px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}><span aria-label="No class scheduled" className="text-muted-foreground">✖</span></td>;
                           const first = sessions[0]!;
                           const record = recordMap.get(first.id + ":" + learner.membershipId);
                           const state = codeFor(first, record);
@@ -537,7 +540,7 @@ export function AdminAttendanceWorkspace({
                             <td key={day} className="px-3 py-3 text-center">
                               <button
                                 type="button"
-                                disabled={!multiple && new Date(first.startsAt).getTime() > Date.now()}
+                                disabled={!multiple && new Date(first.startsAt).getTime() > loadedAt}
                                 aria-label={multiple
                                   ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
                                   : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
@@ -545,7 +548,8 @@ export function AdminAttendanceWorkspace({
                                   if (multiple) setChooser({ learner, sessions });
                                   else setTarget({ learner, session: first, record });
                                 }}
-                                className="disabled:cursor-default"
+                                title={!multiple && new Date(first.startsAt).getTime()>loadedAt ? "This class has not started. Attendance can be corrected after it begins." : undefined}
+                                className="disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-primary"
                               >
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
                                   {multiple ? String(sessions.length) + " sessions" : state.code}
