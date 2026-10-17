@@ -36,7 +36,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       description={[data.delivery.courseName,data.delivery.sectionName,
         data.delivery.academicPeriodName].join(" · ")}
       actions={<Link href={back + "/students"}
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
         Section students
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -50,15 +50,15 @@ export default async function FacultyCourseAssessmentHealthPage({
       method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border bg-surface p-4">
       <label className="grid gap-1 text-sm font-semibold text-body">Assessment type
         <select name="kind" defaultValue={data.query.kind}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground">
           <option value="ALL">All published assessments</option>
           <option value="ASSIGNMENT">Assignments</option>
           <option value="QUIZ">Quizzes</option>
         </select>
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
       <Link href={facultyCourseHealthHref({...data.query,kind:"ALL",page:1})}
-        className="px-3 py-2 text-sm font-semibold text-primary-text">Clear</Link>
+        className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text">Clear</Link>
     </form>
     <p className="text-sm text-body">
       {data.total} published assessment{data.total === 1 ? "" : "s"} in this Section
@@ -91,7 +91,7 @@ export default async function FacultyCourseAssessmentHealthPage({
             ? "Unknown" : item.averagePercent + "%"}.
         </p>
         <Link href={item.href}
-          className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
           Open exact Section report →
         </Link>
       </article>)}</div>}
@@ -100,9 +100,9 @@ export default async function FacultyCourseAssessmentHealthPage({
       <span className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</span>
       <div className="flex gap-3">
         {data.page > 1 && <Link href={facultyCourseHealthHref({...data.query,page:data.page-1})}
-          className="text-sm font-semibold text-primary-text">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>}
         {data.page < data.totalPages && <Link href={facultyCourseHealthHref({...data.query,page:data.page+1})}
-          className="text-sm font-semibold text-primary-text">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

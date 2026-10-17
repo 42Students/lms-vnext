@@ -1,11 +1,11 @@
 import "server-only";
 
-import { and, asc, eq, ilike, isNull } from "drizzle-orm";
+import { and, asc, eq, ilike, inArray, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
-  activityEvents, collegeMemberships, membershipRoles, placementApplications,
+  activityEvents, collegeMemberships, membershipRoles, placementApplications, placementCompanies, placementCompanyRelationships,
   placementApplicationScreenings, placementApplicationStatusHistory,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
   placementJobs, placementSeasons, placementDebarments, placementEligibilityOverrides, inAppNotifications, users,
@@ -16,7 +16,7 @@ import { evaluatePlacementEligibility } from "./eligibility-service";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {
-  bulkDriveAddSchema, bulkDriveCandidatesQuerySchema,
+  bulkDriveAddSchema, bulkDriveCandidatesQuerySchema, bulkDrivePreflightSchema,
   bulkDriveOutcome, bulkDriveCounts, type BulkDriveResult,
 } from "./bulk-drive-model";
 import { placementJobIdSchema } from "./validation";
@@ -88,6 +88,29 @@ export async function listBulkDriveCandidates(
     page: query.page,
     hasMore: rows.length > 25,
   };
+}
+
+/** Read-only preview: a current active application is not a fresh addition. */
+export async function previewBulkDriveAdd(
+ context:RequestContext,rawJobId:string,rawInput:unknown,
+){
+ const input=bulkDrivePreflightSchema.parse(rawInput);
+ const job=await loadManagedDrive(context,placementJobIdSchema.parse(rawJobId));
+ const [role]=await getDb().select({id:placementJobRoleOptions.id})
+  .from(placementJobRoleOptions).where(and(
+   eq(placementJobRoleOptions.id,input.roleOptionId),
+   eq(placementJobRoleOptions.jobId,job.id),
+   eq(placementJobRoleOptions.status,"ACTIVE"))).limit(1);
+ if(!role)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ const rows=await getDb().select({membershipId:placementApplications.membershipId})
+  .from(placementApplications).where(and(
+    eq(placementApplications.jobId,job.id),
+    eq(placementApplications.roleOptionId,input.roleOptionId),
+    eq(placementApplications.status,"SUBMITTED"),
+    inArray(placementApplications.membershipId,input.membershipIds),
+  ));
+ return {alreadyAppliedCount:new Set(rows.map(row=>row.membershipId)).size,
+  totalChecked:input.membershipIds.length};
 }
 
 async function loadLearner(tx: Tx, collegeId: string, membershipId: string) {
@@ -345,6 +368,39 @@ export async function bulkAddLearnersToDrive(
   const results: BulkDriveResult[] = [];
   for (const id of input.membershipIds) {
     results.push(await addOne(context, job, input.roleOptionId, id,input.includeIneligible?.reason));
+  }
+  const added=results.filter(item=>item.status==="added");
+  if(added.length){
+   // A replay finds existing applications and produces no second summary bell.
+   await getDb().transaction(async tx=>{
+    const [relationship]=await tx.select({companyName:placementCompanies.name})
+     .from(placementJobs)
+     .innerJoin(placementCompanyRelationships,and(
+       eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+       eq(placementCompanyRelationships.collegeId,placementJobs.collegeId)))
+     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+     .where(and(eq(placementJobs.id,job.id),eq(placementJobs.collegeId,job.collegeId))).limit(1);
+    const company=relationship?.companyName??"the company";
+    const [event]=await tx.insert(activityEvents).values({
+     organizationId:context.membership!.organizationId,collegeId:job.collegeId,
+     actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+     module:"PLACEMENTS",eventType:"STUDENTS_ADDED_TO_DRIVE",
+     subjectType:"placement_job",subjectId:job.id,
+     summary:added.length+" student(s) added to "+company,
+     metadata:{roleOptionId:input.roleOptionId,studentCount:added.length,
+      membershipIds:added.map(item=>item.membershipId)},
+    }).returning({id:activityEvents.id});
+    if(!event)throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
+    const tpo=await tx.selectDistinct({userId:collegeMemberships.userId}).from(collegeMemberships)
+     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO")))
+     .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+     .where(and(eq(collegeMemberships.collegeId,job.collegeId),eq(collegeMemberships.status,"ACTIVE")));
+    if(tpo.length)await tx.insert(inAppNotifications).values(tpo.map(member=>({
+     userId:member.userId,eventId:event.id,title:added.length+" student(s) added to "+company,
+     body:"The placement cell added students to a drive. Review the updated application roster.",
+     actionHref:"/tpo/placements/jobs/"+encodeURIComponent(job.id),
+    }))).onConflictDoNothing();
+   });
   }
   return { results, counts: bulkDriveCounts(results) };
 }

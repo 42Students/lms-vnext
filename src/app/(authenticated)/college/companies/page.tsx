@@ -37,16 +37,18 @@ export default async function CollegeCompaniesPage({
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
-          className="min-h-10 rounded-md border border-border px-3" />
+          className="min-h-11 rounded-md border border-border px-3" />
       </label>
-      <label className="grid gap-1 text-sm">Status
-        <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-3">
-          <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
+      <label className="grid gap-1 text-sm">History
+        <select name="showDeleted" defaultValue={query.showDeleted}
+          className="min-h-11 rounded-md border border-border px-3">
+          <option value="0">Active companies</option>
+          <option value="1">Include deleted companies</option>
         </select>
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
-    <PlacementEmployerRelationships key={query.q+":"+query.page}
+    <PlacementEmployerRelationships key={query.q+":"+query.page+":"+query.showDeleted}
       relationships={data.items.map(item => ({
         relationshipId: item.relationshipId,
         companyId: item.companyId,
