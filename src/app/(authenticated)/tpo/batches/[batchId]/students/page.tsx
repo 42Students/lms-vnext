@@ -11,6 +11,8 @@ import {tpoEligibilityImportScaffoldHref} from "@/modules/placements/tpo-eligibi
 import {TpoBatchEligibilityImport} from "@/components/tpo/tpo-batch-eligibility-import";
 import {TpoBatchInlineDecision} from "@/components/tpo/tpo-batch-inline-decision";
 import {TpoBulkActionPanel} from "@/components/tpo/tpo-bulk-action-panel";
+import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
+import {TpoBatchStudentBulkNotes} from "@/components/tpo/tpo-batch-student-bulk-notes";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {getTpoBatchStudentRegistrations} from "@/modules/placements/tpo-batch-student-registration-service";
 import {getTpoBatch} from "@/modules/placements/tpo-batch-workspace-read-service";
@@ -76,6 +78,15 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
    target="STUDENTS" rows={visible.map(student=>({
     id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
    }))} />:null}
+ <section aria-label="Batch student follow-up actions" className="grid gap-3 lg:grid-cols-2">
+  <TpoStudentNudgePanel rows={visible.map(student=>({
+   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
+   registered:student.registration?.choice==="PLACEMENTS",
+  }))}/>
+  <TpoBatchStudentBulkNotes rows={visible.map(student=>({
+   id:student.membershipId,label:student.name+" · "+(student.rollNumber??"No roll number"),
+  }))}/>
+ </section>
  <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
   Every change is confirmed and audited. Review skipped learners before retrying.</p>
