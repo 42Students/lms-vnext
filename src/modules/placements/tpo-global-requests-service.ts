@@ -1,5 +1,5 @@
 import "server-only";
-import {globalTpoRequestsQuerySchema,tpoRequestAgeCutoff} from "@/modules/placements/tpo-global-requests-model";
+import {globalTpoRequestsQuerySchema,tpoRequestDateBounds} from "@/modules/placements/tpo-global-requests-model";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -23,8 +23,11 @@ export async function getTpoGlobalRequestsInbox(context: RequestContext, rawQuer
     status: query.status,
     requestType:query.requestType==="ALL"?undefined:query.requestType,
     sort:query.sort,
-    requestedBefore:tpoRequestAgeCutoff(query.age,new Date()),
+    requestedBefore:tpoRequestDateBounds(query.age,new Date()).before,
+    requestedAfter:tpoRequestDateBounds(query.age,new Date()).after,
     search: query.search,
+    urgentOnly:query.urgentOnly ?? false,
+    jobId:query.jobId,
     page: query.page,
     pageSize: query.pageSize,
   });

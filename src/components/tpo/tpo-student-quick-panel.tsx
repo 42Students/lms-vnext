@@ -4,17 +4,19 @@ import {useEffect,useState} from "react";
 import type {TpoStudentRow} from "@/modules/placements/tpo-students-model";
 import {TpoStudentNudgePanel} from "./tpo-student-nudge-panel";
 import {TpoStudentNoteEditor} from "./tpo-student-note-editor";
+import {afterCollegeDisplay,type AfterCollegeOutcome} from "@/modules/placements/tpo-after-college-model";
+import {TpoRequestDecisionControl} from "@/components/placements/tpo-request-decision-control";
 
 type Tab="Profile"|"Placement"|"Requests"|"Notes"|"History";
 const tabs:readonly Tab[]=["Profile","Placement","Requests","Notes","History"];
-type PanelDetail={requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;job:string}[];
+type PanelDetail={applications:{id:string;jobId:string;title:string;status:string}[];requests:{id:string;status:string;type:string;reason:string;note:string|null;requestedAt:string;updatedAt:string;job:string}[];
  notes:{id:string;body:string;createdAt:string;job:string}[];
  studentNotes:{id:string;note:string;createdAt:string;authorUserId:string}[];
  teamHistory:{id:string;eventType:string;summary:string;occurredAt:string;subjectType:string;actorUserId:string|null}[];
  truncated:boolean};
-export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
+export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOutcome}:{
  student:TpoStudentRow;rows:readonly TpoStudentRow[];
- onNavigate:(membershipId:string)=>void;onClose:()=>void;
+ onNavigate:(membershipId:string)=>void;onClose:()=>void;recordedOutcome?:AfterCollegeOutcome|null;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
  const [detail,setDetail]=useState<PanelDetail|null>(null);
@@ -31,9 +33,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
  }
  async function chooseTab(next:Tab){
   setTab(next);setError("");
-  if(next!=="Requests"&&next!=="Notes"&&next!=="History"||detail)return;
+  if(next!=="Requests"&&next!=="Notes"&&next!=="History"&&next!=="Placement"||detail)return;
   await fetchDetail();
  }
+ useEffect(()=>{void fetchDetail();},[student.membershipId]);
  const when=(value:string)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(value));
  const index=rows.findIndex(row=>row.membershipId===student.membershipId);
  const attention=[
@@ -59,6 +62,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
       <h2 className="text-xl font-bold">{student.displayName}</h2>
       <p className="text-sm text-body">{student.rollNumber??student.registrationNumber??"No roll number"} · {student.branchName}</p>
       <p className="text-xs text-muted-foreground">{student.cohortName} · {student.journeyState.replaceAll("_"," ")}</p>
+      <p className="mt-2 text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
     </div>
     <button type="button" autoFocus className="min-h-10 rounded border border-border px-3" onClick={onClose}>
       Close panel
@@ -67,7 +71,10 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
    <nav aria-label="Student panel pages" className="mt-4 flex flex-wrap gap-2">
     {tabs.map(t=><button key={t} type="button" onClick={()=>void chooseTab(t)}
       aria-current={tab===t?"page":undefined}
-      className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}</button>)}
+      className={"min-h-10 rounded border px-3 text-sm "+(tab===t?"border-primary bg-primary-subtle":"border-border")}>{t}
+       {t==="Requests"&&detail?.requests.some(row=>row.status==="PENDING")?
+       " ("+detail.requests.filter(row=>row.status==="PENDING").length+" waiting)":""}
+      </button>)}
    </nav>
    <div className="mt-5 space-y-4 text-sm">
     {tab==="Profile"?<>
@@ -78,6 +85,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
         ["Batch",student.cohortName],["Roll number",student.rollNumber??"Not recorded"],
         ["CGPA",student.cgpa??"Not recorded"],["Active backlogs",student.activeBacklogs??"Not recorded"],
         ["Past backlogs",student.pastBacklogs??"Not recorded"],
+        ["After college",afterCollegeDisplay(recordedOutcome)],
         ["Registration",student.registrationChoice??"Not recorded"],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
@@ -98,11 +106,17 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
       </dl>
+      <h3 className="font-semibold">Applications</h3>
+      {detail&&!detail.applications?.length?<p>No recorded placement applications.</p>:null}
+      {detail?.applications?.map(row=><div key={row.id} className="flex flex-wrap items-center justify-between gap-2 rounded border border-border p-3">
+        <span>{row.title} · {row.status.replaceAll("_"," ")}</span>
+        <Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)} className="min-h-10 text-primary-text underline">Open drive</Link>
+      </div>)}
       <Link href={participation} className="inline-flex min-h-10 items-center text-primary-text underline">Manage placement participation</Link>
       <TpoStudentNudgePanel rows={[{id:student.membershipId,label:student.displayName,
        registered:student.registeredForPlacements}]}/>
     </>:null}
-    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History")?<p role="status">Loading student records…</p>:null}
+    {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status">Loading student records…</p>:null}
     {error?<p role="alert" className="text-error">{error}</p>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
@@ -111,6 +125,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose}:{
         <p className="font-semibold">{row.type.replaceAll("_"," ")} · {row.status}</p>
         <p className="text-xs text-muted-foreground">{row.job} · {when(row.requestedAt)}</p>
         <p>{row.reason}</p>{row.note?<p>Decision: {row.note}</p>:null}
+        {row.status==="PENDING"?<TpoRequestDecisionControl
+          requestId={row.id} requestType={row.type} expectedUpdatedAt={row.updatedAt}
+          onSuccess={()=>void fetchDetail()}/>:null}
       </article>)}
       <Link href={"/tpo/students/requests?search="+encodeURIComponent(student.displayName)}
        className="inline-flex min-h-10 items-center text-primary-text underline">Review student's requests</Link>

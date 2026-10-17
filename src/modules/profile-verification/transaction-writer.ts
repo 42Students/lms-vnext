@@ -1,3 +1,4 @@
+import {verificationDecisionNotice} from "@/modules/verification/notification-copy";
 import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { activityEvents, collegeMemberships, colleges, inAppNotifications, learnerProfiles, membershipRoles, systemRoles, users } from "@/db/schema";
@@ -210,12 +211,13 @@ export const postgresLockedVerificationTransition: LockedTransition =
           metadata:{section,version:record.version},
         }).returning({id:activityEvents.id});
         if (!activity) throw new VerificationStateError("INVALID_TRANSITION");
+        const message=verificationDecisionNotice({
+          section,action:event.action,
+          reviewerName:event.actorName??record.decidedByName,
+          reason:event.note??record.note,
+        });
         await tx.insert(inAppNotifications).values({
-          userId:member.userId,eventId:activity.id,
-          title:"Profile verification update",
-          body:event.action === "VERIFIED"
-            ? section+" profile verification approved"
-            : section+" profile verification needs correction",
+          userId:member.userId,eventId:activity.id,...message,
         });
       }
       return record;
