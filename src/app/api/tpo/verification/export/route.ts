@@ -32,7 +32,7 @@ export async function GET(request:Request){
    learnerName:row.learnerName,
    section:row.section,status:row.status,
    submittedAt:stamp(row.submittedAt),reviewedAt:"",
-   missingDocumentCount:row.marksheets?.missing??(row.missingIdentityProof?1:0),
+   missingDocumentCount:row.section==="IDENTITY"?(row.missingIdentityProof?1:0):(row.marksheets?.missing??0),
    attentionFlags:row.attention.join("; "),
   })));
   return new Response(result.csv,{headers:{
