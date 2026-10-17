@@ -3,6 +3,7 @@ import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
+import {getTpoReportDriveDimensions} from "@/modules/placements/tpo-report-drive-dimensions-service";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -22,6 +23,9 @@ import { getPlacementReportDetails } from "@/modules/placements/report-service";
 type SearchParams = {
   seasonId?: string | string[];
   jobId?: string | string[];
+  companyId?:string|string[];
+  workMode?:string|string[];
+  payCategory?:string|string[];
 };
 
 function first(value: string | string[] | undefined) {
