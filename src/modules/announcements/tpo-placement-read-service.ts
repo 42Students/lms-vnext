@@ -50,14 +50,15 @@ export async function listTpoPlacementAnnouncements(
    ]),
   )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt),desc(db10Announcements.id))
   .limit(101).offset((safePage-1)*100);
-  const audiences=targetedReady&&rows.length?await tx.select({
+  const visibleRows=rows.slice(0,100);
+  const audiences=targetedReady&&visibleRows.length?await tx.select({
    id:placementTpoNoticeAudiences.announcementId,kind:placementTpoNoticeAudiences.kind,
   }).from(placementTpoNoticeAudiences).where(
-   inArray(placementTpoNoticeAudiences.announcementId,rows.map(row=>row.id))
+   inArray(placementTpoNoticeAudiences.announcementId,visibleRows.map(row=>row.id))
   ):[];
   const audienceById=new Map(audiences.map(row=>[row.id,row.kind]));
-  return {status:"READY" as const,items:projectTpoAnnouncementRows(rows).map(row=>({
+  return {status:"READY" as const,items:projectTpoAnnouncementRows(visibleRows).map(row=>({
    ...row,audienceKind:audienceById.get(row.id)??"COLLEGE",
-  }))};
+  })),page:safePage,hasMore:rows.length>100};
  });
 }
