@@ -60,4 +60,18 @@ describe("chat-4 learner Home and Courses gap closure",()=>{
   expect(s).toContain("apiFetch");
   expect(s).not.toContain("discussion_post_failed");
  });
+ it("LEARNER-course-detail-R01 persists actual rewind position and restarts completed playback",()=>{
+  const progress=source("src/modules/courses/progress-service.ts");
+  expect(progress).toContain("lastPositionSeconds: positionSeconds,");
+  expect(source("src/components/courses/learner-video-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
+  expect(source("src/components/courses/learner-youtube-player.tsx")).toContain("completed ? 0 : initialPositionSeconds");
+ });
+ it("LEARNER-course-detail-R03 lets learners join and copy future live class meetings",()=>{
+  expect(source("src/modules/courses/learner-course-service.ts")).toContain('row.contentType === "LIVE_CLASS"');
+  expect(source("src/components/courses/learner-course-workspace.tsx")).toContain("<LearnerLiveClassLink");
+  const s=source("src/components/courses/learner-live-class-link.tsx");
+  expect(s).toContain("Join Meeting");
+  expect(s).toContain("Copy meeting link");
+ });
+
 });

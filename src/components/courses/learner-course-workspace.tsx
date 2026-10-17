@@ -8,6 +8,7 @@ import { learnerRoadmapDialogKey } from "@/modules/courses/learner-roadmap-dialo
 import { learnerRoadmapShouldOpenItem } from "@/modules/courses/learner-roadmap-item-focus-model";
 import { LearnerRoadmapItemDialog } from "./learner-roadmap-item-dialog";
 import { learnerSafeExternalContentHref } from "@/modules/courses/learner-external-content-link-model";
+import {LearnerLiveClassLink} from "./learner-live-class-link";
 import { assignmentFilesRuntimeEnabled,multipartAssignmentRuntimeEnabled } from "@/modules/courses/assignment-file-readiness";
 import Link from "next/link";
 import { formatLearnerCourseMoment } from "@/modules/courses/learner-course-date-model";
@@ -253,7 +254,8 @@ function ContentCard({
           {start
             ? `Available ${start}`
             : "This item is scheduled and is not available yet."}
-        </div>
+        {content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?<LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!}/>:null}
+         </div>
       ) : content.type === "LIVE_CLASS" && ended ? (
         <div className="mt-4 rounded-lg border border-border bg-surface-subtle px-3 py-3 text-sm text-body">
           This live session has ended.
@@ -297,7 +299,9 @@ function ContentCard({
           }
           readOnly={readOnly}
         />
-      ) : learnerSafeExternalContentHref(content.externalUrl) ? (
+      ) : content.type==="LIVE_CLASS"&&learnerSafeExternalContentHref(content.externalUrl)?(
+         <LearnerLiveClassLink href={learnerSafeExternalContentHref(content.externalUrl)!}/>
+       ) : learnerSafeExternalContentHref(content.externalUrl) ? (
         <a
           href={learnerSafeExternalContentHref(content.externalUrl)!}
           target="_blank"
