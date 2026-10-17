@@ -250,13 +250,13 @@ export default async function HrPlacementJobPage({
             <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
             <p className="mt-1 text-xs text-muted-foreground">
               Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
-              Assessment and interview steps show recorded applied results; “—” means this drive has no such round.
+              Assessment and interview steps show recorded applied results; “—” means this drive has no such round. Offered/Hired count distinct employer-visible recipients, not historical offer versions.
             </p>
             <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Employer-visible stage funnel">
               {recruiterVisibleDriveFunnel({
                 shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
                 rounds:workspace.rounds,
-                issued:offerSummary.issued,accepted:offerSummary.accepted,joined:offerSummary.joined,
+                offered:offerSummary.distinctOffered,hired:offerSummary.distinctHired,
               }).map(stage=><li key={stage.label} className="rounded-lg border border-border bg-surface-subtle p-3">
                 <p className="text-xs font-semibold text-body">{stage.label}</p>
                 <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
