@@ -42,5 +42,5 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
   {name:"Placed",count:counts?.placed??0,href:"/tpo/placements/jobs/"+jobId+"/joining"},
  ];
  return {stages,excluded:reach.excluded,considered:reach.candidateCount,
-  definition:"Registered & eligible means the current opted-in, eligible notification audience; later stages count distinct persisted applications."};
+  definition:"Registered & eligible means the current opted-in, eligible notification audience; Applied counts learners who applied even if they later withdrew. Subsequent stages count distinct persisted applications."};
 }
