@@ -55,6 +55,10 @@ export type TpoStudentSource = {
     cgpaHundredths: number | null;
     activeBacklogs: number | null;
     pastBacklogs: number | null;
+    tenthPctBasisPoints?:number|null;twelfthPctBasisPoints?:number|null;
+    diplomaPctBasisPoints?:number|null;undergraduatePctBasisPoints?:number|null;
+    passingYear?:number|null;gapYears?:number|null;isLateralEntry?:boolean|null;
+    academicSource?:string|null;verifiedAt?:Date|null;
   };
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
@@ -92,6 +96,8 @@ export type TpoStudentRow = {
   preferencesPresent: boolean;
   verification:TpoStudentVerificationFact;
   cgpa: number | null;
+  tenthPct?:number|null;twelfthPct?:number|null;diplomaPct?:number|null;ugPct?:number|null;
+  passingYear?:number|null;gapYears?:number|null;isLateralEntry?:boolean|null;marksVerified?:boolean|null;
   activeBacklogs: number | null;
   pastBacklogs: number | null;
   applicationCount: number;
@@ -133,6 +139,8 @@ export type TpoStudentRosterFilter = {
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
   minApplications?:number;maxApplications?:number;
   minCgpa?:number;maxCgpa?:number;
+  minTenthPct?:number;minTwelfthPct?:number;minDiplomaPct?:number;minUgPct?:number;
+  passingYear?:number;maxGapYears?:number;marksVerified?:boolean;isLateralEntry?:boolean;
   maxActiveBacklogs?:number;maxPastBacklogs?:number;
   cgpaRecorded?:boolean;
   minOffers?:number;maxOffers?:number;
@@ -305,6 +313,14 @@ export function deriveTpoStudent(
       source.academicEvidence.cgpaHundredths === null
         ? null
         : source.academicEvidence.cgpaHundredths / 100,
+    tenthPct:source.academicEvidence.tenthPctBasisPoints==null?null:source.academicEvidence.tenthPctBasisPoints/100,
+    twelfthPct:source.academicEvidence.twelfthPctBasisPoints==null?null:source.academicEvidence.twelfthPctBasisPoints/100,
+    diplomaPct:source.academicEvidence.diplomaPctBasisPoints==null?null:source.academicEvidence.diplomaPctBasisPoints/100,
+    ugPct:source.academicEvidence.undergraduatePctBasisPoints==null?null:source.academicEvidence.undergraduatePctBasisPoints/100,
+    passingYear:source.academicEvidence.passingYear??null,
+    gapYears:source.academicEvidence.gapYears??null,
+    isLateralEntry:source.academicEvidence.isLateralEntry??null,
+    marksVerified:source.academicEvidence.academicSource==="VERIFIED"&&source.academicEvidence.verifiedAt!=null,
     activeBacklogs: source.academicEvidence.activeBacklogs,
     pastBacklogs: source.academicEvidence.pastBacklogs,
     applicationCount: source.applications.length,
@@ -443,6 +459,14 @@ export function filterTpoStudentRoster(
     .filter(row=>filter.offerWaiting===undefined||(row.offersAwaitingAnswer>0)===filter.offerWaiting)
     .filter(row=>filter.minCgpa===undefined||(row.cgpa!==null&&row.cgpa>=filter.minCgpa))
     .filter(row=>filter.maxCgpa===undefined||(row.cgpa!==null&&row.cgpa<=filter.maxCgpa))
+    .filter(row=>filter.minTenthPct===undefined||(row.tenthPct!=null&&row.tenthPct>=filter.minTenthPct))
+    .filter(row=>filter.minTwelfthPct===undefined||(row.twelfthPct!=null&&row.twelfthPct>=filter.minTwelfthPct))
+    .filter(row=>filter.minDiplomaPct===undefined||(row.diplomaPct!=null&&row.diplomaPct>=filter.minDiplomaPct))
+    .filter(row=>filter.minUgPct===undefined||(row.ugPct!=null&&row.ugPct>=filter.minUgPct))
+    .filter(row=>filter.passingYear===undefined||row.passingYear===filter.passingYear)
+    .filter(row=>filter.maxGapYears===undefined||(row.gapYears!=null&&row.gapYears<=filter.maxGapYears))
+    .filter(row=>filter.marksVerified===undefined||row.marksVerified===filter.marksVerified)
+    .filter(row=>filter.isLateralEntry===undefined||row.isLateralEntry===filter.isLateralEntry)
     .filter(row=>filter.maxActiveBacklogs===undefined||(row.activeBacklogs!==null&&row.activeBacklogs<=filter.maxActiveBacklogs))
     .filter(row=>filter.maxPastBacklogs===undefined||(row.pastBacklogs!==null&&row.pastBacklogs<=filter.maxPastBacklogs))
     .filter(row=>filter.cgpaRecorded===undefined||(row.cgpa!==null)===filter.cgpaRecorded)
