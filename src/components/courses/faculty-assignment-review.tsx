@@ -591,8 +591,8 @@ export function FacultyAssignmentReview({
       ) : null}
 
       {!loading && submissions && submissions.length>0 ? (
-        <nav aria-label="Submission student navigation" className="flex flex-wrap items-end gap-2 rounded-lg border border-border bg-surface p-3">
-          <label className="grid min-w-48 flex-1 gap-1 text-sm font-semibold">
+        <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-2 rounded-lg border border-border bg-surface p-3 sm:flex sm:flex-wrap">
+          <label className="col-span-2 grid min-w-0 flex-1 gap-1 text-sm font-semibold sm:min-w-48">
             Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
             <select className="min-h-10 rounded border border-border bg-surface px-2"
               value={selectedSubmissionId??submissions[0].id}
