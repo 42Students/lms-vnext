@@ -31,6 +31,8 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
     if(chunk.startsWith("#company:"))return <Link key={i} className="text-primary-text underline"
       href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
+    if(chunk.startsWith("#student:"))return <Link key={i} className="text-primary-text underline"
+      href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-semibold">{chunk}</span>;
     return chunk;
