@@ -3,6 +3,7 @@ import Link from "next/link";
 import {TpoSafeCsvDownload} from "@/components/tpo/tpo-safe-csv-download";
 import {Suspense} from "react";
 import {TpoStudentsSpreadsheet} from "@/components/tpo/tpo-students-spreadsheet";
+import {TpoStudentsSelectionProvider,TpoStudentsSelectionSummary} from "@/components/tpo/tpo-students-selection";
 import {TpoStudentSavedViews} from "@/components/tpo/tpo-student-saved-views";
 import { TpoAcademicImportWorkspace } from "@/components/tpo/tpo-academic-import-workspace";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
@@ -392,9 +393,7 @@ export default async function TpoStudentsPage({
     <div className="space-y-6">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.students}
-        description={query.batchId?
-          "Batch student journeys, including completed learners from a finished batch.":
-          "Everyone in placements, from the batches you made eligible."}
+        description="Everyone in placements, from the batches you made eligible."
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
       <details className="rounded-xl border border-border bg-surface p-3">
@@ -409,20 +408,10 @@ export default async function TpoStudentsPage({
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
-        <label className="text-sm font-semibold">Program
-          <select name="programId" defaultValue={query.programId??""}
-            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
-            <option value="">All programs</option>
-            {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
-          </select>
-        </label>
-        <label className="text-sm font-semibold">Class
-          <select name="classId" defaultValue={query.classId??""}
-            className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
-            <option value="">All classes</option>
-            {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
-        </label>
+        {/* Program and Class are selected in the single grid filter panel.
+            Preserve them through this separate advanced-filter form. */}
+        <input type="hidden" name="programId" value={query.programId??""}/>
+        <input type="hidden" name="classId" value={query.classId??""}/>
         <label className="text-sm font-semibold">Stage
           <select name="legacyStage" defaultValue={query.legacyStage??""}
             className="mt-1 block min-h-11 rounded border border-border bg-surface px-3">
@@ -653,7 +642,7 @@ export default async function TpoStudentsPage({
         </div>
 
         <p className="mt-3 text-sm text-body" aria-live="polite">Journey of the {summary.activeLearners} students in {query.batchId?"this batch":query.programId?"this program":query.branchId?"this branch":"placements"}.</p>
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Student placement journey">
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4" aria-label="Student placement journey">
          {tpoStudentJourneySteps(summary).map(step=><div key={step.label} className="rounded-lg border border-border bg-surface p-4">
           <h3 className="text-sm font-semibold">{step.label}</h3>
           <p className="mt-2 text-2xl font-bold tabular-nums">{step.count}</p>
@@ -916,25 +905,29 @@ export default async function TpoStudentsPage({
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
             {roster.total > 0
               ? "This page is outside the matching result range. Return to the first page."
-              : "Nobody is in placements yet."}
-            {roster.total===0?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
+              : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
+                ? "No students match these filters."
+                : "Nobody is in placements yet."}
+            {roster.total===0&&!(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!==""))?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
             <div className="mt-3">
               <Link
                 href={roster.total>0?scopedHref({
                   ...currentFilters,
                   page: 1,
-                }):"/tpo/batches"}
+                }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
                 className="font-semibold text-primary-text hover:underline"
               >
-                {roster.total>0?"First matching page":"Open Placement eligibility"}
+                {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
               </Link>
             </div>
           </div>
         ) : null}
+        <TpoStudentsSelectionProvider key={"selection:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState+":"+JSON.stringify(currentFilters)}>
         <Suspense fallback={<p role="status">Loading spreadsheet grid…</p>}>
           <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
             afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}/>
         </Suspense>
+        <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>
 
         {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
           <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
@@ -967,6 +960,7 @@ export default async function TpoStudentsPage({
           />
         ) : null}
 
+        </TpoStudentsSelectionProvider>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-body">
             Page {roster.page} of {Math.max(1, roster.totalPages)}

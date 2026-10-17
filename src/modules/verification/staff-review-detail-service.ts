@@ -40,7 +40,7 @@ export async function getCollegeVerificationDetail(context:RequestContext,member
  }).from(profileVerificationEvents)
    .where(eq(profileVerificationEvents.verificationId,record.verificationId))
    .orderBy(desc(profileVerificationEvents.createdAt),desc(profileVerificationEvents.id))
-   .limit(100);
+   .limit(50);
  return {...record,section:section,status:record.status as VerificationStatus,
   documents:verificationDocumentManifest(record.submittedSnapshot),history:events};
 }
