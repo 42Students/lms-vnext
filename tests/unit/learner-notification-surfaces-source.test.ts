@@ -11,7 +11,7 @@ describe("Learner notification and placement UI source guards", () => {
     const inbox = source("src/components/activity/learner-notifications-inbox.tsx");
     const history = source("src/app/(authenticated)/learn/notifications/history/page.tsx");
     expect(page).toContain("LearnerNotificationsInbox");
-    expect(inbox).toContain("Browse older personal notifications");
+    expect(inbox).toContain("Browse personal history");
     expect(inbox).toContain("/learn/notifications/history");
     expect(inbox).toContain("/learn/notifications/history");
     expect(history).toContain("getOwnLearnerNotificationHistory");
@@ -45,7 +45,7 @@ describe("Learner notification and placement UI source guards", () => {
     expect(shared).toContain("markOwnLearnerNotificationRead");
     expect(bulk).toContain("markAllOwnLearnerNotificationsRead");
     expect(specific).toContain("isSameOriginRequest(request)");
-    expect(list).toContain('readEndpoint + "/" + id + "/read"');
+    expect(list).toContain('readEndpoint + "/" + encodeURIComponent(id) + "/read"');
     expect(list).toContain("item.actionLabel");
     expect(history).toContain("collegeId: membership.collegeId");
   });

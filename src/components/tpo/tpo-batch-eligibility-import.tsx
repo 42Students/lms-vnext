@@ -1,6 +1,7 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useRef,useState} from "react";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {TpoBatchUndoControl} from "./tpo-batch-undo-control";
@@ -22,10 +23,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
  const [chosenName,setChosenName]=useState("");
  const [previewPage,setPreviewPage]=useState(1);
  const [acknowledged,setAcknowledged]=useState(false);
+ const [discardPending,setDiscardPending]=useState(false);
  const unresolved=preview?.preview.filter((row,index)=>row.status==="unusable"&&!skippedByUser.includes(index)).length??0;
  async function chooseFile(file:File|null){
   if(!file)return;
-  setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);setAcknowledged(false);
+  setError("");setPreview(null);setNotice("");setLastActionId(null);setPreviewPage(1);setAcknowledged(false);setChosenName("");
   if(!file.name.toLowerCase().endsWith(".csv")) {
     setError("Choose a CSV export of the spreadsheet (.csv).");return;
   }
@@ -98,6 +100,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    </label>
    {chosenName?<p className="text-xs text-muted-foreground">Selected: {chosenName}</p>:null}
    <p className="text-xs text-muted-foreground">For Excel files, use Save As → CSV (UTF-8) before import.</p>
+   <a download="eligibility-import-template.csv" href="data:text/csv;charset=utf-8,studentCode%2Cdecision%2Creason%0A" className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Download a template</a>
   </div>
   <label className="block text-sm">CSV contents
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
@@ -134,7 +137,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    </nav>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy} onClick={()=>fileInput.current?.click()} className="min-h-10 rounded border border-border px-3 text-sm">Choose another file</button>
-    <button type="button" disabled={busy} onClick={()=>{setPreview(null);setSkippedByUser([]);setNotice("Review discarded. No changes were saved.");}} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
+    <button type="button" disabled={busy} onClick={()=>setDiscardPending(true)} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
    </div>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <label className="flex items-start gap-2 text-sm text-body">
@@ -151,5 +154,11 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {lastActionId?<TpoBatchUndoControl batchId={batchId} actionId={lastActionId}/>:null}
   </dialog>
+  <ConfirmDialog open={discardPending} onOpenChange={setDiscardPending}
+   title="Discard import review?" description="The preview, your included or skipped row choices and review acknowledgement will be cleared. No eligibility decisions have been saved."
+   confirmLabel="Discard review" onConfirm={()=>{
+    setPreview(null);setSkippedByUser([]);setAcknowledged(false);setPreviewPage(1);
+    setDiscardPending(false);setNotice("Review discarded. No changes were saved.");
+   }}/>
  </section>;
 }

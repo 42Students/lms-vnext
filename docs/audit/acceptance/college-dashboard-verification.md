@@ -23,3 +23,5 @@ Historical note: dashboard independent failure states have separate source tests
 
 
 | COL-dashboard-17 | DONE (source-level; browser at 375px pending) | Prefer responsive wrap and 2-count-card layout at 375px to truncating long legacy headings. `src/components/admin/college-dashboard-cards.tsx` and `src/components/admin/college-setup-checklist.tsx`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-dashboard-17 exposes 375px-safe cards and a single-column first checklist`. |
+
+| COL-dashboard-12 | DONE (source contract, tests not executed) | `src/modules/admin-ui/admin-dashboard-navigation.ts`; `tests/unit/admin-dashboard-navigation.test.ts` and `tests/unit/chat11-college-setup-integrity-round11.test.ts`: legacy 14 steps remain in their original order, with a real academic-period prerequisite after semester mappings. Global Super Admin recruiter access remains separate from the college setup guide. |

@@ -208,6 +208,7 @@ export const ACTIVITY_EVENT_TYPES = {
   PLACEMENTS_JOB_REOPENED: "placements.job.reopened",
   PLACEMENTS_JOB_CLOSED:
     "placements.job.closed",
+  PLACEMENTS_JOB_CANCELLED: "placements.job.cancelled",
   PLACEMENTS_APPLICATION_SUBMITTED:
     "placements.application.submitted",
   PLACEMENTS_APPLICATION_WITHDRAWN:

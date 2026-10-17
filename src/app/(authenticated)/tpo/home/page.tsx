@@ -138,7 +138,7 @@ export default async function TpoHome(){
    ...operationalHomeNeeds(operations.workQueue),
    ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
    ...(teamThreads.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
-    {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
+    {type:"TEAM_ASKS",priority:1,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],

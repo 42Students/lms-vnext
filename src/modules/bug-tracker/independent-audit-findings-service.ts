@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {independentFindingActionSchema} from "./independent-finding-actions-model";
+import {canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {ACTIVE_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
@@ -29,15 +30,32 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  if(query.kinds.length)predicates.push(inArray(db10AuditFindings.kind,query.kinds));
  if(query.view!=="ALL")predicates.push(inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]));
  if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
+ // Facet chips report the full current view, not just the one selected chip.
+ // Preserve query, area and kind scope while ignoring selected status/severity.
+ const facetsWhere=and(
+  query.q?or(ilike(db10AuditFindings.title,pattern),
+    ilike(db10AuditFindings.summary,pattern),ilike(db10AuditFindings.externalId,pattern)):undefined,
+  query.area?ilike(db10AuditFindings.area,"%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"):undefined,
+  query.kinds.length?inArray(db10AuditFindings.kind,query.kinds):undefined,
+  query.view!=="ALL"?inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]):undefined,
+  query.view==="RELEASE"?inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]):undefined,
+ );
  const where=and(...predicates);
  const db=getDb();
- const [total,items]=await Promise.all([
+ const [total,items,facets]=await Promise.all([
   db.select({n:count()}).from(db10AuditFindings).where(where),
   db.select().from(db10AuditFindings).where(where)
    .orderBy(desc(db10AuditFindings.foundAt),desc(db10AuditFindings.importedAt),asc(db10AuditFindings.id))
    .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
+  db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
+   .from(db10AuditFindings).where(facetsWhere)
+   .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
  ]);
- return {total:total[0]?.n??0,items,page:query.page,
+ const statusCounts:Record<string,number>={};
+ for(const row of facets)statusCounts[row.status]=(statusCounts[row.status]??0)+row.n;
+ const criticalOpen=facets.reduce((sum,row)=>
+   row.severity==="CRITICAL"&&(ACTIVE_FINDING_STATUSES as readonly string[]).includes(row.status)?sum+row.n:sum,0);
+ return {total:total[0]?.n??0,items,page:query.page,statusCounts,criticalOpen,
   pages:Math.max(1,Math.ceil((total[0]?.n??0)/INDEPENDENT_AUDIT_PAGE_SIZE))};
 }
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
@@ -61,6 +79,9 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    .for("update").limit(1);
   if(!row)return {ok:false as const,reason:"NOT_FOUND"};
   if(row.version!==input.expectedVersion)return {ok:false as const,reason:"STALE_VERSION"};
+  if(input.action==="STATUS"&&!canTransitionIndependentFinding(
+    row.status as IndependentFindingStatus,input.status,input.note,
+  ))return {ok:false as const,reason:"INVALID_STATUS_TRANSITION"};
   const patch:Partial<typeof db10AuditFindings.$inferInsert>={version:row.version+1,updatedAt:new Date()};
   let note:string|null=null;
   if(input.action==="STATUS"){patch.status=input.status;note=input.note??null;}
