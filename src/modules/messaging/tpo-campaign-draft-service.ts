@@ -69,10 +69,12 @@ export async function createTpoCampaignDraft(context:RequestContext,raw:unknown)
   }).returning({id:placementTpoEmailCampaigns.id});
   if(!campaign)throw new TpoCampaignDraftError("NOT_READY");
    await tx.execute(sql`insert into placement_tpo_campaign_drafts
-    (campaign_id,college_id,title,subject,body,template_key,segment,created_by_user_id,suppression_counts)
+    (campaign_id,college_id,title,subject,body,template_key,segment,created_by_user_id,suppression_counts,sender_name,suppressed_counts)
     values(${campaign.id}::uuid,${college.id}::uuid,${input.title}::varchar,
      ${input.subject}::varchar,${input.body}::text,${input.templateKey}::varchar,
-     ${input.segment}::varchar,${context.user.id}::uuid,${JSON.stringify(snapshot.suppressed)}::jsonb)`);
+     ${input.segment}::varchar,${context.user.id}::uuid,${JSON.stringify(snapshot.suppressed)}::jsonb,
+     coalesce((select left(u.display_name,200) from users u where u.id=${context.user.id}::uuid),'Placement cell')::varchar,
+     ${JSON.stringify(snapshot.suppressed)}::jsonb)`);
   const emails=new Map(subset.map(row=>[row.id,row.emailNorm]));
   await tx.insert(placementTpoEmailCampaignRecipients).values(
    snapshot.recipientIds.map(leadId=>({
