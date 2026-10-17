@@ -1,5 +1,5 @@
 "use client";
-import {useState,type FormEvent} from "react";
+import {useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 
 type InterviewRound={id:string;name:string;sequence:number};
@@ -12,6 +12,7 @@ function nowInIst(){
 }
 export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds:readonly InterviewRound[]}){
  const router=useRouter();
+ const submitLock=useRef(false);
  const [submitting,setSubmitting]=useState(false);
  const [notice,setNotice]=useState<string|null>(null);
  const [start,setStart]=useState("");
@@ -25,7 +26,8 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
   if(start<current){event.preventDefault();setError("Interview time must be in the future (IST).");return;}
   if(end<=start){event.preventDefault();setError("End time must be after start time.");return;}
   event.preventDefault();
-  if(submitting)return;
+  if(submitLock.current)return;
+  submitLock.current=true;
   setError(null);setNotice(null);setSubmitting(true);
   try{
    const response=await fetch(action,{
@@ -48,7 +50,7 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
    router.refresh();
   }catch{
    setError("Could not reach the server. Your entered times are still here.");
-  }finally{setSubmitting(false);}
+  }finally{submitLock.current=false;setSubmitting(false);}
  }
  return <form method="post" action={action} onSubmit={event=>void submit(event)} className="grid gap-3 sm:grid-cols-2">
   <input type="hidden" name="action" value="CREATE"/>
