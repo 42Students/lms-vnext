@@ -142,6 +142,73 @@ export default async function HrPlacementJobPage({
   const formatRoundTime=(d:Date)=>new Intl.DateTimeFormat("en-IN",{
     timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(d);
 
+  // Use one authorized mapping for both normal round editing and focused review.
+  const resultControlRounds = workspace.rounds.map(
+            (round) => ({
+              id: round.id,
+              sequence: round.sequence,
+              kind: round.kind,
+              name: round.name,
+              status: round.status,
+              scheduledAt:
+                round.scheduledAt?.toISOString() ??
+                null,
+              timezone: round.timezone,
+              mode: round.mode,
+              venue: round.venue,
+              meetingUrl: round.meetingUrl,
+              resultsDueAt:
+                round.resultsDueAt?.toISOString() ??
+                null,
+              participants:
+                round.participants.map(
+                  (participant) => ({
+                    applicationId:
+                      participant.applicationId,
+                    displayName:
+                      participant.displayName,
+                    email:
+                      participant.email,
+                    result:
+                      participant.result
+                        ? {
+                            id:
+                              participant
+                                .result.id,
+                            status:
+                              participant
+                                .result.status,
+                            outcome:
+                              participant
+                                .result.outcome as
+                                | "PASS"
+                                | "FAIL"
+                                | "HOLD"
+                                | "ABSENT",
+                            waitlistRank:
+                              participant
+                                .result.waitlistRank,
+                            scorePercent:
+                              participant
+                                .result.scorePercent,
+                            reasonCategory:
+                              participant
+                                .result.reasonCategory as
+                                | "APTITUDE"
+                                | "TECHNICAL"
+                                | "COMMUNICATION"
+                                | "OTHER"
+                                | null,
+                            candidateMessage:
+                              participant
+                                .result.candidateMessage,
+                          }
+                        : null,
+                  }),
+                ),
+            }),
+          );
+
   const ctc =
     workspace.job.minimumAnnualCtcInr !=
       null ||
@@ -627,71 +694,7 @@ export default async function HrPlacementJobPage({
         </section>:null}
         {!driveOverview.readOnly ? (
         <RecruiterResultControls
-          rounds={workspace.rounds.map(
-            (round) => ({
-              id: round.id,
-              sequence: round.sequence,
-              kind: round.kind,
-              name: round.name,
-              status: round.status,
-              scheduledAt:
-                round.scheduledAt?.toISOString() ??
-                null,
-              timezone: round.timezone,
-              mode: round.mode,
-              venue: round.venue,
-              meetingUrl: round.meetingUrl,
-              resultsDueAt:
-                round.resultsDueAt?.toISOString() ??
-                null,
-              participants:
-                round.participants.map(
-                  (participant) => ({
-                    applicationId:
-                      participant.applicationId,
-                    displayName:
-                      participant.displayName,
-                    email:
-                      participant.email,
-                    result:
-                      participant.result
-                        ? {
-                            id:
-                              participant
-                                .result.id,
-                            status:
-                              participant
-                                .result.status,
-                            outcome:
-                              participant
-                                .result.outcome as
-                                | "PASS"
-                                | "FAIL"
-                                | "HOLD"
-                                | "ABSENT",
-                            waitlistRank:
-                              participant
-                                .result.waitlistRank,
-                            scorePercent:
-                              participant
-                                .result.scorePercent,
-                            reasonCategory:
-                              participant
-                                .result.reasonCategory as
-                                | "APTITUDE"
-                                | "TECHNICAL"
-                                | "COMMUNICATION"
-                                | "OTHER"
-                                | null,
-                            candidateMessage:
-                              participant
-                                .result.candidateMessage,
-                          }
-                        : null,
-                  }),
-                ),
-            }),
-          )}
+          rounds={resultControlRounds}
         />
         ) : null}
 
