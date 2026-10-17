@@ -89,4 +89,23 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(code).toContain("learner");
   expect(code).toContain("hiringPulse");
  });
+ it("TPO-companies-R02 link card has employer domain registration and error state",()=>{
+  const code=source("src/components/tpo/tpo-public-join-link-card.tsx");
+  expect(code).toContain("Add domain");
+  expect(code).toContain("Email domains: @");
+  expect(code).toContain("Couldn't load the company link");
+ });
+ it("TPO-companies-R05 canonical company drives order newest first",()=>{
+  const code=source("src/modules/placements/tpo-companies-view-service.ts");
+  expect(code).toContain("desc(placementJobs.createdAt)");
+ });
+ it("TPO-companies-05 does not misrepresent private pairwise TPO threads as a shared company conversation",()=>{
+  const service=source("src/modules/placements/tpo-team-conversation-service.ts");
+  expect(service).toContain("startedByMembershipId");
+  expect(service).toContain("invitedMembershipId");
+  expect(service).toContain("hasPlacementTeamMembership");
+  expect(service).toContain('eq(placementTpoInternalThreads.collegeId, college.id)');
+  expect(service).not.toContain('companyRelationshipId:placementTpoInternalThreads.companyRelationshipId');
+  // This remains OPEN until a new verified object-scoped company thread exists.
+ });
 });
