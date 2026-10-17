@@ -110,6 +110,12 @@ export function LearnerPlacementJobDetail({
           className="rounded-xl border border-border bg-surface-subtle p-4 sm:p-5">
           <h2 className="text-base font-semibold text-foreground">{availability.title}</h2>
           <p className="mt-2 text-sm leading-6 text-body">{availability.detail}</p>
+          {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
+            <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-body" aria-label="Application blockers">
+              {[...new Set(items.flatMap(row=>row.applicationBlockers??[]))].map(reason=>
+                <li key={reason}>{reason}</li>)}
+            </ul>
+          ) : null}
           {availability.kind!=="OPEN" ? (
             <div className="mt-3 flex flex-wrap gap-4">
               <Link href="/learn/my-placements/applications"

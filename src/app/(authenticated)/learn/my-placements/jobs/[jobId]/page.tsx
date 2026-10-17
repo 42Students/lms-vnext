@@ -49,6 +49,7 @@ function toItem(row: Awaited<ReturnType<typeof listLearnerPlacementJobs>>[number
     eligibility: row.eligibility,
     deadlinePassed: row.deadlinePassed,
     canApply: row.canApply,
+    applicationBlockers: row.applicationBlockers,
   };
 }
 

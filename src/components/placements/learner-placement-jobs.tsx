@@ -80,6 +80,7 @@ export type LearnerPlacementJobItem = {
   };
   deadlinePassed: boolean;
   canApply: boolean;
+  applicationBlockers?: string[];
 };
 
 function humanize(value: string) {
@@ -622,6 +623,16 @@ export function LearnerPlacementJobs({
             </div>
 
             <p className="mt-3 text-xs font-medium text-muted-foreground">{postedAtLabel(item.job.publishedAt)}</p>
+            {!item.canApply && !item.application ? (
+              <div className="mt-3 rounded-md border border-border bg-surface-subtle p-3 text-sm text-body"
+                aria-label="Why this role is not open to you">
+                <p className="font-semibold text-foreground">Not open to you</p>
+                <ul className="mt-2 list-disc space-y-1 pl-5">
+                  {(item.applicationBlockers??["Your placement cell has not opened this role for your application."])
+                    .map(reason=><li key={reason}>{reason}</li>)}
+                </ul>
+              </div>
+            ) : null}
             {failedChecks.length > 0 ||
             missingChecks.length > 0 ? (
               <div className="mt-4 rounded-lg border border-border bg-muted px-4 py-3">

@@ -139,6 +139,7 @@ export default async function LearnerPlacementsPage({
       eligibility: row.eligibility,
       deadlinePassed: row.deadlinePassed,
       canApply: row.canApply,
+      applicationBlockers: row.applicationBlockers,
     }));
 
   const journey: LearnerPlacementJourneyItem[] =
