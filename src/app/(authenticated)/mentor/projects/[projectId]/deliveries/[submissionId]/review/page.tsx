@@ -39,6 +39,8 @@ export default async function MentorDeliveryVersionPage({params}:{
         <div><dt className="text-xs text-muted-foreground">Reviewed</dt>
           <dd className="mt-1 text-sm">{v.reviewedAt?format(v.reviewedAt):"No review date recorded"}</dd></div>
       </dl>
+      <h3 className="mt-5 font-semibold">Learner submission summary</h3>
+      <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{v.summary||"No summary recorded"}</p>
       <h3 className="mt-5 font-semibold">Recorded reviewer feedback</h3>
       {v.feedback?<p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
         {v.feedback}</p>:
