@@ -27,14 +27,14 @@ function one(value: string | string[] | undefined) {
 }
 
 const searchSchema = z.string().trim().max(100);
-const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
-const attentionSchema = z.literal("LEARNER_ACTION");
+const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED","IN_PROGRESS","READY","BLOCKED"]);
+const attentionSchema = z.enum(["LEARNER_ACTION","BLOCKED"]);
 const workSchema = z.enum(["BLOCKED","NO_TASKS"]);
 const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
 
 function parsePageSize(value: string | undefined) {
   const parsed = z.coerce.number().int().safeParse(value);
-  return parsed.success && (parsed.data === 50 || parsed.data === 100)
+  return parsed.success && (parsed.data === 10 || parsed.data === 50)
     ? parsed.data : 25;
 }
 
@@ -105,12 +105,20 @@ export default async function LearnerProjectsPage({
         return row.project.status !== "ARCHIVED" &&
           row.project.status !== "COMPLETED";
       }
+      if(query.status==="IN_PROGRESS")return row.project.status==="ACTIVE"&&
+        (progressByProject.get(row.project.id)?.completedTasks??0)>0;
+      if(query.status==="READY")return row.project.status==="COMPLETED";
+      if(query.status==="BLOCKED")return Boolean(row.project.blocker?.trim())||
+        learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id));
       return row.project.status === query.status;
     })
     .filter((row) =>
       query.attention !== "LEARNER_ACTION" ||
       attentionByProject.has(row.project.id),
     )
+    .filter((row)=>query.attention!=="BLOCKED"||
+      Boolean(row.project.blocker?.trim())||
+      learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id)))
     .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
       row.project.status, progressByProject.get(row.project.id),
     ))
@@ -163,9 +171,9 @@ export default async function LearnerProjectsPage({
             dueState: dueByProject.get(row.project.id)?.state,
             dueDate: dueByProject.get(row.project.id)?.date,
             progressDetail: progressByProject.has(row.project.id)
-              ? String(progressByProject.get(row.project.id)!.completedTasks) +
-                " of " + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks done"
-              : undefined,
+              ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
+                "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
+              : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
             actionLine: projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open project",
