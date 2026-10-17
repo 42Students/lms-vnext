@@ -764,8 +764,8 @@ export function RecruiterLeadsWorkspace({
               </div>
               <RecruiterSavedViewControls columns={visibleColumns}/>
               {selectedIds.length?<button type="button" className={buttonStyle}
-                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(selectedIds.slice(0,100).join(",")))}>
-                Send an email to selected ({Math.min(selectedIds.length,100)})
+                onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).slice(0,100).map(row=>row.id).join(",")))}>
+                Send an email to selected ({Math.min(visible.filter(row=>selectedIds.includes(row.id)).length,100)})
               </button>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
