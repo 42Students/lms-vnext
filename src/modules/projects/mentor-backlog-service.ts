@@ -18,6 +18,7 @@ const paramsSchema = z.strictObject({
 const backlogCreateSchema = z.strictObject({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().max(4000).nullable().default(null),
+  approach: z.string().trim().max(4000).nullable().default(null),
   acceptanceCriteria: z.string().trim().max(4000).nullable().default(null),
   priority: z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
   estimatePoints: z.number().int().min(0).max(1000).nullable().default(null),
@@ -90,6 +91,7 @@ export async function createMentorBacklogTask(context: RequestContext, projectId
       projectId:scope.project.id,sprintId:null,
       templateKey:"backlog-"+randomUUID().replaceAll("-",""),
       sequence:(last?.sequence??-1)+1,title:input.title,description:input.description,
+      approach:input.approach,
       acceptanceCriteria:input.acceptanceCriteria,priority:input.priority,status:"TODO",
       estimatePoints:input.estimatePoints,
       taskType:input.taskType,dueDate:input.dueDate,blockerReason:input.blockerReason,

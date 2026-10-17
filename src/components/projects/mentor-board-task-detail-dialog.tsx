@@ -4,7 +4,7 @@ import Link from "next/link";
 import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 type Task={
- id:string;title:string;status:string;description:string|null;acceptanceCriteria:string|null;
+ id:string;title:string;status:string;description:string|null;approach:string|null;acceptanceCriteria:string|null;
  priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
  sprintId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null;
 };
@@ -52,6 +52,8 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
   </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
+  <section className="mt-4"><h3 className="font-semibold">Approach</h3>
+    <p className="mt-1 whitespace-pre-wrap text-sm">{task.approach||"No approach recorded"}</p></section>
   <section className="mt-4"><h3 className="font-semibold">Done when</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.acceptanceCriteria||"No criteria recorded"}</p></section>
   {task.blockerReason||task.status==="BLOCKED"?

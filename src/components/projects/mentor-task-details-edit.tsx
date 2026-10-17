@@ -12,6 +12,7 @@ import { projectMutation } from "./project-api";
 
 type Props={
   projectId:string;taskId:string;title:string;description:string|null;
+  approach:string|null;
   acceptanceCriteria:string|null;priority:string;updatedAt:string;
   taskType:string|null;estimatePoints:number|null;dueDate:string|null;blockerReason:string|null;
 };
@@ -22,6 +23,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [title,setTitle]=useState(props.title);
   const [description,setDescription]=useState(props.description??"");
+  const [approach,setApproach]=useState(props.approach??"");
   const [criteria,setCriteria]=useState(props.acceptanceCriteria??"");
   const [priority,setPriority]=useState(props.priority);
   const [taskType,setTaskType]=useState(props.taskType??"");
@@ -32,6 +34,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==props.title ||
     (description.trim()||null)!==(props.description??null) ||
+    (approach.trim()||null)!==(props.approach??null) ||
     (criteria.trim()||null)!==(props.acceptanceCriteria??null) ||
     priority!==props.priority || taskType!==(props.taskType??"") ||
     estimate!==(props.estimatePoints?.toString()??"") || dueDate!==(props.dueDate??"") ||
@@ -39,6 +42,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   function begin() {
     setTitle(props.title);
     setDescription(props.description??"");
+    setApproach(props.approach??"");
     setCriteria(props.acceptanceCriteria??"");
     setPriority(props.priority);
     setTaskType(props.taskType??"");setEstimate(props.estimatePoints?.toString()??"");
@@ -48,7 +52,7 @@ export function MentorTaskDetailsEdit(props:Props) {
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(!title.trim()||title.trim().length>200||
-      description.trim().length>4000||criteria.trim().length>4000||!changed) {
+      description.trim().length>4000||approach.trim().length>4000||criteria.trim().length>4000||!changed) {
       setError("Change a task field within its allowed length.");
       return;
     }
@@ -62,6 +66,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           "/tasks/"+encodeURIComponent(props.taskId)+"/details",
         "PATCH",{
           title:title.trim(),description:description.trim()||null,
+          approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,
           priority,expectedUpdatedAt:props.updatedAt,
           taskType:taskType||null,estimatePoints:estimate!==""?Number(estimate):null,
@@ -89,6 +94,10 @@ export function MentorTaskDetailsEdit(props:Props) {
         <label className="grid gap-1 text-xs font-semibold text-body">Description
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
+        </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Approach (optional)
+          <Textarea maxLength={4000} value={approach}
+            onChange={event=>setApproach(event.target.value)}/>
         </label>
         <label className="grid gap-1 text-xs font-semibold text-body">Done when (optional)
           <Textarea maxLength={4000} value={criteria}
