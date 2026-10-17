@@ -41,6 +41,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
         and m.college_id=${college.id}::uuid
         and position(lower(${q}) in lower(m.body))>0)`) : undefined))
    .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(100);
+  // Unread counts are per original recipient: query results never change who may read a thread.
   const unread = await tx.select({
    href:inAppNotifications.actionHref,
    total:sql<number>`count(*)::integer`,
