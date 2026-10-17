@@ -320,6 +320,7 @@ export function SuperAdminHrAccounts({
           {
             companyRelationshipId:
               values.companyRelationshipId,
+            companyRelationshipIds:values.companyRelationshipIds,
             displayName: values.displayName.trim(),
             phoneE164: values.phoneE164.trim(),
             ...(values.email.trim()

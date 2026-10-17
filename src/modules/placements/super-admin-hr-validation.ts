@@ -35,6 +35,7 @@ export const createSuperAdminHrInputSchema = z
   .object({
     companyRelationshipId:
       superAdminHrRelationshipIdSchema,
+    companyRelationshipIds:z.array(superAdminHrRelationshipIdSchema).max(20).optional(),
     displayName: personDisplayNameSchema,
     phoneE164: phoneE164Schema,
     email: personEmailSchema.optional(),
