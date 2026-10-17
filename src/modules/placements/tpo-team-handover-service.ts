@@ -1,6 +1,6 @@
 import "server-only";
 import {and,eq,inArray} from "drizzle-orm";
-import {z} from "zod";
+import {mayHandoverOwnTeamWork,tpoTeamHandoverSchema} from "./tpo-team-handover-model";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,
  placementJobs,placementCompanyRelationships,placementTpoLeads,placementTpoFollowups,users} from "@/db/schema";
@@ -10,12 +10,6 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 import {hasDriveOwnerColumn} from "./tpo-team-unowned-service";
-
-export const tpoTeamHandoverSchema=z.strictObject({
- sourceMembershipId:z.string().uuid(),targetMembershipId:z.string().uuid(),
-}).refine(input=>input.sourceMembershipId!==input.targetMembershipId,{
- path:["targetMembershipId"],message:"Choose a different team member to take over",
-});
 
 /** TPO-inbox-team-36: move work, NEVER silently revoke membership, grant roles,
  * change a private conversation's participants or reassign an unrelated ask.
@@ -49,6 +43,10 @@ export async function handoverTpoTeamWork(context:RequestContext,raw:unknown){
     inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])));
   if(new Set(roles.map(row=>row.membershipId)).size!==2)
    throw new Error("TEAM_MEMBER_NOT_FOUND");
+  if(!mayHandoverOwnTeamWork({
+   actorMembershipId:actor.id,sourceMembershipId:input.sourceMembershipId,
+   targetMembershipId:input.targetMembershipId,sourceActive:true,targetActive:true,
+  }))throw new Error("TEAM_HANDOVER_SELF");
   const jobs=await tx.update(placementJobs).set({
     ownerMembershipId:input.targetMembershipId,updatedAt:new Date(),
    }).where(and(eq(placementJobs.collegeId,college.id),
