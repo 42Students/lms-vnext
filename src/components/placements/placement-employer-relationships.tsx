@@ -314,7 +314,11 @@ export function PlacementEmployerRelationships({
                 </div>
 
                 <div className="flex flex-wrap items-start gap-2 xl:justify-end">
-                  {item.relationshipStatus==="ARCHIVED" ? (
+                  {item.companyStatus!=="ACTIVE" ? (
+                    <span role="status" className="text-sm text-muted-foreground">
+                      This company is archived on the platform and cannot be restored here.
+                    </span>
+                  ) : item.relationshipStatus==="ARCHIVED" ? (
                     <Button size="sm" variant="secondary" disabled={busy}
                       onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
                   ) : (<>
