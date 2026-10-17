@@ -48,8 +48,8 @@ export async function listTpoPlacementAnnouncements(
     or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),
     or(isNull(db10Announcements.expiresAt),gt(db10Announcements.expiresAt,now)),
    ]),
-  )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt))
-  .limit(100);
+  )).orderBy(desc(db10Announcements.isPinned),desc(db10Announcements.createdAt),desc(db10Announcements.id))
+  .limit(101).offset((safePage-1)*100);
   const audiences=targetedReady&&rows.length?await tx.select({
    id:placementTpoNoticeAudiences.announcementId,kind:placementTpoNoticeAudiences.kind,
   }).from(placementTpoNoticeAudiences).where(
