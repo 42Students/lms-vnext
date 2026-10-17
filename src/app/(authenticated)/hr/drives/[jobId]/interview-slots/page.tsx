@@ -25,6 +25,10 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
  const rounds=workspace.rounds.filter(row=>row.kind==="INTERVIEW"&&
   (row.status==="PENDING"||row.status==="SCHEDULED"));
  const action="/api/placements/recruiter/drives/"+jobId+"/interview-slots";
+ const minStart=new Intl.DateTimeFormat("sv-SE",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+  }).format(new Date()).replace(" ","T");
  const when=(d:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
   dateStyle:"medium",timeStyle:"short"}).format(d)+" IST";
  return <main className="space-y-6">
@@ -57,10 +61,10 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
       </select>
      </label>
      <label className="grid gap-1 text-sm text-body">Start (IST)
-      <input name="startAt" type="datetime-local" required className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+      <input name="startAt" type="datetime-local" min={minStart} required className="min-h-11 rounded-md border border-border bg-surface px-3"/>
      </label>
      <label className="grid gap-1 text-sm text-body">End (IST)
-      <input name="endAt" type="datetime-local" required className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+      <input name="endAt" type="datetime-local" min={minStart} required className="min-h-11 rounded-md border border-border bg-surface px-3"/>
      </label>
      <label className="grid gap-1 text-sm text-body">Capacity
       <input name="capacity" type="number" min={1} max={100} defaultValue={1}
