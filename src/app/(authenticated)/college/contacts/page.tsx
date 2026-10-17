@@ -7,6 +7,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {DataTable} from "@/components/ui/data-table";
 import {collegeContactPageRoleCounts,activeCollegeContactFilterCount,collegeContactsPageRange,collegeContactsHref,collegeContactsTabHref,collegeContactsWithoutMemberHref,clearedCollegeContactsHref,collegeContactFilterMessage,parseCollegeContactsSearchParams} from "@/modules/people/college-contacts-model";
 import {listCollegeContacts} from "@/modules/people/college-contacts-service";
 import {listCollegeContactFilterOptions} from "@/modules/people/college-contacts-filter-options-service";
@@ -198,17 +199,30 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
    <p className="text-sm text-muted-foreground">{results.total} matching contacts · Page {filter.page}</p>
    <p className="text-xs text-muted-foreground" aria-label="Current page role breakdown">On this page: {roleCounts.facultyOnly} faculty-only · {roleCounts.learnerOnly} learner-only · {roleCounts.dual} dual-role contacts.</p>
    {results.items.length===0?<div role="status" className="space-y-2 rounded-lg border p-4 text-sm"><p>No matching contacts in this college.</p><Link href={clearedCollegeContactsHref(filter.tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Clear filters in this tab</Link></div>:
-    <ul className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-     {results.items.map(contact=><li key={contact.membershipId} className="min-w-0 space-y-2 rounded-lg border bg-surface p-4">
-      <h2 className="break-words font-semibold">{contact.name}</h2>
-      <p className="flex min-w-0 flex-wrap items-center gap-2 text-xs text-body">{contact.roles.join(" / ")||"No contact role"} <StatusBadge tone={contact.status==="ACTIVE"?"success":contact.status==="SUSPENDED"?"warning":"neutral"}>{contact.status}</StatusBadge></p>
-      <p className="break-all text-sm">Email: {contact.email}</p>
-      <p className="text-sm">Phone: {contact.phone}</p>
-      <p className="text-xs text-muted-foreground">Joined {dateFormat.format(contact.joinedAt)} IST</p>
-      <div className="flex flex-wrap gap-2"><Link href={"/college/contacts/"+contact.membershipId} className="inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold">View contact</Link>{contactRecordLinks(contact).map(link=>
-       <Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold">{link.label}</Link>)}</div>
-     </li>)}
-    </ul>}
+    <DataTable rows={results.items} getRowKey={contact=>contact.membershipId}
+      caption="Contacts" rowHref={contact=>"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+      columns={[
+        {key:"name",header:"Name",mobileLabel:"Name",mobilePriority:"primary" as const,
+          cell:contact=><Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline">{contact.name}</Link>},
+        {key:"roles",header:"Roles",mobileLabel:"Roles",mobilePriority:"secondary" as const,
+          cell:contact=><span>{contact.roles.join(" / ")||"No contact role"}</span>},
+        {key:"status",header:"Membership",mobileLabel:"Membership",mobilePriority:"secondary" as const,
+          cell:contact=><StatusBadge tone={contact.status==="ACTIVE"?"success":contact.status==="SUSPENDED"?"warning":"neutral"}>{contact.status}</StatusBadge>},
+        {key:"email",header:"Email",mobileLabel:"Email",mobilePriority:"secondary" as const,
+          cell:contact=><span className="break-all">{contact.email}</span>},
+        {key:"phone",header:"Phone",mobileLabel:"Phone",mobilePriority:"secondary" as const,
+          cell:contact=>contact.phone},
+        {key:"joined",header:"Joined",mobileLabel:"Joined",mobilePriority:"secondary" as const,
+          cell:contact=>dateFormat.format(contact.joinedAt)+" IST"},
+        {key:"actions",header:"Related role records",mobileLabel:"Related role records",mobilePriority:"action" as const,
+          cell:contact=><div className="flex flex-wrap gap-2">
+            <Link href={"/college/contacts/"+encodeURIComponent(contact.membershipId)}
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">View contact</Link>
+            {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href}
+              className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">{link.label}</Link>)}
+          </div>},
+      ]}/>}
   </section>
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
    <p>Page {filter.page} of {pageCount} · Showing {range.first}–{range.last} of {results.total} matching contacts</p>
