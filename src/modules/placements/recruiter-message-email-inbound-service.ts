@@ -1,6 +1,6 @@
 import "server-only";
 import {createHash} from "node:crypto";
-import {eq,gt,sql} from "drizzle-orm";
+import {eq,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementRecruiterInboundEmailEvents,placementRecruiterMessageMailState} from "@/db/schema";
