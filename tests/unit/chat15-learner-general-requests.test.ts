@@ -50,7 +50,8 @@ describe("chat-15 learner general placement requests",()=>{
   expect(journey).toContain("roundId:result.roundId");
   const page=source("src/app/(authenticated)/learn/my-placements/placement/page.tsx");
   expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
-  expect(page).toContain('initialKind={prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
+  expect(page).toContain('initialKind={prefillAcceptance?"OFFER_ACCEPTANCE_DISPUTE":prefillAbsence?"ABSENCE_DISPUTE":"OFF_CAMPUS_OFFER"}');
+  expect(page).toContain('prefillAbsence=query.request==="absence-dispute"');
  });
  it("LEARNER-placements-43 only offers externally-reported acceptance dispute before the persisted cutoff",()=>{
   const schema=tpoGeneralRequestInputSchema.safeParse({kind:"OFFER_ACCEPTANCE_DISPUTE",
@@ -65,5 +66,13 @@ describe("chat-15 learner general placement requests",()=>{
   expect(writer).toContain('offer.acceptanceChannel!=="EXTERNAL_IMPORT"');
   expect(writer).toContain("offer.acceptedDisputableUntil.getTime()<=Date.now()");
   expect(writer).toContain("eq(placementApplications.membershipId,member.id)");
+  // 0134 first CREATE TABLE wins: later IF NOT EXISTS does not extend its CHECK.
+  const registered=source("drizzle/0134_lanes_round_2.sql");
+  const firstCheck=registered.slice(0,registered.indexOf("-- from learner-general-placement-requests.sql"));
+  expect(firstCheck).not.toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
+  const proposal=source("docs/proposed-migrations/chat15-general-request-acceptance-kind.sql");
+  expect(proposal).toContain("DROP CONSTRAINT IF EXISTS placement_general_request_kind_ck");
+  expect(proposal).toContain("'OFFER_ACCEPTANCE_DISPUTE'");
+  expect(source("src/db/schema/placement-general-requests.ts")).toContain("'PLACEMENT_AFTER_PLACEMENT','OFFER_ACCEPTANCE_DISPUTE'");
  });
 });

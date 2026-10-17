@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PlacementEmployerRelationships } from "@/components/placements/placement-employer-relationships";
+import {CollegeCompanyCreate} from "@/components/placements/college-company-create";
 import {
   listPlacementRelationshipOwners,
 } from "@/modules/placements/company-service";
@@ -32,16 +33,26 @@ export default async function CollegeCompaniesPage({
     redirect(collegeCompaniesHref({...query,page:data.totalPages}));
   }
 
+  const exportParams=new URLSearchParams({
+    q:query.q,sort:query.sort,showDeleted:query.showDeleted,pageSize:String(query.pageSize),
+  });
   return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="Placements" title="Companies" description="Maintain each recruiting company once and reuse it across drives." />
+    <CollegeCompanyCreate collegeId={collegeId}/>
     <form method="get" className="flex flex-wrap items-end gap-3 rounded-xl border border-border p-4">
       <label className="grid min-w-0 flex-1 gap-1 text-sm">Company
         <input name="q" type="search" maxLength={100} defaultValue={query.q}
           className="min-h-11 rounded-md border border-border px-3" />
       </label>
-      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
+      <label className="grid gap-1 text-sm">Status
+        <select name="status" defaultValue={query.status} className="min-h-10 rounded-md border border-border px-3">
+          <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
+        </select>
+      </label>
+      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 font-semibold text-on-primary">Filter</button>
     </form>
-    <PlacementEmployerRelationships key={query.q+":"+query.page}
+    <p role="status" className="text-sm text-body">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
+    <PlacementEmployerRelationships key={[query.q,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
       relationships={data.items.map(item => ({
         relationshipId: item.relationshipId,
         companyId: item.companyId,
@@ -52,6 +63,8 @@ export default async function CollegeCompaniesPage({
         companyStatus:item.companyStatus,
         relationshipStatus:item.relationshipStatus,
         industry:item.industry,
+        drives:item.drives,
+        lastActive:item.lastActive,
         isTrusted: item.isTrusted,
         ownerMembershipId: item.ownerMembershipId,
       }))}

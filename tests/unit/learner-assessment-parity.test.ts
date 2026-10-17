@@ -77,7 +77,7 @@ describe("learner assessment parity pages", () => {
     expect(attempt).toContain("setTimeout");
     expect(overview).toContain("/quiz?quizId=");
   });
-  it("keeps legacy aggregate assessment mechanics", () => {
+  it("LEARNER-learning-misc-13 keeps legacy aggregate assessment mechanics", () => {
     const overview = fs.readFileSync(
       path.join(
         process.cwd(),
@@ -97,7 +97,7 @@ describe("learner assessment parity pages", () => {
     expect(overview).toContain("Page {currentPage} of {totalPages}");
     expect(overview).toContain("filter=assessments");
     expect(overview).toContain("lesson=");
-    expect(overview).toContain("Created ");
+    expect(overview).toContain("Created: ");
     // The per-state action labels live in the extracted quiz-overview-state.
     const quizState = fs.readFileSync(
       path.join(

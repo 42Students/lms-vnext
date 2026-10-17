@@ -10,40 +10,40 @@ Audit: `docs/audit/pages/superadmin/placements-projects-b-projects.md` (and `pla
 |---|---|---|---|
 | SA-placements-projects-51 | S2 | MISSING-PAGE | NOT-A-GAP |
 | SA-placements-projects-56 | S2 | MISSING-ACTION | OPEN |
-| SA-placements-projects-60 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-62 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-placements-projects-60 | S2 | MISSING-FIELD | DONE |
+| SA-placements-projects-62 | S2 | MISSING-ACTION | DONE |
 | SA-placements-projects-64 | S2 | MISSING-FIELD | DONE |
-| SA-placements-projects-65 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-69 | S2 | MISSING-TAB | FIXED-ON-MAIN |
-| SA-placements-projects-70 | S2 | STATE | FIXED-ON-MAIN |
+| SA-placements-projects-65 | S2 | MISSING-FIELD | DONE |
+| SA-placements-projects-69 | S2 | MISSING-TAB | DONE |
+| SA-placements-projects-70 | S2 | STATE | DONE |
 | SA-placements-projects-77 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | SA-placements-projects-81 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-placements-projects-82 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-85 | S2 | MISSING-TAB | FIXED-ON-MAIN |
+| SA-placements-projects-85 | S2 | MISSING-TAB | DONE |
 | SA-placements-projects-88 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-89 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-90 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| SA-placements-projects-90 | S2 | MISSING-FIELD | DONE |
 | SA-placements-projects-91 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-52 | S3 | COPY | DONE |
 | SA-placements-projects-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-placements-projects-54 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| SA-placements-projects-54 | S3 | MISSING-EXPORT | DONE |
 | SA-placements-projects-57 | S3 | COPY | DONE |
 | SA-placements-projects-58 | S3 | MISSING-FIELD | DONE |
 | SA-placements-projects-59 | S3 | MISSING-FILTER | DONE |
-| SA-placements-projects-61 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-placements-projects-63 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| SA-placements-projects-61 | S3 | MISSING-COLUMN | DONE |
+| SA-placements-projects-63 | S3 | MISSING-EXPORT | DONE |
 | SA-placements-projects-66 | S3 | MISSING-COLUMN | DONE |
 | SA-placements-projects-67 | S3 | STATE | DONE |
 | SA-placements-projects-68 | S3 | STATE | DONE |
 | SA-placements-projects-71 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | SA-placements-projects-72 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-73 | S3 | COPY | DONE |
-| SA-placements-projects-74 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-placements-projects-74 | S3 | MISSING-FILTER | DONE |
 | SA-placements-projects-75 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-placements-projects-76 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
+| SA-placements-projects-76 | S3 | MISSING-EXPORT | DONE |
 | SA-placements-projects-78 | S3 | COPY | DONE |
 | SA-placements-projects-79 | S3 | COPY | DONE |
-| SA-placements-projects-80 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-placements-projects-80 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-86 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-placements-projects-87 | S3 | MISSING-ACTION | DONE |
 | SA-placements-projects-92 | S3 | STATE | DONE |
@@ -58,34 +58,34 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 |---|---|---|---|
 | TPO-home-01 | S2 | COPY | DONE |
 | TPO-home-04 | S2 | MISSING-FIELD | DONE |
-| TPO-home-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-06 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-05 | S2 | MISSING-FIELD | DONE |
+| TPO-home-06 | S2 | MISSING-FIELD | DONE |
 | TPO-home-07 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-08 | S2 | MISSING-FIELD | DONE |
 | TPO-home-09 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-13 | S2 | MISSING-FIELD | DONE |
 | TPO-home-26 | S2 | STATE | DONE |
 | TPO-home-27 | S2 | PERMISSION | UNCONFIRMED |
 | TPO-home-28 | S2 | MISSING-MODAL | DONE |
-| TPO-home-42 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-43 | S2 | RESPONSIVE | FIXED-ON-MAIN |
-| TPO-home-10 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-home-17 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-home-42 | S2 | MISSING-FIELD | DONE |
+| TPO-home-43 | S2 | RESPONSIVE | DONE |
+| TPO-home-10 | S3 | MISSING-FIELD | DONE |
+| TPO-home-17 | S3 | A11Y | DONE |
 | TPO-home-18 | S3 | RESPONSIVE | DONE |
 | TPO-home-19 | S3 | STATE | DONE |
 | TPO-home-20 | S3 | STATE | DONE |
 | TPO-home-21 | S3 | COPY | DONE |
 | TPO-home-23 | S3 | COPY | DONE |
-| TPO-home-25 | S3 | PERMISSION | UNCONFIRMED |
+| TPO-home-25 | S3 | PERMISSION | NOT-A-GAP |
 | TPO-home-29 | S3 | COPY | DONE |
 | TPO-home-30 | S3 | COPY | DONE |
 | TPO-home-32 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-home-34 | S3 | STATE | DONE |
-| TPO-home-36 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| TPO-home-36 | S3 | MISSING-FIELD | DONE |
 | TPO-home-37 | S3 | STATE | DONE |
-| TPO-home-39 | S3 | A11Y | FIXED-ON-MAIN |
+| TPO-home-39 | S3 | A11Y | DONE |
 | TPO-home-40 | S3 | COPY | OPEN |
-| TPO-home-41 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-home-41 | S3 | MISSING-ACTION | DONE |
 | TPO-home-R04 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-home-R05 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R06 | S3 | COPY | DONE |
@@ -104,31 +104,31 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-3.md` (and `tenants-modules-
 |---|---|---|---|
 | SA-tenants-modules-46 | S2 | MISSING-ACTION | OPEN |
 | SA-tenants-modules-47 | S2 | MISSING-ACTION | OPEN |
-| SA-tenants-modules-51 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-51 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-54 | S2 | SIDE-EFFECT | UNCONFIRMED |
 | SA-tenants-modules-57 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| SA-tenants-modules-63 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-65 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-41 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-42 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-tenants-modules-63 | S2 | MISSING-ACTION | DONE |
+| SA-tenants-modules-65 | S2 | MISSING-ACTION | DONE |
+| SA-tenants-modules-41 | S3 | MISSING-FILTER | DONE |
+| SA-tenants-modules-42 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-43 | S3 | COPY | DONE |
 | SA-tenants-modules-44 | S3 | STATE | DONE |
 | SA-tenants-modules-48 | S3 | MISSING-FILTER | OPEN |
-| SA-tenants-modules-52 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-tenants-modules-52 | S3 | MISSING-FILTER | DONE |
 | SA-tenants-modules-53 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-tenants-modules-55 | S3 | PERMISSION | FIXED-ON-MAIN |
+| SA-tenants-modules-55 | S3 | PERMISSION | DONE |
 | SA-tenants-modules-58 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-59 | S3 | MISSING-COLUMN | DONE |
 | SA-tenants-modules-60 | S3 | STATE | UNCONFIRMED |
-| SA-tenants-modules-62 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
+| SA-tenants-modules-62 | S3 | SIDE-EFFECT | DONE |
 | SA-tenants-modules-64 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
-| SA-tenants-modules-66 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-66 | S3 | MISSING-ACTION | DONE |
 | SA-tenants-modules-67 | S3 | COPY | DONE |
 | SA-tenants-modules-68 | S3 | MISSING-FIELD | UNCONFIRMED |
 | SA-tenants-modules-45 | S4 | STATE | DONE |
 | SA-tenants-modules-49 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-50 | S4 | MISSING-FILTER | DONE |
-| SA-tenants-modules-56 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
+| SA-tenants-modules-56 | S4 | MISSING-FILTER | DONE |
 | SA-tenants-modules-61 | S4 | VALIDATION | DONE |
 
 ## learner/home-courses (27: FIXED-ON-MAIN 14, UNCONFIRMED 2, OPEN 11)
@@ -192,7 +192,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-23 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-26 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | COL-course-tabs-24 | S4 | MISSING-FILTER | DONE |
-| COL-course-tabs-25 | S4 | PERMISSION | UNCONFIRMED |
+| COL-course-tabs-25 | S4 | PERMISSION | NOT-A-GAP |
 | COL-course-tabs-27 | S4 | RESPONSIVE | DONE |
 
 ## college/verification-misc (20: FIXED-ON-MAIN 12, OPEN 8)
@@ -248,7 +248,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 | COL-attendance-R02 | S3 | SIDE-EFFECT | OPEN |
 | COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | DONE |
-| COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
+| COL-placements-R01 | S3 | MISSING-EXPORT | DONE |
 | COL-projects-R02 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R02 | S4 | MISSING-FIELD | DONE |
 
@@ -314,3 +314,22 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 - Tests were written but NOT RUN by chat-4; orchestrator is responsible for integrated verification.
 
 - Source-reverified existing `SA-placements-projects-68` ten-section readiness navigation, `SA-placements-projects-72` confirmed submission review dialog, and `TPO-home-26` placements-disabled state; each had an ID-named existing test and existing code on synced main. Statuses moved from UNCONFIRMED to DONE; tests remain unrun.
+
+## Owner UX playbook freeze, gap-and-CI-only round (2026-10-18)
+
+- Owner ordered **STOP all UI/UX page work** until the single UX playbook is audited three times and signed off. Existing earlier UX page commits remain untouched; no additional restyling or UX checklist checkmarks in this round.
+- Reconciled 34 stale `FIXED-ON-MAIN` entries to `DONE`: their existing page acceptance files already say DONE, and each has an ID-named regression contract in the corresponding chat-4 unit test. Source/evidence checked only; tests were NOT RUN by this lane. Orchestrator acceptance is still required.
+- New work is limited to functional gaps and test/type repairs, not a design pass. Other incomplete OPEN/UNCONFIRMED entries remain open.
+
+
+- COL-placements-R01: source-verified new scoped list filters and both CSV endpoints; contact/interviewer fields absent in registered schema remain blank by design. Requires integration acceptance, not a claim of executed tests.
+
+### Typecheck and unit-failure triage — 2026-10-18
+
+- Source check of the stale `docs/orchestrator/typecheck-errors.md` report: six `courses-c2-learning` and the two `courses-ui2a-faculty` lesson-content fixture points, plus the faculty live-class fixture, already have `points` in the latest branch; those must not be patched twice.
+- Repaired **11 remaining missing-points fixture call sites** in `tests/integration/courses-c3-progress.test.ts` (4), `courses-c4c-assessment-progress.test.ts` (1), `sa-courses-content-authoring.test.ts` (5), and `storage-files-courses-db.test.ts` (1). Existing test names continue to cite course and authoring gap IDs. The `points` column is still required: no runtime validation was weakened.
+- Previously reported `SA-placements-projects-58` / `-63` source assertions and the `FAC-assessments-R08` zero-point participation validator were already repaired in the branch; the current test names and source expectations were rechecked, not rerun.
+- Do not infer global green from this stale report. Compiler/test execution and remaining other-lane failures belong to orchestrator; no local `tsc`, Vitest, lint, browser or PostgreSQL execution was possible in this lane.
+- Remaining queue items include `SA-placements-projects-56` (standalone creator), `SA-placements-projects-77` (audit taxonomy), `SA-tenants-modules-46/47/48` (independent findings), `COL-people-R03` (atomic dry-run CSV), `COL-attendance-R02` (approved SMS credentials/side effects), `LEARNER-home-courses-02/18/22` (semester/attendance/polling). `TPO-home-40/44` require chat-9 shell ownership. The UX playbook freeze remains absolute.
+
+- Owner-delegated decisions: `TPO-home-25` NOT-A-GAP (college-wide team workload, college scoped) and `COL-course-tabs-25` NOT-A-GAP (central validated global/college policy override; no College Admin mutation). Both documented in acceptance with ID-named source tests, **not executed**.

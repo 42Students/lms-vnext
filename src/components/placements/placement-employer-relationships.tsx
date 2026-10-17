@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import { Button } from "@/components/ui/button";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -23,6 +24,8 @@ export type PlacementEmployerRelationshipItem = {
   companyStatus?:string;
   relationshipStatus?:string;
   industry?:string|null;
+  drives?:number;
+  lastActive?:Date|null;
   isTrusted: boolean;
   ownerMembershipId: string | null;
 };
@@ -50,6 +53,7 @@ export function PlacementEmployerRelationships({
   const { showToast } = useToast();
   const [pendingId, setPendingId] =
     useState<string | null>(null);
+  const [restoreConfirmId,setRestoreConfirmId]=useState<string|null>(null);
   const [archiveConfirmId, setArchiveConfirmId] =
     useState<string | null>(null);
   const [drafts, setDrafts] = useState<
@@ -146,6 +150,21 @@ export function PlacementEmployerRelationships({
     }
   }
 
+  /** COL-placements-15: recovery is a confirmed, same-college write. */
+  async function restore(relationshipId:string){
+    if(pendingId)return;
+    setPendingId(relationshipId);
+    try{
+      await apiFetch("/api/placements/companies/"+encodeURIComponent(relationshipId)+"/restore",{method:"POST"});
+      setRestoreConfirmId(null);
+      showToast({tone:"success",title:"Company restored"});
+      router.refresh();
+    }catch{
+      showToast({tone:"error",title:"Could not restore company",
+        description:"This company cannot be restored right now. Refresh and try again."});
+    }finally{setPendingId(null);}
+  }
+
   return (
     <section className="rounded-xl border border-border bg-surface">
       <div className="border-b border-border px-5 py-4">
@@ -205,6 +224,11 @@ export function PlacementEmployerRelationships({
                     Domains: {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                     {item.industry?" · "+item.industry:""}
                   </p>
+                  {typeof item.drives==="number" ? <p className="mt-1 text-sm text-body">
+                    Drives: {item.drives} · Last active: {item.lastActive
+                      ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
+                      : "Not recorded"}
+                  </p> : null}
                   {item.websiteUrl ? (
                     <a
                       className="mt-1 inline-block text-xs font-semibold text-primary-text hover:text-primary-hover"
@@ -290,6 +314,10 @@ export function PlacementEmployerRelationships({
                 </div>
 
                 <div className="flex flex-wrap items-start gap-2 xl:justify-end">
+                  {item.relationshipStatus==="ARCHIVED" ? (
+                    <Button size="sm" variant="secondary" disabled={busy}
+                      onClick={()=>setRestoreConfirmId(item.relationshipId)}>Restore</Button>
+                  ) : (<>
                   <Button
                     size="sm"
                     variant="secondary"
@@ -347,12 +375,18 @@ export function PlacementEmployerRelationships({
                       Archive
                     </Button>
                   )}
+                  </>)}
                 </div>
               </div>
             );
           })}
         </div>
       )}
+      <ConfirmDialog open={Boolean(restoreConfirmId)} onOpenChange={next=>{if(!next)setRestoreConfirmId(null);}}
+        title="Restore this company?"
+        description="The archived company relationship will become available to this college again. Its history is preserved."
+        confirmLabel="Restore company" pending={Boolean(pendingId)}
+        onConfirm={()=>{if(restoreConfirmId)void restore(restoreConfirmId);}}/>
     </section>
   );
 }

@@ -159,7 +159,7 @@ export async function listProjectMeetings(
     .from(projectMeetings)
     .where(
       and(eq(projectMeetings.projectId,scope.project.id),
-        ...(scope.access==="LEARNER" ? [ne(projectMeetings.status,"DRAFT")] : [])),
+        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")] : [])),
     )
     .orderBy(
       asc(projectMeetings.startsAt),
@@ -476,6 +476,7 @@ export async function transitionProjectMeeting(
   }
 
   if (
+    meeting.status !== "DRAFT" &&
     meeting.status !== "REQUESTED" &&
     meeting.status !== "SCHEDULED" && meeting.status !== "RESCHEDULED"
   ) {
@@ -499,7 +500,7 @@ export async function transitionProjectMeeting(
           projectMeetings.projectId,
           scope.project.id,
         ),
-        inArray(projectMeetings.status, ["REQUESTED", "SCHEDULED","RESCHEDULED"]),
+        inArray(projectMeetings.status, ["DRAFT", "REQUESTED", "SCHEDULED","RESCHEDULED"]),
         ...(scope.access === "LEARNER" ? [
           eq(projectMeetings.status, "REQUESTED"),
           eq(projectMeetings.requestedByMembershipId, context.membership!.id),
@@ -511,6 +512,8 @@ export async function transitionProjectMeeting(
   if (!cancelled) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
+  // MEN-projects-meetings-27: drafts are never sent to learners or the wider team.
+  if (meeting.status === "DRAFT") return cancelled;
   const event=await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
     collegeId:scope.collegeId,organizationId:scope.organizationId,
