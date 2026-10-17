@@ -61,3 +61,20 @@ The following gaps each have their own named assertion in `tests/unit/tpo-drives
 | TPO-drives-41 | OPEN | Create form now stores a per-user/college browser draft, restores field/selection values and clears backup after success, with a discard option and existing unload/double-submit guard. Server-side autosave + last-saved-by/time and route-change interception remain incomplete. Named test TPO-drives-41. |
 
 | GR-60 | PARTIAL (TPO Drive Create) | Form backup uses a scoped browser key with stable hooks and no lint suppressions; named GR-60 TPO-drives-41 test. Server saved-state parity still open. |
+
+## Round 4 — additional open-gap evidence (not closure; tests written, not run)
+
+| Gap | Status | Evidence and next action |
+| --- | --- | --- |
+| TPO-drives-27 | BLOCKED | Private JD file bucket, scanner and owner storage protocol must be wired before upload. No fake file input or public URL added. Test TPO-drives-27 in `tests/unit/tpo-drives-chat-3-open-verification.test.ts`. |
+| TPO-drives-28 | OPEN | Employment type remains the fixed enum. UI now explains custom job types and placed-counting rules are separate; full configured type and placement accounting integration requires schema/UI work. Test TPO-drives-28. |
+| TPO-drives-29 | OPEN | On-site/hybrid/remote no longer imply pool logistics; work-mode helper clarifies travel and scheduling, but host/reporting/travel data not persisted. Test TPO-drives-29. |
+| TPO-drives-30 | OPEN | External portal URL is labelled accurately. Portal name is not stored, and UI explicitly says so; schema/API needed. Test TPO-drives-30. |
+| TPO-drives-31 | OPEN | Historical outside-platform record remains separate from published opportunities, still cannot attach participants or offers. Source and test TPO-drives-31 confirm no invented job. |
+| TPO-drives-32 | OPEN | Fixed, variable and stipend values are persisted on create. Repeatable packages, bonuses, stipend duration and per-role details still require workspace changes. Test TPO-drives-32. |
+| TPO-drives-34 | OPEN | Program/cohort targeting exists with tenant-scoped choices, but placement-batch counts/defaults and finished-batch semantics require further work. Test TPO-drives-34. |
+| TPO-drives-39 | OPEN | Create explicitly directs round templates and recruiter invites to after-save workspace; legacy preset chooser still missing. Test TPO-drives-39. |
+| TPO-drives-40 | OPEN | Setup review exists; a truthful "Who this reaches" panel now explains that reach can only be verified after save. Live eligibility preview on the form remains unavailable. Test TPO-drives-40. |
+| TPO-drives-42 | OPEN | Create-side publish preflight and server lifecycle deadline/pay blockers verified; direct publish and TPO lifecycle still have different mandatory round/policy rules. Test TPO-drives-42. |
+| TPO-drives-48 | OPEN | Persisted edit state explicitly refuses LIVE edits. No pretend notification choices; live-edit domain contract and audit side effects remain. Test TPO-drives-48. |
+| TPO-drives-52 | OPEN | Quick draft and full create routes remain separate. Test TPO-drives-52 locks their current exposure until workflows can be safely consolidated. |

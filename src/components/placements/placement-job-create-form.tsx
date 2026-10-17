@@ -809,6 +809,7 @@ export function PlacementJobCreateForm({
                 Contract
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -829,6 +830,7 @@ export function PlacementJobCreateForm({
                 Remote
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">These describe work location, not a pool or campus-hosted interview event. Pool reporting time and travel arrangements must be coordinated separately.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -911,6 +913,7 @@ export function PlacementJobCreateForm({
                 Employer form only
               </option>
             </select>
+            <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -922,6 +925,7 @@ export function PlacementJobCreateForm({
               type="url"
               placeholder="Required for hybrid/external-only"
             />
+            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -1136,6 +1140,12 @@ export function PlacementJobCreateForm({
           </label>
           </div>
         </div>
+      </section>
+
+      <section aria-label="Who this reaches" className="rounded-xl border border-border bg-surface p-4">
+        <h2 className="font-semibold text-foreground">Who this reaches</h2>
+        <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
+        <p className="mt-2 text-xs text-muted-foreground">Interview round templates and recruiter invitations are configured from the saved drive workspace after creating the draft.</p>
       </section>
 
       <section className="flex flex-col gap-4 rounded-xl border border-border bg-surface p-5 sm:flex-row sm:items-center sm:justify-between">
