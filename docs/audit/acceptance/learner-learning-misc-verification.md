@@ -60,3 +60,21 @@ Each of these gaps also has an ID-named test in `tests/unit/learner-learning-mis
 | LEARNER-learning-misc-34 | SOURCE-DONE (unverified) | `src/app/(authenticated)/learn/attendance/page.tsx` now reads the selected validated IST month, constraining the SQL fetch through `getLearnerAttendanceWorkspace({window:learnerAttendanceMonthWindow(selected)})`. Attendance calendar already has the same scope, and academic schedule uses a bounded window. `tests/unit/chat15-calendar-window-bounds.test.ts` names ID and checks all three paths. |
 | LEARNER-learning-misc-07 | OPEN (needs storage owner) | Legacy code/notebook/archive types are rejected by `src/modules/storage/file-policy.ts`, which belongs to the storage subsystem and is excluded from this lane by `gap-closure-lane.md`. Course-only upload validation cannot bypass signed storage grants safely. |
 | LEARNER-learning-misc-12 | BLOCKED by provider configuration | Google Drive file picker/import requires provider OAuth configuration and a scoped import flow with scanning. An arbitrary Drive link is not equivalent to an imported verified private file; no fake completion. |
+
+## Chat-3 round 12: independently checked source sub-contracts (tests authored, not run)
+
+These named regression tests check *existing pieces* of the legacy audit only. An `OPEN`, `FIXED-ON-MAIN`, or partial gap does **not** become DONE merely because one piece is rendered; missing semantics listed in the audit remain pending. No page restyling performed following the owner UX freeze. The orchestrator must execute tests and verify integration before marking full closure.
+
+| Gap | Queue disposition maintained | New named source regression |
+| --- | --- | --- |
+| LEARNER-learning-misc-03 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-03` |
+| LEARNER-learning-misc-09 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-09` |
+| LEARNER-learning-misc-20 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-20` |
+| LEARNER-learning-misc-30 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-30` |
+| LEARNER-learning-misc-32 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-32` |
+| LEARNER-learning-misc-33 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-33` |
+| LEARNER-learning-misc-35 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-35` |
+| LEARNER-learning-misc-36 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-36` |
+| LEARNER-learning-misc-38 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-38` |
+| LEARNER-learning-misc-39 | DONE — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-39` |
+| LEARNER-learning-misc-40 | FIXED-ON-MAIN — sub-contract only | `tests/unit/chat3-learner-round12-parity-contracts.test.ts` / `LEARNER-learning-misc-40` |
