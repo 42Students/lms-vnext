@@ -1,6 +1,6 @@
 # Unit test failures on main (cloud CI run, 2026-10-17)
 
-79 failing tests in 67 files (refreshed 2026-10-17 21:15). Typecheck and lint are clean. Lanes cannot run tests, so read each failing test and the code it checks, then fix whichever side is wrong (the test if the code matches legacy wording and behaviour, the code otherwise). Never delete or weaken a test just to make it pass. Most failures come from two lanes changing the same page with different wording or structure, so keep the legacy-exact wording.
+128 failing tests in 109 files (refreshed 2026-10-17 23:00). Typecheck and lint are clean. Lanes cannot run tests, so read each failing test and the code it checks, then fix whichever side is wrong (the test if the code matches legacy wording and behaviour, the code otherwise). Never delete or weaken a test just to make it pass. Most failures come from two lanes changing the same page with different wording or structure, so keep the legacy-exact wording.
 
 Owner by area:
 - chat-7: learner-* tests, chat7-* tests
@@ -16,80 +16,129 @@ Owner by area:
 
 Failing tests:
 
+- tests/unit/admin-dashboard-navigation.test.ts > W06 legacy admin Dashboard navigation fidelity > COL-dashboard-12 uses the exact legacy setup guide wording
+- tests/unit/admin-dashboard-navigation.test.ts > W06 legacy admin Dashboard navigation fidelity > does not erroneously restore a full setup guide to Super Admin
+- tests/unit/admin-dashboard-navigation.test.ts > W06 legacy admin Dashboard navigation fidelity > preserves all 14 legacy College Admin setup steps by phase
 - tests/unit/api-origin-guard.test.ts > state-changing API routes > every POST/PUT/PATCH/DELETE handler checks the request origin
-- tests/unit/chat11-exact-project-activity-duplicate-filter.test.ts > does not silently choose one exact-project history filter
-- tests/unit/chat11-mentor-meeting-filter-duplicates.test.ts > rejects contradictory meeting status and outcome query values
-- tests/unit/chat11-mentor-review-filter-duplicates.test.ts > refuses contradictory age/assignment filters on the Mentor delivery queue
-- tests/unit/chat11-mentor-task-review-filter-duplicates.test.ts > refuses ambiguous review version, age and priority query values
-- tests/unit/chat11-portfolio-activity-duplicate-filter.test.ts > never selects one of two conflicting importance or assignment selections
-- tests/unit/chat11-r3-mentor-resource-filter-duplicates.test.ts > keeps valid scalar resource filters and lets Zod reject invalid enums
-- tests/unit/chat11-r3-mentor-resource-filter-duplicates.test.ts > rejects conflicting or repeated project resource filters rather than selecting first
-- tests/unit/chat11-r4-mentor-resource-strict-page-query.test.ts > normalizes the supported fields and retains valid paging
-- tests/unit/chat11-r4-mentor-resource-strict-page-query.test.ts > rejects unknown or repeated URL filters on the mentor resources page
+- tests/unit/audit-findings-detail-link.test.ts > DB10 audit finding detail integration > opens the existing authorized persisted detail and status/retest workflow
+- tests/unit/audit-finding-version-refresh.test.ts > audit finding optimistic edit refresh > remounts editor when server version changes
+- tests/unit/chat11-attendance-delivery-recovery.test.ts > chat-11 attendance and final-delivery recovery > MEN-projects-meetings-65 has separate accept, request-change, and revision-reopen confirmations
+- tests/unit/chat11-faculty-attendance-confirm-round3.test.ts > chat-11 faculty attendance confirmation and mobile marking > FAC-attendance-grades-20 keeps a narrow-screen sticky submission bar and responsive roster
+- tests/unit/chat11-mentor-delivery-decision-round3.test.ts > mentor review parity > MEN-projects-meetings-65 has separate legacy mentor decision dialogs and retains administrator controls
+- tests/unit/chat12-company-depth-round6.test.ts > Chat12 company depth and URL filters > TPO-students-48 displays the current page count
+- tests/unit/chat12-filter-chips-mobile-round5.test.ts > chat12 mobile filters and chips > TPO-students-48 announces both filtered counts and visible-page selection
 - tests/unit/chat12-remaining-students-round5.test.ts > chat12 remaining Students scope and safety > TPO-students-07 retains DB08 immutable lift history while student dispute is still OPEN
+- tests/unit/chat12-round11-recruiter-request-safe-actions.test.ts > chat-12 recruiter drive request safe review > TPO-requests-verification-01 stages schema changes without pretending kind-specific review effects exist
 - tests/unit/chat12-round12-profile-facets.test.ts > TPO Students restored profile filters and visible labels > TPO-students-46 retains only the primary import in the header and discloses ancillary tools
+- tests/unit/chat12-round14-unified-selection.test.ts > chat-12 unified page selection > TPO-students-17 resets shared selection on page/filter navigation without mutating hidden records
+- tests/unit/chat12-round14-unified-selection.test.ts > chat-12 unified page selection > TPO-students-48 announces visible selection and filter count without including hidden students
 - tests/unit/chat12-round17-verified-legacy-gaps.test.ts > chat-12 independently verified legacy copy and summary > TPO-students-46 uses exact single Students header subtitle and primary import
+- tests/unit/chat12-round18-grid-checkboxes.test.ts > TPO-students-17 keeps grid selection limited to visible page rows and drops hidden IDs on header clear
+- tests/unit/chat12-round18-grid-checkboxes.test.ts > TPO-students-R03 makes table and mobile row checkboxes use the same selection as bulk actions
+- tests/unit/chat12-round19-roster-responsive-counts.test.ts > TPO Students phone presentation and scoped selection summary > TPO-students-48 announces selected of filtered view with exact scoped totals
+- tests/unit/chat12-round35-cross-page-selection.test.ts > TPO-students-17 preserves a tenant-scoped whole-view 5000-row selection across pages and range-selects with Shift
+- tests/unit/chat12-round43-general-request-kinds.test.ts > Five distinct learner requests > TPO-requests-verification-01 validates each payload discriminator and ignores unauthenticated HTTP proof
+- tests/unit/chat12-round9-students-resilience.test.ts > chat-12 Students S2/S3 audited gap guardrails > TPO-students-17 counts selections accessibly and limits Ctrl+A to the visible page
 - tests/unit/chat12-timed-debar-round3.test.ts > TPO timed debarments wired to DB08 > TPO-students-07 preserves immutable DB08 history and refuses a concurrent second active debarment
+- tests/unit/chat12-tpo-journey-export.test.ts > chat-12 TPO placement metrics and exporting > TPO-students-48 gives an announced count of visible students and selected rows
 - tests/unit/chat12-tpo-students-contract.test.ts > Chat-12 Students claimed-main gaps ? verified source contracts > TPO-students-11 gives roster and per-student private notes a persisted editor
 - tests/unit/chat12-tpo-students-copy.test.ts > Chat-12 TPO Students legacy wording > TPO-students-47 restores roster search, empty and failure wording
-- tests/unit/chat2-join-form-state.test.ts > TPO-campaigns-public-R03 TPO-campaigns-public-R06 join states > supports Enter submit, editable details and one-time-code autocomplete
-- tests/unit/chat2-public-join-states.test.ts > Public recruiter invitation parity > TPO-campaigns-public-24 shows the college-link loading error and exact retry
-- tests/unit/chat2-tpo-recruiter-leads-copy.test.ts > TPO recruiter leads visible legacy parity > TPO-recruiters-40 restores edit-action heading and legacy Save label
+- tests/unit/chat12-verification-reasons-round3.test.ts > chat-12 Verification legacy send-back reason selector > TPO-requests-verification-27 permits a custom-only reason but prevents an empty send-back
+- tests/unit/chat13-application-rescreen.test.ts > Application re-screen on real academic evidence > SA-placements-projects-21 protects mutation origin and shows scored policy checks without a fake match score
+- tests/unit/chat13-super-admin-placements-s3-copy-verification.test.ts > Chat 13 Super Admin placement legacy copy and S3 contracts > SA-placements-projects-36 recruiter legacy copy
+- tests/unit/chat13-target-audience-cascade.test.ts > Drive Target Audience Department Program Batch Class > SA-placements-projects-14 scopes class choices by department and persists section whitelist
+- tests/unit/chat15-learner-general-requests.test.ts > chat-15 learner general placement requests > LEARNER-placements-51 validates registration changes, off-campus offers and corrections before persistence
+- tests/unit/chat15-learner-general-requests.test.ts > chat-15 learner general placement requests > LEARNER-placements-52 offers a prefilled dispute for a persisted ABSENT round
+- tests/unit/chat15-reassigned-learner-parity.test.ts > chat-15 reassigned learner course and placement parity > LEARNER-course-detail-20 published roadmap empty state uses exact legacy copy
+- tests/unit/chat16-reassigned-mentor-parity.test.ts > chat-16 reassigned mentor legacy parity > MEN-projects-meetings-53 models type, status, pin, access notes and scoped sprint/task associations
+- tests/unit/chat16-reassigned-mentor-parity.test.ts > chat-16 reassigned mentor legacy parity > MEN-projects-meetings-57 shows resource status, pin, file/link type, notes and safe link action
+- tests/unit/chat16-reassigned-mentor-parity.test.ts > chat-16 reassigned mentor legacy parity > MEN-projects-meetings-65 confirms each final submission decision and preserves stale-review guidance
+- tests/unit/chat16-reassigned-tracker-parity.test.ts > chat-16 reassigned tracker issue workflows > SA-placements-projects-101 binds reports to authenticated user and returns only that user's list/detail
+- tests/unit/chat2-company-placed-policy.test.ts > TPO company placement rule and hiring history > TPO-companies-06 connects the name-page strip and Companies tab to evidence
+- tests/unit/chat2-notices-retraction-update.test.ts > TPO announcement delivery retraction and edit notifications > TPO-inbox-team-51 supports versioned edits and optional scoped re-notification
+- tests/unit/chat2-recruiter-access-copy.test.ts > Recruiter access and notification wording > REC-calendar-messages-profile-R03 never says conversations are unavailable while the real inbox exists
+- tests/unit/chat2-recruiter-draft-discard.test.ts > Recruiter Messages draft protection > REC-calendar-messages-profile-12 warns before closing a nonempty reply
+- tests/unit/chat2-tpo-public-link-settings.test.ts > TPO-settings-audit-55 recruiter link > TPO-settings-audit-55 is reachable through settings navigation
+- tests/unit/chat4-super-admin-projects-gap-closure.test.ts > chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-58 shows average-based mentor overload, not a fixed cap
 - tests/unit/chat4-super-admin-projects-gap-closure.test.ts > chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-63 retains the verified Projects behavior
-- tests/unit/chat4-super-admin-projects-gap-closure.test.ts > chat-4 Super Admin Projects verified gap coverage > SA-placements-projects-92 preserves origin, reason, breadcrumb and admin shortcut URLs
-- tests/unit/chat6-cross-page-verification-round4.test.ts > chat-6 cross-page gap source verification > SA-academics-people-58 retains in-page link-based content authoring and safely explains blocked binary uploads
-- tests/unit/chat6-learner-notification-copy-round2.test.ts > Learner notification legacy copy > LEARNER-profile-misc-23 removes extraneous history header counts and pinned duplication while retaining feed
-- tests/unit/chat6-superadmin-content-round2.test.ts > Super Admin Courses and Content gap closure > SA-academics-people-63 exact legacy video and live class labels and help
-- tests/unit/chat9-calendar-event-legend.test.ts > TPO Calendar kind legend > TPO-calendar-reports-11 renders counted color chips but retains multi-kind selection as open
-- tests/unit/chat9-college-project-resource-audit.test.ts > College workspace resource activity > COL-projects-18 recognizes resource added edited saved removed without treating task events as resource edits
-- tests/unit/chat9-college-projects-round4-evidence.test.ts > College Projects gap closure round 4 > COL-projects-19 restores workspace, submissions and template page labels
-- tests/unit/chat9-college-projects-round4-evidence.test.ts > College Projects gap closure round 4 > COL-projects-21 gives archived-workspace recovery and the existing creation/reassignment actions
-- tests/unit/chat9-college-projects-round4-evidence.test.ts > College Projects gap closure round 4 > COL-projects-22 is an improvement, not a missing legacy mentor/class/template filter
-- tests/unit/chat9-college-projects-s2-closure.test.ts > College Admin Projects S2 legacy gap closure > COL-projects-06 creates one workspace per student only after scoped cohort preflight and confirmation
-- tests/unit/chat9-project-reassignment-entry.test.ts > college Projects reassignment workflow entry > links the existing reassignment route from Workspaces while retaining detail access
-- tests/unit/chat9-round6-college-projects-parity.test.ts > College Admin Projects round 6 > COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy risk description
-- tests/unit/chat9-round6-college-projects-parity.test.ts > College Admin Projects round 6 > COL-projects-22 is NOT-A-GAP: mentor class and template filters were absent in the old Workspaces list
+- tests/unit/chat6-faculty-zero-point-assignment-r08.test.ts > Faculty zero-point participation assignments > FAC-assessments-R08 permits zero-point participation assignments without allowing negative or noninteger marks
+- tests/unit/chat6-recruiter-lifecycle-round3.test.ts > Super Admin recruiter legacy lifecycle > SA-academics-people-114 restores recruiter accounts page search and college access copy
+- tests/unit/chat7-college-project-legacy-one-tab.test.ts > College Admin Projects legacy Workspaces and one tab strip > shows legacy Projects group and single Workspaces page heading
+- tests/unit/chat7-legacy-faculty-quiz-report-copy.test.ts > Faculty QuizReportContent.jsx dev legacy headings and empty states > preserves dynamic report title and exact legacy section names
+- tests/unit/chat7-project-workspace-legacy-heading.test.ts > Project workspace legacy title-only headings across roles > renders the real project title and optional persisted summary without invented eyebrow
+- tests/unit/chat9-college-project-team-entry.test.ts > College projects team and resource evidence > COL-projects-15 links workspace Team to an authorized preselected reassignment without inferring a different tenant
+- tests/unit/chat9-phase2-college-group-tabs.test.ts > college group tabs exact legacy navigation labels > renders academic section labels in exact dev-legacy order
+- tests/unit/chat9-round6-calendar-settings.test.ts > chat-9 round 6 calendar and settings > TPO-settings-audit-03 uses the original Settings section names in the grouped navigation
 - tests/unit/chat9-round6-project-risk-audit.test.ts > College Projects risk and activity acceptance > COL-projects-18 enables admin resource change/search without overriding mentor Activity feed
-- tests/unit/chat9-round6-tpo-settings-and-audit.test.ts > chat-9 TPO settings and audit evidence round 6 > TPO-settings-audit-03 avoids developer-only persistence labels in What Companies See
-- tests/unit/chat9-super-admin-college-create-copy.test.ts > Super Admin create-college exact legacy labels > retains scope-controlled organization ID and required fields
-- tests/unit/chat9-super-admin-exact-page-copy.test.ts > Super Admin exact dev-legacy per-page title strings (legacy-copy-B) > Recruiter accounts editor heading exactly matches its Placements tab
-- tests/unit/chat9-tpo-settings-legacy-graceful.test.ts > TPO Settings legacy copy and graceful editing > TPO-settings-audit-03 uses the original placement settings section names
-- tests/unit/college-courses-content-gap-closure.test.ts > College Courses & Content gap closure > COL-courses-content-17 archiving warns about active course offerings rather than silently deleting
+- tests/unit/chat9-super-admin-navigation-reachability.test.ts > Super Admin 13-row sidebar grouped page reachability > every grouped tab is a real vNext Super Admin page with unique active state
+- tests/unit/chat9-tpo-settings-source-closure.test.ts > TPO settings audited source features > TPO-settings-audit-74 verifies partial implementation in src/app/(authenticated)/tpo/settings/public-page/page.tsx
 - tests/unit/college-mentor-round7-gap-verification.test.ts > chat-11 college and mentor interaction contracts > MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows
+- tests/unit/college-people-gap-closure.test.ts > College People legacy audited page contracts > COL-people-20 Super Admin permission guards COLLEGE_ADMIN grant and revoke before writes
+- tests/unit/college-setup-checklist-model.test.ts > College Admin setup checklist evidence > provides only explicit relative College Admin deep links
+- tests/unit/college-term-mapping-model.test.ts > Semester-course mapping boundaries > accepts strict curriculum mapping input
+- tests/unit/faculty-blueprint-round16-14.test.ts > validates authoring fields before a confirmed mutation is sent
 - tests/unit/graceful-raw-error-scan.test.ts > new raw-error and mutation regression gate > GR-09 rejects new renderings of API codes or internal error messages
 - tests/unit/graceful-raw-error-scan.test.ts > new raw-error and mutation regression gate > GR-31 inventories newly changed unguarded mutating components
 - tests/unit/graceful-route-coverage.test.ts > route error and loading coverage > GR-19 every page/layout segment has a bounded loading fallback
 - tests/unit/graceful-route-coverage.test.ts > route error and loading coverage > GR-20 every page/layout segment has a customer-safe retry boundary
 - tests/unit/hr-drive-round-presets.test.ts > HR Request Drive local round presets > replaces only draft rounds with supported legacy kinds
+- tests/unit/hr-offer-pagination.test.ts > HR offer report pagination contract > accepts only recorded status codes and positive page numbers
+- tests/unit/hr-offer-pagination.test.ts > HR offer report pagination contract > bounds each database page and labels empty out-of-range pages
+- tests/unit/learner-added-pages-recovery.test.ts > Learner added page mobile/recovery/empty audit > learn/my-placements/applications/[applicationId]/company has a real mobile layout and an honest empty state
+- tests/unit/learner-assessment-parity.test.ts > learner assessment parity pages > keeps legacy aggregate assessment mechanics
 - tests/unit/learner-contact-edit-source.test.ts > Learner contacts persisted write and UI route contracts > only exposes a confirmed contact-edit dialog, leaving login credentials alone
 - tests/unit/learner-course-interaction-model.test.ts > learner Course interaction model > allows manual completion only for accessible external resources
 - tests/unit/learner-course-page-parity.test.ts > learner Course page parity contract > keeps legacy Learning Path filters, lesson expansion and deep-link focus
+- tests/unit/learner-course-page-parity.test.ts > learner Course page parity contract > keeps storage-backed Course content behind an authenticated delivery-scoped route
+- tests/unit/learner-notification-surfaces-source.test.ts > Learner notification and placement UI source guards > links pagination from the existing personal/announcement inbox
 - tests/unit/learner-notification-surfaces-source.test.ts > Learner notification and placement UI source guards > scopes Learner mark-read through persisted membership even on legacy shared API routes
-- tests/unit/learner-projects-round2-gap-closure.test.ts > learner/projects round-two gap verification > LEARNER-projects-09 uses Projects shell heading with the specific project subtitle
+- tests/unit/learner-placements-37-schedule.test.ts > LEARNER-placements-37 schedule details > LEARNER-placements-37 exposes persisted join and test URLs only after HTTPS checks
+- tests/unit/learner-placements-chat7-followup.test.ts > Chat-7 learner placements follow-up > LEARNER-placements-33 retains vNext application summary as intentional design
+- tests/unit/learner-placements-chat7-queue-review.test.ts > chat-7 learner placements queued closure audit > LEARNER-placements-33 retains OD-38 approved application summary
+- tests/unit/learner-placements-chat7-queue-review.test.ts > chat-7 learner placements queued closure audit > LEARNER-placements-41 shows scheduled online assessments without inventing result confirmations
+- tests/unit/learner-placements-chat7-round5-contracts.test.ts > Learner Placements chat-7 round-5 grouped source contracts > LEARNER-placements-37 retains the reviewed learner journey behavior
+- tests/unit/learner-placements-chat7-schedule-surface.test.ts > Chat-7 schedule parity > LEARNER-placements-41 exposes online assessments without pretending schedule is attendance
+- tests/unit/learner-placements-round2-source-contracts.test.ts > Chat-7 learner placement verified-closure source contracts > LEARNER-placements-37 source behavior or reviewed disposition
 - tests/unit/learner-projects-round2-gap-closure.test.ts > learner/projects round-two gap verification > LEARNER-projects-34 distinguishes no resource, malformed address and popup failures
+- tests/unit/learner-roadmap-empty-state-model.test.ts > published learner Learning Path empty states > LEARNER-course-detail-20 distinguishes unpublished path, no lessons and lessons without items
 - tests/unit/mentor-activity-round4.test.ts > chat-11 mentor activity and resource parity > MEN-projects-meetings-54 offers mentor-only visibility and row tag
+- tests/unit/mentor-activity-round4.test.ts > chat-11 mentor activity and resource parity > MEN-projects-meetings-62 renders relative time with exact timestamp on hover
+- tests/unit/mentor-projects-chat7-final-r7.test.ts > mentor gaps round-seven behavior > MEN-projects-meetings-14 preserves persisted truth and legacy controls
+- tests/unit/mentor-projects-chat7-round6-workflows.test.ts > chat-7 mentor workflows round 6 > MEN-projects-meetings-R06 shows an honest zero-release state pending sprint creation improvements
+- tests/unit/mentor-resource-list-round5.test.ts > mentor resource list parity > MEN-projects-meetings-57 lists human-facing resource labels, last update, state and safe links
 - tests/unit/projects-phase2-readiness-ui.test.ts > PR-S2-05 legacy College Admin override interface > replaces the disabled placeholder and wires manager action
 - tests/unit/projects-phase2-workspace-copy-audit.test.ts > Phase 2 exact old-LMS Projects headings and empty states > uses legacy Team and Resources copy, not implementation language
 - tests/unit/projects-resource-files-tab-wiring.test.ts > Project resources tab file backend wiring > keeps the legacy link/note resource controls intact
 - tests/unit/public-auth-round3-gap-verification.test.ts > Public login and session round-three verified closure > PUB-auth-public-18 never caches domain lookup outages as unknown tenants
 - tests/unit/public-auth-round3-gap-verification.test.ts > Public login and session round-three verified closure > PUB-auth-public-32 login uses shared guarded API and friendly failure responses
-- tests/unit/recruiter-home-drives-chat7-drafts-r7.test.ts > chat-7 recruiter drive request legacy safety > REC-home-drives-32 matches the reviewed contract
-- tests/unit/tpo-accreditation-students.test.ts > TPO-calendar-reports-33 NAAC student evidence > never exports duplicate accepted offers or spreadsheet formulas unsafely
-- tests/unit/tpo-batches-chat5-round3.test.ts > TPO batches chat-5 verified source and behavior > TPO-batches-19: verifies persisted batch workflow contract
-- tests/unit/tpo-batch-lifecycle-model.test.ts > batch lifecycle versioned transitions > requires invitation before finish and allows reopening
-- tests/unit/tpo-batch-sort-model.test.ts > TPO batch directory sorting > rejects invalid URL values
-- tests/unit/tpo-calendar-followup-model.test.ts > TPO calendar follow-up boundaries > creates only a known lead, offset-aware date and optional note
-- tests/unit/tpo-calendar-reports-06-done.test.ts > TPO-calendar-reports-06 complete follow-up from calendar > exposes Done alongside Reschedule only for open TPO follow-ups
-- tests/unit/tpo-drive-discussion-chat5.test.ts > TPO drive discussion parity > TPO-drive-workspace-64 keeps recruiter follow-up accessible after closing a drive
-- tests/unit/tpo-drives-chat-3-open-verification.test.ts > chat-3 remaining Drives audit evidence ? open unless explicitly closed > TPO-drives-39 round templates are disclosed as after-save work, not pretended to exist
+- tests/unit/rec-notification-bell.test.ts > REC-calendar-messages-profile-21 recruiter notification bell > polls every 30 s, and scopes mark-read to caller and employer grants
+- tests/unit/recruiter-chat14-round1.test.ts > chat-14 recruiter reassigned exact-parity round 1 > REC-calendar-messages-profile-27 saves name designation and mobile atomically and warns before leaving dirty form
+- tests/unit/recruiter-chat14-round2.test.ts > chat-14 recruiter reassignment batch 2 > REC-home-drives-52 pages actual persisted offers by 15 and includes expired offers
+- tests/unit/super-admin-dashboard-navigation.test.ts > Super Admin dashboard global vs college navigation > has no disabled placeholders for existing global routes
+- tests/unit/superadmin-tenants-gap-closure.test.ts > Super Admin Tenants/Modules legacy gap contracts > SA-tenants-modules-R03 Audit Findings requires an active Super Admin rather than a broad logs role
+- tests/unit/super-admin-tracker-active-route-guards.test.ts > DB10 tracker Super Admin active account route fences > blocks inactive actors before database readiness on src/app/(authenticated)/tracker/audit-findings/page.tsx
+- tests/unit/super-admin-tracker-detail-url-denial.test.ts > tracker detail public ID guard > reuses the guarded page for audit finding details
+- tests/unit/super-admin-videos-directory.test.ts > Super Admin Videos directory pure model > includes hosted and YouTube videos, not other content
+- tests/unit/tpo-batches-bulk-legacy-chat5.test.ts > TPO batch remaining legacy controls > TPO-batches-43 offers reason presets and enforces a three-character ineligibility reason
+- tests/unit/tpo-batches-chat5-next-round.test.ts > TPO Batches next-round source and behavioral gap closure > GR-04 GR-30 GR-32 prevent raw errors and double submissions in batch decision editor
+- tests/unit/tpo-batches-chat5-next-round.test.ts > TPO Batches next-round source and behavioral gap closure > TPO-batches-40 uses the expected legacy import heading and confirm button
+- tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts > chat-5 OPEN gap regression baselines > TPO-batches-20 partial baseline ? further implementation required
+- tests/unit/tpo-drive-cancel-model.test.ts > TPO drive cancellation > allows only published active-season drives against an unchanged impact
+- tests/unit/tpo-drive-discussion-chat2.test.ts > TPO drive discussion handoff > TPO-inbox-team-07 keeps scoped recruiter discussion reachable from drive and legacy tab alias
+- tests/unit/tpo-drives-chat-3-open-verification.test.ts > chat-3 remaining Drives audit evidence ? open unless explicitly closed > TPO-drives-47 recruiter lead invite is not misrepresented as a drive-level email
 - tests/unit/tpo-drives-chat-3-round4.test.ts > chat-3 Drives round 4 > TPO-drives-51 college administrator has a real separate create flow
-- tests/unit/tpo-drives-gap-closure.test.ts > TPO Drives independently inspected legacy gap contracts > TPO-drives-42 future deadline pay and HTTPS preflight happen before creating a company
-- tests/unit/tpo-drive-workspace-chat5-round6.test.ts > chat-5 Drive Workspace next 25+ OPEN gap evidence > TPO-drive-workspace-64 partial or implemented scope is recorded without inferring unsupported parity
-- tests/unit/tpo-inbox-team-graceful-round3.test.ts > Chat-2 graceful messaging and TPO action acceptance > TPO-inbox-team-54 and GR-90 never surface a read-cell API error code
-- tests/unit/tpo-inbox-team-round5-parity-review.test.ts > TPO inbox/team outstanding legacy contracts > TPO-inbox-team-60 keeps the readable bell actions distinct from missing event-producer coverage
-- tests/unit/tpo-recruiter-lead-policy.test.ts > W05 legacy recruiter lead policy > infers company only from a non-free work email
-- tests/unit/tpo-team-filter-round4.test.ts > TPO conversations filters > TPO-inbox-team-18 counts and filters available thread types without guessing unsupported object threads
+- tests/unit/tpo-drive-workspace-chat5-round6.test.ts > chat-5 Drive Workspace next 25+ OPEN gap evidence > TPO-drive-workspace-57 partial or implemented scope is recorded without inferring unsupported parity
+- tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts > TPO drive workspace S3 and S4 verified contracts > TPO-drive-workspace-57: validates the scoped drive-workspace behavior
+- tests/unit/tpo-inbox-team-round2.test.ts > Chat-2 TPO Inbox + Team legacy verification round 2 > TPO-inbox-team-R05 separates Team read positions from bell notification reads
+- tests/unit/tpo-notice-edit-validation.test.ts > requires a version and rejects foreign scope, HTML-empty title and oversized text
+- tests/unit/tpo-settings-primary-nav.test.ts > TPO-settings-audit-01 legacy primary Settings sections > keeps the ten legacy sections in original group order alongside linked destinations
+- tests/unit/tpo-team-activity-notices-chat2.test.ts > Team inbox activity and participant notices > TPO-inbox-team-29 sends a person-named bell and safe preview with a message deep link
+- tests/unit/tpo-team-asks-chat2.test.ts > Team asks permission and lifecycle > TPO-inbox-team-22 records proposed scoped table/foreign keys, not an unnumbered production migration
+- tests/unit/tpo-team-away-chat2.test.ts > TPO Team away until > TPO-inbox-team-34 validates time and uses only the active scoped member for writes
 - tests/unit/tpo-team-legacy-people-chat2.test.ts > TPO People roster legacy copy > TPO-inbox-team-32 keeps the number of displayed team members consistent with the filtered roster
+- tests/unit/tpo-team-topic-length-chat2.test.ts > TPO Team legacy topic limits > TPO-inbox-team-17 aligns form and persisted topic length without altering recruiter messaging
+- tests/unit/tracker-audit-findings-guard.test.ts > tracker audit findings route guard > redirects non-super-admins like the other tracker pages
+- tests/unit/t-s2-08-publication-navigation.test.ts > T-S2-08 public publishing remains a scoped TPO setting > keeps the new setting reachable
 - tests/unit/w03-archived-project-readonly.test.ts > W03 archived project read-only UI contract > derives one read-only flag from persisted ARCHIVED status
 - tests/unit/w03-archived-project-readonly.test.ts > W03 archived project read-only UI contract > hides delivery, resource and meeting mutation controls while retaining history sections
 - tests/unit/w03-mentor-attention.test.ts > W03 mentor notification attention parity > avoids stalled alerts for missing genuine activity or nonactive projects
