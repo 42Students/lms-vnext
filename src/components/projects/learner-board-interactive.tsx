@@ -77,7 +77,9 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   if(statuses.includes(lane as EditableStatus))void move(id,lane as EditableStatus);
  }
  return <section aria-label="Project Board lanes" className="space-y-3">
-  <p className="text-sm text-body">Drag your own task into a lane, or use the move control for touch and keyboard.</p>
+  <p className="text-sm text-body">{readOnly
+    ?"This workspace is read-only. Task moves and backlog pulls are disabled."
+    :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
   {error?<p role="alert" className="rounded border border-error p-3 text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="min-h-10 text-sm font-semibold text-primary-text underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
