@@ -37,7 +37,11 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      assignmentScope==="ASSIGNED"?task.assigneeMembershipId!==null:
      task.assigneeMembershipId===assignmentScope));
  }),[tasks,release,sprint,sprints,priority,status,assignmentScope]);
- const groups=[{membershipId:null,displayName:"Unassigned"},...learners];
+ const activeMemberIds=new Set(learners.map(row=>row.membershipId));
+ const previousAssignees=[...new Set(tasks.map(row=>row.assigneeMembershipId)
+   .filter((id):id is string=>Boolean(id)&&!activeMemberIds.has(id)))];
+ const groups=[{membershipId:null,displayName:"Unassigned"},...learners,
+   ...previousAssignees.map(id=>({membershipId:id,displayName:"Former member"}))];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
  const projectUnassigned=tasks.filter(t=>t.assigneeMembershipId===null &&
    !["DONE","IN_REVIEW"].includes(t.status)).length;
