@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, desc, eq, exists, gte, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings, placementJobRoleOptions,
-  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments } from "@/db/schema";
+  placementJobs, users, learnerProfiles, learnerProgramEnrollments, cohorts, programs, departments,placementCandidateAcademicEvidence } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
@@ -65,6 +65,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
      eq(collegeMemberships.collegeId,collegeId)))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+    .leftJoin(placementCandidateAcademicEvidence,
+     eq(placementCandidateAcademicEvidence.membershipId,collegeMemberships.id))
     .innerJoin(placementJobRoleOptions,and(eq(placementJobRoleOptions.id,placementApplications.roleOptionId),
      eq(placementJobRoleOptions.jobId,job.id)))
     .leftJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -82,6 +84,33 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     rollNumber:learnerProfiles.rollNumber,
     email:users.email,
     phone:users.phoneE164,
+    batchName:sql<string|null>`(select c.name from learner_program_enrollments e
+      join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
+      join departments d on d.id=p.department_id
+      where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+        and d.college_id=${collegeId}
+      order by e.admitted_at desc,e.id desc limit 1)`,
+    branchName:sql<string|null>`(select d.name from learner_program_enrollments e
+      join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
+      join departments d on d.id=p.department_id
+      where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+        and d.college_id=${collegeId}
+      order by e.admitted_at desc,e.id desc limit 1)`,
+    cgpaHundredths:placementCandidateAcademicEvidence.cgpaHundredths,
+    activeBacklogs:placementCandidateAcademicEvidence.activeBacklogs,
+    pastBacklogs:placementCandidateAcademicEvidence.pastBacklogs,
+    tenthPctBasisPoints:placementCandidateAcademicEvidence.tenthPctBasisPoints,
+    twelfthPctBasisPoints:placementCandidateAcademicEvidence.twelfthPctBasisPoints,
+    lastRound:sql<string|null>`(select r.name from placement_round_results result
+      join placement_job_rounds r on r.id=result.round_id
+      where result.application_id=${placementApplications.id}
+       and result.status='APPLIED' and result.superseded_at is null
+      order by r.sequence desc,result.updated_at desc limit 1)`,
+    lastResult:sql<string|null>`(select result.outcome from placement_round_results result
+      join placement_job_rounds r on r.id=result.round_id
+      where result.application_id=${placementApplications.id}
+       and result.status='APPLIED' and result.superseded_at is null
+      order by r.sequence desc,result.updated_at desc limit 1)`,
     applicationStatus:placementApplications.status,
     screeningStatus:placementApplicationScreenings.status,
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
