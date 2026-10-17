@@ -206,7 +206,7 @@ export function ActivityCenter({
                   <div><dt>Events grouped</dt><dd>{group.count>1?"several at once ("+group.count+")":"1"}</dd></div>
                   {Object.entries(item.event.metadata).map(([name,value])=><div key={name}>
                     <dt>{humanize(name)}</dt><dd className="break-all">{typeof value==="string"?value:JSON.stringify(value)}</dd>
-                  </div>)
+                  </div>)}
                 </dl>
               </details>
             </article>
