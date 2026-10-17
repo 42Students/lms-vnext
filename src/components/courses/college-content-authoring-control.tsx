@@ -198,6 +198,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   </div>}
   {existing.length>0&&<div className="space-y-2">
    <h3 className="text-sm font-semibold">Existing Content</h3>
+   {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground">
+    Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
+    You can still edit Resource notes and its saved HTTPS link.
+   </p>:null}
    {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
