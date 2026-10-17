@@ -212,3 +212,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 57: checked 15 additional FIXED-ON-MAIN source contracts in tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts; runtime and browser acceptance still required.
 
 - Round 58: verified 11 further FIXED-ON-MAIN request IDs against actual source with named tests in tests/unit/chat12-fixed-main-requests-audit-r3.test.ts; runtime effects remain independently unverified.
+
+- Round 59: TPO-students-12 visibility override consumes the same authorized filtered view IDs as selection and Add-to-Drive (up to 5,000 fetched, max 25 overrides per review); page-local-only selection leak fixed. Tests source-authored, runtime acceptance pending.
