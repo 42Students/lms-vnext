@@ -1,6 +1,6 @@
 import "server-only";
 
-import { asc, eq, sql } from "drizzle-orm";
+import { and, asc, eq, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { courseLearningPaths, courseLessons, courseOfferings, courses, departments, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
