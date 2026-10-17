@@ -24,12 +24,20 @@ export class TpoCommunicationSettingsError extends Error {
 export async function getTpoCommunicationSettings(context:RequestContext){
  const collegeId=await requireTpoBatchActor(context);
  if(!await placementTableExists("placement_tpo_college_settings"))
-  return {ready:false as const,smsMonthlyCap:500,emailSignature:"",recruiterAccessMonths:6,prepThresholdPct:60,version:null};
+  return {ready:false as const,smsMonthlyCap:500,emailSignature:"",recruiterAccessMonths:6,prepThresholdPct:60,notifyDriveOpenEmail:true,notifyResultApplied:true,notifyNudges:true,notifyPrepAssigned:true,version:null};
  const [row]=await getDb().select({smsMonthlyCap:placementTpoCollegeSettings.smsMonthlyCap,
-  emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,updatedAt:placementTpoCollegeSettings.updatedAt})
+  emailSignature:placementTpoCollegeSettings.emailSignature,recruiterAccessMonths:placementTpoCollegeSettings.recruiterAccessMonths,prepThresholdPct:placementTpoCollegeSettings.prepThresholdPct,
+  notifyDriveOpenEmail:placementTpoCollegeSettings.notifyDriveOpenEmail,
+  notifyResultApplied:placementTpoCollegeSettings.notifyResultApplied,
+  notifyNudges:placementTpoCollegeSettings.notifyNudges,
+  notifyPrepAssigned:placementTpoCollegeSettings.notifyPrepAssigned,updatedAt:placementTpoCollegeSettings.updatedAt})
   .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,collegeId)).limit(1);
  return {ready:true as const,smsMonthlyCap:row?.smsMonthlyCap??500,
-  emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,prepThresholdPct:row?.prepThresholdPct??60,version:row?.updatedAt.toISOString()??null};
+  emailSignature:row?.emailSignature??"",recruiterAccessMonths:row?.recruiterAccessMonths??6,prepThresholdPct:row?.prepThresholdPct??60,
+  notifyDriveOpenEmail:row?.notifyDriveOpenEmail??true,
+  notifyResultApplied:row?.notifyResultApplied??true,
+  notifyNudges:row?.notifyNudges??true,
+  notifyPrepAssigned:row?.notifyPrepAssigned??true,version:row?.updatedAt.toISOString()??null};
 }
 
 export async function updateTpoCommunicationSettings(context:RequestContext,raw:unknown){
