@@ -22,7 +22,7 @@ describe("Super Admin Placements documented parity and owner-accepted navigation
   const s=source("src/components/placements/placement-job-create-form.tsx");
   expect(s).toContain("No active placement season.");
   expect(s).toContain("Open placement seasons");
-  expect(s).toContain("disabled={pending || !activeSeason}");
+  expect(s).toContain("disabled={pending || !activeSeason || uncertainCreate}");
  });
  it("SA-placements-projects-24 implements global Verified by 42 with a not-verified filter",()=>{
   const page=source("src/app/(authenticated)/admin/companies/page.tsx");
