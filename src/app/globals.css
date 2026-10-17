@@ -121,6 +121,13 @@
   --color-info: var(--lms-info);
 }
 
+/* Failsafe for existing legacy class pairs outside the audited component slice.
+ * New code must use text-on-primary, enforced by UX source review. */
+.bg-primary.text-white,
+.bg-primary.text-primary-foreground {
+  color: var(--lms-on-primary);
+}
+
 * {
   box-sizing: border-box;
 }
