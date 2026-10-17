@@ -294,28 +294,6 @@ export async function updateCourseAssignment(
       facultyAssignmentLegacyEdit(current, input));
   }
 
-  if (
-    input.allowedMethods !== undefined ||
-    (input.maxPoints !== undefined && input.maxPoints !== current.maxPoints)
-  ) {
-    const [submission] = await getDb()
-      .select({ id: assignmentSubmissions.id })
-      .from(assignmentSubmissions)
-      .where(
-        eq(
-          assignmentSubmissions.assignmentId,
-          assignmentId,
-        ),
-      )
-      .limit(1);
-
-    if (submission) {
-      throw new CoursesServiceError(
-        "ASSIGNMENT_HAS_SUBMISSIONS",
-      );
-    }
-  }
-
   try {
     const [updated] = await getDb().transaction(async tx => {
       const [locked] = await tx.select().from(courseAssignments)
