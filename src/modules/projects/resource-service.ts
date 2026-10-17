@@ -29,6 +29,7 @@ import {
   createProjectResourceInputSchema,
   projectResourceIdSchema,
   updateProjectResourceInputSchema,
+  archiveProjectResourceInputSchema,
   type CreateProjectResourceInput,
   type UpdateProjectResourceInput,
 } from "./validation";
@@ -235,6 +236,12 @@ export async function updateProjectResource(
       );
     }
     if(resource.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    // MEN-projects-meetings-R07: a stale editor must not overwrite a
+    // resource changed while its form was open.
+    if ((scope.access==="MENTOR" && !input.expectedUpdatedAt) ||
+      (input.expectedUpdatedAt &&
+       resource.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime()))
+      throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
 
     const merged =
       createProjectResourceInputSchema.parse({
@@ -328,12 +335,16 @@ export async function archiveProjectResource(
   context: RequestContext,
   projectIdInput: string,
   resourceIdInput: string,
+  rawInput: unknown = {},
 ) {
   const scope =
     await requireProjectLifecycleAccess(
       context,
       projectIdInput,
     );
+  const input=archiveProjectResourceInputSchema.parse(rawInput);
+  if (scope.access==="MENTOR" && !input.expectedUpdatedAt)
+    throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
   const resourceId =
     projectResourceIdSchema.parse(resourceIdInput);
   const db = getDb();
@@ -352,7 +363,7 @@ export async function archiveProjectResource(
     ensureMutableProject(project.status);
 
     const [resource] = await tx
-      .select({ id: projectResources.id })
+      .select({ id: projectResources.id, updatedAt:projectResources.updatedAt })
       .from(projectResources)
       .where(
         and(
@@ -369,6 +380,9 @@ export async function archiveProjectResource(
         "PROJECT_RESOURCE_NOT_FOUND",
       );
     }
+    if (input.expectedUpdatedAt && resource.updatedAt.getTime()!==
+      new Date(input.expectedUpdatedAt).getTime())
+      throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
 
     const [archived] = await tx
       .update(projectResources)
