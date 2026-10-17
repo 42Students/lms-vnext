@@ -32,4 +32,34 @@ describe("chat-3 final sprint TPO Companies",()=>{
   expect(code).toContain("person.stage");
   expect(code).toContain("Invited");
  });
+ it("TPO-companies-13 canonical company has create-drive action with employer prefill",()=>{
+  const code=source("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx");
+  expect(code).toContain("/tpo/placements/new?company=");
+  expect(code).toContain("Create drive");
+ });
+ it("TPO-companies-14 company-aware New action offers lead, drive and followup",()=>{
+  const code=source("src/components/tpo/tpo-company-memory-workspace.tsx");
+  expect(code).toContain("New recruiter lead for ");
+  expect(code).toContain("New drive for ");
+  expect(code).toContain("Follow-up");
+ });
+ it("TPO-companies-15 company communication status has optimistic and rollback semantics",()=>{
+  const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(code).toContain("changeCompanyCommunication");
+  expect(code).toContain("companyCommunicationFilter");
+  expect(code).toContain("Couldn't save. Retry this company status.");
+ });
+ it("TPO-companies-16 company list has search, contact, history and alias filters",()=>{
+  const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(code).toContain("companySearch");
+  expect(code).toContain("companyContacts");
+  expect(code).toContain("companyHistory");
+  expect(code).toContain("companyAliases");
+ });
+ it("TPO-companies-17 company list shows named people and contact action",()=>{
+  const code=source("src/components/tpo/recruiter-leads-workspace.tsx");
+  expect(code).toContain("company.people");
+  expect(code).toContain("Add a contact");
+  expect(code).toContain("Drives that ran");
+ });
 });
