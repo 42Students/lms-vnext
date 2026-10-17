@@ -10,10 +10,12 @@ const kinds:readonly [Kind,string][]=[
  ["ABSENCE_DISPUTE","Absence dispute"],["CORRECTION_WITH_PROOF","Correction with proof"],
  ["PLACEMENT_AFTER_PLACEMENT","Placement after placement"]];
 const box="min-h-11 rounded border border-border bg-surface p-2";
-export function LearnerGeneralRequests(){
+export function LearnerGeneralRequests({
+ initialKind="OFF_CAMPUS_OFFER",initialApplicationId="",initialRoundId="",
+}:{initialKind?:Kind;initialApplicationId?:string;initialRoundId?:string}){
  const [rows,setRows]=useState<History[]>([]),[cohortId,setCohortId]=useState("");
- const [kind,setKind]=useState<Kind>("OFF_CAMPUS_OFFER"),[reason,setReason]=useState("");
- const [target,setTarget]=useState(""),[aux,setAux]=useState(""),[proofUrl,setProofUrl]=useState("");
+ const [kind,setKind]=useState<Kind>(initialKind),[reason,setReason]=useState("");
+ const [target,setTarget]=useState(initialApplicationId),[aux,setAux]=useState(initialRoundId),[proofUrl,setProofUrl]=useState("");
  const [consent,setConsent]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
  const {run,pending}=useGuardedAction();
  async function refresh(){
