@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { mentorMeetingDisplayStatus } from "@/modules/projects/mentor-meeting-display-status";
+import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -857,9 +858,9 @@ export function ProjectWorkspace({
                   {mode==="MENTOR"?<p className="mt-2 text-xs font-semibold text-body">
                     {(sprintsByRelease.get(release.id)??[]).filter(s=>s.status==="COMPLETED").length}
                     {" "}of {(sprintsByRelease.get(release.id)??[]).length} sprints complete ·
-                    {" "}{workspace.tasks.filter(t=>t.sprintId!==null&&
+                    {" "}{mentorEstimateLabel(workspace.tasks.filter(t=>t.sprintId!==null&&
                       (sprintsByRelease.get(release.id)??[]).some(s=>s.id===t.sprintId))
-                      .reduce((sum,t)=>sum+(t.estimatePoints??0),0)} points ·
+                      .reduce((sum,t)=>sum+(t.estimatePoints??0),0),workspace.project.estimationUnit)} ·
                     {" "}{(sprintsByRelease.get(release.id)??[]).every(s=>s.status==="COMPLETED")?
                       "Ready to ship":"Work remaining"}
                   </p>:null}
@@ -948,6 +949,7 @@ export function ProjectWorkspace({
                                 title={sprint.title}
                                 description={sprint.description}
                                 updatedAt={sprint.updatedAt.toISOString()}
+                              estimationUnit={workspace.project.estimationUnit}
                                 goal={sprint.goal}
                                 definitionOfDone={sprint.definitionOfDone}
                                 startDate={sprint.startDate}
@@ -1084,7 +1086,7 @@ export function ProjectWorkspace({
                               {mode==="MENTOR"?<div>
                                 <dt className="font-semibold">Sprint</dt><dd>{sprint.title}</dd>
                               </div>:null}
-                              <div><dt className="font-semibold">Estimate</dt><dd>{taskFacts.estimate}</dd></div>
+                              <div><dt className="font-semibold">Estimate</dt><dd>{mentorEstimateLabel(task.estimatePoints,workspace.project.estimationUnit)}</dd></div>
                               <div><dt className="font-semibold">Task type</dt><dd>{taskFacts.taskType}</dd></div>
                               {taskFacts.blockerReason ? <div className="sm:col-span-2">
                                 <dt className="font-semibold">Blocker note</dt>
