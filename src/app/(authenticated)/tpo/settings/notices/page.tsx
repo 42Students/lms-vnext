@@ -37,7 +37,12 @@ export default async function TpoStudentNoticesSettings(){
   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
    <h2 className="text-lg font-semibold">Optional emails</h2>
    <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-   <p className="text-sm text-muted-foreground">Email template delivery status cannot be verified here until the configured mail provider is connected.</p>
+   <section aria-label="Emails switched on" className="space-y-2 border-t border-border pt-3">
+    <h3 className="font-semibold">Emails switched on</h3>
+    <p role="status" className="text-sm text-warning-text">Couldn't check which emails are switched on.</p>
+    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
+    <Link href="/tpo/settings/templates" className="inline-flex min-h-10 text-sm text-primary-text underline">View available message templates</Link>
+   </section>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
     <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-primary-text underline">Open personal notifications inbox</Link>
