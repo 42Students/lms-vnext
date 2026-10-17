@@ -42,6 +42,10 @@ export const hrDriveDraftSchema = z.strictObject({
   passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
   rounds: z.array(round).min(1).max(12),
 }).superRefine((data, ctx) => {
+  if(data.driveMode==="OFF_CAMPUS"&&!data.externalApplicationUrl){
+    ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
+      message:"Application website is required for off-campus drives"});
+  }
   if(data.driveMode==="ON_CAMPUS"&&data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"An application website is only valid for off-campus drives"});
@@ -139,6 +143,11 @@ export function hrDraftFromAuthorizedJob(job: {
     workMode: mode.success ? mode.data : base.workMode,
     driveMode:job.recruiterDriveMode==="OFF_CAMPUS"?"OFF_CAMPUS":"ON_CAMPUS",
     externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
+    branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean).slice(0,30),
+    passingYear:job.eligiblePassingYear?.toString()??"",
+    ctcLpa:job.ctcLpa??"",fixedLpa:job.fixedCtcLpa??"",
+    variableLpa:job.variableCtcLpa??"",
+    stipendMonthlyInr:job.stipendPerMonthInr?.toString()??"",
     minimumAnnualCtcInr: job.minimumAnnualCtcInr?.toString() ?? "",
     maximumAnnualCtcInr: job.maximumAnnualCtcInr?.toString() ?? "",
     rounds: validRounds.length ? validRounds.slice(0, 12) : base.rounds,
