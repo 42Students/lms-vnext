@@ -83,9 +83,21 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     className="text-sm font-semibold text-primary-text underline">Back to project</Link>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h1 className="text-xl font-semibold">Board</h1>
-   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
-     className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
-    Review submission</Link>
+   <div className="flex flex-wrap items-center gap-2">
+     {!readOnly?<MentorTaskCreate projectId={projectId}
+       sprintId={(sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.id??""}
+       updatedAt={new Date((sprints.find(item=>item.status==="ACTIVE")??sprints.find(item=>item.status==="PLANNED"))?.updatedAt??0).toISOString()}
+       sprints={sprints.filter(item=>item.status!=="COMPLETED"&&
+         releases.some(release=>release.id===item.releaseId)).map(item=>({
+           id:item.id,title:item.title,status:item.status,updatedAt:new Date(item.updatedAt).toISOString(),
+         }))}
+       learners={members.filter(member=>member.role==="LEARNER").map(member=>({
+         membershipId:member.membershipId,displayName:member.displayName,
+       }))}/>:null}
+     <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"}
+       className="min-h-10 rounded-md border border-border px-3 py-2 text-sm font-semibold text-primary-text">
+      Review submission</Link>
+   </div>
   </div>
   <div className="flex flex-wrap gap-3 rounded-xl border border-border p-3">
    <label className="text-sm font-semibold">Release
