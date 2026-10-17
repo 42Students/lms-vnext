@@ -8,10 +8,8 @@ describe("Mentor Project list URL",()=>{
     expect(schema.safeParse({page:10001}).success).toBe(false);
   });
   it("rejects forged scope and unknown selector",()=>{
-    // The shared GET form intentionally strips legacy/untrusted selectors.
-    // An ignored collegeId cannot become an authorization or tenancy scope.
-    const parsed=schema.parse({collegeId:"tenant"});
-    expect("collegeId" in parsed).toBe(false);
+    // An explicitly forbidden tenant selector is rejected before any data read.
+    expect(schema.safeParse({collegeId:"tenant"}).success).toBe(false);
     expect(schema.safeParse({attention:"CUSTOM"}).success).toBe(false);
     expect(schema.safeParse({pageSize:250}).success).toBe(false);
   });
