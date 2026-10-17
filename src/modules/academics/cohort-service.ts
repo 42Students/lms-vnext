@@ -8,6 +8,8 @@ import { getDb } from "@/db/client";
 import {
   cohorts,
 } from "@/db/schema";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import {
@@ -176,7 +178,8 @@ export async function createCohort(
   const db = getDb();
 
   try {
-    const [created] = await db
+    return await db.transaction(async (tx)=>{
+    const [created] = await tx
       .insert(cohorts)
       .values({
         programId: input.programId,
@@ -188,7 +191,16 @@ export async function createCohort(
       })
       .returning();
 
+    if(!created)throw new Error("Unable to persist cohort mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_CREATED,
+      organizationId:program.organizationId,collegeId:program.collegeId,
+      subjectType:"cohort",subjectId:created.id,subjectLabel:created.name,
+      summary:"Cohort created",
+      metadata:{code:created.code,status:created.status},
+    });
     return created;
+   });
   } catch (error) {
     throw mapCohortConstraint(error);
   }
@@ -239,7 +251,8 @@ export async function updateCohort(
   const db = getDb();
 
   try {
-    const [updated] = await db
+    return await db.transaction(async (tx)=>{
+    const [updated] = await tx
       .update(cohorts)
       .set({
         ...input,
@@ -259,7 +272,16 @@ export async function updateCohort(
       );
     }
 
+    if(!updated)throw new Error("Unable to persist cohort mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_UPDATED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"cohort",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"Cohort updated",
+      metadata:{previousStatus:current.status,code:updated.code},
+    });
     return updated;
+   });
   } catch (error) {
     if (error instanceof AcademicsServiceError) {
       throw error;
@@ -325,7 +347,8 @@ export async function transitionCohort(
   }
 
   const db = getDb();
-  const [updated] = await db
+  return await db.transaction(async (tx)=>{
+    const [updated] = await tx
     .update(cohorts)
     .set({
       status: nextStatus,
@@ -345,5 +368,14 @@ export async function transitionCohort(
     );
   }
 
-  return updated;
+  if(!updated)throw new Error("Unable to persist cohort mutation.");
+    await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_COHORT_STATUS_CHANGED,
+      organizationId:current.organizationId,collegeId:current.collegeId,
+      subjectType:"cohort",subjectId:updated.id,subjectLabel:updated.name,
+      summary:"Cohort status changed",
+      metadata:{previousStatus:current.status,nextStatus:updated.status},
+    });
+    return updated;
+   });
 }
