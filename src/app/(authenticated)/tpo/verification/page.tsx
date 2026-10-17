@@ -30,6 +30,30 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
           className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">{label} CSV</a>)}
      </div>:null}
   </nav>
+  <form method="get" action="/tpo/verification" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-4">
+   <label className="grid gap-1 text-sm">Status
+    <select name="tab" defaultValue={query.tab} className="min-h-11 rounded border border-border bg-surface px-2">
+     <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm">Section
+    <select name="kind" defaultValue={query.kind} className="min-h-11 rounded border border-border bg-surface px-2">
+     <option value="ALL">All sections</option><option value="EDUCATION">Education</option><option value="IDENTITY">Identity</option>
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm">Request kind
+    <select name="waitingState" defaultValue={query.waitingState} className="min-h-11 rounded border border-border bg-surface px-2">
+     <option value="ALL">First check or update</option><option value="SUBMITTED">First check</option><option value="UPDATE_PENDING">Update</option>
+    </select>
+   </label>
+   <label className="grid gap-1 text-sm">Page size
+    <select name="pageSize" defaultValue={query.pageSize} className="min-h-11 rounded border border-border bg-surface px-2">
+     <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+    </select>
+   </label>
+   <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply filters</button>
+   <Link href="/tpo/verification" className="self-center text-primary-text underline">Reset filters</Link>
+  </form>
   {!queue.available?<section role="status" className="rounded border border-border p-4">
    <h1 className="font-semibold">Verification</h1>
    <p>Could not check your verification access</p>
