@@ -1,10 +1,10 @@
-import {placementReportCsv} from "./report-model";
+import {placementReportCsv,countsAsPlacedByCollegeRule} from "./report-model";
 
 /** One student, not one offer; no duplicate learner even if they hold many offers. */
 export type AccreditationStudentOffer={
  membershipId:string;offerId:string;name:string|null;rollNumber:string|null;
  programme:string;branch:string;batch:string;company:string;
- status:string;annualCtcInr:number|null;joining:string|null;
+ status:string;annualCtcInr:number|null;joining:string|null;kind?:string;
 };
 export type AccreditationStudentRow={
  membershipId:string;name:string|null;rollNumber:string|null;
@@ -18,7 +18,8 @@ export const ACCREDITATION_STUDENT_HEADINGS=[
 ] as const;
 export const ACCREDITATION_STUDENT_WARNING=
  "Evidence only: employer contacts and historic placement-time attributes may be unavailable. Verify the batch, external placements, and official NAAC/NIRF requirements before submission.";
-export function buildAccreditationStudentRows(offers:readonly AccreditationStudentOffer[]):AccreditationStudentRow[]{
+export function buildAccreditationStudentRows(offers:readonly AccreditationStudentOffer[],
+ countsAsPlacedAt:"SELECTED"|"OFFER_RELEASED"|"OFFER_ACCEPTED"="OFFER_ACCEPTED"):AccreditationStudentRow[]{
  const members=new Map<string,AccreditationStudentOffer[]>();
  const seen=new Set<string>();
  for(const offer of offers){
@@ -29,7 +30,10 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
  }
  const output:AccreditationStudentRow[]=[];
  for(const [membershipId,group] of members){
-  const accepted=group.filter(x=>x.status==="ACCEPTED");
+  const accepted=group.filter(x=>countsAsPlacedByCollegeRule({
+   employmentType:"FULL_TIME",offerStatus:x.status,offerKind:x.kind,
+   countsAsPlacedAt,
+  }));
   if(accepted.length===0)continue;
   // Deterministic ordering: known best CTC first; never turn unknown pay into zero.
   const best=[...accepted].sort((a,b)=>(b.annualCtcInr??-1)-(a.annualCtcInr??-1)
