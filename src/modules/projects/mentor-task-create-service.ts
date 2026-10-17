@@ -36,12 +36,14 @@ export async function createMentorProjectTask(context:RequestContext,rawParams:u
         .for("update").limit(1);
       if(!project||!["PLANNED","ACTIVE"].includes(project.status))
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-      const [sprint]=await tx.select().from(projectSprints)
+      const [sprint]=input.sprintId?await tx.select().from(projectSprints)
         .where(and(eq(projectSprints.id,input.sprintId),
           eq(projectSprints.projectId,scope.project.id)))
-        .for("update").limit(1);
-      if(!sprint||sprint.status==="COMPLETED"||
-          sprint.updatedAt.getTime()!==new Date(input.expectedSprintUpdatedAt).getTime())
+        .for("update").limit(1):[null];
+      if(input.sprintId&&(!sprint||sprint.status==="COMPLETED"||
+          sprint.updatedAt.getTime()!==Date.parse(input.expectedSprintUpdatedAt??"")))
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+      if(input.status!=="TODO"&&sprint?.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
       const [release]=await tx.select({status:projectReleases.status})
         .from(projectReleases)
