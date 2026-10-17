@@ -48,3 +48,5 @@ TPO-requests-verification-R01: decision dialog maps the known placed-offer refus
 | TPO-requests-verification-17 | DONE | Legacy Waiting / Last 30 days / All history views, old subtitle and empty copy; request query accepts ALL with bounded latest 30 days; `tests/unit/chat12-requests-history-round3.test.ts` named `TPO-requests-verification-17` |
 | TPO-requests-verification-11 | OPEN (remaining branch, proof and after-college filters) | Search label now names roll/student number and age/drive filters verified; `tests/unit/chat12-requests-history-round3.test.ts` `TPO-requests-verification-11` |
 | TPO-requests-verification-12 | DONE | Needs doing strip and filters retained; `tests/unit/chat12-requests-history-round3.test.ts` `TPO-requests-verification-12` |
+
+| TPO-requests-verification-27 | DONE | Education/Identity exact legacy reason options, custom-only reason, send-back modal text and empty-reason guard; `tests/unit/chat12-verification-reasons-round3.test.ts` named `TPO-requests-verification-27` |
