@@ -162,12 +162,13 @@ export async function endDriveApplicants(
     recipients.set(row.userId,{accepted:Boolean(previous?.accepted)||protectedIds.has(row.id),
       withdrawn:Boolean(previous?.withdrawn)||row.status==="WITHDRAWN"});
   }
-  const notices=[...recipients].map(([userId,hasAcceptedOffer])=>({
+  const notices=[...recipients].map(([userId,state])=>({
     userId,eventId:event.id,
     title:mode==="CANCELLED"?"This drive was cancelled":"This drive has closed",
-    body:hasAcceptedOffer?
+    body:state.accepted?
       (mode==="CANCELLED"?"This drive was cancelled. ":"This drive has closed. ")+
-        "Your accepted offer remains valid. "+reason:visibleMessage,
+        "Your accepted offer remains valid. "+reason:
+      state.withdrawn?"This drive has ended. Your application was already withdrawn. "+reason:visibleMessage,
     actionHref:"/learn/my-placements/applications",
   }));
   for(let i=0;i<notices.length;i+=200){
