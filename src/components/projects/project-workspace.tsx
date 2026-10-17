@@ -661,6 +661,10 @@ export function ProjectWorkspace({
               {" "}{workspace.members.length} member(s)
             </p>:null}
           </div>
+          {mode === "ADMIN" && !readOnly ? (
+            <Link href={"/college/projects/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
+              className="inline-flex min-h-9 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Reassign mentor</Link>
+          ) : null}
           {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
             <AddProjectMemberControl
               projectId={workspace.project.id}

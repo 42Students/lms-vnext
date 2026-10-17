@@ -43,7 +43,7 @@ export async function listTpoPlacementAnnouncements(
    eq(db10Announcements.receiverId,college.id),
    eq(db10Announcements.senderType,senderTypeForTpoTab(tab)),
    ...(tab==="deleted"?
-    [isNotNull(db10Announcements.deletedAt),eq(db10Announcements.senderUserId,context.user.id)]:
+    [isNotNull(db10Announcements.deletedAt)]:
     [isNull(db10Announcements.deletedAt)]),
    ...(tab==="deleted"||tab==="yours"?[]:[
     or(isNull(db10Announcements.scheduledAt),lte(db10Announcements.scheduledAt,now)),

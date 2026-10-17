@@ -118,7 +118,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
        {[
         ["Participation",tpoStudentDisplayLabel(student.participationStatus)],["Applications",student.applicationCount],
         ["Active applications",student.activeApplicationCount],["Offers",student.offerCount],
-        ["Accepted offers",student.acceptedOfferCount],["Best so far",tpoStudentDisplayLabel(student.bestSoFar)],
+        ["Accepted offers",student.acceptedOfferCount],["Best so far",student.bestCompany?
+         student.bestCompany+": "+tpoStudentDisplayLabel(student.bestSoFar):tpoStudentDisplayLabel(student.bestSoFar)],
        ].map(([label,value])=><div key={String(label)} className="rounded border border-border p-3">
         <dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{value}</dd>
        </div>)}
