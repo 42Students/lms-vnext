@@ -20,7 +20,8 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
    const rows=Array.isArray(body?.questions)?body.questions:body.quiz.questions;
    setQuestions(rows.map((q:Question)=>({type:q.type,prompt:q.prompt,points:q.points,
     options:q.options.map(o=>({text:o.text,correct:Boolean(o.correct)}))})));
-  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load quiz questions.");}
+  }catch(cause){setOpen(false);setQuestions([]);
+   setError(cause instanceof Error?cause.message:"Unable to load quiz questions.");}
   finally{setLoading(false);}
  }
  function update(i:number,question:Question){setQuestions(prev=>prev.map((q,j)=>i===j?question:q));}
