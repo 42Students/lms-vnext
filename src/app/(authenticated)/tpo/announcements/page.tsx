@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
@@ -121,6 +122,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
       <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground">Ended</p>:null}
     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{row.message}</p>
+    {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
     {tab.data==="yours"&&row.senderUserId===context.user.id?<TpoNoticeReadProgress id={row.id}/>:null}
     {tab.data==="yours" && row.senderUserId===context.user.id ?
      <details className="mt-4 rounded-lg border border-border p-3">
