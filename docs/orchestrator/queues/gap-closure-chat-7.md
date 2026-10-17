@@ -136,7 +136,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-25 | S4 | MISSING-FIELD | OPEN |
 | MEN-projects-meetings-29 | S4 | VALIDATION | OPEN |
 | MEN-projects-meetings-R09 | S4 | MISSING-FIELD | OPEN |
-| MEN-projects-meetings-R10 | S4 | STATE | OPEN |
+| MEN-projects-meetings-R10 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R11 | S4 | STATE | FIXED-ON-MAIN |
 
 ## recruiter/home-drives (58: OPEN 22, FIXED-ON-MAIN 32, UNCONFIRMED 4)
