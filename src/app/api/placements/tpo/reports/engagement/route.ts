@@ -3,6 +3,7 @@ import {apiErrorResponse} from "@/lib/api-error";
 import {hasMembershipRole} from "@/modules/identity/context";
 import {getPlacementReportWorkspace} from "@/modules/placements/report-service";
 import {getPlacementLeadsReport} from "@/modules/placements/report-extra-service";
+import {joinTpoCompanyEngagementWithPlacement} from "@/modules/placements/tpo-company-engagement-model";
 import {companyEngagementCsv,companyEngagementCsvQuerySchema} from "@/modules/placements/tpo-company-engagement-csv-model";
 import {NextResponse} from "next/server";
 export const runtime="nodejs";
@@ -18,12 +19,10 @@ export async function GET(request:Request){
    getPlacementReportWorkspace(context,{collegeId,...input}),
    getPlacementLeadsReport(context,collegeId),
   ]);
-  const companies=new Map(report.report.byCompany.map(row=>[row.companyId,row]));
-  const all=leads.companyEngagement;
+  const all=joinTpoCompanyEngagementWithPlacement(leads.companyEngagement,report.report.byCompany);
   const rows=all.slice(0,5000).map(row=>{
-   const existing=row.companyId?companies.get(row.companyId):null;
    return {companyName:row.companyName,contacts:row.contacts,invited:row.invited,joined:row.joined,
-    drives:existing?.drives??0,placed:existing?.placed??0};
+    drives:row.drives,placed:row.placed};
   });
   return new Response("\uFEFF"+companyEngagementCsv(rows),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
