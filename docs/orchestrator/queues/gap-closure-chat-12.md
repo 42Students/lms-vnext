@@ -197,3 +197,20 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Round 50: TPO-students-15 DONE (source-authored, runtime pending): transactional learner notices, existing 48-hour staff-add opt-out and a new batch-level summary audit/bell to the scoped TPO team. No summary emitted for zero new applications; tests unrun.
 
 - Round 51: TPO-students-14 OPEN pending runtime acceptance: 200 cross-page selected authorized learners, server already-applied count before confirm and drive search are implemented; no mutation on preview. Named tests authored, unrun.
+
+
+- Round 52: TPO-requests-verification-01 0134 conflict decision: first effective strict tables remain canonical; sixth learner kind requires proposed-only new CHECK; runtime pg_catalog guard avoids DB 500 until registered. No numbered migrations edited.
+
+- Round 53 TPO-requests-verification-37: shared transaction-bound recruiter request -> DRAFT builder extracted, preserving TPO manual review semantics; verified policy auto-approval wiring follows; no design restyling.
+
+- Round 54 TPO-requests-verification-37/38: persisted same-college trusted-company/domain and college approval-setting policy with verified grant, real draft conversion and autoapproval event/TPO + recruiter bells added; public-link-only bypass and email delivery still require separate proof, integration unrun.
+
+- Round 55 TPO-requests-verification-13: add idempotent server-verified bulk audit for 10-request run, no duplicate learner notices and truthful partial outcomes; proof-aware skip, all-filtered selection remain OPEN and DB acceptance unrun.
+
+- Round 56: verified 14 previously FIXED-ON-MAIN Students IDs at the source-contract level using tests/unit/chat12-fixed-main-students-audit-r1.test.ts; no claim of runtime acceptance. Failed candidate assertions were not added.
+
+- Round 57: checked 15 additional FIXED-ON-MAIN source contracts in tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts; runtime and browser acceptance still required.
+
+- Round 58: verified 11 further FIXED-ON-MAIN request IDs against actual source with named tests in tests/unit/chat12-fixed-main-requests-audit-r3.test.ts; runtime effects remain independently unverified.
+
+- Round 59: TPO-students-12 visibility override consumes the same authorized filtered view IDs as selection and Add-to-Drive (up to 5,000 fetched, max 25 overrides per review); page-local-only selection leak fixed. Tests source-authored, runtime acceptance pending.
