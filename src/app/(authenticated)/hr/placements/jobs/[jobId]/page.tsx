@@ -73,7 +73,7 @@ export default async function HrPlacementJobPage({
     // canonical read first, then redirect only within this recruiter job.
     const safeTab=tab==="interviews"||tab==="results"?"rounds":
       tab==="selections"?"offers":
-      tab==="messages"||tab==="requests"?"overview":tab;
+      tab==="messages"||tab==="requests"||tab==="discussion"?"overview":tab;
     hiring = await getHrJobRead(context, jobId, {
       tab:safeTab, stage, applicant, page, offerPage, offerState, roundId, outcome,
     });
@@ -87,6 +87,7 @@ export default async function HrPlacementJobPage({
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
+  const discussionTab=query.tab==="discussion";
   const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
   if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
     const destination=query.tab==="selections"?"offers":"rounds";
@@ -225,7 +226,7 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
-      {filters.tab === "overview" && !requestsTab ? (
+      {filters.tab === "overview" && !requestsTab && !discussionTab ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
@@ -342,6 +343,11 @@ export default async function HrPlacementJobPage({
             {tab}
           </Link>
         ))}
+        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
+          aria-current={discussionTab?"page":undefined}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Discussion
+        </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Messages
