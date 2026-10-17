@@ -12,6 +12,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
+import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
@@ -1471,39 +1472,7 @@ export function ProjectWorkspace({
             </p>
           </div>
 
-          {workspace.activity.length === 0 ? (
-            <div className="rounded-xl border border-border bg-surface p-5 text-sm text-muted-foreground">
-              No persisted Project activity yet.
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {workspace.activity.map((event) => (
-                <article
-                  key={event.id}
-                  className="rounded-xl border border-border bg-surface p-4"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-3">
-                    <div>
-                      <p className="m-0 text-sm font-semibold text-foreground">
-                        {event.summary}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {event.actorDisplayName ?? "System"}
-                        {" · "}
-                        {formatDateTime(event.occurredAt)}
-                      </p>
-                    </div>
-                    <StatusBadge tone={tone(event.importance)}>
-                      {event.eventType
-                        .split(".")
-                        .slice(1)
-                        .join(" ")}
-                    </StatusBadge>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )}
+          <ProjectActivityFilteredList events={workspace.activity}/>
 
 
         </section>
