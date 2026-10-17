@@ -1642,11 +1642,11 @@ export function ProjectWorkspace({
               Activity
             </h2>
             <p className="mt-1 text-sm text-body">
-              Persisted Project events visible inside this workspace.
+              Task moves, sprint updates and resource changes from your project.
             </p>
           </div>
 
-          <ProjectActivityFilteredList events={workspace.activity}/>
+          <ProjectActivityFilteredList events={workspace.activity} now={renderTime.toISOString()}/>
 
 
         </section>
