@@ -19,6 +19,11 @@ export function decideAlert(input: {
   return "NONE";
 }
 
+/** Never charge a repeat delivery attempt for an unsaved new signature. */
+export function countSuppressedOccurrence(knownSignature: boolean): boolean {
+  return knownSignature;
+}
+
 /** Global quota: four individual alerts plus at most one burst summary per minute. */
 export function burstSlot(sent: number): "INDIVIDUAL" | "SUMMARY" | "SUPPRESS" {
   return sent < 4 ? "INDIVIDUAL" : sent === 4 ? "SUMMARY" : "SUPPRESS";

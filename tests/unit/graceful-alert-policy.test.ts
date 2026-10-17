@@ -1,11 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { burstSlot, decideAlert } from "@/modules/log-alerts/policy";
+import { burstSlot, countSuppressedOccurrence, decideAlert } from "@/modules/log-alerts/policy";
 
 const now = new Date("2099-06-10T00:00:00.000Z");
 const base = { known: true, muted: false, fixStatus: "OPEN", fixedAt: null,
   recentCount: 1, lastSpikeAt: null, now };
 
 describe("Graceful Telegram error policy", () => {
+  it("GR-116 GR-118 GR-125 retries undelivered new signatures without multiplying burst overflow", () => {
+    expect(burstSlot(5)).toBe("SUPPRESS");
+    expect(countSuppressedOccurrence(false)).toBe(false);
+    expect(countSuppressedOccurrence(true)).toBe(true);
+  });
   it("GR-116 new signature alerts once, known is silent and rate cap is five", () => {
     expect(decideAlert({ ...base, known: false })).toBe("NEW");
     expect(decideAlert(base)).toBe("NONE");
