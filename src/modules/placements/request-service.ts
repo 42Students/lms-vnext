@@ -26,6 +26,7 @@ import {
   placementLearnerRequests,
   inAppNotifications,
   placementOffers,
+  placementOfferStatusHistory,
   placementRoundResults,
   users,
 } from "@/db/schema";
@@ -310,10 +311,7 @@ async function validateRequestTarget(
             placementOffers.applicationId,
             application.application.id,
           ),
-          inArray(
-            placementOffers.status,
-            ["ISSUED", "ACCEPTED"],
-          ),
+          eq(placementOffers.status,"ACCEPTED"),
         ),
       )
       .limit(1);
@@ -451,7 +449,7 @@ export async function createPlacementRequest(
         )).for("update").limit(1);
       if(!locked)throw new PlacementsServiceError("PLACEMENT_REQUEST_STALE");
       const [activeOffer]=await tx.select({id:placementOffers.id}).from(placementOffers)
-        .where(and(eq(placementOffers.applicationId,input.applicationId),inArray(placementOffers.status,["ISSUED","ACCEPTED"]))).limit(1);
+        .where(and(eq(placementOffers.applicationId,input.applicationId),eq(placementOffers.status,"ACCEPTED"))).limit(1);
       if(activeOffer)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
     }
     if(input.requestType==="OFFER_EXTENSION"){
@@ -688,29 +686,26 @@ async function applyApprovedEffect(
     request.requestType ===
     "APPLICATION_WITHDRAWAL"
   ) {
-    const [activeOffer] = await db
-      .select({
-        id: placementOffers.id,
-      })
+    // ISSUED means released but not accepted. Decline those offers during
+    // a withdrawal, but leave ACCEPTED (placed) offers for Offers reversal.
+    const offers = await db.select({id:placementOffers.id,status:placementOffers.status})
       .from(placementOffers)
-      .where(
-        and(
-          eq(
-            placementOffers.applicationId,
-            application.id,
-          ),
-          inArray(
-            placementOffers.status,
-            ["ISSUED", "ACCEPTED"],
-          ),
-        ),
-      )
-      .limit(1);
-
-    if (activeOffer) {
-      throw new PlacementsServiceError(
-        "PLACEMENT_REQUEST_EFFECT_INVALID",
-      );
+      .where(and(eq(placementOffers.applicationId,application.id),
+        inArray(placementOffers.status,["ISSUED","ACCEPTED"])))
+      .for("update");
+    if(offers.some(offer=>offer.status==="ACCEPTED")){
+      throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+    }
+    for(const offer of offers.filter(offer=>offer.status==="ISSUED")){
+      const [closed]=await db.update(placementOffers)
+        .set({status:"DECLINED",respondedByUserId:context.user.id,respondedAt:now,updatedAt:now})
+        .where(and(eq(placementOffers.id,offer.id),eq(placementOffers.status,"ISSUED")))
+        .returning({id:placementOffers.id});
+      if(!closed)throw new PlacementsServiceError("PLACEMENT_REQUEST_EFFECT_INVALID");
+      await db.insert(placementOfferStatusHistory).values({
+        offerId:offer.id,fromStatus:"ISSUED",toStatus:"DECLINED",
+        actorUserId:context.user.id,reason:"Withdrawal approved by the placement cell",
+      });
     }
 
     const [updated] = await db

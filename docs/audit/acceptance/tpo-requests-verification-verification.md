@@ -33,3 +33,5 @@ TPO-requests-verification-28: result toast now includes the verified section (Ed
 TPO-requests-verification-15 / -32: exports use guarded downloads, so HTML or JSON failures cannot be downloaded as CSV. `tests/unit/chat12-tpo-safe-export.test.ts` tests contain both IDs.
 
 **Source-only partials remain OPEN:** TPO-requests-verification-22 (full grid/saved views), 24 (server-side proof filter and all shortcuts), 26 (bulk whole-view parity), 29 (full inline changed-values and private proof parity). The tests cover only the documented implemented subset.
+
+| TPO-requests-verification-R01 | DONE | TPO approval of withdrawal declines ISSUED offers transactionally, with durable offer status-history, while still refusing ACCEPTED placements; creation also permits ISSUED; `tests/unit/chat12-offer-withdrawal.test.ts` tests contain `TPO-requests-verification-R01` (PostgreSQL acceptance not run) |
