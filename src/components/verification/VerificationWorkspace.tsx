@@ -13,6 +13,7 @@ import type {VerificationRecord} from "@/modules/profile-verification/domain";
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
  learnerName:string;batchName:string|null;branchName:string|null;
+ decidedAt?:Date|null;decidedByName?:string|null;
  missingMarksheet:boolean;missingIdentityProof?:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
 export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false}:{
