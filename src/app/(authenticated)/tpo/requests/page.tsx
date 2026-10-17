@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoRequestDecisionControl } from "@/components/placements/tpo-request-decision-control";
 import {TpoSequentialRequestReview} from "@/components/placements/tpo-sequential-request-review";
+import {TpoRequestPageClipboard} from "@/components/placements/tpo-request-page-clipboard";
 import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import { hasMembershipRole } from "@/modules/identity/context";
 import {tpoRequestsExportHref} from "@/modules/placements/tpo-requests-page-csv-model";
@@ -91,7 +92,7 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
         </select>
       </label>
       <label className="text-sm">Age<select name="age" defaultValue={data.query.age} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">Any age</option><option value="TODAY">Asked today</option><option value="ONE_TO_TWO_DAYS">1–2 days</option><option value="OLDER_THAN_1_DAY">Older than 24 hours</option><option value="OLDER_THAN_2_DAYS">Older than 2 days</option><option value="OLDER_THAN_7_DAYS">Older than 7 days</option><option value="OLDER_THAN_30_DAYS">Older than 30 days</option><option value="LAST_30_DAYS">Last 30 days</option></select></label>
-      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option></select></label>
+      <label className="text-sm">Order<select name="sort" defaultValue={data.query.sort} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="URGENCY_FIRST">Urgent first</option><option value="NEWEST_FIRST">Newest first</option><option value="OLDEST_FIRST">Oldest first</option><option value="DECIDED_NEWEST">Decided on · newest</option><option value="DECIDED_OLDEST">Decided on · oldest</option></select></label>
       <button type="submit" className="min-h-11 rounded bg-primary px-4 text-on-primary">Apply</button>
       <Link href={tpoRequestClearAdvancedHref(data.query.status)} className="inline-flex min-h-11 items-center text-primary-text underline">Clear search, age and drive filters</Link>
     </form>
@@ -117,6 +118,11 @@ export default async function GlobalTpoRequestsPage({searchParams}:{searchParams
       rows={Array.from(new Map(data.requests.filter(row=>row.status==="PENDING")
         .map(row=>[row.membershipId,{id:row.membershipId,label:row.studentName,registered:null}])).values())}
     />:null}
+    <TpoRequestPageClipboard rows={data.requests.map(row=>({
+      id:row.id,student:row.studentName,number:row.rollNumber,
+      kind:row.requestType,company:row.companyName,asked:row.requestedAt.toISOString(),
+      status:row.status,decided:row.decidedAt?.toISOString()??null,
+    }))}/>
     <TpoSafeCsvDownload href={tpoRequestsExportHref(data.query)} filename="tpo-requests.csv" label="Export filtered requests CSV" />
     <p className="text-sm text-body">Showing {data.requests.length} of {data.total} matching {data.query.status.toLowerCase()} requests. {data.summary.pending} pending across this college.</p>
     {data.requests.length===0?<section role="status" className="rounded-lg border border-border p-5">
