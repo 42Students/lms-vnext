@@ -28,7 +28,7 @@ function one(value: string | string[] | undefined) {
 
 const searchSchema = z.string().trim().max(100);
 const statusSchema = z.enum(["CURRENT", "PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]);
-const attentionSchema = z.literal("LEARNER_ACTION");
+const attentionSchema = z.enum(["LEARNER_ACTION","BLOCKED"]);
 const workSchema = z.enum(["BLOCKED","NO_TASKS"]);
 const sortSchema = z.enum(["RECENT", "TITLE", "PROGRESS"]);
 
@@ -111,6 +111,9 @@ export default async function LearnerProjectsPage({
       query.attention !== "LEARNER_ACTION" ||
       attentionByProject.has(row.project.id),
     )
+    .filter((row)=>query.attention!=="BLOCKED"||
+      Boolean(row.project.blocker?.trim())||
+      learnerProjectHasBlockedTasks(row.project.status,progressByProject.get(row.project.id)))
     .filter((row) => query.work !== "BLOCKED" || learnerProjectHasBlockedTasks(
       row.project.status, progressByProject.get(row.project.id),
     ))
