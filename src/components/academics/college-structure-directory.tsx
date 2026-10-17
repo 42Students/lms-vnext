@@ -414,6 +414,7 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                   <th scope="col" className="px-4 py-3">Program / semester</th>
                   <th scope="col" className="px-4 py-3">Year / academic period</th>
                   <th scope="col" className="px-4 py-3">Credits / choices</th>
+                  <th scope="col" className="px-4 py-3">Students</th>
                   <th scope="col" className="px-4 py-3">Active offerings</th>
                   <th scope="col" className="px-4 py-3">Status</th>
                   <th scope="col" className="px-4 py-3">Manage</th>
@@ -427,8 +428,9 @@ export function CollegeStructureDirectory({ data, electiveOptions }: {
                       <p className="mt-1 text-xs text-muted-foreground">{item.periodName ?? "No academic period linked"}</p>
                     </td>
                     <td className="px-4 py-4 text-body">
-                      {item.credits} credits · {electiveSelectionLabel(item.minPick, item.maxPick)}
+                      {item.credits} credits · Pick: {electiveSelectionLabel(item.minPick, item.maxPick)}
                     </td>
+                    <td className="px-4 py-4 text-body" title="Distinct actively assigned learners across the slot’s active course groups. Not pending picks.">{item.confirmedStudents}</td>
                     <td className="px-4 py-4 text-body">{item.activeOfferings}</td>
                     <td className="px-4 py-4 text-body">{item.status}</td>
                     <td className="px-4 py-4">
