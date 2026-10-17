@@ -9,14 +9,14 @@ import {ProjectTaskComments} from "./project-task-comments";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
-type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
+type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string};
 type Release={id:string;title:string};
 type Person={membershipId:string;displayName:string|null;role:string};
 type TaskSubmission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
-type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType?:string};
+type TaskEvent={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType:string};
 const editable=["TODO","IN_PROGRESS","BLOCKED"] as const;
 export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members,taskSubmissions=[],taskActivity=[],readOnly=false}:{
  projectId:string;initialTasks:Task[];sprints:Sprint[];releases:Release[];members:Person[];
