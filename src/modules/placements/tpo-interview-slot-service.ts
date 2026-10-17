@@ -211,9 +211,13 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementLearnerRequests.status,"PENDING"))).for("update").limit(1);
    if(!request)throw new PlacementsServiceError("PLACEMENT_REQUEST_INVALID_STATE");
    const [application]=await tx.select({id:placementApplications.id})
-    .from(placementApplications).where(and(
+    .from(placementApplications)
+    .innerJoin(placementApplicationScreenings,
+     eq(placementApplicationScreenings.applicationId,placementApplications.id))
+    .where(and(
      eq(placementApplications.id,request.applicationId),
-     eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"))).limit(1);
+     eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
+     eq(placementApplicationScreenings.status,"SHORTLISTED"))).limit(1);
    if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
    const [withdrawal]=await tx.select({id:placementLearnerRequests.id})
     .from(placementLearnerRequests).where(and(
