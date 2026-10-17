@@ -86,19 +86,33 @@ const inputClass =
   "min-h-10 w-full rounded-md border border-border bg-surface px-3 text-sm text-foreground outline-none transition focus:border-primary focus:ring-4 focus:ring-[var(--lms-focus-ring)]";
 
 export function RecruiterResultControls({
-  rounds,
+  rounds,focusApplicantId,
 }: {
   rounds: RecruiterRound[];
+  focusApplicantId?:string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [pendingKey, setPendingKey] =
     useState<string | null>(null);
-  const [selected,setSelected]=useState<Record<string,string[]>>({});
+  const [selected,setSelected]=useState<Record<string,string[]>>(()=>{
+    if(!focusApplicantId)return {};
+    const initial:Record<string,string[]>={};
+    for(const round of rounds){
+      if(round.kind==="TALK"||!["SCHEDULED","COMPLETED"].includes(round.status))continue;
+      if(round.participants.some(p=>p.applicationId===focusApplicantId&&p.result?.status!=="APPLIED")){
+        initial[round.id]=[focusApplicantId];
+      }
+    }
+    return initial;
+  });
   const [bulkPending,setBulkPending]=useState<string|null>(null);
   const bulkSubmissionLock=useRef(false);
   const singleSubmissionLock=useRef(false);
-  const [activeRoundId,setActiveRoundId]=useState<string|null>(null);
+  const [activeRoundId,setActiveRoundId]=useState<string|null>(()=>
+    focusApplicantId?rounds.find(round=>round.kind!=="TALK"&&
+      ["SCHEDULED","COMPLETED"].includes(round.status)&&
+      round.participants.some(p=>p.applicationId===focusApplicantId&&p.result?.status!=="APPLIED"))?.id??null:null);
   const [undoHistory,setUndoHistory]=useState<Array<Record<string,Draft>>>([]);
   function draftSelectedOutcome(roundId:string,outcome:ResultOutcome){
     const ids=selected[roundId]??[];
