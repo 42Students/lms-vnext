@@ -58,6 +58,7 @@ export function ProjectAdminFilters({
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
+  includeRiskSort?: boolean;
 }) {
   return (
     <form
