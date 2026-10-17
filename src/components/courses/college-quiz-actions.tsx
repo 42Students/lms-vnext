@@ -2,6 +2,7 @@
 
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {CollegeQuizQuestionsEditor} from "./college-quiz-questions-editor";
 type Quiz={id:string;title:string;status:string;dueAt:Date|null};
 function istInput(date:Date|null){
  if(!date)return "";
@@ -46,6 +47,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
     Delete</button>
   </div>
+  {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 rounded border border-border p-3">
    <label className="grid gap-1 text-xs font-semibold">Quiz title
     <input required maxLength={255} value={title} disabled={busy}
