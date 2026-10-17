@@ -142,7 +142,10 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
       or exists(select 1 from placement_job_eligibility_policies policy
         where policy.job_id=${placementJobs.id} and
         (cardinality(policy.allowed_cohort_ids)=0 or
-         ${filters.cohortId}::uuid=any(policy.allowed_cohort_ids)))
+         ${filters.cohortId}::uuid=any(policy.allowed_cohort_ids))
+       and (cardinality(policy.allowed_program_ids)=0 or
+        exists(select 1 from cohorts c where c.id=${filters.cohortId}::uuid
+         and c.program_id=any(policy.allowed_program_ids))))
     )`:undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
