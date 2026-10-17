@@ -11,18 +11,44 @@ function istInput(date:Date|null){
 }
 export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  const router=useRouter();
- const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false);
+ const [editing,setEditing]=useState(false),[busy,setBusy]=useState(false),[loading,setLoading]=useState(false);
  const [title,setTitle]=useState(quiz.title),[due,setDue]=useState(istInput(quiz.dueAt));
  const [error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [description,setDescription]=useState(""),[maxAttempts,setMaxAttempts]=useState(1);
+ const [shuffleQuestions,setShuffleQuestions]=useState(false),[shuffleOptions,setShuffleOptions]=useState(false);
+ const [expectedUpdatedAt,setExpectedUpdatedAt]=useState("");
+ async function beginEdit(){
+  if(busy||loading)return;
+  if(editing){setEditing(false);return;}
+  setError("");setNotice("");setLoading(true);
+  try{
+   const response=await fetch("/api/courses/quizzes/"+encodeURIComponent(quiz.id),{cache:"no-store"});
+   const payload=await response.json().catch(()=>null);
+   if(!response.ok||payload?.quiz?.quiz?.id!==quiz.id)
+    throw Error(payload?.error??"Unable to load Quiz metadata.");
+   const current=payload.quiz.quiz;
+   setTitle(current.title);setDescription(current.description??"");
+   setDue(istInput(current.dueAt));setMaxAttempts(current.maxAttempts);
+   setShuffleQuestions(Boolean(current.shuffleQuestions));setShuffleOptions(Boolean(current.shuffleOptions));
+   setExpectedUpdatedAt(current.updatedAt);setEditing(true);
+  }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load Quiz metadata.");}
+  finally{setLoading(false);}
+ }
  async function act(action:"EDIT"|"ARCHIVE"){
   if(busy)return;
   let url="/api/courses/quizzes/"+encodeURIComponent(quiz.id);
   let method="PATCH",body:unknown;
   if(action==="EDIT"){
+   if(!expectedUpdatedAt){setError("Reload the Quiz before editing.");return;}
    if(!title.trim()||title.trim().length>255){setError("Enter a quiz title.");return;}
+   if(quiz.status==="DRAFT"&&(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)){
+    setError("Maximum attempts must be between 1 and 20.");return;
+   }
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
-   body={title:title.trim(),dueAt:deadline?.toISOString()??null};
+   body={title:title.trim(),dueAt:deadline?.toISOString()??null,description:description.trim()||null,
+    expectedUpdatedAt,
+    ...(quiz.status==="DRAFT"?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
    if(!window.confirm("Delete this quiz? Quizzes with learner attempts cannot be archived."))return;
    url+="/transition";method="POST";body={action:"ARCHIVE"};
@@ -32,7 +58,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    const response=await fetch(url,{method,headers:{"content-type":"application/json"},body:JSON.stringify(body)});
    const data=await response.json().catch(()=>null);
    if(!response.ok)throw new Error(typeof data?.error==="string"?data.error:"Unable to update quiz.");
-   setEditing(false);setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
+   setEditing(false);setExpectedUpdatedAt("");setNotice(action==="EDIT"?"Quiz updated.":"Quiz deleted.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update quiz.");}
   finally{setBusy(false);}
@@ -40,9 +66,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  if(quiz.status==="ARCHIVED")return null;
  return <div className="mt-2 space-y-2">
   <div className="flex flex-wrap gap-2">
-   <button type="button" disabled={busy} onClick={()=>setEditing(v=>!v)}
+   <button type="button" disabled={busy||loading} onClick={()=>void beginEdit()}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
-    Edit metadata</button>
+    {loading?"Loading…":"Edit metadata"}</button>
    <button type="button" disabled={busy} onClick={()=>void act("ARCHIVE")}
     className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-error">
     Delete</button>
@@ -52,9 +78,25 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    <label className="grid gap-1 text-xs font-semibold">Quiz title
     <input required maxLength={255} value={title} disabled={busy}
      onChange={e=>setTitle(e.target.value)} className="min-h-10 rounded border border-border px-2"/></label>
+   <label className="grid gap-1 text-xs font-semibold">Description
+    <textarea maxLength={10000} rows={3} value={description} disabled={busy}
+     onChange={e=>setDescription(e.target.value)} className="rounded border border-border p-2"/>
+   </label>
+   {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold">Maximum attempts
+    <input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
+     onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-10 rounded border border-border px-2"/>
+   </label>:null}
    <label className="grid gap-1 text-xs font-semibold">Deadline (IST)
     <input type="datetime-local" value={due} disabled={busy} onChange={e=>setDue(e.target.value)}
      className="min-h-10 rounded border border-border px-2"/></label>
+   {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
+    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleQuestions}
+     disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
+     Shuffle question order per learner</label>
+    <label className="flex items-center gap-2"><input type="checkbox" checked={shuffleOptions}
+     disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
+     Shuffle answer options per learner</label>
+   </div>:null}
    {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground">
     Learner attempts lock the deadline; other immutable quiz fields stay unchanged.
    </p>:null}

@@ -422,6 +422,22 @@ export function SuperAdminHrAccounts({
     }
   }
 
+  async function quickStatus(account:HrAccount){
+    if(!account.accountManageable||pending||account.status==="DISABLED")return;
+    const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
+    const question=next==="ARCHIVED"
+      ? "Archive "+hrDisplayName(account)+"? Their college access will be revoked."
+      : "Reactivate "+hrDisplayName(account)+"? College access is not automatically restored.";
+    if(!window.confirm(question))return;
+    setPending(true);setActionError(null);
+    try{
+      await requestJson("/api/admin/hr/"+encodeURIComponent(account.userId),"PATCH",{status:next});
+      showToast({tone:"success",title:next==="ARCHIVED"?"Recruiter archived":"Recruiter reactivated"});
+      router.refresh();
+    }catch(error){showToast({tone:"error",title:"Recruiter status update failed",description:errorText(error)});}
+    finally{setPending(false);}
+  }
+
   async function grantAccess(
     companyRelationshipId: string,validUntil?:string,
   ): Promise<boolean> {
@@ -595,6 +611,10 @@ export function SuperAdminHrAccounts({
           >
             Edit
           </Button>
+          {account.status!=="DISABLED"?<Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+            onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+          <Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
+            onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
         </div>
       ),
     },
@@ -756,6 +776,10 @@ export function SuperAdminHrAccounts({
                       <Button variant="ghost" size="sm" disabled={!account.accountManageable}
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
+                      {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+                      <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
+                        onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>
                   </article>
                 ))}

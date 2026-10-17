@@ -196,3 +196,28 @@ No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct
 - WP-04 and WP-08 remain IN-PROGRESS because their other S2/S3 gaps (Team object conversations, announcements, staff workload) are not closed; do not mark them DONE.
 - No tests, typecheck, lint, build or CI waits under FAST v2. All new commits exclusively on `chatgpt/chat-2-b`.
 - `TPO-inbox-team-12` partial performance mitigation: omit correlated body-search SQL entirely when query has fewer than two characters. Full SQL-backed thread pagination is still open.
+
+## FAST v2 continuation after main migration 0130 — 2026-10-17
+
+- Branch `chatgpt/chat-2-b` fast-forwarded from the already-integrated lane head to latest `main` (includes registered 0130); all subsequent changes were branch-only with `[chat-2]` gap IDs.
+- WP-01 `TPO-recruiters-03`: date-filter day starts now use Asia/Kolkata instead of browser timezone; quick search includes designation/source; Needs doing/Needs attention filters hydrate from URLs, have removable chips and clear consistently.
+- WP-01 `TPO-recruiters-09`: lead header uses exact legacy stage labels and readable invite status.
+- WP-02 `TPO-campaigns-public-07`: new campaign selection uses only visibly selected recruiters, refuses empty visible selection, and labels accurate visible counts; server suppression remains authoritative.
+- WP-03 `TPO-companies-12`: company people sign-in evidence comes from actual recruiter identity sessions within the college lead group, never inferred from join state.
+- WP-04 `TPO-inbox-team-04`: opening a recruiter conversation posts the authorized read acknowledgment; TPO-sent messages show Seen when recruiter readAt was persisted.
+- WP-02 `PUB-auth-public-44/45`: client distinguishes empty/malformed/disallowed emails, invalid optional phone, absent/incomplete code; already-joined accounts see a distinct sign-in next step.
+- WP-05 `TPO-recruiters-33`: opted-out contact phone is plain text, not a click-to-call action; email was already blocked.
+- WP-05 `TPO-recruiters-20`: table sort/order browser preference is restored and persisted alongside existing column preference.
+- WP-01 `TPO-recruiters-14`: Stage and Owner bulk actions now have explicit in-page review panels instead of browser confirm; Not now date picker excludes past dates. A full audited undo/replay is not provided.
+- WP-05 `TPO-recruiters-06`: Table/Board/Companies/Emails are role=tab controls with active state; company counts fetch even on Table and Board.
+- WP-05 `TPO-recruiters-15/21`: owner chooser displays staff names without ID prefixes; first-follow-up date input excludes past IST dates.
+- WP-01 `TPO-recruiters-19`: selected CSV count and eligibility are restricted to actually selected visible rows.
+- WP-01 to WP-08 remain **IN-PROGRESS**; a source-level improvement is not a claim that a multi-part audit gap, package, or production release is accepted.
+- Blocked `PUB-auth-public-50/52/53/54/55`: OD-09 private company-share OTP, chosen columns and resume ZIP need authorized disclosure and storage.
+- Blocked `TPO-recruiters-13/14/17`: provider-backed bulk invite sending and durable undo/reminder worker need provider/worker registration and live evidence.
+- Blocked `TPO-campaigns-public-01/02/05`: verified sender templates, delivery provider and durable campaign worker remain unavailable for live sending.
+- Blocked `TPO-settings-audit-52`: no-end-date access requires a security-policy decision and cannot be silently enabled.
+- Blocked `REC-calendar-messages-profile-R01`: email reply relay needs registered inbound webhook routing.
+- Blocked `TPO-companies-05`: full shared Team object conversations and Asks require persistence and cross-lane coordination.
+- Blocked `TPO-companies-06`: totals named Students placed need college counts-as-placed policy evidence, not a guessed accepted-offer metric.
+- No tests, typecheck, lint, build, CI waits or live delivery actions were run under FAST v2.

@@ -637,13 +637,21 @@ export async function readRecruiterThreadMessages(
   const window=hrConversationDetailPageWindow(page,total);
   const descending=await tx.select({
     id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
+    senderUserId:placementTpoMessages.senderUserId,
     body:placementTpoMessages.body,readAt:placementTpoMessages.readAt,
     createdAt:placementTpoMessages.createdAt,
   }).from(placementTpoMessages)
    .where(eq(placementTpoMessages.threadId,thread.id))
    .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
    .limit(40).offset(window.offset);
-  return {thread,messages:descending.reverse(),page:window.page,pages:window.pages,total,unread:Number(pending?.unread??0)};
+  const actors=[...new Set(descending.map(message=>message.senderUserId))];
+  const senderRows=actors.length?await tx.select({
+    id:users.id,displayName:users.displayName,
+  }).from(users).where(inArray(users.id,actors)):[];
+  const senderNames=new Map(senderRows.map(row=>[row.id,row.displayName]));
+  return {thread,messages:descending.reverse().map(message=>({
+    ...message,senderDisplayName:senderNames.get(message.senderUserId)??null,
+  })),page:window.page,pages:window.pages,total,unread:Number(pending?.unread??0)};
  });
 }
 

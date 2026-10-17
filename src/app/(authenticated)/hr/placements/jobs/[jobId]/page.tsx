@@ -92,7 +92,7 @@ export default async function HrPlacementJobPage({
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
-  const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
+  const requestData=(requestsTab||discussionTab)?await getDriveChangeRequests(context,workspace.job.id):null;
   const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;
   const selectedThread=driveConversation?.threads[0]??null;
   const threadMessages=selectedThread?
@@ -370,13 +370,20 @@ export default async function HrPlacementJobPage({
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
         <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters' conversations.</p>
+        {requestData?.party==="COMPANY"&&requestData.requests.length>0?
+          <div className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+            <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
+            <p className="mt-1 text-body">Review submitted requests, college decisions and replies in the Requests tab.</p>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
+              className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open change requests →</Link>
+          </div>:null}
         {threadMessages?<div className="space-y-3">
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
           <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
             {[...threadMessages.messages].reverse().map(message=><li key={message.id}
               className="rounded-lg border border-border bg-surface-subtle p-3">
               <p className="text-xs font-semibold text-muted-foreground">
-                {message.senderType==="RECRUITER"?"You":"Placement cell"} ·
+                {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
                 {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
               </p>
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
@@ -392,7 +399,7 @@ export default async function HrPlacementJobPage({
           <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Open drive discussion</button>
         </form>}
       </section>:null}
-      {requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+      {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
@@ -589,7 +596,9 @@ export default async function HrPlacementJobPage({
           </Link>
 </div>}
           <p className="mt-1 text-sm text-body">
-            Stage employer outcomes here. The college placement team retains final apply authority.
+            {driveOverview.readOnly
+              ? "Historical hiring rounds and applied outcomes remain readable. New results and interview slots are disabled."
+              : "Stage employer outcomes here. The college placement team retains final apply authority."}
           </p>
         </div>
         {filters.tab==="rounds"?<section className="mb-5 space-y-3 rounded-xl border border-border bg-surface p-4 sm:p-5">

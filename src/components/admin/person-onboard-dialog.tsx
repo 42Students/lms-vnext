@@ -11,6 +11,7 @@ import {
 } from "@/modules/identity/constants";
 import { Button } from "@/components/ui/button";
 import { onboardingRoleSelection } from "@/modules/people/college-faculty-onboarding-model";
+import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 import { Dialog } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -37,6 +38,8 @@ export function PersonOnboardDialog({
   const { showToast } = useToast();
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState("");
+  const [firstName,setFirstName]=useState("");
+  const [lastName,setLastName]=useState("");
   const [phoneE164, setPhoneE164] = useState("");
   const [email, setEmail] = useState("");
   const [roles, setRoles] = useState<MembershipRole[]>(
@@ -45,7 +48,7 @@ export function PersonOnboardDialog({
   const [pending, startTransition] = useTransition();
 
   function reset() {
-    setDisplayName("");
+    setDisplayName("");setFirstName("");setLastName("");
     setPhoneE164("");
     setEmail("");
     setRoles(onboardingRoleSelection(forcedRole));
@@ -60,14 +63,15 @@ export function PersonOnboardDialog({
   }
 
   function submit() {
+    if(forcedRole&&!indianMobileToE164(phoneE164)){showToast({tone:"error",title:"Check mobile number",description:"Mobile number must be 10 digits"});return;}
     startTransition(async () => {
       const response = await fetch("/api/people/onboard", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           collegeId,
-          displayName,
-          phoneE164,
+          displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
+          phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
           roles: onboardingRoleSelection(forcedRole, roles),
         }),
@@ -80,7 +84,11 @@ export function PersonOnboardDialog({
           title: "Onboarding failed",
           description:
             payload?.error === "IDENTITY_COLLISION"
-              ? "Phone/email identity data conflicts with an existing canonical user."
+              ? "Mobile number already exists. Check the linked account before creating a duplicate."
+              : payload?.error === "EMAIL_ALREADY_EXISTS"
+              ? "Email already exists. Please use a different email address."
+              : payload?.error === "PHONE_ALREADY_EXISTS"
+              ? "Mobile number already exists. Please use a different mobile number."
               : "The person could not be onboarded. Check the fields and try again.",
         });
         return;
@@ -120,7 +128,7 @@ export function PersonOnboardDialog({
             <Button
               disabled={
                 pending ||
-                !displayName.trim() ||
+                !(forcedRole?firstName.trim()&&lastName.trim():displayName.trim()) ||
                 !phoneE164.trim() ||
                 roles.length === 0
               }
@@ -132,7 +140,14 @@ export function PersonOnboardDialog({
         }
       >
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="sm:col-span-2">
+          {forcedRole?<div className="grid gap-3 sm:col-span-2 sm:grid-cols-2">
+            <label className="grid gap-1 text-xs font-semibold text-body">First Name
+              <Input value={firstName} maxLength={120} required onChange={e=>setFirstName(e.target.value)} placeholder="First name"/>
+            </label>
+            <label className="grid gap-1 text-xs font-semibold text-body">Last Name
+              <Input value={lastName} maxLength={120} required onChange={e=>setLastName(e.target.value)} placeholder="Last name"/>
+            </label>
+          </div>:<div className="sm:col-span-2">
             <label
               htmlFor={`onboard-name-${collegeId}`}
               className="mb-1.5 block text-xs font-semibold text-body"
@@ -149,6 +164,7 @@ export function PersonOnboardDialog({
               placeholder="Full name"
             />
           </div>
+}
           <div>
             <label
               htmlFor={`onboard-phone-${collegeId}`}
@@ -162,9 +178,10 @@ export function PersonOnboardDialog({
               onChange={(event) =>
                 setPhoneE164(event.target.value)
               }
-              placeholder="+919876543210"
+              placeholder={forcedRole?"9876543210":"+919876543210"}
               inputMode="tel"
             />
+            {forcedRole?<p className="mt-1 text-xs text-muted-foreground">Mobile number must be 10 digits</p>:null}
           </div>
           <div>
             <label

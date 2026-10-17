@@ -114,3 +114,9 @@ UNCONFIRMED: -49 (where vNext computes "in progress"), -59 (runtime permission a
 ## 5. Test hooks
 Existing: `tests/integration/super-admin-videos-directory.test.ts`, `super-admin-resources-directory.test.ts`, `super-admin-live-classes-directory.test.ts`, `super-admin-offering-detail.test.ts`, `tests/unit/admin-learning-read-model.test.ts`, `admin-assessment-directory-model.test.ts`, `admin-quizzes-read-model.test.ts`, `admin-course-progress-model.test.ts`.
 Needed (`scripts/verify/pages/superadmin-courses-content.mjs`): with a Super Admin session and no membership cookie, create a course, create an offering, create a lesson, upload/attach a YouTube link, toggle student visibility, release quiz results; confirm each refusal or success message; open each of the 8 tabs at 1280px and 375px; verify the policy cards when no college is selected; export parity checks for any CSV that gets added.
+
+## FAST v2 chat-4 Super Admin content authoring implementation (2026-10-17)
+
+- `SA-academics-people-58`: source-implemented a direct persisted content row editor for title/order, Resource notes, YouTube duration and live-class dates; confirmation-based Publish and Delete/Archive using existing authenticated API routes; all private URLs and file keys stay out of the directory. The authoring lesson selector now excludes inactive offerings, inactive lessons and archived paths.
+- `SA-academics-people-59`: Super Admin binary upload remains blocked by the storage actor grant/private storage environment; the page no longer advertises a nonfunctional binary-upload action. Text/YouTube/Resource/Live link authoring remains available.
+- Runtime and complete legacy-parity verification not performed. Do not mark all Super Admin content authoring/upload gaps DONE.

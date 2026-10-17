@@ -2,6 +2,8 @@
 
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import {legacyPersonName,indianMobileToE164} from "@/modules/people/college-onboard-mobile-model";
 
 type Choices = {
   programs: {id:string;name:string}[];
@@ -12,11 +14,14 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const router=useRouter();
   const [pending,start]=useTransition();
   const [result,setResult]=useState<string|null>(null);
+  const [savedMemberId,setSavedMemberId]=useState<string|null>(null);
   const [error,setError]=useState("");
   const [programId,setProgramId]=useState("");
   const [cohortId,setCohortId]=useState("");
   const [sectionId,setSectionId]=useState("");
-  const [displayName,setDisplayName]=useState("");
+  const [firstName,setFirstName]=useState("");
+  const [lastName,setLastName]=useState("");
+  const displayName=legacyPersonName(firstName,lastName);
   const [phoneE164,setPhone]=useState("");
   const [email,setEmail]=useState("");
   const [rollNumber,setRoll]=useState("");
@@ -25,7 +30,8 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
   const [address,setAddress]=useState("");
   const field="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground";
   function submit(event:FormEvent<HTMLFormElement>) {
-    event.preventDefault();setError("");setResult(null);
+    event.preventDefault();setError("");setResult(null);setSavedMemberId(null);
+    if(!indianMobileToE164(phoneE164)){setError("Mobile number must be 10 digits");return;}
     if(!programId||!cohortId||!displayName.trim()||!phoneE164.trim()){
       setError("Name, phone, program and batch are required.");return;
     }
@@ -34,29 +40,33 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
       try {
         const response=await fetch("/api/college/students/register",{
           method:"POST",headers:{"content-type":"application/json"},
-          body:JSON.stringify({displayName,phoneE164,email,programId,cohortId,
+          body:JSON.stringify({displayName,phoneE164:indianMobileToE164(phoneE164),email,programId,cohortId,
             sectionId:sectionId||undefined,rollNumber,gender,dateOfBirth,address}),
         });
         const body=await response.json().catch(()=>null) as
           {error?:string;status?:string;membershipId?:string;failures?:string[]}|null;
         if(!response.ok && response.status!==207)throw Error(body?.error??"Student registration failed");
         const isPartial=body?.status==="PARTIAL";
+        setSavedMemberId(body?.membershipId??null);
         setResult(isPartial
           ? "Partially registered. Student membership "+(body?.membershipId??"")+"; "+(body?.failures??[]).join("; ")
           : "Student registered and enrolled successfully.");
         if(!isPartial){
-          setDisplayName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
+          setFirstName("");setLastName("");setPhone("");setEmail("");setRoll("");setDob("");setAddress("");
           router.refresh();
         }
       }catch(reason){setError(reason instanceof Error?reason.message:"Registration failed");}
     });
   }
   return <form onSubmit={submit} className="grid gap-4 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2">
-    <label className="grid gap-1 text-sm font-semibold">Full name
-      <input required maxLength={255} value={displayName} onChange={e=>setDisplayName(e.target.value)} className={field}/>
+    <label className="grid gap-1 text-sm font-semibold">First Name
+      <input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold">Mobile number (with country code)
-      <input required type="tel" placeholder="+919876543210" value={phoneE164}
+    <label className="grid gap-1 text-sm font-semibold">Last Name
+      <input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
+    </label>
+    <label className="grid gap-1 text-sm font-semibold">Mobile Number
+      <input required type="tel" placeholder="9876543210" value={phoneE164}
         onChange={e=>setPhone(e.target.value)} className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Email
@@ -101,6 +111,7 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
         {pending?"Registering…":"Register student"}
       </button>
       {result&&<p role="status" className="text-sm text-body">{result}</p>}
+      {savedMemberId?<Link href={"/admin/people/directory/"+encodeURIComponent(savedMemberId)} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Open registered student profile →</Link>:null}
       {error&&<p role="alert" className="text-sm text-error">{error}</p>}
     </div>
   </form>;

@@ -10,6 +10,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
 }){
  const router=useRouter();
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
+ const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
@@ -41,14 +42,22 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       Add backlog task
     </button>
     {adding?<form onSubmit={async e=>{
-      e.preventDefault();setBusy(true);setError("");
+      e.preventDefault();setError("");
+      if(!title.trim()||!Number.isInteger(points?Number(points):0)||
+        (points!==""&&(Number(points)<0||Number(points)>1000))){
+        setError("Enter a task title and a valid estimate from 0 to 1000.");return;
+      }
+      setBusy(true);
       try{
         await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
+          taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
-        setAdding(false);setTitle("");setDescription("");setCriteria("");router.refresh();
+        setAdding(false);setTitle("");setDescription("");setCriteria("");
+        setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
+        router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
       finally{setBusy(false);}
     }} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2">
@@ -69,7 +78,25 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="text-sm font-semibold">Estimate points<input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/></label>
-      <div className="flex items-end gap-2"><button type="submit" disabled={busy||!title.trim()}
+      <label className="text-sm font-semibold">Task type
+        <select value={taskType} onChange={e=>setTaskType(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3">
+          <option value="">Not specified</option>
+          <option value="STORY">Story</option><option value="BUG">Bug</option>
+          <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
+        </select>
+      </label>
+      <label className="text-sm font-semibold">Due date
+        <input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background px-3"/>
+      </label>
+      <label className="text-sm font-semibold sm:col-span-2">What's blocking this task?
+        <textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
+          className="mt-1 min-h-10 w-full rounded-md border border-border bg-background p-2"/>
+      </label>
+      <div className="flex items-end gap-2"><button type="submit"
+        disabled={busy||!title.trim()||(points!==""&&
+          (!Number.isInteger(Number(points))||Number(points)<0||Number(points)>1000))}
         className="min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-primary-foreground">Add task</button>
       <button type="button" onClick={()=>setAdding(false)}
         className="min-h-10 rounded-md border border-border px-3 text-sm">Cancel</button></div>
@@ -80,7 +107,9 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   <div className="grid gap-3 sm:grid-cols-2">
    {backlog.map(task=><article key={task.id} className="rounded-lg border border-border p-3">
     <p className="font-semibold">{task.title}</p>
-    <p className="mt-1 text-xs text-body">{task.priority} · {task.estimatePoints??0} points</p>
+    <p className="mt-1 text-xs text-body">
+      {task.priority} · {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
+    </p>
     {task.carriedFromSprintId?<span className="mt-1 inline-flex rounded border border-border px-2 py-1 text-xs font-semibold text-warning-text">Carried over</span>:null}
     {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
      <select disabled={busy} defaultValue="" onChange={e=>{const id=e.target.value;if(id)void move(task,id);}}
@@ -92,7 +121,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
   </div>
-  {!readOnly&&ready?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
+  {!readOnly&&targets.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
      {tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status))

@@ -22,6 +22,8 @@ type PageProps = {
     nextFollowup?: string | string[];
     lastActivity?: string | string[];
     added?: string | string[];
+    need?: string | string[];
+    attention?: string | string[];
     due?: string | string[];
   }>;
 };
@@ -58,6 +60,7 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
         designation:first(query.designation)??"",
         nextFollowup:first(query.nextFollowup)??(first(query.due)==="1"?"DUE":"ALL"),
         lastActivity:first(query.lastActivity)??"ALL",added:first(query.added)??"ALL",
+        need:first(query.need)??"ALL",attention:first(query.attention)??"ALL",
       }}
     />
   );

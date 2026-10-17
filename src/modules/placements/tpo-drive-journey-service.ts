@@ -35,7 +35,7 @@ export async function getTpoDriveJourney(context:RequestContext,rawJobId:unknown
  const reach=await db.transaction(tx=>previewEligiblePublishedDrive(tx,context,job),{accessMode:"read only"});
  const stages=[
   {name:"Registered & eligible",count:reach.eligible,href:"/tpo/placements/jobs/"+jobId+"/about"},
-  {name:"Applied",count:counts?.applied??0,href:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?stage=SUBMITTED"},
+  {name:"Applied",count:counts?.applied??0,href:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?stage=ALL"},
   {name:"Shortlisted",count:counts?.shortlisted??0,href:"/tpo/placements/jobs/"+jobId+"/applicants-pipeline?stage=SHORTLISTED"},
   {name:"Interviewed",count:counts?.interviewed??0,href:"/tpo/placements/jobs/"+jobId+"/rounds"},
   {name:"Offered",count:counts?.offered??0,href:"/tpo/placements/jobs/"+jobId+"/offers"},
