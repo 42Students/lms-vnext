@@ -2,6 +2,7 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {OtherTenantSettings} from "@/components/admin/tenant-settings-other-keys";
 import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
 type Entry={key:string;value:string;version:number};
 type Result={key:string;status:"SAVED"|"DELETED"|"FAILED";message:string;version?:number};
@@ -64,6 +65,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     </label>)}
    </div>
   </fieldset>)}
+  <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries}/>
   <div className="flex flex-wrap items-center gap-3">
    <button type="button" disabled={!ready||saving||changed.length===0} onClick={()=>void save()}
     className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
