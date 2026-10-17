@@ -8,9 +8,10 @@ describe("Recruiter Messages draft protection",()=>{
   expect(ui).toContain("<ConfirmActionDialog");
   expect(ui).toContain("open={leaveHref!==null}");
   expect(ui).toContain('confirmLabel="Discard"');
-  expect(ui).toContain("onCancel={()=>setLeaveHref(null)}");
-  expect(ui).toContain("setLeaveHref(url.pathname+url.search+url.hash)");
-  expect(ui).toContain("if(destination)router.push(destination)");
+  expect(ui).toContain("onCancel={()=>setPendingLeave(null)}");
+  expect(ui).toContain("setPendingLeave(destination.pathname+destination.search+destination.hash)");
+  expect(ui).toContain("if(href)router.push(href)");
+  expect(ui).toContain("const href=leaveHref;setPendingLeave(null);setBody(\"\")");
  });
  it("REC-calendar-messages-profile-12 protects native unload while unsent text remains",()=>{
   expect(ui).toContain('window.addEventListener("beforeunload",warn)');
