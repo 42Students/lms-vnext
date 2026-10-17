@@ -112,6 +112,7 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-R05 | S4 | A11Y | DONE |
 
 ## Notes (source-verification limits and remaining external checks)
+- Tracker reconciliation: `docs/audit/gap-register.md` still reports 11 OPEN, 4 UNCONFIRMED and 2 FIXED-ON-MAIN rows across the two chat-13 pages despite source-backed DONE queue/acceptance records. These are not independently CI-VERIFIED until the orchestrator executes tests and refreshes that register.
 - All 95 records are DONE in the source-verification queue: existing gap-named unit tests and acceptance file evidence were confirmed. This does not assert that unit, integration, browser or database tests have run here; orchestrator verification remains required.
 - SA-placements-projects-14: migration 0133 registers legacy_posting_details; actual data migration and cross-college business intent require runtime verification. Cross-college access is not inferred from application mode.
 - SA-placements-projects-21: verified CLEAN document access and real policy checks intentionally avoid fabricating missing resume match scores.

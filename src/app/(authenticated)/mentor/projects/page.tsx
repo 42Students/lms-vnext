@@ -20,6 +20,8 @@ import { hasMembershipRole } from "@/modules/identity/context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { listMyMentorProjectAttention } from "@/modules/projects/mentor-attention-service";
 import { listMyProjectInstances } from "@/modules/projects/member-service";
+import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
+import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
 
 export default async function MentorProjectsPage({
   searchParams,
@@ -64,18 +66,15 @@ export default async function MentorProjectsPage({
   }
   const query = parsed.data;
 
-  const [allRows, attentionRows] =
-    await Promise.all([
-      listMyProjectInstances(
-        context,
-      ),
-      listMyMentorProjectAttention(
-        context,
-      ),
-    ]);
-
-  const [workCounts, teamSizes] = await Promise.all([
-    getMentorProjectWorkCounts(context), getMentorProjectTeamSizes(context),
+  // MEN-projects-meetings-10: common filters are paged and counted in SQL.
+  // Nontrivial attention/task ranking keeps the legacy full-set path.
+  const canPageInSql=canPageMentorProjectList(query);
+  const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
+  const allRows=paged?.items??await listMyProjectInstances(context);
+  const [attentionRows,workCounts,teamSizes]=await Promise.all([
+    listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
+    getMentorProjectWorkCounts(context,paged?allRows:undefined),
+    getMentorProjectTeamSizes(context,paged?allRows:undefined),
   ]);
   const alerts = new Map<
     string,
@@ -196,22 +195,22 @@ export default async function MentorProjectsPage({
           teamSizes.get(a.project.id) ?? 0, teamSizes.get(b.project.id) ?? 0,"SMALLEST")
       : compareMentorProjects(a.project,b.project,query.sort));
 
-  const total = filtered.length;
-  const totalPages = Math.max(
+  const total = paged?.total??filtered.length;
+  const totalPages = paged?.totalPages??Math.max(
     1,
     Math.ceil(
       total /
         (query.pageSize ?? 25),
     ),
   );
-  const page = Math.min(
+  const page = paged?.page??Math.min(
     query.page ?? 1,
     totalPages,
   );
   const start =
     (page - 1) *
     (query.pageSize ?? 25);
-  const rows = filtered.slice(
+  const rows = paged?filtered:filtered.slice(
     start,
     start +
       (query.pageSize ?? 25),

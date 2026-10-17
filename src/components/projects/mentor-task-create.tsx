@@ -1,6 +1,6 @@
 "use client";
 
-import {useEffect,useState} from "react";
+import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Dialog} from "@/components/ui/dialog";
@@ -10,17 +10,17 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {useToast} from "@/components/ui/toast";
 import {projectMutation} from "./project-api";
+import {mentorEstimateLabel,mentorEstimateOptions} from "@/modules/projects/mentor-estimation-unit-model";
 
 export function MentorTaskCreate({
-  projectId,sprintId,updatedAt,sprints=[],learners=[],
-}:{projectId:string;sprintId:string;updatedAt:string;
+  projectId,sprintId,updatedAt,estimationUnit,sprints=[],learners=[],
+}:{projectId:string;sprintId:string;updatedAt:string;estimationUnit?:string|null;
   sprints?:readonly {id:string;title:string;status:string;updatedAt:string}[];
   learners?:readonly {membershipId:string;displayName:string|null}[];
 }){
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
-  const [confirmDiscard,setConfirmDiscard]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
@@ -65,7 +65,7 @@ export function MentorTaskCreate({
         taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
       });
       showToast({tone:"success",title:"Task added."});
-      setOpen(false);resetForm();
+      discardDraft();
       router.refresh();
     }catch{
       showToast({tone:"error",title:"Task was not created",
@@ -123,9 +123,13 @@ export function MentorTaskCreate({
             </>:null}
           </select>
         </label>
-        <label className="grid gap-1 text-sm font-semibold text-body">Estimate
-          <Input inputMode="numeric" type="number" min={0} max={1000} value={estimate}
-            onChange={e=>setEstimate(e.target.value)}/>
+        <label className="grid gap-1 text-sm font-semibold text-body">Estimate ({mentorEstimateLabel(1,estimationUnit).replace(/^1 /,"")})
+          <select value={estimate} onChange={e=>setEstimate(e.target.value)}
+            className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground">
+            <option value="">Not estimated</option>
+            {mentorEstimateOptions(estimationUnit).map(value=>
+              <option key={value} value={String(value)}>{mentorEstimateLabel(value,estimationUnit)}</option>)}
+          </select>
         </label>
         <label className="grid gap-1 text-sm font-semibold text-body">Type
           <select value={taskType} onChange={e=>setTaskType(e.target.value)}

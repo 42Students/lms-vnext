@@ -28,6 +28,7 @@ import {
 } from "./access";
 import {
   projectReleaseIdSchema,
+  projectReleaseVersionInputSchema,
   projectSprintIdSchema,
   projectTaskIdSchema,
   updateProjectTaskStatusInputSchema,
@@ -606,12 +607,15 @@ export async function unshipProjectRelease(
   context: RequestContext,
   projectIdInput: string,
   releaseIdInput: string,
+  rawInput:unknown={},
 ) {
   const scope =
     await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
+  const expected=projectReleaseVersionInputSchema.parse(rawInput).expectedUpdatedAt;
+  if(scope.access==="MENTOR"&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
   const releaseId =
     projectReleaseIdSchema.parse(releaseIdInput);
   const db = getDb();
@@ -647,6 +651,8 @@ export async function unshipProjectRelease(
         "PROJECT_RELEASE_NOT_FOUND",
       );
     }
+    if(expected && release.updatedAt.getTime()!==new Date(expected).getTime())
+      throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
     if (release.status !== "SHIPPED") {
       throw new ProjectsServiceError(
         "PROJECT_RELEASE_INVALID_STATE",
@@ -711,12 +717,15 @@ export async function shipProjectRelease(
   context: RequestContext,
   projectIdInput: string,
   releaseIdInput: string,
+  rawInput:unknown={},
 ) {
   const scope =
     await requireProjectLifecycleMutationAccess(
       context,
       projectIdInput,
     );
+  const expected=projectReleaseVersionInputSchema.parse(rawInput).expectedUpdatedAt;
+  if(scope.access==="MENTOR"&&!expected)throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
   const releaseId =
     projectReleaseIdSchema.parse(releaseIdInput);
   const db = getDb();
@@ -752,6 +761,8 @@ export async function shipProjectRelease(
         "PROJECT_RELEASE_NOT_FOUND",
       );
     }
+    if(expected && release.updatedAt.getTime()!==new Date(expected).getTime())
+      throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
     if (
       release.status !== "PLANNED" &&
       release.status !== "IN_PROGRESS"

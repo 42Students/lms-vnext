@@ -69,3 +69,9 @@ Remaining reassigned mentor OPEN items require data-model or full UI workflows: 
 | MEN-projects-meetings-75 | PARTIAL — task edit and delivery reopen drafts | src/components/projects/mentor-task-details-edit.tsx and project-delivery-reopen-control.tsx; tests/unit/chat11-mentor-edit-draft-round8.test.ts — `it("MEN-projects-meetings-75 keeps task edit and delivery reopen drafts until confirmed")`. Final delivery feedback editors still to reconcile. |
 
 | MEN-projects-meetings-75 | PARTIAL — final delivery review + rubric guards | project-final-delivery-controls.tsx; tests/unit/chat11-mentor-final-feedback-guard-round8.test.ts — `it("MEN-projects-meetings-75 protects final delivery and evaluation feedback on discard")`. Additional mentor editors and route change guard remain subject to audit. |
+
+### Chat-16 follow-up: project brief notices and final draft recovery (authored, not tested)
+
+| MEN-projects-meetings-72 | PARTIAL | `workspace-brief-service.ts` now sends role-scoped mentor and learner notifications using the same audit activity event and DB transaction; `tests/unit/chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-72. Remaining producer/recipient coverage requires database testing. |
+| MEN-projects-meetings-75 | PARTIAL | Additional unsaved release edits, meeting outcomes and delivery feedback now prompt to discard and warn on unload; `mentor-release-editor.tsx`, `project-meeting-controls.tsx`; `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-75. Navigation-route guards and all editor variants remain pending. |
+| MEN-projects-meetings-76 | PARTIAL | Native release deletion confirmation replaced by `ConfirmDialog`; task transition and meeting outcome failures present static retry guidance; `chat16-mentor-draft-recovery-round3.test.ts` — MEN-projects-meetings-76. |
