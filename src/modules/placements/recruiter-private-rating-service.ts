@@ -3,7 +3,7 @@ import {and,eq,gt,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementRecruiterCollegeGrants,placementRecruiterPrivateReviews,users} from "@/db/schema";
+ placementJobs,placementRecruiterCollegeGrants,placementRecruiterPrivateReviews,users} from "@/db/schema";
 import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
@@ -62,6 +62,7 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
   // cannot silently replace each other's note or rating.
   const [owned]=await tx.select({id:placementApplications.id})
    .from(placementApplications)
+   .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .innerJoin(placementApplicationScreenings,
     eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(placementRecruiterCollegeGrants,
