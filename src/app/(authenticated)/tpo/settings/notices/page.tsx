@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {TpoOptionalEmailsEditor} from "@/components/tpo/tpo-optional-emails-editor";
 import {TpoSmsCapEditor} from "@/components/tpo/tpo-communication-settings-editors";
 import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -34,15 +35,25 @@ export default async function TpoStudentNoticesSettings(){
   </section>
   {communication.ready?<TpoSmsCapEditor initial={communication.smsMonthlyCap} version={communication.version}/>:
    <p role="status" className="rounded-lg border border-border p-4 text-sm">Communication settings are not available in this database.</p>}
-  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
-   <h2 className="text-lg font-semibold">Optional emails</h2>
-   <p className="text-sm">Switch off what your students do not need. The in-app notice always shows; these control only the email.</p>
-   <section aria-label="Emails switched on" className="space-y-2 border-t border-border pt-3">
-    <h3 className="font-semibold">Emails switched on</h3>
-    <p role="status" className="text-sm text-warning-text">Couldn't check which emails are switched on.</p>
-    <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
-    <Link href="/tpo/settings/templates" className="inline-flex min-h-10 text-sm text-primary-text underline">View available message templates</Link>
+  {communication.ready?<TpoOptionalEmailsEditor initial={{
+    notifyDriveOpenEmail:communication.notifyDriveOpenEmail,
+    notifyResultApplied:communication.notifyResultApplied,
+    notifyNudges:communication.notifyNudges,notifyPrepAssigned:communication.notifyPrepAssigned,
+   }} version={communication.version}/>:null}
+   <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+    <h2 className="font-semibold">SMS</h2>
+    <p className="text-sm font-medium">Always sent (email and SMS), never counted against the limit</p>
+    <div className="flex flex-wrap gap-2">{["Round scheduled or changed",
+     "Offer released, expiring, expired or withdrawn","Drive cancelled",
+     "Application deadline today","Debarred or marked absent"].map(label=>
+     <span key={label} className="rounded-full border border-border px-3 py-1 text-xs">{label}</span>)}</div>
+    <p className="text-xs text-muted-foreground">These are legacy notification categories. Actual email/SMS delivery is not certified without provider status.</p>
    </section>
+  <section className="space-y-2 rounded-xl border border-border bg-surface p-5">
+   <h2 className="text-lg font-semibold">Emails switched on</h2>
+   <p role="status" className="text-sm text-warning-text">Couldn't check which emails are switched on.</p>
+   <p className="text-xs text-muted-foreground">Mail delivery configuration and provider template status are not available to this reader. In-app notices remain available.</p>
+   <Link href="/tpo/settings/templates" className="inline-flex min-h-10 text-sm text-primary-text underline">View available message templates</Link>
   </section>
   <nav aria-label="Notice and notification destinations" className="flex flex-wrap gap-4 text-sm">
     <Link href={destinations.inbox} className="inline-flex min-h-11 items-center text-primary-text underline">Open personal notifications inbox</Link>
