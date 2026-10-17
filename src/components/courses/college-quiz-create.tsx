@@ -183,7 +183,11 @@ export function CollegeQuizCreate({lessons,deliveries}:{
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">
      {busy?"Saving…":"Create quiz draft"}</button>
     <button type="button" disabled={busy} onClick={()=>{
-      if((title.trim()||questions.some(q=>q.prompt.trim()))&&!window.confirm("Discard unsaved quiz changes?"))return;
+      const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
+       maxAttempts!=="1"||shuffleQuestions||shuffleOptions||questions.length!==1||
+       questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
+        q.options.length!==2||q.options.some(option=>option.text.trim())));
+      if(dirty&&!window.confirm("Discard unsaved quiz changes?"))return;
       setOpened(false);
     }} className="min-h-10 rounded border border-border px-4 text-sm">Cancel</button>
    </div>
