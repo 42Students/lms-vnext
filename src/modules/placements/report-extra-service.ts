@@ -9,6 +9,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
+  placementCompanyRelationships,
   placementApplicationScreenings,
   placementApplicationStatusHistory,
   placementApplications,
@@ -372,7 +373,7 @@ export async function getPlacementLeadsReport(
   const leads = await listTpoLeads(context, collegeId);
   const db = getDb();
   // Only real contact types count as outreach; NOTE/creation/SYSTEM do not.
-  const [contacts, openSteps] = await Promise.all([
+  const [contacts, openSteps, relationships] = await Promise.all([
     db.select({ leadId: placementTpoLeadActivities.leadId,
       at: placementTpoLeadActivities.createdAt })
       .from(placementTpoLeadActivities)
@@ -382,6 +383,9 @@ export async function getPlacementLeadsReport(
       .from(placementTpoFollowups)
       .where(and(eq(placementTpoFollowups.collegeId, collegeId),
         isNull(placementTpoFollowups.doneAt))),
+    db.select({relationshipId:placementCompanyRelationships.id,companyId:placementCompanyRelationships.companyId})
+      .from(placementCompanyRelationships)
+      .where(eq(placementCompanyRelationships.collegeId,collegeId)),
   ]);
   const health = summarizeTpoLeadHealth(
     leads.map((lead) => ({ id: lead.id, manualStage: lead.manualStage,
@@ -395,7 +399,8 @@ export async function getPlacementLeadsReport(
   return {
     health,
     collegeId,
-    companyEngagement:buildTpoCompanyEngagement(leads,contacts.map(row=>({leadId:row.leadId}))),
+    companyEngagement:buildTpoCompanyEngagement(leads,contacts.map(row=>({leadId:row.leadId})))
+      .map(row=>({...row,companyId:relationships.find(rel=>rel.relationshipId===row.companyRelationshipId)?.companyId??null})),
     leads: summarizePlacementLeads(
       leads.map((lead) => ({
         id: lead.id,
