@@ -24,7 +24,7 @@ export function TpoReportSavedFilters({path,collegeId}:{path:string;collegeId:st
   if(!label||label.length>50){setMessage("Choose a name up to 50 characters.");return;}
   if(views.length>=12&&!views.some(item=>item.name===label)){setMessage("Up to 12 saved filters per report.");return;}
   const next=views.filter(item=>item.name!==label);
-  next.push({name:label,seasonId:params.get("seasonId")??"",jobId:params.get("jobId")??""});
+  next.push({name:label,seasonId:params.get("seasonId")??"",jobId:params.get("jobId")??"",batchId:params.get("batchId")??"",branchId:params.get("branchId")??"",sort:params.get("sort")??"",outcome:params.get("outcome")??"",q:params.get("q")??"",group:params.get("group")??""});
   if(persist(next)){setPicked(label);setName("");setMessage("Saved filters for this report.");}
  }
  function apply(){
@@ -32,6 +32,9 @@ export function TpoReportSavedFilters({path,collegeId}:{path:string;collegeId:st
   const next=new URLSearchParams();
   if(selected.seasonId)next.set("seasonId",selected.seasonId);
   if(selected.jobId)next.set("jobId",selected.jobId);
+  for(const field of ["batchId","branchId","sort","outcome","q","group"] as const){
+   if(selected[field])next.set(field,selected[field]);
+  }
   router.push(path+(next.size?"?"+next:""));
   setMessage("Saved filters applied.");
  }
