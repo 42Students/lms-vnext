@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
+import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -528,10 +529,7 @@ export function PlacementJobCreateForm({
       showToast({
         tone: "error",
         title: "Could not create opportunity",
-        description:
-          error instanceof Error
-            ? error.message
-            : "Please try again.",
+        description: tpoDriveFormErrorMessage(error),
       });
     }
     });
