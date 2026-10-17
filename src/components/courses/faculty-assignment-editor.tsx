@@ -4,6 +4,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
+import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
 import {ALL_ASSIGNMENT_METHODS,normalizeAssignmentMethods,type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 import {authoringDueInstant,authoringLocalDateTime,assignmentActionAvailable}
  from "@/modules/courses/faculty-authoring-datetime-model";
@@ -181,6 +182,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
      onClick={()=>void submit("ARCHIVE")} className="rounded border border-border px-4 py-2">Archive</button>
    </>}
   </div>
-  <p className="text-xs text-muted-foreground">No attachments. Draft edits require an unchanged version; reload after another author updates the assignment.</p>
+  {existing?<FacultyAssignmentMaterialLinks key={existing.id} deliveryId={deliveryId} assignmentId={existing.id} disabled={pending||existing.status==="ARCHIVED"}/>:null}
+  <p className="text-xs text-muted-foreground">Draft edits require an unchanged version; reload after another author updates the assignment.</p>
  </section>;
 }

@@ -12,6 +12,16 @@ function row(name: string, phone: string) {
 }
 
 describe("College student CSV import model", () => {
+  it("COL-people-R03 rejects same-cohort roll numbers ignoring case before provisioning identities",()=>{
+    const csv=["First Name,Last Name,Roll Number,Mobile Number,Email",
+     "A,One,CS-001,9876543210,one@example.org",
+     "B,Two,cs-001,9876543211,two@example.org"].join("\n");
+    const result=parseStudentCsv(csv,{programId,cohortId});
+    expect(result.structuralErrors).toEqual([]);
+    expect(result.entries[0]?.errors).toEqual([]);
+    expect(result.entries[1]?.errors).toContain("DUPLICATE_ROLL_NUMBER_IN_FILE");
+  });
+
   it("parses quoted commas and CRLF without miscounting rows", () => {
     const cells = tokenizeStudentCsv(header + "\r\n" +
       `"Last, First",+919876543210,,${programId},${cohortId}\r\n`);

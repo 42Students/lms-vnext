@@ -35,3 +35,17 @@ Remaining unclosed work includes SA-tenants-modules-43/45/46/47/48/49/50/53/54/5
 | SA-tenants-modules-54 | BLOCKED (provider credentials) | Inbound receiver may only run with verified signed provider and safe tenant threading; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-54` |
 | SA-tenants-modules-60 | NOT-A-GAP (row granularity) | Per-college broadcast notices preserve independent retries and audit; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-60` |
 | SA-tenants-modules-68 | DONE (source) | VerificationReviewDrawer has 50-event history and masked identity-number guidance; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-tenants-modules-68` |
+
+## chat-13 2026-10-18 independent Activity and Tracker cross-check
+| Gap | Decision | Evidence |
+|---|---|---|
+| SA-tenants-modules-43 | DONE (source) | Activity feed groups by day and retains safe metadata descriptions. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-43` (written, not run). |
+| SA-tenants-modules-45 | DONE (source) | Activity uses a bounded 50-event page and grouped timeline. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-45` (written, not run). |
+| SA-tenants-modules-46 | PARTIAL (source) | Recorded import state is shown; manual GitHub Sync now is not configured. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-46` (written, not run). |
+| SA-tenants-modules-47 | DONE (source) | Finding detail mutations include severity, assignee, duplicate, fix commit, comment and status. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-47` (written, not run). |
+| SA-tenants-modules-48 | DONE (source) | Audit board has Open / Release / All and severity filters. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-48` (written, not run). |
+| SA-tenants-modules-50 | DONE (source) | Audit board remembers allowlisted filters in localStorage. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-50` (written, not run). |
+| SA-tenants-modules-54 | BLOCKED (source) | Inbound mail provider signature/credentials must be verified before intake can run. Provider proof required. |
+| SA-tenants-modules-60 | NOT-A-GAP (source) | Selected-college broadcast preserves separate receipt/retry/audit records; one synthetic row would obscure deliveries. Owner decision retained. |
+| SA-tenants-modules-67 | DONE (source) | Verification drawer supports section-specific SEND_BACK workflows and feedback. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-67` (written, not run). |
+| SA-tenants-modules-68 | DONE (source) | Verification drawer shows persisted decision history and masked-ID posture. `tests/unit/chat13-superadmin-gap-register-reconcile-c.test.ts` test `SA-tenants-modules-68` (written, not run). |

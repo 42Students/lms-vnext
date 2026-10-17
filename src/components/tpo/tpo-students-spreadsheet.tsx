@@ -174,17 +174,17 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
   <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
-   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">Export selected XLSX</a>:
+   {xlsxHref?<a href={xlsxHref} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)]">Export selected XLSX</a>:
     selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
   <button type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
-    onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text disabled:opacity-50">
+    onClick={downloadSelection} className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] disabled:opacity-50">
     Export selected CSV
   </button>
   {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
   <details className="rounded-xl border border-border p-4">
    <summary className="cursor-pointer font-semibold">Bulk Add a note</summary>
    <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
-   <label className="mt-3 flex min-h-10 items-center gap-2 text-sm"><input type="checkbox"
+   <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><input type="checkbox"
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
      onChange={e=>setNoteSelection(e.target.checked?rows.slice(0,100).map(r=>r.membershipId):[])} />Select visible page</label>
    <div className="my-3 grid max-h-44 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">
@@ -199,18 +199,18 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   </details>
   <label className="inline-flex items-center gap-3 text-sm font-semibold">Sort visible roster page
    <select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
-    className="min-h-10 rounded border border-border bg-surface px-3">
+    className="min-h-11 rounded border border-border bg-surface px-3">
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>
     <option value="APPLICATIONS_ASC">Applications · fewest</option>
     <option value="OFFERS_DESC">Offers · most</option><option value="OFFERS_ASC">Offers · fewest</option>
    </select>
   </label>
   <TpoGridFilterPanel fields={filters} mobileSheet/>
-  <TpoSpreadsheetGrid mobileActionsCollapsible storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoSpreadsheetGrid mobileActionsCollapsible mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
-    <button type="button" className="min-h-10 text-primary-text underline"
+    <button type="button" className="min-h-11 text-[var(--lms-link-text)] underline"
       onClick={()=>open(row.membershipId)} aria-label={"Open student panel for "+row.displayName}>
       Open student panel
     </button>
@@ -220,16 +220,16 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
       initial={afterCollege[row.membershipId]??{outcome:"NOT_DECIDED",expectedVersion:"none"}}
       available={afterCollegeAvailable} />
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}
-      aria-label={"Placement history for "+row.displayName} className="min-h-10 text-primary-text underline">Placement history</Link>
+      aria-label={"Placement history for "+row.displayName} className="min-h-11 text-[var(--lms-link-text)] underline">Placement history</Link>
     <Link href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/participation"}
-      aria-label={"Change participation for "+row.displayName} className="min-h-10 text-primary-text underline">Change participation</Link>
+      aria-label={"Change participation for "+row.displayName} className="min-h-11 text-[var(--lms-link-text)] underline">Change participation</Link>
    </div>}/>
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
   {selected&&!active?<p role="status" className="text-sm">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
-    <button type="button" className="ml-2 text-primary-text underline" onClick={()=>open(null)}>Clear selection</button>
+    <button type="button" className="ml-2 text-[var(--lms-link-text)] underline" onClick={()=>open(null)}>Clear selection</button>
   </p>:null}
  </div>;
 }

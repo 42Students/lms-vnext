@@ -78,3 +78,16 @@ Remaining gaps are tracked in `docs/orchestrator/queues/gap-closure-chat-4.md`. 
 | SA-placements-projects-68 | DONE (source) | Readiness route shows shared workspace section tabs; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-68` |
 | SA-placements-projects-72 | OPEN (partial) | Confirmed accept and request changes restored; distinct durable lock action still absent; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-72` |
 | SA-placements-projects-77 | OPEN | Template, mentor, review and release mutation audits need complete database-backed coverage; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-77` |
+
+## 2026-10-18 chat-13 independent Projects source sweep — not runtime verification
+| ID | Result | Evidence |
+|---|---|---|
+| SA-placements-projects-55 | DONE | 10/20/50/100 and canonical search/page size; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-55` (source, unrun). |
+| SA-placements-projects-56 | PARTIAL | Individual creation preflight exists; per-learner failure detail and standalone team fields incomplete; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-56` (source, unrun). |
+| SA-placements-projects-58 | DONE | Mentor workload average-based overload and mentor filter; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-58` (source, unrun). |
+| SA-placements-projects-66 | DONE | Releases readiness and selected-workspace picker; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-66` (source, unrun). |
+| SA-placements-projects-67 | DONE | Override warnings and guarded confirmation; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-67` (source, unrun). |
+| SA-placements-projects-68 | DONE | Readiness section route retained through shared workspace component; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-68` (source, unrun). |
+| SA-placements-projects-77 | OPEN | Full template, mentor, submission, release and review mutation audit coverage not yet proven end-to-end; full integration coverage still necessary. |
+| SA-placements-projects-87 | DONE | Template-college assignment/removal selection and retry; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-87` (source, unrun). |
+| SA-placements-projects-93 | DONE | Student roster replacement with scoped selection and confirm; `tests/unit/chat13-superadmin-gap-register-reconcile-b.test.ts` test `SA-placements-projects-93` (source, unrun). |
