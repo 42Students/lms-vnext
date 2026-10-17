@@ -550,7 +550,7 @@ export async function issuePlacementOffer(
         title: input.kind === "LOI" ? "Letter of intent received" : "Placement offer received",
         body:
           `You received a ${input.roleTitle} ${input.kind === "LOI" ? "letter of intent" : "offer"} for ${current.job.title}. Review and respond to it.`,
-        actionHref: "/learn/placements",
+        actionHref: "/learn/my-placements/offers?status=pending",
       },
     );
 
@@ -1006,7 +1006,7 @@ export async function actOnPlacementOffer(
         reason: input.reason,
       });
 
-    await recordActivityEventInTransaction(
+    const withdrawalEvent=await recordActivityEventInTransaction(
       tx,
       context,
       {
@@ -1030,6 +1030,19 @@ export async function actOnPlacementOffer(
           `placement-offer:${updated.id}:withdrawn`,
       },
     );
+    const [recipient]=await tx.select({userId:collegeMemberships.userId})
+      .from(collegeMemberships).where(and(
+        eq(collegeMemberships.id,current.application.membershipId),
+        eq(collegeMemberships.collegeId,current.job.collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+      )).limit(1);
+    if(recipient)await deliverInAppNotificationInTransaction(tx,withdrawalEvent.id,
+      [recipient.userId],{
+        title:"Placement offer withdrawn",
+        body:"Your placement team withdrew the offer for "+current.job.title+
+          ". Review the updated offer status before taking further action.",
+        actionHref:"/learn/my-placements/offers?status=withdrawn",
+      });
 
     return updated;
   });

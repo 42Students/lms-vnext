@@ -49,7 +49,7 @@ export async function listMyMentorProjectAttention(
       startsAt:projectMeetings.startsAt,
     }).from(projectMeetings).where(and(
       inArray(projectMeetings.projectId,ids),
-      inArray(projectMeetings.status,["REQUESTED","SCHEDULED"]),
+      inArray(projectMeetings.status,["REQUESTED","SCHEDULED","RESCHEDULED"]),
     )),
     getDb().select({
       groupKey:activityEvents.groupKey,occurredAt:activityEvents.occurredAt,

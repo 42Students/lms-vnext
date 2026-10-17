@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
 import {PageHeader} from "@/components/ui/page-header";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -12,8 +13,10 @@ export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
- const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)redirect("/dashboard");
+ const ctx=await getCurrentRequestContext();
+ if(!isSuperAdmin(ctx) || ctx.user.platformStatus !== "ACTIVE")redirect("/dashboard");
+ if(ctx.adminScope?.collegeId||ctx.adminScope?.organizationId)redirect("/dashboard");
+ requirePermission(ctx,"admin-scope.select");
  const parsed=parseIndependentFindingFilters(await searchParams);
  const header=<><PageHeader eyebrow="42 Tracker · Super Admin" title="Audit findings"
   description="Independent findings imported from the audit repository, not user bug reports."/><TrackerAdminNav/></>;
@@ -24,7 +27,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    Audit findings are unavailable until registered migration 0133 is verified and DB10_AUDIT_FINDINGS_READY=DB10_VERIFIED.
    Bug reports are not substituted for independent audit findings.
   </p></div>;
- const data=await listIndependentAuditFindings(context,parsed);
+ const data=await listIndependentAuditFindings(ctx,parsed);
  const selectClass="min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground";
  return <div className="min-w-0 space-y-5">{header}
   <nav aria-label="Finding views" className="flex flex-wrap gap-2">

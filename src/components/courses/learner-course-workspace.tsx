@@ -24,6 +24,8 @@ import {LessonResourceMaterialsControl} from "./lesson-resource-materials-contro
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { LearnerYouTubePlayer } from "./learner-youtube-player";
 import { LearnerVideoPlayer } from "./learner-video-player";
+import {LearnerCourseStateRetry} from "./learner-course-state-retry";
+import {LearnerFormattedResponse} from "./learner-formatted-response";
 import {
   assignmentInteractionState,
   isAssignmentOverdue,
@@ -161,12 +163,14 @@ function ContentCard({
   deliveryId,
   readOnly,
   materialsEnabled,
+  saveIntervalMs,
 }: {
   content: Workspace["lessons"][number]["contents"][number];
   lessonId: string;
   deliveryId: string;
   readOnly: boolean;
   materialsEnabled:boolean;
+  saveIntervalMs:number;
 }) {
   const start = formatDateTime(content.startsAt);
   const end = formatDateTime(content.endsAt);
@@ -290,6 +294,7 @@ function ContentCard({
             "COMPLETED"
           }
           readOnly={readOnly}
+          saveIntervalMs={saveIntervalMs}
         />
       ) : content.type === "YOUTUBE" &&
       content.externalUrl ? (
@@ -454,7 +459,7 @@ function AssignmentCard({
       {assignment.submissionId && assignment.submissionType==="TEXT"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
           <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
-          <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText??"No text was saved."}</p>
+          <LearnerFormattedResponse text={assignment.submissionText??"No text was saved."}/>
         </section>:null}
       {assignment.submissionId && assignment.submissionType==="LINK"?
         <section aria-label="Your submission" className="mt-4 rounded-lg bg-surface-subtle p-3">
@@ -470,7 +475,7 @@ function AssignmentCard({
           <h4 className="text-sm font-semibold text-foreground">Your submission</h4>
           {assignment.submissionText?<div>
             <h5 className="text-xs font-semibold text-body">Written response</h5>
-            <p className="whitespace-pre-wrap break-words text-sm text-body">{assignment.submissionText}</p>
+            <LearnerFormattedResponse text={assignment.submissionText}/>
           </div>:null}
           <AssignmentFileOpenControl key={assignment.submissionId} submissionId={assignment.submissionId}
             enabled={assignmentFilesRuntimeEnabled()} />
@@ -717,6 +722,13 @@ export function LearnerCourseWorkspace({
 
   return (
     <div className="space-y-5">
+      {workspace.stateWarnings.length>0 ? (
+        <aside role="alert" className="rounded-xl border border-warning bg-surface p-4 text-sm text-body">
+          <p className="font-semibold">Some course state could not be loaded</p>
+          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Your progress has not been changed.</p>
+          <LearnerCourseStateRetry/>
+        </aside>
+      ) : null}
       {filterNotice ? <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{filterNotice}</p> : null}
       {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
         ? <p role="alert" className="rounded-lg border border-border p-3 text-sm text-body">
@@ -981,7 +993,8 @@ export function LearnerCourseWorkspace({
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly}
-                            materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
+                            materialsEnabled={resourceMaterialsRuntimeEnabled()}
+                            saveIntervalMs={workspace.playbackSettings.saveIntervalMs}/>
                           </LearnerRoadmapItemDialog>
                         ) : null;
                       }
