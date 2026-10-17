@@ -92,7 +92,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </article>)}
    {!backlog.length?<p className="py-4 text-sm text-muted-foreground">Backlog is empty.</p>:null}
   </div>
-  {!readOnly&&ready?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
+  {!readOnly&&targets.length>0?<details><summary className="cursor-pointer text-sm font-semibold text-primary-text">
     Return unfinished tasks to backlog</summary>
     <div className="mt-2 space-y-2">
      {tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status))
