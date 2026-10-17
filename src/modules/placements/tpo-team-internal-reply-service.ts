@@ -1,4 +1,5 @@
 import "server-only";
+import {createHash} from "node:crypto";
 import {and,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
@@ -46,6 +47,25 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
     eq(users.platformStatus,"ACTIVE"),
    )).for("share");
   if(new Set(active.map(member=>member.id)).size!==2)throw new Error("TEAM_PARTICIPANT_INACTIVE");
+  // Repeating the same keyed POST reuses its committed message, even after
+  // a client timeout; the thread row lock serializes competing retries.
+  const key=input.idempotencyKey?
+   "tpo.team.message:"+thread.id+":"+context.user.id+":"+input.idempotencyKey:null;
+  const bodyHash=createHash("sha256").update(input.body).digest("hex");
+  if(key){
+   const [existing]=await tx.select({metadata:activityEvents.metadata})
+    .from(activityEvents).where(and(
+     eq(activityEvents.dedupeKey,key),
+     eq(activityEvents.collegeId,college.id),
+     eq(activityEvents.actorUserId,context.user.id),
+    )).limit(1);
+   if(existing){
+    const saved=existing.metadata.messageId;
+    if(existing.metadata.bodyHash!==bodyHash||typeof saved!=="string")
+     throw new Error("TEAM_IDEMPOTENCY_CONFLICT");
+    return {id:saved,threadId:thread.id};
+   }
+  }
   const [message]=await tx.insert(placementTpoInternalMessages).values({
    threadId:thread.id,collegeId:college.id,
    authorMembershipId:membership.id,body:input.body,
@@ -57,7 +77,8 @@ export async function postTpoInternalMessage(context:RequestContext,raw:unknown)
    module:"PLACEMENTS",eventType:"placements.tpo_team.message_sent",
    subjectType:"team_thread",subjectId:thread.id,
    summary:"Private team message created",
-   metadata:{messageId:message.id,bodyLength:input.body.length},
+   metadata:{messageId:message.id,bodyLength:input.body.length,bodyHash},
+   dedupeKey:key,
   }).returning({id:activityEvents.id});
   const other=active.find(member=>member.id!==membership.id);
   if(!event||!other)throw new Error("TEAM_PARTICIPANT_INACTIVE");

@@ -10,10 +10,13 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  const {threadId}=await params;
  const form=await request.formData().catch(()=>null);
- const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body")});
+ const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body"),
+  idempotencyKey:form?.get("idempotencyKey")||undefined});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
-  await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
+  const result=await postTpoInternalMessage(await getCurrentRequestContext(),parsed.data);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json(result);
   return NextResponse.redirect(new URL("/tpo/team/"+threadId,request.url),303);
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
@@ -22,6 +25,8 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof Error&&error.message==="TEAM_PARTICIPANT_INACTIVE")
    return NextResponse.json({error:"TEAM_PARTICIPANT_INACTIVE"},{status:409});
+  if(error instanceof Error&&error.message==="TEAM_IDEMPOTENCY_CONFLICT")
+   return NextResponse.json({error:"STALE_MESSAGE"},{status:409});
   if(error instanceof Error&&error.message==="TEAM_TABLES_PENDING")
    return NextResponse.json({error:"TEAM_TABLES_PENDING"},{status:503});
   throw error;
