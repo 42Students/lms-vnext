@@ -1,5 +1,6 @@
 import { z } from "zod";
 import type { LearnerProfileDocument } from "./profile-validation";
+import {learnerProfileCareerCoverage} from "./learner-profile-career-coverage-model";
 
 /** The existing profile completion denominator, made explainable and actionable. */
 export const learnerProfileSectionSchema = z.enum([
@@ -39,5 +40,7 @@ export function learnerProfileChecklist(document: LearnerProfileDocument) {
     { section: "metadata", label: "Additional information", completed: document.metadata.length > 0 },
   ];
   const completed = items.filter(item => item.completed).length;
-  return { items, completed, total: items.length, percentage: Math.round(100 * completed / items.length) };
+  // Use the same persisted, non-sensitive career weights as the on-page ring.
+  const percentage=learnerProfileCareerCoverage({items}).percentage??0;
+  return {items,completed,total:items.length,percentage};
 }

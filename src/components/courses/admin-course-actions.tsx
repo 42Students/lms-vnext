@@ -14,6 +14,7 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { courseApiError } from "./learner-course-api";
+import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
 async function mutate(
   path: string,
@@ -64,9 +65,7 @@ function useCourseMutation() {
           tone: "error",
           title: "Course update failed",
           description:
-            error instanceof Error
-              ? error.message
-              : "The request could not be completed.",
+            academicSetupErrorMessage(error, "Course was not saved. Review your changes and retry."),
         });
       }
     });
