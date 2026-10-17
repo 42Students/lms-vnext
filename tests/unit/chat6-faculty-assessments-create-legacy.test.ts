@@ -10,6 +10,6 @@ describe("faculty assessment create legacy two-step entry",()=>{
   expect(src).toContain("disabled={!course||!lesson}");
   expect(src).toContain("setLessonKey(\"\")");
   expect(src).toContain("continued&&lesson&&course");
-  expect(src).toContain("lesson.deliveryId");
+  expect(src).toContain("deliveryId={course.deliveryId}");
  });
 });
