@@ -230,3 +230,13 @@ Direct-to-main implementation commits use the required `[chat-6]` prefix. No tes
 - BLOCKED WP-04 `SA-academics-people-60/87`: URL-video ingest infrastructure and security-sensitive impersonation are not safe to fake; move on.
 - BLOCKED WP-06 `PUB-auth-public-39`: production apex/domain rewrite is deployment-owned, not modified.
 - WPs remain IN-PROGRESS because many nonblocked assigned legacy gaps (faculty/student extended onboarding, courses, Recruiter/Placements operations, TPO batches/calendar/reports and announcements grouping) are not entirely closed. No misleading DONE markings.
+
+## FAST v2 subsequent chat-6-b batch — 2026-10-17
+
+- Merged origin/main by fast-forward when it was already an ancestor, then fast-forwarded again after the orchestrator absorbed concurrent lane commits. Branch-only pushes; no PR.
+- WP-02 `SA-placements-projects-19`: persisted-stage filter (APPLIED / SHORTLISTED / ASSESSMENT / INTERVIEW / WAITLISTED / OFFERED / HIRED / REJECTED), exact selected-college Job / Department / Program / Batch selectors, academic matching through actual learner enrollments and matching CSV filters; fixed duplicate jobId hidden inputs. Search, paginator, export preserve stage.
+- WP-02 `SA-academics-people-80/93` and `COL-people-01/25`: role-specific first/last name fields, Indian ten-digit mobile normalization to canonical +91 E.164, specific duplicate mobile/email errors in onboarding dialog. Extra legacy fields and enrollment-at-creation remain OPEN.
+- WP-05 `SA-placements-projects-35` / `SA-academics-people-113`: recruiter account table and mobile cards have per-row Archive/Reactivate and Sign out, using existing server account scope checks; global delete and global login semantics await owner decision.
+- Blocked: `SA-placements-projects-25/26` global company merge/verification policy; `PUB-auth-public-12/35` auth refresh/session design; `PUB-auth-public-39` apex marketing deployment; `SA-academics-people-84/87` hard delete and impersonation require owner approval. Move to next queue item.
+- None of the six owned WPs or four reassigned batches WPs is DONE: outstanding unblocked tasks exist; do not mark complete based on partial route improvements.
+- FAST v2: no tests, lint, typecheck, build, CI waiting, or tests added; push ONLY chatgpt/chat-6-b.

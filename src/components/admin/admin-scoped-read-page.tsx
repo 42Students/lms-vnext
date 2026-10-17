@@ -110,7 +110,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" action={path} aria-label="Refresh directory">
     {data.query.q ? <input type="hidden" name="q" value={data.query.q} /> : null}
     <input type="hidden" name="status" value={data.query.status} />
-    {data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
+    {!applicationFilters&&data.query.jobId ? <input type="hidden" name="jobId" value={data.query.jobId} /> : null}
     {data.query.pipelineStage!=="ALL"?<input type="hidden" name="pipelineStage" value={data.query.pipelineStage}/>:null}
     {data.query.channel!=="ALL"?<input type="hidden" name="channel" value={data.query.channel}/>:null}
     {data.query.source!=="ALL"?<input type="hidden" name="source" value={data.query.source}/>:null}
