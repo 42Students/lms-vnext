@@ -18,6 +18,7 @@ import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
+import {MentorMeetingHistory} from "./mentor-meeting-history";
 import { MentorTaskDetailsEdit } from "./mentor-task-details-edit";
 import { ProjectTaskAssigneeControl } from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
