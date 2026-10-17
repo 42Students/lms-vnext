@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useState,type KeyboardEvent} from "react";
 import {tpoBatchShortcut,tpoBatchVisibleSelection,tpoBatchSelectedClipboard}
  from "@/modules/placements/tpo-batch-keyboard-actions-model";
 type Row={id:string;name:string;rollNumber?:string|null};
@@ -17,7 +17,7 @@ export function TpoBatchStudentKeyboardActions({rows,downloadHref}:{rows:readonl
    setMessage(valid.length+" selected learner rows copied.");
   }catch{setMessage("Could not copy. Check clipboard permission and try again.");}
  }
- function keydown(event:React.KeyboardEvent<HTMLElement>){
+ function keydown(event:KeyboardEvent<HTMLElement>){
   const target=event.target;
   const insideEditable=target instanceof HTMLElement &&
    Boolean(target.closest("input,textarea,select,[contenteditable=true]"));

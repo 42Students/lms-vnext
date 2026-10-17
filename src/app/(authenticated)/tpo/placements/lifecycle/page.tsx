@@ -5,7 +5,7 @@ import {TpoDriveRequestActions} from "@/components/tpo/tpo-drive-request-actions
 import {TpoRemindNonApplicants} from "@/components/placements/tpo-remind-non-applicants";
 import {TpoDriveCloneAction} from "@/components/placements/tpo-drive-clone-action";
 import {TpoDriveSavedViews} from "@/components/placements/tpo-drive-saved-views";
-import {TpoBulkDriveReminder} from "@/components/placements/tpo-bulk-drive-reminder";
+import {TpoDriveActOnPanel} from "@/components/placements/tpo-drive-act-on-panel";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -358,7 +358,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <button type="submit" className="min-h-11 justify-self-start rounded border border-primary px-4 text-sm font-semibold text-primary-text">
             Export selected drives (CSV)
           </button>
-           <TpoBulkDriveReminder/>
+           <TpoDriveActOnPanel/>
           </div>
         </form>}
       <nav aria-label="Drive pages" className="flex flex-wrap items-center justify-between gap-3">
