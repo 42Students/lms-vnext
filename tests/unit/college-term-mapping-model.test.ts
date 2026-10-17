@@ -8,11 +8,11 @@ const termId = "90000000-0000-4000-8000-000000000001";
 const courseId = "90000000-0000-4000-8000-000000000002";
 
 describe("Semester-course mapping boundaries", () => {
-  it("accepts strict curriculum mapping input", () => {
+  it("COL-academic-setup-06 accepts strict curriculum mapping input", () => {
     expect(collegeTermCourseAddSchema.parse({
-      programTermId: termId, courseId, type: "ELECTIVE", credits: 0,
+      programTermId: termId, courseId, type: "ELECTIVE", credits: 3,
     })).toEqual({
-      programTermId: termId, courseId, type: "ELECTIVE", credits: 0,
+      programTermId: termId, courseId, type: "ELECTIVE", credits: 3,
     });
     for (const invalid of [
       { programTermId: termId, courseId, type: "CORE", credits: 31 },
