@@ -79,7 +79,7 @@ export default async function ElectiveRoster({
         await leaveGroup(context, offering.groupId, membershipId, "MANUAL");
       } else error = "Unsupported action";
     } catch (cause) {
-      error = cause instanceof Error ? cause.message : "Unable to update student";
+      error = "Could not update this student. Check eligibility and capacity, then try again.";
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=" + action));
   }
@@ -101,7 +101,7 @@ export default async function ElectiveRoster({
         await endCourseTeachingAssignment(context, uuid.parse(String(form.get("assignmentId") ?? "")));
       } else throw new Error("Unsupported teaching action");
     } catch (cause) {
-      error = cause instanceof Error ? cause.message : "Could not update faculty";
+      error = "Could not update the faculty assignment. Refresh the roster and try again.";
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));
   }
