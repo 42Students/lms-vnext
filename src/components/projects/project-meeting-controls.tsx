@@ -364,6 +364,8 @@ export function ScheduleProjectMeetingControl({
   const [meetingUrl, setMeetingUrl] =
     useState(meeting?.meetingUrl ?? "");
   const [scheduleMinStart, setScheduleMinStart] = useState("");
+  const [meetingStatus,setMeetingStatus]=useState<"DRAFT"|"SCHEDULED"|"RESCHEDULED">(
+    meeting?.status==="DRAFT"?"DRAFT":meeting?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
   const [facilitation,setFacilitation]=useState(()=>
     mentorMeetingFacilitationSchema.parse(meeting?.facilitation??emptyMentorMeetingFacilitation));
   const [outcome,setOutcome]=useState(meeting?.outcome??"");
@@ -404,9 +406,9 @@ export function ScheduleProjectMeetingControl({
         : "",
     );
     setTimeZone("Asia/Kolkata");
-    setMeetingUrl(
-      meeting?.meetingUrl ?? "",
-    );
+    setMeetingUrl(meeting?.meetingUrl ?? "");
+    setMeetingStatus(
+      meeting?.status==="DRAFT"?"DRAFT":meeting?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
     setMeetingType(
       meeting?.meetingType ?? "GENERAL",
     );
@@ -436,6 +438,7 @@ export function ScheduleProjectMeetingControl({
       startsAt,
       endsAt,
       meetingUrl,
+      draft:meetingStatus==="DRAFT",
       nowMs: Date.now(),
     });
     if (validationError) {
@@ -471,7 +474,8 @@ export function ScheduleProjectMeetingControl({
           startsAt: toIso(startsAt),
           endsAt: toIso(endsAt),
           timeZone,
-          meetingUrl: meetingUrl.trim(),
+          status:meetingStatus,
+          meetingUrl:meetingStatus==="DRAFT"?null:meetingUrl.trim(),
           expectedProjectUpdatedAt: new Date(projectUpdatedAt).toISOString(),
           ...(meeting?{expectedUpdatedAt:new Date(meeting.updatedAt).toISOString()}:{}),
           meetingType,
@@ -491,7 +495,7 @@ export function ScheduleProjectMeetingControl({
         tone: "success",
         title: meeting
           ? "Meeting scheduled"
-          : "Meeting added.",
+          : meetingStatus==="DRAFT"?"Meeting draft saved.":"Meeting added.",
       });
       router.refresh();
     } catch {
@@ -522,7 +526,7 @@ export function ScheduleProjectMeetingControl({
             ? "Schedule Project meeting"
             : "New Project meeting"
         }
-        description="Use an HTTP or HTTPS meeting link. Sprint and task links are checked against this Project."
+        description="Drafts remain private and need a future meeting window. Scheduling requires an HTTP or HTTPS meeting link. Use the separate Complete or Cancel controls for final outcomes."
       >
         <form
           noValidate
@@ -542,6 +546,21 @@ export function ScheduleProjectMeetingControl({
             onEndsAt={setEndsAt}
             onTimeZone={setTimeZone}
           />
+          <label className="grid gap-1 text-xs font-semibold text-body">
+            Status
+            <Select value={meetingStatus} onChange={event=>
+              setMeetingStatus(event.target.value as "DRAFT"|"SCHEDULED"|"RESCHEDULED")}>
+              <option value="REQUESTED" disabled>Requested (learner request)</option>
+              <option value="SCHEDULED">Scheduled</option>
+              <option value="RESCHEDULED" disabled={!meeting||meeting.status==="DRAFT"||meeting.status==="REQUESTED"}>Rescheduled</option>
+              <option value="COMPLETED" disabled>Completed (use Complete control)</option>
+              <option value="CANCELLED" disabled>Cancelled (use Cancel control)</option>
+              {(!meeting||meeting.status==="DRAFT")?<option value="DRAFT">Draft</option>:null}
+            </Select>
+            {meetingStatus==="DRAFT"?<span className="text-xs text-muted-foreground">
+              Drafts are visible to mentors only; no invitations are sent.
+            </span>:null}
+          </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Ceremony
@@ -576,7 +595,7 @@ export function ScheduleProjectMeetingControl({
             </span>
             <Input
               type="url"
-              required
+              required={meetingStatus!=="DRAFT"}
               value={meetingUrl}
               maxLength={2048}
               placeholder="https://… or http://…"
