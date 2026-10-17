@@ -21,7 +21,9 @@ export async function listSuperAdminContentAuthoringLessons(context: RequestCont
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
-    .where(eq(departments.collegeId, acting.collegeId))
+    .where(and(eq(departments.collegeId, acting.collegeId),
+      eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
+      eq(courseLessons.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")))
     .orderBy(asc(courses.name), asc(courseLessons.name), asc(courseLessons.id))
     .limit(500);
 }
