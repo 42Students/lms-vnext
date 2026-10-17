@@ -588,7 +588,7 @@ export function FacultyCourseWorkspace({
                   return (
                     <details
                       key={lesson.id}
-                      open={lessonIndex===0?true:undefined}
+                      open={selectedLessonId?true:lessonIndex===0?true:undefined}
                       className="group rounded-xl border border-border bg-[var(--lms-neutral-50)] p-4 sm:p-5"
                     >
                       <summary className="mb-4 flex cursor-pointer list-none flex-wrap items-start justify-between gap-3 focus-visible:outline-2 focus-visible:outline-primary">
