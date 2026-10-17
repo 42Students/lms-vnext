@@ -1,3 +1,4 @@
+import {TpoReportPresentation} from "./tpo-report-presentation";
 import {TpoReportSavedFilters} from "./tpo-report-saved-filters";
 import {ReportInteractiveTable} from "./report-interactive-table";
 import Link from "next/link";
@@ -233,6 +234,7 @@ export function ReportNavigation({
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
+    <div className="flex flex-wrap justify-end"><TpoReportPresentation/></div>
     <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
       {links.map((link) => (
         <Link
