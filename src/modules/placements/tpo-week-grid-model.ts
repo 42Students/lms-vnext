@@ -1,5 +1,5 @@
 import type {PlacementCalendarEvent} from "./placement-calendar-model";
-export type WeekGridEvent=Pick<PlacementCalendarEvent,"id"|"title"|"companyName"|"kind"|"roundKind"|"status"|"jobId"|"roundId"> & {
+export type WeekGridEvent=Pick<PlacementCalendarEvent,"id"|"title"|"companyName"|"kind"|"roundKind"|"status"|"jobId"|"roundId"|"followupId"> & {
  startsAt:string;endsAt:string|null;href:string|null;
 };
 export type PositionedWeekEvent=WeekGridEvent & {
