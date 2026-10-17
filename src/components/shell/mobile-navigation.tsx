@@ -66,13 +66,13 @@ export function MobileNavigation({
         aria-expanded={open}
         aria-haspopup="dialog"
         onClick={() => setOpen(true)}
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text md:hidden"
+        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border bg-surface text-lg font-semibold text-foreground transition-colors hover:bg-primary-subtle hover:text-primary-text lg:hidden"
       >
         <span aria-hidden="true">☰</span>
       </button>
 
       {open ? (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <button
             type="button"
             aria-label="Close navigation"
