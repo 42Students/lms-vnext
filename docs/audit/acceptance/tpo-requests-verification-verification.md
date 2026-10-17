@@ -10,9 +10,10 @@ Base source `main` at `a56fd84fdbe4e2c9bc11758b290d1f1845cac991`. These are auth
 | TPO-requests-verification-09 | DONE | `src/app/(authenticated)/tpo/requests/page.tsx`: roll, branch, after college and placed; `tests/unit/chat12-tpo-requests-verification.test.ts` — `TPO-requests-verification-09` |
 | TPO-requests-verification-10 | DONE | `src/app/(authenticated)/tpo/requests/page.tsx`: decision actor, date, reason; `tests/unit/chat12-tpo-requests-verification.test.ts` — `TPO-requests-verification-10` |
 | TPO-requests-verification-14 | DONE | `tpo/requests/page.tsx`, `src/components/tpo/tpo-student-nudge-panel.tsx`: targeted request messsaging; `tests/unit/chat12-tpo-requests-verification.test.ts` — `TPO-requests-verification-14` |
-| TPO-requests-verification-17 | DONE | `tpo/requests/page.tsx`: legacy subtitle, waiting status and empty copy; `tests/unit/chat12-tpo-requests-verification.test.ts` — `TPO-requests-verification-17` |
+| TPO-requests-verification-17 | PARTIAL (legacy period tabs still require implementation) | `tpo/requests/page.tsx`: legacy subtitle, waiting status and empty copy; `tests/unit/chat12-tpo-requests-verification.test.ts` — `TPO-requests-verification-17` |
 
 | TPO-requests-verification-25 | DONE | Sequential review and progress in `TpoVerificationPanel.tsx`; `tests/unit/chat12-tpo-verification-workflows.test.ts` — `TPO-requests-verification-25` |
 | TPO-requests-verification-28 | DONE | TPO review outcome feedback; `tests/unit/chat12-tpo-verification-workflows.test.ts` — `TPO-requests-verification-28` |
 
-TPO-requests-verification-25: sequential review uses an immutable page snapshot so refetching after each decision never skips the next student; same named test covers the edge case.\n
+TPO-requests-verification-25: sequential review uses an immutable page snapshot so refetching after each decision never skips the next student; same named test covers the edge case.
+TPO-requests-verification-28: result toast now includes the verified section (Education or Identity).
