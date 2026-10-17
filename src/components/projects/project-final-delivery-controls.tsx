@@ -165,9 +165,7 @@ export function LearnerFinalDeliveryControl({
     const payload=currentPayload();
     const snapshot=JSON.stringify(payload);
     if(snapshot===lastSavedSnapshot.current)return;
-    let cancelled=false;
     const timer=window.setTimeout(async()=>{
-      if(cancelled)return;
       setAutosaveStatus("saving");setPending(true);
       try{
         await projectMutation(
@@ -175,14 +173,14 @@ export function LearnerFinalDeliveryControl({
           "PATCH",payload,
         );
         lastSavedSnapshot.current=snapshot;
-        if(!cancelled)setAutosaveStatus("saved");
+        setAutosaveStatus("saved");
       }catch{
-        if(!cancelled)setAutosaveStatus("failed");
+        setAutosaveStatus("failed");
       }finally{
-        if(!cancelled)setPending(false);
+        setPending(false);
       }
     },1800);
-    return ()=>{cancelled=true;window.clearTimeout(timer);};
+    return ()=>window.clearTimeout(timer);
   },[open,draft,projectId,summary,sourceUrl,demoUrl,notes,attachments,pending]);
 
   async function submitDraft() {
