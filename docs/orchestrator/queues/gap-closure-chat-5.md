@@ -68,11 +68,11 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-43 | S3 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-46 | S3 | MISSING-ACTION | OPEN |
 | TPO-drive-workspace-56 | S3 | MISSING-EXPORT | OPEN |
-| TPO-drive-workspace-57 | S3 | COPY | OPEN |
+| TPO-drive-workspace-57 | S3 | COPY | DONE |
 | TPO-drive-workspace-58 | S3 | MISSING-TAB | DONE |
 | TPO-drive-workspace-64 | S3 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-70 | S3 | A11Y | OPEN |
-| TPO-drive-workspace-72 | S3 | RESPONSIVE | OPEN |
+| TPO-drive-workspace-72 | S3 | RESPONSIVE | DONE |
 | TPO-drive-workspace-73 | S3 | PERFORMANCE | OPEN |
 | TPO-drive-workspace-R04 | S3 | A11Y | DONE |
 | TPO-drive-workspace-R05 | S3 | COPY | DONE |
@@ -97,7 +97,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-20 | S2 | MISSING-ACTION | OPEN |
 | TPO-batches-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-batches-22 | S2 | MISSING-ACTION | DONE |
-| TPO-batches-26 | S2 | VALIDATION | OPEN |
+| TPO-batches-26 | S2 | VALIDATION | DONE |
 | TPO-batches-33 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-batches-34 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-batches-35 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
@@ -109,7 +109,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-42 | S2 | SIDE-EFFECT | DONE |
 | TPO-batches-44 | S2 | MISSING-ACTION | OPEN |
 | TPO-batches-45 | S2 | MISSING-EXPORT | OPEN |
-| TPO-batches-53 | S2 | MISSING-TAB | OPEN |
+| TPO-batches-53 | S2 | MISSING-TAB | DONE |
 | TPO-batches-54 | S2 | SIDE-EFFECT | OPEN |
 | TPO-batches-58 | S2 | MISSING-FIELD | DONE |
 | TPO-batches-59 | S2 | MISSING-FIELD | DONE |
@@ -126,8 +126,8 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-27 | S3 | COPY | DONE |
 | TPO-batches-28 | S3 | STATE | DONE |
 | TPO-batches-29 | S3 | MISSING-TAB | FIXED-ON-MAIN |
-| TPO-batches-40 | S3 | COPY | OPEN |
-| TPO-batches-43 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
+| TPO-batches-40 | S3 | COPY | DONE |
+| TPO-batches-43 | S3 | MISSING-MODAL | DONE |
 | TPO-batches-46 | S3 | MISSING-ACTION | OPEN |
 | TPO-batches-47 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-48 | S3 | STATE | FIXED-ON-MAIN |
@@ -135,7 +135,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-52 | S3 | COPY | DONE |
 | TPO-batches-55 | S3 | MISSING-ACTION | OPEN |
 | TPO-batches-56 | S3 | COPY | DONE |
-| TPO-batches-60 | S3 | COPY | OPEN |
+| TPO-batches-60 | S3 | COPY | DONE |
 | TPO-batches-61 | S3 | MISSING-ACTION | DONE |
 | TPO-batches-63 | S3 | SIDE-EFFECT | OPEN |
 | TPO-batches-64 | S3 | PERMISSION | UNCONFIRMED |
@@ -149,7 +149,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-57 | S4 | VALIDATION | DONE |
 | TPO-batches-62 | S4 | MISSING-TAB | DONE |
 | TPO-batches-65 | S4 | RESPONSIVE | OPEN |
-| TPO-batches-R06 | S4 | COPY | OPEN |
+| TPO-batches-R06 | S4 | COPY | DONE |
 
 ## tpo/students (56: FIXED-ON-MAIN 24, OPEN 29, UNCONFIRMED 3)
 

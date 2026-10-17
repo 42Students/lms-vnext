@@ -242,4 +242,12 @@ describe("chat-3 Drives round 4",()=>{
   expect(form).toContain("markDirty()");
  });
 
+ it("TPO-drives-37 legacy-retired active/past backlog and gap-year fields are not offered",()=>{
+  const form=source("src/components/placements/placement-job-create-form.tsx");
+  for(const removed of ["Max active backlogs","Max past backlogs","Max gap years","maxActiveBacklogs","maxPastBacklogs","maxGapYears"])
+   expect(form).not.toContain(removed);
+  expect(form).toContain("minPctThroughout");
+  expect(form).toContain("minCgpa");
+ });
+
 });

@@ -27,3 +27,12 @@
 | TPO-recruiters-07 | DONE (source; not run) | Exact nonzero Needs doing chips (follow-ups due, no next step, gone quiet, unassigned), collapse toggle, empty sentence, working filter and recruiter-access count; `tests/unit/chat2-tpo-recruiters-needs-toggle.test.ts`. |
 
 | TPO-recruiters-R01 | DONE (source; tests unrun) | Companies tab has inline persisted communication selector, legacy defaults derived from drive/recruiter evidence, search/filter, alias tooltip, Add contact shortcut and CSV. `tests/unit/chat2-engage-company-communication.test.ts`. |
+
+## Chat-2 follow-up — exact copy and legacy inference
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-recruiters-38 | DONE (source; tests unrun) | `src/modules/placements/tpo-recruiter-lead-policy.ts` infers a capitalised first domain label (Acme, Foo-bar) and refuses consumer mail hosts as legacy expects. `tests/unit/tpo-recruiter-lead-policy.test.ts` **infers company only from a non-free work email**, plus `tests/unit/chat2-recruiter-profile-and-lead-parity.test.ts` **TPO-recruiters-38**. |
+| TPO-recruiters-40 | PARTIAL — OPEN | Detail edit dialog uses legacy **Edit contact details** and **Save** wording without changing server validation; `src/components/tpo/recruiter-lead-detail-workspace.tsx`; `tests/unit/chat2-tpo-recruiter-leads-copy.test.ts` **TPO-recruiters-40 restores edit-action heading and legacy Save label**. Broader detail action wording remains to verify. |
+
+Tests were authored but not run in this builder session.

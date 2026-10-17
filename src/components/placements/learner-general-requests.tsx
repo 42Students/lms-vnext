@@ -84,7 +84,7 @@ export function LearnerGeneralRequests({
    className="min-h-11 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{pending?"Sending…":"Send request"}</button>
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  <h3 className="font-semibold">Your requests</h3>
+  <h3 className="font-semibold">Request history</h3>
   {!rows.length?<p role="status" className="text-sm">No other placement requests recorded yet.</p>:
    <ul className="space-y-2">{rows.map(row=><li key={row.id} className="rounded border border-border p-3 text-sm">
     <strong>{row.kind.replaceAll("_"," ")}</strong> · {row.status.replaceAll("_"," ")}

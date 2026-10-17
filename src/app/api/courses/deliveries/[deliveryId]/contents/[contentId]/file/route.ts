@@ -1,180 +1,41 @@
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { getPrivateR2Config } from "@/modules/storage/r2-config";
-import { getObjectStream, headObject } from "@/modules/storage/s3-client";
-import { apiErrorResponse } from "@/lib/api-error";
-import { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {getPrivateR2Config} from "@/modules/storage/r2-config";
+import {headObject,presignUrl} from "@/modules/storage/s3-client";
+import {apiErrorResponse} from "@/lib/api-error";
+import {getLearnerCourseFileReference} from "@/modules/courses/learner-course-file-reference-service";
 
-export const runtime = "nodejs";
-
-type RouteContext = {
-  params: Promise<{
-    deliveryId: string;
-    contentId: string;
-  }>;
-};
-
-function fileName(storageKey: string) {
-  const segment = storageKey
-    .split("/")
-    .filter(Boolean)
-    .at(-1);
-
-  return (segment || "course-file").replace(
-    /[^A-Za-z0-9._-]/g,
-    "_",
-  );
+export const runtime="nodejs";
+type RouteContext={params:Promise<{deliveryId:string;contentId:string}>};
+function fileName(key:string){
+ return (key.split("/").filter(Boolean).at(-1)??"course-file").replace(/[^A-Za-z0-9._-]/g,"_");
 }
 
-function parseRange(
-  header: string | null,
-  size: number,
-) {
-  if (!header?.startsWith("bytes=")) {
-    return null;
-  }
-
-  const [startText, endText] = header
-    .slice("bytes=".length)
-    .split("-", 2);
-
-  const start = startText
-    ? Number(startText)
-    : Number.NaN;
-  const requestedEnd = endText
-    ? Number(endText)
-    : size - 1;
-
-  if (
-    !Number.isInteger(start) ||
-    !Number.isInteger(requestedEnd) ||
-    start < 0 ||
-    requestedEnd < start ||
-    start >= size
-  ) {
-    return { invalid: true as const };
-  }
-
-  return {
-    invalid: false as const,
-    start,
-    end: Math.min(requestedEnd, size - 1),
-  };
-}
-
-export async function GET(
-  request: Request,
-  { params }: RouteContext,
-) {
-  const { deliveryId, contentId } = await params;
-  let workspace: Awaited<ReturnType<typeof getLearnerCourseWorkspace>>;
-  try {
-    const context = await getCurrentRequestContext();
-    workspace = await getLearnerCourseWorkspace(context, deliveryId);
-  } catch (error) {
-    return apiErrorResponse(error);
-  }
-
-  const content = workspace.lessons
-    .flatMap((lesson) => lesson.contents)
-    .find((item) => item.id === contentId);
-
-  if (!content || !content.storageKey) {
-    return Response.json(
-      { error: "COURSE_FILE_NOT_FOUND" },
-      { status: 404 },
-    );
-  }
-
-  let metadata: Awaited<ReturnType<typeof headObject>>;
-  const r2 = (() => {
-    try {
-      return getPrivateR2Config();
-    } catch {
-      return null;
-    }
-  })();
-  try {
-    if (!r2) throw new Error("STORAGE_NOT_CONFIGURED");
-    metadata = await headObject(r2, content.storageKey);
-  } catch {
-    return Response.json(
-      {
-        error: "COURSE_FILE_UNAVAILABLE",
-        message:
-          "The course file is not available from storage.",
-      },
-      { status: 503 },
-    );
-  }
-
-  const size = Number(metadata?.sizeBytes ?? 0);
-  if (!Number.isFinite(size) || size <= 0) {
-    return Response.json(
-      { error: "COURSE_FILE_NOT_FOUND" },
-      { status: 404 },
-    );
-  }
-
-  const range = parseRange(
-    request.headers.get("range"),
-    size,
-  );
-
-  if (range?.invalid) {
-    return new Response(null, {
-      status: 416,
-      headers: {
-        "Content-Range": `bytes */${size}`,
-      },
-    });
-  }
-
-  const download =
-    new URL(request.url).searchParams.get(
-      "download",
-    ) === "1";
-  const name = fileName(content.storageKey);
-  const headers = new Headers({
-    "Accept-Ranges": "bytes",
-    "Cache-Control": "private, no-store",
-    "Content-Type":
-      metadata?.contentType ||
-      "application/octet-stream",
-    "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name}"`,
-  });
-
-  if (range && !range.invalid) {
-    const length = range.end - range.start + 1;
-    headers.set(
-      "Content-Range",
-      `bytes ${range.start}-${range.end}/${size}`,
-    );
-    headers.set("Content-Length", String(length));
-
-    const object = await getObjectStream(r2!, content.storageKey, {
-      start: range.start,
-      end: range.end,
-    });
-    if (!object) {
-      return Response.json({ error: "COURSE_FILE_NOT_FOUND" }, { status: 404 });
-    }
-    const stream = object.body;
-
-    return new Response(stream, {
-      status: 206,
-      headers,
-    });
-  }
-
-  headers.set("Content-Length", String(size));
-  const object = await getObjectStream(r2!, content.storageKey);
-  if (!object) {
-    return Response.json({ error: "COURSE_FILE_NOT_FOUND" }, { status: 404 });
-  }
-  const stream = object.body;
-
-  return new Response(stream, {
-    status: 200,
-    headers,
-  });
+/** The browser handles full downloads and HTTP Range on the signed R2 URL.
+ * No file bytes are proxied through Next.js. Every request authenticates and
+ * authorizes one material before issuing a fifteen-minute GET capability. */
+export async function GET(request:Request,{params}:RouteContext){
+ const {deliveryId,contentId}=await params;
+ let key:string|null;
+ try{
+  key=await getLearnerCourseFileReference(await getCurrentRequestContext(),deliveryId,contentId);
+ }catch(error){return apiErrorResponse(error);}
+ if(!key)return Response.json({error:"COURSE_FILE_NOT_FOUND"},{status:404});
+ let config:ReturnType<typeof getPrivateR2Config>;
+ try{
+  config=getPrivateR2Config();
+  const existing=await headObject(config,key);
+  if(!existing||!existing.sizeBytes||existing.sizeBytes<=0)
+   return Response.json({error:"COURSE_FILE_NOT_FOUND"},{status:404});
+ }catch{
+  return Response.json({error:"COURSE_FILE_UNAVAILABLE",
+   message:"The course file is not available from storage."},{status:503});
+ }
+ const download=new URL(request.url).searchParams.get("download")==="1";
+ const query=download?{"response-content-disposition":'attachment; filename="'+fileName(key)+'"'}:undefined;
+ const signed=presignUrl(config,{method:"GET",key,expiresSeconds:900,query});
+ return new Response(null,{status:302,headers:{
+  Location:signed,
+  "Cache-Control":"private, no-store",
+  "Referrer-Policy":"no-referrer",
+ }});
 }

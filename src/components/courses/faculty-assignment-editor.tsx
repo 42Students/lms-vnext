@@ -153,7 +153,7 @@ export function FacultyAssignmentEditor({deliveryId,lessons,assignments,methodsE
    <input type="datetime-local" value={dueAt} onChange={e=>{const next=e.target.value;setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,dueAt,next));setDueAt(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   <label className="grid gap-1 text-sm">Maximum points
-   <input type="number" min={1} max={1000} value={maxPoints}
+   <input type="number" min={0} max={1000} value={maxPoints}
     onChange={e=>{const next=Number(e.target.value);setConfirmed(current=>facultyAssignmentConfirmationOnEdit(current,maxPoints,next));setMaxPoints(next);}}
     className="min-h-10 rounded border border-border p-2" /></label>
   {methodsEnabled?<FacultyAssignmentMethodPicker methods={allowedMethods}

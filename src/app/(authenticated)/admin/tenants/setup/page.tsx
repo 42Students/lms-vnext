@@ -31,6 +31,12 @@ export default async function SuperAdminTenantSetup(){
   <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">Create another tenant →</Link>
   <PageHeader eyebrow="Super Admin · Tenant Setup" title={college.name}
    description="Work through college-specific setup without losing the selected administrative scope."/>
+  <nav aria-label="Tenant Setup sections" className="flex flex-wrap gap-3">
+   <Link href="/admin/tenants/create" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">1. Tenant structure</Link>
+   <Link href="/admin/tenants/setup" aria-current="page" className="inline-flex min-h-11 items-center font-semibold text-primary-text">2. Launch setup</Link>
+   <Link href={`/activity?collegeId=${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Activity</Link>
+   <Link href={`/api/activity/admin-export?collegeId=${encodeURIComponent(college.id)}`} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Export activity CSV</Link>
+  </nav>
   <p className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
    This is a navigation checklist, not automatic completion evidence. Only the Readiness Gate measures persisted setup checks; login and DNS runtime verification still require separate acceptance.
   </p>
