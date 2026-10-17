@@ -48,6 +48,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           title:title.trim(),description:description.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
+          taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
         setAdding(false);setTitle("");setDescription("");setCriteria("");router.refresh();
       }catch(err){setError(err instanceof Error?err.message:"Could not add backlog task");}
