@@ -81,7 +81,10 @@ describe("Chat-5 delegated decisions: safe behavior and remaining boundaries",()
   const docs=source("docs/audit/acceptance/tpo-inbox-team-verification.md");
   expect(docs).toContain("TPO-inbox-team-08 | BLOCKED");
   expect(docs).toContain("No production access or emails attempted.");
-  expect(source("src/modules/placements/tpo-messages-service.ts")).toContain("not recruiter messages or external email/SMS outbox records");
+  const inbox=source("src/modules/placements/tpo-messages-service.ts");
+  expect(inbox).toContain("These are persisted in-app notification DELIVERIES, not");
+  expect(inbox).toContain("recruiter messages or external email/SMS outbox records.");
+  expect(inbox).toContain("recipient\u0027s active TPO role");
  });
  it("TPO-inbox-team-35 keeps the college's role-administration controls as the source of placement-team authority",()=>{
   const team=source("src/app/(authenticated)/tpo/settings/team/page.tsx");
