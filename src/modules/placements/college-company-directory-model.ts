@@ -17,10 +17,13 @@ export type CollegeCompaniesQuery=z.infer<typeof Schema>;
 export function parseCollegeCompaniesQuery(raw:Record<string,string|string[]|undefined>) {
   return Schema.safeParse(raw);
 }
-export function collegeCompaniesHref(query:Pick<CollegeCompaniesQuery,"q"|"page">&Partial<Pick<CollegeCompaniesQuery,"status">>) {
+export function collegeCompaniesHref(query:CollegeCompaniesQuery) {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);
-  if(query.status&&query.status!=="ACTIVE")params.set("status",query.status);
+  if(query.status!=="ACTIVE")params.set("status",query.status);
+ if(query.pageSize!==10)params.set("pageSize",String(query.pageSize));
+ if(query.sort!=="LAST_ACTIVE")params.set("sort",query.sort);
+ if(query.showDeleted==="1")params.set("showDeleted","1");
   if(query.page>1)params.set("page",String(query.page));
   return "/college/companies"+(params.size?"?"+params.toString():"");
 }
