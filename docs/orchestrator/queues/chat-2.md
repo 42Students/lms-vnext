@@ -354,3 +354,19 @@ No tests, typecheck, lint, build, CI waiting or live delivery performed (FAST v2
 - `TPO-companies-R03/TPO-inbox-team-R02`: OD-07 cross-role permission expansion requires owner approval.
 
 FAST v2: no tests, typecheck, lint, build, CI waits, deployment or live sending. Source changes remain runtime-unverified.
+
+## FAST v2 continuation — recruiter bulk undo, S1 gap TPO-recruiters-14
+
+- Synchronized `chatgpt/chat-2-b` to the latest integrated `main` before all edits.
+- **WP-01 `TPO-recruiters-14` (S1, source-level implementation):** Bulk stage and owner updates now snapshot only changed leads with original/post values and exact post-write revision, inside the existing immutable `activity_events` run audit. New POST `/api/placements/tpo/leads/bulk-undo` restores stage/reason/revisit or owner only for the original active college/TPO actor, within five minutes, on a single-use audited transaction. Every lead is row-locked in deterministic order, IDs must belong to the original run, current revision and values must still match the batch, and an attempted stale restore rolls back completely; a unique undo event dedupe key prevents replay. Stage and owner result panels offer separate two-step Undo with count and stale/expired/replayed outcome copy. No migration or worker required for this immediate undo path.
+- **Acceptance still open:** Runtime/database verification, interruption/retry edge cases and the legacy `bulk-record` / broader Actions-window parity are not asserted complete; WP-01 stays IN-PROGRESS. No independent test, typecheck, lint, build or CI run, per FAST v2.
+
+### Blocked / owner-owned dependencies
+- `PUB-auth-public-50/52/53/54/55`: OD-09 candidate-share OTP, consent and resume ZIP storage approvals pending.
+- `TPO-campaigns-public-01/02/05`: approved live provider templates/credentials and dispatch/receipt worker missing.
+- `TPO-recruiters-13/17`: bulk invitation email delivery and scheduled reminder depend on provider/worker.
+- `TPO-settings-audit-52`: indefinite recruiter grant security policy undecided.
+- `TPO-companies-05/TPO-inbox-team-23/26/34`: Team object-thread/ask/away schema cross-lane ownership.
+- `REC-calendar-messages-profile-R01`: reply-by-email requires verified inbound webhook and consent.
+- `TPO-companies-06`: verified counts-as-placed policy undecided.
+- `TPO-companies-R03/TPO-inbox-team-R02`: OD-07 cross-role permission decision pending.
