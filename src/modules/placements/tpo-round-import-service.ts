@@ -150,7 +150,12 @@ export async function stageTpoRoundImport(
   // Do not use the first ambiguous match: an import must never stage results
   // for a different learner merely because their roll/email was duplicated.
   const match=chosen??(exact.length===1?exact[0]!.applicationId:undefined);
-  const reason=row.invalidRank?"Rank must be 1–100000 and is only allowed for Waitlisted results":
+  const overridden=chosen?candidates.get(chosen):null;
+  const contradictoryOverride=Boolean(overridden&&(
+   row.applicationId&&row.applicationId.toLowerCase()!==chosen!.toLowerCase()||
+   row.email&&overridden.email?.toLowerCase()!==row.email.toLowerCase()||
+   row.roll&&overridden.roll?.toLowerCase()!==row.roll.toLowerCase()));
+  const reason=contradictoryOverride?"Selected learner conflicts with the uploaded application ID, email or roll":row.invalidRank?"Rank must be 1–100000 and is only allowed for Waitlisted results":
    !match?"Unmatched or ambiguous learner; review and choose Skip or a verified match":
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
