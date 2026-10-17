@@ -118,6 +118,9 @@ export function MentorTaskDetailsEdit(props:Props) {
           <Input type="number" min={0} max={1000} value={estimate}
             onChange={e=>setEstimate(e.target.value)}/>
         </label>
+        {!estimateValid?<p role="alert" className="text-xs text-error">
+          Estimate must be a whole number from 0 to 1000.
+        </p>:null}
         <label className="grid gap-1 text-xs font-semibold text-body">Type
           <select className="rounded border border-border p-2" value={taskType}
             onChange={e=>setTaskType(e.target.value)}>
