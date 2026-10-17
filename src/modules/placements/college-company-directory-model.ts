@@ -3,6 +3,7 @@ import {z} from "zod";
 export const COLLEGE_COMPANIES_PAGE_SIZES=[10,20,50,100] as const;
 const Schema=z.strictObject({
   q:z.string().trim().max(100).default(""),
+  status:z.enum(["ACTIVE","ARCHIVED"]).default("ACTIVE"),
   page:z.coerce.number().int().min(1).max(1000).default(1),
   pageSize:z.coerce.number().int().refine(value=>COLLEGE_COMPANIES_PAGE_SIZES.some(size=>size===value),{
     message:"Choose a supported company page size.",
@@ -19,9 +20,7 @@ export function parseCollegeCompaniesQuery(raw:Record<string,string|string[]|und
 export function collegeCompaniesHref(query:CollegeCompaniesQuery) {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);
-  if(query.pageSize!==10)params.set("pageSize",String(query.pageSize));
-  if(query.sort!=="LAST_ACTIVE")params.set("sort",query.sort);
-  if(query.showDeleted==="1")params.set("showDeleted","1");
+  if(query.status!=="ACTIVE")params.set("status",query.status);
   if(query.page>1)params.set("page",String(query.page));
   return "/college/companies"+(params.size?"?"+params.toString():"");
 }
