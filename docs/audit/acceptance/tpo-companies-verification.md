@@ -63,3 +63,9 @@ Builder did not run tests, lint, typecheck, or PostgreSQL integration.
 | TPO-companies-05 | **OPEN.** The canonical Company page and grouped Company Memory remain college-scoped, but an embedded persisted object Team conversation, company mentions/asks and Open in Team affordance cannot be considered complete until the Team kind model exists. No faux messages are displayed. |
 | TPO-companies-04 / 25 / R03 | **Prior delegated decisions remain.** Trusted badge never auto-approves a recruiter drive request; CRM API gate checks actual schema readiness; company writes require verified scoped placement access. Tests `chat2-unconfirmed-recruiter-company-decisions.test.ts`. |
 | TPO-companies-20 / 21 | **Prior source evidence retained.** Default Companies lands in Engage, explicit directory or grouped Company Memory deep links remain, friendly separate not-found/retry and policy-warning behavior is preserved. |
+
+
+## 2026-10-18 company Team integration
+| ID | Verdict | Implementation / test |
+| --- | --- | --- |
+| TPO-companies-05 | **PARTIAL — OPEN, migration pending.** Canonical Company detail and Company Memory now link to a tenant-safe company Team discussion. New schema/model/service/route/page/composer implements one thread per college company relationship, 4,000-character messages, idempotency keys, own-college persisted placements.manage checks, actor audit, active TPO-only bell, 30-second read refresh and archived relationship read-only behavior. Registered SQL is still required; `docs/proposed-migrations/tpo-company-team-conversations.sql`. First-class @mentions, asks, decisions and edit/delete are not implemented, so not full gap closure. Tests: `chat2-company-team-model.test.ts`, `chat2-company-team-source-contract.test.ts`, `chat2-company-team-draft-route.test.ts`, `chat2-company-team-reachability.test.ts`. |
