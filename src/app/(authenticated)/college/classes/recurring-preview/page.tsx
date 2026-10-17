@@ -16,6 +16,6 @@ export default async function CollegeRecurringPreviewPage({
   return <div className="space-y-6">
     <PageHeader eyebrow="College Admin · Academic Setup" title="Recurring Schedule Preview"
       description="Preview weekday/time patterns against persisted class, faculty and lecture hall scheduling conflicts in India Standard Time." />
-    <CollegeRecurringPreview {...options} defaultSectionId={classId} classes={options.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))} />
+    <CollegeRecurringPreview key={classId || "unselected"} {...options} defaultSectionId={classId} classes={options.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))} />
   </div>;
 }
