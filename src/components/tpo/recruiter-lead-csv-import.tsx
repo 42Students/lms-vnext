@@ -240,7 +240,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   <table className="w-full text-left text-sm">
                     <thead className="sticky top-0 bg-surface-secondary text-muted-foreground">
                       <tr>
-                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">File row</th>
                         <th scope="col" className="px-3 py-2">Name</th>
                         <th scope="col" className="px-3 py-2">Validation</th>
                         <th scope="col" className="px-3 py-2">Include</th>
@@ -305,7 +305,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   <table className="w-full text-left text-sm">
                     <thead className="bg-surface-secondary">
                       <tr>
-                        <th scope="col" className="px-3 py-2">CSV row</th>
+                        <th scope="col" className="px-3 py-2">File row</th>
                         <th scope="col" className="px-3 py-2">Status</th>
                         <th scope="col" className="px-3 py-2">Details</th>
                       </tr>
