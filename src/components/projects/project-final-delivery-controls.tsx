@@ -150,8 +150,8 @@ export function LearnerFinalDeliveryControl({
       showToast({
         tone: "success",
         title: draft
-          ? "Final draft updated"
-          : "Final draft created",
+          ? "Draft saved."
+          : "Draft saved.",
       });
       router.refresh();
     } catch (caught) {
@@ -194,6 +194,14 @@ export function LearnerFinalDeliveryControl({
 
   async function submitDraft() {
     if (!draft) return;
+    const hasEvidence=Boolean(draft.sourceUrl||draft.demoUrl||
+      draft.attachments?.some(item=>Boolean(item)&&typeof item==="object"&&
+        ((item as {kind?:unknown}).kind==="FILE"||(item as {kind?:unknown}).kind==="LINK")));
+    if(!draft.summary.trim()||!hasEvidence){
+      showToast({tone:"error",title:"Add at least one attachment and a summary before submitting."});
+      return;
+    }
+    if(!window.confirm("Submit on behalf of your team?"))return;
     setPending(true);
     try {
       await projectMutation(
@@ -202,7 +210,7 @@ export function LearnerFinalDeliveryControl({
       );
       showToast({
         tone: "success",
-        title: "Final delivery submitted",
+        title: "Submission sent for review.",
       });
       router.refresh();
     } catch (caught) {
@@ -301,7 +309,7 @@ export function LearnerFinalDeliveryControl({
         >
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Summary
+              Summary (short)
             </span>
             <Textarea
               required
@@ -310,18 +318,18 @@ export function LearnerFinalDeliveryControl({
               onChange={(event) =>
                 setSummary(event.target.value)
               }
-              placeholder="What did the team build and deliver?"
+              placeholder="Short summary of what was submitted"
             />
           </label>
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Source URL
+              Primary link
             </span>
             <Input
               type="url"
               value={sourceUrl}
               maxLength={2048}
-              placeholder="https://…"
+              placeholder="Paste a link, or upload a file below"
               onChange={(event) =>
                 setSourceUrl(
                   event.target.value,
@@ -350,6 +358,7 @@ export function LearnerFinalDeliveryControl({
             <Textarea
               value={notes}
               maxLength={6000}
+              placeholder="Add any final notes"
               onChange={(event) =>
                 setNotes(event.target.value)
               }
