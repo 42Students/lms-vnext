@@ -1,8 +1,8 @@
 # Gap closure queue: chat-11
 
-Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-11-b`. 189 gaps on 7 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on.
+Protocol: `docs/orchestrator/briefs/gap-closure-lane.md` (read it first, every round). Branch: `chatgpt/chat-11-b`. 189 gaps on 7 pages. Work page by page in the order below; inside a page go S1, S2, S3, S4. Record every gap in `docs/audit/acceptance/<account>-<page>-verification.md`. One line per blocker under "Notes" at the bottom, then move on. DONE indicates implemented with named test evidence in the page acceptance file, not a test-run certification; orchestrator runs tests.
 
-## learner/projects (39: FIXED-ON-MAIN 19, OPEN 16, UNCONFIRMED 4)
+## learner/projects (39: DONE 39)
 
 Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/learner-projects-verification.md`.
 
@@ -48,7 +48,7 @@ Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if prese
 | LEARNER-projects-35 | S4 | COPY | DONE |
 | LEARNER-projects-R04 | S4 | MISSING-FIELD | DONE |
 
-## public/auth-public-1-login-session (39: OPEN 23, FIXED-ON-MAIN 11, UNCONFIRMED 5)
+## public/auth-public-1-login-session (39: DONE 26, NOT-A-GAP 2, OPEN 8, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-public-1-login-session-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/public-auth-public-1-login-session-verification.md`.
 
@@ -94,7 +94,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
 | PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
 
-## college/academic-setup (34: FIXED-ON-MAIN 19, OPEN 13, WRONG 1, UNCONFIRMED 1)
+## college/academic-setup (34: DONE 29, NOT-A-GAP 2, FIXED-ON-MAIN 2, UNCONFIRMED 1)
 
 Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-academic-setup-verification.md`.
 
@@ -135,7 +135,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-39 | S4 | MISSING-EXPORT | DONE |
 | COL-academic-setup-41 | S4 | RESPONSIVE | UNCONFIRMED |
 
-## mentor/projects-meetings-part2 (25: FIXED-ON-MAIN 8, OPEN 16, UNCONFIRMED 1)
+## mentor/projects-meetings-part2 (25: DONE 12, OPEN 9, FIXED-ON-MAIN 4)
 
 Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meetings-part2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-part2-verification.md`.
 
@@ -167,7 +167,7 @@ Audit: `docs/audit/pages/mentor/projects-meetings-part2.md` (and `projects-meeti
 | MEN-projects-meetings-75 | S4 | STATE | OPEN |
 | MEN-projects-meetings-77 | S4 | A11Y | FIXED-ON-MAIN |
 
-## faculty/attendance-grades (22: OPEN 7, FIXED-ON-MAIN 15)
+## faculty/attendance-grades (22: DONE 15, NOT-A-GAP 3, OPEN 1, FIXED-ON-MAIN 3)
 
 Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/faculty-attendance-grades-verification.md`.
 
@@ -196,7 +196,7 @@ Audit: `docs/audit/pages/faculty/attendance-grades.md` (and `attendance-grades-r
 | FAC-attendance-grades-19 | S4 | COPY | DONE |
 | FAC-attendance-grades-21 | S4 | MISSING-PAGE | NOT-A-GAP |
 
-## learner/course-detail (18: FIXED-ON-MAIN 4, OPEN 12, UNCONFIRMED 2)
+## learner/course-detail (18: DONE 6, OPEN 6, FIXED-ON-MAIN 4, UNCONFIRMED 2)
 
 Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/learner-course-detail-verification.md`.
 
@@ -211,17 +211,17 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-05 | S3 | MISSING-FIELD / COPY | OPEN |
 | LEARNER-course-detail-08 | S3 | VALIDATION / COPY | DONE |
 | LEARNER-course-detail-09 | S3 | MISSING-FIELD | DONE |
-| LEARNER-course-detail-14 | S3 | MISSING-FIELD / COPY | OPEN |
-| LEARNER-course-detail-15 | S3 | COPY | OPEN |
-| LEARNER-course-detail-16 | S3 | MISSING-PAGE | OPEN |
+| LEARNER-course-detail-14 | S3 | MISSING-FIELD / COPY | DONE |
+| LEARNER-course-detail-15 | S3 | COPY | DONE |
+| LEARNER-course-detail-16 | S3 | MISSING-PAGE | DONE |
 | LEARNER-course-detail-17 | S3 | MISSING-ACTION | OPEN |
 | LEARNER-course-detail-19 | S3 | STATE | OPEN |
 | LEARNER-course-detail-12 | S4 | MISSING-FIELD | OPEN |
-| LEARNER-course-detail-13 | S4 | COPY | OPEN |
+| LEARNER-course-detail-13 | S4 | COPY | DONE |
 | LEARNER-course-detail-18 | S4 | STATE | UNCONFIRMED |
 | LEARNER-course-detail-20 | S4 | COPY | OPEN |
 
-## superadmin/tenants-modules-2 (12: FIXED-ON-MAIN 4, OPEN 5, UNCONFIRMED 3)
+## superadmin/tenants-modules-2 (12: OPEN 5, FIXED-ON-MAIN 4, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-tenants-modules-2-verification.md`.
 
