@@ -46,7 +46,7 @@ export async function decideMentorProjectMeeting(context:RequestContext,rawProje
     sql`date_trunc('milliseconds', ${projectMeetings.updatedAt}) = ${expected.toISOString()}::timestamptz`,
    )).returning();
   if(!updated)throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
-  await recordActivityEventInTransaction(tx,context,{
+  const event=await recordActivityEventInTransaction(tx,context,{
    eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
    collegeId:scope.collegeId,organizationId:scope.organizationId,
    subjectType:"project_meeting",subjectId:updated.id,
