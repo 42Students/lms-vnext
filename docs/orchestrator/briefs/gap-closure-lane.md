@@ -24,3 +24,16 @@ You are a builder lane (chat-N). Your queue is `docs/orchestrator/queues/gap-clo
 
 ## Per reply
 Finish with a short summary: pages touched, gap IDs DONE / NOT-A-GAP / BLOCKED, gap IDs remaining, tests added, proposals written, and the latest commit sha. State plainly that tests were written but not run (you cannot run them); the orchestrator runs them.
+
+## Throughput (added after round 1: do more gaps per reply)
+- Target: at least 25 gaps resolved per reply (round 1 managed about 12 per lane). One gap should not take more than a few commits.
+- Gaps marked FIXED-ON-MAIN, and wording (COPY) gaps, need verification, not new features: read the code once, and cover several gap IDs in ONE test file (one `it` per gap ID, ID in the test name) in ONE commit that cites all of those IDs. Do not make a separate commit per ID.
+- Do the big features (new screens, new routes) only when a gap truly needs them, and keep each to a few commits.
+- Update the page verification file in the same commit as the tests, so the evidence always matches.
+- Work through the whole page list top to bottom before returning to any gap you skipped.
+
+## Friendly errors (owner rule, 2026-10-17)
+Customers must never see raw error codes, stack traces or server details. Read `docs/orchestrator/work-packages/friendly-errors.md`. chat-14 builds the shared helper (`src/lib/friendly-error.ts`, `src/lib/api-fetch.ts`) first; every lane adopts it on the pages it touches once it is on main. Until then, never render a raw code in the UI.
+
+## Graceful operation (owner rule, 2026-10-17)
+Beyond friendly messages, read `docs/orchestrator/work-packages/graceful-operation.md`: guarded double-submit, conflict handling that keeps the form, per-card error boundaries, drafts that survive failures, outbound timeouts and retries. chat-14 builds the shared helpers first (queue: graceful-chat-14.md); chat-15 writes the browser failure tests; every lane adopts the helpers on the pages it touches and meets the GR items of sections 3, 6 and 7 of `docs/audit/graceful/CHECKLIST.md` there.
