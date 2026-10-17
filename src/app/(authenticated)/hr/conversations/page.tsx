@@ -5,6 +5,7 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
+import {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
 import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-model";
 import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
 import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
@@ -36,6 +37,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
  }):null;
  const generalThread=generalResult?.status==="READY" ? generalResult.items.find(row=>!row.jobId)??null:null;
+ const generalHistory=generalThread?await readRecruiterThreadMessages(context,generalThread.id,1):null;
  const displayNow=new Date();
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
@@ -79,6 +81,15 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
       {generalThread.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
         {generalThread.preview!.text}
       </p>:null}
+      {generalHistory?<ol aria-label="General placement-cell messages" className="mt-3 max-h-72 space-y-2 overflow-y-auto">
+        {[...generalHistory.messages].reverse().map(message=><li key={message.id}
+          className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+          <p className="mb-1 text-xs font-semibold text-muted-foreground">
+            {message.senderType==="RECRUITER"?"You":"Placement cell"} · {when(message.createdAt)} IST
+          </p>
+          <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
+        </li>)}
+      </ol>:null}
       <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
       <Link href={"/hr/conversations/"+generalThread.id}
         className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
