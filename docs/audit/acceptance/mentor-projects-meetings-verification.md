@@ -112,3 +112,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-21 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-21 task lane visualization and final signoff rule`. |
 | MEN-projects-meetings-23 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-23 legacy overview and deliverables vocabulary`. |
 | MEN-projects-meetings-24 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-03.test.ts` — `MEN-projects-meetings-24 team card with explainer and count`. |
+
+## Chat-7 round 2 — meetings and release source contracts (tests authored, not executed)
+
+| Gap ID | Status | Verified source and gap-named test |
+|---|---|---|
+| MEN-projects-meetings-26 | DONE (source checked; CI pending) | `src/components/projects/mentor-meeting-history.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-26 bounded historic meetings with reveal control`. |
+| MEN-projects-meetings-30 | DONE (source checked; CI pending) | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-30 meeting-specific notes access`. |
+| MEN-projects-meetings-31 | DONE (source checked; CI pending) | `src/modules/projects/meeting-service.ts`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-31 tenant-scoped team meeting notifications`. |
+| MEN-projects-meetings-32 | DONE (source checked; CI pending) | `src/components/projects/mentor-release-editor.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-32 release CRUD controls`. |
+| MEN-projects-meetings-34 | DONE (source checked; CI pending) | `src/components/projects/mentor-sprint-write.tsx`; `tests/unit/chat7-round2-mentor-04.test.ts` — `MEN-projects-meetings-34 release-first sprint scheduling and definition of done`. |
