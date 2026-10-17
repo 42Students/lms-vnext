@@ -235,7 +235,7 @@ Audit: `docs/audit/pages/college/academic-people.md` (and `academic-people-revie
 | COL-people-R02 | S2 | PERMISSION | DONE |
 | COL-academic-setup-R01 | S3 | STATE | DONE |
 | COL-people-R03 | S3 | VALIDATION | OPEN |
-| COL-academic-setup-R05 | S4 | VALIDATION | OPEN |
+| COL-academic-setup-R05 | S4 | VALIDATION | DONE |
 | COL-courses-content-R01 | S4 | STATE | OPEN |
 
 ## college/operations (7: OPEN 7)

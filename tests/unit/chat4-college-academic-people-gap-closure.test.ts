@@ -7,6 +7,18 @@ import type {RequestContext} from "@/modules/identity/context";
 const source=(path:string)=>readFileSync(join(process.cwd(),path),"utf8");
 
 describe("chat-4 College academic and people gap closure",()=>{
+ it("COL-academic-setup-R05 bounds semesters and mapping credits",async()=>{
+  const {createCollegeSemesterSchema,canCreateSemesterTerm}=await import("@/modules/academics/semester-mutation-model");
+  const {collegeTermCourseAddSchema}=await import("@/modules/academics/college-term-mapping-model");
+  const id="40000000-0000-4000-8000-000000000001";
+  const term={programId:id,termNumber:12,name:"Twelfth",totalCredits:null};
+  expect(createCollegeSemesterSchema.safeParse(term).success).toBe(true);
+  expect(createCollegeSemesterSchema.safeParse({...term,termNumber:13}).success).toBe(false);
+  expect(canCreateSemesterTerm(13,24)).toBe(false);
+  const mapping={programTermId:id,courseId:id,type:"CORE",credits:3};
+  expect(collegeTermCourseAddSchema.safeParse(mapping).success).toBe(true);
+  for(const credits of [null,0,11,1.5])expect(collegeTermCourseAddSchema.safeParse({...mapping,credits}).success).toBe(false);
+ });
  it("COL-academic-setup-R02 archives offerings and blocks their access without deleting selection history",async()=>{
   const {electiveLifecyclePrompt}=await import("@/modules/electives/college-elective-lifecycle-model");
   expect(electiveLifecyclePrompt("Slot A","ARCHIVE")).toContain("All its offerings are archived; enrolled students lose access, history is kept.");
