@@ -186,8 +186,8 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
 | TPO-students-54 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-13 | S3 | MISSING-ACTION | OPEN |
-| TPO-students-24 | S3 | MISSING-FILTER | OPEN |
-| TPO-students-25 | S3 | MISSING-FILTER | OPEN |
+| TPO-students-24 | S3 | MISSING-FILTER | DONE |
+| TPO-students-25 | S3 | MISSING-FILTER | DONE |
 | TPO-students-27 | S3 | MISSING-COLUMN | DONE |
 | TPO-students-37 | S3 | MISSING-ACTION | DONE |
 | TPO-students-38 | S3 | MISSING-ACTION | DONE |
@@ -195,11 +195,11 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-40 | S3 | MISSING-ACTION | DONE |
 | TPO-students-41 | S3 | A11Y | DONE |
 | TPO-students-42 | S3 | MISSING-TAB | DONE |
-| TPO-students-43 | S3 | MISSING-TAB | OPEN |
+| TPO-students-43 | S3 | MISSING-TAB | DONE |
 | TPO-students-44 | S3 | MISSING-FIELD | DONE |
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-students-46 | S3 | COPY | OPEN |
-| TPO-students-47 | S3 | COPY | OPEN |
+| TPO-students-46 | S3 | COPY | DONE |
+| TPO-students-47 | S3 | COPY | DONE |
 | TPO-students-49 | S3 | PERMISSION | OPEN |
 | TPO-students-50 | S3 | STATE | NOT-A-GAP |
 | TPO-students-51 | S3 | RESPONSIVE | OPEN |
@@ -340,3 +340,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - [chat-5] Additional queue UNCONFIRMED decisions: TPO-drive-workspace-12 → OPEN; TPO-drive-workspace-26 → OPEN; TPO-drive-workspace-38 → OPEN; TPO-students-15 → DONE; TPO-students-49 → OPEN; TPO-students-50 → NOT-A-GAP; TPO-requests-verification-29 → OPEN. Acceptances record remaining OPEN and the TPO-students-15 current 48-hour opt-out implementation.
 
 - [chat-5] round-2 verified on main: TPO-students-16, TPO-students-17, TPO-students-22, TPO-students-28, TPO-students-32: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
+
+- [chat-5] round-2 verified on main: TPO-students-24, TPO-students-25, TPO-students-43, TPO-students-46, TPO-students-47: earlier named chat12 behavioral tests and acceptance evidence exist; rechecked source boundary in `tests/unit/chat5-verified-queue-round2.test.ts`. DONE is code review status only; CI and database tests still pending.
