@@ -45,6 +45,11 @@ export default async function SuperAdminClassesPage({ searchParams }: {
             <input name="q" type="search" defaultValue={data.query.q}
               className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
           </label>
+          <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Status
+            <select name="status" defaultValue={data.query.status} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"All statuses":status}</option>)}
+            </select>
+          </label>
           <label className="grid min-w-32 gap-1 text-sm font-semibold text-body">Rows per page
             <select name="pageSize" defaultValue={data.query.pageSize} className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
               {[10,25,50,100].map(n=><option key={n} value={n}>{n}</option>)}
