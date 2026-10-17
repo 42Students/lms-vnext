@@ -81,3 +81,7 @@ Round 3 scope corrections: TPO-settings-audit-56 extension supports timed grants
 
 | TPO-settings-audit-94 | OPEN | Extended known audit-code mappings; `tests/unit/chat9-round6-copy-polish.test.ts` — `TPO-settings-audit-94 maps known setting changes to customer-readable actions`. Exhaustive producer taxonomy pending. |
 | TPO-settings-audit-96 | OPEN | Public label replaces internal canonical count, legacy empty-state and Retry retained; `tests/unit/chat9-round6-copy-polish.test.ts` — `TPO-settings-audit-96 removes internal audit count labels and retains the legacy empty state`. Stale-cache recovery missing. |
+
+| TPO-settings-audit-96 | DONE | `src/app/(authenticated)/tpo/audit/page.tsx`: exact legacy title, empty and error messages; removed internal source labels, canonical export naming and implementation disclosures; `tests/unit/chat9-tpo-audit-exact-legacy-no-internal.test.ts` — `TPO-settings-audit-96 hides data source implementation labels while retaining legacy copy`. Tests authored, not executed by builder. |
+
+| TPO-settings-audit-94 | DONE | `src/modules/placements/tpo-audit-model.ts` legacy mapping reviewed; `tests/unit/chat9-tpo-audit-legacy-event-names.test.ts` — `TPO-settings-audit-94 restores meaningful settings, recruiter, and drive activity names`. Tests written; orchestrator to execute. |
