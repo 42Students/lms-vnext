@@ -89,14 +89,17 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
   ))return {ok:false as const,reason:"INVALID_STATUS_TRANSITION"};
   const patch:Partial<typeof db10AuditFindings.$inferInsert>={version:row.version+1,updatedAt:new Date()};
   let note:string|null=null;
-  if(input.action==="STATUS"){patch.status=input.status;note=input.note??null;}
+  if(input.action==="STATUS"){
+   patch.status=input.status;note=input.note??null;
+   if(row.status==="DUPLICATE"&&input.status!=="DUPLICATE")patch.duplicateOf=null;
+  }
   if(input.action==="SEVERITY")patch.severity=input.severity;
   if(input.action==="ASSIGNEE")patch.assignee=input.assignee;
   if(input.action==="DUPLICATE"){
    if(row.id===input.duplicateOf)return {ok:false as const,reason:"INVALID_DUPLICATE"};
-   const [target]=await tx.select({id:db10AuditFindings.id}).from(db10AuditFindings)
-    .where(eq(db10AuditFindings.id,input.duplicateOf)).limit(1);
-   if(!target)return {ok:false as const,reason:"INVALID_DUPLICATE"};
+   const [target]=await tx.select({id:db10AuditFindings.id,status:db10AuditFindings.status})
+    .from(db10AuditFindings).where(eq(db10AuditFindings.id,input.duplicateOf)).limit(1);
+   if(!target||target.status==="DUPLICATE")return {ok:false as const,reason:"INVALID_DUPLICATE"};
    patch.duplicateOf=target.id;patch.status="DUPLICATE";
   }
   if(input.action==="FIX_COMMIT"){
