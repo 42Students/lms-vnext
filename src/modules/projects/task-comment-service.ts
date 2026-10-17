@@ -57,6 +57,7 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
   if(!updated)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const [comment]=await tx.insert(projectTaskComments).values({
    projectId:scope.project.id,taskId,authorMembershipId,body:input.body,
+   commentKind:input.commentKind,
   }).returning();
   if(!comment)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   const event = await recordActivityEventInTransaction(tx,context,{
