@@ -147,6 +147,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso}:{
     })}
    </div>
   </div>
+  {!slot&&message?<p role="alert" className="rounded border border-border p-3 text-sm text-warning-text">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
    <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5">
     <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
