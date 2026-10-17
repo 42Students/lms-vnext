@@ -99,7 +99,7 @@ describe("learner Course interaction model", () => {
     });
   });
 
-  it("allows manual completion only for accessible external resources", () => {
+  it("LEARNER-course-detail-08 allows manual completion of Resource and Live class regardless of link", () => {
     expect(
       resourceInteractionState({
         type: "RESOURCE",
@@ -124,7 +124,8 @@ describe("learner Course interaction model", () => {
         externalUrl: null,
         progressStatus: "NOT_STARTED",
       }).canMarkComplete,
-    ).toBe(false);
+    ).toBe(true);
+    expect(resourceInteractionState({type:"LIVE_CLASS",externalUrl:null,progressStatus:"NOT_STARTED"}).canMarkComplete).toBe(true);
   });
 
   it("surfaces expired unattempted quizzes without mislabeling attempted quizzes", () => {
