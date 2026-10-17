@@ -177,6 +177,7 @@ export function RecruiterLeadsWorkspace({
     companyName: initialCompany,
   });
   const [saveError, setSaveError] = useState("");
+  const [reviewingCreate,setReviewingCreate]=useState(false);
   const [saving, setSaving] = useState(false);
   const [duplicate, setDuplicate] = useState<Lead | null>(null);
   const [checking, setChecking] = useState(false);
@@ -425,7 +426,7 @@ export function RecruiterLeadsWorkspace({
   function field(name: keyof NewLead, value: string) {
     setForm(current => ({ ...current, [name]: value }));
     setDuplicate(null);
-    setSaveError("");
+    setSaveError("");setReviewingCreate(false);
   }
 
   async function checkContact() {
@@ -457,7 +458,7 @@ export function RecruiterLeadsWorkspace({
     if(saving)return;
     const dirty=Object.values(form).some(value=>value.trim());
     if(dirty&&!window.confirm("Discard this recruiter draft?"))return;
-    setAdding(false);setDuplicate(null);setSaveError("");
+    setAdding(false);setDuplicate(null);setSaveError("");setReviewingCreate(false);
     createLaunchRef.current?.focus();
   }
 
@@ -496,11 +497,7 @@ export function RecruiterLeadsWorkspace({
     if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
       setSaveError("Choose a future follow-up date (IST).");return;
     }
-    if (!window.confirm(
-      "Create recruiter lead for " + form.name.trim() +
-      (form.companyName.trim() ? " at " + form.companyName.trim() : "") +
-      "? This saves a new college contact and records an auditable creation event.",
-    )) return;
+    if(!reviewingCreate){setReviewingCreate(true);return;}
 
     setSaving(true);
     setSaveError("");
@@ -524,7 +521,7 @@ export function RecruiterLeadsWorkspace({
       });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(friendlyError(response.status, data));
-      setAdding(false);
+      setAdding(false);setReviewingCreate(false);
       setActionToast("Recruiter lead added");
       setForm(EMPTY);
       setDuplicate(null);
@@ -550,7 +547,7 @@ export function RecruiterLeadsWorkspace({
           </Link>
           <RecruiterLeadCsvImport onImported={() => void load()} />
           <button ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase !== "ready"}
-            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null); }}>
+            onClick={() => { setAdding(true); setForm(EMPTY); setSaveError(""); setDuplicate(null);setReviewingCreate(false); }}>
             Add recruiter lead
           </button>
         </div>
@@ -1069,11 +1066,20 @@ export function RecruiterLeadsWorkspace({
                 disabled={!form.followupDate}
                 placeholder="What should the placement cell do next?"/>
             </label>
+            {reviewingCreate?<div role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+              <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
+                This saves a new college contact and records an auditable creation event.
+              </p>
+              {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
+              <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewingCreate(false)}>
+                Edit details
+              </button>
+            </div>:null}
             {saveError && <p role="alert" className="text-sm text-destructive">{saveError}</p>}
             <div className="flex justify-end">
               <button type="submit" className={primaryStyle}
                 disabled={saving || checking || Boolean(duplicate)}>
-                {saving ? "Creating…" : "Create recruiter lead"}
+                {saving ? "Creating…" : reviewingCreate?"Confirm and create recruiter":"Review and create recruiter"}
               </button>
             </div>
           </form>
