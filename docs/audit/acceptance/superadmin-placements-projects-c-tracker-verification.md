@@ -39,7 +39,7 @@
 
 | ID | Disposition | Evidence |
 |---|---|---|
-| SA-placements-projects-109 | DONE (provider-gated UI) | Scoped read and bounded warning/error time-window around the issue in `tracker-issue-logs-panel.tsx` and `issues/[publicId]/nearby-logs/route.ts`; `chat16-mentor-tracker-contract-round2.test.ts` — SA-placements-projects-109. No false result when Cloud Logging not configured. |
+| SA-placements-projects-109 | DONE (provider-gated UI) | Scoped read and bounded warning/error time-window around the issue in `tracker-issue-logs-panel.tsx` and `issues/[publicId]/nearby-logs/route.ts`; `tests/unit/chat16-mentor-tracker-contract-round2.test.ts` — test `SA-placements-projects-109 fetches scoped redacted warnings around the reported timestamp`. No false result when Cloud Logging not configured. |
 | SA-placements-projects-114 | PARTIAL | Log record detail offers Copy permalink, Copy for Claude and Report this. Known Errors cards expose mute/unmute, but not all actions are bound to a selected log signature; `chat16-mentor-tracker-contract-round2.test.ts` — SA-placements-projects-114. |
 | SA-placements-projects-116 | PARTIAL (delivery credentials pending) | Daily digest preview, Send to Telegram now and Send test alert use origin-guarded rate-limited route; `tracker-telegram-manual-panel.tsx` and round2 test — SA-placements-projects-116. Provider validation requires configured bot/chat in deployment. |
 | SA-placements-projects-117 | DONE (provider-gated UI) | Redacted, bounded CSV and Claude markdown reports, paging and download notices in `tracker-live-logs-explorer.tsx`; round2 test — SA-placements-projects-117. Real provider access remains the SA-113 infrastructure dependency. |
