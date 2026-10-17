@@ -85,7 +85,7 @@ export function HrDriveDraftForm({
       if(submittedRef.current)return;
       const saved=saveHrUnsentDraft(draft,Date.now());
       if(!saved)return;
-      try{window.localStorage.setItem(storageKey,saved);}catch{/* Storage disabled */ }
+      try{window.localStorage.setItem(storageKey,saved);}catch{try{window.sessionStorage.setItem(storageKey,saved);}catch{/* Disabled */}}
     };
     const timer=window.setTimeout(persist,600);
     const onVisibility=()=>{if(document.visibilityState==="hidden")persist();};
