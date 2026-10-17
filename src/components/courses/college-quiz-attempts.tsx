@@ -51,6 +51,8 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
     </label>
+    {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
+     <p className="text-xs text-muted-foreground">No Students match your search.</p>:null}
     <ul className="space-y-2">{attempts.filter(item=>!learnerSearch.trim()||
       (item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||
       (item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())).map(item=><li key={item.id}
