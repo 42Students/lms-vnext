@@ -24,7 +24,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-19 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-20 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-21 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-students-22 | S2 | MISSING-FILTER | OPEN |
+| TPO-students-22 | S2 | MISSING-FILTER | DONE |
 | TPO-students-23 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-students-26 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-students-28 | S2 | MISSING-COLUMN | DONE |
@@ -52,7 +52,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-46 | S3 | COPY | DONE |
 | TPO-students-47 | S3 | COPY | OPEN |
 | TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
-| TPO-students-50 | S3 | STATE | UNCONFIRMED |
+| TPO-students-50 | S3 | STATE | NOT-A-GAP |
 | TPO-students-51 | S3 | RESPONSIVE | DONE |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
@@ -166,3 +166,6 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Six OPEN gaps now DONE on source evidence: TPO-students-25, TPO-students-28, TPO-students-39, TPO-students-43, TPO-requests-verification-23, TPO-requests-verification-16. New ID tests authored but not executed.
 - TPO-students-06/07 still OPEN: bulk timed Debar/Lift and learner notifications exist, but learner dispute and drive-count transition integration do not.
 - TPO-students-10/12/14/17/34/36 and TPO-requests-verification-01/13/37/38/R02 still require full persisted workflows and real database acceptance; do not report them completed.
+
+- Round 30–32: `TPO-students-22` DONE after adding independent skill-name filter, retaining name/count filters and safe server-only matching in scoped export and journey links. `TPO-students-50` NOT-A-GAP: active application already implies registration with no explicit registration row; exact rule verified by test.
+- `TPO-requests-verification-R02` remains OPEN: last-resubmission audit snapshot diff + recruiter contact/access card implemented, agency status and deadline comparison not yet proven.
