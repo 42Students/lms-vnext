@@ -53,7 +53,7 @@ describe("chat-13 final sprint public company share",()=>{
   const page=read("src/app/company-share/[token]/page.tsx");
   expect(page).toContain("Please shortlist by ");
   expect(page).toContain("result.shortlistBy");
-  expect(companyShareIssueSchema.safeParse({jobId:"00000000-0000-0000-0000-000000000001",
+  expect(companyShareIssueSchema.safeParse({jobId:"550e8400-e29b-41d4-a716-446655440000",
    expiresInDays:90,selectedColumns:["NAME"],shortlistBy:null}).success).toBe(true);
  });
 });
