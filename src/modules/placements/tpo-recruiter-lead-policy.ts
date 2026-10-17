@@ -62,6 +62,14 @@ const LEGACY_FREE_MAIL_DOMAINS = new Set([
   "yahoo.com",
   "outlook.com",
   "hotmail.com",
+  "icloud.com",
+  "aol.com",
+  "live.com",
+  "msn.com",
+  "proton.me",
+  "protonmail.com",
+  "mail.com",
+  "yahoo.co.in",
 ]);
 
 /**
@@ -78,5 +86,5 @@ export function inferLegacyRecruiterCompanyName(
   const domain = email.slice(at + 1).trim().toLowerCase();
   if (!domain || LEGACY_FREE_MAIL_DOMAINS.has(domain)) return null;
   const firstLabel = domain.split(".")[0]?.trim();
-  return firstLabel ? firstLabel.toUpperCase() : null;
+  return firstLabel ? firstLabel.slice(0,1).toUpperCase()+firstLabel.slice(1) : null;
 }

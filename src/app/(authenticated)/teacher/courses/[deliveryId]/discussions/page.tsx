@@ -30,24 +30,6 @@ export default async function FacultyCourseDiscussionsPage({
         title="Discussions"
         description={`${workspace.course.courseName} · ${workspace.course.sectionName}`}
       />
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussion-history"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-          Moderation history
-        </Link>
-      </div>
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/discussion-participation"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-          Participation
-        </Link>
-      </div>
-      <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/notices"}
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
-          Section notices (unavailable)
-        </Link>
-      </div>
       <LearnerCourseDiscussion
         key={deliveryId}
         deliveryId={deliveryId}

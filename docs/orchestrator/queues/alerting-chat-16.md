@@ -39,6 +39,11 @@ Owner requirement (2026-10-17): errors in vNext must reach Telegram exactly like
 - GR-123 / GR-125: Logs mutations preserve guarded `apiFetch` and only show whitelisted timeout guidance or friendly API errors; new regression assertions cover both mutation entry points and preserved mute confirmation. Historical `graceful-logs-ui-contract` failure was already reconciled on main, but the post-fix test has NOT been run.
 - There are no additional OPEN GR-111..GR-125 items in this lane queue; the remaining BLOCKED statuses require migration registration, IAM, credentials or cluster smoke evidence and are not source-code closures.
 
+## Round follow-up — refreshed GR-118 CI failure (source fixed; tests not run)
+- GR-118 / GR-125: `graceful-alert-ops-contract` required an explicit 12-error tick cap. Cloud Logging ingestion now processes at most ONE complete 12-error provider page per tick within the 150-second Cron HTTP budget; only checkpoints after the entire page is handled and resumes via provider page token. The GR-118 test now guards these invariants, without weakening the failure assertion.
+- Queue availability: GR-111..GR-125 are the full assigned list (15 unique items). There are zero additional OPEN checklist rows to close; existing BLOCKED runtime/secret/migration prerequisites are recorded below. New GR IDs must be assigned by the orchestrator before a 30-item round is possible.
+- The refreshed CI report lists no further chat-16 failures after GR-118. Correctness is source-inspected ONLY and must be confirmed by orchestrator CI.
+
 ## Notes (blockers, one line each)
 - RUNBOOK GR-111..GR-125: `docs/operations/vnext-telegram-alerting.md` documents safe configuration, production-only webhook registration, DB10 promotion, smoke evidence and recovery.
 - BLOCKED GR-115/GR-118/GR-119/GR-125: orchestrator/W01 must register and replay `docs/proposed-migrations/graceful-telegram-alerting.sql` including daily counts, observed-event deduplication, and resumable Cloud Logging page-window columns before setting `DB10_LOG_ALERTS_READY=DB10_VERIFIED`.

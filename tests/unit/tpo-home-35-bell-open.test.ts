@@ -3,14 +3,14 @@ import {readFileSync} from "node:fs";
 import {tpoBellOpenHref} from "@/modules/activity/tpo-bell-open-model";
 
 describe("TPO-home-35 / TPO-inbox-team-61 bell open and acknowledge",()=>{
- it("accepts only application-relative links, never off-origin redirects",()=>{
+ it("TPO-inbox-team-61 accepts only application-relative links, never off-origin redirects",()=>{
   expect(tpoBellOpenHref("/tpo/drives/123?tab=requests")).toBe("/tpo/drives/123?tab=requests");
   expect(tpoBellOpenHref(null)).toBeNull();
   expect(tpoBellOpenHref("https://example.com")).toBeNull();
   expect(tpoBellOpenHref("//example.com")).toBeNull();
   expect(tpoBellOpenHref("/\\example.com")).toBeNull();
  });
- it("uses the scoped POST on click before navigating, with no navigation on failure",()=>{
+ it("TPO-home-35 uses a scoped POST on click before navigating and never navigates on failure",()=>{
   const panel=readFileSync("src/components/tpo/tpo-bell-panel.tsx","utf8");
   expect(panel).toContain('"/api/tpo/notifications/"+encodeURIComponent(item.id)+"/read"');
   expect(panel).toContain('onClick={()=>void openItem(item)}');

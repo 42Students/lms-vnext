@@ -31,7 +31,7 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-29 | S2 | MISSING-FIELD | OPEN |
 | TPO-students-30 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-31 | S2 | MISSING-FIELD | OPEN |
-| TPO-students-32 | S2 | STATE | OPEN |
+| TPO-students-32 | S2 | STATE | DONE |
 | TPO-students-34 | S2 | SIDE-EFFECT | OPEN |
 | TPO-students-35 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-students-36 | S2 | MISSING-EXPORT | OPEN |
@@ -49,21 +49,21 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-43 | S3 | MISSING-TAB | OPEN |
 | TPO-students-44 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-45 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| TPO-students-46 | S3 | COPY | OPEN |
+| TPO-students-46 | S3 | COPY | DONE |
 | TPO-students-47 | S3 | COPY | OPEN |
 | TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-students-50 | S3 | STATE | UNCONFIRMED |
-| TPO-students-51 | S3 | RESPONSIVE | OPEN |
+| TPO-students-51 | S3 | RESPONSIVE | DONE |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-students-R03 | S3 | STATE | OPEN |
-| TPO-students-R04 | S3 | STATE | OPEN |
-| TPO-students-R05 | S3 | COPY | OPEN |
-| TPO-students-R06 | S3 | COPY | OPEN |
-| TPO-students-R07 | S3 | STATE | OPEN |
+| TPO-students-R03 | S3 | STATE | DONE |
+| TPO-students-R04 | S3 | STATE | DONE |
+| TPO-students-R05 | S3 | COPY | DONE |
+| TPO-students-R06 | S3 | COPY | DONE |
+| TPO-students-R07 | S3 | STATE | DONE |
 | TPO-students-R08 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-students-48 | S4 | STATE | OPEN |
-| TPO-students-53 | S4 | MISSING-FIELD | OPEN |
+| TPO-students-48 | S4 | STATE | DONE |
+| TPO-students-53 | S4 | MISSING-FIELD | DONE |
 
 ## tpo/requests-verification (34: OPEN 15, FIXED-ON-MAIN 18, UNCONFIRMED 1)
 
@@ -93,14 +93,14 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 | TPO-requests-verification-12 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-requests-verification-14 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-requests-verification-15 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-requests-verification-17 | S3 | COPY | OPEN |
+| TPO-requests-verification-17 | S3 | COPY | DONE |
 | TPO-requests-verification-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-requests-verification-27 | S3 | COPY | OPEN |
+| TPO-requests-verification-27 | S3 | COPY | DONE |
 | TPO-requests-verification-28 | S3 | COPY | OPEN |
-| TPO-requests-verification-29 | S3 | MISSING-FIELD | UNCONFIRMED |
+| TPO-requests-verification-29 | S3 | MISSING-FIELD | DONE |
 | TPO-requests-verification-30 | S3 | SIDE-EFFECT | FIXED-ON-MAIN |
 | TPO-requests-verification-32 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-requests-verification-R01 | S3 | SIDE-EFFECT | OPEN |
+| TPO-requests-verification-R01 | S3 | SIDE-EFFECT | DONE |
 | TPO-requests-verification-R03 | S3 | SIDE-EFFECT | OPEN |
 | TPO-requests-verification-16 | S4 | PERFORMANCE | OPEN |
 | TPO-requests-verification-18 | S4 | STATE | OPEN |
@@ -144,3 +144,17 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - TPO-requests-verification-37/38/R03 remain OPEN in part: persisted REQUEST, TPO bell, recruiter scope and review UI exist, but trusted auto-approval with pending-account exception, reviewed before/after diffs and recruiter decision email still need implementation.
 - TPO-students-06/07/10/12/14/16/17/34/36/R03 remain OPEN in part: timed/bulk debar/notifications, course prep assignment, drive overrides, cross-page selection, academic side effects, Excel export and unified grid selection need full workflows.
 - TPO-requests-verification-06/21 need shell work by chat-9 only: Requests sidebar badge and permission-aware Verification row.
+
+## Round 12–17 checkpoint (chat-12)
+
+- Started with an exact fast-forward from latest main and repaired three CI-reported chat-12 tests: `TPO-students-20`, `GR-90`, `TPO-requests-verification-25`.
+- Verified and marked 9 fully source-supported gap rows DONE (runtime suite pending); all still-incomplete 35 OPEN rows retain named remaining work in the acceptance files, rather than being reported as closed.
+- Added resume/coding-profile filters, shared page selection, scoped Debar/Lift learner notifications, in-app confirmation for bulk outcome Save/Undo, legacy Students header and empty-filter recovery.
+- `TPO-students-10/12/34/36`, `TPO-requests-verification-01/37/38/R02` are substantial service/migration workflows and remain OPEN. Do not describe schema proposals or source tests as completed effects.
+- Shell-only `TPO-requests-verification-06/21` still belongs to chat-9. Unit tests were authored but not run.
+
+- TPO-students-R03 DONE (authored, runtime pending): table/mobile grid row checkboxes now use the shared selection context with bulk actions, Add to Drive and notes. TPO-students-17 still OPEN for cross-page Shift/selection behavior.
+
+- Round 19–20: TPO-students-48/51/R04 DONE (code authored, acceptance pending); filtered and selected counts now live, phone cards show essential facts/details disclosure and two-column journey, Program/Class selector duplication removed. Tests authored, not run.
+
+- Round-21: `TPO-requests-verification-29` DONE (source-authored; runtime acceptance pending): private reviewer detail now limits to latest 50 audit events with education and masked proof, student roll and named reviewer context. Tests authored, not run.
