@@ -8,7 +8,7 @@ import {
 } from "@/modules/academics/college-section-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
-type Cohort = { id: string; name: string; code: string; programName: string };
+type Cohort = { id: string; name: string; code: string; programName: string; programId: string };
 type Period = { id: string; name: string; code: string };
 type ClassRow = {
   id: string; name: string; code: string;
@@ -37,6 +37,9 @@ export function CollegeClassCreate({ cohorts, periods }: {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [cohortId, setCohortId] = useState("");
+  const [programId,setProgramId]=useState("");
+  const uniquePrograms=[...new Map(cohorts.map(cohort=>[cohort.programId,{id:cohort.programId,name:cohort.programName}])).values()];
+  const filteredCohorts=cohorts.filter(cohort=>!programId||cohort.programId===programId);
   const [academicPeriodId, setAcademicPeriodId] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
@@ -76,11 +79,18 @@ export function CollegeClassCreate({ cohorts, periods }: {
           : "No usable academic periods in this college. Create a period first."}
       </p>
       : <form onSubmit={submit} className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <label className="grid gap-1 text-sm font-medium text-body">Program
+          <select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
+           className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+           <option value="">Select program</option>
+           {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
+          </select>
+        </label>
         <label className="grid gap-1 text-sm font-medium text-body">Batch
           <select required value={cohortId} onChange={event => setCohortId(event.target.value)}
             className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
             <option value="">Select batch</option>
-            {cohorts.map(c => <option key={c.id} value={c.id}>
+            {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </select>
