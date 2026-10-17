@@ -21,3 +21,5 @@
 
 | TPO-recruiters-22 | DONE (source, not run) | Verified existing dual email/phone preflight and explicit link to the named existing lead with disabled duplicate create, named `tests/unit/chat2-tpo-recruiter-existing-contacts.test.ts`. |
 | TPO-recruiters-R06 | DONE (source, not run) | Unsubscribed/Not Now invite panel shows the exact legacy warning and disables inviting opted-out people, named test in same file. |
+
+| TPO-recruiters-R02 | DONE (source verified, unrun) | Companies rendered independently of empty lead view, grouped and filtered against actual companies. Named regression in `tests/unit/chat2-tpo-engage-companies-independent.test.ts`. |
