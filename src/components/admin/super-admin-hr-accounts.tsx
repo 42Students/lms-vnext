@@ -463,7 +463,7 @@ export function SuperAdminHrAccounts({
 
       showToast({
         tone: "success",
-        title: "College access granted",
+        title: "College access given",
       });
 
       await loadDetail(selectedUserId);
@@ -635,9 +635,9 @@ export function SuperAdminHrAccounts({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
-        title="Recruiter accounts"
-        description="Manage employer recruiters, their college access and signed-in devices. Results follow the current platform or selected tenant safety scope."
+        eyebrow="Industry access"
+        title="Recruiter account lifecycle"
+        description="Manage recruiter accounts, their company links and college access. Account actions follow the current administrative scope."
         actions={
           <Button onClick={openCreate}>
             Add recruiter
