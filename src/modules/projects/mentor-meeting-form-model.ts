@@ -32,6 +32,7 @@ export function mentorMeetingScheduleError(input: {
   endsAt: string;
   meetingUrl: string;
   nowMs: number;
+  draft?: boolean;
 }): string | null {
   if (!input.title.trim()) return "Meeting title is required.";
   if (!input.startsAt) return "Meeting date is required.";
@@ -43,8 +44,8 @@ export function mentorMeetingScheduleError(input: {
   if (!Number.isFinite(end) || end <= start) {
     return "Meeting end time must be after the start time.";
   }
-  if (!input.meetingUrl.trim()) return "Meeting link is required.";
-  if (!mentorMeetingHttpUrl(input.meetingUrl.trim())) {
+  if (!input.draft && !input.meetingUrl.trim()) return "Meeting link is required.";
+  if (input.meetingUrl.trim() && !mentorMeetingHttpUrl(input.meetingUrl.trim())) {
     return "Enter a valid meeting link.";
   }
   return null;
