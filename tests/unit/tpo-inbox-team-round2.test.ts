@@ -167,4 +167,14 @@ describe("Chat-2 TPO Inbox + Team legacy verification round 2",()=>{
   expect(page).toContain('tabInput==="members"?"people":tabInput');
  });
 
+ it("TPO-inbox-team-R07 gives native keyboard links, log landmarks, busy state and search hint",()=>{
+  const message=src("src/app/(authenticated)/tpo/messages/[threadId]/page.tsx");
+  const teamMessage=src("src/app/(authenticated)/tpo/team/[threadId]/page.tsx");
+  expect(message).toContain('role="log" aria-live="polite" aria-busy={false}');
+  expect(message).toContain("All conversations");
+  expect(teamMessage).toContain('role="log" aria-live="polite" aria-busy={false}');
+  expect(src("src/components/tpo/tpo-team-search.tsx")).toContain("Search (press /)");
+  expect(messages()).toContain('aria-current={query.status===status?"page":undefined}');
+ });
+
 });
