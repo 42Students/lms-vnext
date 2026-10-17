@@ -131,3 +131,16 @@ These **32 authored test cases** do not represent 32 new GR IDs. The source was 
 | GR-80 GR-81 / big-round one-factor | BLOCKED | `tests/e2e/graceful-verify-one-factor-domain-failures.spec.ts`: 10 verification known-domain outcome browser tests, including stale code restart; not executed. |
 
 | GR-80 GR-81 / big-round two-factor | BLOCKED | `tests/e2e/graceful-verify-two-factor-domain-failures.spec.ts`: 10 verification known-domain outcome browser tests, including stale code restart; not executed. |
+
+## Big-round source evidence (100 authored, NOT RUN)
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| GR-80 | BLOCKED | Six `tests/e2e/graceful-unexpected-{email,phone}-{error,code,message}.spec.ts` files provide 60 intercepted unknown-provider errors with a second user retry and preserved contact; two `graceful-known-auth-{email,phone}.spec.ts` files provide 20 exact domain wording responses; two `graceful-verify-{one,two}-factor-domain-failures.spec.ts` files provide 20 real OTP verify failure/restart recovery cases. |
+| GR-81 | BLOCKED | All 100 cases call `expectNoRawErrors` and reject unhandled page exceptions. Unknown machine identifiers and raw SQL/provider messages are deliberately present only in intercepted response bodies. |
+| GR-82 | BLOCKED | Production smoke suite and external signed-in storage-state requirements unchanged; development browser source-only cases never certify production. |
+| GR-83 | BLOCKED | Unit/helper, GR-51 fake-provider outbox and disposable PostgreSQL execution evidence still missing. |
+
+**Register audit:** 0 items proposed for chat-15 in `docs/audit/gap-register.md` (483 OPEN/UNCONFIRMED/IN-BRANCH across other lanes, including 19 public rows proposed for chat-7 at audit time). Those are not chat-15 closures. **Total authoring in this big round: 100 test cases, 10 pushes; 0 independently executed passes, 0 distinct GR IDs certified.**
+
+The orchestrator owns live test runs and must attach a pinned merged SHA, environment, pass/fail/skip counts and traces before changing GR-80–83 status.
