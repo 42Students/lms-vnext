@@ -96,6 +96,8 @@ export async function offerToNextWaitlisted(context:RequestContext,rawJobId:unkn
  if(input.expectedPreviewToken!==preview.previewToken)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
  const next=preview.next;
  if(!next||!preview.lastRoundId)throw new PlacementsServiceError("PLACEMENT_OFFER_NOT_READY");
+ if(next.promotionStatus==="RELEASED")
+  throw new PlacementsServiceError("PLACEMENT_OFFER_ACTIVE_EXISTS");
  const existing=await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   const [locked]=await tx.select({status:placementJobs.status,openings:placementJobs.openings})
