@@ -13,6 +13,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
 }){
  const router=useRouter();
  const [opened,setOpened]=useState(false);
+ const [keepOpen,setKeepOpen]=useState(false);
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState("");
@@ -64,7 +65,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
-   setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("10");
+   if(!keepOpen)setOpened(false);
+   setTitle("");setDescription("");setDueAt("");setPoints("10");
    setMessage("Assignment draft created. Publish it to let learners submit.");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
@@ -117,6 +119,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
     "All currently eligible Sections in the selected Course Offering"}.
     Draft assignments are hidden until they are published.</p>
    <div className="sm:col-span-2"><FacultyAssignmentMethodPicker methods={allowedMethods} onChange={setAllowedMethods} disabled={pending}/></div>
+   <label className="flex items-center gap-2 text-sm sm:col-span-2">
+    <input type="checkbox" checked={keepOpen} disabled={pending}
+     onChange={event=>setKeepOpen(event.target.checked)}/>Create another assignment after saving
+   </label>
    <div className="flex flex-wrap gap-2 sm:col-span-2">
     <button type="button" disabled={pending||!chosen||!title.trim()} onClick={()=>void create()}
      className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
