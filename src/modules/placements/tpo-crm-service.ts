@@ -313,13 +313,38 @@ export async function logTpoLeadActivity(
       })
       .returning();
 
-    if (lead.manualStage === "NEW") {
+    // Call outcomes are business decisions, not display-only notes. Keep both
+    // the timeline event and its state/follow-up side effect in this transaction.
+    if (input.type === "CALL" && input.outcome === "Not interested") {
+      await tx.update(placementTpoLeads)
+        .set({ manualStage: "NOT_NOW", notNowReason: "Not interested",
+          notNowUntil: null, updatedAt: new Date() })
+        .where(and(eq(placementTpoLeads.id, leadId),
+          eq(placementTpoLeads.collegeId, input.collegeId)));
+    } else if (lead.manualStage === "NEW") {
       await tx.update(placementTpoLeads)
         .set({ manualStage: "CONTACTED", updatedAt: new Date() })
         .where(and(
           eq(placementTpoLeads.id, leadId),
           eq(placementTpoLeads.collegeId, input.collegeId),
         ));
+    }
+    if (input.type === "CALL" && input.outcome === "No answer" &&
+      lead.manualStage !== "NOT_NOW") {
+      const [existing] = await tx.select({id:placementTpoFollowups.id})
+        .from(placementTpoFollowups)
+        .where(and(eq(placementTpoFollowups.collegeId,input.collegeId),
+          eq(placementTpoFollowups.leadId,leadId),
+          isNull(placementTpoFollowups.doneAt)))
+        .limit(1);
+      if(!existing) {
+        await tx.insert(placementTpoFollowups).values({
+          collegeId:input.collegeId,leadId,
+          dueAt:new Date(Date.now()+2*24*60*60_000),
+          note:"Call again — no answer",
+          ownerMembershipId:ownerMembership(context,input.collegeId),
+        });
+      }
     }
     return activity;
   });
