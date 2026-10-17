@@ -112,4 +112,11 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(result.deadline).toBe("Deadline not set");
   expect(result.status).toBe("Published");
  });
+ it("TPO-drive-workspace-40 refuses CSV multiline learner identities and malformed quoting",()=>{
+  expect(parseSelectionCsv('Application ID,Result\n"a,b",PASS',true,1000)[1]).toEqual(["a,b","PASS"]);
+  expect(()=>parseSelectionCsv('Application ID,Result\n"a\nb",PASS',true,1000)).toThrow(/Multiline/);
+  expect(()=>parseSelectionCsv('Application ID,Result\na,PASS\n\n',true,1000)).toThrow(/blank/);
+  expect(()=>parseSelectionCsv('Application ID,Result\n"a"junk,PASS',true,1000)).toThrow(/closing/);
+ });
+
 });
