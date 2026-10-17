@@ -402,7 +402,7 @@ export function LearnerCourseDiscussion({
                 We could not load this discussion.
               </h3>
               <p className="mt-2 text-sm text-body">
-                This is a loading problem, not an empty discussion.
+                Check your connection and try again.
               </p>
               <Button className="mt-4" variant="secondary" onClick={() => void load()}>
                 Retry
@@ -557,7 +557,7 @@ export function LearnerCourseDiscussion({
         <form onSubmit={submit} className="border-t border-border p-4 sm:p-5">
           {loadError && messages.length > 0 ? (
             <p className="mb-3 text-xs font-semibold text-warning">
-              Background refresh failed. You can keep reading the messages already loaded.
+              Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.
             </p>
           ) : null}
           <p className="mb-3 text-xs leading-5 text-muted-foreground">
@@ -595,12 +595,12 @@ export function LearnerCourseDiscussion({
           />
           <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <span className="text-xs text-muted-foreground">
-              <span className="sm:hidden">Tap Post to send · Enter adds a new line</span>
+              <span className="sm:hidden">Tap Send to post · Enter adds a new line</span>
               <span className="hidden sm:inline">Enter to send · Shift+Enter for a new line</span>
               {" · "}{draft.length}/{LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH}
             </span>
             <Button type="submit" className="min-h-11 w-full sm:w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
-              {posting ? "Posting…" : "Post"}
+              {posting ? "Sending…" : "Send"}
             </Button>
           </div>
         </form>
