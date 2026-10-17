@@ -538,7 +538,7 @@ export function LearnerPlacementJobs({
                 </p>
               </div>
               <div className="flex flex-wrap items-center gap-3">
-              <LearnerSaveDriveButton jobId={item.job.id} initialSaved={savedJobIds.includes(item.job.id)}/>
+              <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
               <StatusBadge
                 tone={eligibilityTone(
                   item.eligibility.status,
