@@ -143,7 +143,15 @@ export function LoginForm({
   },[emailCooldown]);
 
   function fail(errorCode: string | undefined) {
-    const known = errorCode ? ERROR_MESSAGES[errorCode] : undefined;
+    const known = errorCode==="NOT_REGISTERED" && channel==="EMAIL"
+      ?"We couldn't find an account with that email.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
+      ?"We couldn't send the email just now. Try again.":errorCode==="NO_ACCOUNT_FOR_DOMAIN"
+      ?(channel==="EMAIL"?"This email isn't registered at this college.":"This number isn't registered at this college.")+
+       " If you belong to another college, use the main sign-in page (42lms.com).":
+       errorCode==="CHANNEL_DISABLED"
+      ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
+        "This college signs in with email. Use your email instead."):
+       errorCode?ERROR_MESSAGES[errorCode]:undefined;
     setError(known ?? "Something went wrong. Try again in a moment.");
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
@@ -192,7 +200,7 @@ export function LoginForm({
       setSecondCode("");
       setCooldown(RESEND_SECONDS);
     } catch {
-      setError("Network problem. Check your connection and try again.");
+      setError("That took too long. Check your connection and try again.");
     } finally {
       setBusy(false);
     }
@@ -263,12 +271,12 @@ export function LoginForm({
   return (
     <div className="w-full max-w-md">
       <h2 className="m-0 text-2xl font-semibold text-foreground">
-        Sign in
+        {attempt?"Enter your code":"Sign in"}
       </h2>
       <p className="mt-1 text-sm text-muted-foreground">
-        {collegeName
-          ? `Sign in to ${collegeName}`
-          : "Use the phone number or email registered with your college."}
+        {attempt ? "We sent a code to "+attempt.maskedContact+".":
+          channel==="PHONE"?"Use your registered mobile number.":
+          "Use your registered email address."}
       </p>
 
       {error ? (
@@ -352,7 +360,7 @@ export function LoginForm({
             aria-labelledby={`login-tab-${channel.toLowerCase()}`}>
           <label className="block">
             <span className="mb-1 block text-sm font-medium text-foreground">
-              {channel === "PHONE" ? "Mobile number" : "Email address"}
+              {channel === "PHONE" ? "Mobile number" : "Email"}
             </span>
             <Input
               name="contact"
@@ -364,7 +372,7 @@ export function LoginForm({
               inputMode={channel === "PHONE" ? "tel" : "email"}
               autoComplete={channel === "PHONE" ? "tel" : "email"}
               placeholder={
-                channel === "PHONE" ? "98765 43210" : "you@college.edu"
+                channel === "PHONE" ? "98765 43210" : "you@example.com"
               }
               required
               autoFocus
@@ -380,7 +388,7 @@ export function LoginForm({
             className="w-full"
             disabled={busy}
           >
-            {busy ? "Sending code…" : "Send code"}
+            {busy ? "Sending code…" : "Continue"}
           </Button>
           <LoginConsent />
         </form>
@@ -414,7 +422,7 @@ export function LoginForm({
             <span className="mb-1 block text-sm font-medium text-foreground">
               {attempt.requiresSecondFactor
                 ? "Code from the text message"
-                : "Verification code"}
+                : "One-time code"}
             </span>
             <Input
               name="code"
@@ -424,7 +432,7 @@ export function LoginForm({
               }
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="123456"
+              placeholder="Enter the code"
               maxLength={6}
               className="text-center text-lg tracking-[0.4em]"
               required
@@ -464,7 +472,7 @@ export function LoginForm({
               (attempt.requiresSecondFactor === true && secondCode.length < 6)
             }
           >
-            {busy ? "Verifying…" : "Verify and continue"}
+            {busy ? "Verifying…" : "Verify and sign in"}
           </Button>
 
           <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
@@ -474,7 +482,8 @@ export function LoginForm({
               disabled={busy || cooldown > 0}
               className="font-medium text-primary-text underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
             >
-              {cooldown > 0 ? `Resend code in ${cooldown}s` : "Resend code"}
+              {cooldown > 0 ? "Resend code in "+Math.floor(cooldown/60)+":"+
+                String(cooldown%60).padStart(2,"0") : "Resend code"}
             </button>
             {attempt.emailFallbackAvailable && !attempt.requiresSecondFactor ? (
               <button
@@ -483,7 +492,7 @@ export function LoginForm({
                 disabled={busy || emailCooldown > 0}
                 className="font-medium text-primary-text underline-offset-2 hover:underline disabled:cursor-not-allowed disabled:text-muted-foreground disabled:no-underline"
               >
-                {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Email me the code instead"}
+                {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
               </button>
             ) : null}
           </div>
@@ -493,7 +502,7 @@ export function LoginForm({
             onClick={reset}
             className="text-sm text-muted-foreground hover:text-foreground"
           >
-            Use a different {channel === "PHONE" ? "number" : "email"}
+            Change
           </button>
           <LoginConsent />
         </form>
