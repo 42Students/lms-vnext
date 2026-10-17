@@ -118,12 +118,14 @@ export function LearnerAssessmentOverview({
   kind,
   snapshotNowMs,
   fileUploadsEnabled = false,
+  classScope="PRESENT",
 }: {
   courses: readonly CourseChoice[];
   items: readonly Item[];
   kind: "ASSIGNMENT" | "QUIZ";
   snapshotNowMs: number;
   fileUploadsEnabled?: boolean;
+  classScope?:"NONE"|"PRESENT"|"UNAVAILABLE";
 }) {
   const [clock, setClock] = useState({ snapshotNowMs, elapsedMs: 0 });
   const currentNowMs = learnerAssessmentClock(snapshotNowMs,
@@ -195,6 +197,16 @@ export function LearnerAssessmentOverview({
     [items,filtered,selectedAssignmentKey],
   );
 
+  if(items.length===0 && kind==="QUIZ" && classScope==="NONE"){
+    return <EmptyState title="You haven't been added to a class yet"
+      description="Quizzes appear once your college puts you in a class or section." />;
+  }
+  if(items.length===0 && kind==="QUIZ" && classScope==="UNAVAILABLE"){
+    return <div role="alert" className="rounded-lg border border-border bg-surface p-4">
+      <p>Couldn&apos;t load your class, so quizzes can&apos;t be shown.</p>
+      <Link href="/learn/allQuizzes" className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Retry</Link>
+    </div>;
+  }
   if (items.length === 0) {
     return (
       <EmptyState
