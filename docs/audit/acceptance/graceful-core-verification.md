@@ -30,7 +30,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 | GR-22 | DONE | `src/app/layout.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-22; `tests/unit/graceful-core-edge-regressions.test.ts` — GR-22 edge regression (authored, not run) |
 | GR-23 | DONE | `src/components/public/browser-support-notice.tsx`; `tests/unit/graceful-root-screens.test.ts` — GR-23; `tests/unit/graceful-core-edge-regressions.test.ts` — GR-23 edge regression (authored, not run) |
 | GR-18 | DONE | `src/lib/db-outage.ts` and `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-18 (central API fallback); `tests/unit/graceful-core-edge-regressions.test.ts` — GR-18 edge regression (authored, not run) |
-| GR-54 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-54 (central error handler only) |
+| GR-54 | DONE | `src/lib/api-error.ts`; `tests/unit/graceful-server-helpers.test.ts` — GR-54 (central error handler only); `tests/unit/graceful-core-edge-regressions.test.ts` — GR-54 edge regression (authored, not run) |
 | GR-19 | DONE | `src/components/ui/graceful-page-loading.tsx`, 203 new loading boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-19 |
 | GR-20 | DONE | 207 new error boundaries; `tests/unit/graceful-route-coverage.test.ts` — GR-20 |
 | GR-09 | DONE | `tests/unit/graceful-raw-error-scan.test.ts` — GR-09; immutable existing-file SHA allowlist in `docs/audit/graceful/raw-error-allowlist.json`; `tests/unit/graceful-core-edge-regressions.test.ts` — GR-09 edge regression (authored, not run) |
@@ -52,7 +52,7 @@ Tests below are authored but not executed in this lane. DONE on a helper means i
 
 ## 2026-10-17 shared-layer edge pass
 
-- Re-examined all 28 existing DONE GR contracts listed above; authored an additional named regression for each in `tests/unit/graceful-core-edge-regressions.test.ts`. These tests are **not executed** by chat-14; the orchestrator must run them before making runtime acceptance claims. Existing DONE statuses are inherited; this pass does not establish new runtime verification.
-- GR-60 / GR-62: `src/hooks/use-form-draft.ts` now saves the latest edit synchronously on `pagehide` and `beforeunload`, and does not replace a user edit that arrives before late local-storage restoration.
+- Re-examined all 29 existing DONE GR contracts listed above; authored an additional named regression for each in `tests/unit/graceful-core-edge-regressions.test.ts`. These tests are **not executed** by chat-14; the orchestrator must run them before making runtime acceptance claims. Existing DONE statuses are inherited; this pass does not establish new runtime verification.
+- GR-60 / GR-62: `src/hooks/use-form-draft.ts` now installs exit handlers on mount, flushes the latest edit synchronously on `pagehide` and `beforeunload`, and does not replace a user edit that arrives before late local-storage restoration.
 - GR-40 / GR-54: `src/lib/upload-progress.ts` now translates all failed XHR statuses through `friendlyApiError`, including rate limit and session failures; selected files remain caller-owned for retry.
 - **Queue disposition:** no OPEN GR entries remain in the chat-14 core queue at this revision. GR-51 remains BLOCKED pending provider delivery idempotency and acceptance, and cannot be truthfully reported DONE; cross-application adoption and live browser acceptance remain responsibilities of the assigned lanes and orchestrator.
