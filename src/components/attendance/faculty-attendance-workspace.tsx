@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -169,6 +170,7 @@ export function FacultyAttendanceWorkspace({
   );
   const [submitting, setSubmitting] =
     useState(false);
+  const [confirmingAttendance, setConfirmingAttendance] = useState(false);
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
@@ -335,6 +337,18 @@ export function FacultyAttendanceWorkspace({
     });
   }
 
+  function requestAttendanceConfirmation() {
+    if (!selectedSession || markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    setError(null);
+    if (selectedSession.attendanceStatus === "MARKED" && !facultyCorrectionReasonValid(correctionReason)) {
+      setError("Explain this attendance correction in at least 8 characters."); return;
+    }
+    if (!attendanceConfirmation) {
+      setError("Change at least one recorded mark before submitting a correction."); return;
+    }
+    setConfirmingAttendance(true);
+  }
+
   async function submitAttendance() {
     if (
       !selectedSession ||
@@ -353,7 +367,7 @@ export function FacultyAttendanceWorkspace({
       setError("Change at least one recorded mark before submitting a correction.");
       return;
     }
-    if (!window.confirm(attendanceConfirmation)) return;
+    setConfirmingAttendance(false);
     submitLock.current = true;
     setSubmitting(true);
     try {
@@ -1034,7 +1048,7 @@ export function FacultyAttendanceWorkspace({
                     !attendanceConfirmation ||
                     (selectedSession?.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason))
                   }
-                  onClick={submitAttendance}
+                  onClick={requestAttendanceConfirmation}
                 >
                   {submitting
                     ? "Submitting…"
@@ -1054,6 +1068,18 @@ export function FacultyAttendanceWorkspace({
         </>
       )}
 
+      <ConfirmDialog
+        open={confirmingAttendance}
+        onOpenChange={setConfirmingAttendance}
+        title="Submit Attendance"
+        description={attendanceConfirmation ?? "Review attendance marks before submitting."}
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
+        confirmVariant="primary"
+        pending={submitting}
+        confirmDisabled={!selectedSession || markingWindow !== "OPEN" || !attendanceConfirmation}
+        onConfirm={() => void submitAttendance()}
+      />
       {selectedLearner ? (
       <Drawer
         open={true}
