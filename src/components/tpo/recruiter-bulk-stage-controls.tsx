@@ -206,7 +206,7 @@ export function RecruiterBulkStageControls({
               onClick={() => void apply()}
               className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
             >
-              {busy ? "Applying…" : reviewOpen ? "Confirm stage changes" : "Review and confirm"}
+              {busy ? "Applying…" : reviewOpen&&reviewSignature===currentSignature ? "Confirm stage changes" : "Review and confirm"}
             </button>
           </div>
           {reviewOpen&&reviewSignature===currentSignature?<div role="status" className="rounded-md border border-border bg-surface-secondary p-3 text-sm">
