@@ -4,6 +4,7 @@ import {getDb} from "@/db/client";
 import {projectDeliveryEvents,projectEvaluations,projectInstances,projectSubmissions} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
+import {learnerProjectDeliveryReopenedNotice} from "./learner-project-review-notification-model";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
