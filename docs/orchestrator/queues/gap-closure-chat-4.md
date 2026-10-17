@@ -91,7 +91,7 @@ Audit: `docs/audit/pages/tpo/home.md` (and `home-review.md` if present; any ID: 
 | TPO-home-R06 | S3 | COPY | DONE |
 | TPO-home-R07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-home-R08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
-| TPO-home-22 | S4 | STATE | OPEN |
+| TPO-home-22 | S4 | STATE | DONE |
 | TPO-home-24 | S4 | COPY | DONE |
 | TPO-home-38 | S4 | COPY | DONE |
 | TPO-home-44 | S4 | RESPONSIVE | OPEN |
@@ -142,9 +142,9 @@ Audit: `docs/audit/pages/learner/home-courses.md` (and `home-courses-review.md` 
 | LEARNER-home-courses-14 | S2 | MISSING-FIELD / SIDE-EFFECT | UNCONFIRMED |
 | LEARNER-course-detail-R01 | S3 | STATE / VALIDATION | DONE |
 | LEARNER-course-detail-R03 | S3 | STATE / MISSING-ACTION | DONE |
-| LEARNER-course-detail-R04 | S3 | PERFORMANCE | OPEN |
+| LEARNER-course-detail-R04 | S3 | PERFORMANCE | DONE |
 | LEARNER-home-courses-02 | S3 | MISSING-FILTER | OPEN |
-| LEARNER-home-courses-03 | S3 | STATE / COPY | OPEN |
+| LEARNER-home-courses-03 | S3 | STATE / COPY | DONE |
 | LEARNER-home-courses-04 | S3 | MISSING-FIELD / COPY | FIXED-ON-MAIN |
 | LEARNER-home-courses-05 | S3 | COPY / MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-home-courses-08 | S3 | PERFORMANCE | FIXED-ON-MAIN |
@@ -184,7 +184,7 @@ Audit: `docs/audit/pages/college/course-tabs.md` (and `course-tabs-review.md` if
 | COL-course-tabs-13 | S2 | MISSING-ACTION | DONE |
 | COL-course-tabs-16 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-17 | S2 | MISSING-ACTION | DONE |
-| COL-course-tabs-14 | S3 | MISSING-ACTION | OPEN |
+| COL-course-tabs-14 | S3 | MISSING-ACTION | DONE |
 | COL-course-tabs-15 | S3 | STATE | UNCONFIRMED |
 | COL-course-tabs-18 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-course-tabs-19 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
@@ -249,7 +249,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 | COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
-| COL-projects-R02 | S3 | MISSING-FIELD | OPEN |
+| COL-projects-R02 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R02 | S4 | MISSING-FIELD | DONE |
 
 ## Chat-4 verified-closure round — 2026-10-17

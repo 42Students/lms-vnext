@@ -8,6 +8,11 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
+function employerWebsiteHost(url:string|null){
+ if(!url)return null;
+ try{return new URL(url).hostname||null;}catch{return null;}
+}
+
 export type PlacementEmployerRelationshipItem = {
   relationshipId: string;
   companyId: string;
@@ -197,7 +202,7 @@ export function PlacementEmployerRelationships({
                     </StatusBadge>
                   </div>
                   <p className="mt-1 text-sm text-body">
-                    Domains: {item.primaryDomain??(item.websiteUrl?new URL(item.websiteUrl).hostname:"No domain registered")}
+                    Domains: {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                     {item.industry?" · "+item.industry:""}
                   </p>
                   {item.websiteUrl ? (
