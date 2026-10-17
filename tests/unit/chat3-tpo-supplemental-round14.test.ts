@@ -83,10 +83,12 @@ describe("TPO supplemental job metadata",()=>{
   expect(service).toContain('eq(placementCompanyRelationships.collegeId,collegeId)');
   expect(service).toContain('eq(membershipRoles.role,"TPO")');
   expect(service).toContain(".limit(101)");
-  expect(page).toContain("Recorded: happened outside");
-  expect(page).toContain("These are historical records, not live jobs.");
-  expect(page).toContain("No outside-platform drives recorded for this college.");
-  expect(drives).toContain('href="/tpo/placements/recorded-outside"');
+  expect(page).toContain("Recorded outside drives");
+  expect(page).toContain("Add students and results");
+  expect(page).toContain("These are historic records, not published jobs; they are excluded from learner application reminders.");
+  expect(page).toContain("No outside-platform drives have been recorded yet.");
+  expect(drives).toContain('/tpo/placements/recorded-outside');
+  expect(page).toContain("listTpoOutsideDriveRecords(context)");
  });
 
  it("TPO-drives-52 quick draft shares strict IST parsing and safe errors with full create",()=>{

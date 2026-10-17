@@ -20,7 +20,11 @@ describe("TPO-home-R02 all-batch eligibility attention and invitation",()=>{
   expect(next?.action).toBe("Invite 9 students");
   expect(next?.href).toBe("/tpo/batches/later");
   const page=readFileSync(new URL("../../src/app/(authenticated)/tpo/home/page.tsx",import.meta.url),"utf8");
-  expect(page).toContain("for(const candidate of inviteCandidates)");
+  // Home now checks invite candidates in bounded concurrent groups, not one
+  // serial for-of loop; a full earlier batch must not hide an actionable later one.
+  expect(page).toContain("for(let offset=0;offset<inviteCandidates.length;offset+=4)");
+  expect(page).toContain("const candidates=inviteCandidates.slice(offset,offset+4)");
+  expect(page).toContain("Promise.all(candidates.map(async candidate");
   expect(page).toContain("hasUninvitedBatch:batches.batches.some");
  });
 });

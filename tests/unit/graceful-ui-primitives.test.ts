@@ -15,7 +15,8 @@ describe("graceful shared UI primitives", () => {
       open: true, title: "Remove student", consequence: "This removes access.",
       onCancel: () => {}, onConfirm: () => {},
     }));
-    expect(html).toContain('role="dialog"');
+    expect(html).toContain('<dialog');
+    expect(html).toContain('aria-labelledby=');
     expect(html).toContain("This removes access.");
     expect(readFileSync("src/components/ui/confirm-action-dialog.tsx", "utf8")).not.toContain("window.confirm(");
   });

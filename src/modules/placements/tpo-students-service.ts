@@ -998,6 +998,7 @@ export async function getTpoStudentsIntelligence(
       registrationScope: "ACTIVE_COHORT",
       applicationScope: "ACTIVE_SEASON",
       readinessVerified: false,
+      prepCourseEvidenceAvailable:prep.available,
       placedVerified: false,
     },
   };

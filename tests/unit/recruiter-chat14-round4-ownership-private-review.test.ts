@@ -180,7 +180,7 @@ describe("chat-14 recruiter ownership and private review gap closure",()=>{
   expect(schema).toContain("prpr_rating_ck");
   expect(schema).toContain("prpr_note_ck");
   expect(source("src/db/schema/index.ts")).toContain('export * from "./placement-recruiter-candidate-ratings"');
-  const migration=source("docs/proposed-migrations/recruiter-private-candidate-ratings.sql");
+  const migration=source("drizzle/0134_lanes_round_2.sql");
   expect(migration).toContain("CREATE TABLE IF NOT EXISTS placement_recruiter_private_reviews");
   expect(migration).toContain("UNIQUE (recruiter_user_id, application_id)");
  });

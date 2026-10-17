@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { placementTableExists } from "@/modules/placements/staged-tables";
+import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { tpoCrmApiErrorResponse } from "@/lib/tpo-crm-api-error";
 import { getTpoCompanyMemory } from "@/modules/placements/tpo-company-memory-service";
@@ -10,6 +11,10 @@ export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const url = new URL(request.url);
+    await requirePlacementManageScope(context,url.searchParams.get("collegeId")??"");
+    if(!(await placementTableExists("placement_tpo_leads"))||
+       !(await placementTableExists("placement_tpo_lead_activities")))
+      return NextResponse.json({error:"TPO_CRM_SCHEMA_NOT_REGISTERED"},{status:503});
     return NextResponse.json({
       company: await getTpoCompanyMemory(
         context,

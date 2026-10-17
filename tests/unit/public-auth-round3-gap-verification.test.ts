@@ -25,8 +25,8 @@ describe("Public login and session round-three verified closure",()=>{
  it("PUB-auth-public-18 never caches domain lookup outages as unknown tenants",()=>{
   const resolver=file("src/modules/auth/request-tenant.ts");
   expect(resolver).toContain('return {kind:"unavailable",host};');
-  expect(file("src/app/page.tsx")).toContain("We couldn't confirm this college right now");
-  expect(file("src/app/page.tsx")).toContain("its settings didn't load");
+  expect(file("src/app/page.tsx")).toContain("We couldn&apos;t confirm this college right now");
+  expect(file("src/app/page.tsx")).toContain("its settings didn&apos;t load");
  });
  it("PUB-auth-public-27 maintains legacy 404 text on graceful recovery",()=>{
   const source=file("src/app/not-found.tsx");
@@ -38,6 +38,6 @@ describe("Public login and session round-three verified closure",()=>{
   const source=file("src/components/auth/login-form.tsx");
   expect(source).toContain('import {apiFetch,FriendlyFetchError}');
   expect(source).toContain('import {useGuardedAction}');
-  expect(source).toContain('return fail(result.data.error)');
+  expect(source).toContain('return fail(result.data.error,result.data.retryAfterSeconds)');
  });
 });
