@@ -133,3 +133,9 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 - SA-tenants-modules-30 — NOT-A-GAP: descendant locks already writable for the four academic scope levels; a lock without enabled value is impossible under the persisted NOT NULL schema.
 
 - SA-tenants-modules-31 — DONE in source: learner trace now includes real placement cell decision, reason, actor and date with college/scope filtering and learner>class>batch precedence; runtime verification pending.
+
+## Remaining unassigned Tenant Settings runtime wiring (not claimed DONE)
+- SA-tenants-modules-36 — OPEN: persisted SMS sender/template fields exist in the Super Admin editor, but registered provider/DLT templates and the operational SMS consumers have not been connected; do not report sender/template activation.
+- SA-tenants-modules-37 — OPEN: course watched threshold, in-progress threshold, chat polling and progress save intervals persist as typed settings but runtime readers still use source constants. Wire and integration-test course consumers before closure.
+- SA-tenants-modules-39 — OPEN: operational cap overrides persist in the settings editor, but bulk-status, progress bulk, identity JSON, and announcement page-size consumers still enforce their source limits. Do not advertise a change in active caps.
+- The independent audit gap register still has stale OPEN rows for SA-tenants-modules-32/40 and earlier chat-13 Super Admin work despite branch acceptance/test evidence; orchestrator must reconcile only after verifying tests on main.
