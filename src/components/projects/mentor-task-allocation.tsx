@@ -112,6 +112,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
     </select>
    </label>
+   <label className="text-sm font-semibold">Status
+    <select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
+      className="ml-2 min-h-10 rounded-md border border-border bg-background p-2">
+     <option value="">All statuses</option>
+     {["TODO","IN_PROGRESS","IN_REVIEW","BLOCKED","DONE"].map(value=>
+      <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
+    </select>
+   </label>
   </div>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm text-success">{notice}</p>:null}
