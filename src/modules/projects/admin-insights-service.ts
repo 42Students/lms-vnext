@@ -763,9 +763,12 @@ export async function listProjectAdminSubmissionQueue(
       : undefined,
     query.submissionStatus==="UNDER_REVIEW"?and(
       eq(projectSubmissions.status,"SUBMITTED"),isNull(projectSubmissions.lockedAt)):
-    query.submissionStatus==="LOCKED"?isNotNull(projectSubmissions.lockedAt):
+    query.submissionStatus==="LOCKED"?and(
+      isNotNull(projectSubmissions.lockedAt),isNull(projectSubmissions.reopenedAt)):
     query.submissionStatus==="DRAFT_REVISING"?and(
       eq(projectSubmissions.status,"APPROVED"),isNotNull(projectSubmissions.reopenedAt)):
+    query.submissionStatus==="APPROVED"?and(
+      eq(projectSubmissions.status,"APPROVED"),isNull(projectSubmissions.reopenedAt)):
     query.submissionStatus?eq(projectSubmissions.status,query.submissionStatus):undefined,
     search,
   );

@@ -22,7 +22,7 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 
 1. WP-chat-11-01-projects-people-s1 | DONE (non-blocked) | 17 gaps: S1 6, S2 11; COL-projects-03 authored workspace brief now enabled on registered 0122; status excludes runtime/test certification.
 2. WP-chat-11-02-projects-meetings-projects-s2 | IN-PROGRESS | 22 S2 gaps. LEARNER-projects-38 last-editor attribution, MEN-projects-meetings-41/42 card/detail facts, and MEN-projects-meetings-31 in-app meeting alerts progressed; external calendar sync blocked on provider setup. Backlog metadata edit and Board undo improved; remaining broader S2 parity open.
-3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. SA-placements-projects-88 rollback source added; workspace/table/export and template improvements implemented across neighboring WPs. This round added SA-placements-projects-60 blocker accuracy, SA-placements-projects-61 Watch/Risk severity and SQL sorting, SA-placements-projects-63 scoped CSV and title/ID search. Remaining creation, tracker and historical audit gaps still open; reporter auth, storage and external logs marked SKIP by owner/config.
+3. WP-chat-11-03-projects-tracker-s2 | IN-PROGRESS | 24 S2 gaps. MEN-projects-meetings-64 version evidence, submitter and reviewer attribution, attachment timeline advanced; SA-placements-projects-70 reopened/locked status filtering corrected. Prior SA-60/61/63/88 work retained; other S2 workspace/template/review gaps remain open.
 4. WP-chat-11-04-projects-tenants-modules-s2 | IN-PROGRESS | 18 gaps: S2 2, S3 16 (FAST: LEARNER-projects-02/03/15/27/28/R03 advanced; LEARNER-projects-37 existing-draft autosave added; remaining parity open)
 5. WP-chat-11-05-projects-meetings-s3 | IN-PROGRESS | 19 gaps: S3 19 (MEN-03/04/19/21/26/33/40/43/44/45/49/51/52 source advanced; migration 0132 unblocks separate Approach but broader edits remain; other mentor S3 gaps still open)
 6. WP-chat-11-06-projects-projects-meetings-part-s3 | IN-PROGRESS | 24 S3 gaps. SA-placements-projects-53/54/71/74/75/76/80 row export/facts/filtering advanced; broader audit, resources and permissions parity remains.
@@ -261,3 +261,12 @@ WP-01 and WP-02 must remain IN-PROGRESS; unaddressed gaps include College projec
 - BLOCKED `SA-placements-projects-113`: live GCP log integration requires runtime IAM.
 - BLOCKED `SA-placements-projects-120`: external GitHub findings importer requires credentials.
 - WP-02 remains IN-PROGRESS due to learner work, full meeting parity and large board/allocation gaps; WP-05 remains IN-PROGRESS for unified edit status/sprint/assignee and other mentor parity. No checks/tests/typecheck/lint/build/CI waits, per FAST v2.
+
+## [chat-11] S2-first continuation — 2026-10-17 09:xx IST
+
+- Synced `chatgpt/chat-11-b` to merged `main` `2e69a866` before changes; all subsequent commits pushed to this branch only.
+- `MEN-projects-meetings-64`: mentor version detail now reads scoped submitter/creator/reviewer names, submission type, summary, notes, source/demo links, attachment metadata, lock/reopen timestamps, and recorded events. URLs pass `safeProjectExternalHref`; private file IDs are not exposed as downloads. Timeline reflects draft creation/submission/review and registered LOCKED/REOPENED/ATTACHMENTS_CHANGED events; other legacy activity events are not yet reconstructed.
+- `SA-placements-projects-70`: reopened approved submissions no longer appear in the Locked or currently Approved filters, and the visible badge prioritizes Draft (revising). Added Under Review / Locked / Draft (revising) shortcuts with selected-state accessibility.
+- BLOCKED `MEN-projects-meetings-31`: external calendar sync requires provider configuration and credentials.
+- BLOCKED `SA-placements-projects-101/103/113/120`: security decision, private storage, GCP IAM and GitHub credentials respectively.
+- WP-03 stays IN-PROGRESS; other open S1/S2 gaps retain priority. No tests, typecheck, lint, build or CI waits under FAST v2.
