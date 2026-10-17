@@ -11,7 +11,8 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
  * college; private applications and screening decisions never enter this count. */
 export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  collegeId:string,authorizedJobIds:readonly string[]){
- if(!hasActiveRecruiter(context)||!context.recruiter?.grants.some(g=>g.collegeId===collegeId))
+ const activeGrant=context.recruiter?.grants.find(g=>g.collegeId===collegeId);
+ if(!hasActiveRecruiter(context)||!activeGrant)
   throw new AuthorizationError("placements.recruiter.read");
  const ids=[...new Set(authorizedJobIds)].slice(0,20);
  if(ids.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
@@ -22,7 +23,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
   eq(users.platformStatus,"ACTIVE"),
   eq(placementApplicationScreenings.status,"SHORTLISTED"));
  // Every job is re-scoped against the same college grant in the parent call.
- requirePermission(context,"placements.recruiter.read",{collegeId});
+ requirePermission(context,"placements.recruiter.read",{
+   collegeId,placementCompanyRelationshipId:activeGrant.companyRelationshipId,
+ });
  const [shared,offers]=await Promise.all([
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementApplications.id})::integer`})
    .from(placementApplications)
