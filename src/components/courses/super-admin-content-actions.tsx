@@ -5,16 +5,17 @@ import {facultyContentExternalHref} from "@/modules/courses/faculty-content-prev
 
 type Content={id:string;title:string;contentType:string;status:string;sequence:number;notes?:string|null;
  durationSeconds:number|null;startsAt:Date|null;endsAt:Date|null};
-function localDate(value:Date|null){
+type MeetingZone="Asia/Kolkata"|"UTC";
+function localDate(value:Date|null,zone:MeetingZone="Asia/Kolkata"){
  if(!value)return "";
  return new Intl.DateTimeFormat("sv-SE",{
-  timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+  timeZone:zone,year:"numeric",month:"2-digit",day:"2-digit",
   hour:"2-digit",minute:"2-digit",hourCycle:"h23",
  }).format(new Date(value)).replace(" ","T");
 }
-function toInstant(value:string){
+function toInstant(value:string,zone:MeetingZone="Asia/Kolkata"){
  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))throw Error("Enter a valid date and time.");
- const time=new Date(value+":00+05:30");
+ const time=new Date(value+":00"+(zone==="UTC"?"+00:00":"+05:30"));
  if(!Number.isFinite(time.getTime()))throw Error("Enter a valid date and time.");
  return time.toISOString();
 }
@@ -26,6 +27,7 @@ export function SuperAdminContentActions({item}:{item:Content}){
  const [duration,setDuration]=useState(item.durationSeconds===null?"":String(item.durationSeconds));
  const [notes,setNotes]=useState(item.notes??"");
  const [replacementUrl,setReplacementUrl]=useState("");
+ const [timeZone,setTimeZone]=useState<MeetingZone>("Asia/Kolkata");
  const [startsAt,setStartsAt]=useState(localDate(item.startsAt)),[endsAt,setEndsAt]=useState(localDate(item.endsAt));
  async function save(){
   if(busy)return;
