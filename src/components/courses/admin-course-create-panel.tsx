@@ -64,6 +64,13 @@ async function postJson(path: string, body: unknown) {
   return response.json();
 }
 
+function createdRecordId(result:unknown,kind:"course"|"offering"|"delivery"){
+ if(!result||typeof result!=="object")return null;
+ const value=(result as Record<string,unknown>)[kind];
+ if(!value||typeof value!=="object")return null;
+ const id=(value as Record<string,unknown>).id;
+ return typeof id==="string"&&/^[a-f0-9-]{36}$/i.test(id)?id:null;
+}
 function FieldLabel({ htmlFor, children }: { htmlFor: string; children: React.ReactNode }) {
   return <label htmlFor={htmlFor} className="mb-1.5 block text-xs font-semibold text-body">{children}</label>;
 }
