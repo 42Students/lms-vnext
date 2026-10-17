@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
-import {setTpoJobTypeActive,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
+import {setTpoJobTypeActive,renameTpoJobType,TpoConfigError} from "@/modules/placements/tpo-job-type-write-service";
 export const runtime="nodejs";
 export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:string}>}){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
@@ -18,6 +18,23 @@ export async function PATCH(request:Request,{params}:{params:Promise<{jobTypeId:
  }catch(error){
   if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
    status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_LAST_ACTIVE"?409:error.code==="TPO_SETTINGS_PENDING"?503:404});
+  return apiErrorResponse(error);
+ }
+}
+
+export async function PUT(request:Request,{params}:{params:Promise<{jobTypeId:string}>}){
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const {jobTypeId}=await params;
+  const body=await request.json() as {label?:unknown;expectedVersion?:unknown};
+  const result=await renameTpoJobType(await getCurrentRequestContext(),{
+   jobTypeId,label:body?.label,expectedVersion:body?.expectedVersion,
+  });
+  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+   status:error.code==="TPO_SETTINGS_STALE"||error.code==="TPO_JOB_TYPE_EXISTS"||error.code==="TPO_JOB_TYPE_BUILTIN"?409:
+    error.code==="TPO_SETTINGS_PENDING"?503:404});
   return apiErrorResponse(error);
  }
 }

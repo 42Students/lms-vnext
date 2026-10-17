@@ -27,11 +27,16 @@ type Lead = {
   unsubscribedAt:string|null;
   createdAt:string;
 };
+type CompanySummary = {
+ name:string;drivesRan:number;acceptedOfferDrives:number;
+ drives:Array<{id:string;jobTitle:string;applied:number;offers:number;status:string}>;
+};
 type Activity = {
   id: string;
   type: string;
   outcome: string | null;
   note: string | null;
+  isSystem?:boolean;
   createdAt: string;
 };
 type Followup = {
@@ -58,6 +63,12 @@ const SOURCES = [
   ["COLD_OUTREACH", "Cold outreach"], ["COMPANY_REACHED_OUT", "Company reached out"],
 ] as const;
 const ACTIVITY_TYPES = ["CALL", "EMAIL", "MEETING", "NOTE"] as const;
+function activityDayIst(value:string){
+ const time=new Date(value);
+ return Number.isNaN(time.getTime())?"Date unavailable":
+  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(time);
+}
+
 
 function messageFor(status: number, error?: string) {
   if (status === 503 && error === "DB09_MIGRATIONS_PENDING") {
@@ -86,6 +97,8 @@ export function RecruiterLeadDetailWorkspace({
 }: { collegeId: string; leadId: string }) {
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
+  const [companySummary,setCompanySummary]=useState<CompanySummary|null>(null);
+  const [companyError,setCompanyError]=useState("");
   const [followups, setFollowups] = useState<Followup[]>([]);
   const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [openedAt] = useState(() => new Date());
@@ -153,6 +166,21 @@ export function RecruiterLeadDetailWorkspace({
       controller.abort();
     };
   }, [load]);
+
+  useEffect(()=>{
+    if(!lead?.companyName){setCompanySummary(null);setCompanyError("");return;}
+    const controller=new AbortController();
+    setCompanySummary(null);setCompanyError("");
+    void fetch("/api/placements/tpo/companies/detail?collegeId="+encodeURIComponent(collegeId)+
+      "&name="+encodeURIComponent(lead.companyName),{
+        credentials:"same-origin",cache:"no-store",signal:controller.signal,
+      }).then(async response=>{
+        if(!response.ok)throw new Error("Company drive details are unavailable.");
+        const payload=await response.json() as {company?:CompanySummary};
+        if(!controller.signal.aborted)setCompanySummary(payload.company??null);
+      }).catch(()=>{if(!controller.signal.aborted)setCompanyError("Company drive details could not be loaded.");});
+    return ()=>controller.abort();
+  },[collegeId,lead?.companyName]);
 
   async function mutate(url: string, method: "PATCH" | "POST", body: unknown) {
     setSaving(true);
@@ -370,6 +398,17 @@ export function RecruiterLeadDetailWorkspace({
           {lead.companyName?<section aria-label="Company" className="rounded-lg border border-border bg-surface p-5">
              <h2 className="font-semibold text-foreground">Company</h2>
              <p className="mt-2 text-sm font-medium">{lead.companyName}</p>
+             {companySummary?<div className="mt-3 space-y-2 text-sm text-body">
+               <p>{companySummary.drivesRan} drives that ran · {companySummary.acceptedOfferDrives} accepted-offer drives</p>
+               <p className="text-xs text-muted-foreground">Applied and offers below are stored drive counts, not verified placements.</p>
+               <ul className="space-y-1">
+                 {companySummary.drives.slice(0,5).map(drive=><li key={drive.id}>
+                   <Link className="text-primary-text underline" href={"/tpo/placements/jobs/"+encodeURIComponent(drive.id)}>{drive.jobTitle}</Link>
+                   {" · "+drive.applied+" applied · "+drive.offers+" offers"}
+                 </li>)}
+               </ul>
+             </div>:companyError?<p role="status" className="mt-2 text-xs text-warning">{companyError}</p>:
+               <p role="status" className="mt-2 text-xs text-muted-foreground">Loading company drives…</p>}
              <p className="mt-1 text-xs text-muted-foreground">
                See company drives, applicant counts, offers and recruiter contacts in Company Memory.
              </p>
@@ -473,7 +512,7 @@ export function RecruiterLeadDetailWorkspace({
                 </div>
                 <label className="block text-sm">Type
                   <select className={input + " mt-1"} value={logType}
-                    onChange={e => setLogType(e.target.value as typeof logType)}>
+                    onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}
                   </select>
                 </label>
@@ -484,28 +523,39 @@ export function RecruiterLeadDetailWorkspace({
                     onClick={()=>setLogOutcome(outcome)}>{outcome}</button>)}
                 </div>:null}
                 <label className="block text-sm">Outcome
-                  <input className={input + " mt-1"} maxLength={30} value={logOutcome}
-                    onChange={e => setLogOutcome(e.target.value)} />
+                  {logType==="CALL"?<select className={input + " mt-1"} required
+                    value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}>
+                    <option value="">Choose a call outcome</option>
+                    {["Connected","No answer","Busy","Wrong number","Not interested"].map(value=>
+                      <option key={value} value={value}>{value}</option>)}
+                  </select>:<input className={input+" mt-1"} maxLength={30}
+                    value={logOutcome} onChange={e=>setLogOutcome(e.target.value)}/>}
                 </label>
                 <label className="block text-sm">Notes
                   <textarea className={input + " mt-1"} maxLength={2000} rows={3} value={logNote}
                     onChange={e => setLogNote(e.target.value)} />
                 </label>
-                <button className={primary} type="submit" disabled={saving}>
+                <button className={primary} type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
                   {saving ? "Saving…" : "Log activity"}
                 </button>
               </form>
               <h3 className="font-semibold">Timeline</h3>
               {activities.length ? (
                 <ol className="space-y-3">
-                  {activities.map(a => (
-                    <li key={a.id} className="border-l-2 border-border pl-3 text-sm">
+                  {activities.map((a,index) => (
+                    <li key={a.id} className="text-sm">
+                      {(!index||activityDayIst(activities[index-1].createdAt)!==activityDayIst(a.createdAt))?
+                        <h4 className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                          {activityDayIst(a.createdAt)}
+                        </h4>:null}
+                      <div className={a.isSystem?"rounded-md border border-border bg-surface-secondary px-3 py-2 text-muted-foreground":"border-l-2 border-border pl-3"}>
                       <span className="font-semibold">{a.type==="CALL"?"Call":a.type==="EMAIL"?"Email":a.type==="MEETING"?"Meeting":a.type==="NOTE"?"Note":a.type==="SYSTEM"?"System":a.type.replaceAll("_"," ")}</span>
                       {a.outcome ? " · " + a.outcome : ""}
                       <time className="ml-2 text-muted-foreground" dateTime={a.createdAt}>
                         {formatDateTimeIst(a.createdAt)}
                       </time>
                       {a.note ? <p className="mt-1 whitespace-pre-wrap">{a.note}</p> : null}
+                      </div>
                     </li>
                   ))}
                 </ol>

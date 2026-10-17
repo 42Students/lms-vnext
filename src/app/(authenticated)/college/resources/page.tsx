@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
 import {getCollegeContentAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
+import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
@@ -31,7 +32,7 @@ export default async function CollegeResourcesPage({
   }
   const authoring=await getCollegeContentAuthoringOptions(context,"RESOURCE");
   return <div className="space-y-4">
-    <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated}/>
+    <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing} existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered resource metadata CSV

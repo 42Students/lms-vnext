@@ -93,7 +93,17 @@ function previewData(rows:ImportRow[],roster:Roster[]){
    name:candidate.name??"Learner",outcome:row.outcome,status:candidate.currentStatus,
    rank:row.rank,message:row.message});
  }
- return {matched,unmatched,notInFile:roster.filter(c=>!used.has(c.applicationId)&&c.currentStatus!=="APPLIED")
+ const rankCounts=new Map<number,number>();
+ for(const entry of matched)if(entry.outcome==="HOLD"&&entry.rank!==null)
+  rankCounts.set(entry.rank,(rankCounts.get(entry.rank)??0)+1);
+ const duplicateRanks=new Set([...rankCounts].filter(([,n])=>n>1).map(([rank])=>rank));
+ const safeMatches=matched.filter(entry=>{
+  if(entry.outcome!=="HOLD"||entry.rank===null||!duplicateRanks.has(entry.rank))return true;
+  unmatched.push({line:entry.line,identity:entry.identity,
+   reason:"Two or more learners have the same waitlist rank",suggestions:[]});
+  return false;
+ });
+ return {matched:safeMatches,unmatched,notInFile:roster.filter(c=>!used.has(c.applicationId)&&c.currentStatus!=="APPLIED")
    .map(c=>({applicationId:c.applicationId,name:c.name??"Learner"}))};
 }
 export async function previewTpoRoundImport(context:RequestContext,jobId:unknown,roundId:unknown,bytes:Buffer,filename:string){
@@ -145,6 +155,7 @@ export async function stageTpoRoundImport(
    !row.outcome?"Unknown result outcome":!candidates.has(match)?"Learner not in this round":
    used.has(match)?"Duplicate learner in the import":"";
   if(reason){
+   if(exact.length===1)problemApplications.add(exact[0]!.applicationId);
    // Invalid or ambiguous rows must never turn a matched student's missing
    // result into an automatic failure under MARK_NOT_CLEARED.
    if(match&&candidates.has(match))problemApplications.add(match);
@@ -159,6 +170,10 @@ export async function stageTpoRoundImport(
   used.add(match);
   entries.push({line:row.line,applicationId:match,outcome:row.outcome!,rank:row.rank,message:row.message});
  }
+ const explicitRanks=entries.filter(row=>row.outcome==="HOLD"&&row.rank!==null)
+  .map(row=>row.rank!);
+ if(new Set(explicitRanks).size!==explicitRanks.length)
+  throw Error("Duplicate waitlist ranks in the import. Resolve the ranked rows before staging results.");
  if(input.missingPolicy==="MARK_NOT_CLEARED"){
   if(inputRows.some(row=>row.invalidRank&&!skippedLines.has(row.line)))
    throw Error("Correct or skip invalid waitlist ranks before failing absent results.");

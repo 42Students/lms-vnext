@@ -18,7 +18,8 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
  if(batchId&&!batches.batches.some(batch=>batch.id===batchId))
   return <p role="alert">Invalid batch. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
  const data=await getTpoAfterCollegeReport(ctx,{collegeId:ctx.membership.collegeId,batchId,branchId});
- const branches=new Map(data.rows.map(row=>[row.branchId,row.branchName]));
+ const branches=new Map(data.branches.map(row=>[row.id,row.name]));
+ if(branchId&&!branches.has(branchId))return <p role="alert">Invalid branch for this college. <Link href="/tpo/reports/after-college">Clear filters</Link></p>;
  const query=new URLSearchParams({...batchId?{batchId}: {},...branchId?{branchId}:{}});
  return <main className="space-y-5">
   <Link href="/tpo/reports" className="text-sm font-semibold text-primary-text underline">← All reports</Link>
@@ -36,7 +37,7 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
     <label className="grid gap-1 text-sm">Branch
      <select name="branchId" defaultValue={branchId??""} className="min-h-10 rounded border border-border p-2">
       <option value="">All branches</option>
-      {[...branches].map(([id,label])=><option key={id} value={id}>{label}</option>)}
+      {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
      </select></label>
     <button type="submit" className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary">Filter</button>
     <Link href="/tpo/reports/after-college" className="text-primary-text underline">Clear</Link>

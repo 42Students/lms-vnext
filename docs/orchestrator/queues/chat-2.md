@@ -221,3 +221,26 @@ No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct
 - Blocked `TPO-companies-05`: full shared Team object conversations and Asks require persistence and cross-lane coordination.
 - Blocked `TPO-companies-06`: totals named Students placed need college counts-as-placed policy evidence, not a guessed accepted-offer metric.
 - No tests, typecheck, lint, build, CI waits or live delivery actions were run under FAST v2.
+
+## FAST v2 chat-2 branch continuation after integrated lane merges — 2026-10-17
+
+- Fast-forwarded `chatgpt/chat-2-b` to integrated `main` before new edits; source commits here carry `[chat-2]`, gap IDs, and were pushed only to chat-2-b.
+- **WP-01/05 TPO-recruiters-10:** lead detail Company card loads same-college Company Memory via the authorized API; shows exact recorded drive, applied and offer totals with direct drive links, not unverified placements.
+- **WP-05 TPO-recruiters-26:** server rejects unsupported WhatsApp interactions, requires Note text and one of the five recognized Call outcomes; UI selection matches server and clears old outcome on type change, disables incomplete submission. No deployed acceptance claimed.
+- **WP-05 TPO-recruiters-28:** recorded activity timeline grouped by calendar day in IST and SYSTEM events visually differentiated.
+- **WP-07 TPO-companies-27:** canonical company directory now supports sort by company name, contacts, drives, confirmed joins before pagination; preserves sort in URLs, has per-row Create drive, full matched CSV export guarded against spreadsheet formulas and capped explicitly at 2,000 with no silent truncation. Export reads one scoped snapshot.
+- **WP-08 TPO-companies-28:** canonical hiring-history table no longer displays learner names; offer/joining/recruiter status codes receive readable labels and offer timeline descriptions no longer include learner full names.
+- **WP-08 TPO-campaigns-public-11:** persisted delivery-batch receipt history export includes all records matching an optional purpose within one authorized college transaction (explicit 2,000 limit), rather than only current page. Provider acceptance remains distinct from delivered.
+- **All WP-01..WP-08 statuses remain IN-PROGRESS:** incomplete nonblocked features, live behavior and acceptance must not be marked DONE.
+
+### Blocked dependencies — skip pending authorization or operational setup
+- `PUB-auth-public-50/52/53/54/55`: OD-09 company-share OTP and selected PII/resume ZIP consent/storage policy require owner decision.
+- `TPO-campaigns-public-01/02/05`: live provider templates/credentials, dispatch receipts and scheduled worker deployment unavailable.
+- `TPO-recruiters-13/14/17`: verified bulk-email provider delivery, durable undo/replay and day-four reminder scheduler unavailable.
+- `TPO-settings-audit-52`: unlimited recruiter grant lifetime needs explicit security policy decision.
+- `REC-calendar-messages-profile-R01`: reply-via-email relay requires verified inbound hooks/routing and consent.
+- `TPO-companies-05` / `TPO-inbox-team-23/26/34`: persistent Team object threads, asks, decisions, owner/away model require registered shared schema/coordination.
+- `TPO-companies-06`: counts-as-placed policy unresolved; confirmed joins are not equated to all placements.
+- `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 role expansion requires permission owner approval.
+
+FAST v2: no tests, lint, typecheck, build, CI wait, live email sending or live deployment. Source edits have not been runtime-verified.

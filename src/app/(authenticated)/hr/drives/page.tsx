@@ -118,12 +118,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
         {option.label} ({option.count})</Link>)}</nav>
     {query.data.view!=="WAITING"?<div className="flex justify-end">
       <Link href={recruiterDrivesHref({...query.data,collegeId:selectedCollege,page:1})
-        .replace("/hr/drives","/api/placements/recruiter/drives/export")}
+        .replace("/recruiter/drives","/api/placements/recruiter/drives/export")}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm text-primary-text">
         Export matching drives CSV
       </Link>
     </div>:null}
-    <form method="get" action="/hr/drives" className="flex flex-wrap items-end gap-3">
+    <form method="get" action="/recruiter/drives" className="flex flex-wrap items-end gap-3">
       <input type="hidden" name="collegeId" value={selectedCollege} />
       <input type="hidden" name="view" value={query.data.view} />
       <input type="hidden" name="page" value="1" />

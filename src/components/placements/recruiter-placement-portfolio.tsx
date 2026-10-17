@@ -105,7 +105,11 @@ export function RecruiterPlacementPortfolio({
               <p className="mt-2 text-sm text-body">
                 Next: {item.job.status==="CLOSED"
                   ? "Hire again with a new request."
-                  : "Review the shared applicant list and follow up with the placement cell."}
+                  : (counts?.[item.job.id]?.sharedApplicants??0)===0
+                    ? "Wait for the placement cell to share the applicant list."
+                    : item.job.applicationDeadline&&item.job.applicationDeadline<now
+                      ? "Review shared applicants and hiring rounds after the deadline."
+                      : "Review shared applicants and prepare the next hiring step."}
               </p>
             </div>
             <Link
