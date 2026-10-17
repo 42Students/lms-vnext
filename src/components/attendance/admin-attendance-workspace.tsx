@@ -209,6 +209,16 @@ export function AdminAttendanceWorkspace({
     [data.grid?.sessions, loadedAt],
   );
 
+  const markedSessions=heldSessions.filter(session=>session.attendanceStatus==="MARKED");
+  const markedIds=new Set(markedSessions.map(session=>session.id));
+  const absentMarks=(data.grid?.records??[]).filter(record=>
+    markedIds.has(record.scheduleEventId)&&record.status!=="PRESENT").length;
+  const totalMarks=markedSessions.length*(data.grid?.roster.length??0);
+  const presentMarks=Math.max(0,totalMarks-absentMarks);
+  const monthPercent=totalMarks>0?Math.round(100*presentMarks/totalMarks):null;
+  const activeDays=new Set(heldSessions.map(session=>attendanceIndiaDay(session.startsAt))).size;
+  const notMarkedCount=heldSessions.length-markedSessions.length;
+
   function learnerPercent(learner: Learner) {
     return adminAttendancePercent(
       learner.membershipId, data.grid?.sessions ?? [], data.grid?.records ?? [],
@@ -470,6 +480,15 @@ export function AdminAttendanceWorkspace({
                   }{" "}
                   of {heldSessions.length} held sessions marked
                 </p>
+                <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-3 lg:grid-cols-5">
+                  <div><dt>Monthly attendance</dt><dd className="font-semibold">{monthPercent===null?"—":monthPercent+"%"}</dd></div>
+                  <div><dt>Students</dt><dd className="font-semibold">{data.grid.roster.length}</dd></div>
+                  <div><dt>Sessions held</dt><dd className="font-semibold">{heldSessions.length}</dd></div>
+                  <div><dt>Absences</dt><dd className="font-semibold">{absentMarks}</dd></div>
+                  <div><dt>Active days</dt><dd className="font-semibold">{activeDays}</dd></div>
+                  <div><dt>Not marked</dt><dd className="font-semibold">{notMarkedCount}</dd></div>
+                </dl>
+                <p className="mt-2 text-xs text-body">{presentMarks} present marks across {markedSessions.length} marked sessions</p>
               </div>
               <Button
                 variant="secondary"
