@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  buildCloudErrorFilter, cloudLoggingAccessToken, parseCloudErrorEntry, readCloudLogErrorPage,
+  buildCloudErrorFilter, cloudLoggingAccessToken, parseCloudErrorEntry, readCloudLogErrorPage, readCloudProviderJsonLimited,
 } from "@/modules/log-alerts/cloud-log-reader";
 
 describe("GR-114 GR-118 Cloud Logging fallback", () => {
@@ -46,6 +46,22 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
       token: "synthetic",
       transport: (async () => { throw new Error("transport should not be called"); }) as typeof fetch,
     })).rejects.toThrow("INVALID_LOG_CONFIGURATION");
+  });
+  it("GR-113 GR-118 GR-125 rejects oversized provider bodies while streaming", async () => {
+    const chunks = [new Uint8Array(750_000), new Uint8Array(300_000)];
+    const response = new Response(new ReadableStream<Uint8Array>({
+      pull(controller) {
+        const next = chunks.shift();
+        if (next) controller.enqueue(next);
+        else controller.close();
+      },
+    }));
+    await expect(readCloudProviderJsonLimited(response))
+      .rejects.toThrow("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+  });
+  it("GR-118 rejects malformed provider JSON without echoing the provider response", async () => {
+    await expect(readCloudProviderJsonLimited(new Response("not-json")))
+      .rejects.toThrow("LOG_PROVIDER_INVALID_RESPONSE");
   });
   it("GR-125 uses metadata ADC without leaking the access token on failures", async () => {
     const access = await cloudLoggingAccessToken(vi.fn(async () =>
