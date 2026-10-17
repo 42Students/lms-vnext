@@ -92,6 +92,7 @@ export default async function TpoTeamPage({searchParams}:{
           {row.unreadCount} unread
          </span>:null}
         </div>
+        {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground">{row.searchSnippet??row.lastPreview}</p>:null}
         <p className="mt-1 text-xs text-muted-foreground">Internal thread · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.createdAt)}</p>
        </li>)}</ul>:
        <p role="status" className="mt-2 text-sm text-body">No private team conversations yet. Everyone is always available.</p>}
