@@ -84,4 +84,12 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(recordSelectionsSchema.safeParse({action:"RECORD",entries:[{
     applicationId:id,roleTitle:"Graduate Trainee",annualCtcInr:950000}]}).success).toBe(true);
  });
+ it("TPO-drive-workspace-53 requires deliberate waitlist promotion and invalidates changed previews",()=>{
+  const token=waitlistPreviewToken("drive-a",[{applicationId:"a",rank:1,canPromote:true}]);
+  expect(token).not.toBe(waitlistPreviewToken("drive-a",[{applicationId:"a",rank:2,canPromote:true}]));
+  expect(tpoWaitlistPromotionSchema.safeParse({action:"OFFER_NEXT",confirmed:true,
+   expectedPreviewToken:token,reason:"Vacant seat"}).success).toBe(true);
+  expect(tpoWaitlistPromotionSchema.safeParse({action:"OFFER_NEXT",confirmed:false,
+   expectedPreviewToken:token,reason:"Vacant seat"}).success).toBe(false);
+ });
 });
