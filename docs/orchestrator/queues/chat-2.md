@@ -244,3 +244,31 @@ No tests, lint, typecheck, build or CI waiting were run under FAST v2. No direct
 - `TPO-companies-R03` / `TPO-inbox-team-R02`: OD-07 role expansion requires permission owner approval.
 
 FAST v2: no tests, lint, typecheck, build, CI wait, live email sending or live deployment. Source edits have not been runtime-verified.
+
+## FAST v2 continuation after integrated main / migration 0131 — 2026-10-17
+
+- Fast-forwarded `chatgpt/chat-2-b` from previously integrated head onto latest `main` before edits, then pushed only `[chat-2]` commits with gap IDs.
+- **WP-01 `TPO-recruiters-14`:** bulk Stage/Owner ineligible rows can be selected for explicit review after a result instead of blindly replaying the batch; precondition checks remain server-side, successful rows are not selected for retries.
+- **WP-01 `TPO-recruiters-13`:** retries for failed one-time invitation links preserve already generated successful tokens in the current preview; no outbound email mode or provider claim was enabled.
+- **WP-01 `TPO-recruiters-23`:** importer now exposes navigable New / Already recruiters / To fix / Skipped row groups, include/skip all, group empty states, source character cap for Excel and CSV, one-time result CSV and non-created rows copy, modal description for assistive technologies and truthful File row heading.
+- **WP-01 `TPO-recruiters-03`:** contact reachability filter supports Has both and Email or phone and retains URL synchronization.
+- **WP-01 `TPO-recruiters-19`:** empty visible exports/copy disabled; Send an email to selected hidden when there are no visible selected recipients.
+- **WP-02 `PUB-auth-public-44`:** Send a new code actually reissues the OTP; client-side mobile validation now accepts country code 91 in parity with the persisted join schema; common personal email aliases disallowed at the OTP schema.
+- **WP-03 `TPO-companies-12`:** historical company recruiter activity query explicitly constrains college ID in addition to scoped lead IDs.
+- **WP-03 `TPO-companies-15`:** duplicate same-file import removed from communication-service module.
+- **WP-05 `TPO-recruiters-15`:** assignment owner chooser sorts by staff name.
+- **WP-05 `TPO-recruiters-20`:** rows with two absent date sort keys have deterministic ID ordering instead of a non-transitive comparator.
+- **WP-02 `TPO-campaigns-public-07`:** filtered-out recipient selection cannot advertise an empty Send selected workflow.
+- WP-01 through WP-08 remain **IN-PROGRESS**; new source changes do not certify any entire package as closed.
+
+### Blocked items (one line each; skip)
+- `PUB-auth-public-50/52/53/54/55`: OD-09 OTP-gated share, protected PII columns and resume ZIP require approved disclosure/consent and file storage keys.
+- `TPO-campaigns-public-01/02/05`: real provider dispatch/receipts and durable retry worker require delivery credentials and operational registration.
+- `TPO-recruiters-13/14/17`: bulk email send and durable audited undo/reminder replay require registered worker/provider setup beyond link preview.
+- `TPO-settings-audit-52`: indefinite recruiter access requires explicit owner policy approval.
+- `TPO-companies-05` / `TPO-inbox-team-23/26/34`: shared Team-object decision/ask/away persistence and coordination remain missing.
+- `REC-calendar-messages-profile-R01`: email-reply relay requires inbound webhook routing and consent.
+- `TPO-companies-06`: no approved college counts-as-placed policy, so verified joins are not renamed placements.
+- `TPO-inbox-team-R02` / `TPO-companies-R03`: OD-07 placement-team role expansion requires permission owner decision.
+
+No tests, typecheck, lint, build, CI waits or live delivery operations; source behavior remains runtime-unverified.
