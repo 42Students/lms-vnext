@@ -9,7 +9,6 @@ import { tpoDriveLifecyclePage, tpoDriveLifecycleQuerySchema } from "./tpo-drive
 import {tpoApplicantExportSearchPattern} from "./tpo-drive-applications-export-model";
 import { PlacementsServiceError } from "./errors";
 import { requireTpoJobActor } from "./tpo-job-write-base";
-import { placementTableExists } from "./staged-tables";
 
 /** Tenant comes only from the authenticated TPO membership. Requests need their own persisted workflow. */
 export async function getTpoDriveLifecycleList(context: RequestContext, raw: unknown, now = new Date()) {
@@ -61,7 +60,6 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   const attentionCounts=attention??{noApplicants:0,noDeadline:0,dueSoon:0,overdue:0};
 
   if (filters.view === "REQUESTS") {
-    const available = await placementTableExists("placement_recruiter_drive_requests");
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,companies,owners,ownerUserId:filters.ownerUserId,
       companyId:filters.companyId,view:filters.view,search:filters.search,
