@@ -9,9 +9,9 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
  const [results,setResults]=useState<Entry[]>([]);
  const [notice,setNotice]=useState("");
  const eligible=rows.filter(row=>!bulkInviteDisposition(row));
- async function createLinks(target:readonly TpoBulkInviteCandidate[]){
+ async function createLinks(target:readonly TpoBulkInviteCandidate[],retryOnly=false){
   if(busy||target.length===0||target.length>100)return;
-  setBusy(true);setResults([]);setNotice("");
+  setBusy(true);if(!retryOnly)setResults([]);setNotice("");
   const outcome:Entry[]=[];
   for(const lead of target){
    try{
