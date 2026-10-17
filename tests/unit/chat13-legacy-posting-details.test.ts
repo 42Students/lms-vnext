@@ -1,5 +1,5 @@
 import {describe,it,expect} from "vitest";
-import {placementLegacyPostingDetailsSchema,parseLegacyPairs}
+import {placementLegacyPostingDetailsSchema,parseLegacyPairs,isLegacyAssessmentDeadlineAfterApplication}
  from "@/modules/placements/placement-legacy-posting-model";
 import {createPlacementJobInputSchema} from "@/modules/placements/validation";
 import {readFileSync} from "node:fs";
@@ -21,6 +21,30 @@ describe("Super Admin legacy job details",()=>{
   expect(createPlacementJobInputSchema.safeParse({...base,legacyPostingDetails:{
    assessmentDeadline:"2098-12-31T00:00:00.000Z",
   }}).success).toBe(false);
+ });
+ it("SA-placements-projects-14 keeps persisted assessment chronology during partial draft updates",()=>{
+  const due=new Date("2099-01-01T00:00:00.000Z");
+  expect(isLegacyAssessmentDeadlineAfterApplication(null,due)).toBe(true);
+  expect(isLegacyAssessmentDeadlineAfterApplication("2099-01-01T00:00:00.000Z",due)).toBe(false);
+  expect(isLegacyAssessmentDeadlineAfterApplication("2098-12-31T23:59:00.000Z",due)).toBe(false);
+  expect(isLegacyAssessmentDeadlineAfterApplication("2099-01-01T00:01:00.000Z",due)).toBe(true);
+  expect(isLegacyAssessmentDeadlineAfterApplication("2099-01-01T00:01:00.000Z",null)).toBe(false);
+  const service=readFileSync("src/modules/placements/job-service.ts","utf8");
+  expect(service).toContain("current.legacyPostingDetails?.assessmentDeadline");
+  expect(service).toContain("input.legacyPostingDetails===undefined");
+  expect(service).toContain("input.applicationDeadline===undefined");
+ });
+ it("SA-placements-projects-14 rejects equal assessment and application deadlines at create boundaries",()=>{
+  const base={collegeId:"00000000-0000-4000-8000-000000000001",
+   companyRelationshipId:"00000000-0000-4000-8000-000000000002",
+   title:"Role",employmentType:"FULL_TIME",workMode:"ONSITE",
+   applicationDeadline:"2099-01-01T00:00:00.000Z"};
+  expect(createPlacementJobInputSchema.safeParse({...base,legacyPostingDetails:{
+   assessmentDeadline:"2099-01-01T00:00:00.000Z"}}).success).toBe(false);
+  expect(createPlacementJobInputSchema.safeParse({...base,legacyPostingDetails:{
+   assessmentDeadline:"2099-01-01T00:01:00.000Z"}}).success).toBe(true);
+  const form=readFileSync("src/components/placements/placement-job-create-form.tsx","utf8");
+  expect(form).toContain("Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)");
  });
  it("SA-placements-projects-14 renders persisted draft terms without inventing a cross-college grant",()=>{
   const ui=readFileSync("src/components/placements/placement-job-create-form.tsx","utf8");

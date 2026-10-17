@@ -43,3 +43,14 @@ export function parseLegacyPairs(raw:string,kind:"date"|"rule"){
   return {label,value};
  });
 }
+
+/** Keep supplemental assessment chronology valid on partial drive edits. */
+export function isLegacyAssessmentDeadlineAfterApplication(
+ assessmentDeadline:string|null|undefined,
+ applicationDeadline:Date|null|undefined,
+):boolean {
+ if(!assessmentDeadline)return true;
+ if(!applicationDeadline)return false;
+ const timestamp=Date.parse(assessmentDeadline);
+ return Number.isFinite(timestamp)&&timestamp>applicationDeadline.getTime();
+}
