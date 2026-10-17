@@ -100,3 +100,10 @@ The additional unit test `tests/unit/tpo-notice-round4-verification.test.ts` con
 | --- | --- | --- |
 | TPO-inbox-team-17 | PARTIAL — OPEN | Create-topic limit now 200 in UI, Zod and Drizzle with proposed migration `docs/proposed-migrations/tpo-inbox-team-topic-limit.sql`. Named tests `tests/unit/tpo-team-topic-length-chat2.test.ts` (**TPO-inbox-team-17**). Multi-person/topic context, renaming, visibility and leave still missing. PostgreSQL registration and execution by orchestrator. |
 | TPO-inbox-team-57 | DONE (source; integration pending) | Same-college, persisted `placements.manage` authority can edit, delete, undo or restore colleagues' TPO notices, still guarded by organization/college/sender type, row lock and version. UI includes colleague notices in To your students and Recently removed; named tests **TPO-inbox-team-57** in `tests/unit/tpo-team-notice-colleague-access-chat2.test.ts`. Database authorization test to be run by orchestrator. |
+
+## Builder chat-2 continuation — notification acknowledgement
+
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-inbox-team-64 | DONE (source; unrun) | `src/components/activity/notification-list.tsx` now uses 12 s guarded `apiFetch` and shows friendly Retry-able toast without navigation on failed read acknowledgement; whole-row TPO cards, unread dot, New and arrow remain. Named **TPO-inbox-team-64** in `tests/unit/tpo-bell-notification-ack-chat2.test.ts`. |
+| TPO-inbox-team-61 | DONE (source; unrun) | Reviewed existing `src/components/tpo/tpo-bell-panel.tsx`: 20-row drawer with click-then-read-then-route, errors and mark-all guard; named **TPO-inbox-team-61** in the same test. |
