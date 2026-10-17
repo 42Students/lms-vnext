@@ -28,7 +28,7 @@ export function LearnerProjectMobileFilters({
             Search Projects
             <input type="search" name="search" maxLength={100}
               defaultValue={query.search ?? ""}
-              placeholder="Project name or summary"
+              placeholder="Search project title, course or slug"
               className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground" />
           </label>
           <label className="grid gap-1 text-sm font-semibold text-foreground">
@@ -72,7 +72,7 @@ export function LearnerProjectMobileFilters({
             Results per page
             <select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
               className="min-h-11 w-full rounded-lg border border-border bg-background px-3 py-2 font-normal text-foreground">
-              {[25,50,100].map(value=>(
+              {[10,25,50].map(value=>(
                 <option key={value} value={value}>{value}</option>
               ))}
             </select>

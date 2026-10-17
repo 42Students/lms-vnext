@@ -1,10 +1,11 @@
+import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
-import {and,desc,eq,sql} from "drizzle-orm";
+import {inArray,and,desc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,users} from "@/db/schema";
 import {placementTpoTeamEveryoneMessages as messages,
  placementTpoTeamEveryoneMutes as mutes} from "@/db/schema/tpo-internal";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import {type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {placementTableExists} from "./staged-tables";
@@ -15,7 +16,7 @@ import {everyoneMessageSchema,everyoneMuteSchema,
 async function scope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
-  !hasMembershipRole(context,"TPO"))throw new AuthorizationError("placements.manage");
+  !hasPlacementTeamMembership(context))throw new AuthorizationError("placements.manage");
  if(!can(context,"placements.manage",{collegeId:member.collegeId}))
   throw new AuthorizationError("placements.manage");
  requirePermission(context,"placements.manage",{collegeId:member.collegeId});
@@ -33,7 +34,7 @@ async function requirePersistedTpoMember(tx:Parameters<Parameters<ReturnType<typ
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .innerJoin(membershipRoles,and(
    eq(membershipRoles.membershipId,collegeMemberships.id),
-   eq(membershipRoles.role,"TPO"),
+   inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"]),
   ))
   .where(and(eq(collegeMemberships.id,membershipId),
    eq(collegeMemberships.collegeId,collegeId),
@@ -96,7 +97,7 @@ export async function postTpoTeamEveryoneMessage(context:RequestContext,raw:unkn
     .from(collegeMemberships)
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
-       eq(membershipRoles.role,"TPO")))
+       inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
     .where(and(eq(collegeMemberships.collegeId,college.id),
       eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"))),
    tx.select({membershipId:mutes.membershipId}).from(mutes).where(eq(mutes.collegeId,college.id)),

@@ -9,9 +9,12 @@ import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {randomUUID} from "node:crypto";
+import {z} from "zod";
 import {
   projectInstances,
   projectResources,
+  projectSprints,
+  projectTasks,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -72,7 +75,7 @@ export async function listProjectResources(
           projectResources.projectId,
           scope.project.id,
         ),
-        eq(projectResources.status, "ACTIVE"),
+        scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.status, "ACTIVE"),
         scope.access === "ADMIN" || scope.access === "MENTOR" ? undefined : eq(projectResources.visibility, "TEAM"),
       ),
     )
@@ -95,7 +98,7 @@ export async function createProjectResource(
     );
   if (!["ADMIN","MENTOR","LEARNER"].includes(scope.access))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  if(scope.access === "LEARNER" && (input.required || input.visibility === "MENTOR_ONLY"))
+  if(scope.access === "LEARNER" && (input.required || input.visibility === "MENTOR_ONLY" || input.pinned || input.accessNotes || input.sprintId || input.taskId || (input.status && input.status !== "ACTIVE")))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const db = getDb();
 
@@ -115,6 +118,20 @@ export async function createProjectResource(
       if(scope.access==="LEARNER" && project.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
+      if(input.sprintId){
+        const [associated]=await tx.select({id:projectSprints.id})
+          .from(projectSprints).where(and(eq(projectSprints.id,input.sprintId),
+            eq(projectSprints.projectId,scope.project.id))).limit(1);
+        if(!associated)throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+      }
+      if(input.taskId){
+        const [associated]=await tx.select({id:projectTasks.id,sprintId:projectTasks.sprintId})
+          .from(projectTasks).where(and(eq(projectTasks.id,input.taskId),
+            eq(projectTasks.projectId,scope.project.id))).limit(1);
+        if(!associated || (input.sprintId && associated.sprintId!==input.sprintId))
+          throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+      }
+
       const [latest] = await tx
         .select({ sequence: projectResources.sequence })
         .from(projectResources)
@@ -132,6 +149,12 @@ export async function createProjectResource(
           url: input.url ?? null,
           required: input.required ?? false,
           visibility: input.visibility ?? "TEAM",
+          resourceType: input.resourceType ?? (input.url ? "LINK" : "NOTE"),
+          status: scope.access==="LEARNER"?"ACTIVE":input.status??"ACTIVE",
+          pinned: scope.access==="LEARNER"?false:input.pinned??false,
+          accessNotes: scope.access==="LEARNER"?null:input.accessNotes??null,
+          sprintId: scope.access==="LEARNER"?null:input.sprintId??null,
+          taskId: scope.access==="LEARNER"?null:input.taskId??null,
           sequence: (latest?.sequence ?? -1) + 1,
         })
         .returning();
@@ -201,7 +224,6 @@ export async function updateProjectResource(
         and(
           eq(projectResources.id, resourceId),
           eq(projectResources.projectId, scope.project.id),
-          eq(projectResources.status, "ACTIVE"),
         ),
       )
       .for("update")
@@ -212,6 +234,7 @@ export async function updateProjectResource(
         "PROJECT_RESOURCE_NOT_FOUND",
       );
     }
+    if(resource.status==="ARCHIVED")throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
     const merged =
       createProjectResourceInputSchema.parse({
@@ -227,7 +250,27 @@ export async function updateProjectResource(
         required:
           input.required ?? resource.required,
         visibility: input.visibility ?? resource.visibility,
+        resourceType: input.resourceType ?? resource.resourceType,
+        status: input.status ?? resource.status,
+        pinned: input.pinned ?? resource.pinned,
+        accessNotes: input.accessNotes !== undefined ? input.accessNotes : resource.accessNotes,
+        sprintId: input.sprintId !== undefined ? input.sprintId : resource.sprintId,
+        taskId: input.taskId !== undefined ? input.taskId : resource.taskId,
       });
+
+    if(merged.sprintId){
+      const [associated]=await tx.select({id:projectSprints.id}).from(projectSprints)
+        .where(and(eq(projectSprints.id,merged.sprintId),
+          eq(projectSprints.projectId,scope.project.id))).limit(1);
+      if(!associated)throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
+    if(merged.taskId){
+      const [associated]=await tx.select({id:projectTasks.id,sprintId:projectTasks.sprintId})
+        .from(projectTasks).where(and(eq(projectTasks.id,merged.taskId),
+          eq(projectTasks.projectId,scope.project.id))).limit(1);
+      if(!associated || (merged.sprintId && associated.sprintId!==merged.sprintId))
+        throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
 
     const [updated] = await tx
       .update(projectResources)
@@ -237,13 +280,19 @@ export async function updateProjectResource(
         url: merged.url ?? null,
         required: merged.required ?? false,
         visibility: merged.visibility ?? "TEAM",
+        resourceType: merged.resourceType ?? "LINK",
+        status: merged.status ?? "ACTIVE",
+        pinned: merged.pinned ?? false,
+        accessNotes: merged.accessNotes ?? null,
+        sprintId: merged.sprintId ?? null,
+        taskId: merged.taskId ?? null,
         updatedAt: new Date(),
       })
       .where(
         and(
           eq(projectResources.id, resource.id),
           eq(projectResources.projectId, scope.project.id),
-          eq(projectResources.status, "ACTIVE"),
+          eq(projectResources.status, resource.status),
         ),
       )
       .returning();
@@ -346,5 +395,56 @@ export async function archiveProjectResource(
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
     },archived));
     return archived;
+  });
+}
+
+/** MEN-projects-meetings-56: reorder ACTIVE resources without colliding with
+ * unique positions occupied by archived records. All IDs are scoped to one
+ * authorized project; a stale/partial array cannot silently lose an item.
+ */
+export const projectResourceReorderSchema=z.strictObject({
+  orderIds:z.array(z.string().uuid()).min(1).max(250).refine(
+    ids=>new Set(ids).size===ids.length,{message:"Resource order contains duplicates"},
+  ),
+});
+export async function reorderProjectResources(
+  context:RequestContext,projectIdInput:string,rawInput:unknown,
+){
+  const scope=await requireProjectLifecycleAccess(context,projectIdInput);
+  const {orderIds}=projectResourceReorderSchema.parse(rawInput);
+  return getDb().transaction(async tx=>{
+    const [project]=await tx.select({status:projectInstances.status})
+      .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
+      .for("update").limit(1);
+    if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+    ensureMutableProject(project.status);
+    const all=await tx.select({id:projectResources.id,sequence:projectResources.sequence,
+      status:projectResources.status}).from(projectResources)
+      .where(eq(projectResources.projectId,scope.project.id))
+      .orderBy(asc(projectResources.sequence)).for("update");
+    const active=all.filter(item=>item.status==="ACTIVE");
+    if(active.length!==orderIds.length||active.length>250 ||
+        active.some(row=>!orderIds.includes(row.id))){
+      throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
+    }
+    const old=active.map(row=>row.id);
+    if(old.every((id,i)=>id===orderIds[i]))return {changed:false,count:active.length};
+    const maxSequence=Math.max(-1,...all.map(item=>item.sequence));
+    if(!Number.isSafeInteger(maxSequence)||maxSequence>2147483647-active.length-1){
+      throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
+    }
+    // Phase 1 reserves disjoint positive sequence values. The check constraint
+    // disallows negative sentinels, and archived positions must never move.
+    for(let i=0;i<orderIds.length;i++){
+      await tx.update(projectResources).set({sequence:maxSequence+1+i})
+        .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
+    }
+    // Phase 2 fills only the ACTIVE positions vacated above.
+    for(let i=0;i<orderIds.length;i++){
+      await tx.update(projectResources)
+        .set({sequence:active[i]!.sequence,updatedAt:new Date()})
+        .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
+    }
+    return {changed:true,count:active.length};
   });
 }

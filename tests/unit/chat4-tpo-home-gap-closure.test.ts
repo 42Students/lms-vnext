@@ -84,6 +84,12 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const src=source("src/components/tpo/tpo-bell-panel.tsx");
   expect(src).toContain('<Drawer open={open} onOpenChange={changeOpen} title="Notifications"');
   expect(src).toContain("aria-expanded={open}");
+  const drawer=source("src/components/ui/drawer.tsx");
+  expect(drawer).toContain("panel.showModal()");
+  expect(drawer).toContain('aria-labelledby={titleId}');
+  expect(drawer).toContain('onCancel={(event) => {');
+  expect(drawer).toContain("onOpenChange(false)");
+
  });
  it("TPO-home-41 supports G/N chords, Escape and the keyboard help dialog",()=>{
   const src=source("src/components/tpo/tpo-keyboard-shortcuts.tsx");

@@ -22,6 +22,7 @@ import {RecruiterSavedViewControls} from "./recruiter-saved-view-controls";
 import {RecruiterInlineStage} from "./recruiter-inline-stage";
 import {RecruiterInlineOwner} from "./recruiter-inline-owner";
 import {tpoCompanyDirectoryCsv} from "@/modules/placements/tpo-company-directory-export-model";
+import {deriveLegacyCompanyCommunication} from "@/modules/placements/tpo-company-communication-legacy-model";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 type Lead = {
@@ -173,6 +174,7 @@ export function RecruiterLeadsWorkspace({
   const [error, setError] = useState("");
   const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
+  const [needsExpanded,setNeedsExpanded]=useState(true);
   const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
   const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
@@ -635,8 +637,12 @@ export function RecruiterLeadsWorkspace({
       ) : (
         <>
           <section aria-label="Needs doing" className="space-y-2 rounded-lg border border-border bg-surface p-4">
-            <h2 className="text-sm font-semibold text-foreground">Needs doing</h2>
-            <div className="flex flex-wrap gap-2">
+            <button type="button" aria-expanded={needsExpanded}
+              className="flex min-h-10 w-full items-center justify-between gap-3 text-sm font-semibold text-foreground"
+              onClick={()=>setNeedsExpanded(open=>!open)}>
+              Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
+            </button>
+            {needsExpanded?<div className="flex flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
@@ -654,13 +660,14 @@ export function RecruiterLeadsWorkspace({
                   :"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
                 onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
                 Unassigned ({needCounts.unassigned})</button>:null}
-            </div>
-            {!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
+            </div>:null}
+            {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
             <Link className="inline-flex min-h-10 items-center text-sm text-primary-text underline"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
+            {!needsExpanded?<p className="text-xs text-muted-foreground">Show needs doing to review outreach priorities.</p>:null}
           </section>
           <div className="flex flex-wrap gap-3 rounded-lg border border-border bg-surface p-4">
             <label className="min-w-48 flex-1 text-sm">
@@ -923,12 +930,13 @@ export function RecruiterLeadsWorkspace({
                       <tr key={company.key} className="border-b border-border last:border-0">
                         <td className="px-4 py-3">
                           <Link className="text-primary-text underline" href={"/tpo/companies?name="+encodeURIComponent(company.name)}>{company.name}</Link>
-                          {company.aliases.length?<p className="text-xs text-muted-foreground">Also typed as {company.aliases.join(", ")}</p>:null}
+                          {company.aliases.length?<p className="text-xs text-muted-foreground"><span title={company.aliases.join(", ")}>Also {company.aliases.length} other spellings</span></p>:null}
                         </td>
                         <td className="px-4 py-3">
                           <select aria-label={"Communication for "+company.name}
                             className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm"
-                            value={communication[company.key]??"NOT_CONTACTED"}
+                            value={communication[company.key]??deriveLegacyCompanyCommunication(company.drivesRan,
+                              rows.filter(row=>company.people.some(p=>p.id===row.id)))}
                             disabled={!communicationReady}
                             onChange={e=>void changeCompanyCommunication(company.key,e.target.value)}>
                             <option value="NOT_CONTACTED">Not contacted</option>

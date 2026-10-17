@@ -27,14 +27,16 @@ export function isCloudLogNamespace(namespace: unknown): namespace is string {
   return typeof namespace === "string" && /^[a-z0-9][a-z0-9-]{0,62}$/.test(namespace);
 }
 
-export function buildCloudErrorFilter(start: Date, end: Date, namespace: string): string {
+export function buildCloudErrorFilter(
+  start: Date, end: Date, namespace: string, minimumSeverity: "WARNING"|"ERROR"="ERROR",
+): string {
   if (!Number.isFinite(start.getTime()) || !Number.isFinite(end.getTime()) ||
       !isCloudLogNamespace(namespace) || end < start) throw new Error("INVALID_LOG_WINDOW");
   return [
     'resource.type="k8s_container"',
     'resource.labels.container_name="web"',
     'resource.labels.namespace_name="' + namespace + '"',
-    "severity>=ERROR",
+    minimumSeverity==="WARNING"?"severity>=WARNING":"severity>=ERROR",
     'timestamp>"' + start.toISOString() + '"',
     'timestamp<="' + end.toISOString() + '"',
   ].join(" AND ");
@@ -165,13 +167,14 @@ export async function readCloudLogErrorPage(input: {
   end: Date;
   token: string;
   pageToken?: string;
+  minimumSeverity?: "WARNING"|"ERROR";
   transport?: Transport;
 }): Promise<{ errors: CloudErrorRecord[]; nextPageToken?: string }> {
   if (!isCloudLogProject(input.project) || !isCloudLogNamespace(input.namespace) ||
       !input.token || input.token.length > 4096) throw new Error("INVALID_LOG_CONFIGURATION");
   const body = {
     resourceNames: ["projects/" + input.project],
-    filter: buildCloudErrorFilter(input.start, input.end, input.namespace),
+    filter: buildCloudErrorFilter(input.start, input.end, input.namespace,input.minimumSeverity),
     orderBy: "timestamp asc",
     pageSize: 12,
     ...(input.pageToken ? { pageToken: input.pageToken } : {}),

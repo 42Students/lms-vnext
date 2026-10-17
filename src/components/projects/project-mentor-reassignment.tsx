@@ -1,9 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
@@ -47,6 +48,8 @@ export function ProjectMentorReassignment({
   const [search, setSearch] = useState("");
   const [pending, setPending] =
     useState(false);
+  const sendingRef=useRef(false);
+  const [confirmOpen,setConfirmOpen]=useState(false);
   const [result, setResult] = useState<{
     reassignedCount: number;
     skippedCount: number;
@@ -62,6 +65,8 @@ export function ProjectMentorReassignment({
     selectedMentors.get(projectId) === mentorMembershipId
   );
   const actionableSelection = selected.filter(projectId => !skippedSelection.includes(projectId));
+  const selectedMentorName=mentors.find(row=>row.membershipId===mentorMembershipId)?.displayName??
+    mentors.find(row=>row.membershipId===mentorMembershipId)?.email??"this mentor";
 
   const visibleMentors = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -87,23 +92,22 @@ export function ProjectMentorReassignment({
     );
   }
 
-  async function submit() {
-    if (
-      !selected.length ||
-      !mentorMembershipId
-    ) {
+  function submit() {
+    if (!selected.length) {
+      showToast({tone:"error",title:"Select at least one workspace to reassign."});
       return;
     }
+    if(!mentorMembershipId||pending)return;
     if (!actionableSelection.length) {
-      showToast({ tone: "info", title: "No changes were needed",
-        description: "Already this mentor — will skip" });
+      showToast({tone:"info",title:"No workspaces needed changes — they already have this mentor."});
       return;
     }
-    if (!window.confirm(
-      "Reassign " + actionableSelection.length + " of " + selected.length +
-      " selected workspace(s) to " +
-      (mentors.find(row => row.membershipId === mentorMembershipId)?.displayName ?? "this mentor") + "?"
-    )) return;
+    setConfirmOpen(true);
+  }
+  async function executeReassignment() {
+    if(sendingRef.current||pending||!actionableSelection.length||!mentorMembershipId)return;
+    sendingRef.current=true;
+    setConfirmOpen(false);
     setPending(true);
     setResult(null);
     try {
@@ -137,10 +141,8 @@ export function ProjectMentorReassignment({
       if (response.reassignedCount > 0) {
         showToast({
           tone: "success",
-          title: "Mentor reassignment complete",
-          description:
-            response.reassignedCount +
-            " workspace(s) reassigned.",
+          title: "Reassigned "+response.reassignedCount+" workspace(s) to "+selectedMentorName+".",
+          description: "The new primary mentor has been saved for the changed workspaces.",
         });
       } else {
         showToast({
@@ -149,24 +151,24 @@ export function ProjectMentorReassignment({
             : "info",
           title: response.failures.length
             ? "No workspaces were reassigned"
-            : "No changes were needed",
+            : "No workspaces needed changes — they already have this mentor.",
           description: response.failures.length
             ? "Review the per-workspace failures below."
-            : "The selected workspaces already use this mentor.",
+            : "No workspaces needed changes — they already have this mentor.",
         });
       }
-      setSelected([]);
+      // Preserve failed workspace selection so the operator can retry without reselecting.
+      setSelected([...new Set(response.failures.map(row=>row.projectId))]);
       router.refresh();
-    } catch (error) {
+    } catch {
       showToast({
         tone: "error",
         title: "Mentor reassignment failed",
         description:
-          error instanceof Error
-            ? error.message
-            : "The request could not be completed.",
+          "The request could not be completed. Your selection is still available; please retry.",
       });
     } finally {
+      sendingRef.current=false;
       setPending(false);
     }
   }
@@ -299,6 +301,7 @@ export function ProjectMentorReassignment({
           <p className="mt-3 text-sm text-body">
             {skippedSelection.length} of {selected.length} selected workspaces will be skipped.
           </p> : null}
+        {!selected.length ? <p role="status" className="mt-3 text-sm text-body">Select at least one workspace to reassign.</p> : null}
         <div className="mt-4">
           <Button
             disabled={
@@ -306,7 +309,7 @@ export function ProjectMentorReassignment({
               !selected.length ||
               !mentorMembershipId
             }
-            onClick={() => void submit()}
+            onClick={submit}
           >
             {pending
               ? "Reassigning…"
@@ -337,13 +340,18 @@ export function ProjectMentorReassignment({
                       failure.projectId,
                   )?.title ??
                     failure.projectId}
-                  : {failure.code}
+                  : Could not reassign this workspace. Refresh and try again.
                 </li>
               ))}
             </ul>
           ) : null}
         </section>
       ) : null}
+      <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
+        title={"Reassign "+actionableSelection.length+" of "+selected.length+" selected workspace(s) to "+selectedMentorName+"?"}
+        description="The previous primary mentor is removed from the selected workspaces; existing co-mentors stay. Confirm the new mentor before updating projects."
+        confirmLabel="Reassign workspaces" pending={pending}
+        onConfirm={()=>void executeReassignment()}/>
     </div>
   );
 }

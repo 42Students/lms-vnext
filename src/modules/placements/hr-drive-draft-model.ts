@@ -15,7 +15,7 @@ const round = z.strictObject({
   name: z.string().trim().min(2).max(120),
 });
 export const hrDriveDraftSchema = z.strictObject({
-  title: z.string().trim().min(3).max(200),
+  title: z.string().trim().min(3,"Enter a role title").max(200),
   description: z.string().trim().max(5000),
   location: z.string().trim().max(180),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),

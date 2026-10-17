@@ -2,6 +2,7 @@
 import {useState,useRef} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
+import {projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
 
 type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date};
 type Cursor={time:string;id:string};
@@ -40,6 +41,8 @@ export function ProjectActivityFilteredList({projectId,events,now}:{
   }catch{setLoadError("We couldn't load more activity. Try again.");}
   finally{lock.current=false;setBusy(false);}
  }
+ const [search,setSearch]=useState("");
+ const [resourceAction,setResourceAction]=useState("ALL");
  const [type,setType]=useState("");
  const [range,setRange]=useState("ALL");
  const [fromDate,setFromDate]=useState("");
@@ -49,14 +52,28 @@ export function ProjectActivityFilteredList({projectId,events,now}:{
  const filtered=items.filter(event=>{
   const occurred=new Date(event.occurredAt);
   const day=occurred.toISOString().slice(0,10);
-  return (!type||event.eventType===type)
+  const term=search.trim().toLocaleLowerCase("en-IN");
+  return (!term||[event.summary,event.actorDisplayName??"",event.eventType].some(value=>value.toLocaleLowerCase("en-IN").includes(term)))
+    &&projectResourceAuditMatches(event.eventType,resourceAction)
+    &&(!type||event.eventType===type)
     &&(range==="ALL"||current-occurred.getTime()<Number(range)*86400000)
     &&(!fromDate||day>=fromDate)
     &&(!toDate||day<=toDate);
  });
- const resetFilters=()=>{setType("");setRange("ALL");setFromDate("");setToDate("");};
+ const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setRange("ALL");setFromDate("");setToDate("");};
  return <section className="space-y-3">
   <div className="flex flex-wrap items-end gap-3 rounded-lg border border-border p-3">
+   <label className="grid gap-1 text-sm font-semibold">Search activity
+    <input type="search" value={search} onChange={event=>setSearch(event.target.value)}
+     placeholder="Search activity" className="min-h-10 rounded border border-border bg-background px-3"/>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold">Resource change
+    <select value={resourceAction} onChange={event=>setResourceAction(event.target.value)}
+     className="min-h-10 rounded border border-border bg-background p-2">
+     <option value="ALL">All resource changes</option>
+     {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
+    </select>
+   </label>
    <label className="grid gap-1 text-sm font-semibold">Type
     <select value={type} onChange={event=>setType(event.target.value)}
       className="min-h-10 rounded border border-border bg-background p-2">
@@ -89,8 +106,9 @@ export function ProjectActivityFilteredList({projectId,events,now}:{
     ? <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
       {items.length===0
        ? "No project activity yet. Task moves, sprint updates and resource changes will appear here."
-       : type && (fromDate||toDate||range!=="ALL")
+       : (type||search||resourceAction!=="ALL") && (fromDate||toDate||range!=="ALL")
         ? "No activity matches this source and date range."
+        : search||resourceAction!=="ALL" ? "No activity matches these resource or search filters."
         : fromDate||toDate||range!=="ALL" ? "No activity in this date range."
         : "No activity recorded from this source yet."}
     </p>

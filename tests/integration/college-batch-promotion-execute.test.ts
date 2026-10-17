@@ -103,6 +103,13 @@ describe.skipIf(!enabled)("College batch promotion execute, rollback-only dispos
         .rejects.toMatchObject({code:"PROMOTION_PREVIEW_CHANGED"});
       await expect(run(admin, {...command,expectedTargetTerm:3}))
         .rejects.toMatchObject({code:"PROMOTION_PREVIEW_CHANGED"});
+      // COL-academic-setup-R04: execute must recheck target curriculum in
+      // its transaction rather than trusting an earlier good preview.
+      await tx.execute(sql`delete from program_term_courses where id=${ids.termCourse}`);
+      await expect(run(admin,command)).rejects.toMatchObject({code:"PROMOTION_BLOCKED"});
+      await tx.execute(sql`insert into program_term_courses
+        (id,program_term_id,course_id,type,credits,display_order)
+        values (${ids.termCourse},${ids.term2},${ids.course},'CORE',3,1)`);
       const result = await run(admin, command);
       expect(result).toMatchObject({
         cohortId: ids.cohort, version: 1, currentTermNumber: 2,

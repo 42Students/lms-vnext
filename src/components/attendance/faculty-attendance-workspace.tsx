@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Drawer } from "@/components/ui/drawer";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Input } from "@/components/ui/input";
@@ -169,6 +170,8 @@ export function FacultyAttendanceWorkspace({
   );
   const [submitting, setSubmitting] =
     useState(false);
+  const [confirmingAttendance, setConfirmingAttendance] = useState(false);
+  const [confirmingRosterReload, setConfirmingRosterReload] = useState(false);
   const submitLock = useRef(false);
   const [error, setError] =
     useState<string | null>(null);
@@ -335,6 +338,18 @@ export function FacultyAttendanceWorkspace({
     });
   }
 
+  function requestAttendanceConfirmation() {
+    if (!selectedSession || markingWindow !== "OPEN" || submitting || submitLock.current) return;
+    setError(null);
+    if (selectedSession.attendanceStatus === "MARKED" && !facultyCorrectionReasonValid(correctionReason)) {
+      setError("Explain this attendance correction in at least 8 characters."); return;
+    }
+    if (!attendanceConfirmation) {
+      setError("Change at least one recorded mark before submitting a correction."); return;
+    }
+    setConfirmingAttendance(true);
+  }
+
   async function submitAttendance() {
     if (
       !selectedSession ||
@@ -353,7 +368,7 @@ export function FacultyAttendanceWorkspace({
       setError("Change at least one recorded mark before submitting a correction.");
       return;
     }
-    if (!window.confirm(attendanceConfirmation)) return;
+    setConfirmingAttendance(false);
     submitLock.current = true;
     setSubmitting(true);
     try {
@@ -1034,7 +1049,7 @@ export function FacultyAttendanceWorkspace({
                     !attendanceConfirmation ||
                     (selectedSession?.attendanceStatus==="MARKED"&&!facultyCorrectionReasonValid(correctionReason))
                   }
-                  onClick={submitAttendance}
+                  onClick={requestAttendanceConfirmation}
                 >
                   {submitting
                     ? "Submitting…"
@@ -1047,6 +1062,13 @@ export function FacultyAttendanceWorkspace({
                   className="mt-3 text-sm font-semibold text-error"
                 >
                   {error}
+                  <span className="mt-2 block text-sm font-normal text-body">
+                    Attendance saves are atomic: no partial roster will be committed on a rejected request.
+                    Reload the saved roster before retrying if the connection was interrupted.
+                  </span>
+                  <Button size="sm" variant="secondary" onClick={() => setConfirmingRosterReload(true)}>
+                    Reload saved roster
+                  </Button>
                 </p>
               ) : null}
             </section>
@@ -1054,6 +1076,27 @@ export function FacultyAttendanceWorkspace({
         </>
       )}
 
+      <ConfirmDialog
+        open={confirmingAttendance}
+        onOpenChange={setConfirmingAttendance}
+        title="Submit Attendance"
+        description={attendanceConfirmation ?? "Review attendance marks before submitting."}
+        confirmLabel="Confirm"
+        cancelLabel="Cancel"
+        confirmVariant="primary"
+        pending={submitting}
+        confirmDisabled={!selectedSession || markingWindow !== "OPEN" || !attendanceConfirmation}
+        onConfirm={() => void submitAttendance()}
+      />
+      <ConfirmDialog
+        open={confirmingRosterReload}
+        onOpenChange={setConfirmingRosterReload}
+        title="Reload saved attendance?"
+        description="This reloads marks recorded on the server and discards any unsaved selections in this page."
+        confirmLabel="Reload roster"
+        confirmVariant="primary"
+        onConfirm={() => window.location.reload()}
+      />
       {selectedLearner ? (
       <Drawer
         open={true}
