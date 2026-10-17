@@ -27,7 +27,7 @@ export default async function TpoRecruiterConversationPage({params}:{
  if(!data)notFound();
  return <main className="space-y-5">
   <Link href="/tpo/messages" className="text-sm font-semibold text-primary-text">
-   ← Messages
+   ← All conversations
   </Link>
   <h1 className="text-xl font-semibold text-foreground">Recruiter conversation</h1>
   <p className="text-sm text-body">{data.total} messages · Showing the latest 100</p>
