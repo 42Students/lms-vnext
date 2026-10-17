@@ -5,10 +5,12 @@ import {PageHeader} from "@/components/ui/page-header";
 import {hasActiveRecruiter} from "@/modules/identity/context";
 import {hrConversationQuerySchema} from "@/modules/placements/hr-conversation-inbox-model";
 import {listHrConversations} from "@/modules/placements/hr-conversation-inbox-service";
+import {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
 import {hrConversationsHref} from "@/modules/placements/hr-conversation-urls-model";
 import {listOwnRecruiterDecisionNotices} from "@/modules/placements/recruiter-decision-notice-service";
 import {RecruiterDecisionReadButton} from "@/components/hr/recruiter-decision-read-button";
 import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
+import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
 const HR_CONVERSATION_KINDS=[{value:"ALL",label:"All threads"},{value:"GENERAL",label:"General"},{value:"DRIVE",label:"Hiring drives"}] as const;
 type Query={collegeId?:string|string[];q?:string|string[];page?:string|string[];unreadOnly?:string|string[];sort?:string|string[];scope?:string|string[]};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -31,6 +33,11 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
   <PageHeader eyebrow="Recruiter" title="Conversations"/>
   <p>Invalid conversation filters.</p><Link href="/hr/conversations" className="text-primary-text">Reset</Link></main>;
  const result=await listHrConversations(context,parsed.data);
+ const generalResult=result.status==="READY"?await listHrConversations(context,{
+  collegeId:result.collegeId,q:"",page:1,unreadOnly:"false",sort:"LATEST",scope:"GENERAL",
+ }):null;
+ const generalThread=generalResult?.status==="READY" ? generalResult.items.find(row=>!row.jobId)??null:null;
+ const generalHistory=generalThread?await readRecruiterThreadMessages(context,generalThread.id,1):null;
  const displayNow=new Date();
  const decisionNotices=result.status==="READY"
   ? await listOwnRecruiterDecisionNotices(context,result.collegeId):[];
@@ -68,6 +75,25 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
    <section className="rounded-xl border border-border bg-surface p-4">
     <h2 className="font-semibold text-foreground">Talk to the placement cell</h2>
     <p className="mt-1 text-sm text-body">Open your private conversation with this college, without linking a particular hiring drive.</p>
+    {generalThread?<details className="mt-3 rounded-lg border border-border p-3">
+      <summary className="cursor-pointer text-sm font-semibold text-primary-text">Message the placement cell · General</summary>
+      <p className="mt-2 text-sm text-body">Placement cell · General</p>
+      {generalThread.preview?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+        {generalThread.preview!.text}
+      </p>:null}
+      {generalHistory?<ol aria-label="General placement-cell messages" className="mt-3 max-h-72 space-y-2 overflow-y-auto">
+        {[...generalHistory.messages].reverse().map(message=><li key={message.id}
+          className="rounded-lg border border-border bg-surface-subtle p-3 text-sm">
+          <p className="mb-1 text-xs font-semibold text-muted-foreground">
+            {message.senderType==="RECRUITER"?"You":"Placement cell"} · {when(message.createdAt)} IST
+          </p>
+          <p className="whitespace-pre-wrap break-words text-body">{message.body}</p>
+        </li>)}
+      </ol>:null}
+      <div className="mt-3"><RecruiterConversationReplyForm threadId={generalThread.id}/></div>
+      <Link href={"/hr/conversations/"+generalThread.id}
+        className="mt-3 inline-flex min-h-10 items-center text-primary-text underline">Open full conversation</Link>
+    </details>:null}
     <form method="post" action="/api/placements/recruiter/conversations/open" className="mt-3">
       <input name="collegeId" type="hidden" value={result.collegeId}/>
       <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">

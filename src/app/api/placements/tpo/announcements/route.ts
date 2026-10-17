@@ -25,8 +25,10 @@ export async function POST(request:Request){
  if(!parsed.success)return noticePostError(request,"INVALID_BODY",400);
  try{
   const context=await getCurrentRequestContext();
-  await createTpoNotice(context,parsed.data);
-  return NextResponse.redirect(new URL("/tpo/announcements?tab=yours",request.url),303);
+  const notice=await createTpoNotice(context,parsed.data);
+  const returnUrl=new URL("/tpo/announcements?tab=yours",request.url);
+  returnUrl.searchParams.set("sentNotice",notice.id);
+  return NextResponse.redirect(returnUrl,303);
  }catch(error){
   if(error instanceof AuthorizationError)return noticePostError(request,"FORBIDDEN",403);
   if(error instanceof z.ZodError){

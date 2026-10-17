@@ -9,7 +9,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
-  boolean, check, index, integer, pgTable, text, timestamp, uuid, varchar,
+  boolean, check, index, integer, pgTable, primaryKey, text, timestamp, uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { organizations } from "./organizations";
@@ -33,6 +33,8 @@ export const db10Announcements = pgTable(
     scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
     isPinned: boolean("is_pinned").notNull().default(false),
+    buttonLabel: varchar("button_label", { length: 60 }),
+    buttonUrl: varchar("button_url", { length: 500 }),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     deletedByUserId: uuid("deleted_by_user_id")
       .references(() => users.id, { onDelete: "restrict" }),
@@ -61,9 +63,33 @@ export const db10Announcements = pgTable(
       sql`${t.expiresAt} is null or ${t.scheduledAt} is null or ${t.expiresAt} > ${t.scheduledAt}`,
     ),
     check(
+      "announcements_cta_pair_ck",
+      sql`(${t.buttonLabel} is null and ${t.buttonUrl} is null)
+        or (${t.buttonLabel} is not null and length(trim(${t.buttonLabel})) between 1 and 60
+          and ${t.buttonUrl} is not null and ${t.buttonUrl} ~ '^https://[^[:space:]]+$')`,
+    ),
+    check(
       "db10_announcements_delete_shape_ck",
       sql`(${t.deletedAt} is null and ${t.deletedByUserId} is null)
         or (${t.deletedAt} is not null and ${t.deletedByUserId} is not null)`,
     ),
+  ],
+);
+
+export const placementCellAnnouncementReads = pgTable(
+  "placement_cell_announcement_reads",
+  {
+    announcementId: uuid("announcement_id").notNull()
+      .references(() => db10Announcements.id, { onDelete: "cascade" }),
+    collegeId: uuid("college_id").notNull()
+      .references(() => colleges.id, { onDelete: "cascade" }),
+    firstReadByUserId: uuid("first_read_by_user_id").notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    firstReadAt: timestamp("first_read_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.announcementId, t.collegeId] }),
+    index("placement_cell_announcement_reads_by_college_idx")
+      .on(t.collegeId, sql`${t.firstReadAt} desc`),
   ],
 );

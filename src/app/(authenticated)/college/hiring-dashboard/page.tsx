@@ -9,6 +9,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import Link from "next/link";
 import {getCollegeHiringFunnel} from "@/modules/placements/college-hiring-funnel-service";
 import {CollegeHiringFunnel} from "@/components/placements/college-hiring-funnel";
+import {CollegeReportNavigation} from "@/components/placements/college-report-navigation";
 
 /** Dedicated legacy Analytics surface: tenant-owned observed placement metrics. */
 export default async function CollegeHiringDashboardPage({
@@ -43,6 +44,7 @@ export default async function CollegeHiringDashboardPage({
         className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Placement Evidence by Department
       </Link>} />
+    <CollegeReportNavigation/>
     <ReportFilters workspace={workspace} path="/college/hiring-dashboard" />
     <ReportMetrics metrics={workspace.report.metrics} />
     <CollegeHiringFunnel data={funnel} selectedSeasonId={workspace.selectedSeasonId}

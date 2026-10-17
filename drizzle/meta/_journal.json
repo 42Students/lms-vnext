@@ -904,6 +904,13 @@
       "when": 1792197728792,
       "tag": "0128_legacy_batch_fields_after_college_outcomes",
       "breakpoints": true
+    },
+    {
+      "idx": 129,
+      "version": "7",
+      "when": 1792199887797,
+      "tag": "0129_lesson_visibility_announcement_cta_reads",
+      "breakpoints": true
     }
   ]
 }

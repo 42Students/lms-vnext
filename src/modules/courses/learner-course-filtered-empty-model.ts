@@ -7,7 +7,7 @@ export function learnerCourseFilteredEmptyTitle(f:Filters):string {
  if(f.termState==="CURRENT")return "No active courses match these filters";
  if(f.termState==="HISTORY")return "No past courses match these filters";
  if(f.progressFilter!=="ALL")return "No courses match this progress filter";
- if(f.typeFilter==="elective")return "No electives match these filters";
- if(f.typeFilter==="core")return "No regular courses match these filters";
+ if(f.typeFilter==="elective")return "No electives to show right now.";
+ if(f.typeFilter==="core")return "No regular courses to show — everything this semester is an elective.";
  return "No courses match the current filters";
 }

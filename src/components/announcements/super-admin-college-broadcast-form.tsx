@@ -22,7 +22,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const [feedback,setFeedback]=useState("");
  const count=mode==="ALL_COLLEGES"?colleges.length:selected.length;
  const timing=broadcastLocalTiming(scheduledAt,expiresAt);
- const valid=count>0&&Boolean(title.trim())&&Boolean(message.trim())&&timing.valid&&!pending;
+ const valid=count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&!pending;
  async function submit(){
   if(!valid)return;
   setPending(true);setFeedback("");
@@ -61,8 +61,10 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     <input type="checkbox" checked={selected.includes(item.id)} onChange={e=>setSelected(prev=>e.target.checked?[...prev,item.id]:prev.filter(id=>id!==item.id))}/>{item.label}
    </label>)}
   </fieldset>:null}
-  <label className="grid gap-1 text-sm font-semibold text-body">Title<Input value={title} maxLength={255} onChange={e=>setTitle(e.target.value)}/></label>
-  <label className="grid gap-1 text-sm font-semibold text-body">Message<Textarea value={message} maxLength={10000} onChange={e=>setMessage(e.target.value)}/></label>
+  <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
+  <label className="grid gap-1 text-sm font-semibold text-body">Title<Input value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
+  <label className="grid gap-1 text-sm font-semibold text-body">Message<Textarea value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
+  <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="grid gap-1 text-sm font-semibold text-body">Schedule (local)<Input type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
    <label className="grid gap-1 text-sm font-semibold text-body">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>

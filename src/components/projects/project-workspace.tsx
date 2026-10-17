@@ -404,6 +404,17 @@ export function ProjectWorkspace({
                 readiness.finalSubmission.canSubmitDraft
               }
               review={workspace.finalDelivery.reviews.at(-1)??null}
+              lastEditedBy={(()=>{
+                const latest=workspace.finalDelivery.submissions.at(-1);
+                if(!latest)return null;
+                const edited=workspace.activity.filter(event=>event.subjectId===latest.id&&
+                  (event.eventType==="projects.delivery.draft_updated"||
+                   event.eventType==="projects.delivery.draft_created"))
+                  .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0];
+                return edited?.actorDisplayName??(edited?null:
+                  workspace.members.find(member=>member.membershipId===latest.createdByMembershipId)?.displayName??null);
+              })()}
+
               readinessDetail={{
                 tasksRemaining:Math.max(0,readiness.execution.tasks.total-readiness.execution.tasks.done),
                 sprintsRemaining:Math.max(0,readiness.execution.sprints.total-readiness.execution.sprints.completed),

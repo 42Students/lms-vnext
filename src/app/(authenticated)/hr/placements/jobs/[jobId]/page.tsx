@@ -23,6 +23,12 @@ import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
+import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conversation-service";
+import {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
+import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
+import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
+import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
 function safeDriveReturnTo(raw:string|undefined){
  if(!raw)return "/hr/drives";
@@ -67,8 +73,13 @@ export default async function HrPlacementJobPage({
   try {
     // Parse only the known params: extra ones (for example ?collegeId=) are ignored.
     const { tab, stage, applicant, page, offerPage, offerState, roundId, outcome } = query;
+    // Legacy links use historical tab keys. Authorize the job with the
+    // canonical read first, then redirect only within this recruiter job.
+    const safeTab=tab==="interviews"||tab==="results"?"rounds":
+      tab==="selections"?"offers":
+      tab==="messages"||tab==="requests"||tab==="discussion"?"overview":tab;
     hiring = await getHrJobRead(context, jobId, {
-      tab, stage, applicant, page, offerPage, offerState, roundId, outcome,
+      tab:safeTab, stage, applicant, page, offerPage, offerState, roundId, outcome,
     });
   } catch (error) {
     if ((error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") ||
@@ -79,6 +90,19 @@ export default async function HrPlacementJobPage({
   }
   const { workspace, filters, applicants, applicantsPage, offers, offersPage, offerSummary, offersTotal } = hiring;
   if(query.tab==="messages")redirect(hrDriveMessagesHref(workspace.job.id));
+  const requestsTab=query.tab==="requests";
+  const discussionTab=query.tab==="discussion";
+  const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
+  const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;
+  const selectedThread=driveConversation?.threads[0]??null;
+  const threadMessages=selectedThread?
+    await readRecruiterThreadMessages(context,selectedThread.id,1):null;
+  if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
+    const destination=query.tab==="selections"?"offers":"rounds";
+    const search=new URLSearchParams({tab:destination,returnTo});
+    if(query.roundId&&z.string().uuid().safeParse(query.roundId).success)search.set("roundId",query.roundId);
+    redirect("/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?"+search.toString());
+  }
   const reviewMode = z.enum(["1"]).optional().safeParse(query.review);
   if (!reviewMode.success) notFound();
   const focused = reviewMode.data === "1" && filters.tab === "applicants";
@@ -210,7 +234,7 @@ export default async function HrPlacementJobPage({
         </div>
       </section>
 
-      {filters.tab === "overview" ? (
+      {filters.tab === "overview" && !requestsTab && !discussionTab ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div><h2 className="text-lg font-semibold text-foreground">Drive overview</h2>
@@ -327,15 +351,54 @@ export default async function HrPlacementJobPage({
             {tab}
           </Link>
         ))}
+        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=discussion"+returnQuery}
+          aria-current={discussionTab?"page":undefined}
+          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+          Discussion
+        </Link>
         <Link href={hrDriveMessagesHref(workspace.job.id)}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Messages
         </Link>
-        <Link href={"/recruiter/drives/"+workspace.job.id+"/change-requests"}
+        <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
+          aria-current={requestsTab?"page":undefined}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
           Change requests
         </Link>
       </nav>
+      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <RecruiterConversationLiveRefresh/>
+        <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
+        <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters' conversations.</p>
+        {threadMessages?<div className="space-y-3">
+          <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
+          <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
+            {[...threadMessages.messages].reverse().map(message=><li key={message.id}
+              className="rounded-lg border border-border bg-surface-subtle p-3">
+              <p className="text-xs font-semibold text-muted-foreground">
+                {message.senderType==="RECRUITER"?"You":"Placement cell"} ·
+                {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
+              </p>
+              <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
+            </li>)}
+          </ol>
+          <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
+          <Link href={"/hr/conversations/"+selectedThread!.id}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Browse full conversation history</Link>
+        </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
+          <input type="hidden" name="collegeId" value={workspace.college.id}/>
+          <input type="hidden" name="jobId" value={workspace.job.id}/>
+          <p className="text-sm text-body">No private drive discussion exists yet.</p>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Open drive discussion</button>
+        </form>}
+      </section>:null}
+      {requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <h2 className="text-lg font-semibold text-foreground">Requests</h2>
+        <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
+        {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
+          userId={context.user.id} requests={requestData.requests}/> :
+         <p role="status" className="rounded-lg border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
+      </section>:null}
       {filters.tab === "applicants" ? (
         <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
