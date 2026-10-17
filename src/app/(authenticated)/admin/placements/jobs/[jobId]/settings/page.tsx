@@ -2,6 +2,7 @@ import {SuperAdminDriveTabs} from "@/components/placements/super-admin-drive-tab
 import {SuperAdminDriveDeadline} from "@/components/placements/super-admin-drive-deadline";
 import {SuperAdminDriveDuplicate} from "@/components/placements/super-admin-drive-duplicate";
 import {SuperAdminDriveArchive} from "@/components/placements/super-admin-drive-archive";
+import {SuperAdminPublishedDriveEdit} from "@/components/placements/super-admin-published-drive-edit";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { getPlacementJob } from "@/modules/placements/job-service";
@@ -21,6 +22,13 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <p className="text-sm text-muted-foreground">The existing drive workspace enforces deadline, eligibility and publication state transitions.</p>
    <Link href={base} className="inline-flex min-h-10 items-center font-semibold text-primary-text">Open drive controls →</Link>
   </section>
+  {job.status==="PUBLISHED"?
+    <SuperAdminPublishedDriveEdit job={{
+      id:job.id,title:job.title,description:job.description,
+      locations:job.locations,applicationDeadline:job.applicationDeadline?.toISOString()??null,
+      openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
+      updatedAt:job.updatedAt.toISOString(),
+    }} />:null}
   <SuperAdminDriveDuplicate jobId={jobId} title={job.title}/>
   {job.status!=="ARCHIVED"?<SuperAdminDriveArchive jobId={jobId} title={job.title}/>:null}
   {job.status==="PUBLISHED"?<SuperAdminDriveDeadline jobId={jobId} deadline={job.applicationDeadline?.toISOString()??null}/>:null}
