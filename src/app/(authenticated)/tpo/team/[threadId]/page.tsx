@@ -3,6 +3,7 @@ import {createHash} from "node:crypto";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
 import {TpoTeamMessageActions} from "@/components/tpo/tpo-team-message-actions";
 import {TpoTeamDecisionToggle} from "@/components/tpo/tpo-team-decision-toggle";
+import {TpoTeamThreadDetails} from "@/components/tpo/tpo-team-thread-details";
 import {TpoTeamOpenRead} from "@/components/tpo/tpo-team-open-read";
 import {TpoTeamRename} from "@/components/tpo/tpo-team-rename";
 import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
@@ -43,6 +44,9 @@ export default async function InternalThread({params,searchParams}:{params:Promi
   <Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 items-center text-primary-text">All conversations</Link>
   <TpoTeamOpenRead threadId={result.thread.id}/>
   <TpoTeamRename threadId={result.thread.id} currentTopic={result.thread.topic}/>
+  <TpoTeamThreadDetails threadId={result.thread.id} topic={result.thread.topic}
+   counterpart={result.thread.counterpartName} createdAt={result.thread.createdAt.toISOString()}
+   decisions={result.messages.filter(message=>message.decision&&!message.removed).length}/>
   <TpoTeamFollowControls threadId={result.thread.id} following={preferences.following}
    muted={preferences.muted} ready={preferences.status==="READY"}/>
   <form method="post" action={"/api/placements/tpo/team/threads/"+result.thread.id+"/acknowledge"}>
