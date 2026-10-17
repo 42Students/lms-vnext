@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { redactAlertText, safeAlertPath } from "@/modules/log-alerts/redaction";
 import { errorSignatureHash, normaliseErrorForSignature } from "@/modules/log-alerts/signature";
-import { sendTelegramAlert, limitTelegramAlert } from "@/modules/log-alerts/telegram-notifier";
+import { sendTelegramAlert, limitTelegramAlert, sanitizeTelegramLine } from "@/modules/log-alerts/telegram-notifier";
 
 const oldEnv = {
   bot: process.env.TELEGRAM_ALERT_BOT_TOKEN,
@@ -60,6 +60,18 @@ describe("Telegram alert fundamentals", () => {
         return new Response(JSON.stringify({ ok: true }));
       }) as typeof fetch,
     })).toBe(true);
+  });
+  it("GR-113 GR-119 preserves generated digest date and commit without allowing free-form personal data", () => {
+    expect(sanitizeTelegramLine("vNext daily error digest (2099-10-17, IST)"))
+      .toBe("vNext daily error digest (2099-10-17, IST)");
+    expect(sanitizeTelegramLine("Deploy: " + "a".repeat(40)))
+      .toBe("Deploy: " + "a".repeat(40));
+    expect(sanitizeTelegramLine("123456789abc: 90 occurrences"))
+      .toBe("123456789abc: 90 occurrences");
+    expect(sanitizeTelegramLine("Error jane@example.com"))
+      .not.toContain("jane@example.com");
+    expect(sanitizeTelegramLine("Deploy: jane@example.com"))
+      .not.toContain("jane@example.com");
   });
   it("GR-111 never throws when unconfigured and sends no request", async () => {
     delete process.env.TELEGRAM_ALERT_BOT_TOKEN;
