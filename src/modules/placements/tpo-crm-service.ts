@@ -745,7 +745,7 @@ export async function markTpoLeadContacted(
 ) {
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
-  await requirePlacementManageScope(context, collegeId);
+  const college=await requirePlacementManageScope(context, collegeId);
   return getDb().transaction(async tx => {
     const [current] = await tx
       .select()
@@ -783,6 +783,14 @@ export async function markTpoLeadContacted(
       isSystem: false,
       note: "Manual stage changed to Contacted",
       createdByUserId: context.user.id,
+    });
+    await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership?.id??null,
+      module:"PLACEMENTS",eventType:"RECRUITER_LEADS_STAGE_SET",
+      subjectType:"placement_tpo_lead",subjectId:leadId,
+      summary:"Recruiter lead marked Contacted",
+      metadata:{beforeStage:current.manualStage,afterStage:"CONTACTED"},
     });
     return tpoLeadView(updated);
   });
