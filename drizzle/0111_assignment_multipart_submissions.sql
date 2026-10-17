@@ -25,6 +25,6 @@ ALTER TABLE "assignment_submissions" ADD CONSTRAINT "assignment_submissions_payl
           and "assignment_submissions"."submission_url" is not null
           and "assignment_submissions"."text_content" is null)
         or
-        ("assignment_submissions"."submission_type" = 'FILE')
+        (("assignment_submissions"."submission_type")::text = 'FILE')
       ));--> statement-breakpoint
 ALTER TABLE "course_assignments" ADD CONSTRAINT "course_assignments_methods_shape_ck" CHECK (jsonb_typeof("course_assignments"."allowed_submission_methods") = 'array' and jsonb_array_length("course_assignments"."allowed_submission_methods") between 1 and 5);

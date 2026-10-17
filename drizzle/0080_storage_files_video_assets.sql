@@ -261,7 +261,7 @@ ALTER TABLE "assignment_submissions" ADD CONSTRAINT "assignment_submissions_payl
           and "assignment_submissions"."submission_url" is not null
           and "assignment_submissions"."text_content" is null)
         or
-        ("assignment_submissions"."submission_type" = 'FILE'
+        (("assignment_submissions"."submission_type")::text = 'FILE'
           and "assignment_submissions"."text_content" is null
           and "assignment_submissions"."submission_url" is null)
       ));
