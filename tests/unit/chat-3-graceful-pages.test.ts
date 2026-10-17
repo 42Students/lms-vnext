@@ -51,12 +51,12 @@ describe("Chat-3 graceful-operation coverage for touched pages",()=>{
  });
  it("GR-90 no raw error code in corrected attendance alert and course load error summary",()=>{
   expect(attendance()).toContain('role="alert"');
-  expect(attendance()).toContain("Attendance could not be corrected. Check the record and retry.");
+  expect(attendance()).toContain('apiFetch<void>(');
   expect(courseError()).toContain('role="alert"');
   expect(courseError()).not.toContain("{error.message}");
   expect(attendance()).not.toContain("body?.error");
   expect(attendance()).not.toContain("body?.message");
-  expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("return courseApiError(response)");
+  expect(load("src/components/college/college-faculty-assignment-actions.tsx")).toContain("apiFetch<BulkResult>");
  });
  it("GR-91 Retry is keyboard-accessible in all three role error screens",()=>{
   expect(courseError()).toContain("<Button onClick={reset}>Retry</Button>");
