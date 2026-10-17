@@ -136,4 +136,15 @@ describe("chat-4 College Verification and Misc verification",()=>{
   expect(source("src/app/(authenticated)/college/college-profile/page.tsx")).toContain("College profile manages operational contact details.");
  });
 
+ it("COL-verification-misc-10 reviews the first 1000 rather than failing an oversized queue",()=>{
+  const service=source("src/modules/verification/staff-queue-service.ts");
+  expect(service).toContain(".limit(1001)");
+  expect(service).toContain("const truncated=candidateRows.length>1000");
+  expect(service).toContain("candidateRows.slice(0,1000)");
+  expect(service).not.toContain("if(rows.length>5000)throw new VerificationQueueLimitError()");
+  const view=source("src/components/verification/CollegeVerificationPanel.tsx");
+  expect(view).toContain("Showing the first 1,000 students in this view.");
+  expect(view).toContain("narrow the filters to review other students.");
+ });
+
 });

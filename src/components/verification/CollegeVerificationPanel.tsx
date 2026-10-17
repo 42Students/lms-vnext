@@ -21,10 +21,10 @@ import {parseCollegeBulkReviewReceipt} from "@/modules/verification/bulk-respons
 import type {BulkReviewOutcome} from "@/modules/verification/bulk-outcome";
 import {describeBulkReviewOutcomeRows} from "@/modules/verification/bulk-outcome";
 import type {VerificationFilterChoiceList} from "@/modules/verification/filter-options-model";
-export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,batchChoices,branchChoices,classChoices,programChoices}:{
+export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page,total,hasMore,pageSize,query,tpoCanVerify,truncated=false,batchChoices,branchChoices,classChoices,programChoices}:{
  rows:VerificationQueueCard[];counts:Record<VerificationTab,number>;
  activeTab:VerificationTab;initialKind:"ALL"|"EDUCATION"|"IDENTITY";page:number;total:number;hasMore:boolean;pageSize:number;
- query:Record<string,string>;tpoCanVerify:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;programChoices:VerificationFilterChoiceList;
+ query:Record<string,string>;tpoCanVerify:boolean;truncated?:boolean;batchChoices:VerificationFilterChoiceList;branchChoices:VerificationFilterChoiceList;classChoices:VerificationFilterChoiceList;programChoices:VerificationFilterChoiceList;
 }){
  const router=useRouter(),[selected,setSelected]=useState<VerificationQueueCard|null>(null);
  const [selection,setSelection]=useState<Set<string>>(()=>new Set());
@@ -112,6 +112,9 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  exportQuery.set("tab",activeTab);
  return <div className="min-w-0 space-y-4">
   <TpoVerificationSwitch key={String(tpoCanVerify)} initialEnabled={tpoCanVerify}/>
+  {truncated?<p role="status" className="rounded-lg border border-warning bg-surface p-3 text-sm text-body">
+   Showing the first 1,000 students in this view. Totals reflect this working set; narrow the filters to review other students.
+  </p>:null}
   <div className="flex flex-wrap items-center justify-end gap-2">
    <VerificationExportControl query={Object.fromEntries(exportQuery)}/>
    <button type="button" disabled={bulkBusy} onClick={()=>{if(canNavigateCollegeVerificationQueue(bulkBusy))router.refresh();}} className="rounded-md border px-3 py-2 text-sm disabled:opacity-50">Refresh</button>
