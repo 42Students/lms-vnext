@@ -176,12 +176,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             role="dialog"
             aria-modal="true"
             aria-label="Import recruiter leads"
+            aria-describedby="recruiter-import-help"
             className="max-h-[90vh] w-full max-w-3xl space-y-4 overflow-y-auto rounded-xl border border-border bg-surface p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold text-foreground">Import recruiter leads</h2>
-                <p className="mt-2 text-sm text-body">
+                <p id="recruiter-import-help" className="mt-2 text-sm text-body">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
