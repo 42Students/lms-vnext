@@ -29,7 +29,13 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard" }:
     void fetch("/api/client-errors", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ requestId: id, kind }),
+      body: JSON.stringify({
+        message: "A page could not be displayed.",
+        name: stale ? "ChunkLoadError" : "RenderFailure",
+        component: "GracefulErrorBoundary",
+        event: kind,
+        path: window.location.pathname.slice(0, 255),
+      }),
       keepalive: true,
     }).catch(() => { /* The fallback must work without a connection. */ });
 
