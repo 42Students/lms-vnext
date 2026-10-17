@@ -46,9 +46,9 @@ export function SuperAdminHrAccountDialog({
   const [newCompanyName,setNewCompanyName]=useState("");
   const [newCompanyCollegeId,setNewCompanyCollegeId]=useState("");
   const [newCompanyDomain,setNewCompanyDomain]=useState("");
-  const [displayName, setDisplayName] = useState(
-    account?.displayName ?? "",
-  );
+  const [firstName,setFirstName] = useState(()=>account?.displayName?.trim().split(/\s+/)[0]??"");
+  const [lastName,setLastName] = useState(()=>account?.displayName?.trim().split(/\s+/).slice(1).join(" ")??"");
+  const displayName=[firstName.trim(),lastName.trim()].filter(Boolean).join(" ");
   const [phoneE164, setPhoneE164] = useState(
     account?.phoneE164 ?? "",
   );
@@ -272,24 +272,17 @@ export function SuperAdminHrAccountDialog({
           </div>
         )}
 
-        <div>
-          <label
-            htmlFor={`${id}-name`}
-            className="mb-1.5 block text-xs font-semibold text-body"
-          >
-            Full name
+        <div className="grid gap-4 sm:grid-cols-2">
+          <label className="grid gap-1 text-sm font-semibold text-body">First Name
+            <Input id={`${id}-first-name`} autoComplete="given-name" value={firstName}
+              minLength={1} maxLength={120} required disabled={pending}
+              onChange={event=>setFirstName(event.target.value)}/>
           </label>
-          <Input
-            id={`${id}-name`}
-            autoComplete="name"
-            value={displayName}
-            required
-            maxLength={255}
-            disabled={pending}
-            onChange={(event) =>
-              setDisplayName(event.target.value)
-            }
-          />
+          <label className="grid gap-1 text-sm font-semibold text-body">Last Name
+            <Input id={`${id}-last-name`} autoComplete="family-name" value={lastName}
+              maxLength={120} disabled={pending}
+              onChange={event=>setLastName(event.target.value)}/>
+          </label>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -343,7 +336,7 @@ export function SuperAdminHrAccountDialog({
             htmlFor={`${id}-title`}
             className="mb-1.5 block text-xs font-semibold text-body"
           >
-            Job title · optional
+            Designation · optional
           </label>
           <Input
             id={`${id}-title`}
