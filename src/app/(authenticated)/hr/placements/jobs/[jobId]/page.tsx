@@ -11,6 +11,7 @@ import { getHrJobRead } from "@/modules/placements/hr-job-read-service";
 import { hrSelectionReadyApplicationIds } from "@/modules/placements/hr-offer-selection-read-model";
 import { HR_OFFER_STATES } from "@/modules/placements/hr-job-applicants-model";
 import { buildHrDriveOverview } from "@/modules/placements/hr-drive-overview-model";
+import { recruiterVisibleDriveFunnel } from "@/modules/placements/recruiter-drive-funnel-model";
 import { projectRecruiterRoundResults } from "@/modules/placements/recruiter-round-results-read-model";
 import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/placements/hr-inline-round-results-model";
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
@@ -243,6 +244,29 @@ export default async function HrPlacementJobPage({
                   new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not specified"}
               </dd></div>
             </dl>
+          </section>
+          <section aria-labelledby="recruiter-shared-funnel-title"
+            className="rounded-lg border border-border bg-surface p-4">
+            <h3 id="recruiter-shared-funnel-title" className="font-semibold text-foreground">Hiring pipeline</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Only applicants shared by the placement cell are counted. Earlier or unshared applications are not visible to your employer account.
+              Assessment and interview steps show recorded applied results; “—” means this drive has no such round.
+            </p>
+            <ol className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Employer-visible stage funnel">
+              {recruiterVisibleDriveFunnel({
+                shared:applicants.counts.all,shortlisted:applicants.counts.shortlisted,
+                rounds:workspace.rounds,
+                issued:offerSummary.issued,accepted:offerSummary.accepted,joined:offerSummary.joined,
+              }).map(stage=><li key={stage.label} className="rounded-lg border border-border bg-surface-subtle p-3">
+                <p className="text-xs font-semibold text-body">{stage.label}</p>
+                <p className="mt-1 text-xl font-bold tabular-nums text-foreground">{stage.count??"—"}</p>
+                <div role="img" aria-label={stage.ofPrevious===null?"Percentage unavailable":stage.ofPrevious+"% of previous known stage"}
+                  className="mt-2 h-2 overflow-hidden rounded-full bg-border">
+                  <div className="h-full bg-primary" style={{width:(stage.ofPrevious??0)+"%"}}/>
+                </div>
+                <p className="mt-1 text-xs text-muted-foreground">{stage.ofPrevious===null?"No comparable previous count":stage.ofPrevious+"% of previous known stage"}</p>
+              </li>)}
+            </ol>
           </section>
           <ol aria-label="Drive progress" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
