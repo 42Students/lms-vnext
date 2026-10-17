@@ -920,7 +920,7 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`}
-          className="overflow-x-auto rounded-xl border border-border bg-surface p-3"
+          className="hidden overflow-x-auto rounded-xl border border-border bg-surface p-3 md:block"
         >
           <div className="grid min-w-[56rem] grid-cols-7 gap-1">
             {[
@@ -1058,6 +1058,7 @@ export async function PlacementCalendarWorkspace({
           </p>
         </div>
 
+        {state.view!=="agenda"?<p className="text-xs text-muted-foreground md:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
         {groups.length === 0 ? (
           <div className="rounded-xl border border-border bg-surface p-8 text-sm text-body">
             {state.view==="agenda"?TPO_EMPTY_AGENDA:

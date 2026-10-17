@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
-import {useMemo,useState} from "react";
+import {useEffect,useMemo,useState} from "react";
 import {positionWeekEvents,type WeekGridEvent} from "@/modules/placements/tpo-week-grid-model";
 import {calendarLocalIstToOffset} from "@/modules/placements/tpo-calendar-followup-model";
 import type {TpoCalendarLeadOption} from "./tpo-calendar-followup-actions";
@@ -92,6 +92,17 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   }catch(error){setMessage(error instanceof Error?error.message:"Could not create follow-up.");}
   finally{setSaving(false);}
  }
+ const hasDraft=Boolean(slot&&(note.trim()||leadId||leadQuery.trim()));
+ useEffect(()=>{
+  if(!hasDraft)return;
+  const prevent=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+  window.addEventListener("beforeunload",prevent);
+  return ()=>window.removeEventListener("beforeunload",prevent);
+ },[hasDraft]);
+ function cancelDraft(){
+  if(hasDraft&&!window.confirm("Discard this unfinished follow-up?"))return;
+  setSlot(null);setMessage("");
+ }
  const height=(LAST-FIRST)*HEIGHT;
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-3">
@@ -158,7 +169,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   </div>
   {!slot&&message?<p role="alert" className="rounded border border-border p-3 text-sm text-warning-text">{message}</p>:null}
   {slot?<div role="dialog" aria-modal="true" aria-label="New recruiter follow-up" className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-   <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5">
+   <div className="w-full max-w-md space-y-3 rounded-xl border border-border bg-surface p-5" onKeyDown={event=>{if(event.key==="Escape"){event.stopPropagation();cancelDraft();}}}>
     <h2 className="text-lg font-semibold">New recruiter follow-up</h2>
     {slot&&blocked.has(slot.slice(0,10))?<p role="alert" className="rounded border border-warning px-3 py-2 text-sm text-warning-text">This day is blocked for placement scheduling. Choose another date if possible.</p>:null}
     {!blockedDatesAvailable?<p role="status" className="text-xs text-muted-foreground">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</p>:null}
@@ -178,7 +189,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       className="rounded border border-border p-2"/></label>
     {message?<p role="alert" className="text-sm text-warning-text">{message}</p>:null}
     <div className="flex justify-end gap-2">
-     <button type="button" disabled={saving} onClick={()=>setSlot(null)}
+     <button type="button" disabled={saving} onClick={cancelDraft}
       className="min-h-11 rounded border border-border px-4 text-sm">Cancel</button>
      <button type="button" disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
       className="min-h-11 rounded bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">{saving?"Saving…":"Add follow-up"}</button>
