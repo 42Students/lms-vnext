@@ -9,11 +9,26 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
  const [phoneE164,setPhoneE164]=useState("");
  const [evidence,setEvidence]=useState("");
  const [consent,setConsent]=useState(false),[verified,setVerified]=useState(false);
- const [pending,setPending]=useState(false),[error,setError]=useState(""),[success,setSuccess]=useState("");
+ const [pending,setPending]=useState(false),[retrying,setRetrying]=useState(false),[error,setError]=useState(""),[success,setSuccess]=useState("");
  const lock=useRef(false);
  const input={collegeId,membershipId,phoneE164,consentEvidenceReference:evidence,
   guardianConsentConfirmed:consent,verifiedParentPhone:verified};
  const valid=attendanceParentContactInputSchema.safeParse(input).success;
+ async function retry(){
+  if(retrying||pending)return;
+  setRetrying(true);setError("");setSuccess("");
+  try{
+   const result=await apiFetch<{ready:boolean;accepted:number;skipped:number;unavailable:number}>(
+    "/api/attendance/admin/parent-contacts/retry",{
+     method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({collegeId}),
+    });
+   if(!result.ready)setError("Attendance SMS requires the registered database migration.");
+   else setSuccess(result.accepted+" SMS accepted by the provider; "+result.skipped+
+    " outdated or revoked; "+result.unavailable+" unavailable or pending. Accepted is not proof of handset delivery.");
+  }catch{setError("Could not review pending guardian SMS. Try again.");}
+  finally{setRetrying(false);}
+ }
+
  async function save(){
   if(lock.current||!valid)return;
   lock.current=true;setPending(true);setError("");setSuccess("");
@@ -61,6 +76,8 @@ export function AdminAttendanceParentContactEditor({collegeId,learners}:{college
    </label>
    <button type="button" disabled={!valid||pending} onClick={()=>void save()}
     className="min-h-10 rounded bg-primary px-3 text-on-primary">Save verified contact</button>
+   <button type="button" disabled={pending||retrying} onClick={()=>void retry()}
+    className="min-h-10 rounded border border-border px-3">Retry queued guardian SMS (up to 25)</button>
    {success?<p role="status" className="sm:col-span-2">{success}</p>:null}
    {error?<p role="alert" className="sm:col-span-2">{error}</p>:null}
   </div>:null}
