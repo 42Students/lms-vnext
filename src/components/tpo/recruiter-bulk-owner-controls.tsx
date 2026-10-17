@@ -38,6 +38,7 @@ export function RecruiterBulkOwnerControls({
   const [copyNotice,setCopyNotice]=useState("");
   const [runAuditId,setRunAuditId]=useState("");
   const [reviewOpen,setReviewOpen]=useState(false);
+  const [reviewSignature,setReviewSignature]=useState("");
 
   const assignable = rows;
   const retryable=results.filter(item=>item.status==="ineligible"&&assignable.some(row=>row.id===item.leadId));
