@@ -213,6 +213,9 @@ export async function updateCollegeCohort(
       const [updated] = await tx.update(cohorts).set({
         name: input.name, code: input.code,
         expectedEndPeriodId: input.expectedEndPeriodId,
+        startDate:current.startDate??start.startDate,
+        endDate:expected?.endDate??null,
+        academicYear:batchAcademicYearFromDates(current.startDate??start.startDate,expected?.endDate??null),
         updatedAt: new Date(),
       }).where(and(eq(cohorts.id, cohortId), eq(cohorts.programId, current.programId),
         eq(cohorts.status, current.status))).returning();
