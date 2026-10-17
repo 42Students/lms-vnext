@@ -307,7 +307,7 @@ export default async function HrPlacementJobPage({
             <h3 className="font-semibold text-foreground">Next</h3>
             <p className="mt-1 text-sm text-body">{recruiterDriveNextAction(driveOverview).detail}</p>
             <Link href={recruiterDriveNextAction(driveOverview).tab
-               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab
+               ? "/recruiter/drives/"+workspace.job.id+"?tab="+recruiterDriveNextAction(driveOverview).tab+returnQuery
                : recruiterDriveDraftHref({collegeId:workspace.college.id,fromJobId:workspace.job.id})}
               className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
               {recruiterDriveNextAction(driveOverview).label}
