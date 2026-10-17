@@ -18,6 +18,13 @@ describe("chat-16 mentor editor safeguards",()=>{
     expect(editor).toContain("Project estimation unit:");
     expect(workspace).toContain("estimationUnit={workspace.project.estimationUnit}");
   });
+  it("MEN-projects-meetings-57 renders private file timestamps in IST beside status",()=>{
+    const files=source("src/components/projects/project-resource-files-panel.tsx");
+    expect(files).toContain("Last updated: <time dateTime={file.completedAt??file.createdAt}>");
+    expect(files).toContain('timeZone:"Asia/Kolkata"');
+    expect(files).toContain("{descriptor.label}");
+    expect(files).toContain("{file.originalName}");
+  });
   it("MEN-projects-meetings-58 MEN-projects-meetings-76 confirms permanent file deletion without window.confirm",()=>{
     const files=source("src/components/projects/project-resource-files-panel.tsx");
     expect(files).not.toContain("window.confirm(");
