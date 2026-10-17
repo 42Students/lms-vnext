@@ -186,7 +186,9 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       className="mt-1 w-full rounded border bg-background p-2">
       <option value="Asia/Kolkata">India Standard Time (IST)</option>
       <option value="UTC">UTC</option>
-     </select></label>
+     </select>
+     <span className="mt-1 block text-xs text-muted-foreground">Changing Time Zone preserves the scheduled instant and converts the displayed dates.</span>
+    </label>
     <label className="text-sm">Start Date and Time
      <input type="datetime-local" required value={start} onChange={e=>setStart(e.target.value)}
       className="mt-1 w-full rounded border bg-background p-2"/></label>
