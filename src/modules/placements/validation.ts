@@ -280,6 +280,8 @@ const placementJobWorkModes = [
 
 const optionalHttpUrlSchema = httpUrlSchema.nullable().optional();
 
+import {placementLegacyPostingDetailsSchema} from "./placement-legacy-posting-model";
+
 const placementJobFieldsSchema = z
   .object({
     collegeId: z.string().uuid(),
@@ -290,6 +292,7 @@ const placementJobFieldsSchema = z
     companyRelationshipId: z.string().uuid(),
     title: z.string().trim().min(3, "At least 3 characters").max(100),
     description: z.string().trim().max(15_000).default(""),
+    legacyPostingDetails:placementLegacyPostingDetailsSchema.nullable().optional(),
     employmentType: z.enum(placementEmploymentTypes),
     workMode: z.enum(placementJobWorkModes),
     locations: distinctTextList(20, 120).optional().default([]),
@@ -309,6 +312,12 @@ const placementJobFieldsSchema = z
 
 export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
+    const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
+    if(assessmentDeadline){
+      if(!value.applicationDeadline||Date.parse(assessmentDeadline)<value.applicationDeadline.getTime())
+        ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
+          message:"Assessment deadline must be after application deadline"});
+    }
     if(value.fixedCtcLpa!=null&&value.variableCtcLpa!=null&&
       value.maximumAnnualCtcInr!=null&&(value.fixedCtcLpa+value.variableCtcLpa)*100000>value.maximumAnnualCtcInr){
       ctx.addIssue({code:"custom",path:["variableCtcLpa"],
