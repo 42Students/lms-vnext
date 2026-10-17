@@ -108,6 +108,8 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 
 ## Notes (blockers, one line each)
 
+- TPO-requests-verification-01: registered migration 0134 has duplicate IF NOT EXISTS definitions for the general request tables; the first effective CHECK omits OFFER_ACCEPTANCE_DISPUTE, and target_key is varchar(150); a separately registered follow-up migration is required to align the sixth learner request kind, do not edit 0134.
+
 - TPO-students-06/07 OPEN: timed/date/N-drive debarment is wired, but bulk, student dispute/notification and true drive counting transitions are not closed; database acceptance not run.
 - TPO-students-14/15 OPEN: dialog and transactional learner notification are wired; inclusion override and 48-hour opt-out, summary bell and whole-view selections still remain.
 - TPO-requests-verification-01/37/38 OPEN: missing learner request kinds and recruiter REQUEST transitions require staged schema/service changes, not an external blocker.
