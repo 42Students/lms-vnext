@@ -105,6 +105,14 @@ describe("College People legacy audited page contracts",()=>{
   expect(collegeRoleDirectoryHref("FACULTY",faculty)).toContain("teaching=ASSIGNED");
   expect(()=>parseCollegeRoleDirectorySearchParams({page:["1","2"]})).toThrow("INVALID_ROLE_DIRECTORY_FILTERS");
   expect(()=>assertCompatibleCollegeRoleDirectoryFilters("FACULTY",collegeRoleDirectoryQuerySchema.parse({classPresence:"ASSIGNED"}))).toThrow();
+  const page=directory();
+  for(const field of ["Active class / section","Active program","Active batch","Department","Employment type","Membership status"])
+    expect(page).toContain(field);
+  expect(page).toContain("Advanced filters");
+  expect(page).toContain("collegeRoleDirectoryHasActiveFilters(kind,result.filter)");
+  expect(page.indexOf("Active class / section")).toBeLessThan(page.indexOf("<summary"));
+  expect(page.indexOf("Department")).toBeLessThan(page.indexOf("<summary"));
+  expect(page).toContain('name="accountStatus"');
  });
  it("COL-people-16 visible CSV neutralizes spreadsheet formula injection",()=>{
   expect(escapeRoleDirectoryCsvCell("=HYPERLINK(1)")).toBe('"\'=HYPERLINK(1)"');
