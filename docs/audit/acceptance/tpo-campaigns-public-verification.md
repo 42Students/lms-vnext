@@ -6,3 +6,10 @@
 |---|---|---|
 | TPO-campaigns-public-09 | DONE (source, tests not run) | Bad batch IDs cause Next.js 404 before Zod parse/DB access, in `campaigns/[batchId]/page.tsx`. Named test `tests/unit/chat2-campaign-history-routes.test.ts`. |
 | TPO-campaigns-public-10 | PARTIAL — OPEN | Emails title, truthful empty message, sent/skipped labels in `campaigns/page.tsx`. Delivery receipt vs successful delivery semantics remain explicit, and other copy gaps remain. Named unit test in same file. |
+
+| TPO-campaigns-public-24 | DONE (source, unrun) | `PublicJoinPreviewRetry` now says exact "We couldn't load this page" and Retry; invalid link remains distinct. Named `tests/unit/chat2-public-join-states.test.ts`. |
+| TPO-campaigns-public-30 | DONE (source, unrun) | Company join route shares verified distinct error/retry state, plus success/invalid copy; named test. |
+| TPO-campaigns-public-R03 | DONE (source, unrun) | ALREADY_JOINED uses "You already have access to {college}", server `signInEmail` preserved; named test. |
+| TPO-campaigns-public-R01 | DONE (source verified) | Real `join-service` stores normalized optional mobile in registered `placement_recruiter_public_contacts`; refuses to accept with a phone when storage is missing, no silent drop; named test. |
+| TPO-campaigns-public-R02 | PARTIAL — OPEN | Existing per-code error copy and phone/network guards verified, but field-specific placement pending; named test. |
+| TPO-campaigns-public-R07 | DONE (source verified) | Existing registrable work-domain matching and subdomain guards, with named test. |
