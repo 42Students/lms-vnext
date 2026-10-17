@@ -287,7 +287,7 @@ export async function scheduleProjectMeeting(
     const targetStatus=input.status??(existing?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
     if ((!existing && targetStatus==="RESCHEDULED") ||
       (existing?.status!=="DRAFT" && existing && targetStatus==="DRAFT") ||
-      (targetStatus==="RESCHEDULED" && existing &&
+      (targetStatus==="RESCHEDULED" && existing && existing.status!=="RESCHEDULED" &&
         existing.startsAt.getTime()===startsAt.getTime() &&
         existing.endsAt.getTime()===endsAt.getTime()) ||
       (targetStatus!=="DRAFT" && !input.meetingUrl))
