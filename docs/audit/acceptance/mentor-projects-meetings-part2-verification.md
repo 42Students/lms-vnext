@@ -21,5 +21,20 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
 - MEN-projects-meetings-65: Accept/request-change copy is improved, but the legacy separate decision dialogs and stale-state UX are not fully restored. Test: `it("MEN-projects-meetings-65 uses submission decision wording and exact feedback")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
 
+| MEN-projects-meetings-55 | DONE | src/components/projects/project-resource-list.tsx; tests/unit/mentor-resource-list-round5.test.ts — `it("MEN-projects-meetings-55 searches resources, filters types and visibility with clear filters and stats")`. Sprint/task filters require corresponding resource associations and remain a separate data-model gap. |
+| MEN-projects-meetings-57 | DONE | src/components/projects/project-resource-list.tsx; project-resource-open-link.tsx; tests/unit/mentor-resource-list-round5.test.ts — `it("MEN-projects-meetings-57 lists human-facing resource labels, last update, state and safe links")`. |
+
+| MEN-projects-meetings-74 | DONE | next.config.ts; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-74 safely redirects retired mentor bookmarks")` |
+| MEN-projects-meetings-76 | DONE | src/components/projects/mentor-sprint-write.tsx, mentor-project-closeout-control.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-76 uses styled mentor sprint and project completion confirmation")` |
+| MEN-projects-meetings-77 | DONE | src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
+
+| MEN-projects-meetings-60 | DONE | src/app/api/projects/[projectId]/activity/route.ts, src/components/projects/project-activity-filtered-list.tsx; tests/unit/mentor-activity-pagination-round5.test.ts — `it("MEN-projects-meetings-60 pages real authorized project history with a stable microsecond cursor")` |
+
+| MEN-projects-meetings-72 | DONE | src/modules/projects/project-notification-service.ts, meeting-service.ts, task-comment-service.ts, task-assignment-service.ts, member-service.ts, resource-service.ts, mentor-final-delivery-decision-service.ts; tests/unit/mentor-notifications-round5.test.ts — `it("MEN-projects-meetings-72 persists transactional mentor project notices for meeting, comment, task, delivery, team and resource events")`. In-app delivery checks active same-college membership. |
+
+## Partial editor recovery
+
+- MEN-projects-meetings-75: Resource create/edit dialogs now confirm dirty discards and protect page unload; task, sprint, meeting, and delivery editors still need matching recovery. Test: `it("MEN-projects-meetings-75 keeps dirty project resource drafts on close or unload")` in `tests/unit/mentor-resource-dirty-round5.test.ts`.
+
 ## Remaining
-MEN-projects-meetings-53/55/56/57/58/60/63/64/65/66/72/74/75/76/77. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.
+MEN-projects-meetings-53/56/58/63/64/65/66/75. The notifications page still uses separate personal and project sections; unified priority order needs a follow-up audit. No tests executed here.

@@ -1,19 +1,53 @@
 "use client";
-import {useState} from "react";
-import {projectResourceAuditAction,projectResourceAuditMatches} from "@/modules/projects/project-resource-audit-model";
+import {useState,useRef} from "react";
+import {apiFetch} from "@/lib/api-fetch";
 import {mentorActivityCategory, mentorActivityLabel, mentorActivityRelativeTime} from "@/modules/projects/mentor-activity-display-model";
 
-type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:Date};
+type Event={id:string;eventType:string;importance:string;summary:string;actorDisplayName:string|null;occurredAt:string|Date};
+type Cursor={time:string;id:string};
+type Page={events:Event[];hasMore:boolean;nextCursor:Cursor|null};
 
-export function ProjectActivityFilteredList({events,now,resourceAudit=false}:{events:Event[];now:string;resourceAudit?:boolean}){
+export function ProjectActivityFilteredList({projectId,events,now}:{
+ projectId:string;events:Event[];now:string;
+}){
+ const [items,setItems]=useState<readonly Event[]>(events);
+ const [hasMore,setHasMore]=useState(events.length>=100);
+ const [cursor,setCursor]=useState<Cursor|null>(null);
+ const [busy,setBusy]=useState(false);
+ const [loadError,setLoadError]=useState("");
+ const lock=useRef(false);
+ async function loadMore(){
+  if(lock.current||!hasMore)return;
+  lock.current=true;setBusy(true);setLoadError("");
+  try{
+    const endpoint="/api/projects/"+encodeURIComponent(projectId)+"/activity";
+    // The first request obtains the precise microsecond cursor so same-ms
+    // events are not skipped by Date's millisecond precision.
+    let next=cursor;
+    if(!next){
+      const first=await apiFetch<Page>(endpoint,{cache:"no-store"});
+      next=first.nextCursor;
+      if(!next){setHasMore(false);return;}
+    }
+    const params=new URLSearchParams({beforeTime:next.time,beforeId:next.id});
+    const page=await apiFetch<Page>(endpoint+"?"+params.toString(),{cache:"no-store"});
+    setItems(previous=>{
+      const seen=new Set(previous.map(event=>event.id));
+      return [...previous,...page.events.filter(event=>!seen.has(event.id))];
+    });
+    setCursor(page.nextCursor);
+    setHasMore(page.hasMore);
+  }catch{setLoadError("We couldn't load more activity. Try again.");}
+  finally{lock.current=false;setBusy(false);}
+ }
  const [type,setType]=useState("");
  const [resourceChange,setResourceChange]=useState("ALL"),[search,setSearch]=useState("");
  const [range,setRange]=useState("ALL");
  const [fromDate,setFromDate]=useState("");
  const [toDate,setToDate]=useState("");
- const categories=[...new Set(events.map(event=>event.eventType))].sort();
+ const categories=[...new Set(items.map(event=>event.eventType))].sort();
  const current=Date.parse(now);
- const filtered=events.filter(event=>{
+ const filtered=items.filter(event=>{
   const occurred=new Date(event.occurredAt);
   const day=occurred.toISOString().slice(0,10);
   return (!type||event.eventType===type)
@@ -63,7 +97,7 @@ export function ProjectActivityFilteredList({events,now,resourceAudit=false}:{ev
   <p className="text-xs text-muted-foreground">{filtered.length} events · Times shown in your device timezone.</p>
   {!filtered.length
     ? <p className="rounded-lg border border-border p-4 text-sm text-muted-foreground">
-      {events.length===0
+      {items.length===0
        ? "No project activity yet. Task moves, sprint updates and resource changes will appear here."
        : type && (fromDate||toDate||range!=="ALL")
         ? "No activity matches this source and date range."
@@ -91,5 +125,10 @@ export function ProjectActivityFilteredList({events,now,resourceAudit=false}:{ev
        </div>
       </article>)}
      </div>}
+  {hasMore?<button type="button" disabled={busy} onClick={()=>void loadMore()}
+   className="min-h-10 rounded-md border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
+   {busy?"Loading activity…":"Load more activity"}
+  </button>:null}
+  {loadError?<p role="alert" className="text-sm text-error">{loadError}</p>:null}
  </section>;
 }
