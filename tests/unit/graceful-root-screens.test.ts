@@ -56,4 +56,12 @@ describe("graceful route screens", () => {
   it("GR-23 tells unsupported browsers to update instead of showing a blank page", () => {
     expect(source("src/components/public/browser-support-notice.tsx")).toContain("Please update your browser");
   });
+  it("GR-11 sends a schema-valid browser report without exposing exception text", () => {
+    const boundary = source("src/components/public/graceful-error-boundary.tsx");
+    expect(boundary).toContain('message: "A page could not be displayed."');
+    expect(boundary).toContain("event: kind");
+    expect(boundary).not.toContain("body: JSON.stringify({ requestId: id, kind })");
+    expect(source("src/modules/log-alerts/client-report.ts")).toContain("browserErrorSchema");
+  });
+
 });
