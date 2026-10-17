@@ -152,6 +152,14 @@ export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
 }
 
 
+let cloudPollFailureLogged = false;
+
+function noteCloudPollingFailure() {
+  if (cloudPollFailureLogged) return;
+  cloudPollFailureLogged = true;
+  process.stderr.write("[log-alerts] Cloud Logging poll unavailable; other scheduled checks continue\\n");
+}
+
 /** Operator-opted Cloud Logging backup. Production cannot silently query the dev namespace. */
 export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
   { project: string; namespace: string } | null {
@@ -212,6 +220,7 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
         .where(eq(states.stateKey, stateKey));
     }
   });
+  cloudPollFailureLogged = false;
   return handled;
 }
 
@@ -223,7 +232,14 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
   // The locked state row preserves the five-per-minute ceiling across web replicas.
   await flushOverflow(now);
   await sweepUndeliveredRegressions(now);
-  await pollCloudLoggingErrors(now);
+  try {
+    await pollCloudLoggingErrors(now);
+  } catch {
+    // Cloud Logging may lack IAM permission or Workload Identity temporarily.
+    // Do not lose the digest or recovery sweep because a backup source is down.
+    // Never log a provider exception: URLs and request headers are sensitive.
+    noteCloudPollingFailure();
+  }
   let digest = false;
   const acquired = await withScheduledLease("telegram-digest", now, async () => {
     if (hour < 9) return;
