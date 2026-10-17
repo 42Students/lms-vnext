@@ -4,8 +4,10 @@ import { AdminCourseOverview } from "@/components/courses/admin-course-overview"
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
+import { collegeCourseCatalogueQuerySchema } from "@/modules/courses/college-course-catalogue-model";
+import { ErrorState } from "@/components/ui/error-state";
 
-export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[]}>}) {
+export default async function SuperAdminCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[];q?:string|string[];sort?:string|string[];page?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   const collegeId =
@@ -35,6 +37,12 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
   }
 
   const query=await searchParams;
+  const catalogueQuery=collegeCourseCatalogueQuerySchema.safeParse({q:query.q,sort:query.sort,page:query.page});
+  if(!catalogueQuery.success)return <div className="space-y-5">
+    <PageHeader eyebrow="Super Admin" title="Courses"/>
+    <ErrorState title="Invalid course filters" description="Check the search, sort or page and retry."
+      action={<Link href="/admin/courses" className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+  </div>;
   const duplicateCourseId=typeof query.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(query.duplicate)
     ?query.duplicate:undefined;
   const workspace =
@@ -61,6 +69,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         workspace={workspace}
         courseBasePath="/admin/courses"
         duplicateCourseId={duplicateCourseId}
+        catalogueQuery={catalogueQuery.data}
         offeringBasePath="/admin/courses/offerings"
       />
     </div>
