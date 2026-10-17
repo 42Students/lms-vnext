@@ -1481,6 +1481,14 @@ export function ProjectWorkspace({
                         Outcome: {meeting.outcome}
                       </p>
                     ) : null}
+                    {mode==="MENTOR"? (
+                      <Link
+                        href={"/mentor/projects/"+encodeURIComponent(workspace.project.id)+
+                          "/meetings/"+encodeURIComponent(meeting.id)+"/notes"}
+                        className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">
+                        {meeting.outcome?"View notes":"Add notes"}
+                      </Link>
+                    ) : null}
                     {href ? (
                       <a
                         href={href}
