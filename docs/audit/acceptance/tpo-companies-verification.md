@@ -140,3 +140,9 @@ These named regressions were authored, not run; responsive and keyboard browser 
 | TPO-companies-R05 | DONE (source; runtime pending) | Canonical company drive query explicitly uses descending created date, consistent with the name page and newest-first vNext policy; `tpo-companies-view-service.ts`; `tests/unit/chat3-final-sprint-company-team-and-review.test.ts`, `TPO-companies-R05`. |
 
 All 18 final-sprint IDs now have an ID-named source regression and acceptance entry. TPO-companies-05 is **not** fully closed while migration registration and real mention/link/bell parity remain outstanding. Tests were authored but not executed.
+
+### TPO-companies-05 follow-on: working feature surface and notifications
+
+`TPO-companies-05` now also sends transactional `in_app_notifications` to active, verified placement-team recipients for follows, `@team`, explicit `@member:<uuid>` mentions, and ask completion/cancellation; the author is excluded and recipients are revalidated against college membership, active platform status and placement roles. Message rendering resolves `#drive:<uuid>`, `#company:<uuid>` and `#student:<uuid>` through existing permission-checked internal destinations rather than constructing unauthorized profile data. The composer has an explicit teammate picker, and the timeline includes IST day separators and overdue-ask labels. Test `TPO-companies-05 notifies only active same-college team followers, @team and explicit @members` in `tests/unit/chat3-final-sprint-company-team-and-review.test.ts`.
+
+**Remaining acceptance dependency:** The proposed `chat3-tpo-company-team.sql` must be registered and applied by the orchestrator before any real company thread can be used. No browser, real-database, notification-delivery, or concurrent-write test was run by this lane. This is a source-complete proposed feature, not a claim of production deployment.
