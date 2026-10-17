@@ -750,10 +750,11 @@ export function ProjectMeetingTransitionActions({
     (meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED");
   const mayCancel =
     (manager &&
-      (meeting.status === "REQUESTED" ||
+      (meeting.status === "DRAFT" || meeting.status === "REQUESTED" ||
         meeting.status === "SCHEDULED" || meeting.status === "RESCHEDULED")) ||
     learnerOwnRequest;
   const withdrawing=learnerOwnRequest&&!manager;
+  const draftDiscard=manager&&meeting.status==="DRAFT";
 
   if (!mayComplete && !mayCancel) {
     return null;
@@ -788,7 +789,7 @@ export function ProjectMeetingTransitionActions({
         title:
           action === "COMPLETE"
             ? "Meeting completed"
-            : withdrawing?"Meeting request withdrawn.":"Meeting cancelled",
+            : withdrawing?"Meeting request withdrawn.":draftDiscard?"Meeting draft discarded.":"Meeting cancelled",
       });
       router.refresh();
     } catch {
@@ -824,7 +825,7 @@ export function ProjectMeetingTransitionActions({
               setOpen("CANCEL")
             }
           >
-            {withdrawing?"Withdraw":"Cancel meeting"}
+            {withdrawing?"Withdraw":draftDiscard?"Discard draft":"Cancel meeting"}
           </Button>
         ) : null}
       </div>
@@ -837,12 +838,12 @@ export function ProjectMeetingTransitionActions({
         title={
           open === "COMPLETE"
             ? "Complete meeting"
-            : withdrawing?"Withdraw this meeting request?":"Cancel meeting"
+            : withdrawing?"Withdraw this meeting request?":draftDiscard?"Discard meeting draft?":"Cancel meeting"
         }
         description={
           open === "COMPLETE"
             ? "Capture the outcome before closing this Project meeting."
-            : withdrawing?"Your mentor will no longer see this request.":"Cancellation keeps the meeting record and its history visible."
+            : withdrawing?"Your mentor will no longer see this request.":draftDiscard?"This draft was never shared with learners. Discarding keeps an internal record only.":"Cancellation keeps the meeting record and its history visible."
         }
         footer={
           <>
@@ -870,7 +871,7 @@ export function ProjectMeetingTransitionActions({
                 ? "Saving…"
                 : open === "COMPLETE"
                   ? "Complete"
-                  : withdrawing?"Withdraw request":"Cancel meeting"}
+                  : withdrawing?"Withdraw request":draftDiscard?"Discard draft":"Cancel meeting"}
             </Button>
           </>
         }
