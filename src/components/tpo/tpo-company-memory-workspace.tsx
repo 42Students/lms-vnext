@@ -161,7 +161,7 @@ export function TpoCompanyMemoryWorkspace({
         <p role={phase === "loading" ? "status" : "alert"}>
           {phase === "loading" ? "Loading Company Memory…" : error}
         </p>
-        {phase === "error" || phase === "not-found" ? (
+        {phase === "error" || phase === "not-found" || phase === "migration-pending" ? (
           <div className="mt-4 flex flex-wrap gap-3">
             <button className={buttonStyle} onClick={retry}>Retry</button>
             <Link className={buttonStyle} href="/tpo/recruiters?view=companies">Back to companies</Link>
@@ -237,8 +237,8 @@ export function TpoCompanyMemoryWorkspace({
       </div>
 
       {company.studentsHired == null ? (
-        <div className="rounded-lg border border-border bg-surface-secondary p-3 text-sm text-muted-foreground">
-          Students-placed totals remain hidden until W04 verifies the college counts-as-placed policy against current offer outcomes. No guessed zero is shown.
+        <div role="status" className="rounded-lg border border-border bg-surface-secondary p-3 text-sm text-muted-foreground">
+          Students-placed counts are unavailable for this college&apos;s selected placement rule. No estimated zero is shown.
         </div>
       ) : null}
 

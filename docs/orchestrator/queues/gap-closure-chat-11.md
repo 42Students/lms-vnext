@@ -227,7 +227,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-tenants-modules-33 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-33 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-35 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | SA-tenants-modules-25 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-29 | S3 | MISSING-MODAL | FIXED-ON-MAIN |

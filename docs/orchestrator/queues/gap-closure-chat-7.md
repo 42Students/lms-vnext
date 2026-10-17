@@ -74,7 +74,7 @@ Audit: `docs/audit/pages/learner/placements.md` (and `placements-review.md` if p
 | LEARNER-placements-58 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
 | LEARNER-placements-R08 | S4 | STATE | FIXED-ON-MAIN |
 
-## mentor/projects-meetings (58: FIXED-ON-MAIN 49, DONE 5, OPEN 4)
+## mentor/projects-meetings (58: FIXED-ON-MAIN 49, DONE 8, OPEN 1)
 
 Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/mentor-projects-meetings-verification.md`.
 
@@ -125,17 +125,17 @@ Audit: `docs/audit/pages/mentor/projects-meetings.md` (and `projects-meetings-re
 | MEN-projects-meetings-R04 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R05 | S3 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R06 | S3 | STATE | DONE |
-| MEN-projects-meetings-R07 | S3 | VALIDATION | OPEN |
+| MEN-projects-meetings-R07 | S3 | VALIDATION | DONE |
 | MEN-projects-meetings-R08 | S3 | VALIDATION | FIXED-ON-MAIN |
 | MEN-projects-meetings-02 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-07 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-09 | S4 | STATE | FIXED-ON-MAIN |
-| MEN-projects-meetings-10 | S4 | PERFORMANCE | OPEN |
+| MEN-projects-meetings-10 | S4 | PERFORMANCE | DONE |
 | MEN-projects-meetings-13 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-24 | S4 | COPY | FIXED-ON-MAIN |
 | MEN-projects-meetings-25 | S4 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-29 | S4 | VALIDATION | DONE |
-| MEN-projects-meetings-R09 | S4 | MISSING-FIELD | OPEN |
+| MEN-projects-meetings-R09 | S4 | MISSING-FIELD | DONE |
 | MEN-projects-meetings-R10 | S4 | STATE | FIXED-ON-MAIN |
 | MEN-projects-meetings-R11 | S4 | STATE | FIXED-ON-MAIN |
 
@@ -269,3 +269,7 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 ## Chat-7 ownership check, 2026-10-17
 - Reassignment policy: skip OPEN recruiter/home-drives (chat-14), learner/placements (chat-15) and mentor/projects-meetings-part2 (chat-16). Mentor part 1 and faculty/courses remain chat-7.
 - Addressed the two failing `tests/unit/learner-projects-round2-gap-closure.test.ts` source contracts `LEARNER-projects-09` and `LEARNER-projects-34` in shared `project-workspace.tsx` (Projects heading and Resource counts). Tests not run. Learner contact/course/notification and recruiter-drive failures touch chat-15/chat-14 reassigned pages, so their owners retain those failures.
+
+## Chat-7 final mentor status note
+- MEN-projects-meetings-27: structured meeting notes, action items, retrospective, outcome, follow-up/status saved with an unnumbered migration proposal. Legacy Draft and Rescheduled meeting lifecycle statuses remain OPEN: chat-16 owns mentor/calendar and moved meeting pages; do not add incompatible state transitions without updating that lane's consumers. Need orchestrator to register the meeting facilitation proposal before deploying.
+- MEN-projects-meetings-10: DB paging is active for ordinary search/status/assignment with recent/title order; advanced attention/task-work and computed progress sorts remain full-scope rollups. Unit tests authored, not run.

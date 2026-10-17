@@ -527,6 +527,10 @@ export const placementJobs = pgTable(
     publishedAt: timestamp("published_at", { withTimezone: true }),
     closedAt: timestamp("closed_at", { withTimezone: true }),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
+    /** TPO-inbox-team-33: explicitly assigned placement team owner, never inferred from the creator. */
+    ownerMembershipId: uuid("owner_membership_id").references(
+      () => collegeMemberships.id, { onDelete: "restrict" },
+    ),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, { onDelete: "restrict" }),
@@ -550,6 +554,11 @@ export const placementJobs = pgTable(
     index("placement_jobs_relationship_idx").on(
       table.companyRelationshipId,
     ),
+    foreignKey({
+      name: "placement_jobs_owner_college_fk",
+      columns: [table.ownerMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
     check(
       "placement_jobs_status_ck",
       sql`${table.status} in ('DRAFT', 'PUBLISHED', 'CLOSED', 'ARCHIVED', 'CANCELLED')`,

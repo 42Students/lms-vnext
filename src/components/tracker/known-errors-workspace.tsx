@@ -55,7 +55,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   }
 
   return (
-    <article className="space-y-4 rounded-xl border border-border bg-surface p-5">
+    <article id={"known-error-"+item.id} className="scroll-mt-4 space-y-4 rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="m-0 break-all font-mono text-xs text-muted-foreground">
@@ -219,7 +219,7 @@ export function KnownErrorsWorkspace({
   }
 
   return (
-    <div className="space-y-5">
+    <div id="known-errors" className="space-y-5">
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4">
         <p className="m-0 text-sm text-body">Last reviewed: {formatInstant(lastViewedAt)}</p>
         <Button variant="secondary" size="sm" disabled={pending} onClick={markViewed}>

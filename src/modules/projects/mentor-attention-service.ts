@@ -18,12 +18,13 @@ import { currentPendingMentorSubmissions } from "./mentor-latest-review-model";
  */
 export async function listMyMentorProjectAttention(
   context: RequestContext, now: Date = new Date(),
+  verifiedRows?:readonly Awaited<ReturnType<typeof listMyProjectInstances>>[number][],
 ) {
   if (!hasActiveMembership(context) || !hasMembershipRole(context,"MENTOR") || !context.membership) {
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   }
   const membership=context.membership!;
-  const rows=(await listMyProjectInstances(context))
+  const rows=(verifiedRows??await listMyProjectInstances(context))
     .filter(row=>row.memberRole==="MENTOR");
   if (!rows.length) return [];
   const ids=rows.map(row=>row.project.id);

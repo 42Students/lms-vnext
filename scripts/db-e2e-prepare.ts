@@ -311,6 +311,7 @@ async function main() {
         {
           lessonId: lesson.id,
           contentType: "RESOURCE",
+          points: 1,
           title: "E2E Shared Notes",
           notes: "Shared browser fixture",
           externalUrl:
@@ -325,6 +326,7 @@ async function main() {
           lessonId: lesson.id,
           deliveryId: deliveryA.id,
           contentType: "RESOURCE",
+          points: 1,
           title: "E2E Section A Notes",
           notes: "Visible only in Section A",
           sequence: 1,
@@ -337,6 +339,7 @@ async function main() {
           lessonId: lesson.id,
           deliveryId: deliveryB.id,
           contentType: "RESOURCE",
+          points: 1,
           title: "E2E Section B Secret",
           notes: "Must not leak into Section A",
           sequence: 2,

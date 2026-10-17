@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {mentorMeetingFacilitationSchema} from "./mentor-meeting-facilitation-model";
 import {projectDeliveryAttachmentsSchema} from "./pr-s2-07-delivery-reopen-model";
 import {
   PROJECT_MEETING_TYPES,
@@ -454,6 +455,8 @@ export type UpdateProjectMemberInput = z.infer<
   typeof updateProjectMemberInputSchema
 >;
 
+export const projectReleaseVersionInputSchema = z.object({expectedUpdatedAt:z.iso.datetime({offset:true}).optional()}).strict();
+
 export const projectReleaseIdSchema = z.string().uuid();
 export const projectSprintIdSchema = z.string().uuid();
 export const projectTaskIdSchema = z.string().uuid();
@@ -828,6 +831,8 @@ export const scheduleProjectMeetingInputSchema =
       .enum(PROJECT_MEETING_TYPES)
       .optional(),
     meetingUrl: projectMeetingWebUrlSchema,
+    outcome:z.string().trim().max(4000).nullable().optional(),
+    facilitation:mentorMeetingFacilitationSchema.optional(),
     expectedUpdatedAt: z.iso.datetime({offset:true}).optional(),
     expectedProjectUpdatedAt: z.iso.datetime({offset:true}).optional(),
     linkedSprintId:

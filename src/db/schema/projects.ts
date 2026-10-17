@@ -16,6 +16,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import type { ProjectTemplateBlueprint } from "@/modules/projects/validation";
+import type {MentorMeetingFacilitation} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
@@ -1152,6 +1153,8 @@ export const projectMeetings = pgTable(
         onDelete: "restrict",
       }),
     outcome: text("outcome"),
+    facilitation: jsonb("facilitation").$type<MentorMeetingFacilitation>()
+      .notNull().default(sql`'{}'::jsonb`),
     cancellationNote: text("cancellation_note"),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
