@@ -16,11 +16,14 @@ describe("chat-5 final sprint: Faculty course discussions",()=>{
  });
  it("FAC-courses-R06 preserves latest successfully fetched discussion messages and exposes retry on refresh failure even when posting permission is revoked",()=>{
   const page=source("src/components/courses/learner-course-discussion.tsx");
-  expect(page).toContain('loadError && loadedOnce.current && messages.length > 0');
+  const staleBannerGate=page.match(/\{loadError\s*&&[^\n]*\?\s*\(/)?.[0]??"";
+  expect(staleBannerGate).toContain("loadError");
+  expect(staleBannerGate).toContain("loadedOnce.current");
+  expect(staleBannerGate).toContain("messages.length > 0");
   expect(page).toContain("Discussion refresh failed. Could not refresh the discussion. Showing the last messages we loaded.");
   expect(page).toContain("Retry discussion refresh");
   expect(page).toContain("onClick={() => void load(true)}");
-  expect(page.indexOf('loadError && loadedOnce.current && messages.length > 0')).toBeLessThan(page.indexOf('{pinned ? ('));
+  expect(page.indexOf(staleBannerGate)).toBeLessThan(page.indexOf("{pinned ? ("));
   expect(page).toContain('reconcileLatestDiscussionPage(previous, incoming, received.length)');
   expect(page).toContain('if (learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current))');
  });

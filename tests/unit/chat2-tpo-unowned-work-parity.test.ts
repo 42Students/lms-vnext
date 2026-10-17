@@ -31,7 +31,7 @@ describe("TPO unowned work assignment safety",()=>{
   const component=src("src/components/tpo/tpo-team-assign-unowned.tsx");
   const page=src("src/app/(authenticated)/tpo/team/page.tsx");
   const schema=src("src/db/schema/placements.ts");
-  const proposal=src("docs/proposed-migrations/tpo-team-drive-owner.sql");
+  const registeredProposal=src("docs/proposed-migrations/registered-0135/tpo-team-drive-owner.sql");
   expect(component).toContain("Nobody owns {drives} drives and {companies} companies");
   expect(component).toContain("apiFetch<");
   expect(component).toContain('role="alert"');
@@ -39,6 +39,7 @@ describe("TPO unowned work assignment safety",()=>{
   expect(page).toContain("unowned?.ready?");
   expect(page).toContain("TpoTeamAssignUnowned");
   expect(schema).toContain('ownerMembershipId: uuid("owner_membership_id")');
-  expect(proposal).toContain("placement_jobs_owner_college_fk");
+  expect(registeredProposal).toContain("placement_jobs_owner_college_fk");
+  expect(registeredProposal).toContain("REFERENCES college_memberships(id,college_id)");
  });
 });
