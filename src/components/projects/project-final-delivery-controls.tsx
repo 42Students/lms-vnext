@@ -84,6 +84,7 @@ export function LearnerFinalDeliveryControl({
   const [error, setError] =
     useState<string | null>(null);
   const [autosaveStatus,setAutosaveStatus]=useState<"idle"|"saving"|"saved"|"failed">("idle");
+  const failedSnapshot=useRef<string|null>(null);
   const lastSavedSnapshot=useRef(JSON.stringify({
     summary:(draft?.summary??"").trim(),
     sourceUrl:draft?.sourceUrl?.trim()||undefined,
