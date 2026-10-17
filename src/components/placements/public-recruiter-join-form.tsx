@@ -35,6 +35,8 @@ export function PublicRecruiterJoinForm({
   const [error, setError] = useState("");
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
+  const companyLabel = preview.kind === "READY"
+    ? preview.companyName?.trim() || preview.companyDomain || "your company" : "your company";
 
   async function sendCode() {
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
@@ -120,7 +122,7 @@ export function PublicRecruiterJoinForm({
         ) : (
           <>
             <h1 className="text-2xl font-semibold text-foreground">
-              {scope === "COLLEGE" ? "Hire from " + college : college + " would like your company to hire from their students"}
+              {scope === "COLLEGE" ? "Hire from " + college : college + " would like " + companyLabel + " to hire from their students"}
             </h1>
             <p className="mt-3 text-sm text-body">
               {scope === "COLLEGE"
@@ -137,7 +139,7 @@ export function PublicRecruiterJoinForm({
                   className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground" />
                 <span className="text-xs font-normal text-muted-foreground">
                   {scope === "COMPANY"
-                    ? "Your " + (company || "company") + " email. You'll sign in with it."
+                    ? "Your " + companyLabel + " email. You'll sign in with it."
                     : "Your company email. Personal emails such as Gmail can't be used. You'll sign in with it."}
                 </span>
               </label>

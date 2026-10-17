@@ -175,6 +175,19 @@ export function TpoCompanyMemoryWorkspace({
           ) : null}
         </div>
         <div className="flex flex-wrap gap-2">
+          <details className="relative">
+           <summary className={buttonStyle+" cursor-pointer"}>+ New</summary>
+           <nav aria-label={"New work for "+company.name}
+            className="absolute right-0 z-20 mt-1 w-60 space-y-1 rounded-md border border-border bg-surface p-2 shadow-lg">
+            <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
+             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">New recruiter lead for {company.name}</Link>
+            <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
+             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">New drive for {company.name}</Link>
+            <div role="separator" className="border-t border-border"/>
+            <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
+             className="block rounded px-2 py-3 text-sm text-primary-text hover:bg-primary-subtle">Follow-up</Link>
+           </nav>
+          </details>
           {company.canonicalCompanyId?<Link className={buttonStyle}
             href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
             Company link and trusted settings

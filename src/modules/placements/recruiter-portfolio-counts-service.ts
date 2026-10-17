@@ -33,7 +33,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(scope).groupBy(placementApplications.jobId),
-  db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementOffers.id})::integer`})
+  db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementOffers.applicationId})::integer`})
    .from(placementOffers).innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))

@@ -17,6 +17,8 @@ import {listTpoLeads,listDueTpoFollowups} from "@/modules/placements/tpo-crm-ser
 import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {getCollegePlacementRules} from "@/modules/placements/tpo-policy-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
+import {listPlacementCalendarEvents} from "@/modules/placements/placement-calendar-service";
+import {placementCalendarDayKey} from "@/modules/placements/placement-calendar-model";
 import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
 export const dynamic="force-dynamic";
 export default async function TpoHome(){
@@ -45,6 +47,16 @@ export default async function TpoHome(){
   listTpoLeads(ctx,ctx.membership!.collegeId),
   listDueTpoFollowups(ctx,ctx.membership!.collegeId),
  ]):[null,null];
+ const calendarNow=new Date();
+ const weekEnd=new Date(calendarNow.getTime()+7*86400000);
+ const weekEvents=await listPlacementCalendarEvents(ctx,{
+  collegeId:ctx.membership!.collegeId,from:placementCalendarDayKey(calendarNow),
+  to:placementCalendarDayKey(weekEnd),
+ });
+ const weekNext=weekEvents.events.filter(event=>event.startsAt>=calendarNow&&
+  (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
+   .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())
+   .map(event=>({startsAt:event.startsAt,title:event.companyName+" · "+event.title}));
  const firstBatch=batches.batches[0];
  const inviteCandidates=batches.ready?batches.batches.filter(batch=>!batch.invitedAt&&!batch.finishedAt):[];
  // Check each uninvited batch until an actionable cohort is found; a fully
@@ -91,7 +103,7 @@ export default async function TpoHome(){
   pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks:null,teamMentions:null,
   teamUnread:teamThreads.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
-  upcoming:operations.upcomingRounds.map(round=>({startsAt:round.scheduledAt,title:round.name})),
+  upcoming:weekNext,
  });
  const next=buildTpoLegacyNextUp({
   needsYou:[
@@ -103,7 +115,7 @@ export default async function TpoHome(){
    ...(unreadMessages>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages,link:"/tpo/messages"}]:[]),
    ...(teamThreads.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
     {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
-   ...(pendingRequests?[{type:"REQUESTS",priority:5,title:pendingRequests.label,
+   ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount,link:"/tpo/requests"}]:[]),
   ],
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,

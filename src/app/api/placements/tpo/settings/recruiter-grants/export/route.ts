@@ -14,7 +14,7 @@ export async function GET(request:Request){
   const result=await listTpoRecruiterAccess(await getCurrentRequestContext(),query,{exportAll:true});
   return new Response("\uFEFF"+tpoRecruiterGrantCsv(result.items,result.truncated),{
    headers:{"Content-Type":"text/csv; charset=utf-8",
-    "Content-Disposition":'attachment; filename="tpo-recruiter-grant-history.csv"',
+    "Content-Disposition":'attachment; filename="recruiters.csv"',
     "Cache-Control":"private, no-store","X-Content-Type-Options":"nosniff"},
   });
  }catch(error){return apiErrorResponse(error);}

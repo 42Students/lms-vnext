@@ -340,6 +340,13 @@ export async function getRecruiterPlacementWorkspace(
         scope.job.maximumAnnualCtcInr,
       applicationDeadline:
         scope.job.applicationDeadline,
+      recruiterDriveMode: scope.job.recruiterDriveMode,
+      eligibleBranches: scope.job.eligibleBranches,
+      eligiblePassingYear: scope.job.eligiblePassingYear,
+      ctcLpa: scope.job.ctcLpa,
+      fixedCtcLpa: scope.job.fixedCtcLpa,
+      variableCtcLpa: scope.job.variableCtcLpa,
+      stipendPerMonthInr: scope.job.stipendPerMonthInr,
     },
     company: {
       id: scope.companyId,

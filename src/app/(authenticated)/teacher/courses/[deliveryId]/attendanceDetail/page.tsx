@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {FacultyAttendanceScheduleEditor} from "@/components/attendance/faculty-attendance-schedule-editor";
 import {
@@ -6,6 +7,7 @@ import {
   type FacultyAttendanceWorkspaceData,
 } from "@/components/attendance/faculty-attendance-workspace";
 import { getFacultyAttendanceWorkspace } from "@/modules/attendance/faculty-service";
+import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 import { resolveFacultyAttendanceDeepLink } from "@/modules/attendance/faculty-attendance-edit-state";
 
 export default async function FacultyCourseAttendancePage({
@@ -13,11 +15,22 @@ export default async function FacultyCourseAttendancePage({
   searchParams,
 }: {
   params: Promise<{ deliveryId: string }>;
-  searchParams: Promise<{ sessionId?: string }>;
+  searchParams: Promise<{ sessionId?: string;cls?:string }>;
 }) {
   const context = await getCurrentRequestContext();
   const { deliveryId } = await params;
   const query = await searchParams;
+  if(query.cls){
+    const assigned=await listFacultyCourseDeliveries(context);
+    const current=assigned.find(item=>item.deliveryId===deliveryId);
+    if(!current)notFound();
+    const target=assigned.find(item=>item.courseId===current.courseId&&
+      (item.sectionId===query.cls||item.deliveryId===query.cls));
+    if(!target)notFound();
+    redirect("/teacher/courses/"+encodeURIComponent(target.deliveryId)+
+      "/attendanceDetail"+(query.sessionId&&target.deliveryId===deliveryId?
+       "?sessionId="+encodeURIComponent(query.sessionId):""));
+  }
   const data =
     await getFacultyAttendanceWorkspace(
       context,

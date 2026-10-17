@@ -25,6 +25,7 @@ export type HrAccount = {
   companyName: string;
   title: string | null;
   status: HrAccountStatus;
+  accountManageable:boolean;
   grants: HrGrant[];
 };
 
@@ -134,6 +135,9 @@ export function hrApiErrorMessage(
     return "This college-access grant is no longer available.";
   }
 
+  if (code === "PLACEMENT_RECRUITER_OUTSIDE_ADMIN_SCOPE") {
+    return "This recruiter has active grants outside the selected college or organization. Clear the scope before changing their global account or sessions.";
+  }
   if (code === "INVALID_ORIGIN") {
     return "The request was rejected by the origin security check. Refresh the page and try again.";
   }

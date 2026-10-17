@@ -30,8 +30,9 @@ export function TpoBulkRoundResultRecorder({
 }) {
   const router = useRouter();
   const [selected, setSelected] = useState<string[]>([]);
-  const [outcome, setOutcome] = useState<"PASS" | "FAIL">("PASS");
+  const [outcome, setOutcome] = useState<"PASS" | "FAIL" | "HOLD" | "ABSENT">("PASS");
   const [message, setMessage] = useState("");
+  const [firstWaitlistRank,setFirstWaitlistRank]=useState(1);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [results, setResults] = useState<Result[]>([]);
@@ -53,11 +54,12 @@ export function TpoBulkRoundResultRecorder({
 
   async function stageSelected() {
     if (busy || selected.length === 0 || selected.length > 25 ||
-      (outcome === "FAIL" && message.trim().length === 0)) {
+      (outcome !== "PASS" && message.trim().length === 0) ||
+      (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1||firstWaitlistRank+selected.length-1>100000))) {
       setError("Select learners and provide a learner-facing message for Not Selected.");
       return;
     }
-    const entries = selected.flatMap((id) => {
+    const entries = selected.flatMap((id,index) => {
       const row = available.find((item) => item.applicationId === id);
       if (!row) return [];
       return [{
@@ -65,7 +67,8 @@ export function TpoBulkRoundResultRecorder({
         result: {
           applicationId: row.applicationId,
           outcome,
-          ...(outcome === "FAIL" ? { candidateMessage: message.trim() } : {}),
+          ...(outcome !== "PASS" ? { candidateMessage: message.trim() } : {}),
+          ...(outcome === "HOLD" ? {waitlistRank:firstWaitlistRank+index}:{}),
         },
       }];
     });
@@ -75,7 +78,7 @@ export function TpoBulkRoundResultRecorder({
     }
     if (!window.confirm(
       "Stage " + entries.length + " result(s) as " +
-      (outcome === "PASS" ? "Shortlisted" : "Not Selected") +
+      ({PASS:"Shortlisted",FAIL:"Not selected",HOLD:"Waitlisted",ABSENT:"Marked absent"}[outcome]) +
       "? Each successful result will be audited individually. " +
       "This does NOT publish results; a completed round requires separate APPLY confirmation. " +
       "Some rows may succeed even if others fail. Continue?",
@@ -152,15 +155,17 @@ export function TpoBulkRoundResultRecorder({
             Staged outcome
             <select
               value={outcome}
-              onChange={(event) => setOutcome(event.target.value as "PASS" | "FAIL")}
+              onChange={(event) => setOutcome(event.target.value as "PASS" | "FAIL" | "HOLD" | "ABSENT")}
               disabled={busy}
               className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal text-foreground"
             >
               <option value="PASS">Shortlisted for next round (PASS)</option>
               <option value="FAIL">Not selected (FAIL)</option>
+              <option value="HOLD">Waitlisted (HOLD)</option>
+              <option value="ABSENT">Marked absent (ABSENT)</option>
             </select>
           </label>
-          {outcome === "FAIL" ? (
+          {outcome !== "PASS" ? (
             <label className="block text-sm font-semibold text-foreground">
               Learner-facing message (required)
               <textarea
@@ -173,11 +178,19 @@ export function TpoBulkRoundResultRecorder({
               />
             </label>
           ) : null}
+          {outcome==="HOLD"?<label className="block text-sm font-semibold text-foreground">
+            First waitlist rank (in checkbox selection order)
+            <input type="number" min={1} max={100000} value={firstWaitlistRank}
+              onChange={e=>setFirstWaitlistRank(Number(e.target.value))}
+              className="mt-1 block min-h-10 w-40 rounded border border-border bg-surface px-3"/>
+            <span className="mt-1 block text-xs font-normal text-body">Chosen learners are assigned consecutive ranks. Check existing waitlisted results to avoid duplicate ranks.</span>
+          </label>:null}
           <button
             type="button"
             onClick={() => void stageSelected()}
             disabled={busy || selected.length === 0 ||
-              (outcome === "FAIL" && !message.trim())}
+              (outcome !== "PASS" && !message.trim()) ||
+              (outcome==="HOLD" && (!Number.isInteger(firstWaitlistRank)||firstWaitlistRank<1))}
             className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50"
           >
             {busy ? "Staging..." : "Review and confirm staged results"}

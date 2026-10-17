@@ -109,6 +109,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
     ? await db.select({
       id: programTermCourses.programTermId,
       total: count(),
+      creditSum: sql<number>`sum(coalesce(${programTermCourses.credits},${courses.credits},0))::integer`.mapWith(Number),
     }).from(programTermCourses)
       .innerJoin(courses, eq(courses.id, programTermCourses.courseId))
       .innerJoin(departments, and(
@@ -119,9 +120,11 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       .groupBy(programTermCourses.programTermId)
     : [];
   const countMap = new Map(courseCounts.map((item) => [item.id, item.total]));
+  const creditMap = new Map(courseCounts.map((item) => [item.id, item.creditSum]));
   const items = rawItems.map((item) => ({
     ...item,
     mappedCourses: countMap.get(item.id) ?? 0,
+    mappedCredits: countMap.has(item.id)?creditMap.get(item.id)??0:null,
   }));
   const total = totalRows[0]?.total ?? 0;
   return {

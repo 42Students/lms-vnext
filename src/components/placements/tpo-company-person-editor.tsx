@@ -25,10 +25,11 @@ export function TpoCompanyPersonEditor({
   const [designation, setDesignation] = useState("");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [reviewing,setReviewing]=useState(false);
   const current = contacts.find((item) => item.id === selected && item.editable);
 
   function select(value: string) {
-    setSelected(value);
+    setSelected(value);setReviewing(false);
     const item = contacts.find((candidate) => candidate.id === value && candidate.editable);
     setName(item?.name ?? "");
     setEmail(item?.email ?? "");
@@ -38,12 +39,7 @@ export function TpoCompanyPersonEditor({
 
   async function save() {
     if (busy || !name.trim() || !email.trim()) return;
-    const isEdit = Boolean(current);
-    if (!window.confirm(
-      isEdit
-        ? "Save edits to this linked company contact? An immutable audit note will be recorded."
-        : "Add this contact person to the selected company? An immutable audit note will be recorded.",
-    )) return;
+    if(!reviewing){setReviewing(true);setMessage(null);return;}
     setBusy(true); setMessage(null);
     try {
       const body = current
@@ -63,7 +59,7 @@ export function TpoCompanyPersonEditor({
           : "Contact was not saved; verify access and details before retrying.");
         return;
       }
-      select("NEW");
+      select("NEW");setReviewing(false);
       setMessage("Contact saved. Refreshing current records.");
       router.refresh();
     } catch {
@@ -91,24 +87,29 @@ export function TpoCompanyPersonEditor({
       </label>
       <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm font-medium">Name
-          <input value={name} maxLength={150} onChange={event => setName(event.target.value)}
+          <input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
             className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Email
           <input type="email" value={email} maxLength={150}
-            onChange={event => setEmail(event.target.value)}
+            onChange={event => {setReviewing(false);setEmail(event.target.value);}}
             className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
         </label>
         <label className="text-sm font-medium">Designation (optional)
           <input value={designation} maxLength={100}
-            onChange={event => setDesignation(event.target.value)}
+            onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
             className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3" />
         </label>
       </div>
+      {reviewing?<p role="status" className="rounded-lg border border-border p-3 text-sm text-body">
+        {current?"Save edits to this linked company contact?":"Add this contact person to the selected company?"}
+        An immutable audit note will be recorded.
+        <button type="button" className="ml-3 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+      </p>:null}
       <button type="button" onClick={() => void save()}
         disabled={busy || !name.trim() || !email.trim()}
         className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-        {busy ? "Saving..." : current ? "Review and save changes" : "Review and add contact"}
+        {busy ? "Saving..." : reviewing?"Confirm contact save":current ? "Review and save changes" : "Review and add contact"}
       </button>
       {message ? <p role="status" className="text-sm text-body">{message}</p> : null}
     </section>

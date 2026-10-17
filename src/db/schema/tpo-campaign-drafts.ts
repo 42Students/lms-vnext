@@ -29,6 +29,12 @@ export const placementTpoCampaignDrafts = pgTable(
       .$type<Record<string, number>>()
       .notNull()
       .default({}),
+    /** Drift fix: created by migration 0105; sender display name shown on the draft. */
+    senderName: varchar("sender_name", { length: 200 }).notNull(),
+    suppressedCounts: jsonb("suppressed_counts")
+      .$type<Record<string, number>>()
+      .notNull()
+      .default({}),
     templateKey: varchar("template_key", { length: 160 }).notNull(),
     segment: varchar("segment", { length: 24 }).notNull(),
     createdByUserId: uuid("created_by_user_id")
@@ -57,7 +63,7 @@ export const placementTpoCampaignDrafts = pgTable(
     ),
     check(
       "tpo_campaign_draft_body_ck",
-      sql`length(trim(${t.body})) BETWEEN 2 AND 4000`,
+      sql`length(trim(${t.body})) BETWEEN 2 AND 10000`,
     ),
   ],
 );
