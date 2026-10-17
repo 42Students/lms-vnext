@@ -22,7 +22,7 @@ describe("Learner placement dashboard route wiring", () => {
     const dash = source("src/components/placements/learner-placements-dashboard.tsx");
     expect(dash).toContain("Placement snapshot");
     expect(dash).toContain("Needs attention");
-    expect(dash).toContain("Your next seven days");
+    expect(dash).toContain("Next 7 days");
     expect(dash).toContain("Browse drives");
     expect(source("src/app/(authenticated)/learn/my-placements/error.tsx"))
       .toContain("This is a loading problem");

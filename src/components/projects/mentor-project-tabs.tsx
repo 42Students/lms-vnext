@@ -20,7 +20,7 @@ export function MentorProjectTabs({
 }) {
   const searchParams = useSearchParams();
   const active =
-    searchParams.get("tab") ?? "overview";
+    searchParams.get("tab") === "tasks" ? "board" : searchParams.get("tab") === "meetings" ? "team" : searchParams.get("tab") ?? "overview";
 
   return (
     <nav

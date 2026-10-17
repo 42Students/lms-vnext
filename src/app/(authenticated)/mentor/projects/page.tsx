@@ -136,6 +136,7 @@ export default async function MentorProjectsPage({
       return [
         row.project.title,
         row.project.slug,
+        row.project.courseLabel ?? "",
         row.project.summary ?? "",
       ].some((value) =>
         value
@@ -149,14 +150,25 @@ export default async function MentorProjectsPage({
       if (!query.status) {
         return true;
       }
+      if (query.status === "BLOCKED") {
+        return Boolean(row.project.blocker?.trim()) ||
+          Boolean(kinds.get(row.project.id)?.has("STALLED"));
+      }
+      if (query.status === "IN_PROGRESS") {
+        const facts = workCounts.get(row.project.id);
+        return row.project.status === "ACTIVE" && (facts?.open ?? 0) > 0;
+      }
+      if (query.status === "READY") {
+        const facts = workCounts.get(row.project.id);
+        return row.project.status === "COMPLETED" ||
+          Boolean(facts && facts.total > 0 && facts.open === 0);
+      }
       if (
         query.status === "CURRENT"
       ) {
         return (
           row.project.status !==
-            "ARCHIVED" &&
-          row.project.status !==
-            "COMPLETED"
+            "ARCHIVED"
         );
       }
       return (
@@ -297,7 +309,7 @@ export default async function MentorProjectsPage({
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
             dueLabel:row.project.dueLabel || row.project.endDate,
-            actionLine:row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open project"),
+            actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
             blockedHref:row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:

@@ -44,7 +44,7 @@ type SearchParams = {
   interviewedWith?:string|string[];debarred?:string|string[];
   gender?:string|string[];birthYear?:string|string[];minSkills?:string|string[];
   minProjects?:string|string[];minCertifications?:string|string[];minExperiences?:string|string[];
-  hasProfileLinks?:string|string[];
+  hasProfileLinks?:string|string[];hasResume?:string|string[];hasCodingProfiles?:string|string[];
   minTenthPct?:string|string[];minTwelfthPct?:string|string[];minDiplomaPct?:string|string[];minUgPct?:string|string[];
   passingYear?:string|string[];maxGapYears?:string|string[];marksVerified?:string|string[];isLateralEntry?:string|string[];
   profileStatus?:string|string[];
@@ -81,7 +81,7 @@ function studentsHref(
     journeyState?: string;
     legacyStage?:string;minRoundReached?:number;needsAttention?:boolean;debarred?:boolean;
     interviewedWith?:string;
-    gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
+    gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;hasResume?:boolean;hasCodingProfiles?:boolean;
     branchId?: string;
     programId?:string;
     afterCollege?:string;
@@ -112,6 +112,8 @@ function studentsHref(
   if(filters.interviewedWith)params.set("interviewedWith",filters.interviewedWith);
   if(filters.gender)params.set("gender",filters.gender);
   if(filters.hasProfileLinks!==undefined)params.set("hasProfileLinks",filters.hasProfileLinks?"YES":"NO");
+  if(filters.hasResume!==undefined)params.set("hasResume",filters.hasResume?"YES":"NO");
+  if(filters.hasCodingProfiles!==undefined)params.set("hasCodingProfiles",filters.hasCodingProfiles?"YES":"NO");
   for(const key of ["birthYear","minSkills","minProjects","minCertifications","minExperiences"] as const)
    if(filters[key]!==undefined)params.set(key,String(filters[key]));
   if(filters.minRoundReached!==undefined)params.set("minRoundReached",String(filters.minRoundReached));
@@ -203,6 +205,7 @@ export default async function TpoStudentsPage({
     minSkills:first(raw.minSkills)||undefined,minProjects:first(raw.minProjects)||undefined,
     minCertifications:first(raw.minCertifications)||undefined,minExperiences:first(raw.minExperiences)||undefined,
     hasProfileLinks:first(raw.hasProfileLinks)||undefined,
+    hasResume:first(raw.hasResume)||undefined,hasCodingProfiles:first(raw.hasCodingProfiles)||undefined,
     minRoundReached:first(raw.minRoundReached)||undefined,
     needsAttention:first(raw.needsAttention)||undefined,
     branchId: first(raw.branchId) || undefined,
@@ -318,6 +321,7 @@ export default async function TpoStudentsPage({
       debarred:query.debarred,
       interviewedWith:query.interviewedWith,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+    hasResume:query.hasResume,hasCodingProfiles:query.hasCodingProfiles,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
       minRoundReached:query.minRoundReached,
       needsAttention:query.needsAttention,
@@ -351,6 +355,7 @@ export default async function TpoStudentsPage({
       debarred:query.debarred,
       interviewedWith:query.interviewedWith,
       gender:query.gender,birthYear:query.birthYear,minSkills:query.minSkills,minProjects:query.minProjects,
+    hasResume:query.hasResume,hasCodingProfiles:query.hasCodingProfiles,
       minCertifications:query.minCertifications,minExperiences:query.minExperiences,hasProfileLinks:query.hasProfileLinks,
     minRoundReached:query.minRoundReached,
     needsAttention:query.needsAttention,
@@ -386,19 +391,21 @@ export default async function TpoStudentsPage({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="TPO · Students"
         title={TPO_OWNER_PAGE_COPY.students}
         description={query.batchId?
           "Batch student journeys, including completed learners from a finished batch.":
           "Everyone in placements, from the batches you made eligible."}
         actions={manageAllowed?<TpoAcademicImportWorkspace />:undefined}
       />
-      <nav aria-label="Student roster tools" className="flex flex-wrap items-center gap-2">
+      <details className="rounded-xl border border-border bg-surface p-3">
+       <summary className="min-h-10 cursor-pointer text-sm font-semibold">More student tools</summary>
+       <nav aria-label="Student roster tools" className="mt-3 flex flex-wrap items-center gap-2">
         {manageAllowed?<TpoStudentSavedViews />:null}
         <Link href="/tpo/students/requests" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Student Requests</Link>
         <Link href="/tpo/students/preparation-prep" className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Preparation support</Link>
         <TpoSafeCsvDownload href={exportHref} filename="tpo-students.csv" label="Export filtered CSV" />
-      </nav>
+       </nav>
+      </details>
 
       <form action="/tpo/students" method="get"
         className="flex flex-wrap items-end gap-3 rounded-lg border border-border bg-surface p-4">
@@ -465,6 +472,12 @@ export default async function TpoStudentsPage({
             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
            </select>
           </label>
+          {([["hasResume","Resume"],["hasCodingProfiles","Coding profiles"]] as const).map(([key,label])=>
+           <label key={key} className="grid gap-1 text-sm">{label}
+            <select name={key} defaultValue={query[key]===undefined?"":query[key]?"YES":"NO"} className="min-h-11 rounded border border-border p-2">
+             <option value="">Any</option><option value="YES">Provided</option><option value="NO">Not provided</option>
+            </select>
+           </label>)}
          </div>
         </details>
         <label className="text-sm font-semibold">Profile verified

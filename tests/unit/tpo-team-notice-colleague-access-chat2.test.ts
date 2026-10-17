@@ -19,13 +19,24 @@ describe("TPO announcement management matches college-wide team permissions",()=
   expect(lifecycle).not.toContain('eq(db10Announcements.senderUserId,context.user.id)');
   expect(lifecycle).toContain("eq(db10Announcements.version,input.expectedVersion)");
  });
- it("TPO-inbox-team-57 makes colleague notices manageable in To your students and Recently removed",()=>{
+ it("TPO-inbox-team-57 allows colleague management through an explicit All team notices view",()=>{
   const list=src("src/modules/announcements/tpo-placement-read-service.ts");
   const page=src("src/app/(authenticated)/tpo/announcements/page.tsx");
   expect(list).toContain('[isNotNull(db10Announcements.deletedAt)]');
-  expect(list).not.toContain('eq(db10Announcements.senderUserId,context.user.id)');
+  expect(list).toContain('scope:"MINE"|"COLLEGE"="MINE"');
+  expect(list).toContain('scope==="MINE"?[eq(db10Announcements.senderUserId,context.user.id)]');
+  expect(page).toContain('All team notices');
+  expect(page).toContain('showTeam?"COLLEGE":"MINE"');
   expect(page).toContain('tab.data==="yours" ?');
   expect(page).toContain('tab.data==="yours"?<TpoNoticeDeleteConfirm');
   expect(page).not.toContain('row.senderUserId===context.user.id?<TpoNoticeDeleteConfirm');
+ });
+ it("TPO-inbox-team-R04 defaults To your students to the author but retains colleague management",()=>{
+  const list=src("src/modules/announcements/tpo-placement-read-service.ts");
+  const page=src("src/app/(authenticated)/tpo/announcements/page.tsx");
+  expect(list).toContain('scope:"MINE"|"COLLEGE"="MINE"');
+  expect(page).toContain('Your notices');
+  expect(page).toContain('All team notices');
+  expect(page).toContain('showTeam?"&mine=0":""');
  });
 });

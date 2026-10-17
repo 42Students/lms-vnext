@@ -91,3 +91,37 @@ LEARNER-placements-08 PARTIAL (still OPEN): the Next 7 days cards link to the ex
 | LEARNER-placements-41 | DONE (source, not executed) | Schedule includes online assessments from learner-scoped rounds, with gated HTTPS Open test link, mode, duration, venue, and real results; test LEARNER-placements-41 exposes online assessments without pretending schedule is attendance. |
 
 | LEARNER-placements-15 | DONE (source, not executed) | src/components/placements/learner-jobs-browse.tsx separates saved and already-applied cards from a collapsible Not open to you section with only the current page's count and actual blockers supplied by learner-job-service; tests/unit/learner-placements-chat7-not-open-groups.test.ts test LEARNER-placements-15 groups unavailable cards without hiding recorded applications. |
+
+| LEARNER-placements-13 | DONE (queue reconciliation) | `src/components/placements/learner-save-drive-button.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-13 save and unsave learner-scoped drive bookmarks`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-53 | DONE (queue reconciliation) | `src/modules/placements/learner-college-placement-rules-model.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-53 describe only stored college offer rules`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-R03 | DONE (queue reconciliation) | `src/modules/placements/offer-service.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-R03 preserves qualifying Dream and internship sibling applications in the acceptance preview and transaction`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-11 | DONE (queue reconciliation) | `src/components/placements/learner-placements-dashboard.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-11 keeps legacy home section headings and missing-schedule distinction`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-41 | DONE (queue reconciliation) | `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-41 shows scheduled online assessments without inventing result confirmations`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-55 | DONE (queue reconciliation) | `src/app/(authenticated)/learn/my-placements/placement/page.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-55 keeps three anchored placement cell sections`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-R06 | DONE (queue reconciliation) | `src/modules/placements/learner-drive-pay-model.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-R06 shows only persisted CTC and pay breakdown`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-R07 | DONE (queue reconciliation) | `src/modules/placements/learner-placement-schedule-model.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-R07 preserves day-only and ongoing rounds in the schedule`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-02 | DONE (queue reconciliation) | `src/components/placements/learner-placements-tabs.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-02 restores swipe navigation with vertical-scroll guard`. Previously implemented source; this round adds independent evidence. Runtime tests still need orchestrator execution. |
+
+| LEARNER-placements-18 | NOT-A-GAP (queue reconciliation) | `src/components/placements/learner-jobs-browse.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-18 retains approved vNext published-drive summary and saved bookmark count`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-10 | NOT-A-GAP (queue reconciliation) | `src/components/placements/learner-placements-dashboard.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-10 retains OD-38 approved dashboard counts`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-23 | NOT-A-GAP (queue reconciliation) | `src/modules/placements/learner-withdrawal-model.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-23 retains the safer confirmed withdrawal reason audited in history`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-33 | NOT-A-GAP (queue reconciliation) | `src/app/(authenticated)/learn/my-placements/applications/page.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-33 retains OD-38 approved application summary`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-56 | NOT-A-GAP (queue reconciliation) | `src/components/placements/learner-placement-requests.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-56 retains OD-21 concrete requested reschedule time and mode`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-57 | NOT-A-GAP (queue reconciliation) | `src/components/placements/learner-placements-tabs.tsx`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-57 keeps the combined Schedule and intentional supplementary round views`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-58 | NOT-A-GAP (queue reconciliation) | `src/modules/placements/learner-application-detail-service.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-58 retains bounded learner company preview without inventing a data-access event history`. Reviewed intentional behavior, not a newly implemented feature. |
+
+| LEARNER-placements-R08 | NOT-A-GAP (queue reconciliation) | `src/modules/placements/learner-job-service.ts`; `tests/unit/learner-placements-chat7-queue-review.test.ts` — `LEARNER-placements-R08 prevents out-of-audience drive disclosure`. Reviewed intentional behavior, not a newly implemented feature. |

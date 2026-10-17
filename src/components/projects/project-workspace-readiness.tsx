@@ -4,6 +4,7 @@ import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {projectReadinessLegacyCopy as copy} from "@/modules/projects/readiness-override-copy";
 import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {PageHeader} from "@/components/ui/page-header";
+import Link from "next/link";
 import {ProjectAdminNav} from "./project-admin-nav";
 export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:string;basePath:string}){
   const context=await getCurrentRequestContext();
@@ -11,6 +12,20 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   const readiness=await getProjectReadiness(context,projectId);
   return <div className="space-y-6">
     <ProjectAdminNav basePath={basePath} active="readiness" />
+    <Link href={basePath} className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">← Back to workspaces</Link>
+    <nav aria-label="Workspace sections" className="flex flex-wrap gap-2 rounded-lg border border-border bg-surface p-2">
+      {([
+        ["summary","Summary"], ["overview","Overview"], ["team","Team"], ["sprints","Sprints"],
+        ["tasks","Tasks"], ["resources","Resources"], ["meetings","Meetings"],
+        ["readiness","Readiness"], ["delivery","Delivery"], ["audit","Audit"],
+      ] as const).map(([segment, title]) => (
+        <Link key={segment} href={basePath+"/"+projectId+"/"+segment}
+          aria-current={segment==="readiness"?"page":undefined}
+          className={"rounded-md px-3 py-2 text-sm font-semibold "+(segment==="readiness"?"bg-primary text-primary-foreground":"text-body hover:bg-muted")}>
+          {title}
+        </Link>
+      ))}
+    </nav>
     <PageHeader title={copy.title} eyebrow="Projects" description="Task and sprint completion are separate measures; the readiness verdict above is decided server-side." />
     <section className="rounded-xl border border-border bg-surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -26,6 +41,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         <div><dt className="font-semibold">Submission status</dt>
           <dd>{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
       </dl>
+      {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
       {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
         Override recorded {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
           .format(readiness.readinessOverride.occurredAt)}
@@ -49,6 +65,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <p>Sprints completed: {readiness.execution.sprints.completed}/{readiness.execution.sprints.total}</p>
       <p>Releases shipped: {readiness.execution.releases.shipped}/{readiness.execution.releases.total}</p>
     </div>
-    <ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}/>
+    <ProjectReadinessOverrideForm projectId={projectId} initialState={readiness.readinessOverride.state} initialNote={readiness.readinessOverride.note}
+      hasSubmission={readiness.finalSubmission.latest!==null}/>
   </div>;
 }

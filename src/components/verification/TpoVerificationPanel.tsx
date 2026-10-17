@@ -82,7 +82,7 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
    apiBase="/api/tpo/verification"
    onClose={()=>sequenceIndex!==null?finishSequential():setSelected(null)}
    sequenceProgress={sequenceIndex===null?undefined:(sequenceIndex+1)+" of "+sequenceRows.length}
-   onNext={nextSequential} onFinish={()=>finishSequential()}
+   onNext={nextSequential} onFinish={finishSequential}
    onSaved={saved} />}
  </section>;
 }

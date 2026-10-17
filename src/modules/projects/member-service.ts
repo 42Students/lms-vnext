@@ -787,7 +787,7 @@ export async function updateProjectMember(
         projectId:scope.project.id,collegeId:scope.collegeId,
         membershipIds:[changed.membershipId],exceptUserId:context.user.id,
         title:"Project role updated",body:"Your project role or permissions have changed.",
-        actionHref:"/learn/projects/"+scope.project.id+"?tab=team",
+        actionHref:(changed.role==="MENTOR"?"/mentor/projects/":"/learn/projects/")+scope.project.id+"?tab=team",
       });
       return [changed];
     });

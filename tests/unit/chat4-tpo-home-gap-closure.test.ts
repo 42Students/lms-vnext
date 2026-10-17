@@ -20,6 +20,10 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   const morning=tpoHomeGreeting(fixed,"Ananya Rao");
   expect(morning.title).toBe("Good morning, Ananya");
   expect(morning.date).toContain("1 July");
+  // 20:30 UTC is already the next calendar day in India.
+  const istMidnight=tpoHomeGreeting(new Date("2099-06-30T20:30:00.000Z"),"  Ananya Rao  ");
+  expect(istMidnight.date).toContain("1 July");
+  expect(istMidnight.title).toBe("Good morning, Ananya");
   expect(tpoHomeGreeting(new Date("2099-07-01T09:00:00.000Z"),"Ananya").title).toBe("Good afternoon, Ananya");
   expect(tpoHomeGreeting(new Date("2099-07-01T15:00:00.000Z"),"Ananya").title).toBe("Good evening, Ananya");
   expect(tpoHomeGreeting(fixed,null).title).toBe("Good morning");
@@ -78,7 +82,7 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
  });
  it("TPO-home-39 uses the accessible notification Drawer instead of an absolute region",()=>{
   const src=source("src/components/tpo/tpo-bell-panel.tsx");
-  expect(src).toContain('<Drawer open={open} onOpenChange={setOpen} title="Notifications"');
+  expect(src).toContain('<Drawer open={open} onOpenChange={changeOpen} title="Notifications"');
   expect(src).toContain("aria-expanded={open}");
  });
  it("TPO-home-41 supports G/N chords, Escape and the keyboard help dialog",()=>{
@@ -182,4 +186,36 @@ describe("chat-4 verified TPO Home gap coverage",()=>{
   expect(s).toContain('"/tpo/students?q="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)');
   expect(s).toContain("named.students.slice(0,5)");
  });
+
+ it("TPO-home-26 presents module-off state before reading placement work",()=>{
+  const page=source("src/app/(authenticated)/tpo/home/page.tsx");
+  expect(page).toContain("resolveOptionalModuleAccess(ctx)");
+  expect(page).toContain("if(!moduleAccess.placements.enabled)");
+  expect(page).toContain("Placements is switched off for this college");
+  expect(page.indexOf("resolveOptionalModuleAccess(ctx)")).toBeLessThan(page.indexOf("getTpoHomeCrmCounts(ctx,collegeId)"));
+ });
+ it("TPO-home-28 opens an accessible Ctrl K palette with bounded live search",()=>{
+  const trigger=source("src/components/tpo/tpo-find-shortcut.tsx");
+  const api=source("src/app/api/tpo/find-suggestions/route.ts");
+  expect(trigger).toContain("<Dialog");
+  expect(trigger).toContain("isTpoFindShortcut");
+  expect(trigger).toContain("},200)");
+  for(const phrase of ["ArrowDown","ArrowUp","Enter","Escape","Recently opened",
+    "role=\"listbox\"","aria-activedescendant"])
+   expect(trigger).toContain(phrase);
+  expect(api).toContain("termSchema=z.string().trim().min(2).max(100)");
+  expect(api).toContain("hasTpoTooling(context)");
+  expect(api).toContain("findTpoPeopleAndCompanies(context,collegeId,q)");
+  expect(api).toContain("Cache-Control");
+  expect(api).toContain("slice(0,5)");
+ });
+ it("TPO-home-34 polls the actual bell unread count and refreshes on tab focus",()=>{
+  const bell=source("src/components/tpo/tpo-bell-panel.tsx");
+  expect(bell).toContain('"/api/tpo/header-snapshot"');
+  expect(bell).toContain("30000");
+  expect(bell).toContain('window.addEventListener("focus",check)');
+  expect(bell).toContain('document.addEventListener("visibilitychange",check)');
+  expect(bell).toContain("refreshInFlight.current");
+ });
+
 });
