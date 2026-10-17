@@ -76,7 +76,7 @@ Audit: `docs/audit/pages/tpo/drive-workspace.md` (and `drive-workspace-review.md
 | TPO-drive-workspace-73 | S3 | PERFORMANCE | OPEN |
 | TPO-drive-workspace-R04 | S3 | A11Y | FIXED-ON-MAIN |
 | TPO-drive-workspace-R05 | S3 | COPY | FIXED-ON-MAIN |
-| TPO-drive-workspace-R06 | S3 | MISSING-ACTION | OPEN |
+| TPO-drive-workspace-R06 | S3 | MISSING-ACTION | DONE |
 | TPO-drive-workspace-66 | S4 | MISSING-FIELD | OPEN |
 | TPO-drive-workspace-71 | S4 | A11Y | OPEN |
 | TPO-drive-workspace-74 | S4 | STATE | UNCONFIRMED |
