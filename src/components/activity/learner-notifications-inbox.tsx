@@ -63,7 +63,7 @@ export function LearnerNotificationsInbox({
           actionHref: null,
           externalCta:(item.buttonLabel && item.buttonUrl && (()=>{try{
             const parsed=new URL(item.buttonUrl);
-            return parsed.protocol==="https:" && parsed.hostname
+            return parsed.protocol==="https:" && parsed.hostname && !parsed.username && !parsed.password
              ?{label:item.buttonLabel,href:parsed.href}:null;
           }catch{return null;}})()) || null,
           readAt: null,
