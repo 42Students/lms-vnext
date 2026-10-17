@@ -40,3 +40,17 @@ Tests were authored but not run in this builder session.
 ## Chat-2 continuation — exact detail wording
 
 | TPO-recruiters-40 | DONE (source; tests not run) | `src/components/tpo/recruiter-lead-detail-workspace.tsx` uses **← Recruiter leads**, **Edit contact details**, **Save**, **Not now**, and **Log activity**; `tests/unit/chat2-tpo-recruiter-leads-copy.test.ts` **TPO-recruiters-40 restores edit-action heading and legacy Save label** (also asserts the modal/section wording). |
+
+
+## Chat-2 UNCONFIRMED decision — 2026-10-17
+| ID | Decision | Evidence |
+| --- | --- | --- |
+| TPO-recruiters-34 | NOT-A-GAP (least privilege) — recruiter lead changes stay behind an active TPO role and persisted `placements.manage`; college administrator membership alone must not silently grant access to all recruiter-contact mutations. College Admin has its own college-scoped placement administration. | `src/app/(authenticated)/tpo/recruiters/page.tsx`, `src/modules/placements/tpo-bulk-lead-stage-service.ts`; `tests/unit/chat2-unconfirmed-recruiter-company-decisions.test.ts` **TPO-recruiters-34 requires an active TPO role…**. |
+
+
+## Chat-2 OPEN-gap source follow-up
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-recruiters-07 | DONE (source, tests unrun) | The Engage Needs doing strip uses derived Follow-ups due, No next step, Gone quiet, Unassigned counts; zero chips hide, toggle works and the recruiter-access link is factual. `src/components/tpo/recruiter-leads-workspace.tsx`, named **TPO-recruiters-07 provides the actual counted Needs doing chips and zero state** in `tests/unit/chat2-engage-open-gap-decisions.test.ts`. |
+| TPO-recruiters-30 | DONE (source, tests unrun) | Validated duplicate-contact conflict now attempts the scoped same-college contact lookup and links to the existing named lead, while preserving draft fields, legacy labels and friendly errors. `src/components/tpo/recruiter-lead-detail-workspace.tsx`, named **TPO-recruiters-30 links a scoped detected duplicate and preserves contact form details** in same test. |
+| TPO-recruiters-36 | PARTIAL — OPEN | Board is horizontally scrollable, edit modal traps keyboard focus, stage cards expose a native Move/Actions menu; accessible table selection on narrow phones is still incomplete. Named **TPO-recruiters-36 has horizontally reachable stages…** in same test, not full closure. |
