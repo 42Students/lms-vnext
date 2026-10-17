@@ -2,8 +2,8 @@ import "server-only";
 import {and,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,colleges,inAppNotifications,
- membershipRoles,users} from "@/db/schema";
-import {recruiterMessageTpoRecipients,recruiterMessageTpoHref,
+ membershipRoles,placementTpoMessages,users} from "@/db/schema";
+import {recruiterMessageTpoRecipients,recruiterMessageTpoHref,recruiterMessageTpoPreview,
  RECRUITER_MESSAGE_TPO_TITLE} from "./recruiter-message-tpo-notification-model";
 
 type Db=ReturnType<typeof getDb>;
@@ -26,6 +26,13 @@ export async function notifyTpoOfRecruiterMessage(tx:Tx,input:{
     eq(collegeMemberships.status,"ACTIVE")));
  const recipients=recruiterMessageTpoRecipients(members,input.senderUserId);
  if(recipients.length===0)return {notified:0};
+ const [sourceMessage]=await tx.select({body:placementTpoMessages.body})
+  .from(placementTpoMessages).where(and(
+    eq(placementTpoMessages.id,input.messageId),
+    eq(placementTpoMessages.threadId,input.threadId),
+  )).limit(1);
+ if(!sourceMessage)throw new Error("RECRUITER_MESSAGE_NOTIFICATION_SOURCE_MISSING");
+ const preview=recruiterMessageTpoPreview(sourceMessage.body);
  const [event]=await tx.insert(activityEvents).values({
   organizationId:college.organizationId,collegeId:input.collegeId,
   actorUserId:input.senderUserId,module:"PLACEMENTS",
@@ -37,7 +44,7 @@ export async function notifyTpoOfRecruiterMessage(tx:Tx,input:{
  if(!event)throw new Error("RECRUITER_MESSAGE_BELL_EVENT_FAILED");
  await tx.insert(inAppNotifications).values(recipients.map(userId=>({
   userId,eventId:event.id,title:RECRUITER_MESSAGE_TPO_TITLE,
-  body:"A recruiter sent a message to the placement cell.",
+  body:preview,
   actionHref:recruiterMessageTpoHref(input.threadId),createdAt:input.at,
  })));
  return {notified:recipients.length};
