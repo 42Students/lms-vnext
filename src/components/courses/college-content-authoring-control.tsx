@@ -40,8 +40,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   lessons.find(lesson=>lesson.id===listLessonId)?.offeringId===row.offeringId);
  const matching=existing.filter(item=>(!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
-  (!listSectionId||lessons.some(lesson=>lesson.id===item.lessonId&&
-   lesson.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId)));
+  (!listSectionId||item.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId));
  const text=kind==="YOUTUBE"?"Import from link":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  function select(item:Existing){
   setEditing(item.id);setOpen(true);setLessonId(item.lessonId);setTitle(item.title);
