@@ -58,7 +58,18 @@ export async function getMentorDeliveryVersion(context:RequestContext,raw:unknow
     eq(projectDeliveryEvents.projectId,scope.project.id),
     eq(projectDeliveryEvents.submissionId,row.id),
   )).orderBy(asc(projectDeliveryEvents.occurredAt),asc(projectDeliveryEvents.id));
-  return {createdByName:personName(row.createdByMembershipId),
+  const actorIds=[...new Set(immutableEvents.map(event=>event.actorMembershipId))]
+    .filter(id=>!membershipIds.includes(id));
+  const otherActors=actorIds.length?await getDb().select({
+    membershipId:collegeMemberships.id,displayName:users.displayName,
+  }).from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(inArray(collegeMemberships.id,actorIds),
+      eq(collegeMemberships.collegeId,scope.collegeId))):[];
+  const eventPerson=(id:string)=>people.concat(otherActors).find(person=>
+    person.membershipId===id)?.displayName??"Project member";
+  return {events:immutableEvents.map(event=>({...event,
+      actorName:eventPerson(event.actorMembershipId),
+    })),createdByName:personName(row.createdByMembershipId),
     submittedByName:personName(row.submittedByMembershipId),
     projectId:scope.project.id,projectTitle:scope.project.title,
     projectStatus:scope.project.status,version:mentorDeliveryVersionDisplay(row)};
