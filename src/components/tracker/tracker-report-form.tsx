@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useState, type FormEvent, type KeyboardEvent } from "react";
 import { useFormDraft } from "@/hooks/use-form-draft";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { friendlyApiError } from "@/lib/friendly-error";
 import {
   ACCOUNT_OPTIONS, ENVIRONMENT_OPTIONS, ISSUE_TYPE_OPTIONS,
   LOCATION_OPTIONS, REPORTER_OPTIONS, SEVERITY_OPTIONS,
@@ -60,7 +61,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
       clearDraft();
       setCreated(payload.issue.publicId);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The issue could not be reported. Please try again.");
+      setError(caught instanceof FriendlyFetchError ? caught.message : friendlyApiError({}));
     } finally {
       setPending(false);
     }
@@ -179,7 +180,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true}:{con
       <label className={label}>Evidence link
         <input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
         <span className="mt-1 block text-xs font-normal text-muted-foreground">
-          Optional — use this for a screen recording, Drive file, or other useful http/https link.
+          Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
         </span>
       </label>
       {canSearchSimilar ? <>

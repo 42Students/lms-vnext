@@ -22,17 +22,17 @@ export default async function FacultyProfilePage() {
         title="Profile"
       />
       <div className="flex justify-end">
-        <Link href="/teacher/profile/details" className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Edit About &amp; profile sections →</Link>
+        <Link href="/teacher/profile/details" className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">Edit About &amp; profile sections →</Link>
       </div>
       <div className="flex justify-end">
         <Link href="/teacher/profile/teaching"
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:underline">
           Current teaching assignments →
         </Link>
       </div>
       <div className="flex justify-end">
         <Link href="/teacher/profile/contacts"
-          className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+          className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
           Contact details and editing availability
         </Link>
       </div>

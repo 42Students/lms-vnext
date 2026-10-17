@@ -43,6 +43,7 @@ DONE below means implemented plus a named acceptance test written, **not that th
 
 No test execution in this builder lane; orchestrator owns test runs.
 
+| PUB-auth-public-39 | DONE | src/app/page.tsx, src/app/login/page.tsx, src/components/marketing/marketing-layout.tsx; tests/unit/public-auth-login-gap-verification.test.ts — `it("PUB-auth-public-39 routes visitors to marketing but preserves an explicit secure login")`. `/` on a platform host reaches the minimal `/home` landing when signed out, while `/login` and college sign-in preserve OTP. Tests authored, not executed. |
 ## Chat-9 decided UNCONFIRMED (round 7; source checks, CI pending)
 | Gap ID | Status | Decision and evidence |
 |---|---|---|

@@ -49,13 +49,13 @@ export default async function CollegeFacultyAssignmentPage({
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
   return (
-    <div className="space-y-6">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         eyebrow="College Admin · People"
         title={FACULTY_ASSIGNMENT_COPY.title}
         description={FACULTY_ASSIGNMENT_COPY.description}
         actions={<Link href="/college/faculty"
-          className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
+          className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Faculty directory</Link>}
       />
       <Link prefetch={false} download href={facultyAssignmentCsvHref(query)}
         className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">

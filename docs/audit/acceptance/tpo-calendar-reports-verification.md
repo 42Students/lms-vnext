@@ -88,3 +88,9 @@ Status reflects committed source and authored test evidence. Tests are **not run
 | TPO-calendar-reports-22 | OPEN (partial recovery) | `src/components/placements/placement-calendar-workspace.tsx` now contains errors from auxiliary needs, blocked-day and unfiltered chip-count sources; successful current-period event data stays visible, missing totals display Unavailable, and Retry retains filters. `tests/unit/chat9-calendar-partial-recovery.test.ts` — `TPO-calendar-reports-22 keeps a successful primary calendar visible when auxiliary counts fail`. Full last-good snapshot persistence across failed primary reads is still OPEN. Tests authored, not executed. |
 
 | TPO-calendar-reports-53 | OPEN (partial report recovery) | `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx` isolates optional drive-dimension lookup failures, keeps the successful season summary and charts, withholds rather than fabricates drive rows, displays `Batch filter unavailable` and Retry retaining filter selection. `tests/unit/chat9-report-dimension-recovery.test.ts` — `TPO-calendar-reports-53 retains a successful season report when dimension lookup fails and never presents missing dimension rows as zero`. Broad last-good cache recovery remains OPEN; orchestrator to execute. |
+
+## [chat-5] Owner-delegated UNCONFIRMED decisions (2026-10-17)
+
+| ID | Result | Decision and evidence |
+|---|---|---|
+| TPO-calendar-reports-23 | OPEN | Decision: Schedule and reschedule notifications should be persisted in-app per affected candidate with audited events; send external email only on real provider receipt. Do not invent delivery from a calendar entry. Test: `tests/unit/chat5-delegated-policy-decisions.test.ts` — named test `TPO-calendar-reports-23` (source/policy regression; executable CI pending). |
