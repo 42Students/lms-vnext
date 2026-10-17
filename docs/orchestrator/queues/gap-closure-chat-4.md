@@ -210,17 +210,17 @@ Audit: `docs/audit/pages/college/verification-misc.md` (and `verification-misc-r
 | COL-verification-misc-11 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-verification-misc-17 | S2 | PERMISSION | DONE |
 | COL-verification-misc-02 | S3 | MISSING-FIELD | DONE |
-| COL-verification-misc-06 | S3 | COPY | OPEN |
+| COL-verification-misc-06 | S3 | COPY | DONE |
 | COL-verification-misc-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | COL-verification-misc-12 | S3 | MISSING-ACTION | DONE |
 | COL-verification-misc-13 | S3 | STATE | FIXED-ON-MAIN |
 | COL-verification-misc-15 | S3 | STATE | DONE |
 | COL-verification-misc-16 | S3 | PERMISSION | NOT-A-GAP |
-| COL-verification-misc-18 | S3 | PERMISSION | OPEN |
+| COL-verification-misc-18 | S3 | PERMISSION | NOT-A-GAP |
 | COL-verification-misc-19 | S3 | STATE | NOT-A-GAP |
-| COL-verification-misc-09 | S4 | COPY | OPEN |
+| COL-verification-misc-09 | S4 | COPY | DONE |
 | COL-verification-misc-14 | S4 | MISSING-EXPORT | NOT-A-GAP |
-| COL-verification-misc-20 | S4 | STATE | OPEN |
+| COL-verification-misc-20 | S4 | STATE | DONE |
 
 ## college/academic-people (9: OPEN 9)
 
