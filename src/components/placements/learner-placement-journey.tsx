@@ -13,6 +13,8 @@ export type LearnerPlacementJourneyItem = {
   driveStatus?: string;
   offerStatus?: string | null;
   channel: string;
+  staffOptOutUntil?:Date|null;
+  mayStaffOptOut?:boolean;
   submittedAt: Date;
   withdrawnAt: Date | null;
   screening: {
@@ -228,14 +230,14 @@ export function LearnerPlacementJourney({
                 <p className="mt-1 text-sm text-body">
                   If you don&apos;t want this one, withdraw before {new Intl.DateTimeFormat("en-IN",{
                     timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true,
-                  }).format(new Date(item.submittedAt.getTime()+48*60*60*1000))}.
+                  }).format(item.staffOptOutUntil??new Date(item.submittedAt.getTime()+48*60*60*1000))}.
                 </p>
                 <p className="mt-1 text-xs text-muted-foreground">The placement cell applied on your behalf. The 48-hour opt-out window starts when the application was recorded. Outside that window, contact the placement team about withdrawal.</p>
                 <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
-                  <Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
+                  {item.mayStaffOptOut?<Link href={"/learn/my-placements/applications?applicationId="+encodeURIComponent(item.applicationId)}
                     className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
                     Opt out or ask to withdraw
-                  </Link>
+                  </Link>:null}
                   <Link href="/learn/my-placements/placement#requests"
                     className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
                     Contact the placement cell
