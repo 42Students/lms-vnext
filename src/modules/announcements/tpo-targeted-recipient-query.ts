@@ -6,8 +6,11 @@ import {sql,type SQL} from "drizzle-orm";
 export type TpoTargetedNoticeAudience={
  kind:"PLACEMENTS"|"BATCHES"|"BRANCHES"|"DRIVE";
  targetId?:string;
+ targetIds?:string[];
 };
 export function tpoTargetedRecipientQuery(collegeId:string,audience:TpoTargetedNoticeAudience):SQL{
+ const targets=audience.targetIds?.length?audience.targetIds:audience.targetId?[audience.targetId]:[];
+ const targetSql=sql.join(targets.map(id=>sql`${id}::uuid`),sql`,`);
  const active=sql`m.college_id=${collegeId}::uuid AND m.status='ACTIVE'
   AND u.platform_status='ACTIVE'`;
  const learner=sql`JOIN learner_program_enrollments e ON e.membership_id=m.id
@@ -24,12 +27,12 @@ export function tpoTargetedRecipientQuery(collegeId:string,audience:TpoTargetedN
  if(audience.kind==="BATCHES")return sql`
   SELECT DISTINCT m.id FROM college_memberships m JOIN users u ON u.id=m.user_id
   ${learner}
-  WHERE ${active} AND e.cohort_id=${audience.targetId}::uuid
+  WHERE ${active} AND e.cohort_id IN (${targetSql})
   ORDER BY m.id LIMIT 100001`;
  if(audience.kind==="BRANCHES")return sql`
   SELECT DISTINCT m.id FROM college_memberships m JOIN users u ON u.id=m.user_id
   ${learner}
-  WHERE ${active} AND d.id=${audience.targetId}::uuid
+  WHERE ${active} AND d.id IN (${targetSql})
   ORDER BY m.id LIMIT 100001`;
  return sql`
   SELECT DISTINCT m.id FROM college_memberships m JOIN users u ON u.id=m.user_id
