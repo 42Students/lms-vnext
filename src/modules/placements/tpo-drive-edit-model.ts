@@ -8,12 +8,19 @@ export const tpoDriveEditSchema=z.object({
  openings:z.number().int().positive().max(100000).nullable(),
  minimumAnnualCtcInr:z.number().int().min(0).max(100000000).nullable(),
  maximumAnnualCtcInr:z.number().int().min(0).max(100000000).nullable(),
+ fixedCtcLpa:z.number().min(0).max(1000).nullable(),
+ variableCtcLpa:z.number().min(0).max(1000).nullable(),
+ stipendPerMonthInr:z.number().int().min(0).max(10000000).nullable(),
+ isDream:z.boolean(),
 }).strict();
 export type TpoDriveEditInput=z.infer<typeof tpoDriveEditSchema>;
 export function evaluateTpoDriveEdit(status:string,seasonStatus:string|null,input:TpoDriveEditInput){
  if(status!=="DRAFT"||seasonStatus!=="ACTIVE")return "READ_ONLY" as const;
  if(input.minimumAnnualCtcInr!==null&&input.maximumAnnualCtcInr!==null&&
    input.maximumAnnualCtcInr<input.minimumAnnualCtcInr)return "INVALID_CTC" as const;
+ if(input.maximumAnnualCtcInr!==null&&
+   (input.fixedCtcLpa??0)+(input.variableCtcLpa??0)>input.maximumAnnualCtcInr/100000)
+   return "INVALID_CTC" as const;
  if(new Set(input.locations.map(x=>x.toLowerCase())).size!==input.locations.length)
    return "DUPLICATE_LOCATION" as const;
  return "ALLOW" as const;
