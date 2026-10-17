@@ -58,3 +58,9 @@ Canonical `users` login email/phone/name cannot be mutated by a College Admin me
 
 | COL-people-12 | NOT-A-GAP | Do not provide a College Admin 'Clear OTP lockout': the five-minute challenge caps verification attempts, not a permanent user-account lock, so a manual unlock would create an unsafe bypass. `src/modules/auth/login-service.ts`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-people-12 does not add unsafe permanent OTP account unlock for five-minute challenges`. |
 | COL-people-20 | DONE (source-level) | Require active Super Admin permission before both grant and revoke of COLLEGE_ADMIN, even when the actor can edit other scoped college roles. `src/modules/people/membership-service.ts`; `tests/unit/chat11-college-unconfirmed-decisions-round10.test.ts` — `COL-people-20 requires Super Admin for granting or revoking the college admin role`. |
+
+
+## Chat-11 CSV audit and partial-failure hardening (2026-10-18)
+
+| COL-people-05 | DONE (source-level, test unexecuted) | `src/modules/people/college-student-csv-service.ts` inserts the import audit using the actual current membership only when its college and organization equal the import scope; avoids the reported union-property type error. `tests/unit/chat11-college-student-csv-audit-round10.test.ts` — `COL-people-05 writes a typed same-college actor membership instead of an unknown union property`. |
+| COL-people-25 | PARTIAL — OPEN | `src/modules/people/college-student-csv-service.ts` now strips raw class-placement exception messages from imported-row receipts; `tests/unit/chat11-college-student-csv-audit-round10.test.ts` — `COL-people-25 does not leak database error messages in partial CSV row receipts`. Existing-account duplicate detection and full field-level identity error parity are not complete. |
