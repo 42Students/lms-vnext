@@ -22,3 +22,8 @@ These are scoped implementation contracts for the Super Admin placements intervi
 | GR-90 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-90 focuses an accessible error message following a failed application request` (page-scoped, unrun) |
 | GR-91 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-91 provides a keyboard-reachable, visibly focused Refresh and Copy link action` (page-scoped, unrun) |
 | GR-92 | DONE | Placement application drawer; `tests/unit/chat13-placement-detail-graceful.test.ts` → `GR-92 uses written messages for link-copy and application errors` (page-scoped, unrun) |
+| GR-40 | NOT-A-GAP | `tests/unit/chat13-page-scoped-not-applicable.test.ts` → `GR-40 Interview operations has no file upload input`. Scoped solely to these read-only surfaces, not app-wide (not run) |
+| GR-63 | NOT-A-GAP | `tests/unit/chat13-page-scoped-not-applicable.test.ts` → `GR-63 Interview operations has no import or bulk write action`. Scoped solely to these read-only surfaces, not app-wide (not run) |
+| GR-74 | NOT-A-GAP | `tests/unit/chat13-page-scoped-not-applicable.test.ts` → `GR-74 Analytics and interview operations render no logos or avatars`. Scoped solely to these read-only surfaces, not app-wide (not run) |
+| GR-75 | NOT-A-GAP | `tests/unit/chat13-page-scoped-not-applicable.test.ts` → `GR-75 Analytics and interview operations use no realtime socket or bell`. Scoped solely to these read-only surfaces, not app-wide (not run) |
+| GR-77 | NOT-A-GAP | `tests/unit/chat13-page-scoped-not-applicable.test.ts` → `GR-77 Analytics and interview operations have no print or PDF view`. Scoped solely to these read-only surfaces, not app-wide (not run) |

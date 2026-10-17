@@ -13,7 +13,7 @@ export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminC
   (kind==="ALL"||e.kind===kind)&&(status==="ALL"||e.status===status)&&
   (mode==="ALL"||calendarMode(e)===mode)&&(!conflictsOnly||conflicts.has(e.id))
  ).sort((a,b)=>sort==="COMPANY"?a.companyName.localeCompare(b.companyName):a.startsAt.localeCompare(b.startsAt)),[events,kind,status,mode,conflictsOnly,sort,conflicts]);
- const exported=filtered.slice(0,500);
+ const exported=useMemo(()=>filtered.slice(0,500),[filtered]);
  const csv=useMemo(()=>superAdminInterviewCsv(exported),[exported]);
  const unique=(values:string[])=>[...new Set(values)].sort();
  const choices=(label:string,items:string[],value:string,change:(v:string)=>void)=>
