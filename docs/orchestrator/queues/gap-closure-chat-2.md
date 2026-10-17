@@ -42,7 +42,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-11 | S3 | STATE | UNCONFIRMED |
 | TPO-inbox-team-13 | S3 | RESPONSIVE | IN-BRANCH |
 | TPO-inbox-team-14 | S3 | STATE | IN-BRANCH |
-| TPO-inbox-team-23 | S3 | MISSING-ACTION | OPEN |
+| TPO-inbox-team-23 | S3 | MISSING-ACTION | IN-BRANCH |
 | TPO-inbox-team-25 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-26 | S3 | MISSING-FIELD | OPEN |
 | TPO-inbox-team-27 | S3 | STATE | IN-BRANCH |
@@ -74,7 +74,7 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-66 | S4 | A11Y | FIXED-ON-MAIN |
 | TPO-inbox-team-67 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-68 | S4 | STATE | IN-BRANCH |
-| TPO-inbox-team-R04 | S4 | STATE | OPEN |
+| TPO-inbox-team-R04 | S4 | STATE | IN-BRANCH |
 | TPO-inbox-team-R06 | S4 | STATE | OPEN |
 | TPO-inbox-team-R07 | S4 | A11Y | FIXED-ON-MAIN |
 
@@ -116,8 +116,8 @@ Audit: `docs/audit/pages/recruiter/calendar-messages-profile.md` (and `calendar-
 | REC-calendar-messages-profile-07 | S4 | STATE | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-20 | S4 | A11Y | FIXED-ON-MAIN |
 | REC-calendar-messages-profile-33 | S4 | PERMISSION | FIXED-ON-MAIN |
-| REC-calendar-messages-profile-37 | S4 | STATE | OPEN |
-| REC-calendar-messages-profile-42 | S4 | COPY | OPEN |
+| REC-calendar-messages-profile-37 | S4 | STATE | NOT-A-GAP |
+| REC-calendar-messages-profile-42 | S4 | COPY | IN-BRANCH |
 | REC-calendar-messages-profile-47 | S4 | STATE | OPEN |
 | REC-calendar-messages-profile-48 | S4 | COPY | OPEN |
 
@@ -153,13 +153,13 @@ Audit: `docs/audit/pages/tpo/recruiters.md` (and `recruiters-review.md` if prese
 | TPO-recruiters-34 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-recruiters-36 | S3 | RESPONSIVE | OPEN |
 | TPO-recruiters-37 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-recruiters-38 | S3 | VALIDATION | OPEN |
+| TPO-recruiters-38 | S3 | VALIDATION | IN-BRANCH |
 | TPO-recruiters-39 | S3 | COPY | OPEN |
 | TPO-recruiters-40 | S3 | COPY | OPEN |
 | TPO-recruiters-41 | S3 | MISSING-ACTION | OPEN |
 | TPO-recruiters-R05 | S3 | SIDE-EFFECT | OPEN |
 | TPO-recruiters-42 | S4 | STATE | OPEN |
-| TPO-recruiters-43 | S4 | COPY | OPEN |
+| TPO-recruiters-43 | S4 | COPY | IN-BRANCH |
 | TPO-recruiters-R06 | S4 | COPY | OPEN |
 
 ## tpo/companies (30: UNCONFIRMED 3, OPEN 10, FIXED-ON-MAIN 17)
@@ -254,3 +254,10 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Authenticated thread correction, optimistic decisions, away-until, From 42 global unread, Team pagination and drive Discussion were pushed with gap-named unit tests, not executed. The orchestrator must register `docs/proposed-migrations/tpo-inbox-team-away-until.sql`.
 - TPO-settings-audit-01/55, T-S2-08, TPO-inbox-team-R05 and TPO-inbox-team-07 unit-failures-r1 regressions were addressed on branch. Verification is pending the orchestrator test run.
 - Next work: object Team conversations and asks, role policy (R02/38), workload assignment/handover, delivery producers and student-facing notice consequences. Do not move any partial item to DONE without full tests.
+
+## Chat-2 round 6 — source closure review and next work
+- Synced with origin/main at start. Repaired three chat-2 unit-failures-r1 contract mismatches: TPO-home-33/TPO-inbox-team-62 bell snapshot state; TPO-home-35/TPO-inbox-team-61 guarded POST acknowledgement; TPO-inbox-team-54 full From 42 unread count. They are fixed by source changes or updated assertions; run tests in orchestrator before accepting.
+- Reassessed all 27 OPEN TPO inbox-Team gaps from round 5, plus 7 recruiter/calendar/profile and recruiter-leads gaps (34 reviewed, 25+ target met for triage but **not all closed**). The gap IDs marked IN-BRANCH above have source implementations and named tests, not completed CI acceptance. Gaps with missing legacy functionality remain OPEN.
+- Implemented: TPO-inbox-team-22 first-class member-scoped asks (create, idempotent retry, due/overdue, mark done with reply, cancel, audit, in-app notifications, deep links); -23 send-time decisions and Decisions filter; -18 Asks/ask-assignee chips; -31/-32 persisted ask counts and overdue sort; -34 away warning; R04 author notices with college handover view; REC-calendar-messages-profile-28 profile copy; -37 reports deep-link NOT-A-GAP; -42 invite decline verification; -47 explicit alias redirects; TPO-recruiters-38 email-provider inference, -39/-40/-43 source copy.
+- Proposed `docs/proposed-migrations/tpo-team-asks.sql` needs orchestrator registration. `tests/integration/tpo-team-asks-chat2.test.ts` requires disposable DB and is **not run by builder**. Do not claim HOME ask integration, full @mention handling, multi-person/object threads, member handover, or complete CRM parity.
+- Remaining major TPO-inbox-team OPEN IDs: 07,16,17,18,20,22,24,31,33,36,44,54,60,26,29,30,34,37,38,51,52,59,R02,42,R06. Recruiter profile mobile/combined save and TPO recruiter lifecycle/duplicate handling also remain.
