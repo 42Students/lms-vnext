@@ -59,3 +59,10 @@ Tests have not been run.
 | ID | Decision | Evidence |
 | --- | --- | --- |
 | TPO-campaigns-public-37 | NOT-A-GAP (privacy-preserving intentional deviation) — keep opt-in publication fresh and hide counts for cohorts or measures below five rather than exposing identifiable placement/salary details; SELECTED policy is not guessed from offers. This is safer than a legacy live aggregate with insufficient suppression. | `src/modules/placements/public-metric-release.ts`, `src/modules/placements/public-page/read-service.ts`; `tests/unit/chat2-safe-deviations-open-gap-decisions.test.ts` named **TPO-campaigns-public-37 releases no identifying small-cohort aggregate…**. |
+
+
+## Chat-2 remaining provider-dependent campaign increments
+| ID | Status | Evidence |
+| --- | --- | --- |
+| TPO-campaigns-public-04 | PARTIAL — OPEN | Campaign send now creates persisted college delivery batch and per-recipient provider receipt records with actual delivery statuses, `tests/unit/chat2-campaign-open-increments.test.ts` **TPO-campaigns-public-04…**. Separate invite/legacy non-campaign provider history is not fully present; do not represent email counts as universal. |
+| TPO-campaigns-public-23 | PARTIAL — OPEN | Verified college/public recruiter link join generates audited event, scoped TPO bell, increments persisted join count and does not infer a preview as an open. Same named **TPO-campaigns-public-23…** test. External welcome-email delivery requires a configured provider and open counting requires a distinct verified beacon. |
