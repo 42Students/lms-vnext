@@ -84,11 +84,11 @@ test("GR-80 GR-34 Recruiter slow message reply never submits twice", async ({ pa
   }).first();
   const message = form.getByRole("textbox", { name: "Message" });
   await message.fill("Unsent employer message must be delivered at most once");
-  const fault = await failApi(page, /\\/api\\/placements\\/recruiter\\/conversations\\/[^/]+\\/reply$/, "slow");
+  const fault = await failApi(page, /\/api\/placements\/recruiter\/conversations\/[^/]+\/reply$/, "slow");
   try {
     await form.getByRole("button", { name: "Send reply" }).click();
     await expect.poll(() => fault.requests().filter(request =>
-      /^POST \\/api\\/placements\\/recruiter\\/conversations\\/[^/]+\\/reply$/.test(request)).length)
+      /^POST \/api\/placements\/recruiter\/conversations\/[^/]+\/reply$/.test(request)).length)
       .toBe(1);
     await expect(form.getByRole("button", { name: "Sending…" })).toBeDisabled();
     await message.press("ControlOrMeta+Enter");
