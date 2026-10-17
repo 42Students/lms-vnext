@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {placementApplications,placementJobRounds,placementJobs} from "@/db/schema";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requireLearnerPlacementAccess} from "./learner-participation-guard";
@@ -48,7 +49,7 @@ export async function confirmOwnPlacementRound(context:RequestContext,raw:unknow
    isNull(placementRoundCandidateSlots.learnerConfirmedAt))).returning({id:placementRoundCandidateSlots.id});
   if(!saved)throw new AuthorizationError("placements.read");
   await recordActivityEventInTransaction(tx,context,{
-    eventType:"placements.learner_round_attendance.confirmed",
+    eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_LEARNER_ROUND_ATTENDANCE_CONFIRMED,
     collegeId:member.collegeId,organizationId:member.organizationId,
     subjectType:"placement_round",subjectId:input.roundId,
     summary:"Learner confirmed booked round attendance",
