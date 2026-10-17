@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
@@ -15,7 +14,6 @@ export function TpoPublicJoinLinkCard({
   companyId?: string;
   companyName?: string;
 }) {
-  const router=useRouter();
   const [status, setStatus] = useState(initial);
   const [freshUrl, setFreshUrl] = useState("");
   const [busy, setBusy] = useState(false);
@@ -59,6 +57,19 @@ export function TpoPublicJoinLinkCard({
     }
   }
 
+  async function retryStatus(){
+    setBusy(true);setFeedback("");
+    try{
+      const query=new URLSearchParams({scope,...(isCompany&&companyId?{companyId}:{})});
+      const response=await fetch("/api/placements/tpo/public-join-links/status?"+query.toString(),{
+        credentials:"same-origin",cache:"no-store",
+      });
+      if(!response.ok)throw new Error("Couldn't load the company link");
+      const state=await response.json() as TpoPublicJoinLinkStatus;
+      setStatus(state);
+    }catch{setFeedback("Couldn't load the company link");}
+    finally{setBusy(false);}
+  }
   async function saveDomain(){
     if(!companyId)return;
     setBusy(true);setFeedback("");
@@ -129,7 +140,7 @@ export function TpoPublicJoinLinkCard({
       {!status.ready ? (
         <p role="status" className="mt-3 text-sm text-body">
           {isCompany ? "Couldn't load the company link" : "Couldn't load the public link"}
-          <button type="button" onClick={()=>router.refresh()}
+          <button type="button" disabled={busy} onClick={()=>void retryStatus()}
             className="ml-3 font-semibold text-primary-text underline">Retry</button>
         </p>
       ) : (
