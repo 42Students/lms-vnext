@@ -153,10 +153,11 @@ describe("project resource files against PostgreSQL", () => {
     expect(new URL(grant.url).searchParams.get("response-content-disposition")).toMatch(/^attachment;/);
     expect((await issueProjectFileDownloadGrant(collegeAdmin, project.id, done.id, { disposition: "inline" })).file.id).toBe(done.id);
 
-    // Learners cannot upload, edit or delete; the denial does not leak existence.
+    // Learners may upload only while the project is ACTIVE (this one is not
+    // started), and can never edit or delete; denial does not leak existence.
     await expect(
       issueProjectFileUploadGrant(learner, project.id, { originalName: "x.pdf", contentType: "application/pdf", sizeBytes: 10 }),
-    ).rejects.toMatchObject({ code: "STORAGE_NOT_FOUND" });
+    ).rejects.toMatchObject({ code: "STORAGE_PARENT_NOT_AVAILABLE" });
     await expect(updateProjectFileDetails(learner, project.id, done.id, { title: "x" })).rejects.toMatchObject({ code: "STORAGE_NOT_FOUND" });
     await expect(removeProjectFile(learner, project.id, done.id)).rejects.toMatchObject({ code: "STORAGE_NOT_FOUND" });
 

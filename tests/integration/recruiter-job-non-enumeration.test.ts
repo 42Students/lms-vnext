@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
 import { afterAll, describe, expect, it } from "vitest";
 import { closeDatabaseConnection } from "@/db/client";
@@ -32,6 +33,7 @@ describe.skipIf(!enabled)("HR employer job non-enumeration (isolated PG)", () =>
       primaryDomain: "second-" + nonce + ".example",
     });
     const job = await createPlacementJob(tpo, {
+      ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId: first.relationship.id,
       title: "Hiring Analyst " + nonce, description: "Boundary fixture",

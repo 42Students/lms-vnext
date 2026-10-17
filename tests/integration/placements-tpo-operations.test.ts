@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -159,6 +160,7 @@ describe("Placement TPO operations", () => {
     const driveDraft = await createPlacementJob(
       tpo,
       {
+      ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,
@@ -179,6 +181,7 @@ describe("Placement TPO operations", () => {
             id: roundId,
             kind: "TEST",
             name: "Aptitude test",
+            durationMinutes: 60,
           },
         ],
       },
@@ -235,6 +238,7 @@ describe("Placement TPO operations", () => {
       await createPlacementJob(
         tpo,
         {
+      ...publishableJobTerms,
           collegeId: SEED_IDS.collegeA,
           companyRelationshipId:
             company.relationship.id,
@@ -261,6 +265,7 @@ describe("Placement TPO operations", () => {
       await createPlacementJob(
         tpo,
         {
+      ...publishableJobTerms,
           collegeId: SEED_IDS.collegeA,
           companyRelationshipId:
             company.relationship.id,

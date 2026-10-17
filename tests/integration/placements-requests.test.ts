@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -129,6 +130,9 @@ async function cleanup() {
     "delete from placement_round_results",
   );
   await pool.query(
+    "delete from placement_tpo_application_stages",
+  );
+  await pool.query(
     "delete from placement_job_round_events",
   );
   await pool.query(
@@ -185,6 +189,7 @@ async function createApplication(
   const job = await createPlacementJob(
     tpo,
     {
+      ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId:
         company.relationship.id,
@@ -225,6 +230,7 @@ async function createJob(
   const job = await createPlacementJob(
     tpo,
     {
+      ...publishableJobTerms,
       collegeId: SEED_IDS.collegeA,
       companyRelationshipId:
         company.relationship.id,

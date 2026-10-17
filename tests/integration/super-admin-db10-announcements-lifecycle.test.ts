@@ -57,7 +57,7 @@ describe.skipIf(!enabled)("DB10 announcements registered schema lifecycle (dispo
     .rejects.toMatchObject({code:"STALE_VERSION"});
    const deleted=await deleteAnnouncement(admin,id,{expectedVersion:updated.version});
    expect(deleted.deletedAt).not.toBeNull();
-   const deletedOnly=await listAnnouncementsForAdmin({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}}, {q:"DB10 integration",visibility:"DELETED",limit:50});
+   const deletedOnly=await listAnnouncementsForAdmin({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}}, {q:"DB10 revised",visibility:"DELETED",limit:50});
    expect(deletedOnly.items.map(item=>item.id)).toContain(id);
    expect((await listAnnouncementsForAdmin({...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}},{limit:100})).items.map(item=>item.id)).not.toContain(id);
    await expect(deleteAnnouncement(admin,id,{expectedVersion:updated.version})).rejects.toMatchObject({code:"STALE_VERSION"});

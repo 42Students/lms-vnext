@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
 import { closeDatabaseConnection } from "@/db/client";
@@ -71,6 +72,8 @@ async function cleanup() {
     "delete from learner_program_enrollments where membership_id=$1",
     [coordinatorMembershipId],
   );
+  await pool.query("delete from placement_batch_registration_events where registration_id in (select id from placement_batch_registrations where membership_id = $1)", [coordinatorMembershipId]);
+  await pool.query("delete from placement_batch_registrations where membership_id = $1", [coordinatorMembershipId]);
   await pool.query("delete from membership_roles where id = $1", [coordinatorRoleId]);
   await pool.query("delete from college_memberships where id = $1", [coordinatorMembershipId]);
   await pool.query("delete from users where id = $1", [coordinatorUserId]);
@@ -98,6 +101,7 @@ async function setup() {
     primaryDomain: "w04-coordinator-scope.example",
   });
   const job = await createPlacementJob(tpo, {
+      ...publishableJobTerms,
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId: company.relationship.id,
     title: "Drive Day QA Engineer",
@@ -106,10 +110,10 @@ async function setup() {
     applicationMode: "INTERNAL",
   });
   const todayRound = await createPlacementRound(tpo, job.id, {
-    kind: "TEST", name: "Today Aptitude Test",
+    kind: "TEST", name: "Today Aptitude Test", durationMinutes: 60,
   });
   const tomorrowRound = await createPlacementRound(tpo, job.id, {
-    kind: "INTERVIEW", name: "Tomorrow Interview",
+    kind: "INTERVIEW", name: "Tomorrow Interview", durationMinutes: 60,
   });
   await publishPlacementJob(tpo, job.id);
   const application = await applyToPlacementJob(applicant, job.id, {});
@@ -237,6 +241,14 @@ describe("W04 coordinator same-day / tenant authorization", () => {
       `insert into placement_eligibility_decisions
          (college_id,scope_type,scope_id,status,decided_by_user_id)
        values($1,'MEMBERSHIP',$2,'ELIGIBLE',$3)`,
+      [SEED_IDS.collegeA, coordinatorMembershipId, SEED_IDS.collegeAdminUser],
+    );
+    await pool.query(
+      `insert into placement_batch_registrations
+         (college_id,cohort_id,membership_id,choice,consent_version,consent_at,source,recorded_by_user_id)
+       select $1,cohort_id,$2,'PLACEMENTS','fixture',now(),'BACKFILL',$3
+         from learner_program_enrollments
+        where membership_id=$2 and status='ACTIVE'`,
       [SEED_IDS.collegeA, coordinatorMembershipId, SEED_IDS.collegeAdminUser],
     );
 

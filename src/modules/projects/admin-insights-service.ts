@@ -474,40 +474,46 @@ export async function listProjectAdminRiskQueue(
         sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
       )
     : undefined;
+  // Correlated subqueries below need a qualified outer reference: Drizzle
+  // renders single-table column interpolations unqualified, which would bind
+  // to the inner table's own columns instead of project_instances.
+  const instanceId = sql.raw('"project_instances"."id"');
+  const instanceUpdatedAt = sql.raw('"project_instances"."updated_at"');
+  const instanceBlocker = sql.raw('"project_instances"."blocker"');
   const lastActivityAt = sql<Date>`greatest(
-    ${projectInstances.updatedAt},
-    coalesce((select max(pt.updated_at) from project_tasks pt where pt.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(ps.updated_at) from project_sprints ps where ps.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pr.updated_at) from project_releases pr where pr.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pfs.updated_at) from project_submissions pfs where pfs.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pts.updated_at) from project_task_submissions pts where pts.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pm.updated_at) from project_meetings pm where pm.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pres.updated_at) from project_resources pres where pres.project_id = ${projectInstances.id}), 'epoch'::timestamptz),
-    coalesce((select max(pmem.updated_at) from project_members pmem where pmem.project_id = ${projectInstances.id}), 'epoch'::timestamptz)
-  )`;
+    ${instanceUpdatedAt},
+    coalesce((select max(pt.updated_at) from project_tasks pt where pt.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(ps.updated_at) from project_sprints ps where ps.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pr.updated_at) from project_releases pr where pr.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pfs.updated_at) from project_submissions pfs where pfs.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pts.updated_at) from project_task_submissions pts where pts.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pm.updated_at) from project_meetings pm where pm.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pres.updated_at) from project_resources pres where pres.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pmem.updated_at) from project_members pmem where pmem.project_id = ${instanceId}), 'epoch'::timestamptz)
+  )`.mapWith((value: string | Date) => new Date(value));
   // Only the latest submission version can be awaiting review.
   // The unique (project_id, version) constraint makes this
   // ordering deterministic. No submission means false.
   const pendingReview = sql<boolean>`coalesce((
     select latest.status = 'SUBMITTED'
     from project_submissions latest
-    where latest.project_id = ${projectInstances.id}
+    where latest.project_id = ${instanceId}
     order by latest.version desc
     limit 1
   ), false)`;
   const blockedTask = sql<boolean>`(
-    nullif(trim(${projectInstances.blocker}), '') is not null
+    nullif(trim(${instanceBlocker}), '') is not null
     or exists (
       select 1 from project_tasks blocked
-      where blocked.project_id = ${projectInstances.id}
+      where blocked.project_id = ${instanceId}
         and blocked.status = 'BLOCKED'
         and nullif(trim(blocked.blocker_reason), '') is not null
     )
   )`;
-  const blockerSummary = sql<string | null>`coalesce(nullif(trim(${projectInstances.blocker}), ''), (
+  const blockerSummary = sql<string | null>`coalesce(nullif(trim(${instanceBlocker}), ''), (
     select nullif(trim(blocked.blocker_reason), '')
     from project_tasks blocked
-    where blocked.project_id = ${projectInstances.id}
+    where blocked.project_id = ${instanceId}
       and blocked.status = 'BLOCKED'
       and nullif(trim(blocked.blocker_reason), '') is not null
     order by blocked.updated_at desc, blocked.id desc limit 1
