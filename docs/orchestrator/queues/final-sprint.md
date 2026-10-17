@@ -173,17 +173,17 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 
 ## chat-14 (11)
 
-- TPO-drives-03 [WRONG] tpo/drives
-- TPO-drives-13 [FIXED-ON-MAIN] tpo/drives
-- TPO-drives-31 [OPEN] tpo/drives
-- TPO-drives-48 [OPEN] tpo/drives
-- TPO-drives-52 [OPEN] tpo/drives
-- PUB-auth-public-29 [OPEN] public/auth-public-1-login-session
-- PUB-auth-public-31 [OPEN] public/auth-public-1-login-session
-- PUB-auth-public-38 [OPEN] public/auth-public-1-login-session
-- COL-academic-setup-21 [WRONG] college/academic-setup
-- COL-verification-misc-13 [FIXED-ON-MAIN] college/verification-misc
-- TPO-inbox-team-12 [FIXED-ON-MAIN] tpo/inbox-team
+- TPO-drives-03 [NOT-A-GAP] tpo/drives
+- TPO-drives-13 [DONE] tpo/drives
+- TPO-drives-31 [DONE] tpo/drives
+- TPO-drives-48 [DONE] tpo/drives
+- TPO-drives-52 [DONE] tpo/drives
+- PUB-auth-public-29 [DONE] public/auth-public-1-login-session
+- PUB-auth-public-31 [DONE] public/auth-public-1-login-session
+- PUB-auth-public-38 [DONE] public/auth-public-1-login-session
+- COL-academic-setup-21 [NOT-A-GAP] college/academic-setup
+- COL-verification-misc-13 [DONE] college/verification-misc
+- TPO-inbox-team-12 [DONE] tpo/inbox-team
 
 ## chat-15 (10)
 
@@ -211,3 +211,7 @@ Each lane owns a non-overlapping list. For every ID: if OPEN, implement it (exac
 - SA-tenants-modules-29 [FIXED-ON-MAIN] superadmin/tenants-modules-2
 - SA-tenants-modules-35 [FIXED-ON-MAIN] superadmin/tenants-modules-2
 
+
+### chat-14 final sprint acceptance (2026-10-18)
+
+All eleven IDs above have a `[chat-14]` gap-ID-tagged commit, named unit test under `tests/unit/chat14-final-*.test.ts` and a claim-specific acceptance note under `docs/audit/acceptance/`. TPO-drives-31 requires registration of `docs/proposed-migrations/tpo-outside-drive-participants.sql` to enable participant writes. Tests and the migration have not been executed by this lane. The chat-14 final statuses are code and audit decisions, not a claim that production migrations/providers are running.
