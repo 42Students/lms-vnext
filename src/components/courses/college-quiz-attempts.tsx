@@ -13,6 +13,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const [deliveryId,setDeliveryId]=useState(options[0]?.deliveryId??"");
  const [opened,setOpened]=useState(false),[loading,setLoading]=useState(false);
  const [attempts,setAttempts]=useState<Attempt[]>([]),[error,setError]=useState("");
+ const [learnerSearch,setLearnerSearch]=useState("");
  const chosen=options.find(x=>x.deliveryId===deliveryId)??options[0];
  async function open(){
   if(!chosen||loading)return;
@@ -46,7 +47,13 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
     No quiz submissions yet for this Section.</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <ul className="space-y-2">{attempts.map(item=><li key={item.id}
+    <label className="mb-2 grid gap-1 text-xs font-semibold">Search Student
+     <input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
+      className="min-h-10 rounded border border-border bg-background p-2" placeholder="Student name or email"/>
+    </label>
+    <ul className="space-y-2">{attempts.filter(item=>!learnerSearch.trim()||
+      (item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||
+      (item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())).map(item=><li key={item.id}
      className="space-y-1 rounded border border-border p-2 text-xs">
      <p className="font-semibold">{item.learnerDisplayName?.trim()||item.learnerEmail||"Learner "+item.membershipId.slice(0,8)}</p>
      <p>Attempt {item.attemptNumber} · {item.score}/{item.maxScore} points</p>
