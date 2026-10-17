@@ -13,6 +13,7 @@ import {
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
+  activityEvents,
   placementTpoLeadActivities,
   placementTpoLeads,
   collegeMemberships,users,identityDeviceSessions,
@@ -369,7 +370,7 @@ export async function addTpoFollowup(
 ) {
   const leadId = tpoCrmLeadIdSchema.parse(rawLeadId);
   const input = createTpoFollowupSchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
+  const college = await requirePlacementManageScope(context, input.collegeId);
   return getDb().transaction(async (tx) => {
     const [lead] = await tx
       .select({ id: placementTpoLeads.id })
@@ -391,6 +392,14 @@ export async function addTpoFollowup(
         ownerMembershipId: ownerMembership(context, input.collegeId),
       })
       .returning();
+    if(followup)await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId:input.collegeId,
+      actorUserId:context.user.id,actorMembershipId:ownerMembership(context,input.collegeId),
+      module:"PLACEMENTS",eventType:"placements.tpo_followup.created",
+      subjectType:"placement_tpo_followup",subjectId:followup.id,
+      subjectLabel:"Recruiter follow-up",summary:"TPO scheduled recruiter follow-up",
+      metadata:{leadId,followupId:followup.id,dueAt:followup.dueAt.toISOString()},
+    });
     return followup;
   });
 }
@@ -418,33 +427,33 @@ export async function moveTpoFollowup(
   rawFollowupId: string,
   raw: MoveTpoFollowupInput,
 ) {
-  const followupId = tpoCrmFollowupIdSchema.parse(rawFollowupId);
-  const input = moveTpoFollowupSchema.parse(raw);
-  await requirePlacementManageScope(context, input.collegeId);
-  const [followup] = await getDb()
-    .update(placementTpoFollowups)
-    .set({ dueAt: new Date(input.dueAt) })
-    .where(and(
-      eq(placementTpoFollowups.id, followupId),
-      eq(placementTpoFollowups.collegeId, input.collegeId),
-      isNull(placementTpoFollowups.doneAt),
-    ))
-    .returning();
-  if (followup) return followup;
-
-  const [existing] = await getDb()
-    .select({ doneAt: placementTpoFollowups.doneAt })
-    .from(placementTpoFollowups)
-    .where(and(
-      eq(placementTpoFollowups.id, followupId),
-      eq(placementTpoFollowups.collegeId, input.collegeId),
-    ))
-    .limit(1);
-  throw new TpoCrmError(existing
-    ? "TPO_CRM_FOLLOWUP_ALREADY_DONE"
-    : "TPO_CRM_FOLLOWUP_NOT_FOUND");
+ const followupId=tpoCrmFollowupIdSchema.parse(rawFollowupId);
+ const input=moveTpoFollowupSchema.parse(raw);
+ const college=await requirePlacementManageScope(context,input.collegeId);
+ const followup=await getDb().transaction(async tx=>{
+  const [changed]=await tx.update(placementTpoFollowups)
+   .set({dueAt:new Date(input.dueAt)})
+   .where(and(eq(placementTpoFollowups.id,followupId),
+    eq(placementTpoFollowups.collegeId,input.collegeId),
+    isNull(placementTpoFollowups.doneAt)))
+   .returning();
+  if(!changed)return null;
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId:input.collegeId,
+   actorUserId:context.user.id,actorMembershipId:ownerMembership(context,input.collegeId),
+   module:"PLACEMENTS",eventType:"placements.tpo_followup.moved",
+   subjectType:"placement_tpo_followup",subjectId:changed.id,
+   subjectLabel:"Recruiter follow-up",summary:"TPO rescheduled recruiter follow-up",
+   metadata:{followupId:changed.id,leadId:changed.leadId,dueAt:changed.dueAt.toISOString()},
+  });
+  return changed;
+ });
+ if(followup)return followup;
+ const [existing]=await getDb().select({doneAt:placementTpoFollowups.doneAt})
+  .from(placementTpoFollowups).where(and(eq(placementTpoFollowups.id,followupId),
+   eq(placementTpoFollowups.collegeId,input.collegeId))).limit(1);
+ throw new TpoCrmError(existing?"TPO_CRM_FOLLOWUP_ALREADY_DONE":"TPO_CRM_FOLLOWUP_NOT_FOUND");
 }
-
 export async function finishTpoFollowup(
   context: RequestContext,
   rawCollegeId: string,
