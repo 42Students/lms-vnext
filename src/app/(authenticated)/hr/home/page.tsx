@@ -88,6 +88,8 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
   const dueResults = projectHrTodayResultsDue(calendar.resultsDue, collegeJobs.map(row => row.job.id));
   const liveDrives=hrTodayLiveDriveRows(jobs,selectedId,recruiter.companyId);
   const liveDriveCounts=await recruiterVisiblePortfolioCounts(context,selectedId,liveDrives.map(row=>row.job.id));
+  const mostSharedLiveId=[...liveDrives].sort((left,right)=>
+    (liveDriveCounts[right.job.id]?.sharedApplicants??0)-(liveDriveCounts[left.job.id]?.sharedApplicants??0))[0]?.job.id??null;
   const unreadAction=inboxResult.status==="fulfilled"?hrTodayUnreadAction({...inboxResult.value,collegeId:selectedId}):null;
   const conversationSignals = conversations?.status==="READY"
     ? hrTodayConversationSignals(conversations.items,conversations.total)
@@ -210,6 +212,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
           href={"/recruiter/drives/"+encodeURIComponent(row.job.id)}
           className="min-w-0 rounded-md border border-border p-4 hover:border-primary">
           <span className="block break-words font-semibold text-foreground">{row.job.title}</span>
+          {row.job.id===mostSharedLiveId&&liveDrives.length>1?<span className="mt-1 inline-block rounded-full border border-border px-2 py-0.5 text-xs font-semibold text-body">Most shared applicants in this preview</span>:null}
           <span className="mt-1 block text-xs text-muted-foreground">
             {row.job.applicationDeadline?"Applications close "+when(row.job.applicationDeadline)+" IST":"No deadline recorded"}
           </span>
