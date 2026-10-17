@@ -51,3 +51,7 @@
 ## Chat-6 UNCONFIRMED decisions, 2026-10-18
 
 | SA-placements-projects-115 | OPEN (partial) | Sanitized Copy for Claude and prefilled tracker report; no unscoped production logs or SQL; decision evidence: `docs/audit/acceptance/chat-6-unconfirmed-decisions.md`; test: `tests/unit/chat6-unconfirmed-decisions-round13.test.ts` → `SA-placements-projects-115` |
+
+## Chat-6 follow-up: incremental OPEN-gap behavior
+
+| SA-placements-projects-115 | OPEN (partial: sanitized diagnostic SQL copied) | `src/modules/log-alerts/known-error-safe-summary.ts` and `src/components/tracker/known-errors-workspace.tsx` add `Copy SQL to check the data` with a read-only, aggregate-only query using a strictly validated 64-hex signature and safe environment; no raw logs, stack traces, account identities or samples. `tests/unit/chat6-safe-known-error-sql-115.test.ts` → `SA-placements-projects-115 copies only bounded aggregate SQL for a 64-hex signature and safe environment` and `SA-placements-projects-115 refuses invalid clipboard SQL and injection input`. Automatic creation and linking of a tracker issue remains OPEN. |
