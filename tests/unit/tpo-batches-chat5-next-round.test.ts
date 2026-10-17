@@ -75,4 +75,27 @@ describe("TPO Batches next-round source and behavioral gap closure",()=>{
   expect(ui).toContain("finally{setBusy(false)");
   expect(ui).toContain('role="alert"');
  });
+ it("TPO-batches-61 keeps audited undo accessible without leaking provider responses",()=>{
+  const overview=source("src/app/(authenticated)/tpo/batches/[batchId]/page.tsx");
+  const ui=source("src/components/tpo/tpo-batch-undo-control.tsx");
+  expect(overview).toContain("Undo last decision");
+  expect(ui).toContain("apiFetch");
+  expect(ui).toContain("useGuardedAction");
+  expect(ui).not.toContain("window.confirm");
+  expect(ui).toContain("checked={reviewed}");
+ });
+ it("TPO-batches-50 has a complete keyboard-safe loading and recovery state",()=>{
+  const pending=source("src/app/(authenticated)/tpo/batches/[batchId]/students/loading.tsx");
+  const failed=source("src/app/(authenticated)/tpo/batches/[batchId]/students/error.tsx");
+  expect(pending).toContain('aria-busy="true"');
+  expect(pending).toContain("animate-pulse");
+  expect(failed).toContain("Retry");
+ });
+ it("GR-35 GR-90 avoids native confirmation and exposes an alert for failed batch undo",()=>{
+  const ui=source("src/components/tpo/tpo-batch-undo-control.tsx");
+  expect(ui).not.toContain("window.confirm");
+  expect(ui).toContain('type="checkbox"');
+  expect(ui).toContain('role="alert"');
+ });
+
 });
