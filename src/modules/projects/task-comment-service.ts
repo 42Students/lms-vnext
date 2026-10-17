@@ -76,6 +76,6 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
         : "/learn/projects/"+scope.project.id+"?tab=board",
     });
   }
-  return comment;
+  return {...comment,updatedTaskAt:updated.updatedAt};
  });
 }
