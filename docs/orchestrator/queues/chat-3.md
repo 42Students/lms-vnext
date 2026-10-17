@@ -1,3 +1,19 @@
+## FAST v2 0132 continuation — new chat-3 source commits
+
+- Synced `chatgpt/chat-3-b` to origin/main `933c730` containing migration 0132 before edits; branch-only pushes, no main or PR writes.
+- **TPO-requests-verification-11/12**: request inbox now handles urgent-only, selected drive (scoped persisted job IDs), asked today IST, 1–2 days, older-than-two-days filters and linked attention shortcut. All filters persist in URLs and exports. Proof metadata filter remains blocked until trusted attachment facts are available; after-college/branch filters are still outstanding.
+- **TPO-requests-verification-09**: request card now shows recorded after-college destination and Already placed indicator only for persisted placed outcomes; unknown records are not labeled placed.
+- **TPO-requests-verification-14**: existing in-app audited nudge used for selected pending request authors; unknown registration is not represented as nonparticipation.
+- **TPO-requests-verification-30**: exact Education/Identity verified and correction notification copy now dispatched atomically with verification decisions using recorded reviewer and note.
+- **TPO-requests-verification-32**: protected TPO queue CSV route using existing formula-safe serializer and persisted queue, separate Waiting/Sent back/Verified links. **PARTIAL**: first 100 authorized queue rows only; unbounded filtered export and reviewed-at metadata need extended scoped read.
+- **TPO-students-42**: drawer loads requests eagerly, displays pending badge, and supports existing guarded approve/reject action per request with optimistic version and refresh.
+- **TPO-students-45/52**: drawer now displays persisted learner application status with drive links and scoped after-college outcome fact; richer employer/offer details remain open.
+- **TPO-students-R08**: student name cells on desktop and mobile spreadsheet open the accessible student panel, with descriptive action labels.
+- **Blocked — TPO-requests-verification-11**: reliable Proof attached/missing/not needed facet needs registered signed document evidence, cannot be inferred from reason text.
+- **Blocked — TPO-students-52**: a verified prep percentage and profile-verification completeness cannot be derived from attendance/backlogs alone.
+- All items above record pushed source changes only, not acceptance or runtime validation; FAST v2 expressly skipped tests, typecheck, lint, build and CI waiting.
+- WP-chat-3-02/-03/-04 and WP-chat-5-02/-09/-10/-14/-15 remain IN-PROGRESS for remaining nonblocked parity; no WP falsely marked DONE.
+
 ## FAST v2 continuation — College Admin + reassigned TPO requests and verification
 
 - **COL-academic-setup-16 (source):** Class and batch edit discard confirmation, batch graduate/archive actions, and semester-mapping navigation no longer use native browser confirms; safeguards remain inline and drafts remain retained.
@@ -54,8 +70,8 @@ Work packages originally indexed under `docs/audit/work-packages/chat-5/`, now e
 1. WP-chat-5-02-requests-verification-students-s1 | IN-PROGRESS (TPO-students-02/04 addressed; other S1/S2 gaps remain) | 17 gaps (S1 13, S2 4)
 2. WP-chat-5-09-students-requests-verification-s2 | IN-PROGRESS | 20 gaps (S2 20)
 3. WP-chat-5-10-students-placements-s2 | IN-PROGRESS | 23 gaps (S2 12, S3 11)
-4. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps (S3 17)
-5. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps (S3 15)
+4. WP-chat-5-14-requests-verification-recruiters-s3 | IN-PROGRESS (request filters, context, export, notification copy partial) | 17 gaps (S3 17)
+5. WP-chat-5-15-students-settings-audit-s3 | IN-PROGRESS (student drawer navigation/actions partial) | 15 gaps (S3 15)
 
 ## FAST v2 continuation — College Admin Settings
 
