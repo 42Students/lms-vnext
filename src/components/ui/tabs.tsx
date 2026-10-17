@@ -51,7 +51,7 @@ export function Tabs({ items, value, onValueChange, ariaLabel, className, render
             disabled={item.disabled}
             tabIndex={item.value === value ? 0 : -1}
             onKeyDown={event => keyDown(event, index)}
-            onClick={() => onValueChange(item.value)}
+            onClick={() => onValueChange?.(item.value)}
             className={cx("inline-flex min-h-11 shrink-0 items-center justify-center whitespace-nowrap border-b-2 px-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] disabled:opacity-50",
               item.value === value ? "border-[var(--lms-teal-deep)] text-foreground" : "border-transparent text-body hover:bg-primary-subtle")}>
             {item.label}
