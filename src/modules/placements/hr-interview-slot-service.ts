@@ -10,6 +10,7 @@ import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {PlacementsServiceError} from "./errors";
+import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
 type JobScope={id:string;collegeId:string;organizationId:string;companyRelationshipId:string};
 async function verifyRecruiterSlotJob(tx:TpoJobTx,context:RequestContext,jobId:string):Promise<JobScope>{
@@ -101,10 +102,9 @@ export async function writeHrInterviewSlot(
     panelLabel:input.panelLabel??null,capacity:input.capacity,createdByUserId:context.user.id,
    }).returning({id:hrInterviewSlots.id});
    if(!newSlot)throw new Error("SLOT_CREATE_FAILED");
-   await tx.insert(activityEvents).values({
-    organizationId:job.organizationId,collegeId:job.collegeId,actorUserId:context.user.id,
-    module:"PLACEMENTS",eventType:"placements.hr_slot.created",subjectType:"interview_slot",
-    subjectId:newSlot.id,summary:"Recruiter proposed interview time slot",metadata:{jobId:job.id,roundId:round.id},
+   await notifyTpoOfRecruiterAction(tx,context,{
+    collegeId:job.collegeId,jobId:job.id,roundId:round.id,
+    subjectId:newSlot.id,action:"SLOT_PROPOSED",
    });
    return {id:newSlot.id,status:"PROPOSED" as const};
   }
