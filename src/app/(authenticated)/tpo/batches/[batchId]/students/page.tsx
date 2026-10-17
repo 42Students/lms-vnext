@@ -26,7 +26,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  if(!view.success)return <p role="alert">Invalid student search. <Link href={"/tpo/batches/"+batchId+"/students"}>Reset filters</Link></p>;
  const ctx=await getCurrentRequestContext();
  const [result,batchScope,eligibility,registrationCounts]=await Promise.all([
-  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q),getTpoBatch(ctx,batchId),
+  getTpoBatchStudentRegistrations(ctx,batchId,parsed.data,view.data.q,view.data.source==="LEARNER"),getTpoBatch(ctx,batchId),
   getTpoBatchEligibilitySummary(ctx,batchId),getTpoBatchRegistrationSummary(ctx,batchId),
  ]);
  const finished=Boolean(batchScope.lifecycle?.finishedAt);
