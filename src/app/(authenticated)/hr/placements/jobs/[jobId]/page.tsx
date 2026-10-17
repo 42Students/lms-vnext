@@ -609,7 +609,7 @@ export default async function HrPlacementJobPage({
                   className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm text-primary-text">Next</Link>
               ) : null}
             </div>
-          </nav>:null}
+          </nav>
         </section>
       ) : null}
       {filters.tab === "offers" ? (

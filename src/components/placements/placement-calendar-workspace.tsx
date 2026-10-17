@@ -473,7 +473,7 @@ export async function PlacementCalendarWorkspace({
    :response;
   const countSourceEvents=eventTypeCountsSource?.events??[];
   const eventTypeCounts=new Map<string,number>();
-  for(const item of countSourceEvents
+  for(const item of countSourceEvents)
    eventTypeCounts.set(item.kind,(eventTypeCounts.get(item.kind)??0)+1);
 
   // The shared read service supports event-kind and
