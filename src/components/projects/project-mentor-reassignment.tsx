@@ -157,7 +157,8 @@ export function ProjectMentorReassignment({
             : "No workspaces needed changes — they already have this mentor.",
         });
       }
-      setSelected([]);
+      // Preserve failed workspace selection so the operator can retry without reselecting.
+      setSelected([...new Set(response.failures.map(row=>row.projectId))]);
       router.refresh();
     } catch (error) {
       showToast({
