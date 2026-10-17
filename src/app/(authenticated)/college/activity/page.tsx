@@ -36,12 +36,12 @@ export default async function CollegeActivityPage({
     const value = data.query[key];
     if (value) exportParams.set(key, value);
   }
-  return <div className="space-y-6">
+  return <div className="min-w-0 space-y-6">
     <PageHeader eyebrow="College Admin · Operations" title="Activity Log"
       description="What changed across your college. Important items first, with focused categories and the complete immutable audit trail."
       actions={<div className="flex flex-wrap gap-3 items-center"><Link href="/college/projects/audit" className="rounded border border-border px-3 py-2 text-sm font-semibold text-primary-text">View project activity</Link><a href={"/api/activity/college-export" +
         (exportParams.size ? "?" + exportParams.toString() : "")}
-        className="inline-flex min-h-10 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
         Export filtered CSV (max 1,000)
       </a></div>} />
     <nav aria-label="Activity feed categories" className="flex flex-wrap gap-2">
@@ -58,7 +58,7 @@ export default async function CollegeActivityPage({
           : data.query.category===category;
         return <Link key={key} aria-current={active?"page":undefined}
           href={collegeActivityHref({...data.query,category,view,module:undefined,importance:undefined})}
-          className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm font-semibold " +
+          className={"inline-flex min-h-11 items-center rounded-md border px-3 text-sm font-semibold " +
             (active ? "border-primary bg-primary-subtle text-primary-text" : "border-border text-body")}>
           {label}
         </Link>;
@@ -195,7 +195,7 @@ export default async function CollegeActivityPage({
             </td>
             <td className="px-4 py-4">
               <Link href={"/college/activity/" + encodeURIComponent(event.id)}
-                className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
+                className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
                 View event
               </Link>
             </td>
@@ -206,7 +206,7 @@ export default async function CollegeActivityPage({
     <nav aria-label="Activity history pagination" className="flex items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
       {data.nextCursor ? <Link href={collegeActivityHref(data.query, data.nextCursor)}
-        className="inline-flex min-h-10 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 font-semibold text-primary-text">
         Older activity
       </Link> : <span className="text-muted-foreground">No older matching events</span>}
     </nav>

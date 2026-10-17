@@ -52,7 +52,7 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-39 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-41 | S3 | STATE | OPEN |
 | TPO-drives-44 | S3 | COPY | OPEN |
-| TPO-drives-45 | S3 | VALIDATION | OPEN |
+| TPO-drives-45 | S3 | VALIDATION | DONE |
 | TPO-drives-49 | S3 | STATE | DONE |
 | TPO-drives-50 | S3 | PERMISSION | OPEN |
 | TPO-drives-51 | S3 | PERMISSION | NOT-A-GAP |

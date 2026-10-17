@@ -30,7 +30,7 @@ export default async function FacultyTeachingProfilePage({
     <PageHeader eyebrow="Faculty · Self Profile" title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"
-        className="rounded-md border border-border px-4 py-2 text-sm font-semibold text-primary-text">
+        className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
         Profile overview
       </Link>} />
     <section className="rounded-xl border border-border bg-surface p-5">
@@ -50,16 +50,16 @@ export default async function FacultyTeachingProfilePage({
       <label className="grid gap-1 text-sm font-semibold text-body">Search current teaching
         <input name="search" type="search" defaultValue={data.query.search}
           placeholder="Course, Section or academic period" maxLength={120}
-          className="min-h-10 rounded-md border border-border bg-background px-3 text-foreground"/>
+          className="min-h-11 rounded-md border border-border bg-background px-3 text-foreground"/>
       </label>
-      <button type="submit" className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+      <button type="submit" className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
         Search
       </button>
-      <Link href="/teacher/profile/teaching" className="px-3 py-2 text-sm font-semibold text-primary-text">
+      <Link href="/teacher/profile/teaching" className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-primary-text">
         Clear
       </Link>
     </form>
-    <p className="text-sm text-body">{data.total} matching active teaching assignment{data.total===1?"":"s"}</p>
+    <p className="text-sm text-body" role="status" aria-live="polite">{data.total} matching active teaching assignment{data.total===1?"":"s"}</p>
     {data.items.length===0 ? <EmptyState title="No current teaching assignments"
       description="No persisted active teaching deliveries match this search. Expired, revoked or unassigned teaching roles are not reconstructed." />
       : <div className="grid gap-3">{data.items.map(row=>
@@ -75,7 +75,7 @@ export default async function FacultyTeachingProfilePage({
             Academic period status: {row.academicPeriodStatus}
           </p>
           <Link href={"/teacher/courses/"+encodeURIComponent(row.deliveryId)+"/home"}
-            className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text hover:underline">
+            className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
             Open assigned course →
           </Link>
         </article>)}</div>}
@@ -83,9 +83,9 @@ export default async function FacultyTeachingProfilePage({
       <p className="text-sm text-muted-foreground">Page {data.page} of {data.totalPages}</p>
       <div className="flex gap-3">
         {data.page>1 && <Link href={ownFacultyTeachingHref({...data.query,page:data.page-1})}
-          className="text-sm font-semibold text-primary-text">Previous</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Previous</Link>}
         {data.page<data.totalPages && <Link href={ownFacultyTeachingHref({...data.query,page:data.page+1})}
-          className="text-sm font-semibold text-primary-text">Next</Link>}
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text">Next</Link>}
       </div>
     </nav>
     <p className="text-xs leading-5 text-muted-foreground">

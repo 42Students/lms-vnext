@@ -17,8 +17,8 @@ describe("chat-16 reassigned tracker issue workflows",()=>{
     expect(page).toContain("canSearchSimilar={isSuperAdmin(context)}");
     expect(detail).toContain("getMyTrackerReport(context,publicId)");
     expect(admin).toContain("requireTrackerAdmin(context)");
-    expect(source("docs/proposed-migrations/tracker-authenticated-reporter-owner.sql"))
-      .toContain("reporter_user_id");
+    expect(source("src/db/schema/db10-bug-tracker.ts"))
+      .toContain('reporterUserId: uuid("reporter_user_id")');
   });
   it("SA-placements-projects-104 keeps report draft, Ctrl or Cmd Enter, similar issues and a success card",()=>{
     const form=source("src/components/tracker/tracker-report-form.tsx");

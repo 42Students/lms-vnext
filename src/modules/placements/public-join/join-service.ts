@@ -192,7 +192,13 @@ export async function acceptPublicRecruiterJoin(
         eventType: "PLACEMENTS_RECRUITER_PUBLIC_JOIN",
         subjectType: "placement_company_relationship", subjectId: relationship.id,
         subjectLabel: "Recruiter joined", summary: "Recruiter joined through public link",
-        metadata: { scope, companyId, recruiterUserId: user.id },
+        metadata: {
+           scope,companyId,recruiterUserId:user.id,
+           // Never attribute a self-service public-link join to a TPO invite.
+           joinMethod:scope==="COLLEGE"?"PUBLIC_LINK":"COMPANY_LINK",
+           grantSource:"VERIFIED_RECRUITER_SELF_SERVICE",
+           bypassesDriveReview:false,
+         },
       }).returning({ id: activityEvents.id });
       if (!event) throw new PublicJoinAcceptError("INVALID");
       const [employer] = await tx.select({ name: placementCompanies.name })
