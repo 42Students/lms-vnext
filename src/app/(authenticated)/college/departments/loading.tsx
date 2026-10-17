@@ -1,6 +1,8 @@
-import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { PageHeader } from "@/components/ui/page-header";
 
-/** GR-19: loading is bounded by a visible recovery action. */
-export default function Loading() {
-  return <GracefulPageLoading />;
+export default function DepartmentsLoading() {
+  return <section className="space-y-4" aria-busy="true" aria-label="Loading departments">
+    <PageHeader title="Departments" />
+    <p role="status" className="rounded-xl border border-border bg-surface p-5 text-sm text-body">Loading departments…</p>
+  </section>;
 }

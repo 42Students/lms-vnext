@@ -72,7 +72,7 @@ export function CollegeCohortCreateForm({ programs, periods }: {
         setCode("");
         setAcademicYear("");setStartDate("");setEndDate("");
         setExpectedEndPeriodId("");
-        setNotice("Batch created.");
+        setNotice(`Created batch “${parsed.data.name}”. Next, create its classes/sections.`);
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Batch creation failed."));
@@ -180,7 +180,7 @@ export function CollegeCohortRowActions({ row, periods }: {
         });
         const payload = await response.json().catch(() => null);
         if (!response.ok) throw new Error(payload?.error ?? "Graduation failed");
-        setNotice("Batch marked graduated.");
+        setNotice(`Marked “${row.name}” as graduated (Completed).`);
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Unable to graduate batch."));
@@ -225,7 +225,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       try {
         await send("PATCH", "/api/college/batches/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false);setDiscardConfirm(false);
-        setNotice("Batch updated.");
+        setNotice(`Updated batch “${parsed.data.name}”.`);
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Batch update failed."));

@@ -25,7 +25,13 @@
 | COL-academic-setup-35 | DONE | src/modules/academics/college-batch-promotion-execute.ts; tests/unit/college-academic-setup-gap-verification.test.ts — `it("COL-academic-setup-35 verified academic workflow")` |
 | COL-academic-setup-38 | NOT-A-GAP | src/components/admin/lecture-hall-manager.tsx; tests/unit/college-academic-setup-gap-verification.test.ts — `it("COL-academic-setup-38 verified academic workflow")` (owner decision: archive instead of delete) |
 
+| COL-academic-setup-17 | DONE | src/components/academics/college-cohort-management.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-17 provides named create/update/graduate success feedback")` |
+| COL-academic-setup-20 | DONE | src/components/admin/department-actions.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-20 prompts with the changed department name before discarding")` |
+| COL-academic-setup-21 | DONE | src/components/admin/department-directory.tsx, src/modules/admin-ui/department-directory.ts; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-21 sorts, paginates, counts and clears department searches")` |
+| COL-academic-setup-36 | DONE | src/modules/academics/college-batch-promotion-model.ts, src/app/(authenticated)/college/batch-promotion/page.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-36 accepts consecutive YYYY-YY overrides and rejects invalid years")` |
+| COL-academic-setup-40 | DONE | src/app/(authenticated)/college/departments/error.tsx, loading.tsx; tests/unit/college-academic-setup-round4-gap-verification.test.ts — `it("COL-academic-setup-40 provides department retry and safe loading feedback")` |
+
 ## Outstanding and partial
-COL-academic-setup-15/16/17/19/20/21/23/28/29/32/36/39/40/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
+COL-academic-setup-15/16/19/23/28/29/32/39/41 remain open, including dirty-state modals and batch-level student moves. Some received partial improvements this round but are not certified. The archive-vs-delete distinction on COL-academic-setup-38 is intentional per docs/audit/owner-decisions-resolved.md.
 
 Unit checks are source witnesses; the orchestrator must inspect PostgreSQL integration coverage for S1/S2 behavior.
