@@ -234,6 +234,23 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
             <h2 className="font-semibold">{item.company} · {item.title}</h2>
             <StatusBadge tone={driveRequestStatusTone(item.status)}>{driveRequestStatusLabel(item.status)}</StatusBadge>
             <p className="text-xs text-muted-foreground">Request ID: {item.id}</p>
+            <section aria-label="Recruiter contact" className="mt-2 space-y-1 rounded border border-border p-3 text-sm">
+             <h3 className="font-semibold">Recruiter</h3>
+             <p>Email: {item.recruiterEmail??"Not recorded"} · Phone: {item.recruiterPhone??"Not recorded"}</p>
+             {item.verificationStatus!=="VERIFIED"?<p className="text-warning-text">Unverified</p>:null}
+             {item.accessEnded?<p role="alert">Recruiter access ended. Finish this drive yourself.</p>:null}
+             <Link href={"/tpo/recruiters?search="+encodeURIComponent(item.recruiterEmail??"")}
+              className="text-primary-text underline">Open recruiter</Link>
+            </section>
+            {item.changes?<section aria-label="What changed since the last request" className="mt-3 space-y-2 rounded border border-border p-3 text-sm">
+              <h3 className="font-semibold">What changed since the last request</h3>
+              {!item.changes.some(change=>change.changed)?<p>Nothing that we compare changed.</p>:
+               <dl className="grid gap-2">{item.changes.filter(change=>change.changed).map(change=><div key={change.label} className="rounded border p-2">
+                <dt className="font-semibold">{change.label}</dt>
+                <dd>Before: {change.before||"Not provided"}</dd>
+                <dd>Now: {change.after||"Not provided"}</dd>
+               </div>)}</dl>}
+            </section>:null}
             {item.status==="REQUEST"||item.status==="SENT_BACK"?
               <TpoDriveRequestActions requestId={item.id} status={item.status}/>:
               item.approvedJobId?<Link href={"/tpo/placements/jobs/"+item.approvedJobId}
