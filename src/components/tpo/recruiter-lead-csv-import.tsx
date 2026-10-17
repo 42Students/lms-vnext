@@ -42,8 +42,12 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
     setError("");
     setFileName(file?.name ?? "");
     if (!file) return;
+    if(!/\.(?:csv|xlsx)$/i.test(file.name)){
+      setError("Choose a .csv or .xlsx recruiter import file.");
+      return;
+    }
     if (file.size > 10_000_000) {
-      setError("CSV file is too large (limit: 2,000,000 characters).");
+      setError("Import file is too large (maximum 10 MB).");
       return;
     }
     try {
