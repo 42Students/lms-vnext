@@ -113,9 +113,9 @@ export function FacultyAssessmentEditor({
         }),
       });
       if (!response.ok) {
-        setError(
-          await courseApiError(response),
-        );
+        setError(response.status===409 && assessment.kind==="ASSIGNMENT"
+          ? "Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title."
+          : await courseApiError(response));
         return;
       }
       const receipt:unknown=await response.json().catch(()=>null);
