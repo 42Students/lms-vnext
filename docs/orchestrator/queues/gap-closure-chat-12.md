@@ -53,16 +53,16 @@ Audit: `docs/audit/pages/tpo/students.md` (and `students-review.md` if present; 
 | TPO-students-47 | S3 | COPY | OPEN |
 | TPO-students-49 | S3 | PERMISSION | UNCONFIRMED |
 | TPO-students-50 | S3 | STATE | UNCONFIRMED |
-| TPO-students-51 | S3 | RESPONSIVE | OPEN |
+| TPO-students-51 | S3 | RESPONSIVE | DONE |
 | TPO-students-52 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-students-R02 | S3 | STATE | FIXED-ON-MAIN |
 | TPO-students-R03 | S3 | STATE | DONE |
-| TPO-students-R04 | S3 | STATE | OPEN |
+| TPO-students-R04 | S3 | STATE | DONE |
 | TPO-students-R05 | S3 | COPY | DONE |
 | TPO-students-R06 | S3 | COPY | DONE |
 | TPO-students-R07 | S3 | STATE | DONE |
 | TPO-students-R08 | S3 | A11Y | FIXED-ON-MAIN |
-| TPO-students-48 | S4 | STATE | OPEN |
+| TPO-students-48 | S4 | STATE | DONE |
 | TPO-students-53 | S4 | MISSING-FIELD | DONE |
 
 ## tpo/requests-verification (34: OPEN 15, FIXED-ON-MAIN 18, UNCONFIRMED 1)
@@ -154,3 +154,5 @@ Audit: `docs/audit/pages/tpo/requests-verification.md` (and `requests-verificati
 - Shell-only `TPO-requests-verification-06/21` still belongs to chat-9. Unit tests were authored but not run.
 
 - TPO-students-R03 DONE (authored, runtime pending): table/mobile grid row checkboxes now use the shared selection context with bulk actions, Add to Drive and notes. TPO-students-17 still OPEN for cross-page Shift/selection behavior.
+
+- Round 19–20: TPO-students-48/51/R04 DONE (code authored, acceptance pending); filtered and selected counts now live, phone cards show essential facts/details disclosure and two-column journey, Program/Class selector duplication removed. Tests authored, not run.
