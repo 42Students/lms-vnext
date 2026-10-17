@@ -145,6 +145,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      <input type="datetime-local" required value={end} onChange={e=>setEnd(e.target.value)}
       className="mt-1 w-full rounded border bg-background p-2"/></label>
    </>}
+   {kind==="RESOURCE"&&editing?<label className="flex items-center gap-2 text-sm md:col-span-2">
+    <input type="checkbox" checked={removeLink} onChange={e=>setRemoveLink(e.target.checked)}/>
+    Remove existing resource link
+   </label>:null}
    <div className="flex gap-2 md:col-span-2">
     <button type="button" className="rounded bg-primary px-3 py-2 text-on-primary" disabled={busy} onClick={()=>void save()}>
      {busy?"Saving…":"Save"}</button>
