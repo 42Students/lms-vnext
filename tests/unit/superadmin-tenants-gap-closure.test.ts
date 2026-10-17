@@ -97,4 +97,37 @@ describe("Super Admin Tenants/Modules legacy gap contracts",()=>{
   expect(signin).toContain("apiFetch<void>");
   expect(signin).toContain("useGuardedAction");
  });
+ it("SA-tenants-modules-04 unscoped platform has four described navigation cards including Recruiter accounts",()=>{
+  const nav=source("src/modules/admin-ui/admin-dashboard-navigation.ts");
+  const page=source("src/components/admin/admin-dashboard-actions.tsx");
+  expect(nav).toContain('href: "/admin/tenants"');
+  expect(nav).toContain('label: "Recruiter accounts", href: "/admin/recruiters"');
+  expect(nav).not.toContain('label: "Tenant Setup", href: "/admin/tenants/setup"');
+  expect(page).toContain("Choose the level you need to operate at.");
+  expect(page).toContain("subtitle={item.subtitle}");
+ });
+ it("SA-tenants-modules-07 archive is intentionally non-destructive with dependent-college guard",()=>{
+  const actions=source("src/components/admin/organization-actions.tsx");
+  const service=source("src/modules/organizations/service.ts");
+  expect(actions).toContain("Archive organization");
+  expect(actions).toContain("ORGANIZATION_HAS_COLLEGES");
+  expect(service).toContain('status:"ARCHIVED"');
+  expect(actions).not.toContain("Delete organization");
+ });
+ it("SA-tenants-modules-14 college archive intentionally preserves dependencies and historical records",()=>{
+  const component=source("src/components/admin/college-archive-button.tsx");
+  const service=source("src/modules/colleges/service.ts");
+  expect(component).toContain("COLLEGE_HAS_DEPENDENCIES");
+  expect(component).toContain("The server checks memberships");
+  expect(service).toContain("assertCollegeCanArchive(usage)");
+  expect(service).toContain('status:"ARCHIVED"');
+ });
+ it("SA-tenants-modules-R03 Audit Findings requires an active Super Admin rather than a broad logs role",()=>{
+  const board=source("src/app/(authenticated)/tracker/audit-findings/page.tsx");
+  const permission=source("src/modules/permissions/policy.ts");
+  expect(board).toContain('if(!isSuperAdmin(ctx) || ctx.user.platformStatus !== "ACTIVE")redirect("/dashboard")');
+  expect(board).toContain('requirePermission(ctx,"admin-scope.select"');
+  expect(permission).toContain('return isSuperAdmin(context);');
+ });
+
 });
