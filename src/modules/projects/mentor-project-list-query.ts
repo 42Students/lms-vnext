@@ -14,5 +14,5 @@ export const mentorProjectListQuerySchema = z.object({
   page: z.preprocess(value => value === "0" || value === 0 ? 1 : value,
     z.coerce.number().int().min(1).max(10000)).default(1),
   pageSize: z.coerce.number().int().refine(n => [10,25,50].includes(n)).default(25),
-}).strict();
+}).strip(); // MEN-projects-meetings-R10: ignore obsolete legacy query keys safely.
 export type MentorProjectListQuery = z.infer<typeof mentorProjectListQuerySchema>;
