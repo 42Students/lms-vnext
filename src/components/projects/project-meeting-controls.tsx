@@ -680,6 +680,7 @@ export function ProjectMeetingTransitionActions({
       (meeting.status === "REQUESTED" ||
         meeting.status === "SCHEDULED")) ||
     learnerOwnRequest;
+  const withdrawing=learnerOwnRequest&&!manager;
 
   if (!mayComplete && !mayCancel) {
     return null;
@@ -714,7 +715,7 @@ export function ProjectMeetingTransitionActions({
         title:
           action === "COMPLETE"
             ? "Meeting completed"
-            : "Meeting cancelled",
+            : withdrawing?"Meeting request withdrawn.":"Meeting cancelled",
       });
       router.refresh();
     } catch (caught) {
@@ -753,7 +754,7 @@ export function ProjectMeetingTransitionActions({
               setOpen("CANCEL")
             }
           >
-            Cancel meeting
+            {withdrawing?"Withdraw":"Cancel meeting"}
           </Button>
         ) : null}
       </div>
@@ -766,12 +767,12 @@ export function ProjectMeetingTransitionActions({
         title={
           open === "COMPLETE"
             ? "Complete meeting"
-            : "Cancel meeting"
+            : withdrawing?"Withdraw this meeting request?":"Cancel meeting"
         }
         description={
           open === "COMPLETE"
             ? "Capture the outcome before closing this Project meeting."
-            : "Cancellation keeps the meeting record and its history visible."
+            : withdrawing?"Your mentor will no longer see this request.":"Cancellation keeps the meeting record and its history visible."
         }
         footer={
           <>
@@ -799,7 +800,7 @@ export function ProjectMeetingTransitionActions({
                 ? "Saving…"
                 : open === "COMPLETE"
                   ? "Complete"
-                  : "Cancel meeting"}
+                  : withdrawing?"Withdraw request":"Cancel meeting"}
             </Button>
           </>
         }
