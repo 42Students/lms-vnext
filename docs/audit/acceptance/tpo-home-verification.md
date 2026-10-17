@@ -31,6 +31,11 @@ Further live provider/permission/integration acceptance is owned by the orchestr
  
 Remaining TPO Home gaps continue in `docs/orchestrator/queues/gap-closure-chat-4.md`. Live numbers remain conditional on persisted data. TPO-home-07 and TPO-home-09 remain OPEN because the recruiter-access and team-ask/overdue signals are not yet wired. Tests are source-backed and have not been executed.
 
+
+### New TPO Home refresh and deep-link acceptance
+
+| Gap | Status | Evidence |
+|---|---|---|
 | TPO-home-19 | DONE | `src/components/tpo/tpo-home-return-refresh.tsx`, `src/app/(authenticated)/tpo/home/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-19`. |
 | TPO-home-37 | DONE | `src/components/tpo/tpo-bell-panel.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-37`. |
 | TPO-home-R07 | PARTIAL | `src/app/(authenticated)/tpo/find/page.tsx`; `tests/unit/chat4-tpo-home-gap-closure.test.ts` test `TPO-home-R07`. Student link now uses `q` and membership drawer, but roll-number searching and full command palette remain open. |
