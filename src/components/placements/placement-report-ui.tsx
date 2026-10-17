@@ -1,3 +1,5 @@
+import {TpoReportPresentation} from "./tpo-report-presentation";
+import {TpoReportSavedFilters} from "./tpo-report-saved-filters";
 import {ReportInteractiveTable} from "./report-interactive-table";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -114,6 +116,7 @@ export function ReportFilters({
           Apply drive
         </button>
       </form>
+      <div className="lg:col-span-2"><TpoReportSavedFilters path={path}/></div>
       <p className="text-xs leading-5 text-muted-foreground lg:col-span-2">
         Changing the season clears the drive filter. Changing the drive
         preserves the selected season. Reports are read-only and restricted
@@ -231,6 +234,7 @@ export function ReportNavigation({
      For the filters below: {reportNumber(m.studentsPlaced)} students placed · {reportNumber(m.offers)} offers ·
      {" "}{reportPercent(m.placementRatePercent)} placement rate · {reportNumber(m.acceptedOffers)} accepted offers
     </p>
+    <div className="flex flex-wrap justify-end"><TpoReportPresentation/></div>
     <nav aria-label="Reports navigation" className="flex flex-wrap gap-2">
       {links.map((link) => (
         <Link
