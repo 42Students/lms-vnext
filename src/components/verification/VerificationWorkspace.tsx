@@ -13,7 +13,7 @@ import type {VerificationRecord} from "@/modules/profile-verification/domain";
 export type VerificationQueueCard = Pick<VerificationRecord,
  "learnerMembershipId"|"section"|"status"|"submittedAt"|"version"> & {
  learnerName:string;batchName:string|null;branchName:string|null;
- missingMarksheet:boolean;attention:string[];
+ missingMarksheet:boolean;attention:string[];marksheets?:{uploaded:number;expected:number;missing:number};
 };
 export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTab="WAITING",initialKind="ALL",onTabChange,onKindChange,loading=false,error=null,onRetry,onReview,selectedKeys,onSelectionChange,disableLocalSearch=false,sort="OLDEST",allowCollegeStudentLinks=false,allowCollegeContactLinks=false,selectionDisabled=false,preserveServerOrder=false,legacyCollegeCopy=false,legacyTpoCopy=false}:{
  rows:readonly VerificationQueueCard[];counts?:Record<VerificationTab,number>;initialTab?:VerificationTab;initialKind?:"ALL"|"EDUCATION"|"IDENTITY";onTabChange?:(tab:VerificationTab)=>void;onKindChange?:(kind:"ALL"|"EDUCATION"|"IDENTITY")=>void;loading?:boolean;error?:string|null;
@@ -81,6 +81,11 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
         onChange={e=>{if(!selectionDisabled)onSelectionChange(row,e.target.checked);}}/>Select for bulk review
       </label>}
      <p className="text-sm text-muted-foreground">{row.section==="EDUCATION"?"Education":"Identity"} · {row.batchName??"No batch"} · {row.branchName??"No branch"}</p>
+     {row.section==="EDUCATION"&&row.marksheets?<p className="mt-2 text-xs" aria-label="Marksheet completeness">
+      Marksheets: {row.marksheets.missing===0&&row.marksheets.expected>0
+       ?"All "+row.marksheets.uploaded+" uploaded"
+       :row.marksheets.missing+" of "+row.marksheets.expected+" missing"}
+     </p>:null}
      <p className="mt-2 text-xs">Submitted {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.submittedAt)} IST</p>
      {row.attention.length>0&&<p className="mt-2 break-words text-sm" aria-label="Needs a closer look">{row.attention.join(" · ")}</p>}
      <button type="button" disabled={!onReview} onClick={()=>onReview?.(row)}
