@@ -1,3 +1,4 @@
+import { outboundFetch } from "@/lib/outbound";
 import { writeStructuredLog } from "@/observability/logger";
 import type { EmailProvider } from "./types";
 
@@ -49,7 +50,7 @@ export function createZeptoMailEmailProvider(
       }
 
       try {
-        const response = await fetchImpl(config.apiUrl, {
+        const response = await outboundFetch(config.apiUrl, {
           method: "POST",
           headers: {
             Authorization: config.token,
@@ -78,7 +79,9 @@ export function createZeptoMailEmailProvider(
               expiryMinutes: "5",
             },
           }),
-          signal: AbortSignal.timeout(10_000),
+          timeoutMs: 10_000,
+          maxAttempts: 1, // OTP POST has no provider idempotency guarantee.
+          fetchImpl,
         });
 
         if (!response.ok) {
