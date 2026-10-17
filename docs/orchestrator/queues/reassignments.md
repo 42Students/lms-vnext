@@ -17,3 +17,13 @@ Owner priority 2026-10-17: close every gap, fast. Queue sizes were unbalanced (c
 chat-5 keeps: WP-chat-5-01, 03, 06, 07, 08, 12, 13 (drive workspace, drives, placements core).
 
 Rules for all lanes: commit gap IDs; one lane per directory: if you need a change in a file another lane owns (shared shell is chat-9 only), put it in your final summary instead of editing. Gaps marked SKIP in a WP (security-sensitive owner decisions) stay untouched. For other owner decisions build the default recommendation.
+
+
+## Gap-closure reassignments (2026-10-17, ten lanes)
+
+To run ten chats, pages were moved off the heaviest queues. The old queue files (gap-closure-chat-5.md, gap-closure-chat-9.md) still list them; skip these pages, they now belong to the new lane:
+
+- tpo/students and tpo/requests-verification: chat-5 -> chat-12 (queue: gap-closure-chat-12.md)
+- superadmin/placements-projects-a-placements and superadmin/academics-people-1-academic-setup: chat-9 -> chat-13 (queue: gap-closure-chat-13.md)
+
+If you already committed work on one of these pages, say so in your next summary and leave it in place; the new lane will verify it instead of redoing it.
