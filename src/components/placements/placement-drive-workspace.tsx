@@ -390,6 +390,18 @@ export async function PlacementDriveWorkspace({
           ) : null}
         </section>
       ) : null}
+      {journey?<section aria-label="Drive applicant journey" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">Journey</h2>
+        <p className="mt-1 text-xs text-body">{journey.definition}</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
+            className="rounded-lg border border-border p-3 hover:bg-primary-subtle">
+            <span className="block text-xs text-body">{stage.name}</span>
+            <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
+          </Link>)}
+        </div>
+        <p className="mt-3 text-xs text-body">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
+      </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Rounds</h2>
