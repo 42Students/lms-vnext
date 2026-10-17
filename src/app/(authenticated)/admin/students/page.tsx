@@ -1,5 +1,6 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
+import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
 import Link from "next/link";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
@@ -21,5 +22,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <AdminScopedReadPage peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
   description="Read-only learner memberships in the selected college, without private contact details. Use the scoped membership detail for authorized contact."
-  searchParams={searchParams} renderRowActions={row=><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
+  searchParams={searchParams}
+  renderBulkActions={rows=><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/>}
+  renderRowActions={row=><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
 }

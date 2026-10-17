@@ -27,5 +27,8 @@ export function projectAdminCompanies(rows: readonly AdminCompanyRow[]) {
     distinctCompanies: new Set(rows.map(row => row.companyId)).size,
     relationships: rows.length,
     trustedRelationships: rows.filter(row => row.trusted).length,
+    archivedCompaniesOnPage:new Set(rows.filter(row=>row.companyStatus==="ARCHIVED").map(row=>row.companyId)).size,
+    visibleCompaniesOnPage:new Set(rows.filter(row=>row.companyStatus==="ACTIVE"&&row.relationshipStatus==="ACTIVE").map(row=>row.companyId)).size,
+    relationshipsWithDrivesOnPage:rows.filter(row=>(row.driveCount??0)>0).length,
   };
 }

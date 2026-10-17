@@ -1,0 +1,60 @@
+"use client";
+import {useState} from "react";
+import {useRouter} from "next/navigation";
+type Learner={id:string;name:string};
+export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learner[]}){
+ const router=useRouter(),[selected,setSelected]=useState<string[]>([]);
+ const [module,setModule]=useState<"projects"|"electives">("projects");
+ const [action,setAction]=useState<"ENABLE"|"DISABLE"|"INHERIT">("ENABLE");
+ const [busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
+ const [report,setReport]=useState<{requested:number;applied:number;failures:{id:string;error:string}[]}|null>(null);
+ const capped=learners.slice(0,100);
+ async function submit(){
+  if(!selected.length)return;
+  if(!confirm(action+" "+module+" access for "+selected.length+" student(s) in this college?"))return;
+  setBusy(true);setError(null);setReport(null);
+  try{
+   const response=await fetch("/api/admin/students/module-access/bulk",{method:"POST",
+    headers:{"content-type":"application/json"},
+    body:JSON.stringify({membershipIds:selected,module,action,confirmed:true}),
+   });
+   const data=await response.json().catch(()=>null);
+   if(!response.ok)throw new Error(data?.error??"Cannot update selected student overrides.");
+   setReport(data);router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:"Update failed.");}
+  finally{setBusy(false);}
+ }
+ return <section aria-label="Bulk student access" className="space-y-3 rounded-xl border border-border bg-surface p-4">
+  <div className="flex flex-wrap justify-between gap-3"><h2 className="font-semibold">Bulk module access</h2>
+   <p role="status" className="text-sm text-muted-foreground">{selected.length}/25 students selected</p></div>
+  <p className="text-xs text-muted-foreground">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
+  <label className="flex min-h-10 items-center gap-2 text-sm">
+   <input type="checkbox" checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
+    onChange={e=>setSelected(e.target.checked?capped.slice(0,25).map(x=>x.id):[])} disabled={busy}/>
+   Select first {Math.min(25,capped.length)} students in these search results
+  </label>
+  <div className="grid max-h-44 gap-2 overflow-y-auto sm:grid-cols-2">
+   {capped.map(learner=><label key={learner.id} className="flex min-h-9 items-center gap-2 text-sm">
+    <input type="checkbox" checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
+     onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
+    <span className="truncate">{learner.name}</span>
+   </label>)}
+  </div>
+  <div className="flex flex-wrap items-end gap-3 text-sm">
+   <label className="grid gap-1 font-semibold">Module<select value={module} onChange={e=>setModule(e.target.value as typeof module)}
+    className="min-h-10 rounded border border-border bg-background px-3">
+    <option value="projects">Projects</option><option value="electives">Electives</option></select></label>
+   <label className="grid gap-1 font-semibold">Access<select value={action} onChange={e=>setAction(e.target.value as typeof action)}
+    className="min-h-10 rounded border border-border bg-background px-3">
+    <option value="ENABLE">Enable</option><option value="DISABLE">Disable</option>
+    <option value="INHERIT">Clear override / Inherit</option></select></label>
+   <button type="button" disabled={busy||!selected.length} onClick={()=>void submit()}
+    className="min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">{busy?"Saving…":"Apply to selected"}</button>
+  </div>
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {report?<div role="status" className="space-y-1 text-sm">
+   <p>{report.applied} of {report.requested} processed · {report.failures.length} failed</p>
+   {report.failures.length?<ul className="list-disc pl-5">{report.failures.map(f=><li key={f.id}>{f.id}: {f.error}</li>)}</ul>:null}
+  </div>:null}
+ </section>;
+}

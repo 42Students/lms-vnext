@@ -102,6 +102,7 @@ export default async function AnnouncementsPage({
     visibilityState: announcementVisibilityAt(item, now),
   }));
 
+  const receipts=await getSuperAdminBroadcastReceiptCounts(context,page.items.filter(x=>x.senderType==="SUPER_ADMIN"&&x.receiverType==="COLLEGE").map(x=>x.id));
   const next = page.nextCursor
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
@@ -174,6 +175,18 @@ export default async function AnnouncementsPage({
         ...(params.beforeId ? {beforeId:params.beforeId} : {}),
       }).toString()} className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">Export this filtered page (CSV)</Link>
       <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
+      {receipts.size?<section aria-label="Placement-cell read receipts" className="space-y-2 rounded-xl border border-border bg-surface p-4">
+       <h2 className="text-lg font-semibold">Placement-cell notification receipts</h2>
+       <p className="text-sm text-muted-foreground">Bell-notification reads by recipients for individual college notices. A read notification does not prove every placement-cell member opened the full announcement. Scheduled notices may not have bell deliveries yet.</p>
+       <ul className="space-y-2">{page.items.filter(row=>receipts.has(row.id)).map(row=>{
+        const receipt=receipts.get(row.id)!;
+        return <li key={row.id} className="rounded-lg border border-border p-3 text-sm">
+         <p className="font-semibold">{row.title}</p><p className="text-muted-foreground">{receipt.read} of {receipt.delivered} notification recipient(s) read</p>
+         <progress aria-label={row.title+" notification reads"} className="mt-2 h-2 w-full"
+          value={receipt.read} max={Math.max(1,receipt.delivered)}/>
+        </li>;
+       })}</ul>
+      </section>:null}
       <AnnouncementAdminWorkspace items={items} targets={targets} requiresPublicationConsent
         emptyMessage={announcementHistoryEmptyMessage({
           hasFilters:Boolean(params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted),
