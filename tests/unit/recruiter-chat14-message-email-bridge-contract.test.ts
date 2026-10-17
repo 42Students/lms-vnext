@@ -4,6 +4,26 @@ import {sendRecruiterMessageDigest} from "@/modules/placements/recruiter-message
 
 const source=(p:string)=>readFileSync(p,"utf8");
 describe("REC-calendar-messages-profile-R01 mail bridge deployment and scope",()=>{
+ it("REC-calendar-messages-profile-R01 does not email messages for a foreign-company job thread",()=>{
+  const worker=source("src/modules/placements/recruiter-message-email-dispatch-service.ts");
+  expect(worker).toContain("t.job_id is null or exists(select 1 from placement_jobs j");
+  expect(worker).toContain("j.company_relationship_id=r.id");
+  expect(worker).toContain("r.company_id=p.company_id");
+  expect(worker).toContain("r.college_id=t.college_id");
+ });
+ it("REC-calendar-messages-profile-R01 scopes duplicate provider IDs to the actual authorized thread",()=>{
+  const inbound=source("src/modules/placements/recruiter-message-email-inbound-service.ts");
+  expect(inbound).toContain('createHash("sha256").update(state.threadId+');
+  expect(inbound.indexOf("const msgHash=")).toBeGreaterThan(inbound.indexOf("if(!auth.rows[0])"));
+ });
+ it("REC-calendar-messages-profile-R01 escapes digest HTML without injecting provider markup",()=>{
+  const model=source("src/modules/placements/recruiter-message-email-model.ts");
+  expect(model).toContain(".replace(/&/g");
+  expect(model).toContain(".replace(/</g");
+  expect(model).toContain(".replace(/>/g");
+  expect(model).toContain(".replace(/'/g");
+ });
+
  it("REC-calendar-messages-profile-R01 does not send without dedicated template and explicit enablement",async()=>{
   const sent=await sendRecruiterMessageDigest({
     recipient:"recruiter@example.test",recipientName:"Recruiter",companyName:"Company",
