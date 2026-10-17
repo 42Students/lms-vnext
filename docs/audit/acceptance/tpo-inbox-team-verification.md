@@ -275,3 +275,8 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 | TPO-inbox-team-62 / TPO-home-33 | DONE (source, not yet run) | `tests/unit/tpo-home-33-live-header.test.ts` checks displayed server-snapshot unread matching, and `src/components/tpo/tpo-bell-panel.tsx` clears the optimistic mark-all revision when a newer server snapshot arrives. |
 | TPO-inbox-team-61 / TPO-home-35 | DONE (source, not yet run) | `tests/unit/tpo-home-35-bell-open.test.ts` verifies guarded 12-second `apiFetch`, read POST, and no navigation after failure rather than obsolete `response.ok` branching. |
 | TPO-inbox-team-54 | DONE (college-wide count source; other legacy aspects remain OPEN) | `tests/unit/tpo-notice-round4-verification.test.ts` checks persisted college-scoped total unread From 42 rather than obsolete page-only count. |
+
+## Round 6 — decision inbox
+
+| TPO-inbox-team-23 | PARTIAL — OPEN | Real per-conversation decision event projection (ignores later unmark/delete) and Decisions-count chip added in `src/modules/placements/tpo-team-internal-read-service.ts`, `src/modules/placements/tpo-team-conversation-filter-model.ts`, and Team page. `tests/unit/tpo-team-filter-round4.test.ts` has a named **TPO-inbox-team-23** regression. Mark-on-send still outstanding. |
+| TPO-inbox-team-18 | PARTIAL — OPEN | Decisions chip added alongside previous Following/Unread/Topics, preserving scoped SQL and pagination; object/asks filters still absent. |
