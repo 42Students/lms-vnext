@@ -22,8 +22,7 @@ export function recruiterAttentionFromPersistedFacts(input: {
   manualStage: string;
   unsubscribedAt: Date | null;
 }, now: Date): { chips: RecruiterAttentionChip[]; quietDays: number } {
-  if (input.manualStage === "NOT_NOW" || input.unsubscribedAt ||
-    input.recruiterUserId) return { chips: [], quietDays: 0 };
+  if (input.manualStage === "NOT_NOW" || input.unsubscribedAt) return { chips: [], quietDays: 0 };
   const days = (at: Date) => {
     const localDay = (d: Date) => {
       const parts = new Intl.DateTimeFormat("en-CA", {
