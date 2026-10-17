@@ -49,7 +49,8 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
     expect(list).toContain("resource.status");
     expect(list).toContain("ProjectResourceOpenLink");
     const popup=read("src/components/projects/project-resource-open-link.tsx");
-    expect(popup).toContain("Copy the link to open it manually.");
+    expect(popup).toContain("Your browser blocked the new tab.");
+    expect(popup).toContain('<a href={safe} target="_blank" rel="noopener noreferrer"');
   });
   it("MEN-projects-meetings-56 reorders only owned active resources in two collision-safe phases",()=>{
     const service=read("src/modules/projects/resource-service.ts");
@@ -119,10 +120,10 @@ describe("chat-16 reassigned mentor legacy parity",()=>{
   it("MEN-projects-meetings-65 confirms each final submission decision and preserves stale-review guidance",()=>{
     const control=read("src/components/projects/project-final-delivery-controls.tsx");
     const reopen=read("src/components/projects/project-delivery-reopen-control.tsx");
-    expect(control).toContain('title="Review submission"');
+    expect(control).toContain('"Review submission"');
     expect(control).toContain("Accept this submission?");
     expect(control).toContain("The learner will be notified their submission was accepted.");
-    expect(control).toContain("Request changes?");
+    expect(control).toContain("Request changes on this submission?");
     expect(control).toContain("This submission may have changed since you opened this review.");
     expect(control).toContain("expectedUpdatedAt,confirmed:true");
     expect(control).toContain("Submission accepted.");

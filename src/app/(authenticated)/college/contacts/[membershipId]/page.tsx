@@ -15,7 +15,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="College Admin · Contacts" title={contact.name}
    description="College-scoped public contact details. Private learner identity and contact data are not displayed."
-   actions={<Link href="/college/contacts" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Back to contacts</Link>}/>
+   actions={<Link href="/college/contacts" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Back to contacts</Link>}/>
   <section aria-label="Contact record" className="min-w-0 space-y-3 rounded-xl border border-border bg-surface p-5">
    <p className="text-sm"><strong>Roles:</strong> {contact.roles.join(", ")||"None recorded"}</p>
    <p className="text-sm"><strong>College membership:</strong> {contact.status}</p>
@@ -23,7 +23,7 @@ export default async function CollegeContactDetail({params}:{params:Promise<{mem
    <p className="text-sm"><strong>Phone:</strong> {contact.phone}</p>
    <p className="text-sm"><strong>Joined:</strong> {date} IST</p>
    <nav aria-label="Related role records" className="flex flex-wrap gap-2">
-    {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href} className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold">{link.label}</Link>)}
+    {contactRecordLinks(contact).map(link=><Link key={link.href} href={link.href} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold">{link.label}</Link>)}
    </nav>
   </section>
  </div>;

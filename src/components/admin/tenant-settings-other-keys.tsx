@@ -46,7 +46,7 @@ export function OtherTenantSettings({scopeType,collegeId,ready,entries}:{
       <div className="min-w-0 flex-1">
        <strong className="break-all">{entry.key}</strong>
        {documented?<p className="text-xs text-warning-text">Never read here — this key is read at {documented.scope} scope.</p>:null}
-       <p className="mt-1 break-all text-body">{entry.value}</p>
+       <p className="mt-1 break-all text-body">{entry.value==="[redacted]"?"[redacted]":entry.value}</p>
       </div>
       <button type="button" disabled={!ready||busy} onClick={()=>setPendingRemoval(entry)}
        className="min-h-10 rounded-md border border-border px-3 font-semibold text-primary-text disabled:opacity-50">
