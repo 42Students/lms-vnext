@@ -38,6 +38,8 @@ export type LearnerPlacementOfferItem = {
     | "DECLINED"
     | "WITHDRAWN";
   annualCtcInr: number | null;
+  letterHref?: string | null;
+  countsAsPlaced?: boolean;
   joiningDate: string | null;
   expiresAt: string | null;
   issuedAt: string;
@@ -326,6 +328,20 @@ export function LearnerPlacementOffers({
                   </StatusBadge>
                 ) : null}
               </div>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-body">
+              {item.letterHref ? (
+                <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
+                  className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">
+                  View offer letter
+                </a>
+              ) : null}
+              {item.countsAsPlaced===false ? (
+                <span>Counts as placed: No (internship or letter of intent)</span>
+              ) : item.countsAsPlaced===true ? (
+                <span>Counts as placed: Yes</span>
+              ) : null}
             </div>
 
             {learnerOfferApplicationHref(item.applicationId) ? (
