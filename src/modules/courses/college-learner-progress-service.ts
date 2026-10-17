@@ -96,6 +96,7 @@ export async function getCollegeLearnerProgressReport(
    .where(and(eq(courseLearningPaths.offeringId,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
+    eq(courseLessons.visibleToStudents,true),
     eq(lessonContents.status,"PUBLISHED"),
     eq(lessonContents.visibleToStudents,true),
     inArray(lessonContents.contentType,["VIDEO","YOUTUBE"]),
@@ -105,7 +106,8 @@ export async function getCollegeLearnerProgressReport(
    .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
    .where(and(eq(courseLearningPaths.offeringId,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
-    eq(courseLessons.status,"ACTIVE"),eq(courseAssignments.status,"PUBLISHED"),
+    eq(courseLessons.status,"ACTIVE"),
+    eq(courseLessons.visibleToStudents,true),eq(courseAssignments.status,"PUBLISHED"),
     or(isNull(courseAssignments.deliveryId),eq(courseAssignments.deliveryId,deliveryId)))),
   db.select({id:courseQuizzes.id}).from(courseQuizzes)
    .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
@@ -113,6 +115,7 @@ export async function getCollegeLearnerProgressReport(
    .where(and(eq(courseLearningPaths.offeringId,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
+    eq(courseLessons.visibleToStudents,true),
     inArray(courseQuizzes.status,["PUBLISHED","CLOSED"]),
     or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,deliveryId)))),
  ]);

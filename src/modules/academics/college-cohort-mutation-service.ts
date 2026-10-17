@@ -24,7 +24,7 @@ import {
   collegeCohortIdSchema,
   createCollegeCohortSchema,
   updateCollegeCohortSchema,
-  validCohortPeriodRange,
+  validCohortPeriodRange,batchAcademicYearFromDates,
 } from "./college-cohort-mutation-model";
 
 export type CollegeCohortMutationCode =
@@ -135,8 +135,12 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
       if (!validCohortPeriodRange(start.startDate, expected?.endDate ?? null)) {
         throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       }
+      if(input.startDate&&input.endDate&&input.endDate<input.startDate)throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       await ensureUnique(tx, input.programId, input.name, input.code);
-      const [created] = await tx.insert(cohorts).values(input).returning();
+      const [created] = await tx.insert(cohorts).values({...input,
+       startDate:start.startDate,endDate:expected?.endDate??null,
+       academicYear:batchAcademicYearFromDates(start.startDate,expected?.endDate??null),
+      }).returning();
       // Registered DB-0051 trigger initializes the cohort progression row.
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_CREATED,
@@ -147,6 +151,7 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
           programId: created.programId, code: created.code,
           startPeriodId: created.startPeriodId,
           expectedEndPeriodId: created.expectedEndPeriodId,
+          academicYear:created.academicYear,startDate:created.startDate,endDate:created.endDate,
         },
       });
       return created;
@@ -196,7 +201,9 @@ export async function updateCollegeCohort(
       // Labels may be corrected while a batch is in use. Changing a recorded
       // end period still requires an untouched batch to preserve academic history.
       if ((section || enrollment || offering || history) &&
-          input.expectedEndPeriodId !== current.expectedEndPeriodId) {
+          (input.expectedEndPeriodId !== current.expectedEndPeriodId ||
+           (input.startDate!==undefined&&input.startDate!==current.startDate)||
+           (input.endDate!==undefined&&input.endDate!==current.endDate))) {
         throw new CollegeCohortMutationError("BATCH_HAS_DEPENDENCIES");
       }
       const start = await periodInCollege(tx, current.startPeriodId, member.collegeId);
@@ -206,10 +213,18 @@ export async function updateCollegeCohort(
       if (!validCohortPeriodRange(start.startDate, expected?.endDate ?? null)) {
         throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       }
+      if((input.startDate??current.startDate)&&(input.endDate??current.endDate)&&
+         (input.endDate??current.endDate)! < (input.startDate??current.startDate)!)
+        throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       await ensureUnique(tx, current.programId, input.name, input.code, cohortId);
       const [updated] = await tx.update(cohorts).set({
         name: input.name, code: input.code,
         expectedEndPeriodId: input.expectedEndPeriodId,
+        startDate:input.startDate===undefined?(current.startDate??start.startDate):input.startDate,
+        endDate:input.endDate===undefined?(expected?.endDate??current.endDate??null):input.endDate,
+        academicYear:input.academicYear===undefined
+          ?batchAcademicYearFromDates(input.startDate??current.startDate??start.startDate,input.endDate??expected?.endDate??current.endDate??null)
+          :input.academicYear,
         updatedAt: new Date(),
       }).where(and(eq(cohorts.id, cohortId), eq(cohorts.programId, current.programId),
         eq(cohorts.status, current.status))).returning();
@@ -222,6 +237,7 @@ export async function updateCollegeCohort(
         metadata: {
           programId: updated.programId, fromName: current.name, fromCode: current.code,
           toCode: updated.code, expectedEndPeriodId: updated.expectedEndPeriodId,
+          academicYear:updated.academicYear,startDate:updated.startDate,endDate:updated.endDate,
         },
       });
       return updated;

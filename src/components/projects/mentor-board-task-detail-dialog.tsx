@@ -5,11 +5,11 @@ import {ProjectTaskComments} from "./project-task-comments";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 type Task={
  id:string;title:string;status:string;description:string|null;acceptanceCriteria:string|null;
- priority:string;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
+ priority:string;createdAt?:Date;updatedAt:Date;assigneeMembershipId:string|null;blockerReason:string|null;
  sprintId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null;
 };
-type Submission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date};
-type Event={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null};
+type Submission={id:string;taskId:string;status:string;submissionUrl:string;version:number;createdAt:Date;submittedByMembershipId?:string|null};
+type Event={id:string;subjectId:string;summary:string;occurredAt:Date;actorDisplayName:string|null;eventType?:string};
 type Member={membershipId:string;displayName:string|null;role:string};
 export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,submissions,activity,onClose,readOnly}:{
  projectId:string;task:Task;sprintTitle:string|null;members:Member[];
@@ -23,6 +23,9 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
  },[task.id]);
  const author=members.find(m=>m.membershipId===task.assigneeMembershipId)?.displayName??"Unassigned";
  const recent=activity.filter(event=>event.subjectId===task.id);
+ const creator=recent.find(event=>event.eventType==="projects.task.created")?.actorDisplayName;
+ const editor=recent.filter(event=>event.eventType==="projects.task.details_updated")
+   .sort((a,b)=>new Date(b.occurredAt).getTime()-new Date(a.occurredAt).getTime())[0]?.actorDisplayName;
  const attempts=submissions.filter(row=>row.taskId===task.id);
  return <dialog ref={ref} aria-labelledby="mentor-board-task-title" onClose={onClose}
   className="fixed inset-0 m-auto max-h-[90dvh] w-[min(95vw,42rem)] overflow-y-auto rounded-xl border border-border bg-surface p-5 text-foreground shadow-xl backdrop:bg-black/50">
@@ -41,6 +44,12 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
       {label:"Task type",value:task.taskType??"Not set"}]).map(f=>
       <div key={f.label}><dt className="font-semibold text-body">{f.label}</dt><dd className="mt-1">{f.value}</dd></div>)}
   </dl>
+  <dl className="mt-4 grid gap-3 text-xs text-body sm:grid-cols-2">
+    {task.createdAt ? <div><dt className="font-semibold">Created</dt>
+      <dd>{creator ? "Created by "+creator+" · " : ""}{new Date(task.createdAt).toLocaleString("en-IN")}</dd></div> : null}
+    <div><dt className="font-semibold">Last edited</dt>
+      <dd>{editor ? "Last edited by "+editor+" · " : ""}{new Date(task.updatedAt).toLocaleString("en-IN")}</dd></div>
+  </dl>
   <section className="mt-4"><h3 className="font-semibold">Description / Approach</h3>
     <p className="mt-1 whitespace-pre-wrap text-sm">{task.description||"No description recorded"}</p></section>
   <section className="mt-4"><h3 className="font-semibold">Done when</h3>
@@ -55,6 +64,7 @@ export function MentorBoardTaskDetailDialog({projectId,task,sprintTitle,members,
    {attempts.length?<ul className="mt-2 space-y-2">{attempts.map(row=>
     <li key={row.id} className="rounded border border-border p-2 text-xs">
      Version {row.version} · {row.status} · {new Date(row.createdAt).toLocaleDateString("en-IN")}
+     {row.submittedByMembershipId ? " · Submitted by "+(members.find(member=>member.membershipId===row.submittedByMembershipId)?.displayName??"Project member") : ""}
      {/^(https?:)\/\//i.test(row.submissionUrl)?
       <a href={row.submissionUrl} target="_blank" rel="noopener noreferrer"
        className="ml-2 text-primary-text underline">Open submitted evidence</a>:null}

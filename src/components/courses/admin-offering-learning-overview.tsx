@@ -5,6 +5,7 @@ import type {
 } from "@/modules/courses/admin-offering-learning-workspace";
 import { FacultyLessonAuthoring } from "./faculty-lesson-authoring";
 import { CollegeLessonReorderActions } from "./college-lesson-reorder-actions";
+import {CollegeLessonVisibilityControl} from "./college-lesson-visibility-controls";
 import { FacultyItemActions } from "./faculty-item-actions";
 import {
   AdminQuizResultsActions,
@@ -455,6 +456,10 @@ export function AdminOfferingLearningOverview({
                         canMoveUp={lessonIndex > 0}
                         canMoveDown={lessonIndex < workspace.lessons.length - 1}
                       />
+                      <CollegeLessonVisibilityControl lesson={{
+                        id:lesson.id,name:lesson.name,visibleToStudents:lesson.visibleToStudents,
+                        updatedAt:lesson.updatedAt.toISOString(),
+                      }}/>
                       <LessonActions
                         lesson={lesson}
                       />

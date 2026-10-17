@@ -11,12 +11,12 @@ export async function GET(request:Request){
   if(!parsed.success)return Response.json({error:"INVALID_REPORT_FILTERS"},{status:400});
   const data=await getSuperAdminCompanyHiringReport(await getCurrentRequestContext(),parsed.data);
   const groups=hiringCompanyRollups(data.rows);
-  const keys=["applied","shortlisted","assessment","interview","offered","hired","rejected"] as const;
+  const keys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
   const rows:(string|number)[][]=[
    ...data.rows.map(row=>[row.companyName,row.jobTitle,...keys.map(key=>row[key])]),
    ...groups.map(row=>[row.companyName,"Company total",...keys.map(key=>row[key])]),
   ];
-  if(data.truncated)rows.push(["TRUNCATED: report limited to 5000 drives","","","","","","","",""]);
+  if(data.truncated)rows.push(["TRUNCATED: report limited to 5000 drives","","","","","","","","","","",""]);
   const date=new Date().toISOString().slice(0,10);
   return new Response("\uFEFF"+placementReportCsv(COMPANY_HIRING_COLUMNS,rows),{
    headers:{

@@ -1,5 +1,8 @@
 import "server-only";
 
+import { and, eq, inArray, or } from "drizzle-orm";
+import { z } from "zod";
+
 import { getDb } from "@/db/client";
 import { placementTpoLeadActivities, placementTpoLeads } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -9,6 +12,7 @@ import { createTpoLeadSchema, tpoCrmCollegeIdSchema } from "./tpo-crm-validation
 import { inferLegacyRecruiterCompanyName } from "./tpo-recruiter-lead-policy";
 import {
   confirmedTpoLeadImportSchema,
+  TPO_LEAD_CSV_MAX_CHARACTERS,
   normalizeTpoLeadImportPhone,
   previewTpoLeadCsv,
   summarizeTpoLeadImport,
@@ -115,4 +119,68 @@ export async function importTpoLeadsCsv(
   });
 
   return { results, counts: summarizeTpoLeadImport(results) };
+}
+
+/**
+ * Authenticated, tenant-scoped read-only import preview. This is advisory:
+ * unique indexes still resolve concurrent inserts when the user confirms.
+ * Batch the queries to stay within PostgreSQL parameter limits for 5000 rows.
+ */
+export async function previewTpoLeadImportCollisions(
+  context: RequestContext,
+  rawCollegeId: unknown,
+  rawPayload: unknown,
+) {
+  if (!context.membership || !hasMembershipRole(context, "TPO")) {
+    throw new AuthorizationError("placements.manage");
+  }
+  const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
+  requirePermission(context, "placements.manage", { collegeId });
+  await requirePlacementManageScope(context, collegeId);
+  const { csv } = z.object({
+    csv: z.string().min(1).max(TPO_LEAD_CSV_MAX_CHARACTERS),
+  }).strict().parse(rawPayload);
+  const preview = previewTpoLeadCsv(csv);
+  const emails = [...new Set(preview.rows.flatMap(row =>
+    row.lead?.email ? [row.lead.email.trim().toLowerCase()] : [],
+  ))];
+  const phones = [...new Set(preview.rows.flatMap(row =>
+    row.lead?.phone ? [normalizeTpoLeadImportPhone(row.lead.phone)].filter(
+      (value): value is string => Boolean(value),
+    ) : [],
+  ))];
+  const matched: Array<{ id: string; name: string; emailNorm: string | null; phoneNorm: string | null }> = [];
+  for (let cursor = 0; cursor < Math.max(emails.length, phones.length); cursor += 300) {
+    const conditions = [
+      ...(emails.slice(cursor, cursor + 300).length
+        ? [inArray(placementTpoLeads.emailNorm, emails.slice(cursor, cursor + 300))]
+        : []),
+      ...(phones.slice(cursor, cursor + 300).length
+        ? [inArray(placementTpoLeads.phoneNorm, phones.slice(cursor, cursor + 300))]
+        : []),
+    ];
+    if (!conditions.length) continue;
+    const rows = await getDb().select({
+      id: placementTpoLeads.id,
+      name: placementTpoLeads.name,
+      emailNorm: placementTpoLeads.emailNorm,
+      phoneNorm: placementTpoLeads.phoneNorm,
+    }).from(placementTpoLeads).where(and(
+      eq(placementTpoLeads.collegeId, collegeId),
+      or(...conditions),
+    ));
+    matched.push(...rows);
+  }
+  const emailOwners = new Map(matched.filter(row => row.emailNorm)
+    .map(row => [row.emailNorm!, row]));
+  const phoneOwners = new Map(matched.filter(row => row.phoneNorm)
+    .map(row => [row.phoneNorm!, row]));
+  return {
+    collisions: preview.rows.flatMap(item => {
+      if (!item.lead) return [];
+      const found = (item.lead.email && emailOwners.get(item.lead.email.toLowerCase())) ||
+        (item.lead.phone && phoneOwners.get(normalizeTpoLeadImportPhone(item.lead.phone) ?? ""));
+      return found ? [{ row: item.row, leadId: found.id, name: found.name }] : [];
+    }),
+  };
 }

@@ -114,7 +114,8 @@ async function requireAssignmentLearnerAccess(
   if (
     assignment.status !== "PUBLISHED" ||
     assignment.learningPathStatus !==
-      "PUBLISHED"
+      "PUBLISHED" ||
+    !assignment.lessonVisibleToStudents
   ) {
     throw new CoursesServiceError(
       "ASSIGNMENT_NOT_PUBLISHED",

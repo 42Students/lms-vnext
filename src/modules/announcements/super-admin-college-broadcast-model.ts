@@ -8,8 +8,12 @@ export const superAdminCollegeBroadcastSchema=z.strictObject({
  scheduledAt:z.iso.datetime({offset:true}).nullable(),
  expiresAt:z.iso.datetime({offset:true}).nullable(),
  isPinned:z.boolean(),
+ buttonLabel:z.string().trim().max(60).nullable().optional(),
+ buttonUrl:z.string().trim().max(500).nullable().optional(),
  publishConsent:z.literal(true),
 }).superRefine((v,ctx)=>{
+ if(Boolean(v.buttonLabel)!==Boolean(v.buttonUrl))ctx.addIssue({code:"custom",path:["buttonUrl"],message:"Provide both button label and HTTPS link"});
+ if(v.buttonUrl&&!/^https:\/\/[^\s]+$/i.test(v.buttonUrl))ctx.addIssue({code:"custom",path:["buttonUrl"],message:"Enter a secure HTTPS link"});
  if(v.audienceMode==="ALL_COLLEGES"&&v.collegeIds.length!==0)ctx.addIssue({code:"custom",path:["collegeIds"],message:"All-colleges must not include an explicit target list"});
  if(v.reviewedCollegeIds && new Set(v.reviewedCollegeIds).size!==v.reviewedCollegeIds.length)ctx.addIssue({code:"custom",path:["reviewedCollegeIds"],message:"Reviewed audience may not contain duplicate colleges"});
  if(new Set(v.collegeIds).size!==v.collegeIds.length)ctx.addIssue({code:"custom",path:["collegeIds"],message:"A college must not appear more than once"});

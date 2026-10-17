@@ -14,6 +14,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const [selected,setSelected]=useState<string[]>([]);
  const [title,setTitle]=useState("");
  const [message,setMessage]=useState("");
+ const [buttonLabel,setButtonLabel]=useState("");
+ const [buttonUrl,setButtonUrl]=useState("");
  const [scheduledAt,setScheduledAt]=useState("");
  const [expiresAt,setExpiresAt]=useState("");
  const [pinned,setPinned]=useState(false);
@@ -22,7 +24,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const [feedback,setFeedback]=useState("");
  const count=mode==="ALL_COLLEGES"?colleges.length:selected.length;
  const timing=broadcastLocalTiming(scheduledAt,expiresAt);
- const valid=count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&!pending;
+ const buttonValid=(!buttonLabel.trim()&&!buttonUrl.trim())||(buttonLabel.trim().length>0&&buttonLabel.length<=60&&/^https:\/\/[^\s]+$/i.test(buttonUrl));
+ const valid=buttonValid&&count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&!pending;
  async function submit(){
   if(!valid)return;
   setPending(true);setFeedback("");
@@ -31,7 +34,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({audienceMode:mode,collegeIds:mode==="ALL_COLLEGES"?[]:selected,
      reviewedCollegeIds:mode==="ALL_COLLEGES"?colleges.map(c=>c.id):selected,
-     title,message,scheduledAt:timing.scheduledAt,expiresAt:timing.expiresAt,
+     title,message,buttonLabel:buttonLabel.trim()||null,buttonUrl:buttonUrl.trim()||null,scheduledAt:timing.scheduledAt,expiresAt:timing.expiresAt,
      isPinned:pinned,publishConsent:true}),
    });
    const data:unknown=await response.json().catch(()=>null);
@@ -41,7 +44,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
    if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
-   setFeedback("Sent to "+published+" placement cell(s). "+(scheduledAt?"Scheduled announcements will be visible at their planned time.":"Active placement-cell users receive a bell notice."));setTitle("");setMessage("");setSelected([]);
+   setFeedback("Sent to "+published+" placement cell(s). "+(scheduledAt?"Scheduled announcements will be visible at their planned time.":"Active placement-cell users receive a bell notice."));setTitle("");setMessage("");setButtonLabel("");setButtonUrl("");setSelected([]);
    router.refresh();
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{setPending(false);setReview(false);}
@@ -65,6 +68,17 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <label className="grid gap-1 text-sm font-semibold text-body">Title<Input value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
   <label className="grid gap-1 text-sm font-semibold text-body">Message<Textarea value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
+  <fieldset className="space-y-2 rounded-md border border-border p-3">
+   <legend className="text-sm font-semibold">Button (optional)</legend>
+   <label className="grid gap-1 text-sm font-semibold text-body">Button label
+    <Input value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="View details"/>
+   </label>
+   <label className="grid gap-1 text-sm font-semibold text-body">HTTPS link
+    <Input type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
+   </label>
+   <p className="text-xs text-muted-foreground">Provide both fields or leave both blank. Label must be 60 characters or fewer.</p>
+   {!buttonValid?<p role="alert" className="text-sm text-danger-text">Provide a button label and a valid HTTPS link.</p>:null}
+  </fieldset>
   <div className="grid gap-3 sm:grid-cols-2">
    <label className="grid gap-1 text-sm font-semibold text-body">Schedule (local)<Input type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
    <label className="grid gap-1 text-sm font-semibold text-body">Show until (local)<Input type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
