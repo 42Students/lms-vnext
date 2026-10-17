@@ -158,3 +158,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-08 | SOURCE VERIFIED; CI pending | `src/app/(authenticated)/mentor/projects/error.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-08 error boundary offers retry without false feature-disable copy`. |
 | MEN-projects-meetings-11 | SOURCE VERIFIED; CI pending | `src/modules/projects/access.ts`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-11 review-only memberships are not granted write access`. |
 | MEN-projects-meetings-16 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-basics.test.ts` — `MEN-projects-meetings-16 mentor readiness and final-delivery states derive from workspace facts`. |
+
+## Chat-7 round 3 — authored brief, final review and schedule safety
+
+| Gap ID | Review | Evidence |
+|---|---|---|
+| MEN-projects-meetings-17 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-22 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-25 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-28 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+| MEN-projects-meetings-29 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
