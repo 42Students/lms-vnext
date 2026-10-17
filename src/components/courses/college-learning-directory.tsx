@@ -30,6 +30,13 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
       />
       <section aria-label={title + " filters"} className="rounded-xl border border-border bg-surface p-4 sm:p-5">
         <form method="get" action={href} className="flex flex-wrap items-end gap-3">
+          {lessons?<label className="grid min-w-32 gap-1 text-sm font-semibold text-body">
+            Rows per page
+            <select name="pageSize" defaultValue={data.query.pageSize}
+              className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+              {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+            </select>
+          </label>:null}
           <label className="grid min-w-56 flex-1 gap-1 text-sm font-semibold text-body">
             Course or {lessons ? "lesson" : "cohort"}
             <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
@@ -590,7 +597,7 @@ export function CollegeLearningDirectory({ data,courseChoices=[] }: { data: Dire
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
+        <span className="text-muted-foreground">{Math.min(data.total,(data.query.page-1)*data.query.pageSize+1)}–{Math.min(data.total,data.query.page*data.query.pageSize)} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <div className="flex gap-2">
           {data.query.page > 1 ? <Link
             href={collegeLearningHref(data.kind, { ...data.query, page: data.query.page - 1 })}
