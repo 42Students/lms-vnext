@@ -1,0 +1,63 @@
+import {describe,expect,it} from "vitest";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+import {learnerCourseMatchesSearch} from "@/modules/courses/learner-course-card-search-model";
+import {learnerCourseResultSummary} from "@/modules/courses/learner-course-result-summary-model";
+import {learnerCourseFilteredEmptyTitle} from "@/modules/courses/learner-course-filtered-empty-model";
+import {mapLearnerCourseCardsLimited} from "@/modules/courses/learner-course-list-concurrency-model";
+const source=(p:string)=>readFileSync(join(process.cwd(),p),"utf8");
+describe("chat-4 learner Home and Courses gap closure",()=>{
+ it("LEARNER-home-courses-06 legacy filtered results and empty titles",()=>{
+  expect(learnerCourseResultSummary(48,60,100)).toBe("Showing 60 of 100 records · 48 currently displayed");
+  expect(learnerCourseFilteredEmptyTitle({query:"",continueOnly:false,typeFilter:"elective",termState:"ALL",progressFilter:"ALL",periodCount:3}))
+   .toBe("No electives to show right now.");
+  expect(learnerCourseFilteredEmptyTitle({query:"",continueOnly:false,typeFilter:"core",termState:"ALL",progressFilter:"ALL",periodCount:3}))
+   .toBe("No regular courses to show — everything this semester is an elective.");
+ });
+ it("LEARNER-home-courses-07 matches batch, academic year and instructor fields",()=>{
+  const row={course:{courseName:"Geotechnics",courseCode:"GEOT",
+   programName:"Civil Engineering",sectionName:"Section B",cohortName:"2027 Cohort",
+   academicPeriodName:"Year 3",periodStartDate:"2099-07-01",periodEndDate:"2100-07-01"},
+   instructorNames:["Dr Sita"]};
+  expect(learnerCourseMatchesSearch(row,"Cohort")).toBe(true);
+  expect(learnerCourseMatchesSearch(row,"2099")).toBe(true);
+  expect(learnerCourseMatchesSearch(row,"Sita")).toBe(true);
+  expect(learnerCourseMatchesSearch(row,"Astrophysics")).toBe(false);
+ });
+ it("LEARNER-home-courses-09 separates list Retry from course detail errors",()=>{
+  const s=source("src/app/(authenticated)/learn/courses/error.tsx");
+  expect(s).toContain("Failed to load courses. Please try again.");
+  expect(s).toContain("Could not load course");
+  expect(s).toContain("This course may not exist or you may not have access.");
+  expect(s).toContain("onClick={reset}");
+ });
+ it("LEARNER-home-courses-11 unknown tab redirects to Overview retaining query context",()=>{
+  const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
+  expect(s).toContain("if (activeTab === null)");
+  expect(s).toContain("const safeQuery=new URLSearchParams()");
+  expect(s).toContain('"/home"+(suffix?"?"+suffix:"")');
+ });
+ it("LEARNER-home-courses-13 learner header retains Course workspace and separate read-only status",()=>{
+  const s=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
+  expect(s).toContain('description="Course workspace"');
+  expect(s).toContain('title={workspace.course.name}');
+  expect(s).toContain("Past semester course · Read only");
+ });
+ it("LEARNER-home-courses-R01 one course failure does not crash other cards",async()=>{
+  const loaded=await mapLearnerCourseCardsLimited([1,2,3],async row=>{
+   try{if(row===2)throw Error("simulated unavailable course");return "Course "+row;}
+   catch{return "Unavailable "+row;}
+  },2);
+  expect(loaded).toEqual(["Course 1","Unavailable 2","Course 3"]);
+  const s=source("src/app/(authenticated)/learn/courses/page.tsx");
+  expect(s).toContain('return unavailable("Course temporarily unavailable")');
+  expect(s).toContain('return unavailable("Duplicate course mapping "');
+  expect(s).toContain("mapLearnerCourseCardsLimited");
+ });
+ it("GR-90 learner discussion errors remain announced and never render raw API codes",()=>{
+  const s=source("src/components/courses/learner-course-discussion.tsx");
+  expect(s).toContain('role="alert"');
+  expect(s).toContain("apiFetch");
+  expect(s).not.toContain("discussion_post_failed");
+ });
+});
