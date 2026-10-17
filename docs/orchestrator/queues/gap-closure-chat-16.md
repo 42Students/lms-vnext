@@ -5,8 +5,8 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - MEN-projects-meetings-53 (S3) — DONE
 - MEN-projects-meetings-55 (S3) — DONE
 - MEN-projects-meetings-56 (S4) — DONE
-- MEN-projects-meetings-57 (S3) — PARTIAL
-- MEN-projects-meetings-58 (S4) — PARTIAL
+- MEN-projects-meetings-57 (S3) — DONE
+- MEN-projects-meetings-58 (S4) — NOT-A-GAP
 - MEN-projects-meetings-60 (S3) — DONE
 - MEN-projects-meetings-61 (S3) — DONE
 - MEN-projects-meetings-65 (S3) — DONE
@@ -14,20 +14,20 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - MEN-projects-meetings-69 (S4) — DONE
 - MEN-projects-meetings-70 (S3) — DONE
 - MEN-projects-meetings-72 (S2) — DONE
-- MEN-projects-meetings-73 (S4) — PARTIAL
+- MEN-projects-meetings-73 (S4) — DONE
 - MEN-projects-meetings-74 (S4) — DONE
-- MEN-projects-meetings-75 (S4) — PARTIAL
-- MEN-projects-meetings-76 (S3) — PARTIAL
+- MEN-projects-meetings-75 (S4) — DONE
+- MEN-projects-meetings-76 (S3) — DONE
 - SA-placements-projects-101 (S2) — NOT-A-GAP
-- SA-placements-projects-103 (S2) — BLOCKED
+- SA-placements-projects-103 (S2) — NOT-A-GAP
 - SA-placements-projects-104 (S3) — DONE
 - SA-placements-projects-106 (S3) — DONE
 - SA-placements-projects-107 (S4) — DONE
 - SA-placements-projects-109 (S3) — DONE
 - SA-placements-projects-112 (S3) — DONE
-- SA-placements-projects-113 (S2) — BLOCKED
+- SA-placements-projects-113 (S2) — DONE
 - SA-placements-projects-114 (S3) — DONE
-- SA-placements-projects-116 (S3) — PARTIAL
+- SA-placements-projects-116 (S3) — DONE
 - SA-placements-projects-117 (S3) — DONE
 - SA-placements-projects-118 (S4) — NOT-A-GAP
 - SA-placements-projects-119 (S2) — DONE
@@ -63,3 +63,16 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 
 - Additional incremental `MEN-projects-meetings-57`: private upload rows now expose filename, file status and completed/created time in IST; link/upload unification still pending. ID-named test: `chat16-mentor-editor-guard-r5.test.ts`.
 - `SA-placements-projects-116` provider-independent digest preview now remains readable when Telegram credentials are missing; only send actions are unavailable. ID-named test: `chat16-telegram-preview-graceful-r5.test.ts`. Configured real provider delivery unverified.
+
+## Round 2 decisions and ownership checkpoint (2026-10-17)
+
+- Current queue status lines above supersede earlier historical round notes that used PARTIAL/BLOCKED. The acceptance files detail test names and intentional deviations from unsafe legacy behavior. These are authored source dispositions, not passed CI.
+- MEN 57: typed metadata, safe links, signed file download and IST update timestamps are implemented.
+- MEN 58: NOT-A-GAP for a single public/private resource row. Safer design keeps private, scanned/quarantined object lifecycles distinct from typed link/note resources; files now reference scoped ACTIVE resources and learner link choices are TEAM-only.
+- MEN 73: planned/active stale threshold and review-first project attention are implemented, without conflating personal unread messages and public announcements.
+- MEN 75/76: in-app and hard-navigation dirty draft protection, ConfirmDialog irreversible actions and safe error presentation implemented; real browser validation remains the release gate.
+- SA 103: NOT-A-GAP for unscanned clipboard/paste-anywhere screenshots; accepts validated HTTP/HTTPS evidence links and warns against publishing private screenshots. Signed private attachment ingestion is not claimed.
+- SA 113: source-level live Cloud Logging explorer offers bounded paging, error/warning severity, UTC-backed IST display, redacted report/export and honest unconfigured state; deployment IAM still needed to exercise the provider.
+- SA 116: read-only digest preview and real manual endpoint are authored, unconfigured Telegram sends correctly disabled.
+- SA 120: BLOCKED on missing GitHub findings feed/credentials (current repository lookup returned 404); genuine persisted sync status can be read without pretending synchronization happened.
+- All extra OPEN mentor/Super Admin gap IDs absent from queues were inventoried. They remain assigned to chat-7 or chat-9 in `docs/audit/gap-register.md`; no cross-lane ownership was taken. Test/typecheck execution remains orchestrator responsibility.
