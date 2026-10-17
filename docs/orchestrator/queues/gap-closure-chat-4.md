@@ -249,7 +249,7 @@ Audit: `docs/audit/pages/college/operations.md` (and `operations-review.md` if p
 | COL-attendance-R03 | S3 | PERMISSION | DONE |
 | COL-course-tabs-R01 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R01 | S3 | MISSING-EXPORT | OPEN |
-| COL-projects-R02 | S3 | MISSING-FIELD | OPEN |
+| COL-projects-R02 | S3 | MISSING-FIELD | DONE |
 | COL-placements-R02 | S4 | MISSING-FIELD | DONE |
 
 ## Chat-4 verified-closure round — 2026-10-17
