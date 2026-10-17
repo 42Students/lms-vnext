@@ -8,6 +8,7 @@ export const superAdminReadQuerySchema = z.strictObject({
  jobId: z.string().uuid().optional(),
  source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  channel:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
+ source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
  pipelineStage:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED"]).default("ALL"),
  departmentId:z.uuid().optional(),
  programId:z.uuid().optional(),
@@ -31,6 +32,7 @@ export function superAdminReadHref(path:string,query:SuperAdminReadQuery) {
  if(query.q)params.set("q",query.q);
  if(query.jobId)params.set("jobId",query.jobId);
  if(query.pipelineStage!=="ALL")params.set("pipelineStage",query.pipelineStage);
+ if(query.source!=="ALL")params.set("source",query.source);
  if(query.channel!=="ALL")params.set("channel",query.channel);
  if(query.source!=="ALL")params.set("source",query.source);
  for(const key of ["departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
