@@ -1,6 +1,6 @@
 "use client";
 
-import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
+import {LEARNER_EDUCATION_TYPES,LEARNER_QUALIFYING_EXAMS,LEARNER_QUALIFYING_EXAM_DETAILS,learnerEducationValidationProblem} from "@/modules/people/learner-education-picker-model";
 import {LearnerSkillCatalogInput} from "@/components/profile/learner-skill-catalog-input";
 import { useEffect, useMemo, useRef, useState, useTransition, type ReactNode } from "react";
 import {useRouter} from "next/navigation";
@@ -189,6 +189,7 @@ export function LearnerProfileWorkspace(props: {
   const [educationError,setEducationError] = useState<string|null>(null);
   const [showcaseDraft,setShowcaseDraft]=useState<(LearnerShowcaseDetails & {id: string | null;kind:LearnerShowcaseKind})|null>(null);
   const [showcaseError,setShowcaseError]=useState<string|null>(null);
+  const [showcaseBaseline,setShowcaseBaseline]=useState<string|null>(null);
   const [jobPrefsEditing,setJobPrefsEditing]=useState(false);
   const [jobPrefsDraft,setJobPrefsDraft]=useState(props.initialDocument.jobPreferences);
   const [pending, startTransition] = useTransition();
@@ -231,6 +232,21 @@ export function LearnerProfileWorkspace(props: {
     window.document.addEventListener("visibilitychange",onVisible);
     return ()=>window.document.removeEventListener("visibilitychange",onVisible);
   },[router,detailsOpen,contactOpen,collection,pending,contactPending]);
+
+  // Guard the whole page as well as dialog Cancel. A browser reload cannot
+  // safely preserve edits that exist only in local component state.
+  useEffect(()=>{
+    const dirty=(detailsOpen&&JSON.stringify(detailsDraft)!==JSON.stringify(detailsBaseline))||
+      (contactOpen&&JSON.stringify(contactDraft)!==JSON.stringify(document.contacts))||
+      (collection!==null&&JSON.stringify(itemDraft)!==JSON.stringify(itemBaseline))||
+      (jobPrefsEditing&&JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences))||
+      (showcaseDraft!==null&&JSON.stringify(showcaseDraft)!==showcaseBaseline);
+    if(!dirty)return;
+    const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
+    window.addEventListener("beforeunload",warn);
+    return ()=>window.removeEventListener("beforeunload",warn);
+  },[detailsOpen,detailsDraft,detailsBaseline,contactOpen,contactDraft,
+    collection,itemDraft,itemBaseline,jobPrefsEditing,jobPrefsDraft,document.contacts,document.jobPreferences,showcaseDraft,showcaseBaseline]);
 
   useEffect(() => {
     if (!props.initialSection) return;
@@ -297,6 +313,21 @@ export function LearnerProfileWorkspace(props: {
     setEditingId(null);
     setItemDraft({});
     setItemBaseline({});
+  }
+
+  function closeContacts(){
+    if(contactPending)return;
+    if(JSON.stringify(contactDraft)!==JSON.stringify(document.contacts)&&
+       !window.confirm("Discard contact changes?"))return;
+    setContactOpen(false);
+    setContactError(null);
+  }
+
+  function closeJobPreferences(){
+    if(pending)return;
+    if(JSON.stringify(jobPrefsDraft)!==JSON.stringify(document.jobPreferences)&&
+       !window.confirm("Discard job preference changes?"))return;
+    setJobPrefsEditing(false);
   }
 
   function openContacts() {
@@ -368,11 +399,20 @@ export function LearnerProfileWorkspace(props: {
   function openShowcase(kind: LearnerShowcaseKind, entry?: LearnerShowcaseDetails & {id:string}) {
     if(!learnerProfileCollectionMayEdit(pending,contactPending))return;
     setShowcaseError(null);
-    setShowcaseDraft({
+    const initial={
       kind, id:entry?.id??null, title:entry?.title??"",
       organization:entry?.organization??"", date:entry?.date??"",
       url:entry?.url??"", description:entry?.description??"",
-    });
+    };
+    setShowcaseDraft(initial);
+    setShowcaseBaseline(JSON.stringify(initial));
+  }
+
+  function closeShowcase(){
+    if(pending)return;
+    if(showcaseDraft&&JSON.stringify(showcaseDraft)!==showcaseBaseline&&
+       !window.confirm("Discard your award or publication edits?"))return;
+    setShowcaseDraft(null);setShowcaseError(null);setShowcaseBaseline(null);
   }
 
   function saveShowcase() {
@@ -443,6 +483,8 @@ export function LearnerProfileWorkspace(props: {
         maxGrade:String(itemDraft.maxGrade??""),
         startYear:String(itemDraft.startYear??""),
         endYear:String(itemDraft.endYear??""),
+        examDetails:(itemDraft.examDetails && typeof itemDraft.examDetails==="object" && !Array.isArray(itemDraft.examDetails))
+          ?itemDraft.examDetails as Record<string,string|number|boolean>:undefined,
       });
       if(issue){setEducationError(issue.message);return;}
       setEducationError(null);
@@ -723,17 +765,13 @@ export function LearnerProfileWorkspace(props: {
 
       <Dialog
         open={contactOpen}
-        onOpenChange={(open) => {
-          if (!open && contactPending) return;
-          setContactOpen(open);
-          if (!open) setContactError(null);
-        }}
+        onOpenChange={(open) => {if(!open)closeContacts();}}
         title="Confirm contact details"
         description="Only the alternate phone and contact email in your profile will change. Your login phone and account email will not change."
         footer={
           <>
             <Button variant="secondary" disabled={contactPending}
-              onClick={() => { setContactOpen(false); setContactError(null); }}>
+              onClick={closeContacts}>
               Keep current details
             </Button>
             <Button disabled={contactPending || !learnerContactEditSchema.safeParse({
@@ -837,12 +875,12 @@ export function LearnerProfileWorkspace(props: {
       </Dialog>
 
       <Dialog open={showcaseDraft!==null}
-        onOpenChange={open=>{if(!open&&!pending){setShowcaseDraft(null);setShowcaseError(null);}}}
+        onOpenChange={open=>{if(!open)closeShowcase();}}
         title={showcaseDraft?.kind==="award"?"Awards & Recognitions":"Publications & Research"}
         description="Save a learner-entered record. This does not verify the award or publication."
         footer={<>
           <Button variant="secondary" disabled={pending}
-            onClick={()=>{setShowcaseDraft(null);setShowcaseError(null);}}>Cancel</Button>
+            onClick={closeShowcase}>Cancel</Button>
           <Button disabled={pending} onClick={saveShowcase}>{pending?"Saving…":"Save"}</Button>
         </>}>
         {showcaseDraft?<div className="grid gap-4">
@@ -872,10 +910,10 @@ export function LearnerProfileWorkspace(props: {
       </Dialog>
 
       <Dialog open={jobPrefsEditing}
-        onOpenChange={open=>{if(!open&&!pending)setJobPrefsEditing(false);}}
+        onOpenChange={open=>{if(!open)closeJobPreferences();}}
         title="Edit Job Preferences"
         footer={<>
-          <Button variant="secondary" disabled={pending} onClick={()=>setJobPrefsEditing(false)}>Cancel</Button>
+          <Button variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
           <Button disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:jobPrefsDraft},()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
@@ -946,6 +984,31 @@ export function LearnerProfileWorkspace(props: {
               if (field.type === "select") return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Select className="mt-1.5" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
               return <label key={field.key} className="text-xs font-semibold text-body">{field.label}<Input className="mt-1.5" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
+            {collection==="education"&&String(itemDraft.qualifyingExam??"").trim()?
+              <fieldset className="grid gap-3 rounded-md border border-border p-3 sm:col-span-2 sm:grid-cols-2">
+                <legend className="text-sm font-semibold text-foreground">Qualifying exam details (optional)</legend>
+                <p className="text-xs text-body sm:col-span-2">
+                  Record details from your exam result. These fields are learner-entered and are not an official verification.
+                </p>
+                {LEARNER_QUALIFYING_EXAM_DETAILS.map(field=>{
+                  const details=(itemDraft.examDetails && typeof itemDraft.examDetails==="object" &&
+                    !Array.isArray(itemDraft.examDetails))?
+                    itemDraft.examDetails as Record<string,string|number|boolean>:{};
+                  const value=String(details[field.key]??"");
+                  return <label key={field.key} className="text-xs font-semibold text-body">
+                    {field.label}
+                    <Input type="text" className="mt-1" maxLength={field.maxLength}
+                      value={value}
+                      onChange={event=>setItemDraft(current=>({
+                        ...current,examDetails:{
+                          ...((current.examDetails && typeof current.examDetails==="object" &&
+                            !Array.isArray(current.examDetails))?current.examDetails as Record<string,unknown>:{}),
+                          [field.key]:event.target.value,
+                        },
+                      }))}/>
+                  </label>;
+                })}
+              </fieldset>:null}
             {collection==="education"&&educationError?<p role="alert" className="sm:col-span-2 text-sm text-error">{educationError}</p>:null}
             {collection === "experiences" ? <label className="flex items-center gap-2 text-sm text-body sm:col-span-2"><input type="checkbox" checked={Boolean(itemDraft.currentlyWorking)} onChange={(event) => setItemDraft({ ...itemDraft, currentlyWorking: event.target.checked, ...(event.target.checked ? { endDate: "" } : {}) })} />I currently work here</label> : null}
           </div>

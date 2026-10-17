@@ -86,3 +86,4 @@ export * from "./placement-round-candidate-slots";
 export * from "./platform-setting-overrides";
 export * from "./placement-tpo-company-communication";
 export * from "./placement-company-share-selection";
+export * from "./lesson-content-materials";

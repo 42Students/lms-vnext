@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,ne} from "drizzle-orm";
+import {and,asc,eq,gt,ne} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -32,9 +32,20 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
    eq(placementApplications.jobId,jobId),eq(collegeMemberships.collegeId,collegeId),
    ne(placementRoundResults.status,"SUPERSEDED")))
   .orderBy(users.displayName,placementRoundResults.applicationId);
- const rows=facts.map(x=>({...x,student:x.student??"Learner"}));
+ const evaluativeRounds=await getDb().select({id:placementJobRounds.id,
+  sequence:placementJobRounds.sequence,kind:placementJobRounds.kind})
+  .from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
+    ne(placementJobRounds.status,"CANCELLED"),ne(placementJobRounds.kind,"TALK")))
+  .orderBy(asc(placementJobRounds.sequence));
+ const next=evaluativeRounds.find((round,index)=>
+  index>evaluativeRounds.findIndex(x=>x.id===roundId))??null;
+ const passDestination=next?next.kind==="INTERVIEW"?"Interview":"Next test":"Final round cleared";
+ const rows=facts.map(x=>({...x,student:x.student??"Learner",
+  destination:x.outcome==="PASS"?passDestination:x.outcome==="FAIL"?"Not cleared":
+   x.outcome==="HOLD"?"Waitlisted":"Absent"}));
  const ready=scope.jobStatus==="PUBLISHED"&&scope.roundStatus==="COMPLETED"&&scope.roundKind!=="TALK";
- return {scope,ready,rows,...summarizeRoundApply(rows),
+ return {scope,ready,rows,destinations:{PASS:passDestination,FAIL:"Not cleared",
+   HOLD:"Waitlisted",ABSENT:"Absent"},...summarizeRoundApply(rows),
   previewToken:roundApplyPreviewToken(roundId,rows),
   skippedUnrecordedNote:"Applicants with no staged result remain pending; they are not automatically failed."};
 }

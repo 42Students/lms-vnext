@@ -147,6 +147,7 @@ export async function listRecruiterCalendarEvents(
       archivedAt: row.job.archivedAt,
       companyId: row.companyId,
       companyName: row.companyName,
+      collegeName: row.collegeName,
       applicationDeadline:
         row.job.applicationDeadline,
     }));
@@ -176,6 +177,7 @@ export async function listRecruiterCalendarEvents(
             status: placementJobRounds.status,
             scheduledAt:
               placementJobRounds.scheduledAt,
+            durationMinutes: placementJobRounds.durationMinutes,
             timezone:
               placementJobRounds.timezone,
             venue: placementJobRounds.venue,

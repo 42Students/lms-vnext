@@ -9,10 +9,11 @@ export function parseSuperAdminScopedCsvParams(params:URLSearchParams){
  }
  return superAdminScopedCsvQuerySchema.parse(raw);
 }
-export function superAdminScopedCsvHref(path:string,query:Pick<SuperAdminReadQuery,"q"|"status">){
+export function superAdminScopedCsvHref(path:string,query:SuperAdminReadQuery){
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
  if(query.status!=="ALL")params.set("status",query.status);
+ for(const key of ["jobId","departmentId","programId","cohortId","sectionId","employmentType"] as const){if(query[key])params.set(key,query[key]);}
  return path+(params.size?"?"+params.toString():"");
 }
 function csvCell(value:string){

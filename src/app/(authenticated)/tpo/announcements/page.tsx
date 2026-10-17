@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
 import {canPublishTpoNoticeWithCurrentStorage} from "@/modules/announcements/tpo-notice-audience-snapshot-model";
@@ -11,7 +12,7 @@ import {listTpoPlacementAnnouncements} from "@/modules/announcements/tpo-placeme
 import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} from "@/modules/announcements/tpo-audience-preview-service";
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
-type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[]}>};
+type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];noticeError?:string|string[]}>};
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -23,6 +24,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
  const first=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
+ const noticeError=tpoNoticeFormErrorMessage(first(raw.noticeError));
  const query=tpoAudiencePreviewQuery.safeParse({
   audience:first(raw.audience)??"COLLEGE",
   targetId:first(raw.targetId)||undefined,
@@ -36,6 +38,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
  return <main className="space-y-6">
   <PageHeader eyebrow="TPO · Communications" title="Announcements"
    description="College-wide notices for this college. Removal and undo are author-only and version checked; external reminders remain unavailable."/>
+  {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
   {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>

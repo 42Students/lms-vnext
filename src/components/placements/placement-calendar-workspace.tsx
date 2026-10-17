@@ -171,7 +171,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view">
+    Pick<CalendarState, "anchor" | "view" | "kind">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -191,9 +191,8 @@ function calendarHref(
   }
 
   if (audience === "TPO") {
-    if (state.kind) {
-      params.set("kind", state.kind);
-    }
+    const requestedKind="kind" in overrides?overrides.kind:state.kind;
+    if (requestedKind) params.set("kind", requestedKind);
   } else {
     params.set(
       "roundKind",
@@ -451,6 +450,15 @@ export async function PlacementCalendarWorkspace({
         roundKind: state.roundKind,
       },
     );
+
+  const eventTypeCountsSource=audience==="TPO"&&state.kind
+   ?await listPlacementCalendarEvents(context,{
+    collegeId,from:window.from,to:window.to,company:state.company||undefined,
+   })
+   :response;
+  const eventTypeCounts=new Map<string,number>();
+  for(const item of eventTypeCountsSource.events)
+   eventTypeCounts.set(item.kind,(eventTypeCounts.get(item.kind)??0)+1);
 
   // The shared read service supports event-kind and
   // company filtering. The College Admin and Super Admin
@@ -835,6 +843,23 @@ export async function PlacementCalendarWorkspace({
           <Link href={basePath} className="mt-3 inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Show everything</Link>
         ) : null}
       </section>
+
+      {isTpo?<nav aria-label="Filter calendar by event type" className="flex flex-wrap gap-2">
+       {EVENT_FILTERS.map(filter=>{
+        const count=filter.value?eventTypeCounts.get(filter.value)??0:eventTypeCountsSource.events.length;
+        const active=state.kind===(filter.value||undefined);
+        return <Link key={filter.value||"ALL"}
+         href={calendarHref(basePath,audience,state,{kind:filter.value||undefined})}
+         aria-current={active?"page":undefined}
+         className={active?"inline-flex min-h-10 items-center rounded-full bg-primary px-3 text-xs font-semibold text-on-primary":
+          "inline-flex min-h-10 items-center rounded-full border border-border px-3 text-xs font-semibold text-primary-text"}>
+         {filter.label} ({count})
+        </Link>;
+       })}
+       {eventTypeCounts.has("INTERVIEW_SLOT")?<p className="self-center text-xs text-muted-foreground">
+        {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
+       </p>:null}
+      </nav>:null}
 
       <section
         aria-label="Next scheduled calendar event"

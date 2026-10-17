@@ -8,7 +8,11 @@ export function validatePublicJoinClient(input:{
  if(!email)return "Company email is required";
  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return "Enter a valid work email";
  const domain=email.split("@")[1];
- if(input.scope==="COMPANY"&&input.companyDomain&&domain!==input.companyDomain.toLowerCase())
+ const approvedDomain=input.companyDomain.trim().toLowerCase().replace(/^@/,"");
+ // Keep browser preflight in sync with the server: subdomains of the exact
+ // registered company domain are valid, but unrelated lookalike domains are not.
+ if(input.scope==="COMPANY"&&approvedDomain&&domain!==approvedDomain&&
+    !domain.endsWith("."+approvedDomain))
   return "Use your "+input.companyDomain+" email address for this link.";
  if(!input.name.trim())return "Enter your name";
  if(input.scope==="COLLEGE"&&input.companyName.trim().length<2)

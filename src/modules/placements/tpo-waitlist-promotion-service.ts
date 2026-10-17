@@ -62,6 +62,8 @@ export async function getTpoWaitlistPreview(context:RequestContext,rawJobId:unkn
  const rows=waitlist.map(w=>{
   const reasons:string[]=[];
   const existing=promoByApplication.get(w.applicationId);
+  // Released promotions must never win the "next" ranking again.
+  if(existing?.status==="RELEASED")reasons.push("An offer was already released to this waitlisted learner");
   if(w.applicationStatus!=="SUBMITTED"||w.screeningStatus!=="SHORTLISTED")
    reasons.push("Application is no longer shortlisted");
   if(held.has(w.applicationId)&&!existing)reasons.push("Already holds an active offer");

@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
+type Search = { companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -16,6 +16,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const params = await searchParams;
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
+    ...(first(params.companyId)?{companyId:first(params.companyId)}:{}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
@@ -30,6 +31,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   });
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
+    ...(data.companyId?{companyId:data.companyId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
     ...(data.minApplied!==undefined?{minApplied:String(data.minApplied)}:{}),
@@ -45,7 +47,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
    ...(data.minApplied!==undefined?{minApplied:data.minApplied}:{}),
    ...(data.minOffers!==undefined?{minOffers:data.minOffers}:{}),page,
@@ -62,8 +64,15 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <label className="min-w-40 flex-1 text-sm font-semibold text-body">Season
         <select name="seasonId" defaultValue={data.season?.id ?? ""} disabled={!data.seasons.length}
           className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
-          {data.seasons.length === 0 ? <option value="">No season</option> : null}
+          <option value="">All college seasons</option>
           {data.seasons.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
+        </select>
+      </label>
+      <label className="min-w-40 flex-1 text-sm font-semibold text-body">Company
+        <select name="companyId" defaultValue={data.companyId??""}
+          className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
+          <option value="">All companies</option>
+          {data.companies.map(company=><option key={company.id} value={company.id}>{company.name}</option>)}
         </select>
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Lifecycle
@@ -79,7 +88,10 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </label>
       <label className="min-w-36 flex-1 text-sm font-semibold text-body">Deadline state
         <select name="deadline" defaultValue={data.deadline} className="mt-2 block min-h-11 w-full rounded-md border border-border bg-surface px-3 text-foreground">
-          <option value="ALL">All deadlines</option><option value="DUE_SOON">Live · next 7 days</option>
+          <option value="ALL">All deadlines</option>
+          <option value="TODAY">Today (IST)</option>
+          <option value="DUE_SOON">Live · next 7 days</option>
+          <option value="LATER">Later than 7 days</option>
           <option value="OVERDUE">Live · passed</option><option value="UNSET">No recorded deadline</option>
         </select>
       </label>
@@ -129,19 +141,19 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     <nav aria-label="Needs doing" className="flex flex-wrap gap-2 rounded-xl border border-border bg-surface p-3">
       <span className="mr-2 self-center text-sm font-semibold">Needs doing:</span>
       {([
-       ["NO_APPLICANTS","Nobody has applied"],
-       ["NO_DEADLINE","Live with no deadline"],
-       ["DUE_SOON","Close in the next 7 days"],
-       ["OVERDUE","Deadline passed, still open"],
-       ["ALL","All drives"],
-      ] as const).map(([attention,label])=><Link key={attention} href={{
+       ["NO_APPLICANTS","Nobody has applied",data.attentionCounts.noApplicants],
+       ["NO_DEADLINE","Live with no deadline",data.attentionCounts.noDeadline],
+       ["DUE_SOON","Close in the next 7 days",data.attentionCounts.dueSoon],
+       ["OVERDUE","Deadline passed, still open",data.attentionCounts.overdue],
+       ["ALL","All drives",data.counts.total],
+      ] as const).map(([attention,label,n])=><Link key={attention} href={{
         pathname:"/tpo/placements/lifecycle",query:{
           ...(data.season?{seasonId:data.season.id}:{}),
           attention,view:"ALL",page:1,
         },
        }} className={"inline-flex min-h-10 items-center rounded-md border px-3 text-sm "+
        (data.attention===attention?"border-primary bg-primary-subtle font-semibold":"border-border")}>
-       {label}
+       {label} · {n}
       </Link>)}
       <Link className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm"
        href="/tpo/placements/lifecycle?view=REQUESTS">Waiting for your review</Link>
@@ -171,7 +183,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           {data.page<data.totalPages?<Link href={pageHref(data.page+1)}>Next</Link>:null}
         </nav>
       </section>
-    ) : !data.season ? <EmptyState title="No season available" description="Create a season before reading its drive lifecycle." /> : <>
+    ) : <>
       <section aria-label="Drive lifecycle counts" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         {metrics.map(([name,n]) =>
           <div key={name} className="rounded-xl border border-border bg-surface p-4">
@@ -181,7 +193,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       </section>
       <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>
       <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
-       Counts cover the selected season and search across every page.</p>
+       Counts cover the selected college season (or all seasons) and search across every page.</p>
       {data.rows.length === 0 ?
         <div className="space-y-3">
           <EmptyState
@@ -201,6 +213,9 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                 <p className="text-sm text-body">{tpoDriveStatusLabel(job.status)} · {job.employmentType} · {job.workMode}</p>
                 <dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
+                  <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
+                  <div className="flex gap-1"><dt>Job type:</dt><dd>{job.employmentType.replaceAll("_"," ")}</dd></div>
+                  <div className="flex gap-1"><dt>Mode:</dt><dd>{job.workMode}</dd></div>
                   <div className="flex gap-1"><dt>Pay:</dt><dd className="font-semibold">
                     {job.minimumAnnualCtcInr == null && job.maximumAnnualCtcInr == null
                       ? "Not recorded"
@@ -208,7 +223,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                         ? (job.minimumAnnualCtcInr / 100000).toLocaleString("en-IN") : "—") +
                         (job.maximumAnnualCtcInr != null
                           ? "–" + (job.maximumAnnualCtcInr / 100000).toLocaleString("en-IN") : "") + " LPA"}
-                    {job.isDream ? " · Dream" : ""}
+                    {job.isDream ? " · Dream" : " · Regular"}
+                    {job.stipendPerMonthInr!=null?" · Stipend ₹"+job.stipendPerMonthInr.toLocaleString("en-IN")+"/month":""}
                   </dd></div>
                 </dl>
                 <p className="mt-2 text-sm font-semibold text-foreground">

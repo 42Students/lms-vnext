@@ -100,7 +100,7 @@ export default async function AboutDrivePage({params}:{params:Promise<{jobId:str
    <p className="mt-2 text-sm">{data.closeSummary.applications} recorded applications · {data.closeSummary.offers} offer versions.</p>
    <Link className="mt-2 inline-flex min-h-10 items-center text-primary-text underline" href={root+"/closeout"}>See the close-out report</Link>
   </section>:null}
-  <section className="rounded-xl border border-border bg-surface p-5">
+  <section id="activity" aria-label="Drive activity" className="scroll-mt-24 rounded-xl border border-border bg-surface p-5">
    <h2 className="font-semibold">Recent activity · last {data.feed.length} (maximum 100)</h2>
    {!data.feed.length?<p className="mt-3 text-sm text-body">No placement activity recorded for this drive.</p>:
    <ol className="mt-3 divide-y divide-border">{data.feed.map(event=><li key={event.id} className="py-3 text-sm">

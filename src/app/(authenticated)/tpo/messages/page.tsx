@@ -151,7 +151,7 @@ export default async function TpoMessagesPage({
         description="Recruiter conversations and placement notifications for your college. Times are displayed in IST."
         actions={
           <div className="flex flex-wrap gap-2">
-            {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} /> : null}
+            {isRecruiterInbox ? <TpoNewRecruiterConversation recruiters={availableRecruiters} actorUserId={context.user.id} /> : null}
             <Link
               href="/tpo/messages/notifications"
               className="inline-flex min-h-10 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary"

@@ -52,7 +52,7 @@ export function FacultyCourseTabNavigation({
         </div>
         {teachingSections.length > 1 ? (
           <label htmlFor="faculty-course-section" className="text-xs font-semibold text-body">
-            Teaching Section
+            {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
             <select
               id="faculty-course-section"
               value={deliveryId}
@@ -80,7 +80,7 @@ export function FacultyCourseTabNavigation({
           Live Classes
         </Link>
       </div>
-      <nav aria-label="Faculty course tabs" className="flex flex-wrap gap-1 border-b border-border">
+      <nav aria-label="Faculty course tabs" className="flex max-w-full gap-1 overflow-x-auto border-b border-border pb-1" tabIndex={0}>
         {facultyCourseTabs.map((tab) => {
           const active = tab.path === activeTab;
           return (
@@ -89,7 +89,7 @@ export function FacultyCourseTabNavigation({
               href={facultyCourseTabHref(deliveryId, tab.path)}
               aria-current={active ? "page" : undefined}
               className={
-                "inline-flex min-h-11 items-center border-b-2 px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary " +
+                "inline-flex min-h-11 shrink-0 whitespace-nowrap items-center border-b-2 px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary " +
                 (active
                   ? "border-primary text-primary-text"
                   : "border-transparent text-body hover:border-border-strong hover:text-primary-text")

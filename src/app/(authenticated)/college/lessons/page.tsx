@@ -49,6 +49,7 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       minContentCount:first(params.minContentCount)||undefined,
       maxContentCount:first(params.maxContentCount)!==undefined && first(params.maxContentCount)!==""?first(params.maxContentCount):undefined,
       page: first(params.page),
+      pageSize:first(params.pageSize),
     }).filter(([, value]) => value !== undefined)),
   );
   if (!parsed.success) return (
@@ -59,8 +60,10 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
         action={<Link href="/college/lessons" className="font-semibold text-primary-text">Clear filters</Link>} />
     </div>
   );
+  const authoringOptions=await getCollegeLessonAuthoringOptions(context);
+  const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
   return <div className="space-y-4">
-    <CollegeLessonCreateControl options={await getCollegeLessonAuthoringOptions(context)} />
+    <CollegeLessonCreateControl options={authoringOptions} />
     <Link prefetch={false} download href={lessonsCsvHref(parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered lessons CSV
@@ -69,6 +72,6 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       View college live classes
     </Link>
-    <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} />
+    <CollegeLearningDirectory data={await listCollegeLessons(context, parsed.data)} courseChoices={courseChoices} />
   </div>;
 }

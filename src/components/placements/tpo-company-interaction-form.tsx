@@ -22,6 +22,7 @@ export function TpoCompanyInteractionForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
+  const [reviewing,setReviewing]=useState(false);
 
   async function submit() {
     if (busy) return;
@@ -31,9 +32,7 @@ export function TpoCompanyInteractionForm({
       setError("Choose a linked contact and enter 3–2000 note characters. Outcome must be 2–30 characters if supplied.");
       return;
     }
-    if (!window.confirm(interactionConfirmationSummary({
-      type, contactName: chosen.name,
-    }))) return;
+    if(!reviewing){setReviewing(true);setError(null);return;}
 
     setBusy(true);
     setError(null);
@@ -65,7 +64,7 @@ export function TpoCompanyInteractionForm({
       }
       setNote("");
       setOutcome("");
-      setSaved(true);
+      setSaved(true);setReviewing(false);
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not record activity.");
@@ -84,7 +83,7 @@ export function TpoCompanyInteractionForm({
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="text-sm font-semibold text-foreground">
           Contact
-          <select value={leadId} onChange={(event) => setLeadId(event.target.value)}
+          <select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
             className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
             {contacts.map((contact) => (
@@ -95,7 +94,7 @@ export function TpoCompanyInteractionForm({
         <label className="text-sm font-semibold text-foreground">
           Interaction type
           <select value={type}
-            onChange={(event) => setType(event.target.value as TpoCompanyInteractionKind)}
+            onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
             disabled={busy}
             className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal">
             {(["CALL", "EMAIL", "WHATSAPP", "MEETING", "NOTE"] as const).map((kind) => (
@@ -106,19 +105,23 @@ export function TpoCompanyInteractionForm({
       </div>
       <label className="block text-sm font-semibold text-foreground">
         Outcome (optional)
-        <input value={outcome} onChange={(event) => setOutcome(event.target.value)}
+        <input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
           className="mt-1 block min-h-10 w-full rounded-md border border-border bg-surface px-3 font-normal" />
       </label>
       <label className="block text-sm font-semibold text-foreground">
         Notes (required)
-        <textarea value={note} onChange={(event) => setNote(event.target.value)}
+        <textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           maxLength={2000} rows={3} disabled={busy}
           className="mt-1 block w-full rounded-md border border-border bg-surface p-3 font-normal" />
       </label>
+      {reviewing?<div role="group" aria-label="Review company interaction" className="rounded-lg border border-border p-3 text-sm">
+        <p>{interactionConfirmationSummary({type,contactName:contacts.find(c=>c.id===leadId)?.name??"contact"})}</p>
+        <button type="button" className="mt-2 text-primary-text underline" onClick={()=>setReviewing(false)}>Cancel review</button>
+      </div>:null}
       <button type="button" onClick={() => void submit()} disabled={busy || !leadId || note.trim().length < 3}
         className="min-h-10 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-        {busy ? "Recording..." : "Review and confirm activity"}
+        {busy ? "Recording..." : reviewing?"Confirm activity":"Review and confirm activity"}
       </button>
       {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
       {saved ? <p role="status" className="text-sm text-body">

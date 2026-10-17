@@ -26,13 +26,13 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 4. WP-chat-5-04-batches-placements-s2 | TODO | 20 gaps: S2 20
 5. WP-chat-5-05-batches-calendar-reports-s2 | TODO | 15 gaps: S2 15
 6. WP-chat-5-06-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — implemented TPO-drive-workspace-03/16/35/37 with unit + PostgreSQL integration tests authored; execution/browser acceptance not yet verified; other gaps TODO
-7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — R02/-45 counts; TPO-drives-05/06 journey and offer counts, -10 filtering, -17 filtered CSV export, -15/16 list links implemented; Excel/saved views/full parity still open
+7. WP-chat-5-07-drives-drive-workspace-s2 | IN-PROGRESS | 20 gaps: S2 20 — R02/R03, TPO-drives-05/06/07/08/10/11/15/16/17/20 significantly advanced; CSV/page/company/date filters and year-spanning list implemented; Excel, saved views, more bulk actions and parity remain
 8. WP-chat-5-08-drives-requests-verification-s2 | IN-PROGRESS | 20 gaps: S2 20 — TPO-requests-verification-02/03 decision dialogs with reasons now on main; earlier -07 settlement and -08 urgency queue already present; other IDs remain
 9. WP-chat-5-09-students-requests-verification-s2 | TODO | 20 gaps: S2 20
 10. WP-chat-5-10-students-placements-s2 | TODO | 23 gaps: S2 12, S3 11
 11. WP-chat-5-11-batches-placements-s3 | TODO | 20 gaps: S3 20
 12. WP-chat-5-12-drive-workspace-batches-s3 | TODO | 25 gaps: S3 25
-13. WP-chat-5-13-drives-inbox-team-s3 | IN-PROGRESS | 22 gaps: S3 22 — TPO-drives-R04/R06, -11 server-filtered attention shortcuts, -19 contextual empty states now on main; counts/tabs and other S3 items still open
+13. WP-chat-5-13-drives-inbox-team-s3 | IN-PROGRESS | 22 gaps: S3 22 — R04/R06, -08 creator/job/mode and -11 counted attention shortcuts implemented; -20 all-season scoping implemented; remaining S3 screens open
 14. WP-chat-5-14-requests-verification-recruiters-s3 | TODO | 17 gaps: S3 17
 15. WP-chat-5-15-students-settings-audit-s3 | TODO | 15 gaps: S3 15
 16. WP-chat-5-16-batches-placements-s4 | TODO | 15 gaps: S4 15
@@ -49,3 +49,25 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - TPO-drives-17: CSV for matching/visible pages is live in source; Excel, selected-only export and named saved-view export remain.
 - TPO-drives-10/11: min applied/offers, pay category and needs-doing filters now wired; remaining legacy batch/company/owner filters and per-shortcut count badges remain.
 - TPO-drive-workspace-44/45: registered 0116 slots plus round-card proposal/booking/request counts are connected; independent recruiter proposals still use their own persisted table.
+
+## FAST v2 — chat-5-b implementation batch (2026-10-17)
+
+- TPO-drive-workspace-40: import overrides now reject duplicate row/student matches, conflicting skips and invalid waitlist rank. Explicit skip means LEAVE PENDING even with a mark-missing-not-cleared import. Portal IDs are not falsely matched.
+- TPO-drive-workspace-42: consequence preview now identifies next evaluative stage per PASS; applying already uses registered 0108 stages and auditable per-learner results.
+- TPO-drive-workspace-44: future-only candidate booking and future-only slot moves.
+- TPO-drive-workspace-47/48: VERIFIED selection can reconcile its exact matching persisted offer after timeout, without issuing a duplicate.
+- TPO-drive-workspace-53: RELEASED promotion skipped when choosing the next candidate; rank order remains deterministic.
+- TPO-drive-workspace-R03/41: bulk staged HOLD/ABSENT support, ordered waitlist ranks, duplicate/rank-taken checks; unmarked-to-fail policy remains available in round import, not yet in this bulk picker.
+- TPO-drive-workspace-29: pending withdrawal, no-show, placed-elsewhere and eligibility flags added to applicant sheet.
+- TPO-drive-workspace-68: activity deep link into About tab's existing persisted event feed.
+- Blocked COL-placements-04: candidate appointment migration not registered in 0108–0121; leave gated and move on.
+- Blocked COL-placements-01: screening reinstatement history constraint not registered in 0108–0121; leave gated and move on.
+- Blocked TPO-requests-verification-05: production scheduler configuration; delegated per reassignments (chat-3 owns WP-02).
+- Blocked TPO-drive-workspace-65: owner security decision OD-09; SKIP.
+
+- TPO-drive-workspace-R03/41: bulk Waitlisted and Absent actions added to the 25-row recorder with ranking by marking order and occupied-rank checks; **"mark unselected not cleared" remains available only through CSV import**, so that sub-gap stays open.
+- TPO-drives-20: default list now includes all college seasons; specific season remains an explicit filter.
+- TPO-drives-07/08/17: list shows creator (not owner assignment), stipend, type and mode; the CSV includes creator/stipend.
+- TPO-drives-10: company, today's deadlines (IST), later deadlines, applicant count, active offers and dream-category filters are now persisted through URL/pagination/CSV.
+- TPO-drives-11: attention strip now shows persisted counts for no applicants/deadline, near and overdue deadlines.
+- TPO-drive-workspace-29: per-applicant flags are shown in the grid; forced-inclusion indicators and complete no-show decision workflow remain open.

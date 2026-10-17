@@ -51,6 +51,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     {grants.length === 0 ? <EmptyState title="No active college access" description="Your placement-cell relationship must be active before any drives are visible." /> :
     <section className="grid gap-3 sm:grid-cols-2">{grants.map(grant => <Link key={grant.id} href={recruiterDrivesHref({...query.data, collegeId: grant.collegeId})}
       className="rounded-xl border border-border bg-surface p-5 hover:border-primary">{grant.collegeName}</Link>)}</section>}</div>;
+  const returnTo=recruiterDrivesHref({...query.data,collegeId:selectedCollege});
   const jobs = (await listOwnRecruiterPlacementJobs(context)).filter(row => row.collegeId === selectedCollege && row.companyId === context.recruiter!.companyId);
   const requests=await listOwnRecruiterDriveRequests(context,selectedCollege);
   const requestView=filterOwnRecruiterRequests(requests,query.data.view,query.data.q);
@@ -98,12 +99,12 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
       <h2 className="font-semibold text-foreground">Deadline attention</h2>
       <p className="mt-1 text-xs text-muted-foreground">Recorded application deadlines only; past dates do not prove a drive is closed.</p>
       <div className="mt-3 grid gap-3 sm:grid-cols-2">
-        {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/hr/placements/jobs/"+encodeURIComponent(item.job.id)}
+        {attention.soon.map(item=><Link key={"soon:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
           className="rounded-lg border border-border p-3 text-sm text-primary-text">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Due within 7 days · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
         </Link>)}
-        {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/hr/placements/jobs/"+encodeURIComponent(item.job.id)}
+        {attention.past.map(item=><Link key={"past:"+item.job.id} href={"/recruiter/drives/"+encodeURIComponent(item.job.id)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
           className="rounded-lg border border-border p-3 text-sm text-primary-text">
           <span className="block font-semibold">{item.job.title}</span>
           <span className="mt-1 block text-xs text-body">Recorded deadline passed · {item.job.applicationDeadline!.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
@@ -173,7 +174,7 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
             Hire again with changes
           </Link>:null}
           {req.status==="REJECTED"&&req.decisionNote?<p className="mt-2 text-sm text-body">Declined: “{req.decisionNote}”</p>:null}
-          {req.approvedJobId?<Link href={"/hr/placements/jobs/"+encodeURIComponent(req.approvedJobId)}
+          {req.approvedJobId?<Link href={"/recruiter/drives/"+encodeURIComponent(req.approvedJobId)+"?tab=overview&returnTo="+encodeURIComponent(returnTo)}
             className="mt-2 block text-sm text-primary-text underline">Open approved drive</Link>:null}
         </li>;
       })}</ul>

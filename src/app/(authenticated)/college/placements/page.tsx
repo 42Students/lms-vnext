@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
+import {CollegeDriveAttentionCards} from "@/components/placements/college-drive-attention-cards";
+import {getCollegeDriveAttention} from "@/modules/placements/college-drive-attention-service";
 import { PageHeader } from "@/components/ui/page-header";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { COLLEGE_LEGACY_PAGE_TITLES } from "@/modules/people/college-page-title-model";
@@ -17,6 +19,7 @@ export default async function CollegePlacementsPage() {
   ) {
     redirect("/dashboard");
   }
+  const attention=await getCollegeDriveAttention(context);
   return (
     <div className="space-y-6">
       <PageHeader
@@ -36,6 +39,7 @@ export default async function CollegePlacementsPage() {
       <Link href="/college/placements/interviews" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Interviews</Link>
       <Link href="/college/placements/drives" className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">Browse drives</Link>
       </nav>
+      <CollegeDriveAttentionCards data={attention}/>
       <PlacementOperationsWorkspace
         context={context}
         collegeId={context.membership.collegeId}
