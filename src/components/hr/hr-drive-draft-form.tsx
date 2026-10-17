@@ -33,6 +33,7 @@ export function HrDriveDraftForm({
   branchSuggestions,
   sourceJobTitle,
   storageKey,
+  feedbackKey,
   collegeId,
   sourceJobId,
   fixRequestId=null,
@@ -43,6 +44,7 @@ export function HrDriveDraftForm({
   branchSuggestions:readonly string[];
   sourceJobTitle: string | null;
   storageKey:string;
+  feedbackKey:string;
   collegeId:string;
   sourceJobId:string|null;
   fixRequestId?:string|null;
@@ -172,6 +174,11 @@ export function HrDriveDraftForm({
         return;
       }
       submittedRef.current=true;
+      try{
+        window.sessionStorage.setItem(feedbackKey,fixRequestId
+          ? editMode==="EDIT"?"Saved. The placement cell sees the new version.":"Request resent to the placement cell."
+          : "Sent for review.");
+      }catch{/* A verified save must not depend on flash storage. */}
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
