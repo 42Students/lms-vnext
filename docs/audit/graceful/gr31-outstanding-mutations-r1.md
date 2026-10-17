@@ -1,10 +1,10 @@
-# GR-31 residual business mutation inventory — main at 8736e0c (2026-10-17)
+# GR-31 residual business mutation inventory — review baseline main 8736e0c (2026-10-17)
 
 Chat-14 inspected all 256 files whose Git blob SHAs differ from the original
 `docs/audit/graceful/raw-error-allowlist.json` baseline on main.
 
 A **mutating fetch matched the GR-31 detector** and the component did not
-call `useGuardedAction(` in each of the 27 files below. These are real
+call `useGuardedAction(` in each of the 19 outstanding files below. These are real
 verification debt, **not DONE** and not a justification to refresh the baseline.
 The separate shared membership chooser was fixed by chat-14 in
 `src/components/auth/membership-chooser.tsx`, with a named GR-31 test.
@@ -12,32 +12,24 @@ The separate shared membership chooser was fixed by chat-14 in
 | Product area | File | Needed change |
 | --- | --- | --- |
 | College academic workflows | `src/components/academics/college-cohort-management.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| Learner notifications | `src/components/activity/learner-notifications-inbox.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| Shared notification toolbar | `src/components/activity/notification-toolbar.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Super Admin department actions | `src/components/admin/department-actions.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| Super Admin department create | `src/components/admin/department-create-form.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Super Admin lecture halls | `src/components/admin/lecture-hall-manager.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Admin person onboarding | `src/components/admin/person-onboard-dialog.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Super Admin attendance settings | `src/components/admin/super-admin-attendance-settings-editor.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| Super Admin batch graduation | `src/components/admin/super-admin-batch-graduate-action.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Faculty attendance | `src/components/attendance/faculty-attendance-workspace.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Faculty assessment editing | `src/components/courses/faculty-assessment-editor.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Faculty quiz review | `src/components/courses/faculty-quiz-review.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner quiz | `src/components/courses/learner-quiz-attempt.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner video progress | `src/components/courses/learner-video-player.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner YouTube progress | `src/components/courses/learner-youtube-player.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| Course resource progress | `src/components/courses/resource-progress-control.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner applications | `src/components/placements/learner-applications-browse.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner placement jobs | `src/components/placements/learner-placement-jobs.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner placement offers | `src/components/placements/learner-placement-offers.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | TPO bulk round results | `src/components/placements/tpo-bulk-round-result-recorder.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | TPO college rules | `src/components/placements/tpo-college-rules-control.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | TPO drive selection | `src/components/placements/tpo-drive-selection-manager.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| TPO public placements | `src/components/placements/tpo-public-placement-toggle.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | TPO calendar | `src/components/placements/tpo-week-hour-calendar.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 | Learner project board | `src/components/projects/learner-board-interactive.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| TPO follow-up | `src/components/tpo/tpo-new-followup-modal.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
-| TPO placement cell read | `src/components/tpo/tpo-placement-cell-read-action.tsx` | Guard each mutating action with `useGuardedAction`, retain state and error handling, test GR-31 |
 
 ## How the owning lanes close these
 
@@ -59,3 +51,23 @@ GR-09 audit found one JSX false positive in
 The scanner now excludes that field-detail form while still detecting
 `{result.error}` and `{body.error}`.
 These findings are static-source checks, **not executed tests**.
+
+## Chat-14 resolved cross-surface GR-31 cases (authored, pending CI)
+
+The following eight are no longer outstanding in this branch because the actual
+mutation is inside `useGuardedAction.run`, not merely an unused import or a comment.
+All have GR-30/GR-31-named regression tests in
+`tests/unit/graceful-mutation-adoption-round4.test.ts`. No full unit suite was
+run in this lane, so the final status is pending CI verification.
+
+- `src/components/activity/learner-notifications-inbox.tsx`
+- `src/components/activity/notification-toolbar.tsx`
+- `src/components/admin/department-create-form.tsx`
+- `src/components/admin/super-admin-batch-graduate-action.tsx`
+- `src/components/courses/resource-progress-control.tsx`
+- `src/components/placements/tpo-public-placement-toggle.tsx`
+- `src/components/tpo/tpo-new-followup-modal.tsx`
+- `src/components/tpo/tpo-placement-cell-read-action.tsx`
+
+The remaining **19** rows above are still unresolved and must not be hidden by
+rewriting the immutable file SHA baseline or exempting account-lane mutations.
