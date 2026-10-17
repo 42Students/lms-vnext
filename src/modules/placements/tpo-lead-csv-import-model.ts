@@ -21,7 +21,10 @@ export const tpoLeadCsvRowSchema = z.object({
   ]),
   phone: z.union([
     z.literal(""),
-    z.string().trim().min(7).max(30).regex(/^\+?[0-9() .-]+$/),
+    z.string().trim().max(30).regex(/^\+?[0-9() .-]+$/).refine(value => {
+      const digits = normalizeTpoLeadImportPhone(value);
+      return digits !== null && digits.length >= 8 && digits.length <= 10;
+    }, "Enter a phone number"),
   ]),
   companyName: z.string().trim().max(150),
   designation: z.string().trim().max(100),
