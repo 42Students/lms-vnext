@@ -752,7 +752,10 @@ const projectMeetingWindowShape = {
     .string()
     .trim()
     .min(1)
-    .max(80),
+    .max(80)
+    // Meeting instants are offset-aware; never trust a caller's free-text
+    // display zone to contradict the IST calendar used across the LMS.
+    .transform(() => "Asia/Kolkata" as const),
 };
 
 function withValidMeetingWindow<
