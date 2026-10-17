@@ -8,16 +8,16 @@ Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if prese
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| LEARNER-projects-01 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-projects-13 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-projects-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| LEARNER-projects-33 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| LEARNER-projects-36 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-projects-02 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-projects-03 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-projects-04 | S3 | COPY | OPEN |
-| LEARNER-projects-06 | S3 | COPY | UNCONFIRMED |
-| LEARNER-projects-10 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-projects-01 | S2 | MISSING-FIELD | DONE |
+| LEARNER-projects-13 | S2 | MISSING-FIELD | DONE |
+| LEARNER-projects-26 | S2 | MISSING-ACTION | DONE |
+| LEARNER-projects-33 | S2 | MISSING-ACTION | DONE |
+| LEARNER-projects-36 | S2 | MISSING-FIELD | DONE |
+| LEARNER-projects-02 | S3 | MISSING-FIELD | DONE |
+| LEARNER-projects-03 | S3 | MISSING-FIELD | DONE |
+| LEARNER-projects-04 | S3 | COPY | DONE |
+| LEARNER-projects-06 | S3 | COPY | DONE |
+| LEARNER-projects-10 | S3 | COPY | DONE |
 | LEARNER-projects-12 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-projects-14 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | LEARNER-projects-15 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
