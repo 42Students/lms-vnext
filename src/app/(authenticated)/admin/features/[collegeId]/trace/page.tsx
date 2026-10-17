@@ -410,8 +410,8 @@ export default async function SuperAdminLearnerAccessTracePage({
               .map(step=>"Scope "+scopeLabel(step.level)+": "+(step.value?"On":"Off")+
                (step.locked?" (locked)":"")+(step.ignored?" (ignored)":"")+
                (step.winner?" (winning)":"")),
-           ].join("\\n")),
-          ].join("\\n\\n")}/>
+           ].join(String.fromCharCode(10))),
+           ].join(String.fromCharCode(10,10))}/>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/students/"+encodeURIComponent(selected.membershipId)}
             className="inline-flex min-h-11 items-center rounded-md border border-border bg-surface px-4 text-sm font-semibold text-primary-text">
             Inspect membership overrides and locks →
