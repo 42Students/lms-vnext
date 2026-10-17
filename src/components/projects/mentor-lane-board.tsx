@@ -58,7 +58,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   const blockerReason=status==="BLOCKED"&&!task.blockerReason?.trim()
     ? window.prompt("What's blocking this task?")?.trim() : undefined;
   if(status==="BLOCKED"&&!task.blockerReason?.trim()&&!blockerReason)return;
-  if(!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
+  if(!isUndo&&!window.confirm("Move task to "+status.replaceAll("_"," ")+"?"))return;
   setError("");setBusy(true);
   try{
    const result=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+
