@@ -2,13 +2,13 @@
 import {useMemo,useState} from "react";
 import Link from "next/link";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
-import {calendarMode,potentialRoomConflicts,superAdminInterviewCsv,type SuperAdminCalendarRound}
+import {bookingConflicts,calendarMode,superAdminInterviewCsv,type SuperAdminCalendarRound}
  from "@/modules/admin-ui/super-admin-interview-operations-model";
-export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminCalendarRound[];today:string}){
+export function SuperAdminInterviewOperations({events,today,truncated=false}:{events:SuperAdminCalendarRound[];today:string;truncated?:boolean}){
  const [kind,setKind]=useState("ALL"),[status,setStatus]=useState("ALL");
  const [mode,setMode]=useState("ALL"),[conflictsOnly,setConflictsOnly]=useState(false);
  const [sort,setSort]=useState("DATE"),[exportError,setExportError]=useState("");
- const conflicts=useMemo(()=>potentialRoomConflicts(events),[events]);
+ const conflicts=useMemo(()=>bookingConflicts(events),[events]);
  const filtered=useMemo(()=>events.filter(e=>
   (kind==="ALL"||e.kind===kind)&&(status==="ALL"||e.status===status)&&
   (mode==="ALL"||calendarMode(e)===mode)&&(!conflictsOnly||conflicts.has(e.id))
@@ -47,7 +47,7 @@ export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminC
      setKind("ALL");setStatus("ALL");setMode("ALL");setConflictsOnly(false);setSort("DATE");
    }}>Clear filters</button>
   </div>
-  <p role="status" aria-live="polite">{filtered.length} matching scheduled-round records. Candidate-level collisions and department filters require candidate appointment data.</p>
+  <p role="status" aria-live="polite">{filtered.length} matching candidate interview bookings. Department filters require linked program evidence.{truncated?" First 2,000 bookings shown; narrow the date range.":""}</p>
   <a download="interviews.csv" href={filtered.length?"data:text/csv;charset=utf-8,"+encodeURIComponent("\ufeff"+csv):undefined}
    onClick={e=>{if(!filtered.length){e.preventDefault();setExportError("No interviews match the selected filters. Clear filters to export.");}else setExportError("");}}
    className="inline-flex min-h-11 items-center rounded border border-border px-4 font-semibold text-primary-text focus-visible:ring-2 focus-visible:ring-primary">Export interviews.csv</a>
@@ -55,16 +55,17 @@ export function SuperAdminInterviewOperations({events,today}:{events:SuperAdminC
   {exportError?<p role="alert">{exportError}</p>:null}
   {!filtered.length?<p className="rounded border border-border p-4">No interviews match these filters. Clear filters to see all rounds.</p>:
    <div className="overflow-x-auto"><table className="w-full min-w-[55rem] text-left text-sm">
-    <thead><tr className="border-b border-border"><th className="p-2">Round</th><th className="p-2">Company</th><th className="p-2">Date (IST)</th><th className="p-2">Type</th><th className="p-2">Status</th><th className="p-2">Venue</th><th className="p-2">Actions</th></tr></thead>
+    <thead><tr className="border-b border-border"><th className="p-2">Candidate</th><th className="p-2">Round</th><th className="p-2">Company</th><th className="p-2">Date (IST)</th><th className="p-2">Type</th><th className="p-2">Mode</th><th className="p-2">Interviewer</th><th className="p-2">Status</th><th className="p-2">Venue</th><th className="p-2">Actions</th></tr></thead>
     <tbody>{filtered.map(row=><tr key={row.id} className="border-b border-border">
-     <td className="p-2">{row.title}</td><td className="p-2">{row.companyName}</td>
+     <td className="p-2">{row.candidateName??"Not recorded"}</td><td className="p-2">{row.title}</td><td className="p-2">{row.companyName}</td>
      <td className="p-2">{inIst(row.startsAt)}</td><td className="p-2">{row.kind}</td>
-     <td className="p-2">{row.status}{conflicts.has(row.id)?<strong className="block text-warning">Possible venue overlap</strong>:null}</td>
+     <td className="p-2">{calendarMode(row)}</td><td className="p-2">{row.interviewer??"Not recorded"}</td>
+     <td className="p-2">{row.status}{conflicts.has(row.id)?<strong className="block text-warning">{conflicts.get(row.id)?.join("; ")}</strong>:null}</td>
      <td className="p-2">{row.venue??"Not recorded"}</td>
      <td className="p-2"><div className="flex flex-wrap gap-2">
       {row.jobId?<Link className="font-semibold text-primary-text underline" href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
       <a className="font-semibold text-primary-text underline" download={"interview-"+row.id+".ics"}
-       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({id:row.id,title:row.title,date:row.startsAt,durationMinutes:30,location:row.venue}))}>.ics</a>
+       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({id:row.id,title:row.title,date:row.startsAt,durationMinutes:row.endsAt?Math.max(1,Math.round((Date.parse(row.endsAt)-Date.parse(row.startsAt))/60000)):30,location:row.venue}))}>.ics</a>
      </div></td>
     </tr>)}</tbody>
    </table></div>}
