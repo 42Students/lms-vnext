@@ -31,7 +31,11 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
  const learners=members.filter(member=>member.role==="LEARNER");
  const filtered=useMemo(()=>tasks.filter(task=>{
   const linked=sprints.find(item=>item.id===task.sprintId);
-  return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release);
+  return (!sprint||task.sprintId===sprint)&&(!release||linked?.releaseId===release)&&
+   (!priority||task.priority===priority)&&(!status||task.status===status)&&
+   (!assignmentScope||(assignmentScope==="UNASSIGNED"?task.assigneeMembershipId===null:
+     assignmentScope==="ASSIGNED"?task.assigneeMembershipId!==null:
+     task.assigneeMembershipId===assignmentScope));
  }),[tasks,release,sprint,sprints]);
  const groups=[{membershipId:null,displayName:"Unassigned"},...learners];
  const unassigned=filtered.filter(t=>t.assigneeMembershipId===null).length;
