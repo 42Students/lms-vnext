@@ -14,3 +14,6 @@ Remaining: course field/policy parity, lesson-level operations, class-by-course 
 
 | SA-academics-people-63 | DONE | `src/modules/courses/super-admin-content-directory-model.ts`, `src/components/courses/super-admin-content-directory-page.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-63 exact legacy video and live class labels and help` |
 | SA-academics-people-71 | DONE | `src/components/courses/admin-assessment-read-directory.tsx`, `src/components/courses/super-admin-content-directory-page.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-71 exact legacy empty text for assessment and content directories` |
+
+| SA-academics-people-73 | DONE | `src/components/courses/admin-course-actions.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-73 warns before closing unsaved course edits and blocks close while saving` |
+| SA-academics-people-76 | NOT-A-GAP | `src/components/courses/college-lesson-reorder-actions.tsx`, `src/components/courses/faculty-content-order-editor.tsx`; `tests/unit/chat6-superadmin-content-round2.test.ts` → `SA-academics-people-76 keyboard operable move buttons are an approved equivalent to drag reorder` |

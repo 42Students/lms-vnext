@@ -25,4 +25,20 @@ describe("Super Admin Courses and Content gap closure",()=>{
   expect(content).toContain("No content found.");
   expect(content).toContain("Select a course and lesson to view content.");
  });
+ it("SA-academics-people-73 warns before closing unsaved course edits and blocks close while saving",()=>{
+  const code=readFileSync("src/components/courses/admin-course-actions.tsx","utf8");
+  expect(code).toContain('Discard unsaved course changes?');
+  expect(code).toContain('onOpenChange={closeEdit}');
+  expect(code).toContain("if(!next && pending)return;");
+  expect(code).toContain("onClick={() => closeEdit(false)");
+ });
+ it("SA-academics-people-76 keyboard operable move buttons are an approved equivalent to drag reorder",()=>{
+  const lesson=readFileSync("src/components/courses/college-lesson-reorder-actions.tsx","utf8");
+  const content=readFileSync("src/components/courses/faculty-content-order-editor.tsx","utf8");
+  expect(lesson).toContain("Move up");
+  expect(lesson).toContain("Move down");
+  expect(content).toContain("aria-label={`Move ${item.title} up`}");
+  expect(content).toContain("aria-label={`Move ${item.title} down`}");
+  expect(readFileSync("docs/audit/owner-decisions-resolved.md","utf8")).toContain("OD-38");
+ });
 });
