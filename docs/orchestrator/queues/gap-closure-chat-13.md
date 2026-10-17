@@ -101,20 +101,21 @@ Audit: `docs/audit/pages/superadmin/academics-people-1-academic-setup.md` (and `
 | SA-academics-people-10 | S4 | MISSING-FILTER | DONE |
 | SA-academics-people-34 | S4 | STATE | DONE |
 | SA-academics-people-35 | S4 | PERFORMANCE | DONE |
-| SA-academics-people-36 | S4 | COPY | FIXED-ON-MAIN |
-| SA-academics-people-37 | S4 | COPY | FIXED-ON-MAIN |
-| SA-academics-people-39 | S4 | RESPONSIVE | FIXED-ON-MAIN |
-| SA-academics-people-40 | S4 | A11Y | FIXED-ON-MAIN |
-| SA-academics-people-42 | S4 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-academics-people-43 | S4 | VALIDATION | FIXED-ON-MAIN |
-| SA-academics-people-44 | S4 | VALIDATION | FIXED-ON-MAIN |
-| SA-academics-people-45 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-academics-people-R05 | S4 | A11Y | FIXED-ON-MAIN |
+| SA-academics-people-36 | S4 | COPY | DONE |
+| SA-academics-people-37 | S4 | COPY | DONE |
+| SA-academics-people-39 | S4 | RESPONSIVE | DONE |
+| SA-academics-people-40 | S4 | A11Y | DONE |
+| SA-academics-people-42 | S4 | MISSING-ACTION | DONE |
+| SA-academics-people-43 | S4 | VALIDATION | DONE |
+| SA-academics-people-44 | S4 | VALIDATION | DONE |
+| SA-academics-people-45 | S4 | MISSING-FILTER | DONE |
+| SA-academics-people-R05 | S4 | A11Y | DONE |
 
-## Notes (blockers, one line each)
-- SA-placements-projects-14: supplemental fields, strict deadlines and scoped academic cascade are in place; cross-college grants are never inferred; register proposed SQL before runtime use; tests unrun.
-- SA-placements-projects-21: scoped CLEAN resume access, notes, offer link, status history and audited policy re-screen are in place; no invented match score; tests unrun.
-- SA-placements-projects-37: canonical free-text company creation and scoped optional multi-college grants are implemented; unit tests unrun.
+## Notes (source-verification limits and remaining external checks)
+- All 95 records are DONE in the source-verification queue: existing gap-named unit tests and acceptance file evidence were confirmed. This does not assert that unit, integration, browser or database tests have run here; orchestrator verification remains required.
+- SA-placements-projects-14: migration 0133 registers legacy_posting_details; actual data migration and cross-college business intent require runtime verification. Cross-college access is not inferred from application mode.
+- SA-placements-projects-21: verified CLEAN document access and real policy checks intentionally avoid fabricating missing resume match scores.
+- SA-placements-projects-37: existing company and free-text company onboarding carry separate transaction rollback/retry semantics; runtime verification is pending.
 - SA-academics-people-R03: accepted redirect coverage follows the review evidence in docs/audit/pages/superadmin/academics-people-review.md; tests written, unrun.
 - SA-academics-people-R04: nine period/cohort/section mutations now write audit events in their transactions; people repository and attendance-policy already audit; integration verification pending orchestrator.
 - SA-placements-projects-35: recruiter Suspend now preserves grants, blocks profile access and revokes signed-in sessions; unit test written, runtime sign-in denial to be verified by orchestrator.
