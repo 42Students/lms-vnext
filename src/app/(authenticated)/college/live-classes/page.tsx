@@ -22,7 +22,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  </div>;
  const [data,authoring]=await Promise.all([listCollegeContentAggregate(context,"LIVE_CLASS",parsed.data),getCollegeContentAuthoringOptions(context,"LIVE_CLASS")]);
  return <div className="space-y-4">
-  <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} existing={authoring.existing}/>
+  <CollegeContentAuthoringControl kind="LIVE_CLASS" lessons={authoring.lessons} deliveries={authoring.deliveries} existing={authoring.existing}/>
   <Link prefetch={false} download href={collegeContentCsvHref("LIVE_CLASS",{...data.query,view:data.view,from:data.from,to:data.to})}
     className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
     Export live-class schedule CSV (UTC)
