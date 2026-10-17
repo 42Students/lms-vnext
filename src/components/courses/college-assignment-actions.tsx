@@ -41,7 +41,8 @@ export function CollegeAssignmentActions({assignment}:{assignment:Assignment}){
    if(due&&Number.isNaN(due.getTime())){setError("Enter a valid deadline.");return;}
    path=path;method="PATCH";
    if(!methodsLoaded){setError("Load the saved submission methods before editing.");return;}
-   body={title:title.trim(),description:description.trim()||null,maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
+   body={expectedUpdatedAt,confirmed:true,title:title.trim(),description:description.trim()||null,
+    maxPoints,dueAt:due?.toISOString()??null,...(methodsDirty?{allowedMethods:methods}:{})};
   }else{
    const question=action==="ARCHIVE"?
     "Delete this assignment? Existing submissions must be preserved and will block deletion.":
