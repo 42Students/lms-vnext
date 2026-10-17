@@ -84,6 +84,8 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     screeningUpdatedAt:placementApplicationScreenings.updatedAt,
     eligibilityStatus:placementApplications.eligibilityStatus,
     channel:placementApplications.channel,
+    submittedByUserId:placementApplications.submittedByUserId,
+    learnerUserId:collegeMemberships.userId,
     pendingWithdrawal:sql<boolean>`exists(select 1 from placement_learner_requests w
       where w.application_id=${placementApplications.id}
         and w.request_type='APPLICATION_WITHDRAWAL' and w.status='PENDING')`,
@@ -123,8 +125,10 @@ export async function getTpoApplicantPipeline(context: RequestContext, raw: unkn
     .where(and(scope,input.stage==="ALL"?undefined:input.stage==="SUBMITTED"?
       eq(placementApplications.status,"SUBMITTED"):sql`${stage} = ${input.stage}::text`))
     .orderBy(placementApplications.id).limit(5000):null;
-   return {counts:totals,...pagination,allFiltered,rows:records.map(row=>({
-    ...row,flags:[
+   return {counts:totals,...pagination,allFiltered,rows:records.map(({submittedByUserId,learnerUserId,...row})=>({
+    ...row,
+    flags:[
+      ...(submittedByUserId!==learnerUserId?["Added by college"]:[]),
       ...(row.eligibilityStatus!=="ELIGIBLE"?["Eligibility needs review"]:[]),
       ...(row.pendingWithdrawal?["Withdrawal requested"]:[]),
       ...(row.noShow?["No-show"]:[]),

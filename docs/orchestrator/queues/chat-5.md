@@ -166,3 +166,18 @@ Format: `<n>. <WP id> | <STATUS> | <gaps>`. WP files are in `docs/audit/work-pac
 - Blocked TPO-drive-workspace-54: private employer offer-letter uploads need approved storage integration.
 - Deferred TPO-requests-verification-05: production scheduler is owned by reassigned chat-3 / deployment operations.
 - Source-only under FAST v2: no tests, lint, typecheck, build or CI waiting. Unverified WPs stay IN-PROGRESS.
+
+## chat-5 FAST v2 source batch — 2026-10-17, post-0131
+
+- WP-01 / TPO-drive-workspace-40: manual import override rejects contradictions among application ID/email/roll; source sheets reject duplicate semantic headings, blank/wide rows, missing headers, and result stage reports unresolved rows after overrides. Company ID requires a real source-to-application mapping and remains open.
+- WP-01 / TPO-drive-workspace-48: selection CSV rejects duplicate semantic headings, empty sheets and invalid salary values. Matching remains exact and unique; release remains a separate confirmed operation.
+- WP-06 / TPO-drive-workspace-29: Added by college is now derived from the persisted submitter vs learner user ID, and internal IDs are omitted from the output projection.
+- WP-07 / TPO-drive-workspace-49: register and filtered export share tenant-scoped academic enrichment; email, phone, roll, batch and branch are included, with a 5,000-version bounded CSV and aligned metadata rows.
+- WP-07 / TPO-drive-workspace-50: conservative offer-level Rules check wording added without claiming unverified held-offer or college-placed status.
+- WP-07 / TPO-drives-10: cohort filters persist through pagination, and export already preserves them.
+- WP-13 / TPO-drives-18: browser-only views may be copied as scoped URL links and bulk-cleared with confirmation. Colleague-persisted saved views remain open.
+- BLOCKED TPO-drive-workspace-54 / LEARNER-placements-20: production private attachment storage and document consent are not configured for this flow; do not fabricate uploads or share links.
+- SKIP TPO-drive-workspace-65: owner security-sensitive company disclosure decision OD-09 is unresolved.
+- BLOCKED TPO-drive-workspace-28: durable 48-hour apply-on-behalf opt-out model and corresponding notice/consent decision remain unresolved.
+- WP-chat-5-02 scheduler and all WPs reassigned in docs/orchestrator/queues/reassignments.md remain with their new owners. No edits to other lanes or src/components/shell.
+- WPs 01, 03, 06, 07 and 13 remain IN-PROGRESS: additional nonblocked parity and acceptance work remains. No tests/typecheck/lint/build/CI were run under FAST v2.

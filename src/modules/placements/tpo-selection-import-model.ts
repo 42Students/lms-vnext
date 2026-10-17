@@ -22,13 +22,23 @@ export function parseSelectionCsv(text:string):string[][] {
 export type SelectionImportCandidate={applicationId:string;name:string;email?:string|null;roleTitle:string;offerReady:boolean;alreadyOffered:boolean};
 export type SelectionImportEntry={line:number;applicationId:string;name:string;roleTitle:string;annualCtcInr:number|null};
 export function prepareSelectionImport(text:string,candidates:readonly SelectionImportCandidate[],roleFallback:string){
- const rows=parseSelectionCsv(text);const columns=rows.shift()?.map(s=>s.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""))??[];
+ const rows=parseSelectionCsv(text);
+ if(rows.length<2)throw Error("The company selection file needs a header and at least one learner row.");
+ const columns=rows.shift()?.map(s=>s.replace(/^\uFEFF/,"").toLowerCase().replace(/[\s_-]+/g,""))??[];
+ const groups=[["applicationid","applicantid"],["email","studentemail"],
+  ["student","studentname","name"],["role","roletitle","jobtitle"],
+  ["package","packagelpa","ctclpa","annualctc","ctc"]];
+ for(const aliases of groups)if(columns.filter(column=>aliases.includes(column)).length>1)
+  throw Error("The selection file contains conflicting duplicate columns. Keep only one column for each field.");
+ if(new Set(columns.filter(Boolean)).size!==columns.filter(Boolean).length)
+  throw Error("Duplicate column headings are not permitted.");
  const locate=(...labels:string[])=>columns.findIndex(name=>labels.includes(name));
  const idColumn=locate("applicationid","applicantid"),emailColumn=locate("email","studentemail");
  const nameColumn=locate("student","studentname","name");
  const roleColumn=locate("role","roletitle","jobtitle");
  const packageColumn=locate("package","packagelpa","ctclpa","annualctc","ctc");
  if(idColumn<0&&emailColumn<0&&nameColumn<0)throw Error("CSV needs an Application ID, Email or Student name column.");
+ if(rows.length>500)throw Error("Import up to 500 students at a time.");
  const accepted:SelectionImportEntry[]=[];const unmatched:Array<{line:number;value:string;reason:string}>=[];
  const seen=new Set<string>();
  rows.forEach((row,i)=>{
@@ -45,7 +55,8 @@ export function prepareSelectionImport(text:string,candidates:readonly Selection
   if(matches.length!==1){unmatched.push({line:i+2,value:identifier,reason:matches.length?"Ambiguous student":"No eligible matching applicant"});return;}
   const candidate=matches[0]!;
   if(seen.has(candidate.applicationId)){unmatched.push({line:i+2,value:identifier,reason:"Duplicate in file"});return;}
-  const amount=packageColumn<0||!row[packageColumn]?null:Number(row[packageColumn]);
+  const packageText=packageColumn<0?"":row[packageColumn]?.trim()??"";
+  const amount=packageText===""?null:/^\d{1,4}(?:\.\d{1,2})?$/.test(packageText)?Number(packageText):NaN;
   if(amount!==null&&(!Number.isFinite(amount)||amount<0||amount>1000)){
    unmatched.push({line:i+2,value:identifier,reason:"Package must be between 0 and 1000 LPA"});return;
   }

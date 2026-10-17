@@ -71,7 +71,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     <div className="flex flex-wrap justify-between gap-3"><div><h2 className="font-semibold text-foreground">{row.name}</h2><p className="text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><strong className="text-sm">{row.status}</strong></div>
     <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-3"><div><dt>Issued</dt><dd><time dateTime={row.issued}>{formatIst(row.issued)}</time></dd></div><div><dt>Responded</dt><dd>{row.responded?<time dateTime={row.responded}>{formatIst(row.responded)}</time>:"Not recorded"}</dd></div><div><dt>Joining</dt><dd>{row.joining??"Not applicable"}</dd></div>
     <div><dt>Offer expiry</dt><dd>{row.expires?<time dateTime={row.expires}>{formatIst(row.expires)}</time>:"Not recorded"}</dd></div><div><dt>Respond by</dt><dd>{row.respondByHours===null?"Not applicable":row.respondByHours===0?"Time is up":row.respondByHours+" h left"}</dd></div>
-    <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div>
+    <div><dt>Email</dt><dd>{row.email??"Not recorded"}</dd></div><div><dt>Phone</dt><dd>{row.phone??"Not recorded"}</dd></div><div><dt>Rules check</dt><dd title="Offer state only; consult the college placement rules for eligibility and held-offer limits.">{row.ruleCheck}</dd></div>
     {row.expiryIndicator!=="NOT_APPLICABLE"?<div><dt>Issued-offer expiry state</dt><dd>{row.expiryIndicator.replaceAll("_"," ").toLowerCase()}</dd></div>:null}</dl>
     <div className="mt-3 flex flex-wrap gap-4 text-sm font-semibold"><Link className="text-primary-text" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link>
     <Link className="text-primary-text" href={"/tpo/students/"+encodeURIComponent(row.membershipId)+"/history"}>Learner history →</Link>
@@ -82,6 +82,6 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    <div className="flex gap-4">{data.page>1?<Link href={root+"/offers?status="+data.status+"&page="+(data.page-1)+searchSuffix} className="font-semibold text-primary-text">← Previous</Link>:null}
     {data.page<data.totalPages?<Link href={root+"/offers?status="+data.status+"&page="+(data.page+1)+searchSuffix} className="font-semibold text-primary-text">Next →</Link>:null}</div>
   </nav>
-  <p className="text-xs text-muted-foreground">The CSV includes up to 500 matching offer versions, with a truncation row, formula-neutralized fields, learner email and academic identifiers. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
+  <p className="text-xs text-muted-foreground">The CSV includes up to 5,000 matching offer versions, with a truncation row, formula-neutralized fields, learner email, phone and academic identifiers. Counts include all persisted offer versions, not unique learners. Unrecorded joining is pending only on accepted offers.</p>
  </div>;
 }
