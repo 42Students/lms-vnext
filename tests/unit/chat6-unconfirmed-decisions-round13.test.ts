@@ -11,7 +11,8 @@ describe("chat-6 verified UNCONFIRMED decisions (18)",()=>{
    expect(read("src/modules/activity/taxonomy.ts")).toContain("ACADEMICS_SECTION_UPDATED");
  });
  it("SA-academics-people-49 avoids an unvalidated client policy knob and preserves OD-34",()=>{
-   has("SA-academics-people-49","Do not expose policy dials");
+   has("SA-academics-people-49","Respect OD-34:");
+   expect(read("src/modules/courses/progress-service.ts")).toContain("settings.minInProgressPercent");
    expect(read("docs/audit/owner-decisions-resolved.md")).toContain("OD-34");
  });
  it("SA-academics-people-75 protects mobile course tables from overflow",()=>{

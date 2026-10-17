@@ -20,9 +20,11 @@ describe("T-S2-04 recipient-bound unsubscribe links",()=>{
   expect(campaignUnsubscribeDecision(claim,{...same,campaignId:"other"})).toBe("DENY");
   expect(campaignUnsubscribeDecision(claim,{...same,id:"other"})).toBe("DENY");
  });
- it("rejects tampering, wrong key and exact expiry",()=>{
+ it("rejects tampering and wrong key while preserving signed unsubscribe access after expiry",()=>{
   const token=issueTpoCampaignRecipientToken(claim,secret);
-  expect(verifyTpoCampaignRecipientToken(token,secret,claim.expiresAt)).toBeNull();
+  // One-click campaign opt-out must remain usable after the campaign ends;
+  // the separate HMAC and persisted recipient/college gate still apply.
+  expect(verifyTpoCampaignRecipientToken(token,secret,claim.expiresAt)).toEqual(claim);
   expect(verifyTpoCampaignRecipientToken(token,secret+"changed",t)).toBeNull();
   expect(verifyTpoCampaignRecipientToken(token+"x",secret,t)).toBeNull();
   expect(verifyTpoCampaignRecipientToken(token+".more",secret,t)).toBeNull();

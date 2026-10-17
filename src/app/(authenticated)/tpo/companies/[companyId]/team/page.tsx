@@ -24,9 +24,7 @@ export default async function TpoCompanyTeamPage({params}:{
   if(error instanceof TpoCompanyTeamError&&error.code==="NOT_FOUND")notFound();
   throw error;
  }
- // Company scope requires an ACTIVE relationship before returning READY;
- // keep the existing archived read-only fallback without inventing a canPost field.
- const canPost=result.status==="READY";
+ // The read model preserves history for archived relationships; only ACTIVE can post.
  return <main className="space-y-5">
   <PageHeader eyebrow="TPO · Team" title={result.status==="READY"?
    "Company discussion · "+result.companyName:"Company discussion"}
@@ -50,7 +48,7 @@ export default async function TpoCompanyTeamPage({params}:{
     </ol>
     {!result.messages.length?<p role="status" className="text-sm text-body">
      No company Team messages yet.</p>:null}
-    {canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:
+    {result.canPost?<TpoCompanyTeamComposer companyId={companyId} actorUserId={context.user.id}/>:
      <p role="status" className="text-sm text-body">
       This relationship is archived. Its discussion is read-only.
      </p>}
