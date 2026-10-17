@@ -1,4 +1,5 @@
 import {TpoAuditSavedViews} from "@/components/tpo/tpo-audit-saved-views";
+import {TpoAuditGrid} from "@/components/tpo/tpo-audit-grid";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -370,108 +371,7 @@ export default async function TpoAuditPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-            <table className="w-full min-w-[46rem] border-collapse text-left text-sm">
-              <thead className="bg-muted text-body">
-                <tr>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    When
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Kind
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Action
-                  </th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Context
-                  </th>
-                  <th scope="col" className="border-b border-border px-4 py-3">Actor</th>
-                  <th
-                    scope="col"
-                    className="border-b border-border px-4 py-3"
-                  >
-                    Job
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((event) => (
-                  <tr
-                    key={`${event.kind}:${event.id}`}
-                    className="border-b border-border last:border-b-0"
-                  >
-                    <td className="whitespace-nowrap px-4 py-3 align-top">
-                      <time
-                        dateTime={event.occurredAt}
-                      >
-                        {auditDateTime(
-                          event.occurredAt,
-                        )}
-                      </time>
-                    </td>
-
-                    <td className="px-4 py-3 align-top">
-                      <StatusBadge tone="neutral">
-                        {TPO_AUDIT_KIND_LABELS[
-                          event.kind
-                        ]}
-                      </StatusBadge>
-                    </td>
-
-                    <td className="px-4 py-3 align-top font-semibold text-foreground">
-                      {formatTpoAuditEventType(
-                        event.eventType,
-                      )}
-                    </td>
-
-                    <td className="px-4 py-3 align-top text-body">
-                      <p className="m-0">
-                        {event.title}
-                      </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {event.detail}
-                      </p>
-                    </td>
-
-                    <td className="px-4 py-3 align-top text-body">{event.actorName}</td>
-                    <td className="px-4 py-3 align-top">
-                      {event.jobId ? (
-                        <Link
-                          href={
-                            "/tpo/placements/jobs/" +
-                            encodeURIComponent(
-                              event.jobId,
-                            )
-                          }
-                          className="font-semibold text-primary-text hover:underline"
-                        >
-                          Open job →
-                        </Link>
-                      ) : (
-                        <span className="text-muted-foreground">
-                          —
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+          <TpoAuditGrid rows={items}/>        )}
 
         <nav
           aria-label="Audit pagination"
