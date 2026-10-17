@@ -91,3 +91,14 @@ export function collegeProjectWorkspaceOwnsTabs(pathname:string):boolean {
     "reassign-mentor","workspaces"]);
   return !reserved.has(rest[0]!);
 }
+
+/** COL-academic-setup-13: six guided setup steps, separate from later utility tabs. */
+export function collegeAcademicSetupStep(pathname:string){
+ const group=COLLEGE_LEGACY_GROUPS.find(g=>g.title==="Academic Setup");
+ const steps=group?.tabs.slice(0,6)??[];
+ const step=steps.findIndex(t=>pathname===t.href||pathname.startsWith(t.href+"/"));
+ if(step<0)return null;
+ return {index:step+1,total:steps.length,title:steps[step]!.label,
+  previous:step>0?steps[step-1]:null,
+  next:step<steps.length-1?steps[step+1]:null};
+}

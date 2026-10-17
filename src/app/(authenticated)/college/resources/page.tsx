@@ -2,6 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
+import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
+import {getCollegeContentAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
@@ -27,7 +29,9 @@ export default async function CollegeResourcesPage({
       </div>
     );
   }
+  const authoring=await getCollegeContentAuthoringOptions(context,"RESOURCE");
   return <div className="space-y-4">
+    <CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons} existing={authoring.existing}/>
     <Link download prefetch={false} href={collegeContentCsvHref("RESOURCE",parsed.data)}
       className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
       Export filtered resource metadata CSV

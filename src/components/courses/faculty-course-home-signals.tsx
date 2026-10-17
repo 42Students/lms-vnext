@@ -172,9 +172,14 @@ export function FacultyCourseHomeSignals({
                   <summary className="cursor-pointer font-semibold text-body">
                     {learner.severity>=3?"Critical":"Moderate"} · View snapshot
                   </summary>
-                  <ul className="mt-2 space-y-1 text-muted-foreground">
-                    {learner.reasons.map(reason=><li key={reason}>{reason}</li>)}
-                  </ul>
+                  <div className="mt-2 space-y-2 text-xs text-muted-foreground">
+                    <p>Attendance: {learner.attendancePercent===null?"Not enough marked sessions":learner.attendancePercent+"%"}</p>
+                    {learner.attendancePercent!==null?<div role="img" aria-label={"Attendance "+learner.attendancePercent+" percent"} className="h-2 overflow-hidden rounded-full bg-muted">
+                      <span className="block h-full bg-primary" style={{width:learner.attendancePercent+"%"}}/>
+                    </div>:null}
+                    <p>Submissions missing: {learner.missingSubmissionCount}</p>
+                    <p>Average grade: {learner.averageGradePercent===null?"No graded work":learner.averageGradePercent+"%"}</p>
+                  </div>
                   <Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/students`}
                     className="mt-2 inline-block text-primary-text underline">View students</Link>
                 </details>
@@ -198,6 +203,18 @@ export function FacultyCourseHomeSignals({
             {signals.performance.studentAverages.length} students have a graded average.
             Select a score range below to review the corresponding students.
           </p>}
+        {signals.performance.weakestContent?<p className="mt-2 text-xs text-body">
+          {signals.performance.weakestContent.title} is the weakest spot right now, averaging
+          {" "}{signals.performance.weakestContent.averagePercent}% across
+          {" "}{signals.performance.weakestContent.graded} graded submissions.
+        </p>:null}
+        {signals.performance.strongestContent&&
+          signals.performance.strongestContent.id!==signals.performance.weakestContent?.id?
+          <p className="mt-1 text-xs text-body">
+            Strongest: {signals.performance.strongestContent.title}, averaging
+            {" "}{signals.performance.strongestContent.averagePercent}% across
+            {" "}{signals.performance.strongestContent.graded} graded submissions.
+          </p>:null}
         <div className="mt-4 space-y-3">
           {signals.performance.distribution.map((bucket) => {
             const total = Math.max(

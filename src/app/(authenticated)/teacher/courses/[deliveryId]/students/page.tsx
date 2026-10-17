@@ -1,16 +1,29 @@
 import Link from "next/link";
+import {notFound,redirect} from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseRoster } from "@/components/courses/faculty-course-roster";
 import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
+import {listFacultyCourseDeliveries} from "@/modules/courses/faculty-course-service";
 
 export default async function FacultyCourseStudentsPage({
-  params,
+  params,searchParams,
 }: {
   params: Promise<{ deliveryId: string }>;
+  searchParams:Promise<{cls?:string}>;
 }) {
   const context = await getCurrentRequestContext();
   const { deliveryId } = await params;
+  const cls=(await searchParams).cls;
+  if(cls){
+    const assigned=await listFacultyCourseDeliveries(context);
+    const current=assigned.find(item=>item.deliveryId===deliveryId);
+    if(!current)notFound();
+    const target=assigned.find(item=>item.courseId===current.courseId&&
+      (item.sectionId===cls||item.deliveryId===cls));
+    if(!target)notFound();
+    redirect("/teacher/courses/"+encodeURIComponent(target.deliveryId)+"/students");
+  }
   const { delivery, roster } =
     await getFacultyDeliveryRoster(
       context,
@@ -43,9 +56,9 @@ export default async function FacultyCourseStudentsPage({
         </Link>
       </div>
       <div className="flex justify-end">
-        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/attendance-corrections"}
+        <Link href={"/teacher/courses/"+encodeURIComponent(delivery.deliveryId)+"/attendanceDetail"}
           className="inline-flex min-h-10 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text">
-          Correction window &amp; request-history status
+          View class attendance
         </Link>
       </div>
       <FacultyCourseRoster

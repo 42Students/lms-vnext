@@ -3,6 +3,7 @@ import {and,desc,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectDeliveryEvents,projectEvaluations,projectInstances,projectSubmissions} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {notifyActiveProjectMembers} from "./project-notification-service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
@@ -47,7 +48,7 @@ export async function reopenApprovedProjectDelivery(context:RequestContext,proje
     projectId:scope.project.id,submissionId:updated.id,eventType:"REOPENED",
     actorMembershipId,reason:input.reason,
   });
-  await recordActivityEventInTransaction(tx,context,{
+  const event=await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_DELIVERY_REOPENED,
     collegeId:scope.collegeId,organizationId:scope.organizationId,
     subjectType:"project_submission",subjectId:updated.id,subjectLabel:"Project delivery",
@@ -55,6 +56,13 @@ export async function reopenApprovedProjectDelivery(context:RequestContext,proje
     metadata:{projectId:scope.project.id,version:updated.version},
     groupKey:"project:"+scope.project.id+":deliveries",
     dedupeKey:"project-delivery:"+updated.id+":reopened",
+  });
+  await notifyActiveProjectMembers(tx,event.id,{
+    projectId:scope.project.id,collegeId:scope.collegeId,
+    roles:["LEARNER"],exceptUserId:context.user.id,
+    title:"Delivery reopened for revision",
+    body:"Final delivery was reopened. Review the feedback and prepare a new version.",
+    actionHref:"/learn/projects/"+scope.project.id+"?tab=delivery",
   });
   return {submissionId:updated.id,projectId:scope.project.id,reopened:true};
  });

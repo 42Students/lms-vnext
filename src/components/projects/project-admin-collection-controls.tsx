@@ -13,7 +13,10 @@ export type ProjectAdminCollectionQuery = {
     | "DRAFT"
     | "SUBMITTED"
     | "CHANGES_REQUESTED"
-    | "APPROVED";
+    | "APPROVED"
+    | "UNDER_REVIEW"
+    | "LOCKED"
+    | "DRAFT_REVISING";
   page?: number;
   pageSize?: number;
 };
@@ -30,6 +33,9 @@ const SUBMISSION_STATUSES = [
   "SUBMITTED",
   "CHANGES_REQUESTED",
   "APPROVED",
+  "UNDER_REVIEW",
+  "LOCKED",
+  "DRAFT_REVISING",
 ] as const;
 
 function label(value: string) {
@@ -96,7 +102,7 @@ export function ProjectAdminFilters({
             <option value="">All submissions</option>
             {SUBMISSION_STATUSES.map((status) => (
               <option key={status} value={status}>
-                {label(status)}
+                {status==="UNDER_REVIEW"?"Under Review":status==="DRAFT_REVISING"?"Draft (revising)":label(status)}
               </option>
             ))}
           </select>

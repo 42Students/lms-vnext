@@ -1,3 +1,4 @@
+import {publicRecruiterWorkEmailSchema} from "@/modules/placements/public-college-join-model";
 /** REC-calendar-messages-profile-R04/39/45: identify recoverable public join errors
  * without leaking email existence, verifying the user client-side, or claiming success. */
 export function validatePublicJoinClient(input:{
@@ -6,7 +7,8 @@ export function validatePublicJoinClient(input:{
 }):string|null{
  const email=input.email.trim().toLowerCase();
  if(!email)return "Company email is required";
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))return "Enter a valid work email";
+ if(!publicRecruiterWorkEmailSchema.safeParse(email).success)
+  return "Enter a company work email address. Personal emails such as Gmail cannot be used.";
  const domain=email.split("@")[1];
  const approvedDomain=input.companyDomain.trim().toLowerCase().replace(/^@/,"");
  // Keep browser preflight in sync with the server: subdomains of the exact

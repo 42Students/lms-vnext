@@ -6,6 +6,7 @@ import {
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -86,7 +87,7 @@ export function FacultyLessonAuthoring({
   const [notes, setNotes] = useState("");
   const [url, setUrl] = useState("");
   const [durationSeconds, setDurationSeconds] =
-    useState("300");
+    useState("");
   const [startsAt, setStartsAt] =
     useState("");
   const [endsAt, setEndsAt] = useState("");
@@ -121,7 +122,7 @@ export function FacultyLessonAuthoring({
   }
 
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
-    endsAt||dueAt||durationSeconds!=="300"||maxPoints!=="10"||maxAttempts!=="1"||
+    endsAt||dueAt||durationSeconds!==""||maxPoints!=="10"||maxAttempts!=="1"||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
@@ -637,24 +638,20 @@ export function FacultyLessonAuthoring({
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() =>
-              setMode("ASSIGNMENT")
-            }
-          >
+          deliveryId?<Link
+            href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            + Assignment · Full builder
+          </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
           </Button>
           ) : null}
           {(!availableModes || availableModes.includes("QUIZ")) ? (
-          <Button
-            size="sm"
-            variant="secondary"
-            onClick={() =>
-              setMode("QUIZ")
-            }
-          >
+          deliveryId?<Link
+            href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
+            className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+            + Quiz · Full builder
+          </Link>:<Button size="sm" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
           </Button>
           ) : null}
