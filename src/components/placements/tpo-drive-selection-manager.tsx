@@ -74,6 +74,10 @@ export function TpoDriveSelectionManager({jobId,candidates,selections,roleOption
     <p className="text-sm text-body">{mode==="RECORD"
       ?"Choose selected students and enter their package. Nothing is sent until release."
       :"Releasing issues offers immediately. Eligibility, held-offer limits and response deadlines are rechecked for each student. Skipped rows will be reported."}</p>
+    {mode==="VERIFY_AND_RELEASE" && chosen.length>0 ? <p role="status" className="rounded border border-border p-3 text-sm">
+      {chosen.length} selections · {selections.filter(s=>chosen.includes(s.id)&&s.offerReady).length} ready to verify · {selections.filter(s=>chosen.includes(s.id)&&!s.offerReady).length} need review.
+      Successful releases issue official offers and notify learners.
+    </p>:null}
     {mode==="RECORD"?<label className="grid gap-1 text-sm">Package from this drive
      <select className="min-h-11 rounded border border-border bg-surface px-3" defaultValue=""
       onChange={e=>{const option=roleOptions.find(o=>o.id===e.target.value);
