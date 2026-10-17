@@ -634,7 +634,7 @@ export async function updateCourseQuiz(
                   ),
                 }
               : {}),
-            updatedAt: new Date(),
+            updatedAt: new Date(Math.max(Date.now(),lockedQuiz.updatedAt.getTime()+1)),
           })
           .where(
             and(
