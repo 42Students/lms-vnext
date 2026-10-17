@@ -1,10 +1,10 @@
 "use client";
-import {useState} from "react";
+import {useState,type MouseEvent} from "react";
 
 /** TPO-drives-13/14: only acts on currently selected, visible drives. */
 export function TpoBulkDriveReminder(){
  const [busy,setBusy]=useState(false),[message,setMessage]=useState(""),[error,setError]=useState("");
- async function remind(event:React.MouseEvent<HTMLButtonElement>){
+ async function remind(event:MouseEvent<HTMLButtonElement>){
   const form=event.currentTarget.form;
   if(!form||busy)return;
   const ids=[...new Set(new FormData(form).getAll("ids").filter((v):v is string=>typeof v==="string"))];
