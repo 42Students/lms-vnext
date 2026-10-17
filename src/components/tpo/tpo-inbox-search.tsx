@@ -9,8 +9,19 @@ export function TpoInboxSearch({value,placeholder}:{
 }){
  const router=useRouter();
  const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
- useEffect(()=>()=>{if(timer.current)clearTimeout(timer.current);},[]);
- return <input name="q" type="search" defaultValue={value} maxLength={120}
+ const searchInput=useRef<HTMLInputElement>(null);
+ useEffect(()=>{
+  const onKey=(event:KeyboardEvent)=>{
+   if(event.key!=="/"||event.altKey||event.ctrlKey||event.metaKey)return;
+   const target=event.target;
+   if(target instanceof HTMLInputElement||target instanceof HTMLTextAreaElement||
+     target instanceof HTMLSelectElement||(target instanceof HTMLElement&&target.isContentEditable))return;
+   event.preventDefault();searchInput.current?.focus();
+  };
+  window.addEventListener("keydown",onKey);
+  return ()=>{window.removeEventListener("keydown",onKey);if(timer.current)clearTimeout(timer.current);};
+ },[]);
+ return <input ref={searchInput} name="q" type="search" defaultValue={value} maxLength={120}
   placeholder={placeholder}
   className="min-h-11 rounded-md border border-border bg-surface px-3 text-sm text-foreground"
   onChange={event=>{
