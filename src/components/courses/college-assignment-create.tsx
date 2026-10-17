@@ -31,8 +31,10 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    [deliveries,chosen?.offeringId]);
  function close(){
   if(pending)return;
-  if((title.trim()||description.trim()||dueAt)&&
-   !window.confirm("Discard unsaved assignment changes?"))return;
+  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="10"||
+   allowedMethods.length!==ALL_ASSIGNMENT_METHODS.length||
+   ALL_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
+  if(dirty&&!window.confirm("Discard unsaved assignment changes?"))return;
   setOpened(false);
  }
  async function create(){
