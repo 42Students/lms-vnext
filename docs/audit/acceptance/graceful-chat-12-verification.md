@@ -34,3 +34,7 @@ Still required: shared `apiFetch` and `useGuardedAction` adoption after chat-14 
 
 | GR-30 | DONE (TPO Requests and Verification) | `useGuardedAction` on decision and review confirm; `tests/unit/chat12-round4-request-guards.test.ts` named `GR-30` |
 | GR-31 | OPEN (partial) | Immediate-approval and modal decision both guarded; other TPO actions need audits; `tests/unit/chat12-round4-request-guards.test.ts` named `GR-31` |
+
+| GR-30 | DONE (inline after-college editor) | guarded save prevents repeat; `tests/unit/chat12-round4-after-college.test.ts` named `GR-30` |
+| GR-35 | DONE (inline after-college editor) | accessible confirmation replaces native confirm; `tests/unit/chat12-round4-after-college.test.ts` named `GR-35` |
+| GR-90 | DONE (inline after-college editor) | failed save is role alert and selected value persists; `tests/unit/chat12-round4-after-college.test.ts` named `GR-90` |
