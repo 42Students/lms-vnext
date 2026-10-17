@@ -489,6 +489,14 @@ export function LearnerCourseOverview({
               Learning Path
             </Link>
           </div>
+          <nav aria-label="Recent course update categories" className="mt-4 flex flex-wrap gap-2">
+            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=assessments"}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Assessments</Link>
+            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/discussions"}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Discussions</Link>
+            <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/roadmap?filter=live-sessions"}
+              className="inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">Live Sessions</Link>
+          </nav>
           <div className="mt-4 divide-y divide-border">
             {unifiedUpdates.map((update) => (
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
