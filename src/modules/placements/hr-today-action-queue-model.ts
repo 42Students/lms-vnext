@@ -1,5 +1,5 @@
 import { recruiterTodayHref } from "./hr-today-deeplink-model";
-type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null}};
+type Job = {collegeId:string;companyId:string;job:{id:string;title:string;status:string;archivedAt:Date|null;applicationDeadline?:Date|null}};
 type Due={id:string;jobId:string;jobTitle:string;roundName:string;dueAt:Date;status?:string};
 type UnreadThread={id:string;href:string;label:string;unread:number};
 /** REC-home-drives-01: only verified scoped signals become next-up actions.
