@@ -38,6 +38,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   audience:first(raw.audience)??"COLLEGE",
   targetId:first(raw.targetId)||undefined,
  });
+ const formMinDateTime=new Date(new Date().getTime()+330*60_000).toISOString().slice(0,16);
  const isPreview=result.status==="READY"&&tab.data==="yours";
  const selected=query.success?announcementPreviewScope(query.data):null;
  const audience=isPreview&&query.success
@@ -106,10 +107,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
      </label>
     </fieldset>
     <label className="grid gap-1 text-sm">Show until (IST, optional)
-      <input type="datetime-local" name="showUntil" className="min-h-11 rounded-md border border-border bg-surface px-3"/>
+      <input type="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 rounded-md border border-border bg-surface px-3"/>
     </label>
     <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="pinned" /> Pin this notice</label>
-    <TpoNoticeScheduleControls count={audience?.potentiallyVisibleMemberships??null}
+    <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
       enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
        canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
    </form>
