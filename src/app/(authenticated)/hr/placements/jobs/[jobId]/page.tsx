@@ -23,6 +23,10 @@ import {RecruiterFocusedReviewShortcuts} from "@/components/placements/recruiter
 import { hrScheduledRoundRows,hrRoundConflictLinks } from "@/modules/placements/hr-round-schedule-model";
 import { recruiterDriveDraftHref } from "@/modules/placements/hr-drive-draft-links";
 import { hrDriveMessagesHref } from "@/modules/placements/hr-drive-messages-link-model";
+import {getRecruiterDriveConversations} from "@/modules/placements/hr-drive-conversation-service";
+import {readRecruiterThreadMessages} from "@/modules/placements/tpo-messaging-service";
+import {RecruiterConversationReplyForm} from "@/components/hr/recruiter-conversation-reply-form";
+import {RecruiterConversationLiveRefresh} from "@/components/hr/recruiter-conversation-live-refresh";
 import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-request-service";
 import {TpoDriveChangeRequests} from "@/components/placements/tpo-drive-change-requests";
 
@@ -89,6 +93,10 @@ export default async function HrPlacementJobPage({
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
   const requestData=requestsTab?await getDriveChangeRequests(context,workspace.job.id):null;
+  const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;
+  const selectedThread=driveConversation?.threads[0]??null;
+  const threadMessages=selectedThread?
+    await readRecruiterThreadMessages(context,selectedThread.id,1):null;
   if(query.tab==="interviews"||query.tab==="results"||query.tab==="selections"){
     const destination=query.tab==="selections"?"offers":"rounds";
     const search=new URLSearchParams({tab:destination,returnTo});
@@ -358,6 +366,32 @@ export default async function HrPlacementJobPage({
           Change requests
         </Link>
       </nav>
+      {discussionTab?<section aria-label="Drive discussion" className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
+        <RecruiterConversationLiveRefresh/>
+        <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
+        <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters' conversations.</p>
+        {threadMessages?<div className="space-y-3">
+          <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
+          <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
+            {[...threadMessages.messages].reverse().map(message=><li key={message.id}
+              className="rounded-lg border border-border bg-surface-subtle p-3">
+              <p className="text-xs font-semibold text-muted-foreground">
+                {message.senderType==="RECRUITER"?"You":"Placement cell"} ·
+                {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
+              </p>
+              <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
+            </li>)}
+          </ol>
+          <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
+          <Link href={"/hr/conversations/"+selectedThread!.id}
+            className="inline-flex min-h-10 items-center text-sm font-semibold text-primary-text underline">Browse full conversation history</Link>
+        </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
+          <input type="hidden" name="collegeId" value={workspace.college.id}/>
+          <input type="hidden" name="jobId" value={workspace.job.id}/>
+          <p className="text-sm text-body">No private drive discussion exists yet.</p>
+          <button type="submit" className="min-h-11 rounded-md bg-primary px-4 font-semibold text-on-primary">Open drive discussion</button>
+        </form>}
+      </section>:null}
       {requestData?.party==="COMPANY" ? <section className="space-y-4 rounded-xl border border-border bg-surface p-4 sm:p-5">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
