@@ -300,7 +300,11 @@ export function ProjectWorkspace({
 
       <PageHeader
         title={workspace.project.title}
-        description={workspace.project.summary ?? undefined}
+        description={mode==="MENTOR"
+          ? [workspace.project.courseLabel??"Course not linked",
+             "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
+               ?? workspace.members.find(member=>member.role==="MENTOR")?.displayName??"Not assigned")].join(" · ")
+          : (workspace.project.summary ?? undefined)}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge
