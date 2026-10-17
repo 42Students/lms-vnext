@@ -115,7 +115,8 @@ export function LearnerApplicationsBrowse({
     const requested=learnerWithdrawalMode({
       applicationStatus:withdrawTarget.applicationStatus,
       screeningStatus:withdrawTarget.screening.status,
-      scheduledRoundCount:scheduledRounds.filter(r=>r.applicationId===withdrawTarget.applicationId&&r.booked).length,
+      scheduledRoundCount:scheduledRounds.filter(r=>
+        r.applicationId===withdrawTarget.applicationId&&(r.booked||r.isRescheduled)).length,
     })==="REQUEST";
     setWithdrawPending(true);
     setWithdrawError(null);
