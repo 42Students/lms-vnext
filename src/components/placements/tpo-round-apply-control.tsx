@@ -2,8 +2,8 @@
 import {useState} from "react";
 import {useRouter} from "next/navigation";
 type Preview={ready:boolean;roundName?:string;staged:number;applied:number;
- outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};previewToken:string;
- rows:Array<{resultId:string;student:string;outcome:string;status:string}>;
+ outcomes:{PASS:number;FAIL:number;HOLD:number;ABSENT:number};destinations:{PASS:string;FAIL:string;HOLD:string;ABSENT:string};previewToken:string;
+ rows:Array<{resultId:string;student:string;outcome:string;status:string;destination:string}>;
  skippedUnrecordedNote:string};
 type ApplyReport={applied:number;skipped:number;unchanged:number;
  results:Array<{resultId:string;student:string;outcome:string;status:string;reason?:string}>};
@@ -40,14 +40,14 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <h3 className="font-semibold">Consequence preview</h3>
    <p className="text-sm">{preview.staged} staged results to apply; {preview.applied} already applied (unchanged).</p>
    <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-4">
-    <div><dt>Cleared</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
+    <div><dt>Cleared → {preview.destinations.PASS}</dt><dd className="font-semibold">{preview.outcomes.PASS}</dd></div>
     <div><dt>Not cleared</dt><dd className="font-semibold">{preview.outcomes.FAIL}</dd></div>
     <div><dt>Waitlisted</dt><dd className="font-semibold">{preview.outcomes.HOLD}</dd></div>
     <div><dt>Absent</dt><dd className="font-semibold">{preview.outcomes.ABSENT}</dd></div>
    </dl>
    <div className="max-h-60 overflow-y-auto rounded border border-border p-2">
     {preview.rows.map(r=><div key={r.resultId} className="flex justify-between gap-2 border-b border-border px-2 py-2 text-sm">
-     <span>{r.student}</span><span>{r.outcome} · {r.status}</span>
+     <span>{r.student}</span><span>{r.outcome} → {r.destination} · {r.status}</span>
     </div>)}
    </div>
    <p className="text-xs text-body">{preview.skippedUnrecordedNote}</p>
