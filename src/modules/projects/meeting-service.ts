@@ -167,7 +167,7 @@ export async function listProjectMeetings(
           // A cancelled learner request still has a requester and remains visible.
           not(and(eq(projectMeetings.status,"CANCELLED"),
             isNull(projectMeetings.requestedByMembershipId),
-            isNull(projectMeetings.scheduledByUserId))),
+            isNull(projectMeetings.scheduledByUserId))!),
         ] : [])),
     )
     .orderBy(
@@ -256,7 +256,7 @@ export async function scheduleProjectMeeting(
   if (!isFutureProjectMeetingWindow(startsAt, endsAt, Date.now())) {
     throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
   }
-  const links=await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
+  const links = await validateMeetingLinks(scope.project.id,input.linkedSprintId,input.linkedTaskId);
   return getDb().transaction(async (tx) => {
     const [project] = await tx.select({status:projectInstances.status,updatedAt:projectInstances.updatedAt})
       .from(projectInstances).where(eq(projectInstances.id,scope.project.id))
@@ -287,7 +287,7 @@ export async function scheduleProjectMeeting(
     const targetStatus=input.status??(existing?.status==="RESCHEDULED"?"RESCHEDULED":"SCHEDULED");
     if ((!existing && targetStatus==="RESCHEDULED") ||
       (existing?.status!=="DRAFT" && existing && targetStatus==="DRAFT") ||
-      (targetStatus==="RESCHEDULED" && existing && existing.status!=="RESCHEDULED" &&
+      (targetStatus==="RESCHEDULED" && existing &&
         existing.startsAt.getTime()===startsAt.getTime() &&
         existing.endsAt.getTime()===endsAt.getTime()) ||
       (targetStatus!=="DRAFT" && !input.meetingUrl))
@@ -295,23 +295,11 @@ export async function scheduleProjectMeeting(
     // MEN-projects-meetings-R02: prevent the organiser being double-booked
     // across multiple Project workspaces. The transaction-scoped lock makes
     // the check safe even when two different projects schedule concurrently.
-    const effectiveSprintId=input.linkedSprintId===undefined
-      ? existing?.linkedSprintId??null : links.linkedSprintId;
-    const effectiveTaskId=input.linkedTaskId===undefined
-      ? existing?.linkedTaskId??null : links.linkedTaskId;
-    if(effectiveSprintId && effectiveTaskId){
-      const [linkedTask]=await tx.select({sprintId:projectTasks.sprintId})
-        .from(projectTasks).where(and(eq(projectTasks.id,effectiveTaskId),
-          eq(projectTasks.projectId,scope.project.id))).limit(1);
-      if(!linkedTask || linkedTask.sprintId!==effectiveSprintId)
-        throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
-    }
-    const organiserId=existing?.scheduledByUserId??context.user.id;
-    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${organiserId}, 17))`);
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${context.user.id}, 17))`);
     const [conflict] = await tx.select({id:projectMeetings.id}).from(projectMeetings)
       .where(and(or(
           eq(projectMeetings.projectId,scope.project.id),
-          eq(projectMeetings.scheduledByUserId,organiserId),
+          eq(projectMeetings.scheduledByUserId,context.user.id),
         ),
         inArray(projectMeetings.status,["SCHEDULED","RESCHEDULED"]),
         lt(projectMeetings.startsAt,endsAt),gt(projectMeetings.endsAt,startsAt),
@@ -320,13 +308,13 @@ export async function scheduleProjectMeeting(
     if (targetStatus!=="DRAFT" && conflict) throw new ProjectsServiceError("PROJECT_MEETING_SCHEDULE_CONFLICT");
     const values = {
       status: targetStatus,
-      meetingType: input.meetingType ?? existing?.meetingType ?? "GENERAL" as const,
+      meetingType: input.meetingType ?? "GENERAL" as const,
       title: input.title, agenda: input.agenda ?? null,
       startsAt, endsAt, timeZone: input.timeZone,
       meetingUrl: targetStatus==="DRAFT"?null:input.meetingUrl,
-      scheduledByUserId: targetStatus==="DRAFT"?null:organiserId,
-      scheduledByMembershipId:targetStatus==="DRAFT"?null:(existing?.scheduledByMembershipId??context.membership?.id??null),
-      linkedSprintId: effectiveSprintId, linkedTaskId: effectiveTaskId,
+      scheduledByUserId: targetStatus==="DRAFT"?null:context.user.id,
+      scheduledByMembershipId:targetStatus==="DRAFT"?null:context.membership?.id ?? null,
+      linkedSprintId: links.linkedSprintId, linkedTaskId: links.linkedTaskId,
       outcome: input.outcome===undefined?existing?.outcome??null:input.outcome,
       facilitation:mentorMeetingFacilitationSchema.parse(input.facilitation??existing?.facilitation??{}),
       cancellationNote: null, updatedAt: new Date(),
@@ -361,19 +349,6 @@ export async function scheduleProjectMeeting(
       });
       return created;
     }
-    // MEN-projects-meetings-27: editing only facilitator notes is private.
-    // Do not send a misleading second "meeting scheduled" invitation.
-    const facilitatorOnlyChange=existing.status===targetStatus &&
-      existing.meetingType===values.meetingType &&
-      existing.title===values.title &&
-      (existing.agenda??null)===(values.agenda??null) &&
-      existing.startsAt.getTime()===startsAt.getTime() &&
-      existing.endsAt.getTime()===endsAt.getTime() &&
-      existing.timeZone===values.timeZone &&
-      (existing.meetingUrl??null)===(values.meetingUrl??null) &&
-      (existing.linkedSprintId??null)===(values.linkedSprintId??null) &&
-      (existing.linkedTaskId??null)===(values.linkedTaskId??null) &&
-      (existing.outcome??null)===(values.outcome??null);
     const [updated] = await tx.update(projectMeetings).set(values)
       .where(and(eq(projectMeetings.id,existing.id),
         eq(projectMeetings.projectId,scope.project.id),
@@ -382,7 +357,7 @@ export async function scheduleProjectMeeting(
     if (!updated) throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
     await tx.update(projectInstances).set({updatedAt:new Date(Math.max(Date.now(),project.updatedAt.getTime()+1))})
       .where(eq(projectInstances.id,scope.project.id));
-    if(targetStatus==="DRAFT" || facilitatorOnlyChange)return updated;
+    if(targetStatus==="DRAFT")return updated;
     const event=await recordActivityEventInTransaction(tx,context,{
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_MEETING_DECIDED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
