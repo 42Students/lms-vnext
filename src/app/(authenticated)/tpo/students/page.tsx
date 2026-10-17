@@ -312,7 +312,7 @@ export default async function TpoStudentsPage({
   };
 
   const scopedHref=(filters:Parameters<typeof studentsHref>[0],exportCsv=false)=>
-    studentsHref({...filters,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
+    studentsHref({...filters,skillName:filters.skillName??query.skillName,programId:filters.programId??query.programId,afterCollege:filters.afterCollege??query.afterCollege,profileStatus:filters.profileStatus??query.profileStatus,
       minApplications:filters.minApplications??query.minApplications,maxApplications:filters.maxApplications??query.maxApplications,
       minOffers:filters.minOffers??query.minOffers,maxOffers:filters.maxOffers??query.maxOffers,offerWaiting:filters.offerWaiting??query.offerWaiting,minCgpa:filters.minCgpa??query.minCgpa,maxCgpa:filters.maxCgpa??query.maxCgpa,maxActiveBacklogs:filters.maxActiveBacklogs??query.maxActiveBacklogs,maxPastBacklogs:filters.maxPastBacklogs??query.maxPastBacklogs,cgpaRecorded:filters.cgpaRecorded??query.cgpaRecorded,classId:filters.classId??query.classId,batchId:query.batchId},exportCsv);
   const exportHref = scopedHref(
