@@ -39,4 +39,14 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(tpoRemindNotAppliedSchema.safeParse({action:"REMIND",confirmed:true,expectedPreviewToken:token}).success).toBe(true);
   expect(tpoRemindNotAppliedSchema.safeParse({action:"REMIND",confirmed:false,expectedPreviewToken:token}).success).toBe(false);
  });
+ it("TPO-drive-workspace-42 summarizes only staged round outcomes and invalidates edited previews",()=>{
+  const rows=[{resultId:"b",applicationId:"student-b",student:"B",outcome:"PASS",status:"STAGED",version:1},
+   {resultId:"a",applicationId:"student-a",student:"A",outcome:"FAIL",status:"APPLIED",version:1}];
+  expect(summarizeRoundApply(rows)).toEqual({staged:1,applied:1,outcomes:{PASS:1,FAIL:0,HOLD:0,ABSENT:0}});
+  const token=roundApplyPreviewToken("round",rows);
+  expect(token).toBe(roundApplyPreviewToken("round",[rows[1]!,rows[0]!]));
+  expect(token).not.toBe(roundApplyPreviewToken("round",[{...rows[0]!,version:2},rows[1]!]));
+  expect(roundApplyInputSchema.safeParse({confirmed:true,expectedPreviewToken:token}).success).toBe(true);
+  expect(roundApplyInputSchema.safeParse({confirmed:false,expectedPreviewToken:token}).success).toBe(false);
+ });
 });
