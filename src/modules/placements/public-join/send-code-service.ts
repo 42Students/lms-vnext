@@ -6,12 +6,14 @@ import { and, count, eq, gte, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges, organizations, placementPublicJoinLinks, placementPublicJoinChallenges,
+  placementCompanies,
 } from "@/db/schema";
 import { publicJoinTablesReady } from "./readiness";
 import { publicJoinSendCodeSchema, publicJoinCodeDigest,
   publicJoinCodeSendAllowed, newPublicJoinCode, PUBLIC_JOIN_CODE_TTL_MS,
 } from "./code-policy";
 import { companyJoinEmailCandidate } from "./company-preview-policy";
+import {registrableWorkDomain} from "./domain-model";
 
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinCodeError extends Error {
@@ -36,7 +38,7 @@ export function opaqueNetworkTag(ip: string, secret: string) {
 export async function requestPublicJoinCode(
   scope: Scope, raw: unknown, verifiedClientIp: string | null,
   deliver: (email: string, code: string) => Promise<boolean>,
-): Promise<{ sent: true }> {
+): Promise<{ sent: true;companyName:string|null }> {
   const input = publicJoinSendCodeSchema.safeParse(raw);
   if (!input.success) throw new PublicJoinCodeError("INVALID_LINK");
   const secret = process.env.TPO_RECRUITER_OTP_HMAC_SECRET ?? "";
@@ -127,5 +129,13 @@ export async function requestPublicJoinCode(
       .where(eq(placementPublicJoinChallenges.id, issued.challengeId));
   }
   if (!sent) throw new PublicJoinCodeError("DELIVERY_FAILED");
-  return { sent: true };
+  // Show a company only after we have successfully sent a verification code
+  // to the provided mailbox, never as an unauthenticated domain oracle.
+  const domain=registrableWorkDomain(email);
+  const [known]=domain?await getDb().select({name:placementCompanies.name})
+   .from(placementCompanies).where(and(
+    eq(placementCompanies.primaryDomain,domain),
+    eq(placementCompanies.status,"ACTIVE"),
+   )).limit(1):[];
+  return { sent: true,companyName:known?.name??null };
 }
