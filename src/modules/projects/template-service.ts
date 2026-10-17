@@ -8,6 +8,8 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {recordActivityEventInTransaction} from "@/modules/activity/service";
+import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {
   projectTemplateCollegeAssignments,
   projectTemplates,
@@ -390,10 +392,13 @@ export async function publishProjectTemplate(
       .limit(1);
 
     if (!template) {
-      throw new ProjectsServiceError(
-        "PROJECT_TEMPLATE_NOT_FOUND",
-      );
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
     }
+    if (template.status==="ARCHIVED")
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+    if (template.status==="PUBLISHED" &&
+        template.publishedVersion===template.currentVersion)
+      return template;
 
     const [version] = await tx
       .select()
@@ -495,11 +500,10 @@ export async function unpublishProjectTemplate(
       .for("update")
       .limit(1);
 
-    if (!template) {
-      throw new ProjectsServiceError(
-        "PROJECT_TEMPLATE_NOT_FOUND",
-      );
-    }
+    if (!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    if(template.status==="ARCHIVED")
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+    if(template.status==="DRAFT")return template;
 
     const [draft] = await tx
       .update(projectTemplates)

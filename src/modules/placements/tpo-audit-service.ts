@@ -25,6 +25,7 @@ import {
   type TpoAuditKind,
 } from "./tpo-audit-model";
 import { requirePlacementManageScope } from "./scope";
+import {tpoAuditEntityHref} from "./tpo-audit-entity-link-model";
 import { placementTableExists } from "./staged-tables";
 
 const dateSchema = z.iso.date();
@@ -79,6 +80,7 @@ export type TpoAuditRow = {
   detail: string;
   occurredAt: string;
   jobId: string | null;
+  entityHref?: string | null;
   actorName: string;
 };
 
@@ -100,6 +102,8 @@ type AuditDbRow = {
   detail: string;
   occurredAt: Date | string;
   jobId: string | null;
+  subjectType:string|null;
+  subjectId:string|null;
   actorName: string | null;
 };
 
@@ -168,6 +172,8 @@ function auditSources(
           end::text as detail,
           ae.occurred_at as occurred_at,
           null::uuid as job_id,
+          ae.subject_type::text as subject_type,
+          ae.subject_id::text as subject_id,
           ae.actor_user_id as actor_user_id
         from activity_events ae
         where ae.college_id = ${collegeId}
@@ -189,6 +195,8 @@ function auditSources(
           )::text as detail,
           history.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           history.actor_user_id as actor_user_id
         from placement_application_status_history history
         inner join placement_applications application
@@ -213,6 +221,8 @@ function auditSources(
           )::text as detail,
           history.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           history.actor_user_id as actor_user_id
         from placement_application_screening_history history
         inner join placement_applications application
@@ -233,6 +243,8 @@ function auditSources(
           'Placement round change'::text as detail,
           event.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           event.actor_user_id as actor_user_id
         from placement_job_round_events event
         inner join placement_job_rounds round_record
@@ -258,6 +270,8 @@ function auditSources(
           )::text as detail,
           result.submitted_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           coalesce(result.applied_by_user_id,result.submitted_by_user_id) as actor_user_id
         from placement_round_results result
         inner join placement_job_rounds round_record
@@ -282,6 +296,8 @@ function auditSources(
           )::text as detail,
           history.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           history.actor_user_id as actor_user_id
         from placement_offer_status_history history
         inner join placement_offers offer_record
@@ -308,6 +324,8 @@ function auditSources(
           )::text as detail,
           history.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           history.actor_user_id as actor_user_id
         from placement_joining_history history
         inner join placement_offers offer_record
@@ -333,6 +351,8 @@ function auditSources(
           'Recruiter share access event'::text as detail,
           event.created_at as occurred_at,
           job.id as job_id,
+          null::text as subject_type,
+          null::text as subject_id,
           null::uuid as actor_user_id
         from placement_tpo_share_events event
         inner join placement_tpo_share_links share_record
@@ -513,6 +533,8 @@ export async function getTpoAuditLog(
           record.detail as detail,
           record.occurred_at as "occurredAt",
           record.job_id::text as "jobId",
+          record.subject_type as "subjectType",
+          record.subject_id as "subjectId",
           actor.display_name::text as "actorName"
         from audit record
         left join users actor on actor.id = record.actor_user_id
@@ -548,6 +570,8 @@ export async function getTpoAuditLog(
               row.occurredAt,
             ).toISOString(),
       jobId: row.jobId,
+      entityHref:row.subjectType&&row.subjectId?tpoAuditEntityHref(row.subjectType,row.subjectId):
+       row.jobId?tpoAuditEntityHref("placement_job",row.jobId):null,
       actorName: tpoAuditActorLabel(row.actorName),
     }));
 

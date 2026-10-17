@@ -1,5 +1,6 @@
 "use client";
 import { useState, type FormEvent } from "react";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import { facultyMetadataFromDraft,type FacultyMetadataDraftEntry } from "@/modules/people/faculty-profile-metadata-model";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -14,6 +15,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
  const [rows,setRows]=useState<FacultyMetadataDraftEntry[]>(()=>restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));
  const [dirty,setDirty]=useState(false),[error,setError]=useState<string|null>(null);
  const [search,setSearch]=useState("");
+ const { askConfirm, dialog } = useConfirmFlow();
  const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>facultyProfileMetadataMatches(row,facultyProfileActiveSearch(search,rows.length)));
  useFacultyProfileUnsavedWarning(dirty);
  const issue=facultyMetadataDraftIssue(initial,rows);
@@ -48,7 +50,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
      maxLength={5000} disabled={pending} value={row.value} onChange={event=>edit(row.id,"value",event.target.value)}/>
    </label>
    <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-3 text-sm text-error"
-    onClick={()=>{if(!window.confirm("Remove metadata field "+row.key+" from this unsaved draft?"))return;
+    onClick={async()=>{if(!(await askConfirm("Remove metadata field "+row.key+" from this unsaved draft?")))return;
      setRows(current=>removeFacultyMetadataDraftEntry(current,row.id));setDirty(true);}}>
     Remove draft
    </button>
@@ -57,17 +59,18 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   <div className="flex flex-wrap gap-3">
    <button type="button" disabled={pending||rows.length>=100}
-    className="min-h-11 rounded-md border border-border px-4 text-sm" onClick={()=>{
+    className="min-h-11 rounded-md border border-border px-4 text-sm" onClick={async()=>{
      setRows(current=>[...current,{id:crypto.randomUUID(),key:"",value:""}]);
      setSearch(current=>facultyProfileSearchAfterInsertion(current));setDirty(true);
     }}>Add field</button>
-   {dirty?<button type="button" disabled={pending} onClick={()=>{
-    if(!window.confirm("Discard unsaved metadata edits?"))return;
+   {dirty?<button type="button" disabled={pending} onClick={async()=>{
+    if(!(await askConfirm("Discard unsaved metadata edits?")))return;
     setRows(restoreFacultyMetadataDraft(initial,()=>crypto.randomUUID()));setDirty(false);setError(null);
    }} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold">Discard unsaved metadata</button>:null}
-   <button type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+   <button type="submit" disabled={pending||!dirty||Boolean(issue)} className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
     {pending?"Saving…":"Save metadata"}
    </button>
   </div>
+ {dialog}
  </form>;
 }

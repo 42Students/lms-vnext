@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { listCohorts } from "@/modules/academics/cohort-service";
 import { listPrograms } from "@/modules/academics/program-service";
@@ -496,9 +497,7 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Mode and place</dt>
                       <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":(round.mode??"").replaceAll("_"," ")}
                         {" · "}{round.venue??(round.meetingUrl?"Online":"Venue to be told")}
-                        {round.meetingUrl&&/^https:\/\//i.test(round.meetingUrl)?<a href={round.meetingUrl}
-                          
-                          className="ml-2 font-semibold text-[var(--lms-link-text)] underline">Meeting link</a>:null}
+                        {round.meetingUrl&&/^https:\/\//i.test(round.meetingUrl)?<ThirdPartyLink href={round.meetingUrl} label="Meeting link"/>:null}
                       </dd>
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
@@ -513,10 +512,7 @@ export async function PlacementDriveWorkspace({
                     <div><dt className="font-semibold">Duration</dt><dd>{round.durationMinutes ? round.durationMinutes+" minutes" : "Not specified"}</dd></div>
                   </dl>
                   {round.platform ? <p className="mt-2 text-sm text-body">Platform: {round.platform}</p> : null}
-                  {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<a href={round.testUrl}
-                     className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">
-                    Open test instructions →
-                  </a>:null}
+                  {round.testUrl&&/^https:\/\//i.test(round.testUrl)?<ThirdPartyLink href={round.testUrl} label="Open test instructions →"/>:null}
                   {round.whatToBring ? <p className="mt-1 text-sm text-body">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex flex-wrap gap-4 text-sm">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}

@@ -3,7 +3,7 @@ import {sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {isSameOriginRequest} from "@/auth/origin";
 import {verifyUnsubscribeToken} from "@/modules/messaging/unsubscribe-model";
-import {verifyTpoCampaignRecipientToken} from "@/modules/messaging/tpo-campaign-recipient-token";
+import {verifyTpoCampaignRecipientToken,resolveTpoCampaignRecipientSecret} from "@/modules/messaging/tpo-campaign-recipient-token";
 import {CampaignUnsubscribeInvalid,unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
 export async function POST(request:Request){
@@ -12,7 +12,7 @@ export async function POST(request:Request){
  const rawToken=form?.get("token");
  if(typeof rawToken!=="string"||rawToken.length>2048)
   return NextResponse.redirect(new URL("/campaign-unsubscribe/confirmed?scope=placement-cell",request.url),303);
- const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,process.env.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"",Date.now());
+ const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,resolveTpoCampaignRecipientSecret(process.env),Date.now());
  if(tpoClaim){
   try{
    await unsubscribeTpoCampaignRecipient(rawToken);

@@ -9,9 +9,10 @@ import {TpoTopbarNewMenu} from "@/components/tpo/tpo-topbar-new-menu";
 import { TpoFindShortcut } from "@/components/tpo/tpo-find-shortcut";
 import {TpoKeyboardShortcuts} from "@/components/tpo/tpo-keyboard-shortcuts";
 import {TpoMobileFooter} from "@/components/tpo/tpo-mobile-footer";
+import {deniedPortalHome} from "@/modules/identity/unauthorized-portal-home";
 export default async function TpoLayout({children}:Readonly<{children:React.ReactNode}>){
  const context=await getCurrentRequestContext();
- if (!canOpenTpoWorkspace(context)) redirect("/dashboard");
+ if (!canOpenTpoWorkspace(context)) redirect(deniedPortalHome(context));
  if (!hasTpoTooling(context)) return <div className="min-w-0 space-y-4 pb-20 md:pb-0">{children}</div>;
  const inbox=await getTpoPersonalInbox(context,{view:"all"});
  const recruiterUnread=await countTpoUnreadRecruiterMessages(context);

@@ -49,3 +49,14 @@ Remaining unverified / still open: FAC-assessments-13, FAC-assessments-27, FAC-a
 | FAC-assessments-R08 | DONE (source authored; migration registration/database pending) | `src/db/schema/assessments.ts`, `src/modules/courses/{assignment-validation,faculty-assignment-authoring-model,faculty-assignment-editor-ui-model}.ts`, faculty editors; `docs/proposed-migrations/faculty-assessments-participation-zero-points.sql`; `tests/unit/chat6-faculty-zero-point-assignment-r08.test.ts` → `FAC-assessments-R08 permits zero-point participation assignments without allowing negative or noninteger marks`. |
 
 | FAC-assessments-R04 | DONE (source authored; PostgreSQL/load validation pending) | `src/modules/courses/faculty-assessment-service.ts`, `src/modules/courses/faculty-assessment-batch-model.ts`; `tests/unit/chat6-faculty-assessment-r04-batched-scope.test.ts` → `FAC-assessments-R04 rejects sibling section records while retaining shared and own records`, `FAC-assessments-R04 reads only authorized teaching offerings in bounded batches, without full authoring workspaces`. Authorized delivery roster gates batched queries; no per-delivery full content/authoring workspace. |
+
+## Chat-15 final sprint independent WRONG decisions (2026-10-18)
+
+| Gap ID | Decision | Current source and gap-ID-named independent test |
+|---|---|---|
+| FAC-assessments-15 | NOT-A-GAP (original report wrong; existing behavior guarded) | `faculty-assignment-authoring-service.ts` rejects submitted-assignment changes to locked fields through `facultyAssignmentEditLockedBySubmissions` and retains title changes. `faculty-assessment-editor.tsx` has the legacy lock warning. `tests/unit/chat15-final-sprint-faculty-wrong.test.ts`: `FAC-assessments-15 WRONG: submitted assignments cannot move deadlines or points; title correction remains possible`. |
+| FAC-assessments-25 | NOT-A-GAP (reported fields present) | `faculty-assessment-overview.tsx` shows Course, Section, Lesson, due state, draft/hidden status. Same test file: `FAC-assessments-25 WRONG: course, section, lesson, due-state and hidden draft are present`. A separate Created fallback is not silently claimed here. |
+| FAC-assessments-26 | NOT-A-GAP (draft can open report; submissions may be empty) | `faculty-assessment-overview.tsx` exposes View Report and assignment report displays a real empty submission state. Same test file: `FAC-assessments-26 WRONG: every assessment links to its report, even without submissions`. |
+| FAC-assessments-28 | NOT-A-GAP (legacy headings present) | `teacher/report/quiz/[quizId]/page.tsx`, `teacher/report/assignment/[contentId]/page.tsx`, `faculty-report-download.tsx`. Same test file: `FAC-assessments-28 WRONG: distinct quiz and assignment report sections have the requested copy`. |
+  
+Tests added but not executed in this GitHub connector session; orchestrator to run them.

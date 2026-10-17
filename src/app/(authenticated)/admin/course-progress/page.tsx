@@ -68,6 +68,10 @@ export default async function SuperAdminCourseProgressPage({
           className="mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
           Open offering →
         </Link>
+        <Link href={`/admin/course-progress/students?offeringId=${encodeURIComponent(item.offeringId)}`}
+         className="ml-3 mt-3 inline-flex min-h-10 items-center rounded-md border border-border px-3 text-sm font-semibold text-primary-text">
+          View student progress →
+        </Link>
       </article>)}
     </div> : <EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />}
     <nav aria-label="Course progress pages" className="flex flex-wrap items-center justify-between gap-3 text-sm">

@@ -8,7 +8,7 @@ export type ButtonProps = ComponentPropsWithRef<"button"> & {
 };
 
 const variantClasses = {
-  primary: "border-primary bg-primary text-foreground hover:border-primary-hover hover:bg-primary-hover",
+  primary: "border-primary bg-primary text-on-primary hover:border-primary-hover hover:bg-primary-hover",
   secondary: "border-border bg-surface text-foreground hover:border-[var(--lms-teal-deep)] hover:bg-primary-subtle",
   ghost: "border-transparent bg-transparent text-foreground hover:bg-primary-subtle",
   danger: "border-error bg-[var(--lms-error-subtle)] text-foreground hover:brightness-95",

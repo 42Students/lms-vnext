@@ -4,6 +4,7 @@ import {useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {collegeCompanyDraftPayload} from "@/modules/placements/college-company-create-model";
 
 /** COL-placements-14: create or reuse a canonical company and attach a
  * college-specific relationship. Editing a shared global identity stays
@@ -19,19 +20,16 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
  const [notice,setNotice]=useState("");
  function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(!name.trim()||(!primaryDomain.trim()&&!websiteUrl.trim())){
-   setError("Enter a company name and a website or verified company email domain.");return;
+  const parsed=collegeCompanyDraftPayload({collegeId,name,websiteUrl,primaryDomain});
+  if(!parsed.success){
+   setError(parsed.error.issues[0]?.message??"Check company details.");return;
   }
   void run(async()=>{
    setError("");setNotice("");
    try{
     await apiFetch("/api/placements/companies",{
       method:"POST",headers:{"content-type":"application/json"},
-      body:JSON.stringify({collegeId,name:name.trim(),
-        ...(websiteUrl.trim()?{websiteUrl:websiteUrl.trim()}:{}),
-        ...(primaryDomain.trim()?{primaryDomain:primaryDomain.trim().toLowerCase()}:{}),
-        isTrusted:false,
-      }),
+      body:JSON.stringify(parsed.data),
     });
     setName("");setWebsiteUrl("");setPrimaryDomain("");setOpen(false);
     setNotice("Company added to this college. Existing company identities are reused where possible.");
@@ -52,11 +50,11 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
   {open?<form onSubmit={submit} className="grid gap-3 rounded-lg border border-border bg-surface p-4 sm:grid-cols-2">
     <h2 className="font-semibold sm:col-span-2">Add company</h2>
     <label className="grid gap-1 text-sm font-semibold">Company name
-      <input required minLength={2} maxLength={200} value={name} onChange={e=>setName(e.target.value)}
+      <input required minLength={2} maxLength={150} value={name} onChange={e=>setName(e.target.value)}
         className={field} />
     </label>
     <label className="grid gap-1 text-sm font-semibold">Website (HTTPS, optional)
-      <input type="url" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
+      <input type="url" pattern="https://.*" value={websiteUrl} onChange={e=>setWebsiteUrl(e.target.value)}
         placeholder="https://example.com" className={field}/>
     </label>
     <label className="grid gap-1 text-sm font-semibold">Company email domain (optional)

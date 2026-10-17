@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
@@ -36,6 +37,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   const [changed, setChanged] = useState(false);
   useFacultyProfileUnsavedWarning(changed);
   const [search,setSearch]=useState("");
+  const { askConfirm, dialog } = useConfirmFlow();
   const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
     facultyProfileRecordMatches(row,fields.map(field=>field.name),facultyProfileActiveSearch(search,rows.length)));
@@ -75,7 +77,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 rounded-lg border border-border p-3 sm:p-4">
             <legend className="px-1 text-xs font-semibold text-muted-foreground">Record {index + 1}</legend>
-            <button type="button" className="mb-3 min-h-10 rounded-md border border-border px-3 text-sm"
+            <button type="button" className="mb-3 min-h-11 rounded-md border border-border px-3 text-sm"
               aria-expanded={!collapsedIds.includes(row.id)}
               onClick={()=>setCollapsedIds(current=>toggleFacultyProfileCollapsed(current,row.id))}>
               {collapsedIds.includes(row.id)?"Show record fields":"Hide record fields"}
@@ -106,21 +108,21 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
               })}
             </div>:null}
             <div className="mt-3 flex flex-wrap gap-2">
-              <button type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
+              <button type="button" disabled={pending || index===0 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index-1));setChanged(true);
-              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</button>
-              <button type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={()=>{
+              }} className="min-h-11 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" up"}>Move up</button>
+              <button type="button" disabled={pending || index===rows.length-1 || !facultyProfileCanReorderVisible(rows.length,visibleRows.length)} onClick={async()=>{
                 setRows(current=>moveFacultyProfileDraftRow(current,row.id,index+1));setChanged(true);
-              }} className="min-h-10 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</button>
+              }} className="min-h-11 rounded-md border border-border px-3 text-sm" aria-label={"Move "+title+" record "+(index+1)+" down"}>Move down</button>
             </div>
-            <button type="button" disabled={pending || rows.length >= maxItems} onClick={() => {
+            <button type="button" disabled={pending || rows.length >= maxItems} onClick={async () => {
               setRows(current=>duplicateFacultyProfileDraftRow(current,row.id,maxItems,crypto.randomUUID()));
               setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true);
             }} className="mt-3 mr-2 min-h-11 rounded-md border border-border px-4 text-sm font-semibold">
               Duplicate draft
             </button>
-            <button type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => {
-              if (!window.confirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section.")) return;
+            <button type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={async () => {
+              if (!(await askConfirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section."))) return;
               setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
             }} className="mt-3 min-h-11 rounded-md border border-border px-4 text-sm font-semibold text-error">
               Remove draft record
@@ -132,23 +134,24 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
       <div className="flex flex-wrap gap-3">
         <button type="button" disabled={pending || rows.length >= maxItems}
           className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
-          onClick={() => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
+          onClick={async () => { setRows(current => [...current, create()]); setSearch(current=>facultyProfileSearchAfterInsertion(current));setChanged(true); }}>
           Add {title.toLowerCase()} record
         </button>
         <button type="submit" disabled={!changed || pending || missingRequired || Boolean(sectionIssue)}
-          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-white disabled:opacity-50">
+          className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
           {pending ? "Saving…" : "Save " + title.toLowerCase()}
         </button>
       </div>
       {changed && sectionIssue?<p role="alert" className="text-sm text-error">Review this section: {sectionIssue}</p>:null}
       {changed ? <button type="button" disabled={pending} className="min-h-11 rounded-md border border-border px-4 text-sm font-semibold"
-        onClick={()=>{if(!window.confirm("Discard unsaved changes to "+title+"?"))return;
+        onClick={async()=>{if(!(await askConfirm("Discard unsaved changes to "+title+"?")))return;
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
       </button> : null}
       {changed ? <p className="text-xs text-muted-foreground">
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}
-    </form>
+    {dialog}
+ </form>
   );
 }
