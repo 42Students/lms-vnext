@@ -1,5 +1,6 @@
 "use client";
 import {useState} from "react";
+import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Dialog} from "@/components/ui/dialog";
@@ -11,6 +12,7 @@ type DebarRow={id:string;active:boolean};
 type Result={id:string;name:string;status:"saved"|"skipped"|"failed";detail:string};
 const endpoint=(id:string)=>"/api/placements/tpo/students/"+encodeURIComponent(id)+"/debarments";
 export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
+ const router=useRouter();
  const shared=useTpoStudentsSelection();
  const [localSelection,setLocalSelection]=useState<string[]>([]);
  const selected=shared?.selected??localSelection;
@@ -68,6 +70,7 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
    }
    setResults(next);setConfirm(false);
    setSelected(ids=>ids.filter(id=>!next.some(row=>row.id===id&&row.status==="saved")));
+   if(next.some(row=>row.status==="saved"))router.refresh();
   }).catch(()=>setError("The batch did not finish. Review the per-student results before trying again."));
  }
  return <section aria-label="Bulk student debarment" className="space-y-3 rounded-xl border border-border bg-surface p-4">
