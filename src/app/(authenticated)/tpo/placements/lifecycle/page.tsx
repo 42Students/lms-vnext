@@ -11,7 +11,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveWhereItIs} from "@/modules/placements/tpo-drive-lifecycle-list-model";
-type Search = { ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];minOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -20,6 +20,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const data = await getTpoDriveLifecycleList(context, {
     ...(first(params.seasonId) ? { seasonId: first(params.seasonId) } : {}),
     ...(first(params.companyId)?{companyId:first(params.companyId)}:{}),
+    ...(first(params.cohortId)?{cohortId:first(params.cohortId)}:{}),
     ...(first(params.ownerUserId)?{ownerUserId:first(params.ownerUserId)}:{}),
     ...(first(params.view) ? { view: first(params.view) } : {}),
     ...(first(params.search)?{search:first(params.search)}:{}),
@@ -39,6 +40,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
     ...(data.companyId?{companyId:data.companyId}:{}),
+    ...(data.cohortId?{cohortId:data.cohortId}:{}),
     ...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),
     payCategory:data.payCategory,
     attention:data.attention,
