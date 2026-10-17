@@ -149,7 +149,7 @@ Audit: `docs/audit/pages/tpo/batches.md` (and `batches-review.md` if present; an
 | TPO-batches-57 | S4 | VALIDATION | DONE |
 | TPO-batches-62 | S4 | MISSING-TAB | DONE |
 | TPO-batches-65 | S4 | RESPONSIVE | OPEN |
-| TPO-batches-R06 | S4 | COPY | OPEN |
+| TPO-batches-R06 | S4 | COPY | DONE |
 
 ## tpo/students (56: FIXED-ON-MAIN 24, OPEN 29, UNCONFIRMED 3)
 
