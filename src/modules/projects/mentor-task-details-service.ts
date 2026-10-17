@@ -53,13 +53,15 @@ export async function updateMentorTaskDetails(
       .limit(1):[null];
     if(task.sprintId&&(!sprint||sprint.status==="COMPLETED"))
       throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-    const [release]=await tx.select({status:projectReleases.status})
-      .from(projectReleases)
-      .where(and(eq(projectReleases.id,sprint.releaseId),
-        eq(projectReleases.projectId,scope.project.id)))
-      .limit(1);
-    if(!release||release.status==="SHIPPED")
-      throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    if(sprint){
+      const [release]=await tx.select({status:projectReleases.status})
+        .from(projectReleases)
+        .where(and(eq(projectReleases.id,sprint.releaseId),
+          eq(projectReleases.projectId,scope.project.id)))
+        .limit(1);
+      if(!release||release.status==="SHIPPED")
+        throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+    }
 
     // PostgreSQL stores microseconds but JS Date tokens carry milliseconds.
     // The locked row and millisecond comparison are the concurrency boundary.
