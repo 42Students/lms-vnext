@@ -46,7 +46,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    }
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
-   body={title:title.trim(),dueAt:deadline?.toISOString()??null,description:description.trim()||null,
+   body={title:title.trim(),
+    ...(quiz.status==="DRAFT"||istInput(quiz.dueAt)!==due?{dueAt:deadline?.toISOString()??null}:{}),
+    description:description.trim()||null,
     expectedUpdatedAt,
     ...(quiz.status==="DRAFT"?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
