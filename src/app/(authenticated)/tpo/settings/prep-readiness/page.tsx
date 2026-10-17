@@ -25,7 +25,7 @@ export default async function PrepSettings(){
   <>
    {!parsed.success?<p role="alert" className="text-sm">The saved readiness config uses an unsupported shape. No changes will be made until it is reviewed.</p>:null}
    {!coursesResult.ok?<p role="alert" className="rounded-md border border-warning-border bg-warning-subtle p-3 text-sm">
-     Couldn't load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
+     Couldn&apos;t load preparation courses. Saved choices were not changed. <a href="/tpo/settings/prep-readiness" className="font-semibold underline">Retry</a>
    </p>:null}
    {parsed.success&&coursesResult.ok?<TpoPrepReadinessEditor choices={courses} initial={{courseIds:initial.courseIds,minimumCompleted:initial.minimumCompleted}}
     expectedVersion={data.updatedAt?.toISOString()??"none"}/>:null}
