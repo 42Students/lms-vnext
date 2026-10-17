@@ -105,7 +105,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
-    <p>{row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
+    <p>{row.status==="matched"&&row.currentStatus===row.proposedStatus?
+      "No change":row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
    </li>)}</ul>
    <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
     <button type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} className="min-h-10 rounded border border-border px-3 disabled:opacity-50">Previous</button>
