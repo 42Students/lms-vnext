@@ -1,3 +1,5 @@
+import {Suspense} from "react";
+import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -35,6 +37,7 @@ export default async function TpoSeasonPipelinePage({
   ] as const;
   return (
     <div className="space-y-6">
+      <Suspense fallback={null}><TpoReportSavedFilters path="/tpo/reports/season-pipeline" collegeId={context.membership.collegeId} userId={context.user.id}/></Suspense>
       <PageHeader eyebrow="TPO · Reports" title="Season pipeline"
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={report.season ? (
