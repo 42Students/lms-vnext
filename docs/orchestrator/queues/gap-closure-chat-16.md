@@ -26,7 +26,7 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 - SA-placements-projects-109 (S3) — DONE
 - SA-placements-projects-112 (S3) — DONE
 - SA-placements-projects-113 (S2) — BLOCKED
-- SA-placements-projects-114 (S3) — PARTIAL
+- SA-placements-projects-114 (S3) — DONE
 - SA-placements-projects-116 (S3) — PARTIAL
 - SA-placements-projects-117 (S3) — DONE
 - SA-placements-projects-118 (S4) — NOT-A-GAP
@@ -43,4 +43,7 @@ Follow docs/orchestrator/briefs/gap-closure-lane.md exactly. These OPEN gaps are
 
 - Merged upstream verified-closure work before further lane edits. Main now includes independently persisted audit findings under migration 0133, with list, detail, versioned actions and finding-specific filters. Keep that implementation and its tests; these are authored-source DONE, not executed sign-off.
 - Additional chat-16 code: mentor task, sprint, meeting and delivery unsaved-change confirmations, customer-safe error handling, Draft resource label and separate resource counters. Tests: `tests/unit/chat16-mentor-draft-recovery-round3.test.ts`, `chat16-mentor-tracker-contract-round2.test.ts`.
-- Remaining: MEN 57,58,69,72,73,75,76; SA 114,116. Provider-dependent: SA 103,113,120. All CI/browser/database gates unrun by this lane.
+- Remaining: MEN 57,58,69,72,73,75,76; SA 116. Provider-dependent: SA 103,113,120. All CI/browser/database gates unrun by this lane.
+
+- SA-placements-projects-114 authored-source closure: scoped live log signatures correlate with persisted Known Errors by the same redacted canonical hash and environment; known record opens directly and mute/unmute PATCH uses confirmation. Tests: `tests/unit/chat16-tracker-known-error-link-round4.test.ts`. Provider/database runtime validation still required.
+- MEN-projects-meetings-72 project-brief edits now send active mentor + learner inbox notices in the event transaction; MEN-75/76 additionally cover release drafts/deletion and meeting outcome notes. Tests: `chat16-mentor-draft-recovery-round3.test.ts`.
