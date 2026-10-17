@@ -5,6 +5,8 @@ import { PageHeader } from "@/components/ui/page-header";
 import { ProjectArchiveControl } from "./project-archive-control";
 import { ProjectAdminSubmissionReview } from "./project-admin-submission-review";
 import {CollegeProjectSummaryEditorFull} from "./college-project-summary-editor-full";
+import {WorkspaceBriefEditor} from "./workspace-brief-editor";
+import {parseWorkspaceBrief} from "@/modules/projects/workspace-brief-model";
 import { mentorAuthoredBrief, mentorReviewSubmissionHref } from "@/modules/projects/mentor-overview-presenter";
 import { ProjectResourceFilesSection } from "./project-resource-files-section";
 import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
@@ -185,7 +187,14 @@ export function ProjectWorkspace({
   readOnlyOverride?: boolean;
 }) {
   const { readiness } = workspace;
-  const brief = mentorAuthoredBrief(workspace.templateOverview);
+  const authoredBrief=parseWorkspaceBrief(workspace.project.authoredBrief);
+  const templateBrief=mentorAuthoredBrief(workspace.templateOverview);
+  const isAuthored=Boolean(authoredBrief.goal||authoredBrief.description||
+    authoredBrief.deliverables.length||authoredBrief.completionConditions.length||authoredBrief.personas.length);
+  const brief=isAuthored?{
+    goal:authoredBrief.goal,description:authoredBrief.description,
+    deliverables:authoredBrief.deliverables,
+  }:templateBrief;
   const mentorReviewHref = mode === "MENTOR"
     ? mentorReviewSubmissionHref(workspace.project.id, workspace.finalDelivery.submissions)
     : null;
@@ -414,6 +423,18 @@ export function ProjectWorkspace({
               Review submission
             </Link> : null}
           </div>
+          {mode==="ADMIN"&&!readOnly?<WorkspaceBriefEditor
+            projectId={workspace.project.id} initial={authoredBrief}
+            updatedAt={workspace.project.updatedAt}/>:null}
+          {(isAuthored&&authoredBrief.completionConditions.length>0)||
+            (isAuthored&&authoredBrief.personas.length>0)?<div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div><h3 className="text-sm font-semibold">Completion conditions</h3>
+              <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.completionConditions.map((v,i)=><li key={i}>{v}</li>)}</ul>
+            </div>
+            <div><h3 className="text-sm font-semibold">Personas</h3>
+              <ul className="mt-2 list-disc pl-5 text-sm">{authoredBrief.personas.map((v,i)=><li key={i}>{v}</li>)}</ul>
+            </div>
+          </div>:null}
           {mode==="LEARNER"?<div className="mt-4 grid gap-3 sm:grid-cols-2">
             <section className="rounded-lg border border-border p-3">
               <h3 className="font-semibold text-foreground">Definition of done</h3>
@@ -456,7 +477,7 @@ export function ProjectWorkspace({
                 </div>)}
             </div>
           </section>:null}
-          {workspace.templateOverview ? (
+          {workspace.templateOverview||isAuthored ? (
             <div className="mt-3 space-y-4 text-sm leading-6 text-body">
               {brief.goal ? <div>
                 <h3 className="font-semibold text-foreground">Project goal</h3>
