@@ -30,6 +30,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  function remember(name:string,value:string){
+  setVisibleLimit(150);
   const query=new URLSearchParams(window.location.search);
   if(value)query.set(name,value);else query.delete(name);
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
