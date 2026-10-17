@@ -252,14 +252,14 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-05 | S3 | MISSING-PAGE | OPEN |
 | COL-projects-08 | S3 | MISSING-EXPORT | OPEN |
 | COL-projects-15 | S3 | MISSING-MODAL | OPEN |
-| COL-projects-16 | S3 | MISSING-COLUMN | OPEN |
+| COL-projects-16 | S3 | MISSING-COLUMN | DONE-BRANCH |
 | COL-projects-17 | S3 | MISSING-FILTER | UNCONFIRMED |
-| COL-projects-19 | S3 | COPY | OPEN |
-| COL-projects-20 | S3 | STATE | OPEN |
+| COL-projects-19 | S3 | COPY | DONE-BRANCH |
+| COL-projects-20 | S3 | STATE | DONE-BRANCH |
 | COL-projects-09 | S4 | STATE | UNCONFIRMED |
 | COL-projects-18 | S4 | MISSING-FILTER | UNCONFIRMED |
 | COL-projects-21 | S4 | COPY | OPEN |
-| COL-projects-22 | S4 | MISSING-FILTER | OPEN |
+| COL-projects-22 | S4 | MISSING-FILTER | NOT-A-GAP |
 | COL-projects-23 | S4 | RESPONSIVE | OPEN |
 
 ## Notes (blockers, one line each)
@@ -350,3 +350,5 @@ Merged latest origin/main before editing; no test, lint, typecheck or build runs
 - TPO-settings-audit-33/-73/-75 DONE source-level; -03/-94/-96 still OPEN with partial improvements. `tests/unit/chat9-round6-tpo-settings-and-audit.test.ts` written; not run.
 
 - TPO-settings-audit-03/-13 DONE source, -42 improved but OPEN (course list cap 200). Tests authored; orchestrator runs.
+
+- COL-projects-16/-19/-20 DONE source and COL-projects-22 NOT-A-GAP; tests/unit/chat9-round6-college-projects-parity.test.ts authored, tests NOT run.
