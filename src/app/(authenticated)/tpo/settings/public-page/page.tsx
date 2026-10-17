@@ -41,6 +41,28 @@ export default async function PublicPlacementSettingsPage({
    {value.ready&&!view.canEnable&&!view.enabled?<p role="status" className="mt-3 text-sm text-muted-foreground">
      Public statistics cannot be enabled without a recorded cohort of at least five.
     </p>:null}
+   <section aria-label="Published placement preview" className="mt-5 space-y-3 rounded-xl border border-border bg-surface-subtle p-4">
+    <h2 className="font-semibold">How your public placements look</h2>
+    <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>
+    <div className="grid gap-3 sm:grid-cols-2">
+     {([
+      ["Students placed",published?.placed??null],
+      ["Offers received",published?.offers??null],
+      ["Recruiting employers",published?.employers??null],
+     ] as const).map(([label,number])=><div key={label} className="rounded-lg border border-border bg-surface p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 font-semibold">{number===null?"Not enough data yet":number.toLocaleString("en-IN")}</p>
+     </div>)}
+     {([
+      ["Median package",published?.medianCtcInr??null],
+      ["Highest package",published?.highestCtcInr??null],
+     ] as const).map(([label,number])=><div key={label} className="rounded-lg border border-border bg-surface p-3">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 font-semibold">{number===null?"Not enough data yet":
+       new Intl.NumberFormat("en-IN",{style:"currency",currency:"INR",maximumFractionDigits:0}).format(number)}</p>
+     </div>)}
+    </div>
+   </section>
    <Link href="/placements" className="mt-4 inline-block text-sm text-primary-text underline">
      Open public placements page
    </Link>
