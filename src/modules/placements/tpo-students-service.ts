@@ -1,3 +1,6 @@
+import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {readTpoAfterCollegeMatches} from "./tpo-after-college-filter-service";
+import {readTpoStudentVerificationFacts,studentVerificationFact} from "./tpo-student-verification-facts";
 import {
   and,
   asc,
@@ -742,6 +745,7 @@ export async function getTpoStudentsIntelligence(
   }
 
   const now = new Date();
+  const verificationFacts=await readTpoStudentVerificationFacts(college.id);
 
   const studentRows = learners.map((learner) => {
     const sectionIds =
@@ -818,6 +822,7 @@ export async function getTpoStudentsIntelligence(
       },
       preferencesPresent:
         learner.preferencesMembershipId !== null,
+      verification:studentVerificationFact(verificationFacts,learner.membershipId),
       applications:
         applicationsByMember.get(
           learner.membershipId,
