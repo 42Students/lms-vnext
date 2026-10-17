@@ -18,6 +18,7 @@ const paramsSchema = z.strictObject({
 const backlogCreateSchema = z.strictObject({
   title: z.string().trim().min(1).max(200),
   description: z.string().trim().max(4000).nullable().default(null),
+  approach: z.string().trim().max(4000).nullable().default(null),
   acceptanceCriteria: z.string().trim().max(4000).nullable().default(null),
   priority: z.enum(["LOW","MEDIUM","HIGH","CRITICAL"]).default("MEDIUM"),
   estimatePoints: z.number().int().min(0).max(1000).nullable().default(null),
