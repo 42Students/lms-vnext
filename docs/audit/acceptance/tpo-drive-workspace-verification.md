@@ -34,3 +34,21 @@ Tests listed below are **authored but not executed by chat-5**; orchestrator acc
 | TPO-drive-workspace-R02 | DONE | `src/modules/placements/tpo-applicant-pipeline-service.ts`, `src/modules/placements/tpo-drive-applications-export-model.ts`; `tests/unit/tpo-drive-workspace-s2-round2.test.ts` — `TPO-drive-workspace-R02 treats applicant-search SQL wildcard characters literally`. |
 
 Other S2 cases with partial contracts in the round-2 test files remain **OPEN**, not misrepresented as DONE: 01, 04, 11, 12, 21, 22 (roll/contact now included but broader academic columns absent), 23, 27, 38, 45, 49 (fixed/variable pay and full offer filters still missing), 50, 52, 55, 59, 61, 63 and 67. `TPO-drive-workspace-41` is now wired into the actual round-results page with strict roll matching and a named duplicate/ambiguous-roll regression test. All test execution remains orchestrator-owned.
+
+## Round 3 — inspected S3/S4 drive workspace behavior
+
+Tests have been **written but not run**. All cases below are named in `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts`.
+
+| ID | Result | Code and test evidence |
+|---|---|---|
+| TPO-drive-workspace-07 | DONE | publish query deep link opens lifecycle review; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-07: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-19 | DONE | preset cancellation reasons and student-facing reason note; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-19: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-32 | DONE | filter-empty state links to actual Registered, not applied workspace section; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-32: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-36 | DONE | three round presets available to the TPO; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-36: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-58 | DONE | drive-level Drive day navigation and attendance summary; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-58: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-R04 | DONE | shared workspace nav and active aria-current across subpages; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-R04: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-R05 | DONE | friendly readiness messages instead of internal machine codes; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-R05: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-57 | OPEN | release warning is visible; precise holiday-aware expiry rule remains to be implemented; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-57: validates the scoped drive-workspace behavior`. |
+| TPO-drive-workspace-74 | NOT-A-GAP | legacy recruiter key bug is not inherited; vNext returns college-scoped recruiterContacts; `tests/unit/tpo-drive-workspace-s3-chat5-round3.test.ts` — `TPO-drive-workspace-74: validates the scoped drive-workspace behavior`. |
+
+The new S3 empty-state and offer release copy lives in `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` and `offers/page.tsx`. The actual target is `id="drive-registered-not-applied"` in `src/components/placements/placement-drive-workspace.tsx`. Shared GR helpers were not yet on origin/main during this round; raw provider codes were not introduced.
