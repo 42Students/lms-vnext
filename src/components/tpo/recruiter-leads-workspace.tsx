@@ -629,23 +629,19 @@ export function RecruiterLeadsWorkspace({
                 {STAGES.map(x => <option value={x} key={x}>{x === "ALL" ? "All stages" : RECRUITER_STAGE_LEGACY_LABELS[x]}</option>)}
               </select>
             </label>
-            <label className="min-w-36 text-sm">
-              View
-              <select className={inputStyle + " mt-1"} value={view}
-                onChange={e => {
-                  if (e.target.value === "campaigns") {
-                    window.location.assign("/tpo/recruiters?view=campaigns");
-                  } else {
-                    const nextView=e.target.value as typeof view;
-                   const params=new URLSearchParams(window.location.search);
-                   if(nextView==="table")params.delete("view");else params.set("view",nextView);
-                   window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
-                   setView(nextView);
-                  }
-                }}>
-                <option value="table">Table</option><option value="board">Board</option><option value="companies">Companies ({companies.length})</option><option value="campaigns">Emails</option>
-              </select>
-            </label>
+            <nav role="tablist" aria-label="Engage views" className="flex flex-wrap items-center gap-2">
+              {([["table","Table"],["board","Board"],["companies","Companies ("+companies.length+")"],["campaigns","Emails"]] as const).map(([key,label])=>
+                <button type="button" role="tab" key={key} aria-selected={key===view}
+                  className={key===view?"min-h-10 rounded-md bg-primary px-3 text-sm font-semibold text-on-primary":"min-h-10 rounded-md border border-border px-3 text-sm text-body"}
+                  onClick={()=>{
+                    const params=new URLSearchParams(window.location.search);
+                    if(key==="campaigns"){params.set("view","campaigns");
+                      window.location.assign("/tpo/recruiters?"+params.toString());return;}
+                    if(key==="table")params.delete("view");else params.set("view",key);
+                    window.history.replaceState(null,"",window.location.pathname+(params.size?"?"+params.toString():""));
+                    setView(key);
+                  }}>{label}</button>)}
+            </nav>
           </div>
           <div className="space-y-3">
             <button type="button" className={buttonStyle} onClick={()=>setFilterOpen(x=>!x)}
