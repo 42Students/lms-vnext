@@ -48,7 +48,7 @@ Audit: `docs/audit/pages/learner/projects.md` (and `projects-review.md` if prese
 | LEARNER-projects-35 | S4 | COPY | DONE |
 | LEARNER-projects-R04 | S4 | MISSING-FIELD | DONE |
 
-## public/auth-public-1-login-session (39: DONE 26, NOT-A-GAP 2, OPEN 8, UNCONFIRMED 3)
+## public/auth-public-1-login-session (39: DONE 27, NOT-A-GAP 2, OPEN 7, UNCONFIRMED 3)
 
 Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-public-1-login-session-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/public-auth-public-1-login-session-verification.md`.
 
@@ -94,7 +94,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
 | PUB-auth-public-39 | S4 | MISSING-PAGE | DONE |
 
-## college/academic-setup (34: DONE 31, NOT-A-GAP 2, UNCONFIRMED 1)
+## college/academic-setup (34: DONE 32, NOT-A-GAP 2)
 
 Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-academic-setup-verification.md`.
 
@@ -221,7 +221,7 @@ Audit: `docs/audit/pages/learner/course-detail.md` (and `course-detail-review.md
 | LEARNER-course-detail-18 | S4 | STATE | UNCONFIRMED |
 | LEARNER-course-detail-20 | S4 | COPY | DONE |
 
-## superadmin/tenants-modules-2 (12: OPEN 5, FIXED-ON-MAIN 4, UNCONFIRMED 3)
+## superadmin/tenants-modules-2 (12: DONE 5, OPEN 2, FIXED-ON-MAIN 3, UNCONFIRMED 2)
 
 Audit: `docs/audit/pages/superadmin/tenants-modules-2.md` (and `tenants-modules-2-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/superadmin-tenants-modules-2-verification.md`.
 
