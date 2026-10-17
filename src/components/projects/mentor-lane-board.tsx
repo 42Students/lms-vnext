@@ -9,7 +9,7 @@ import {ProjectTaskComments} from "./project-task-comments";
 import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
 import {projectTaskDueState} from "@/modules/projects/project-task-visible-facts-model";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
-type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
+type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;createdAt:Date;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
  assigneeMembershipId:string|null;dueDate:string|null;estimatePoints:number|null;taskType:string|null};
 type Sprint={id:string;title:string;status:string;releaseId:string};
