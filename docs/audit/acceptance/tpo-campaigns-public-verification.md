@@ -66,3 +66,12 @@ Tests have not been run.
 | --- | --- | --- |
 | TPO-campaigns-public-04 | PARTIAL — OPEN | Campaign send now creates persisted college delivery batch and per-recipient provider receipt records with actual delivery statuses, `tests/unit/chat2-campaign-open-increments.test.ts` **TPO-campaigns-public-04…**. Separate invite/legacy non-campaign provider history is not fully present; do not represent email counts as universal. |
 | TPO-campaigns-public-23 | PARTIAL — OPEN | Verified college/public recruiter link join generates audited event, scoped TPO bell, increments persisted join count and does not infer a preview as an open. Same named **TPO-campaigns-public-23…** test. External welcome-email delivery requires a configured provider and open counting requires a distinct verified beacon. |
+
+
+## Chat-2 gap-closure continuation (2026-10-18)
+| ID | Evidence and status |
+| --- | --- |
+| TPO-campaigns-public-04 | **PARTIAL / OPEN.** Campaign dispatch writes real college-scoped messaging batches and receipts. Full provider history including recruiter invites and welcome email still needs actual linked sending, not an inferred sent count. `tests/unit/chat2-campaign-open-increments.test.ts`. |
+| TPO-campaigns-public-23 | **PARTIAL / OPEN.** Verified public join has immutable audit/bell and joins counter; a truthful welcome-email provider result and opt-in open-beacon count remain missing; preview GET remains read-only. Same named test. |
+| TPO-campaigns-public-17 / 25 / R08 | **Previous decisions retained.** Purpose-scoped HMAC unsubscribe allows historical opt-out; join links are explicitly enabled/revoked/replaced and displayed once; public join provenance is audited without silently skipping TPO review. `tests/unit/chat2-unconfirmed-campaign-decisions.test.ts`. |
+| TPO-campaigns-public-37 | **Intentional privacy restriction.** Public aggregate counts remain opt-in and hidden for small cohorts; tests assert five-person minimum and missing SELECTED evidence. |
