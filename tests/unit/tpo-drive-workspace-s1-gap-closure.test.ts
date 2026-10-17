@@ -23,13 +23,13 @@ describe("TPO drive workspace verified S1 gaps",()=>{
   expect(roundImportActionSchema.safeParse({action:"STAGE_IMPORT",confirmed:true,previewToken:"a".repeat(64),
     missingPolicy:"MARK_NOT_CLEARED",overrides:[],skippedLines:[4,4]}).success).toBe(false);
  });
- it("TPO-drive-workspace-18 retains an accepted offer while closing only a published drive with reviewed counts",()=>{
+ it("TPO-drive-workspace-18 retains accepted offers on published cancellations and allows reviewed draft cancellations",()=>{
   const original={submittedApplications:2,openRounds:2,issuedOffers:1,acceptedOffers:1};
   expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE",original,original)).toBe("ALLOW");
   expect(isIssuedOfferCancelable("ISSUED")).toBe(true);
   expect(isIssuedOfferCancelable("ACCEPTED")).toBe(false);
   expect(evaluateTpoDriveCancellation("PUBLISHED","ACTIVE",original,{...original,openRounds:1})).toBe("PREVIEW_STALE");
-  expect(evaluateTpoDriveCancellation("DRAFT","ACTIVE",original,original)).toBe("READ_ONLY");
+  expect(evaluateTpoDriveCancellation("DRAFT","ACTIVE",original,original)).toBe("ALLOW");
  });
  it("TPO-drive-workspace-28 dedupes same-day reminders and requires confirmed reviewed recipient token",()=>{
   const day=placementReminderDay(new Date("2099-04-01T20:00:00Z"));
