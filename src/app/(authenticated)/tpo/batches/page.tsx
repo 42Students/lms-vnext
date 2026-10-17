@@ -21,9 +21,11 @@ import { batchDirectoryFilterSchema, filterTpoBatchDirectory, batchDirectoryStat
 import {tpoBatchPlacementState,tpoBatchMatchesPlacementState} from "@/modules/placements/tpo-batch-state-label-model";
 import {visibleTpoBatchWorkingSet} from "@/modules/placements/tpo-batch-working-set-model";
 import {sortTpoBatchWorkingPriority} from "@/modules/placements/tpo-batch-priority-sort-model";
+import {parseTpoBatchFacetQuery,filterTpoBatchFacets} from "@/modules/placements/tpo-batch-facets-model";
+import {TpoBatchFacetFilters} from "@/components/tpo/tpo-batch-facet-filters";
 export const dynamic="force-dynamic";
 
-export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[]}>}){
+export default async function TpoBatchesPage({searchParams}:{searchParams:Promise<{q?:string|string[];state?:string|string[];sort?:string|string[];program?:string|string[];department?:string|string[];deadline?:string|string[];page?:string|string[];pageSize?:string|string[];showOlder?:string|string[];facetState?:string|string[];facetProgram?:string|string[];facetDepartment?:string|string[];facetFinalYear?:string|string[]}>}){
  const raw=await searchParams,parsed=batchDirectoryFilterSchema.safeParse({q:Array.isArray(raw.q)?raw.q[0]:raw.q,state:Array.isArray(raw.state)?raw.state[0]:raw.state});
  const sortParsed=tpoBatchSortSchema.safeParse(Array.isArray(raw.sort)?raw.sort[0]:raw.sort);
  const programParsed=tpoBatchProgramSchema.safeParse(Array.isArray(raw.program)?raw.program[0]:raw.program);
@@ -46,19 +48,27 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null,
  },parsed.data.state));
  const candidates=data.ready?filterTpoBatchDeadline(stateFiltered,deadlineParsed.data,new Date()):stateFiltered;
+ const facetResult=parseTpoBatchFacetQuery(raw,data.batches);
+ if(!facetResult.success)return <div role="alert">Invalid batch checklist filters. <Link href="/tpo/batches">Clear all</Link></div>;
+ const facets=facetResult.data;
+ const facetRows=candidates.map(batch=>({...batch,placementState:tpoBatchPlacementState({
+  finishedAt:batch.finishedAt,eligible:eligibility?.get(batch.id)?.eligible??null,
+ })}));
+ const selectedFacets=eligibility===null?{...facets,states:[]}:facets;
+ const facetFiltered=filterTpoBatchFacets(facetRows,selectedFacets);
  const sorted=sortParsed.data==="WORKING_SET"?
-  sortTpoBatchWorkingPriority(candidates,eligibility??new Map()):sortTpoBatchNames(candidates,sortParsed.data);
+  sortTpoBatchWorkingPriority(facetFiltered,eligibility??new Map()):sortTpoBatchNames(facetFiltered,sortParsed.data);
  const showOlder=(Array.isArray(raw.showOlder)?raw.showOlder[0]:raw.showOlder)==="1";
  const currentYear=new Date().getFullYear();
  const workingSet=visibleTpoBatchWorkingSet(sorted,currentYear,showOlder,
-  Boolean(parsed.data.q||parsed.data.state!=="ALL"||programParsed.data||departmentParsed.data||deadlineParsed.data!=="ALL"));
+  Boolean(parsed.data.q||parsed.data.state!=="ALL"||programParsed.data||departmentParsed.data||deadlineParsed.data!=="ALL"||facets.states.length||facets.programs.length||facets.departments.length||facets.finalYears.length));
  const batches=workingSet.visible;
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
  const [journey,recent]=await Promise.all([
   listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)).catch(()=>null),
   listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)).catch(()=>null),
  ]);
- const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{})};
+ const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{}),facetState:facets.states,facetProgram:facets.programs,facetDepartment:facets.departments,facetFinalYear:facets.finalYears.map(String)};
  const programs=listTpoBatchPrograms(data.batches);
  const departments=listTpoBatchDepartments(data.batches);
  const working=data.batches.filter(batch=>!batch.finishedAt);
@@ -68,6 +78,16 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const placedCount=journey===null?null:working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
  return <main className="min-w-0 space-y-5">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
+  <TpoBatchFacetFilters key={JSON.stringify(facets)} initial={facets}
+   rows={facetRows} baseQuery={{
+    q:parsed.data.q,state:parsed.data.state,program:programParsed.data,
+    department:departmentParsed.data,deadline:deadlineParsed.data,
+    sort:sortParsed.data,pageSize:String(pageParsed.data.pageSize),
+    ...(showOlder?{showOlder:"1"}:{}),
+   }}/>
+  {eligibility===null&&facets.states.length>0?<p role="status" className="text-sm">
+    State checklist filtering is unavailable until eligibility data loads; other filters remain applied.
+   </p>:null}
   <form className="flex flex-wrap gap-2" action="/tpo/batches" method="get">
    <TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/>
    <label className="text-sm">State<select name="state" defaultValue={parsed.data.state} className="mt-1 block min-h-11 rounded border border-border bg-surface px-3"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></select></label>
