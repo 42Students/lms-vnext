@@ -1037,8 +1037,7 @@ export async function actOnPlacementOffer(
 
 /**
  * LEARNER-placements-R02: advisory, learner-owned impact read.
- * Matches the currently registered ACCEPT cascade (pending offers declined,
- * other submitted applications withdrawn). The POST rechecks under locks.
+ * Matches the current college-policy-aware ACCEPT cascade (Dream/uplift/\n * internship exemptions included). The POST rechecks under locks.
  */
 export async function previewOwnOfferAcceptanceImpact(
  context:RequestContext,rawOfferId:unknown,
@@ -1051,13 +1050,22 @@ export async function previewOwnOfferAcceptanceImpact(
     !can(context,"placements.read",{collegeId:membership.collegeId,
       organizationId:membership.organizationId}))
    throw new AuthorizationError("placements.read");
- const [otherOffers,applications]=await Promise.all([
+ const [[acceptedRole],[collegeRules],otherOffers,applications]=await Promise.all([
+  getDb().select({employmentType:placementJobRoleOptions.employmentType})
+   .from(placementJobRoleOptions)
+   .where(eq(placementJobRoleOptions.id,current.application.roleOptionId)).limit(1),
+  getDb().select({maxHeldOffers:placementCollegeRules.maxHeldOffers,
+   upliftPct:placementCollegeRules.upliftPct})
+   .from(placementCollegeRules)
+   .where(eq(placementCollegeRules.collegeId,membership.collegeId)).limit(1),
   getDb().select({
-   id:placementOffers.id,status:placementOffers.status,
-   title:placementJobs.title,
+   id:placementOffers.id,status:placementOffers.status,kind:placementOffers.kind,
+   title:placementJobs.title,annualCtcInr:placementOffers.annualCtcInr,
+   roleEmploymentType:placementJobRoleOptions.employmentType,
+   jobEmploymentType:placementJobs.employmentType,isDream:placementJobs.isDream,
   }).from(placementOffers)
-   .innerJoin(placementApplications,
-    eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+   .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .where(and(eq(placementApplications.membershipId,membership.id),
     eq(placementJobs.collegeId,membership.collegeId),
@@ -1066,20 +1074,46 @@ export async function previewOwnOfferAcceptanceImpact(
   getDb().select({
    id:placementApplications.id,title:placementJobs.title,
    status:placementApplications.status,
+   annualCtcInr:placementJobRoleOptions.minimumAnnualCtcInr,
+   jobAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
+   roleEmploymentType:placementJobRoleOptions.employmentType,
+   jobEmploymentType:placementJobs.employmentType,
+   isDream:placementJobs.isDream,
   }).from(placementApplications)
+   .innerJoin(placementJobRoleOptions,eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
    .where(and(eq(placementApplications.membershipId,membership.id),
     eq(placementJobs.collegeId,membership.collegeId))),
  ]);
- const withdrawn=applications.filter(row=>row.id!==current.application.id&&
-  row.status==="SUBMITTED");
- const stayed=applications.filter(row=>row.id===current.application.id||
-  row.status!=="SUBMITTED");
+ const acceptedCountsAsPlaced=current.offer.kind==="OFFER" &&
+  !isPlacementInternship(acceptedRole?.employmentType) &&
+  !isPlacementInternship(current.job.employmentType);
+ const wouldKeep=(candidate:{
+  roleEmploymentType:string;jobEmploymentType:string;
+  isDream:boolean;annualCtcInr:number|null;
+ }):boolean=>shouldKeepPlacementCascadeSibling({
+  acceptedCountsAsPlaced,
+  siblingIsInternship:isPlacementInternship(candidate.roleEmploymentType) ||
+   isPlacementInternship(candidate.jobEmploymentType),
+  siblingIsDream:candidate.isDream,
+  siblingAnnualCtcInr:candidate.annualCtcInr,
+  acceptedAnnualCtcInr:current.offer.annualCtcInr,
+  maxHeldOffers:collegeRules?.maxHeldOffers??1,
+  upliftPct:collegeRules?.upliftPct??40,
+ });
+ const withdrawn=applications.filter(candidate=>
+  candidate.id!==current.application.id&&candidate.status==="SUBMITTED" &&
+  !wouldKeep({...candidate,annualCtcInr:candidate.annualCtcInr??candidate.jobAnnualCtcInr}));
+ const stayed=applications.filter(candidate=>
+  candidate.id===current.application.id || candidate.status!=="SUBMITTED" ||
+  wouldKeep({...candidate,annualCtcInr:candidate.annualCtcInr??candidate.jobAnnualCtcInr}));
+ const declined=otherOffers.filter(candidate=>
+  candidate.status==="ISSUED" && candidate.kind==="OFFER" && !wouldKeep(candidate));
  return {
   offerId,offerStatus:current.offer.status,expiresAt:current.offer.expiresAt?.toISOString()??null,
   blockedByAnotherAcceptedOffer:otherOffers.some(row=>row.status==="ACCEPTED"),
   withdrawn:withdrawn.map(row=>({id:row.id,title:row.title})),
-  declined:otherOffers.filter(row=>row.status==="ISSUED").map(row=>({id:row.id,title:row.title})),
+  declined:declined.map(row=>({id:row.id,title:row.title})),
   stayed:stayed.map(row=>({id:row.id,title:row.title})),
   previewOnly:true,
  };
