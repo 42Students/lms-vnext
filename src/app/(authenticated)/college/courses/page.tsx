@@ -4,7 +4,7 @@ import { AdminCourseOverview } from "@/components/courses/admin-course-overview"
 import { PageHeader } from "@/components/ui/page-header";
 import { getAdminCourseWorkspace } from "@/modules/courses/admin-course-workspace";
 
-export default async function CollegeCoursesPage() {
+export default async function CollegeCoursesPage({searchParams}:{searchParams:Promise<{duplicate?:string|string[]}>}) {
   const context =
     await getCurrentRequestContext();
   const membership = context.membership;
@@ -20,6 +20,8 @@ export default async function CollegeCoursesPage() {
       true,
     );
 
+  const raw=await searchParams;
+  const duplicateCourseId=typeof raw.duplicate==="string"&&/^[a-f0-9-]{36}$/i.test(raw.duplicate)?raw.duplicate:undefined;
   return (
     <div className="space-y-6">
       <PageHeader
@@ -28,6 +30,7 @@ export default async function CollegeCoursesPage() {
       />
       <AdminCourseOverview
         workspace={workspace}
+        duplicateCourseId={duplicateCourseId}
         offeringBasePath="/college/courses/offerings"
         allowOfferingLifecycle
       />
