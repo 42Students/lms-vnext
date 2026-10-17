@@ -370,6 +370,13 @@ export default async function HrPlacementJobPage({
         <RecruiterConversationLiveRefresh/>
         <h2 className="text-lg font-semibold text-foreground">Discussion</h2>
         <p className="text-sm text-body">Private hiring-drive conversation with the placement cell. The company cannot read other recruiters' conversations.</p>
+        {requestData?.party==="COMPANY"&&requestData.requests.length>0?
+          <div className="rounded-lg border border-border bg-surface-secondary p-3 text-sm">
+            <p className="font-semibold text-foreground">Change-request activity · {requestData.requests.length} recorded</p>
+            <p className="mt-1 text-body">Review submitted requests, college decisions and replies in the Requests tab.</p>
+            <Link href={"/recruiter/drives/"+workspace.job.id+"?tab=requests"+returnQuery}
+              className="mt-2 inline-flex min-h-10 items-center font-semibold text-primary-text underline">Open change requests →</Link>
+          </div>:null}
         {threadMessages?<div className="space-y-3">
           <p className="text-xs text-muted-foreground">{threadMessages.total} recorded messages</p>
           <ol aria-label="Drive discussion history" className="max-h-[36rem] space-y-2 overflow-y-auto">
