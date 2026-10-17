@@ -8,6 +8,11 @@ export const tpoRecruiterGrantChangeSchema = z.discriminatedUnion("action", [
     title: z.string().trim().max(160).nullable().optional(),
   }).strict(),
   z.object({
+    action:z.literal("EXTEND"),confirmed:z.literal(true),
+    grantId:z.string().uuid(),expectedUpdatedAt:z.iso.datetime({offset:true}),
+    months:z.union([z.literal(3),z.literal(6),z.literal(12)]),
+  }).strict(),
+  z.object({
     action: z.literal("REVOKE"), confirmed: z.literal(true),
     grantId: z.string().uuid(),
     expectedUpdatedAt: z.iso.datetime({ offset: true }),

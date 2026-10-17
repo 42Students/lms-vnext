@@ -82,3 +82,40 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   {notice?<p role="status" className="text-sm">{notice}</p>:null}
  </section>;
 }
+
+/** Changes future grants only. Existing recruiter expiries are not silently extended. */
+export function TpoRecruiterDurationEditor({initial,version}:{initial:number;version:string|null}){
+ const router=useRouter();
+ const [months,setMonths]=useState(initial),[saved,setSaved]=useState(initial);
+ const [currentVersion,setCurrentVersion]=useState(version);
+ const [busy,setBusy]=useState(false),[notice,setNotice]=useState(""),[error,setError]=useState("");
+ async function save(){
+  if(busy||![3,6,12,24].includes(months))return;
+  setBusy(true);setError("");setNotice("");
+  try{
+   const response=await fetch("/api/placements/tpo/settings/communication",{
+    method:"PATCH",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({section:"RECRUITER_DURATION",recruiterAccessMonths:months,expectedVersion:currentVersion}),
+   });
+   const data=await response.json() as ResponseBody;
+   if(!response.ok)throw Error(saveError(data));
+   setSaved(months);setCurrentVersion(data.version??null);setNotice("Saved");router.refresh();
+  }catch(caught){setError(caught instanceof Error?caught.message:"Settings were not saved.");}
+  finally{setBusy(false);}
+ }
+ return <section className="space-y-3 rounded-xl border border-border bg-surface p-5">
+  <h2 className="font-semibold">Recruiter access lasts</h2>
+  <label className="block text-sm">Access granted to a recruiter lasts
+   <select value={[3,6,12,24].includes(months)?months:6}
+    onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
+    className="mt-2 block min-h-11 rounded-md border border-border bg-surface px-3">
+    {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
+   </select>
+  </label>
+  <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
+  <button type="button" onClick={()=>void save()} disabled={busy||saved===months}
+   className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">Save</button>
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  {notice?<p role="status" className="text-sm">{notice}</p>:null}
+ </section>;
+}
