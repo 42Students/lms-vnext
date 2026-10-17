@@ -30,6 +30,7 @@ export async function listSuperAdminContentDirectory(context:RequestContext,rawK
  const source=db.select({
   id:aliased(lessonContents.id,"admin_content_id"),
   title:aliased(lessonContents.title,"admin_content_title"),
+  notes:lessonContents.notes,
   contentType:lessonContents.contentType,
   status:aliased(lessonContents.status,"admin_content_status"),
   sequence:lessonContents.sequence,
