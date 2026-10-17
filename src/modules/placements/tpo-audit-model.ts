@@ -137,6 +137,12 @@ export function formatTpoAuditEventType(
    "placements.tpo_job_type.updated":"Job types changed",
    "placements.tpo_job_type.deleted":"Job types changed",
    "placements.tpo_bulk_undo.applied":"Bulk action undone",
+   "placements.tpo_college_rules.changed":"Placement rules changed",
+   "placements.tpo_communication_setting.updated":"Placement settings changed",
+   "placements.tpo_followup.created":"Recruiter follow-up added",
+   "placements.tpo_followup.moved":"Recruiter follow-up moved",
+   "PLACEMENTS_RECRUITER_ACCESS_GRANTED":"Recruiter access granted",
+   "PLACEMENTS_RECRUITER_ACCESS_REVOKED":"Recruiter access revoked",
   };
   if(Object.prototype.hasOwnProperty.call(legacy,value))return legacy[value];
   return value

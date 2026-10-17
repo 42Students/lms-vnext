@@ -1,3 +1,4 @@
+import {TPO_LEGACY_REPORT_COPY} from "@/modules/placements/tpo-legacy-report-copy";
 import {TpoReportPresentation} from "@/components/placements/tpo-report-presentation";
 import {Suspense} from "react";
 import {TpoReportSavedFilters} from "@/components/placements/tpo-report-saved-filters";
@@ -99,7 +100,7 @@ export default async function TpoLeadsReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Recruiter engagement"
-        description="College-wide CRM lead stages, recorded acquisition sources and observable invitation/account-linkage conversion signals."
+        description={TPO_LEGACY_REPORT_COPY["/tpo/reports/leads"].description}
         actions={
           <ReportCsvLink
             workspace={workspace}
