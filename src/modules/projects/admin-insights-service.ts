@@ -471,6 +471,7 @@ export async function listProjectAdminRiskQueue(
           projectInstances.slug,
           `%${query.q}%`,
         ),
+        sql`${projectInstances.id}::text ilike ${"%"+query.q+"%"}`,
       )
     : undefined;
   const lastActivityAt = sql<Date>`greatest(
