@@ -9,6 +9,6 @@ describe("SA-tenants-modules-24 organization mutation audit",()=>{
  });
  it("emits an event from the mutation transaction",()=>{
   const src=readFileSync(new URL("../../src/modules/organizations/service.ts",import.meta.url),"utf8");
-  expect((src.match(/recordActivityEventInTransaction\(tx,context/g)??[]).length).toBe(3);
+  expect((src.match(/recordActivityEventInTransaction\(tx,context/g)??[]).length).toBe(4);
  });
 });

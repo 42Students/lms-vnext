@@ -4,6 +4,7 @@ const read=(p:string)=>readFileSync(new URL("../../"+p,import.meta.url),"utf8");
 const legacyA=read("docs/audit/legacy-copy-A.md");
 const legacyB=read("docs/audit/legacy-copy-B.md");
 const workspace=read("src/components/projects/project-workspace.tsx");
+const resourceList=read("src/components/projects/project-resource-list.tsx");
 const college=read("src/components/projects/project-admin-nav.tsx");
 const mentor=read("src/app/(authenticated)/mentor/projects/[projectId]/page.tsx");
 const learner=read("src/app/(authenticated)/learn/projects/[projectId]/page.tsx");
@@ -16,7 +17,9 @@ describe("Phase 2 exact old-LMS Projects headings and empty states",()=>{
     ];
     for(const value of words){
       expect(legacyA).toContain(value);
-      expect(workspace).toContain(value);
+      // The empty-state copy was moved into the resource directory component.
+      // Assert where it renders rather than reintroducing duplicate UI.
+      expect(value.startsWith("No resources yet.")?resourceList:workspace).toContain(value);
     }
     for(const stale of ["Canonical college memberships","Template and runtime links available","No active resources."])
       expect(workspace).not.toContain(stale);

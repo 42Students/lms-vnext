@@ -30,12 +30,18 @@ describe("chat-15 evidence-based UNCONFIRMED decisions",()=>{
   expect(dashboard).toContain('href="/learn/courses"');
   expect(dashboard).toContain("Active Courses");
  });
- it("LEARNER-home-courses-14 does not pass off discussions as official announcements",()=>{
+ it("LEARNER-home-courses-14 uses tenant-scoped official class notices, never discussion posts",()=>{
   const page=source("src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx");
-  expect(page).toContain("listCourseDiscussionMessages(");
+  const official=source("src/modules/courses/learner-course-announcements-service.ts");
+  expect(page).toContain("listLearnerCourseClassAnnouncements(context,courseMeta.sectionId)");
   expect(page).toContain("courseUpdates={courseUpdates}");
-  // Must remain OPEN until a separately scoped announcement source is wired.
-  expect(page).not.toContain("listCourseAnnouncements(");
+  expect(page).not.toContain("listCourseDiscussionMessages(");
+  expect(official).toContain('eq(db10Announcements.receiverType,"CLASS")');
+  expect(official).toContain("eq(db10Announcements.receiverId,sectionId)");
+  expect(official).toContain("eq(db10Announcements.collegeId,member.collegeId)");
+  expect(official).toContain("eq(db10Announcements.organizationId,member.organizationId)");
+  expect(official).toContain('inArray(db10Announcements.senderType,["COLLEGE_ADMIN","FACULTY"])');
+  expect(official).toContain('placementTableExists("announcements")');
  });
  it("LEARNER-learning-misc-25 does not execute arbitrary learner-visible question HTML",()=>{
   const attempt=source("src/components/courses/learner-quiz-attempt.tsx");

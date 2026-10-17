@@ -13,8 +13,10 @@ describe("TPO public placements publication and copy",()=>{
  });
  it("TPO-campaigns-public-36 uses the college-specific legacy heading and removes platform-only footer",()=>{
   const p=src("src/app/placements/page.tsx");
-  expect(p).toContain('"Placements at "+(college?.collegeName');
-  expect(p).toContain("Recruit from us.");
+  expect(p).toContain('{college?.collegeName??"College placements"}');
+  expect(p).toContain("PublicRecruitFromUs");
+  const copy=src("src/components/placements/public-recruit-from-us.tsx");
+  expect(copy).toContain('aria-label="Recruit from us"');
   expect(p).not.toContain("42Students · Placements");
   expect(p).not.toContain("Back to college home");
   expect(p).toContain('publicPlacementDisclosure([');

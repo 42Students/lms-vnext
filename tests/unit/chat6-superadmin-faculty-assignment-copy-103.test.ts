@@ -13,7 +13,9 @@ describe("Super Admin faculty assignment copy and audited removal",()=>{
   const action=source("src/components/courses/admin-course-actions.tsx");
   const route=source("src/app/api/courses/teaching-assignments/[assignmentId]/route.ts");
   const service=source("src/modules/courses/teaching-assignment-service.ts");
-  expect(page).toContain('row.status==="ACTIVE"?<TeachingAssignmentActions legacyCopy');
+  expect(page).toContain('if(row.status!=="ACTIVE")return null;');
+  expect(page).toContain("<TeachingAssignmentActions legacyCopy");
+  expect(page).toContain("SuperAdminTeachingRoleEdit");
   expect(action).toContain("Delete teaching assignment?");
   expect(action).toContain("This removes the faculty from teaching the listed course.");
   expect(action).toContain('legacyCopy?"Remove teaching assignment":"End Assignment"');

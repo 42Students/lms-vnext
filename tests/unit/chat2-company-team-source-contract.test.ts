@@ -1,36 +1,50 @@
 import {readFileSync} from "node:fs";
 import {describe,expect,it} from "vitest";
 const src=(p:string)=>readFileSync(p,"utf8");
-describe("Company discussion tenant enforcement and reachability",()=>{
- it("TPO-companies-05 loads only college-related company conversations under persisted placement permissions",()=>{
+
+describe("Company Team tenant enforcement and source contract",()=>{
+ it("TPO-companies-05 reads only college-related company messages behind persisted placement-team permissions",()=>{
   const service=src("src/modules/placements/tpo-company-team-service.ts");
   expect(service).toContain("assertPersistedPlatformPermission(tx,context");
   expect(service).toContain('eq(placementCompanyRelationships.collegeId,college.id)');
   expect(service).toContain('eq(placementCompanyRelationships.companyId,companyId)');
-  expect(service).toContain('eq(placementTpoCompanyThreadMessages.collegeId,college.id)');
+  expect(service).toContain("eq(messages.collegeId,college.id)");
   expect(service).toContain("hasPlacementTeamMembership(context)");
-  expect(service).toContain("placementTableExists(\"placement_tpo_company_threads\")");
+  expect(service).toContain('placementTableExists("placement_tpo_company_team_messages")');
+  expect(service).toContain('placementTableExists("placement_tpo_company_team_follows")');
  });
- it("TPO-companies-05 persists one company thread with idempotent message writes and collision checks",()=>{
+ it("TPO-companies-05 persists scoped messages, follows and assignee audits without inventing an old thread table",()=>{
   const service=src("src/modules/placements/tpo-company-team-service.ts");
-  expect(service).toContain('tx.insert(placementTpoCompanyThreads)');
-  expect(service).toContain('tx.insert(placementTpoCompanyThreadMessages)');
-  expect(service).toContain(".onConflictDoNothing()");
-  expect(service).toContain("message.body!==input.body");
-  expect(service).toContain('TPO_COMPANY_TEAM_IDEMPOTENCY_CONFLICT');
+  expect(service).toContain("tx.insert(messages).values");
+  expect(service).toContain("tx.insert(activityEvents).values");
+  expect(service).toContain("tx.insert(inAppNotifications).values");
+  expect(service).toContain("if(!link)throw new TpoCompanyTeamError");
   expect(service).toContain('eq(placementCompanyRelationships.status,"ACTIVE")');
+  expect(service).toContain("notifyIds.delete(membership.id)");
+  expect(service).toContain('inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])');
  });
- it("TPO-inbox-team-16 TPO-companies-05 use explicit proposed migration instead of pretending storage is registered",()=>{
-  const migration=src("docs/proposed-migrations/tpo-company-team-conversations.sql");
+ it("TPO-inbox-team-16 TPO-companies-05 retain the current staged storage proposal and never simulate an installed table",()=>{
+  const migration=src("docs/proposed-migrations/chat3-tpo-company-team.sql");
   const schema=src("src/db/schema/tpo-company-team.ts");
-  expect(migration).toContain("tpo_company_threads_one_per_relationship_uq");
-  expect(migration).toContain("tpo_company_message_dedupe_uq");
-  expect(migration).toContain("tpo_company_message_author_college_fk");
-  expect(schema).toContain("placementTpoCompanyThreads");
-  expect(schema).toContain("placementTpoCompanyThreadMessages");
+  for(const name of ["placement_tpo_company_team_messages","placement_tpo_company_team_follows",
+    "tpo_company_team_author_college_fk","tpo_company_team_follow_member_college_fk"]){
+   expect(migration).toContain(name);
+   expect(schema).toContain(name);
+  }
+  expect(schema).toContain("placementTpoCompanyTeamMessages");
+  expect(schema).toContain("placementTpoCompanyTeamFollows");
   expect(src("src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx"))
    .toContain("require their registered database migration");
   expect(src("src/app/(authenticated)/tpo/companies/[companyId]/page.tsx"))
    .toContain("Open in Team · Company discussion");
+ });
+ it("TPO-inbox-team-16 retains archived company history while all writes still demand ACTIVE relationships",()=>{
+  const service=src("src/modules/placements/tpo-company-team-service.ts");
+  const page=src("src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx");
+  expect(service).toContain("allowArchivedRead=false");
+  expect(service).toContain("companyScope(context,companyId,true)");
+  expect(service).toContain('canPost:company.relationshipStatus==="ACTIVE"');
+  expect(page).toContain("result.canPost?");
+  expect(page).toContain("This relationship is archived. Its discussion is read-only.");
  });
 });

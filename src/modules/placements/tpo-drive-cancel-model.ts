@@ -31,7 +31,7 @@ export type TpoDriveCancelDecision =
 
 /**
  * Cancellation is the audited, stronger sibling of closure: the drive moves
- * to CLOSED and every still-open round is cancelled. Still-issued offers
+ * to CANCELLED and every still-open round is cancelled. Still-issued offers
  * are withdrawn atomically; accepted offers are retained and not revoked.
  */
 export function evaluateTpoDriveCancellation(
@@ -40,7 +40,10 @@ export function evaluateTpoDriveCancellation(
   current: TpoDriveCancelImpact,
   expected: TpoDriveCancelImpact,
 ): TpoDriveCancelDecision {
-  if (status !== "PUBLISHED" || seasonStatus !== "ACTIVE") return "READ_ONLY";
+  // An unpublished draft has no live season or applicants to protect. The
+  // versioned preview remains mandatory. A live drive needs an active season.
+  if (status !== "DRAFT" && (status !== "PUBLISHED" || seasonStatus !== "ACTIVE"))
+    return "READ_ONLY";
   if (
     current.submittedApplications !== expected.submittedApplications ||
     current.openRounds !== expected.openRounds ||
