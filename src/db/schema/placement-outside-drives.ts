@@ -14,7 +14,7 @@ import {
 import { colleges } from "./colleges";
 import { placementCompanyRelationships } from "./placements";
 import { users } from "./users";
-import {collegeMemberships} from "./college-memberships";
+import {collegeMemberships} from "./memberships";
 
 export const placementOutsideDriveRecords = pgTable(
   "placement_outside_drive_records",
