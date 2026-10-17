@@ -56,4 +56,20 @@ describe("chat-6 Super Admin selected-college course directory parity",()=>{
     expect(actions).toContain("active Course Offering(s) must be archived");
     expect(backend).toContain('COURSE_HAS_ACTIVE_OFFERINGS');
   });
+
+  it("SA-academics-people-55 keeps legacy course headings and creation update feedback with department recovery",()=>{
+    const form=read("src/components/courses/admin-course-create-panel.tsx");
+    const overview=read("src/components/courses/admin-course-overview.tsx");
+    const actions=read("src/components/courses/admin-course-actions.tsx");
+    const copy=read("src/modules/courses/college-courses-copy.ts");
+    expect(copy).toContain('createTitle: "Create New Course"');
+    expect(copy).toContain('existingTitle: "Existing Courses"');
+    expect(copy).toContain('nameLabel: "Course Name"');
+    expect(copy).toContain('Created course');
+    expect(form).toContain("No departments in this college yet.");
+    expect(form).toContain("Go to Departments");
+    expect(form).toContain('href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}');
+    expect(overview).toContain("COLLEGE_COURSES_COPY.existingTitle");
+    expect(actions).toContain('Updated course “"+name.trim()+"”.');
+  });
 });
