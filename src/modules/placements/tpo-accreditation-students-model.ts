@@ -5,7 +5,7 @@ export type AccreditationStudentOffer={
  membershipId:string;offerId:string;name:string|null;rollNumber:string|null;
  programme:string;branch:string;batch:string;company:string;
  status:string;annualCtcInr:number|null;joining:string|null;kind?:string;
- selectedOutcome?:boolean;
+ selectedOutcome?:boolean;employerContact?:string|null;
 };
 export type AccreditationStudentRow={
  membershipId:string;name:string|null;rollNumber:string|null;
@@ -41,7 +41,7 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
    ||a.offerId.localeCompare(b.offerId))[0];
   output.push({membershipId,name:best.name,rollNumber:best.rollNumber,
    programme:best.programme,branch:best.branch,batch:best.batch,
-   employer:best.company,employerContact:null,packageInr:best.annualCtcInr,
+   employer:best.company,employerContact:best.employerContact??null,packageInr:best.annualCtcInr,
    offersHeld:group.filter(x=>x.status==="ACCEPTED"||x.status==="ISSUED").length,
    offerStatus:best.status,joining:best.joining});
  }
