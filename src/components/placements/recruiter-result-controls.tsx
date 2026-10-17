@@ -319,7 +319,7 @@ export function RecruiterResultControls({
   }
 
   return (
-    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor"
+    <div className="space-y-5" tabIndex={0} role="region" aria-label="Recruiter results editor" aria-keyshortcuts="S W H R A Z"
       onKeyDown={event=>{
         if(event.defaultPrevented||event.ctrlKey||event.altKey||event.metaKey)return;
         const target=event.target as HTMLElement;
