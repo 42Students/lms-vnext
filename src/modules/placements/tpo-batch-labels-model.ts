@@ -11,6 +11,14 @@ export function batchSourceLabel(value:string|null|undefined):string{
  if(value==="BATCH")return "From batch";
  return "Not recorded";
 }
+export function batchRegistrationLabel(value:string|null|undefined):string{
+ if(value==="PLACEMENTS")return "Placements";
+ if(value==="HIGHER_STUDIES")return "Higher studies";
+ if(value==="NOT_INTERESTED")return "Not interested";
+ if(value==="ENTREPRENEURSHIP")return "Entrepreneurship";
+ if(value==="COMPETITIVE_EXAMS")return "Competitive exams";
+ return "Not recorded";
+}
 export function batchHistoryDate(value:Date):string{
  return new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
