@@ -76,6 +76,10 @@ export function TpoRoundApplyControl({jobId,roundId}:{jobId:string;roundId:strin
    <div className="max-h-44 overflow-y-auto">{report.results.map(x=><p key={x.resultId}>
     {x.student}: {x.status} ({x.outcome}) {x.reason?"· "+x.reason:""}
    </p>)}</div>
+   <button type="button" className="mr-3 min-h-11 rounded border border-border px-4"
+    onClick={()=>downloadRoundCsv(roundApplyReportCsv(report.results),"round-"+roundId+"-apply-results.csv")}>
+    Export results (CSV)
+   </button>
    <button type="button" className="min-h-11 rounded border border-border px-4" onClick={()=>navigator.clipboard?.writeText(
     report.results.map(x=>[x.student,x.status,x.outcome,x.reason??""].join(",")).join("\n")
    )}>Copy results</button>
