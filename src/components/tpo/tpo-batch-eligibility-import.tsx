@@ -74,7 +74,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 rounded-lg border border-border bg-surface p-4">
-  <h2 className="font-semibold">Import eligibility decisions</h2>
+  <h2 className="font-semibold">Import eligibility</h2>
   <p className="text-sm text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   <div className="rounded-md border border-dashed border-border p-3"
    onDragOver={event=>event.preventDefault()} onDrop={event=>{event.preventDefault();void chooseFile(event.dataTransfer.files.item(0));}}>
@@ -89,7 +89,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    <textarea className="mt-1 min-h-32 w-full min-w-0 rounded border border-border bg-surface p-2 font-mono text-xs"
     value={csv} onChange={e=>{setCsv(e.target.value);setPreview(null);setNotice("");}} disabled={busy} maxLength={1500000}/>
   </label>
-  <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview import"}</button>
+  <button type="button" disabled={busy} onClick={()=>void previewChanges()} className="min-h-11 rounded border border-border px-4 text-sm">{busy?"Working…":"Preview file"}</button>
   {preview?<div className="space-y-2">
    <p role="status" className="text-sm font-semibold">{preview.ready} matched; {preview.skipped} cannot use.</p>
    <div role="tablist" aria-label="Import preview filters" className="flex flex-wrap gap-2">
@@ -105,7 +105,8 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
     <label className="mr-2 inline-flex items-center gap-1"><input type="checkbox" checked={!skippedByUser.includes(i)} onChange={event=>setSkippedByUser(current=>event.target.checked?current.filter(x=>x!==i):[...current,i])} disabled={busy||row.status!=="matched"}/>Include</label>
     <strong>Row {i+1}: {row.studentName??preview.rows[i]?.studentCode}</strong>
     <p>Roll: {row.rollNumber??preview.rows[i]?.studentCode} · Current: {row.currentStatus??"—"} · Becomes: {row.proposedStatus??"—"}</p>
-    <p>{row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
+    <p>{row.status==="matched"&&row.currentStatus===row.proposedStatus?
+      "No change":row.status==="matched"?"Matched":"Can't use"}{row.reason?" — "+row.reason:""}</p>
    </li>)}</ul>
    <nav aria-label="Import preview pages" className="flex flex-wrap items-center gap-3 text-xs">
     <button type="button" disabled={busy||previewPage===1} onClick={()=>setPreviewPage(p=>Math.max(1,p-1))} className="min-h-10 rounded border border-border px-3 disabled:opacity-50">Previous</button>
@@ -114,7 +115,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
    </nav>
    <div className="flex flex-wrap gap-2">
     <button type="button" disabled={busy} onClick={()=>fileInput.current?.click()} className="min-h-10 rounded border border-border px-3 text-sm">Choose another file</button>
-    <button type="button" disabled={busy} onClick={()=>{setPreview(null);setSkippedByUser([]);setNotice("Review discarded; no eligibility changes were saved.");}} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
+    <button type="button" disabled={busy} onClick={()=>{setPreview(null);setSkippedByUser([]);setNotice("Review discarded. No changes were saved.");}} className="min-h-10 rounded border border-border px-3 text-sm">Discard review</button>
    </div>
    <button type="button" disabled={busy} onClick={()=>void copyPreview()} className="min-h-11 rounded border border-border px-4 text-sm">Copy preview outcomes CSV</button>
    <label className="flex items-start gap-2 text-sm text-body">
@@ -125,7 +126,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
      Unmatched or skipped rows will not be changed.
    </label>
    <button type="button" disabled={busy||preview.ready===0||!acknowledged} onClick={()=>void commit()}
-    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm matched decisions</button>
+    className="min-h-11 rounded bg-primary px-4 text-sm text-on-primary disabled:opacity-50">Confirm import</button>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {notice?<p role="status" className="text-sm">{notice}</p>:null}

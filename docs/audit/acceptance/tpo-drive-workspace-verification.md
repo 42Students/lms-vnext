@@ -61,3 +61,26 @@ The new S3 empty-state and offer release copy lives in `src/app/(authenticated)/
 | TPO-drive-workspace-64 | DONE | The same scoped Discussion reader retains recruiter conversations on closed drives, with a reply link; `tests/unit/tpo-drive-discussion-chat5.test.ts` — `TPO-drive-workspace-64 keeps recruiter follow-up accessible after closing a drive`. |
 | TPO-drive-workspace-70 | OPEN | `src/components/placements/tpo-drive-cancel-form.tsx` and `tpo-drive-lifecycle-controls.tsx` now use explicit accessible consequence checks and `useGuardedAction`; `tests/unit/tpo-drive-graceful-chat5-round4.test.ts` — `TPO-drive-workspace-70 and GR-35 require an explicit reviewed destructive-action confirmation`. Other destructive offer controls still require conversion. |
 | TPO-drive-workspace-14 | DONE (existing) | The publish/reopen screen now uses the shared `apiFetch` and guarded-action hook; `tests/unit/tpo-chat5-graceful-adoption-round4.test.ts` — `GR-04 uses guarded JSON fetch in all four changed mutating forms`. |
+
+## Chat-5 next round — OPEN gap continuation
+
+Source tests were authored, not executed. A partial baseline test is **not** closure evidence.
+
+| ID | Status | Evidence |
+|---|---|---|
+| TPO-drive-workspace-55 | OPEN | Offer lifecycle now uses apiFetch, guarded action and reviewed evidence; full offer action-window parity remains; `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` (test name includes `TPO-drive-workspace-55`). |
+| TPO-drive-workspace-70 | OPEN | Removed remaining native offer/applicant decision confirmations in the touched forms; other destructive controls require a complete route-wide audit; `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` (test name includes `TPO-drive-workspace-70`). |
+| TPO-drive-workspace-72 | OPEN | Drive navigation now has a mobile section selector; legacy mobile actions panel and all responsive cards still need work; `tests/unit/tpo-drive-workspace-chat5-next-round.test.ts` (test name includes `TPO-drive-workspace-72`). |
+| TPO-drive-workspace-27 | OPEN | Applicant drawer decision form now has guarded reviewed submission, but S/R/arrows and sequential review navigation are missing; `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` (test name includes `TPO-drive-workspace-27`). |
+| TPO-drive-workspace-34 | OPEN | Candidate-visible rejection reason presets are present; separate confidential internal reason recording still needs persistence; `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` (test name includes `TPO-drive-workspace-34`). |
+| TPO-drive-workspace-21 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-21 partial baseline — further implementation required`. |
+| TPO-drive-workspace-22 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-22 partial baseline — further implementation required`. |
+| TPO-drive-workspace-23 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-23 partial baseline — further implementation required`. |
+| TPO-drive-workspace-26 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-26 partial baseline — further implementation required`. |
+| TPO-drive-workspace-38 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-38 partial baseline — further implementation required`. |
+| TPO-drive-workspace-49 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-49 partial baseline — further implementation required`. |
+| TPO-drive-workspace-50 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-50 partial baseline — further implementation required`. |
+| TPO-drive-workspace-59 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-59 partial baseline — further implementation required`. |
+| TPO-drive-workspace-63 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-63 partial baseline — further implementation required`. |
+| TPO-drive-workspace-67 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-67 partial baseline — further implementation required`. |
+| TPO-drive-workspace-69 | OPEN | Reviewed existing partial behavior; full legacy feature remains outstanding. `tests/unit/tpo-chat5-open-gap-partial-evidence.test.ts` — `TPO-drive-workspace-69 partial baseline — further implementation required`. |
