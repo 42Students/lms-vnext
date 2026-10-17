@@ -117,7 +117,8 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     metadata:{projectId,taskId:task.id,deleted:true,createdByMembershipId:membership.id},
     groupKey:"project:"+projectId,
   });
-  await tx.delete(projectTasks).where(and(eq(projectTasks.projectId,projectId),eq(projectTasks.id,taskId)));
+  await tx.delete(projectTasks).where(and(eq(projectTasks.projectId,projectId),
+    eq(projectTasks.id,taskId),eq(projectTasks.status,"TODO")));
   await notifyActiveProjectMembers(tx,event.id,{projectId,collegeId:scope.collegeId,
    roles:["MENTOR"],exceptUserId:context.user.id,title:"Learner deleted a task",
    body:task.title,actionHref:"/mentor/projects/"+projectId+"?tab=board"});
