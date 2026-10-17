@@ -94,7 +94,7 @@ Audit: `docs/audit/pages/public/auth-public-1-login-session.md` (and `auth-publi
 | PUB-auth-public-38 | S4 | PERMISSION | OPEN |
 | PUB-auth-public-39 | S4 | MISSING-PAGE | OPEN |
 
-## college/academic-setup (34: DONE 30, NOT-A-GAP 2, FIXED-ON-MAIN 1, UNCONFIRMED 1)
+## college/academic-setup (34: DONE 31, NOT-A-GAP 2, UNCONFIRMED 1)
 
 Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.md` if present; any ID: `grep -rn "<ID>" docs/audit/`). Verification file to write: `docs/audit/acceptance/college-academic-setup-verification.md`.
 
@@ -118,7 +118,7 @@ Audit: `docs/audit/pages/college/academic-setup.md` (and `academic-setup-review.
 | COL-academic-setup-05 | S3 | MISSING-COLUMN | DONE |
 | COL-academic-setup-13 | S3 | MISSING-ACTION | DONE |
 | COL-academic-setup-15 | S3 | COPY | DONE |
-| COL-academic-setup-16 | S3 | A11Y | FIXED-ON-MAIN |
+| COL-academic-setup-16 | S3 | A11Y | DONE |
 | COL-academic-setup-17 | S3 | STATE | DONE |
 | COL-academic-setup-19 | S3 | STATE | NOT-A-GAP |
 | COL-academic-setup-23 | S3 | VALIDATION | DONE |
