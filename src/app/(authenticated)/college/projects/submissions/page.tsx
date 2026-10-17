@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ProjectAdminSubmissionsPage } from "@/components/projects/project-admin-submissions-page";
 import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
@@ -18,7 +18,7 @@ export default async function CollegeProjectSubmissionsRoute({
     getProjectAdminCollegeId(context);
 
   if (!collegeId) {
-    redirect("/dashboard");
+    return <ProjectAdminMissingCollege/>;
   }
 
   return (

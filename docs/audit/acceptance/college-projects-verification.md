@@ -34,3 +34,20 @@ Round 4: College workspace list now offers formula-safe visible-page CSV, table/
 | COL-projects-15 | OPEN | Workspace Team now links to preselected, UUID-validated tenant-scoped reassignment; `tests/unit/chat9-college-project-team-entry.test.ts` — `COL-projects-15 links workspace Team to an authorized preselected reassignment without inferring a different tenant`. Roster/change-role modal parity remains. |
 
 | COL-projects-18 | OPEN | Added resource action and search filters using persisted resource event types; `tests/unit/chat9-college-project-resource-audit.test.ts` — `COL-projects-18 recognizes resource added edited saved removed without treating task events as resource edits`. Source has no separate Saved event; exact action provenance remains to verify. |
+
+## Round 6 College Projects evidence
+| COL-projects-16 | DONE source | Re-verified catalogue table, search, counts, source-only visible-row CSV; `tests/unit/chat9-round6-college-projects-parity.test.ts` — `COL-projects-16 provides template search section counts details and a scoped CSV export`. |
+| COL-projects-19 | DONE source | Verified six page titles and restored legacy at-risk and audit subtitles; `tests/unit/chat9-round6-college-projects-parity.test.ts` — `COL-projects-19 displays the exact Workspaces, Templates, Submission and Audit headings plus the legacy risk description`. |
+| COL-projects-20 | DONE source | All Projects subroutes recover missing college context with explicit alert and navigation; `tests/unit/chat9-round6-college-projects-parity.test.ts` — `COL-projects-20 renders a recovery alert on all College Projects entry routes when college context is absent`. |
+| COL-projects-22 | NOT-A-GAP | Audit explicitly confirms mentor/class/template filters did not exist in legacy; existing search+status works. `tests/unit/chat9-round6-college-projects-parity.test.ts` — `COL-projects-22 is NOT-A-GAP: mentor class and template filters were absent in the old Workspaces list`. |
+
+## Round 6 risk and resource activity reconciliation
+| COL-projects-10 | VERIFIED-ON-MAIN | Risk buckets, severity, inactivity, blocker, row actions and page-scoped CSV are persisted and visible; `tests/unit/chat9-round6-project-risk-audit.test.ts` — `COL-projects-10 verifies whole-college risk buckets, scoped CSV and complete row actions`. |
+| COL-projects-11 | VERIFIED-ON-MAIN | Seven-day inactivity, text/task blockers, pending latest submission; `tests/unit/chat9-round6-project-risk-audit.test.ts` — `COL-projects-11 verifies persisted blocker/task, latest review and seven-day inactivity risk criteria`. |
+| COL-projects-18 | DONE source | Reapplied college resource action and search filters on top of chat-11's enhanced Mentor Activity feed; `tests/unit/chat9-round6-project-risk-audit.test.ts` — `COL-projects-18 enables admin resource change/search without overriding mentor Activity feed`. Only persisted Saved events appear. |
+| COL-projects-23 | DONE source | Bounded keyboard-focusable ten-tab strip and responsive workspace list; `tests/unit/chat9-round6-project-risk-audit.test.ts` — `COL-projects-23 ensures ten-tab workspace navigation is keyboard-scrollable at narrow widths`. 375px browser acceptance for orchestrator. |
+
+| COL-projects-09 | VERIFIED-ON-MAIN | Existing primary mentor snapshot model and fallback; `tests/unit/chat9-round6-reviewed-not-a-gaps.test.ts` — `COL-projects-09 verifies recorded primary mentor is used before fallback teammate`. |
+| COL-projects-17 | VERIFIED-ON-MAIN | College audit range/importance and scoped export; `tests/unit/chat9-round6-reviewed-not-a-gaps.test.ts` — `COL-projects-17 verifies college audit filtered view and CSV route`. |
+
+| COL-projects-21 | OPEN | Restored Create workspace and Bulk reassign mentor CTA wording; distinct Deleted workspace semantics still not implemented, so Archived intentionally not renamed to Deleted. `tests/unit/chat9-round6-copy-polish.test.ts` — `COL-projects-21 restores Create workspace and Bulk reassign mentor CTA wording`. |

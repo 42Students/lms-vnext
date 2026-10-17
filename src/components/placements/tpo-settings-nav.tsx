@@ -25,14 +25,14 @@ export const TPO_SETTINGS_NAV_GROUPS=[
  ]},
 ] as const;
 export function TpoSettingsNav({active}:{active:SettingsKey}){
- return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4">
+ return <nav aria-label="TPO placement settings sections" className="min-w-0 space-y-4 md:sticky md:top-4 md:float-left md:mr-6 md:w-56">
   {TPO_SETTINGS_NAV_GROUPS.map(group=><section key={group.title} aria-label={group.title} className="space-y-2">
    <h2 className="text-sm font-semibold text-muted-foreground">{group.title}</h2>
-   <div className="flex flex-wrap gap-2">{group.items.map(item=><Link key={item.id} href={item.href}
+   <div className="flex flex-wrap gap-2 md:flex-col md:items-stretch">{group.items.map(item=><Link key={item.id} href={item.href}
     aria-current={active===item.id?"page":undefined}
     className={active===item.id?
-     "inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary":
-     "inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle"}>
+     "inline-flex min-h-11 items-center rounded-lg bg-primary px-3 text-sm font-semibold text-on-primary md:w-full":
+     "inline-flex min-h-11 items-center rounded-lg border border-border bg-surface px-3 text-sm text-body hover:bg-primary-subtle md:w-full"}>
     {item.label}</Link>)}</div>
   </section>)}
  </nav>;
