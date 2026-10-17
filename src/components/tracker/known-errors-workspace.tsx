@@ -25,6 +25,8 @@ function KnownErrorCard({ item }: { item: KnownError }) {
   const { showToast } = useToast();
   const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
   const [note, setNote] = useState("");
+  const [muteReason, setMuteReason] = useState("");
+  const [confirmMute, setConfirmMute] = useState(false);
   const [commit, setCommit] = useState("");
   const [issuePublicId, setIssuePublicId] = useState(item.issuePublicId ?? "");
 
@@ -38,6 +40,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           timeoutMs: 15_000,
         });
         showToast({ tone: "success", title: "Known error updated" });
+        setConfirmMute(false);
         router.refresh();
       });
     } catch (error) {
@@ -107,10 +110,11 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           {item.acknowledgedAt ? "Acknowledged" : "Acknowledge"}
         </Button>
         <Button size="sm" variant="secondary" disabled={pending}
-          onClick={() => update({
-            action: "MUTE", muted: !item.muted,
-            ...(!item.muted && note.trim() ? { reason: note.trim().slice(0, 255) } : {}),
-          })}>
+          aria-expanded={item.muted ? undefined : confirmMute}
+          onClick={() => {
+            if (item.muted) void update({ action: "MUTE", muted: false });
+            else setConfirmMute(true);
+          }}>
           {item.muted ? "Unmute" : "Mute"}
         </Button>
         <Button size="sm" variant="secondary" disabled={pending}
@@ -140,6 +144,35 @@ function KnownErrorCard({ item }: { item: KnownError }) {
           Save issue link
         </Button>
       </div>
+      {confirmMute && !item.muted ? (
+        <section aria-label="Mute this error"
+          className="space-y-3 rounded-lg border border-border bg-surface p-4">
+          <p className="font-semibold text-foreground">Mute this error</p>
+          <p className="text-sm text-body">
+            Why is it safe to ignore? It comes back on its own if it suddenly spikes.
+          </p>
+          <label className="block text-sm text-body">
+            Reason (optional)
+            <Input className="mt-1" value={muteReason} maxLength={255}
+              onChange={(event) => setMuteReason(event.target.value)}
+              placeholder="Why this error is expected"
+            />
+          </label>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" disabled={pending}
+              onClick={() => void update({
+                action: "MUTE", muted: true,
+                ...(muteReason.trim() ? { reason: muteReason.trim() } : {}),
+              })}>
+              Mute
+            </Button>
+            <Button size="sm" variant="secondary" disabled={pending}
+              onClick={() => setConfirmMute(false)}>
+              Cancel
+            </Button>
+          </div>
+        </section>
+      ) : null}
       {item.issuePublicId ? (
         <p className="m-0 text-xs text-muted-foreground">
           Linked tracker issue: {item.issuePublicId}
@@ -191,7 +224,7 @@ export function KnownErrorsWorkspace({
       </div>
       {items.length === 0 ? (
         <p className="rounded-xl border border-border bg-surface p-6 text-sm text-muted-foreground">
-          No known signatures for this environment. This does not prove that live Cloud Logging contains no errors.
+          No tracked errors yet. This does not prove that live Cloud Logging contains no errors.
         </p>
       ) : (
         <div className="grid gap-4">

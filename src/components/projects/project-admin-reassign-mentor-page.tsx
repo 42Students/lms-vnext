@@ -36,6 +36,7 @@ export async function ProjectAdminReassignMentorPage({
 }) {
   const context = await getCurrentRequestContext();
   const fromMentorId = z.union([z.string().uuid(), z.literal("UNASSIGNED")]).safeParse(one(searchParams.fromMentorId)).data;
+  const initialProjectId = z.string().uuid().safeParse(one(searchParams.projectId)).data;
   const query: ProjectAdminCollectionQuery = {
     fromMentorId,
     q: one(searchParams.q),
@@ -112,6 +113,7 @@ export async function ProjectAdminReassignMentorPage({
       </form>
       <ProjectMentorReassignment
         collegeId={collegeId}
+        initialProjectId={initialProjectId}
         matchingWorkspaces={projects.matchingWorkspaces}
         workspaces={projects.items
           .filter(

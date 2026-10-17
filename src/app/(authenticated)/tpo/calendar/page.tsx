@@ -13,6 +13,7 @@ type SearchParams = {
   view?: string | string[];
   company?: string | string[];
   kind?: string | string[];
+  kinds?: string | string[];
 };
 
 export default async function TpoCalendarPage({
@@ -62,7 +63,7 @@ export default async function TpoCalendarPage({
         context={context}
         collegeId={context.membership.collegeId}
         audience="TPO"
-        searchParams={parsed.data}
+        searchParams={{...parsed.data,kinds:first(raw.kinds)}}
       />
     </div>
   );

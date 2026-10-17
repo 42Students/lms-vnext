@@ -4,6 +4,7 @@ import {
 } from "./batch-eligibility-policy";
 import { learnerPlacementDashboard } from "./learner-dashboard-model";
 import type {TpoStudentVerificationFact} from "./tpo-student-verification-facts";
+import {tpoStudentProfileFacts,type TpoStudentProfileFacts} from "./tpo-student-profile-facts";
 
 export const TPO_STUDENT_JOURNEY_STATES = [
   "NOT_REGISTERED",
@@ -51,6 +52,7 @@ export type TpoStudentSource = {
   fromFinishedBatch?: boolean;
   registrationOpen?:boolean|null;
   registrationChoice: string | null;
+  profileDocument?:unknown;
   participation: ResolvedPlacementParticipation;
   academicEvidence: {
     cgpaHundredths: number | null;
@@ -92,6 +94,8 @@ export type TpoStudentRow = {
   registrationOpen?:boolean|null;
   registrationChoice: string | null;
   registeredForPlacements: boolean;
+  debarred?:boolean|null;
+  profileFacts?:TpoStudentProfileFacts;
   participationStatus: ResolvedPlacementParticipation["status"];
   readinessSignal: TpoStudentReadinessSignal;
   preferencesPresent: boolean;
@@ -139,6 +143,10 @@ export type TpoStudentRosterFilter = {
   journeyState?: TpoStudentJourneyState;
   legacyStage?:"ELIGIBLE"|"INVITED"|"REGISTERED"|"VERIFIED"|"PLACED";
   minRoundReached?:number;needsAttention?:boolean;
+  interviewedWith?:string;
+  debarred?:boolean;
+  gender?:string;birthYear?:number;minSkills?:number;minProjects?:number;
+  minCertifications?:number;minExperiences?:number;hasProfileLinks?:boolean;
   branchId?: string;
   programId?: string;
   profileStatus?:Exclude<TpoStudentVerificationFact["status"],"UNKNOWN">;
@@ -338,6 +346,7 @@ export function deriveTpoStudent(
     placed,
     journeyState,
     bestSoFar,
+    profileFacts:tpoStudentProfileFacts(source.profileDocument),
     bestCompany:latestDepth&&!placed&&offerCount===0
       ?source.applications.find(application=>application.id===latestDepth.applicationId)?.companyName??null:null,
     interviewedCompanies:[...new Set(source.appliedResults.flatMap(result=>{
@@ -461,7 +470,17 @@ export function filterTpoStudentRoster(
         row.branchId === filter.branchId,
     )
     .filter(row=>!filter.programId||row.programId===filter.programId)
+    .filter(row=>filter.debarred===undefined||row.debarred===filter.debarred)
+    .filter(row=>!filter.gender||row.profileFacts?.gender===filter.gender)
+    .filter(row=>filter.birthYear===undefined||row.profileFacts?.birthYear===filter.birthYear)
+    .filter(row=>filter.minSkills===undefined||(row.profileFacts?.skills??0)>=filter.minSkills)
+    .filter(row=>filter.minProjects===undefined||(row.profileFacts?.projects??0)>=filter.minProjects)
+    .filter(row=>filter.minCertifications===undefined||(row.profileFacts?.certifications??0)>=filter.minCertifications)
+    .filter(row=>filter.minExperiences===undefined||(row.profileFacts?.experiences??0)>=filter.minExperiences)
+    .filter(row=>filter.hasProfileLinks===undefined||row.profileFacts?.links===filter.hasProfileLinks)
     .filter(row=>!filter.legacyStage||tpoStudentMatchesLegacyStage(row,filter.legacyStage))
+    .filter(row=>!filter.interviewedWith||(row.interviewedCompanies??[]).some(company=>
+     company.toLocaleLowerCase("en-IN").includes(filter.interviewedWith!.toLocaleLowerCase("en-IN"))))
     .filter(row=>filter.minRoundReached===undefined||
       (row.maximumAppliedRoundSequence!=null&&row.maximumAppliedRoundSequence>=filter.minRoundReached))
     .filter(row=>filter.needsAttention===undefined||tpoStudentNeedsAttention(row)===filter.needsAttention)
@@ -546,7 +565,7 @@ export function tpoStudentMatchesLegacyStage(row:TpoStudentRow,stage:"ELIGIBLE"|
  }
 }
 export function tpoStudentNeedsAttention(row:TpoStudentRow):boolean{
- return row.participationStatus==="INELIGIBLE"||
+ return row.debarred===true||row.participationStatus==="INELIGIBLE"||
   row.verification.status==="WAITING"||row.verification.status==="SENT_BACK"||
   row.offersAwaitingAnswer>0||row.ambiguousSection||
   row.readinessSignal==="ACADEMIC_EVIDENCE_MISSING";

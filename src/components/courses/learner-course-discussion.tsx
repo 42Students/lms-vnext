@@ -378,7 +378,7 @@ export function LearnerCourseDiscussion({
         <section className="rounded-xl border border-primary bg-primary-subtle p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
-              Pinned
+              Pinned by {pinned.senderName??"Unknown"} · 1 of {pinnedMessages.length||1}
             </p>
           </div>
           <p className="mt-2 break-words text-sm font-semibold text-foreground">

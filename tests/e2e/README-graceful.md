@@ -74,3 +74,11 @@ Record the **exact merged commit SHA**, command, environment, scenario counts, f
 ### GR-83 proof still needed
 
 GR-51 explicitly requires a visible outbox state reading **"Will be retried automatically"** when a provider send fails. The merged named helper-unit tests cover GR-01–08, GR-30, GR-32–34, GR-50, GR-52 and GR-60, plus the GR-31 source-scan gate, but a distinct executed GR-51 outbox/UI witness has **not** been identified in the reviewed unit suite. This is an orchestration/owner-lane follow-up, not a license to claim GR-83. The outbox pipeline must be verified using an isolated persistence fixture and fake provider; no real SMS or email is sent. Retain GR-51 as BLOCKED until such proof exists.
+
+## Round 4 (chat-15): adversarial DOM and production checks
+
+The new `graceful-leak-matrix.spec.ts` contributes **42 deliberately hostile text fixtures**, two controls that must be accepted, and nine real browser-level fault-interceptor checks (eight HTTP statuses plus a connection abort). This supplements rather than replaces the role journeys. A negative fixture passes only when `expectNoRawErrors` **rejects** its leaked text. The helper now recognizes unknown underscore-delimited API identifiers in announced errors, runtime/driver exception names, network internals, source-chunk paths, and raw serialized error objects without rejecting routine uppercase status or role labels in the page.
+
+The production-only `graceful-production-faults.spec.ts` runs four additional sign-in fault variants (403, 429, 503, delayed 504). It asserts the exact catalog sentence, one intercepted POST, preserved input, re-enabled Continue, and no unhandled browser errors. A fifth test requests the `.map` for **every** initial Next.js application chunk and rejects anything other than HTTP 404. The dedicated production config includes this spec and never starts `npm run dev`. Do not run these with the development-only bypass or treat a skipped production test as passing.
+
+**Still unverified:** the orchestrator must execute all browser suites against a pinned merged SHA, provide real logged-in production storage states, supply deterministic unread notifications and employer grants, and record successful provider-outbox integration evidence. These source changes do not close GR-80–83 for a release.
