@@ -21,6 +21,11 @@ export const hrDriveDraftSchema = z.strictObject({
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
   workMode: z.enum(["ONSITE", "HYBRID", "REMOTE", "NO_PREFERENCE"]),
   driveMode: z.enum(["ON_CAMPUS","OFF_CAMPUS"]).default("ON_CAMPUS"),
+  externalApplicationUrl: z.string().trim().max(2000).refine(value=>{
+    if(!value)return true;
+    try{const url=new URL(value);return url.protocol==="https:"&&Boolean(url.hostname)&&!url.username&&!url.password;}
+    catch{return false;}
+  },"Enter a valid https application link").default(""),
   ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   fixedLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
   variableLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
@@ -88,7 +93,7 @@ export type HrDriveDraft = z.input<typeof hrDriveDraftSchema>;
 export function emptyHrDriveDraft(): HrDriveDraft {
   return {
     title: "", description: "", location: "",
-    employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",
+    employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",externalApplicationUrl:"",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
     bondAmountInr: "", maximumActiveBacklogs: "", branches: [], passingYear: "",
