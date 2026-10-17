@@ -36,9 +36,9 @@ describe("chat-15 reassigned learner course and placement parity",()=>{
   for(const copy of ["Back to Learning Path","Previous lesson","Next lesson"])expect(s).toContain(copy);
  });
  it("LEARNER-course-detail-20 published roadmap empty state uses exact legacy copy",()=>{
-  expect(learnerRoadmapEmptyState(true,[])).toEqual({title:"No roadmap items yet",description:"Create lessons and add content to show the learner roadmap."});
-  expect(learnerRoadmapEmptyState(true,[{items:[]}])?.title).toBe("No content in this lesson yet.");
-  expect(learnerRoadmapEmptyState(false,[])?.title).toBe("Learning path is being prepared");
+  expect(learnerRoadmapEmptyState(true,[])).toEqual({title:"No lessons published yet",description:"Your teacher has not published any lessons in this course."});
+  expect(learnerRoadmapEmptyState(true,[{items:[]}])?.title).toBe("No learning items published yet");
+  expect(learnerRoadmapEmptyState(false,[])?.title).toBe("No roadmap items yet");
  });
  it("LEARNER-placements-03 placement tabs render content without extra PageHeader",()=>{
   for(const sub of ["applications","jobs","placement"]){
