@@ -98,7 +98,8 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
   const flags=verificationAttentionFlags({status,section,submittedAt:row.submittedAt,missingMarksheet},evaluatedAt);
   return {learnerMembershipId:row.membershipId,learnerName:row.name?.trim()||"Learner",
    section,status,version:row.version,submittedAt:row.submittedAt,batchName:byMember.get(row.membershipId)?.batchName??null,branchName:byMember.get(row.membershipId)?.branchName??null,
-   missingMarksheet,attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
+   missingMarksheet,marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},
+   attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
  return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify};
 }
