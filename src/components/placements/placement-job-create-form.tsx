@@ -335,6 +335,10 @@ export function PlacementJobCreateForm({
               ),
               100_000,
             ),
+          fixedCtcLpa:nullableDecimal(String(data.get("fixedLpa")??"")),
+          variableCtcLpa:nullableDecimal(String(data.get("variableLpa")??"")),
+          stipendPerMonthInr:nullableInteger(String(data.get("stipendPerMonthInr")??"")),
+          isDream:data.get("isDream")==="on",
           applicationMode,
           externalApplicationUrl:
             applicationMode === "INTERNAL"
