@@ -1,35 +1,19 @@
 "use client";
 
-/**
- * GR-56: if a link cannot open, show the exact URL for the user to copy.
- * Usage: <ThirdPartyLink href={meetingUrl} label="Join meeting" />
- * Only http/https destinations are permitted.
- */
 import { useState } from "react";
 
+/** WebView-safe external navigation: same tab plus a visible fallback URL. */
 export function ThirdPartyLink({ href, label }: { href: string; label: string }) {
-  const [failed, setFailed] = useState(false);
-  const open = () => {
-    try {
-      const target = new URL(href);
-      if (!["https:", "http:"].includes(target.protocol)) { setFailed(true); return; }
-      const popup = window.open(target.href, "_blank", "noopener,noreferrer");
-      if (!popup) setFailed(true);
-    } catch { setFailed(true); }
-  };
-  return (
-    <span className="inline-flex min-w-0 flex-col gap-2">
-      <button type="button" onClick={open}
-        className="min-h-10 rounded-md border border-border px-3 text-sm font-semibold text-primary-text underline focus-visible:ring-2 focus-visible:ring-[var(--lms-focus-ring)]">
-        {label}
-      </button>
-      {failed && <span role="status" className="min-w-0 break-all text-sm text-muted-foreground">
-        The link could not be opened. Copy and paste it into your browser: {href}
-        <button type="button" className="ml-2 underline"
-          onClick={() => { void navigator.clipboard?.writeText(href).catch(() => {}); }}>
-          Copy link
-        </button>
-      </span>}
-    </span>
-  );
+  const [showFallback, setShowFallback] = useState(false);
+  let safeHref: string | null = null;
+  try { const url = new URL(href); if (url.protocol === "http:" || url.protocol === "https:") safeHref = url.href; } catch { /* Invalid destination handled inline. */ }
+  return <span className="inline-flex min-w-0 flex-col gap-2">
+    {safeHref ? <a href={safeHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-sm font-semibold text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">{label}</a> :
+      <span role="alert" className="text-sm text-foreground">This link is unavailable.</span>}
+    {safeHref ? <button type="button" onClick={() => setShowFallback(current => !current)}
+      className="inline-flex min-h-11 items-center text-sm text-[var(--lms-teal-deep)] underline focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      {showFallback ? "Hide link" : "Show link to copy"}
+    </button> : null}
+    {showFallback && safeHref ? <span role="status" className="min-w-0 select-text break-all text-sm text-body">{safeHref}</span> : null}
+  </span>;
 }
