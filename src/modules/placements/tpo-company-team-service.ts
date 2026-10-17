@@ -141,7 +141,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
      .from(follows).where(and(eq(follows.collegeId,college.id),eq(follows.companyId,companyId)));
    const notifyIds=new Set(subscribers.map(f=>f.membershipId));
    if(input.assigneeId)notifyIds.add(input.assigneeId);
-   if(/(?:^|\\s)@team(?:\\b|$)/i.test(input.body)){
+   if(/(?:^|\s)@team(?:\b|$)/i.test(input.body)){
     const colleagues=await tx.selectDistinct({id:collegeMemberships.id}).from(collegeMemberships)
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
        inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
