@@ -53,6 +53,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .offset((filters.page - 1) * HR_APPLICANT_PAGE_SIZE),
     db.select({
       total: sql<number>`count(*)::integer`,
+      distinctOffered: sql<number>`count(distinct ${placementOffers.applicationId})::integer`,
+      distinctHired: sql<number>`count(distinct ${placementOffers.applicationId})
+        filter (where ${placementJoiningOutcomes.status} = 'JOINED')::integer`,
       issued: sql<number>`count(*) filter (where ${placementOffers.status}='ISSUED')::integer`,
       accepted: sql<number>`count(*) filter (where ${placementOffers.status}='ACCEPTED')::integer`,
       declined: sql<number>`count(*) filter (where ${placementOffers.status}='DECLINED')::integer`,
@@ -103,6 +106,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     applicantsTruncated: false,
     offerSummary: {
       recorded: Number(offerCounts[0]?.total ?? 0),
+      distinctOffered:Number(offerCounts[0]?.distinctOffered ?? 0),
+      distinctHired:Number(offerCounts[0]?.distinctHired ?? 0),
       issued: Number(offerCounts[0]?.issued ?? 0),
       accepted: Number(offerCounts[0]?.accepted ?? 0),
       declined: Number(offerCounts[0]?.declined ?? 0),

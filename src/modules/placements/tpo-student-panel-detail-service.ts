@@ -5,6 +5,7 @@ import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,placementApplications,
  placementJobs,placementLearnerRequests,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
+import {listTpoStudentNotes} from "./tpo-student-notes-service";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePlacementManageScope} from "./scope";
@@ -29,8 +30,8 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
     eq(placementJobs.collegeId,college.id)))
   .where(eq(placementApplications.membershipId,id)).limit(1000);
  const applicationIds=applications.map(x=>x.id);
- if(!applicationIds.length)return {student,requests:[],notes:[],truncated:false};
- const [requests,notes]=await Promise.all([
+ if(!applicationIds.length)return {student,requests:[],notes:[],studentNotes:await listTpoStudentNotes(ctx,id),truncated:false};
+ const [requests,notes,studentNotes]=await Promise.all([
   db.select({id:placementLearnerRequests.id,applicationId:placementLearnerRequests.applicationId,
    status:placementLearnerRequests.status,type:placementLearnerRequests.requestType,
    reason:placementLearnerRequests.reason,note:placementLearnerRequests.decisionNote,
@@ -44,9 +45,11 @@ export async function getTpoStudentPanelDetail(ctx:RequestContext,raw:unknown){
    .where(and(inArray(placementApplicationNotes.applicationId,applicationIds),
     eq(placementApplicationNotes.side,"TPO")))
    .orderBy(desc(placementApplicationNotes.createdAt)).limit(100),
+  listTpoStudentNotes(ctx,id),
  ]);
  const jobs=new Map(applications.map(x=>[x.id,x.title]));
  return {student,requests:requests.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
   notes:notes.map(x=>({...x,job:jobs.get(x.applicationId)??"Drive"})),
+  studentNotes:studentNotes??[],
   truncated:applications.length===1000||requests.length===100||notes.length===100};
 }

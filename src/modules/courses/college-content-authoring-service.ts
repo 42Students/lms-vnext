@@ -7,7 +7,7 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 
 /** College-only metadata for adding/scheduling link-based lesson content.
  * Never return private storage keys to the catalog or the editor. */
-export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"){
+export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
  const membership=ctx.membership;
  if(!membership||!hasMembershipRole(ctx,"COLLEGE_ADMIN"))
   throw new AuthorizationError("courses.manage");
@@ -29,6 +29,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .orderBy(asc(courses.name),asc(courseLessons.name)).limit(250);
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
+  notes:lessonContents.notes,
   externalUrl:lessonContents.externalUrl,durationSeconds:lessonContents.durationSeconds,
   startsAt:lessonContents.startsAt,endsAt:lessonContents.endsAt,
   status:lessonContents.status,sequence:lessonContents.sequence,

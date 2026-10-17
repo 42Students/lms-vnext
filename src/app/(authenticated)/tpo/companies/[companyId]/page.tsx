@@ -72,6 +72,7 @@ export default async function TpoCompanyDetailPage({
     relationship,
     hiringPulse,
   } = detail;
+  const maxYearlyHires=Math.max(1,...hiringPulse.hiredPerYear.map(row=>row.joinedLearners));
 
   return (
     <div className="space-y-6">
@@ -202,6 +203,7 @@ export default async function TpoCompanyDetailPage({
             ["Seasons with recorded drives", String(hiringPulse.seasonsWithDrives)],
             ["Distinct learners with accepted offers", String(hiringPulse.distinctAcceptedLearners)],
             ["Distinct confirmed joined learners", String(hiringPulse.distinctConfirmedJoinedLearners)],
+            ["Years hiring (confirmed)", String(hiringPulse.yearsHiring)],
             ["Latest recorded event", hiringPulse.latestRecordedEventIso
               ? dateLabel(new Date(hiringPulse.latestRecordedEventIso)) + " IST"
               : "Not recorded"],
@@ -212,6 +214,33 @@ export default async function TpoCompanyDetailPage({
             </div>
           ))}
         </dl>
+        <div className="mt-5 border-t border-border pt-4">
+          <h3 className="text-sm font-semibold text-foreground">Students placed, by year</h3>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Distinct confirmed JOINED learners by recorded joining year (IST), not offers issued.
+            {hiringPulse.yearsHiring>=2
+              ?" Repeat hiring relationship across "+hiringPulse.yearsHiring+" recorded years."
+              :" No repeat-year hiring relationship established."}
+            {hiringPulse.confirmedJoinsWithoutYear>0
+              ?" "+hiringPulse.confirmedJoinsWithoutYear+" confirmed join(s) have no recorded joining date and are excluded from the chart."
+              :""}
+          </p>
+          {hiringPulse.hiredPerYear.length===0
+            ?<p role="status" className="mt-3 rounded-md border border-border p-3 text-sm text-muted-foreground">
+              No dated, confirmed joins have been recorded for this college-company relationship.
+             </p>
+            :<ol className="mt-3 space-y-2" aria-label="Confirmed joined learners per year">
+              {hiringPulse.hiredPerYear.map(row=><li key={row.year}
+                className="grid grid-cols-[4rem_1fr_3rem] items-center gap-3 text-sm">
+                <span className="font-medium tabular-nums">{row.year}</span>
+                <div className="h-4 rounded-sm bg-surface-secondary" aria-hidden="true">
+                  <div className="h-full rounded-sm bg-primary"
+                    style={{width:Math.max(3,row.joinedLearners/maxYearlyHires*100)+"%"}}/>
+                </div>
+                <strong className="text-right tabular-nums">{row.joinedLearners}</strong>
+              </li>)}
+            </ol>}
+        </div>
       </section>
 
       <div className="grid gap-6 xl:grid-cols-2">

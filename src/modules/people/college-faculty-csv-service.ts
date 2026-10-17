@@ -5,6 +5,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { onboardPersonWithRuntime, upsertFacultyProfileWithRuntime } from "./runtime";
 import { tokenizeStudentCsv } from "./college-student-csv-model";
+import {LEGACY_FACULTY_TYPES} from "./college-faculty-type-model";
 
 export const FACULTY_CSV_COLUMNS =
   ["First Name","Last Name","Mobile Number","Email","Faculty Type"] as const;
@@ -45,12 +46,14 @@ export async function runCollegeFacultyCsv(context:RequestContext,raw:unknown) {
     const name=[row[0]?.trim(),row[1]?.trim()].filter(Boolean).join(" ");
     const phone=(row[2]?.trim()??"").replace(/^([0-9]{10})$/,"+91$1");
     const email=row[3]?.trim()??"";
-    const employmentType=row[4]?.trim()??"";
+    const rawFacultyType=row[4]?.trim()??"";
+    const employmentType=LEGACY_FACULTY_TYPES.find(v=>v.toLowerCase()===rawFacultyType.toLowerCase())??rawFacultyType;
     if(row.length!==5)errors.push("COLUMN_COUNT_MISMATCH");
     if(name.length<2||name.length>255)errors.push("NAME_INVALID");
     if(!/^\+[1-9]\d{7,14}$/.test(phone))errors.push("MOBILE_INVALID");
     if(email&&!z.email().safeParse(email).success)errors.push("EMAIL_INVALID");
     if(employmentType.length>128)errors.push("FACULTY_TYPE_TOO_LONG");
+    if(employmentType&&!LEGACY_FACULTY_TYPES.some(v=>v===employmentType))errors.push("FACULTY_TYPE_UNKNOWN");
     if(seenPhones.has(phone))errors.push("DUPLICATE_MOBILE_IN_FILE");
     seenPhones.add(phone);
     if(email){

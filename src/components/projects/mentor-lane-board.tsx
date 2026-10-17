@@ -6,6 +6,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import {projectMutation} from "./project-api";
 import {ProjectTaskAssigneeControl} from "./project-task-assignee-control";
 import {ProjectTaskComments} from "./project-task-comments";
+import {MentorBoardTaskDetailDialog} from "./mentor-board-task-detail-dialog";
 import {MentorTaskDeleteControl} from "./mentor-task-delete-control";
 type Task={id:string;title:string;status:string;priority:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  description:string|null;acceptanceCriteria:string|null;blockerReason:string|null;
@@ -24,7 +25,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
  const [tasks,setTasks]=useState(initialTasks),[release,setRelease]=useState(params.get("release")??""),
  [sprint,setSprint]=useState(params.get("sprint")??""),[priority,setPriority]=useState(params.get("priority")??""),
  [assignee,setAssignee]=useState(params.get("assignee")??""),[statusFilter,setStatusFilter]=useState(params.get("lane")??""),[busy,setBusy]=useState(false),[error,setError]=useState(""),
- [undo,setUndo]=useState<{id:string;status:string}|null>(null);
+ [undo,setUndo]=useState<{id:string;status:string}|null>(null),[selected,setSelected]=useState<string|null>(null);
  useEffect(()=>{setTasks(initialTasks)},[initialTasks]);
  function remember(name:string,value:string){
   const query=new URLSearchParams(window.location.search);
@@ -125,7 +126,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
      return <li key={task.id} draggable={canMove}
       onDragStart={e=>e.dataTransfer.setData("text/plain",task.id)}
       className="space-y-2 rounded-lg border border-border bg-surface p-3 text-sm">
-      <p className="font-semibold">{task.title}</p>
+      <button type="button" onClick={()=>setSelected(task.id)}
+        className="min-h-10 text-left font-semibold text-primary-text underline">{task.title}</button>
       <p className="text-xs text-body">{task.priority} · {sprintRow?.title??"Backlog"}</p>
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
@@ -172,5 +174,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
     </ul>
    </section>)}
   </div></div>
+  {selected&&tasks.find(task=>task.id===selected)?<MentorBoardTaskDetailDialog
+    projectId={projectId} task={tasks.find(task=>task.id===selected)!}
+    sprintTitle={sprints.find(s=>s.id===tasks.find(task=>task.id===selected)?.sprintId)?.title??null}
+    members={members} submissions={taskSubmissions} activity={taskActivity}
+    readOnly={readOnly} onClose={()=>setSelected(null)}/>:null}
  </section>;
 }
