@@ -13,15 +13,15 @@ test.describe("GR-80 public sign-in failure matrix", () => {
       await page.goto("/");
       const errors = captureUncaughtErrors(page);
       await page.getByRole("tab", { name: "Email" }).click();
-      const email = page.getByRole("textbox", { name: "Email address" });
+      const email = page.getByRole("textbox", { name: "Email" });
       await email.fill("learner.a@vnext.test");
       const failure = await failApi(page, kind === "backend-down" ? "**/api/**" : "**/api/auth/login/start", kind);
       try {
-        await page.getByRole("button", { name: "Send code" }).click();
+        await page.getByRole("button", { name: "Continue" }).click();
         await expect.poll(() => failure.requests().some((request) => request === "POST /api/auth/login/start")).toBe(true);
         await expectFriendlyFailure(page, kind);
         await expect(email).toHaveValue("learner.a@vnext.test");
-        await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
+        await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
         await expectNoRawErrors(page);
         expect(errors, "Uncaught client-side errors").toEqual([]);
       } finally {
@@ -44,11 +44,11 @@ test.describe("GR-80 public sign-in failure matrix", () => {
           page, kind === "backend-down" ? "**/api/**" : "**/api/auth/login/start", kind,
         );
         try {
-          await page.getByRole("button", { name: "Send code" }).click();
+          await page.getByRole("button", { name: "Continue" }).click();
           await expect.poll(failure.hits).toBeGreaterThan(0);
           await expectFriendlyFailure(page, kind);
           await expect(contact).toHaveValue("9876543210");
-          await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
+          await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
           await expectNoRawErrors(page);
           expect(errors).toEqual([]);
         } finally {
@@ -62,11 +62,11 @@ test.describe("GR-80 public sign-in failure matrix", () => {
     await page.goto("/");
     const errors = captureUncaughtErrors(page);
     await page.getByRole("tab", { name: "Email" }).click();
-    const email = page.getByRole("textbox", { name: "Email address" });
+    const email = page.getByRole("textbox", { name: "Email" });
     await email.fill("learner.a@vnext.test");
     await context.setOffline(true);
     try {
-      await page.getByRole("button", { name: "Send code" }).click();
+      await page.getByRole("button", { name: "Continue" }).click();
       await expect(page.getByRole("alert")).toContainText(/connection|offline|try again/i);
       await expect(email).toHaveValue("learner.a@vnext.test");
       await expectNoRawErrors(page);
@@ -74,6 +74,6 @@ test.describe("GR-80 public sign-in failure matrix", () => {
     } finally {
       await context.setOffline(false);
     }
-    await expect(page.getByRole("button", { name: "Send code" })).toBeEnabled();
+    await expect(page.getByRole("button", { name: "Continue" })).toBeEnabled();
   });
 });

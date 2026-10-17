@@ -3,7 +3,7 @@ import { FRIENDLY_MESSAGES } from "../../../src/lib/friendly-error";
 
 /** GR-81: a product screen must contain useful content, never implementation text. */
 const forbidden = [
-  /\b[A-Z0-9_]{6,}\b/g,
+  /\b(?:INTERNAL_ERROR|DATABASE_UNAVAILABLE|SESSION_EXPIRED|FORBIDDEN|NOT_FOUND|RATE_LIMITED|GATEWAY_TIMEOUT|UNEXPECTED_ERROR|CONFLICT)\b/g,
   /Error:/i, /Exception/i, /ECONN/i, /undefined/i,
   /\bNaN\b/, /\[object/i, /at <anonymous>/i,
   /\bApplication error\b/i,
@@ -22,6 +22,13 @@ export async function expectNoRawErrors(page: Page): Promise<void> {
   for (const pattern of forbidden) {
     pattern.lastIndex = 0;
     expect(body, `GR-81: leaked implementation detail matching ${pattern}`).not.toMatch(pattern);
+  }
+  // Product role/status labels can be uppercase. Standalone API codes in
+  // announced failures cannot.
+  for (const alert of await page.getByRole("alert").all()) {
+    const value = (await alert.innerText()).trim();
+    expect(value, "GR-81: raw API error identifier in an announcement")
+      .not.toMatch(/^(?:[A-Z][A-Z0-9_]{5,}|HTTP\s*[45]\d{2})$/);
   }
   await expect(page.locator("nextjs-portal")).toHaveCount(0);
 }

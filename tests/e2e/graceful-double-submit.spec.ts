@@ -11,8 +11,8 @@ type Case = {
   endpoint: string;
 };
 const flows: Case[] = [
-  { url: "/", field: 'input[name="contact"]', value: "graceful@example.invalid",
-    button: "Send code", endpoint: "**/api/auth/login/start" },
+  { url: "/", field: 'input[name="contact"]', value: "graceful@example.com",
+    button: "Continue", endpoint: "**/api/auth/login/start" },
   { role: "learner", url: "/learn/my-placements",
     field: "#placement-job-preferences input", value: "Graceful duplicate guard",
     button: "Save preferences", endpoint: "**/api/placements/preferences" },
