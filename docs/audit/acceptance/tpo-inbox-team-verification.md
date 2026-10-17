@@ -198,3 +198,7 @@ Additional source-level closures this continuation: TPO-inbox-team-57, -62, -64,
 
 | TPO-inbox-team-54 | PARTIAL — OPEN | `countUnreadTpo42Announcements` counts college-scoped visible unread notices beyond the first 100 and tabs show true global count only when read-receipt storage is registered; named `TPO-inbox-team-54` in `tests/unit/tpo-from42-unread-chat2.test.ts`. Shell sidebar and informational bell producer remain open (chat-9 shell owner). |
 | TPO-inbox-team-R04 | PARTIAL — OPEN | Announcements continue paginated, and first-page unread badge now uses a separate authorized full count, not a per-page guess; same named test. Remaining author filtering and full-list acceptance pending. |
+
+## Chat-2 round 5 — Team conversation rename
+
+| TPO-inbox-team-17 | PARTIAL — OPEN | Existing 200-character create flow now supplemented by scoped, two-participant optimistic rename with guarded UI, explicit POST and named `TPO-inbox-team-17` tests in `tests/unit/tpo-team-rename-chat2.test.ts`. Multi-person participants, leave action and visibility policy remain open. |
