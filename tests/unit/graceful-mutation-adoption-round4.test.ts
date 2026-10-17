@@ -56,4 +56,31 @@ describe("chat-14 guarded mutation adoption", () => {
     expect(code).toContain("Department name must be 255 characters or less");
     expect(code).toContain("disabled={pending || !name.trim()}");
   });
+  it("GR-30 GR-31 preserves resource confirmation and server message while serializing completion", () => {
+    const code = source("src/components/courses/resource-progress-control.tsx");
+    expect(code).toContain("useGuardedAction()");
+    expect(code).toContain("await run(async () => {");
+    expect(code).toContain("await courseApiError(response)");
+    expect(code).toContain("setComplete(true)");
+    expect(code).toContain('disabled={!hydrated || saving || complete}');
+  });
+
+  it("GR-30 GR-31 guards Super Admin batch graduation without dropping eligibility error details", () => {
+    const code = source("src/components/admin/super-admin-batch-graduate-action.tsx");
+    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("await run(async () => {");
+    expect(code).toContain("BATCH_NOT_READY_TO_GRADUATE");
+    expect(code).toContain("BATCH_GRADUATION_STALE");
+    expect(code).toContain("pending={pending}");
+  });
+
+  it("GR-30 GR-31 protects TPO follow-up creation and retains entered details on failure", () => {
+    const code = source("src/components/tpo/tpo-new-followup-modal.tsx");
+    expect(code).toContain("useGuardedAction({timeoutMs:30000})");
+    expect(code).toContain("await run(async () => {");
+    expect(code).toContain("calendarLocalIstToOffset(when)");
+    expect(code).toContain("setError(\"Could not save the follow-up\")");
+    expect(code).toContain("disabled={saving||loading}");
+  });
+
 });
