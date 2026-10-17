@@ -76,10 +76,32 @@ export function parseCloudErrorEntry(value: unknown): CloudErrorRecord | null {
   };
 }
 
-async function readJsonLimited(response: Response): Promise<unknown> {
-  const text = await response.text();
-  if (text.length > 1_000_000) throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
-  try { return JSON.parse(text) as unknown; }
+export async function readCloudProviderJsonLimited(response: Response): Promise<unknown> {
+  const reader = response.body?.getReader();
+  if (!reader) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");
+  const chunks: Uint8Array[] = [];
+  let size = 0;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      size += value.byteLength;
+      if (size > 1_000_000) {
+        await reader.cancel().catch(() => undefined);
+        throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+      }
+      chunks.push(value);
+    }
+  } catch {
+    throw new Error("LOG_PROVIDER_RESPONSE_TOO_LARGE");
+  }
+  const bytes = new Uint8Array(size);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  try { return JSON.parse(new TextDecoder().decode(bytes)) as unknown; }
   catch { throw new Error("LOG_PROVIDER_INVALID_RESPONSE"); }
 }
 
@@ -102,7 +124,7 @@ export async function cloudLoggingAccessToken(transport: Transport = fetch): Pro
     { headers: { "Metadata-Flavor": "Google" } }, transport, 2_500,
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
-  const result = asObject(await readJsonLimited(response));
+  const result = asObject(await readCloudProviderJsonLimited(response));
   if (typeof result.access_token !== "string" || !result.access_token ||
       result.access_token.length > 4096) throw new Error("LOG_PROVIDER_AUTH_UNAVAILABLE");
   return result.access_token;
@@ -135,7 +157,7 @@ export async function readCloudLogErrorPage(input: {
     input.transport ?? fetch,
   );
   if (!response.ok) throw new Error("LOG_PROVIDER_UNAVAILABLE");
-  const raw = asObject(await readJsonLimited(response));
+  const raw = asObject(await readCloudProviderJsonLimited(response));
   const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 100) : [];
   const errors = entries.map(parseCloudErrorEntry).filter((item): item is CloudErrorRecord => item !== null);
   const nextPageToken = optionalText(raw.nextPageToken);
