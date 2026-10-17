@@ -17,7 +17,8 @@ export async function POST(request:Request,{params}:{params:Promise<{companyId:s
   // Preserve the existing same-origin, validated composer POST without
   // discarding its message or changing the scoped company permission checks.
   return NextResponse.json(await mutateTpoCompanyTeam(
-   await getCurrentRequestContext(),companyId,{action:"SEND",body:parsed.data.body}));
+   await getCurrentRequestContext(),companyId,{action:"SEND",body:parsed.data.body,
+    idempotencyKey:parsed.data.idempotencyKey}));
  }catch(error){
   if(error instanceof AuthorizationError)return NextResponse.json({error:"FORBIDDEN"},{status:403});
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_BODY"},{status:400});
