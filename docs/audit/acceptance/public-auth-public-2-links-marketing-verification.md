@@ -14,7 +14,7 @@ Audit `docs/audit/pages/public/auth-public-2-links-marketing.md`. Protocol `docs
 | PUB-auth-public-53 | OPEN | Chosen applicant column whitelist and shortlist stage disclosure still only 3 columns |
 | PUB-auth-public-55 | OPEN | Private all-resume ZIP awaits signed receipt/download and scanner |
 | PUB-auth-public-56 | DONE | Company-share page renders college, company, share date and expiry / confidentiality warning; named test PUB-auth-public-56 |
-| PUB-auth-public-59 | OPEN | Network failure retry exists; invalid/expired share exact legacy copy still missing |
+| PUB-auth-public-59 | DONE | Public share now displays exact invalid/expired warning; thrown server load errors render independent Retry boundary; `tests/unit/public-auth-links-gap-closure.test.ts` — PUB-auth-public-59 |
 | PUB-auth-public-67 | DONE | /privacy-policy redirects to 13-section historic privacy policy, April 20 2026, Android ID and privacy email; named test PUB-auth-public-67 |
 | PUB-auth-public-68 | DONE | Historic terms/privacy static HTML files at exact consent-facing paths; named test PUB-auth-public-68 |
 | PUB-auth-public-48 | DONE | Exact legacy declined subtitle rendered after Not hiring; named test PUB-auth-public-48 |
