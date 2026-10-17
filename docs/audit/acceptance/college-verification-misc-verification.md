@@ -30,3 +30,12 @@ Photo upload for -01/-02 requires private object storage; the HTTPS link route w
 | COL-verification-misc-18 | NOT-A-GAP | Owner OD-38 approved extra student-groups surface; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-18` |
 | COL-verification-misc-20 | DONE | `src/app/(authenticated)/college/branding/page.tsx`, `src/app/(authenticated)/college/college-profile/page.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-20` |
 | COL-verification-misc-10 | DONE | `src/modules/verification/staff-queue-service.ts`, `src/components/verification/CollegeVerificationPanel.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts`, `COL-verification-misc-10` |
+
+### Further gap coverage (not run)
+
+| Gap | Status | Evidence | Remaining |
+|---|---|---|---|
+| COL-verification-misc-09 | DONE | `src/components/verification/TpoVerificationSwitch.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-09` | Legacy setting label and guarded updates implemented; exact explanatory wording and Super Admin fallback still need parity review |
+| COL-verification-misc-04 | PARTIAL | `src/components/verification/CollegeVerificationPanel.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-04` | The 1,000-row legacy bulk-selection scope and all document eligibility rules still need acceptance |
+| COL-verification-misc-08 | PARTIAL | `src/components/verification/VerificationWorkspace.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-08` | Full saved-view, column-choice and waiting-since filters remain incomplete |
+| COL-verification-misc-11 | PARTIAL | `src/app/(authenticated)/college/activity/page.tsx`; `tests/unit/chat4-college-verification-misc-gap-closure.test.ts` test `COL-verification-misc-11` | The day-grouped readable Activity feed and complete module sentence coverage remain incomplete |
