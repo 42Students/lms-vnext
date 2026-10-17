@@ -90,6 +90,8 @@ export default async function RecruiterInterviewSlots({params}:{params:Promise<{
       {" · "}{slot.mode} · Internal reservations: {slot.bookedCount}/{slot.capacity}
      </p>
      {slot.panelLabel?<p className="text-sm text-body">Panel: {slot.panelLabel}</p>:null}
+     {slot.meetingLocation?<p className="text-sm text-body">Venue: {slot.meetingLocation}</p>:
+       <p className="text-xs text-muted-foreground">Room or joining details not recorded yet.</p>}
      {slot.canEdit?<form action={action} method="post" className="flex flex-wrap gap-2">
       <input type="hidden" name="slotId" value={slot.id}/>
       <input type="hidden" name="expectedVersion" value={slot.version}/>
