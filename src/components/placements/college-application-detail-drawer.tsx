@@ -23,6 +23,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [error,setError]=useState("");
  const [note,setNote]=useState("");
  const [saving,setSaving]=useState(false);
+ const [success,setSuccess]=useState("");
  const url="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
    encodeURIComponent(applicationId);
  async function reload(){
@@ -37,13 +38,13 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  }
  async function save(){
   if(!note.trim()||saving)return;
-  setSaving(true);setError("");
+  setSaving(true);setError("");setSuccess("");
   try{
    const response=await fetch(url,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim()})});
    const result=await response.json().catch(()=>null);
    if(!response.ok)throw Error(result?.error??"Note could not be saved");
-   setNote("");await reload();
+   setNote("");await reload();setSuccess("Internal note saved to application history.");
   }catch(reason){setError(reason instanceof Error?reason.message:"Note could not be saved");}
   finally{setSaving(false);}
  }
@@ -124,6 +125,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <label className="mt-3 grid gap-2 text-sm font-semibold">Add internal notes (visible only to admins)
         <textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="rounded border border-border bg-surface p-3"/></label>
+       {success?<p role="status" className="text-sm text-body">{success}</p>:null}
        <button type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
         className="mt-3 min-h-10 rounded bg-primary px-4 font-semibold text-on-primary disabled:opacity-50">
          {saving?"Saving…":"Add note"}</button>
