@@ -88,7 +88,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </p>:null}
    {audience?<div role="status" className="mt-3 rounded-lg border border-border p-3">
      <p className="text-sm font-semibold text-foreground">Current {query.success?query.data.audience.toLowerCase():"college"} visibility preview</p>
-     <p className="mt-1 text-sm text-body">{audience.potentiallyVisibleMemberships} active memberships with active platform accounts.</p>
+     <p className="mt-1 text-sm text-body">{selected?"Goes to "+audience.potentiallyVisibleMemberships+" students · "+query.data.audience.toLowerCase().replaceAll("_"," "):audience.potentiallyVisibleMemberships+" active college members could see this announcement."}</p>
      <p className="mt-1 text-xs text-muted-foreground">This is an estimate, not a send or delivery count. It excludes inactive memberships and disabled users. The selected audience determines recipient visibility when targeted storage is ready.</p>
    </div>:null}
    {query.success&&!canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady)?
