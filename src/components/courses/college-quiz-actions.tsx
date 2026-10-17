@@ -41,6 +41,9 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   if(action==="EDIT"){
    if(!expectedUpdatedAt){setError("Reload the Quiz before editing.");return;}
    if(!title.trim()||title.trim().length>255){setError("Enter a quiz title.");return;}
+   if(quiz.status==="DRAFT"&&(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)){
+    setError("Maximum attempts must be between 1 and 20.");return;
+   }
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
    body={title:title.trim(),dueAt:deadline?.toISOString()??null,description:description.trim()||null,
