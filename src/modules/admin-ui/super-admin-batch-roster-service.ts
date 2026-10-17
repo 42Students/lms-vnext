@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,count,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {cohorts,departments,programs,sections,sectionEnrollments} from "@/db/schema";
+import {cohorts,departments,programs,sections,sectionEnrollments,learnerProgramEnrollments,collegeMemberships} from "@/db/schema";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import type {RequestContext} from "@/modules/identity/context";
 import {z} from "zod";
@@ -20,9 +20,13 @@ export async function getSuperAdminBatchRosterOverview(context:RequestContext,ra
  if(!batch)return null;
  const classes=await db.select({
   id:sections.id,name:sections.name,code:sections.code,capacity:sections.capacity,status:sections.status,
-  learnerCount:count(sectionEnrollments.id),
+  learnerCount:count(collegeMemberships.id),
  }).from(sections)
   .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.sectionId,sections.id),eq(sectionEnrollments.status,"ACTIVE")))
+  .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId),
+    eq(learnerProgramEnrollments.cohortId,batchId),eq(learnerProgramEnrollments.status,"ACTIVE")))
+  .leftJoin(collegeMemberships,and(eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
+    eq(collegeMemberships.collegeId,scope.collegeId),eq(collegeMemberships.status,"ACTIVE")))
   .where(eq(sections.cohortId,batchId))
   .groupBy(sections.id,sections.name,sections.code,sections.capacity,sections.status)
   .orderBy(asc(sections.name),asc(sections.id));
