@@ -1,0 +1,30 @@
+"use client";
+import {useState} from "react";
+import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evidence-model";
+
+/** Learner resource opening must never render an unsafe URL or silently fail on a blocked popup. */
+export function ProjectResourceOpenLink({url}:{url:string|null}){
+ const [notice,setNotice]=useState("");
+ const safe=url?safeProjectExternalHref(url):null;
+ if(!url)return <p role="status" className="mt-3 text-sm text-muted-foreground">
+  This resource has no link or file attached yet.
+ </p>;
+ if(!safe)return <p role="alert" className="mt-3 text-sm text-error">
+  This resource has an invalid address. Ask your mentor to update it.
+ </p>;
+ function open(){
+  const popup=window.open(safe??"","_blank","noopener,noreferrer");
+  if(!popup){
+   setNotice("Your browser blocked the resource window. Copy the link to open it manually.");
+  }else setNotice("");
+ }
+ return <div className="mt-3 space-y-2 text-sm">
+  <button type="button" onClick={open} className="min-h-10 font-semibold text-primary-text underline">
+   Open resource ↗
+  </button>
+  {notice?<div role="status" className="rounded-md border border-border p-2 text-body">
+   <p>{notice}</p><a href={safe} target="_blank" rel="noopener noreferrer"
+    className="mt-1 block break-all font-semibold text-primary-text underline">{safe}</a>
+  </div>:null}
+ </div>;
+}
