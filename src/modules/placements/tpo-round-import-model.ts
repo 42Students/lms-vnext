@@ -39,7 +39,7 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
   roll=locate("roll","rollnumber","studentroll"),company=locate("companyid","portalid","candidateid"),
   status=locate("result","outcome","status","decision"),rank=locate("waitlistrank","rank"),
   message=locate("reason","message","studentmessage","comment"),name=locate("student","studentname","name");
- if(status<0||Math.max(app,email,roll,company)<0)throw Error("Include Result and an Application ID, Email, Roll number or Company ID column.");
+ if(status<0||Math.max(app,email,roll)<0)throw Error("Include Result and an Application ID, Email or Roll number column. Company portal IDs are not mapped to internal applicants.");
  if(grid.length>1000)throw Error("Import up to 1,000 student rows per file.");
  const rows:ImportRow[]=grid.map((parts,i)=>{
   const value=(col:number)=>col>=0?parts[col]?.trim()??"":"";
@@ -53,4 +53,4 @@ export function parseTpoRoundImport(bytes:Buffer,filename:string){
  });
  return rows;
 }
-export const ROUND_IMPORT_TEMPLATE="Application ID,Email,Roll number,Company ID,Result,Waitlist rank,Student message\n";
+export const ROUND_IMPORT_TEMPLATE="Application ID,Email,Roll number,Result,Waitlist rank,Student message\n";
