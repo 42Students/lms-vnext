@@ -34,7 +34,7 @@ async function verifyOwnSharedApplication(ctx:RequestContext,jobId:string,applic
   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
   .innerJoin(users,eq(users.id,collegeMemberships.userId))
   .where(and(eq(placementApplications.id,applicationId),eq(placementApplications.jobId,jobId),
-   eq(placementApplicationScreenings.status,"SHORTLISTED"),
+   eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED"),
    eq(collegeMemberships.collegeId,workspace.college.id),
    eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
   .limit(1);
@@ -74,7 +74,7 @@ export async function writeRecruiterPrivateReview(ctx:RequestContext,rawJobId:st
      sql`'DRIVES' = any(${placementRecruiterCollegeGrants.capabilities})`))
    .where(and(eq(placementApplications.id,applicationId),
     eq(placementApplications.jobId,jobId),recruiterOwnJobPredicate(ctx.user.id),
-    eq(placementApplicationScreenings.status,"SHORTLISTED")))
+    eq(placementApplications.status,"SUBMITTED"),eq(placementApplicationScreenings.status,"SHORTLISTED")))
    .for("update").limit(1);
   if(!owned)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
   const [current]=await tx.select({id:placementRecruiterPrivateReviews.id,
