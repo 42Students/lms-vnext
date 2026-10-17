@@ -22,6 +22,7 @@ export type LearnerPlacementJourneyItem = {
   };
   results: Array<{
     resultId: string;
+    roundId?: string;
     roundSequence: number;
     roundName: string;
     outcome: string;
@@ -322,6 +323,16 @@ export function LearnerPlacementJourney({
                         >
                           {roundOutcomeLabel(result.outcome)}
                         </StatusBadge>
+                        {result.outcome==="ABSENT"&&result.appliedAt&&result.roundId ? (
+                          <Link
+                            href={"/learn/my-placements/placement?"+new URLSearchParams({
+                              request:"absence-dispute",applicationId:item.applicationId,
+                              roundId:result.roundId,
+                            }).toString()+"#requests"}
+                            className="inline-flex min-h-10 items-center font-semibold text-primary-text underline">
+                            Wrong? Tell the placement cell
+                          </Link>
+                        ) : null}
                       </div>
                     </div>
                   ))}
