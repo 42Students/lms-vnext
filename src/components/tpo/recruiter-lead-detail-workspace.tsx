@@ -528,7 +528,7 @@ export function RecruiterLeadDetailWorkspace({
                   <textarea className={input + " mt-1"} maxLength={2000} rows={3} value={logNote}
                     onChange={e => setLogNote(e.target.value)} />
                 </label>
-                <button className={primary} type="submit" disabled={saving}>
+                <button className={primary} type="submit" disabled={saving||(logType==="CALL"&&!logOutcome)||(logType==="NOTE"&&!logNote.trim())}>
                   {saving ? "Saving…" : "Log activity"}
                 </button>
               </form>
