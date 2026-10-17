@@ -6,6 +6,7 @@ import { hasMembershipRole, type RequestContext } from "@/modules/identity/conte
 import { listBulkDriveCandidates } from "@/modules/placements/bulk-drive-service";
 import { PlacementBulkAddApplicants } from "./placement-bulk-add-applicants";
 import { TpoRemindNonApplicants } from "./tpo-remind-non-applicants";
+import { TpoDriveCloneAction } from "./tpo-drive-clone-action";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
@@ -17,6 +18,7 @@ import { projectTpoDriveScheduleWarnings } from "@/modules/placements/tpo-drive-
 import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
@@ -227,6 +229,8 @@ export async function PlacementDriveWorkspace({
     applicationDeadline:job.applicationDeadline,
   });
 
+  const journey=isTpo?await getTpoDriveJourney(context,jobId):null;
+
   const nextStep = isTpo && lifecycleReadiness
     ? projectTpoDriveNextStep({
         jobId,
@@ -285,6 +289,8 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
+            {isTpo && ["CLOSED","CANCELLED"].includes(job.status) ?
+              <TpoDriveCloneAction jobId={jobId} label="Run it again as a draft"/>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-9 items-center justify-center rounded-md border border-border bg-surface px-3 text-sm font-semibold text-foreground">
@@ -387,6 +393,18 @@ export async function PlacementDriveWorkspace({
           ) : null}
         </section>
       ) : null}
+      {journey?<section aria-label="Drive applicant journey" className="rounded-xl border border-border bg-surface p-5">
+        <h2 className="font-semibold text-foreground">Journey</h2>
+        <p className="mt-1 text-xs text-body">{journey.definition}</p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
+            className="rounded-lg border border-border p-3 hover:bg-primary-subtle">
+            <span className="block text-xs text-body">{stage.name}</span>
+            <strong className="mt-2 block text-2xl tabular-nums">{stage.count}</strong>
+          </Link>)}
+        </div>
+        <p className="mt-3 text-xs text-body">{journey.excluded} registered learners excluded or not notified from {journey.considered} considered.</p>
+      </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="rounded-xl border border-border bg-surface p-5">
           <h2 className="text-base font-semibold text-foreground">Rounds</h2>

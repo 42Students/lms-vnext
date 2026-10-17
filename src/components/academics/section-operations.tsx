@@ -687,7 +687,7 @@ export function SectionOperations({
         </div>
 
         <div className="space-y-3">
-          <h3 className="m-0 text-sm font-semibold text-foreground">
+          <h3 id="section-roster" className="m-0 text-sm font-semibold text-foreground">
             Section roster history
           </h3>
           <DataTable
@@ -780,7 +780,7 @@ export function SectionOperations({
 
       <section className="space-y-4">
         <div>
-          <h2 className="m-0 text-lg font-semibold text-foreground">
+          <h2 id="section-schedule" className="m-0 text-lg font-semibold text-foreground">
             Section schedule
           </h2>
           <p className="mt-1 text-sm text-body">

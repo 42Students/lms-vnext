@@ -9,12 +9,13 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { readAdminQuery, superAdminReadHref, type SuperAdminReadResult, type SuperAdminReadRow } from "@/modules/admin-ui/super-admin-read-directory-model";
-export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,peopleFilters}:{
+export async function AdminScopedReadPage({title,path,description,statuses,searchParams,loader,exportPath,exportFilename,renderRowActions,peopleFilters,classOptions}:{
  title:string;path:string;description:string;
  statuses:readonly string[];
  searchParams:Promise<Record<string,string|string[]|undefined>>;
  loader:(raw:unknown)=>Promise<SuperAdminReadResult>;
  exportPath?:string;exportFilename?:string;renderRowActions?:(row:SuperAdminReadRow)=>ReactNode;
+ classOptions?:readonly {id:string;name:string}[];
  peopleFilters?:{kind:"FACULTY"|"LEARNER";departments:readonly {id:string;name:string}[];programs:readonly {id:string;name:string}[];batches:readonly {id:string;name:string}[];classes:readonly {id:string;name:string}[]};
 }) {
  const parsed=readAdminQuery(await searchParams);
@@ -63,6 +64,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       })}
      </>}
    </>:null}
+   {classOptions?<label className="grid gap-1 text-sm font-semibold text-body">Class
+     <select name="sectionId" defaultValue={data.query.sectionId??""}
+      className="min-h-11 rounded-md border border-border bg-surface px-3 text-foreground">
+      <option value="">All classes</option>
+      {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
+     </select></label>:null}
    <label className="grid gap-1 text-sm font-semibold text-body">Rows per page
     <select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 min-w-0 rounded-md border border-border bg-surface px-3 text-foreground">

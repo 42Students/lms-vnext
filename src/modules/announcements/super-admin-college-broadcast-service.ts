@@ -2,6 +2,9 @@ import "server-only";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema/colleges";
+import {collegeMemberships,membershipRoles} from "@/db/schema/memberships";
+import {users} from "@/db/schema/users";
+import {deliverInAppNotificationInTransaction} from "@/modules/activity/notification-service";
 import {organizations} from "@/db/schema/organizations";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
@@ -75,14 +78,37 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
   }));
   const inserted=await tx.insert(db10Announcements).values(rows).returning({id:db10Announcements.id,collegeId:db10Announcements.collegeId});
   const organizationsByCollege=new Map(targets.map(target=>[target.id,target.organizationId]));
-  await tx.insert(activityEvents).values(inserted.map(row=>({
+  const events=await tx.insert(activityEvents).values(inserted.map(row=>({
    collegeId:row.collegeId,organizationId:organizationsByCollege.get(row.collegeId)!,
    actorUserId:context.user.id,module:"PLATFORM" as const,
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED,
    subjectType:"announcement",subjectId:row.id,
    importance:"HIGH" as const,summary:"Super Admin published an in-app college notice",
    metadata:{audienceMode:input.audienceMode,noticeId:row.id},
-  })));
+  }))).returning({id:activityEvents.id,collegeId:activityEvents.collegeId});
+  // Immediate notices notify every ACTIVE TPO user of the college. Scheduled
+  // notices remain passive until the scheduled-delivery worker is configured.
+  if(!input.scheduledAt||new Date(input.scheduledAt).getTime()<=Date.now()){
+   const recipients=await tx.select({collegeId:collegeMemberships.collegeId,userId:collegeMemberships.userId})
+    .from(collegeMemberships)
+    .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
+    .innerJoin(users,eq(users.id,collegeMemberships.userId))
+    .where(and(
+     inArray(collegeMemberships.collegeId,targets.map(row=>row.id)),
+     eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO"),
+     eq(users.platformStatus,"ACTIVE"),
+    )).limit(10001);
+   if(recipients.length>10000)throw new AnnouncementError("TARGET_NOT_FOUND");
+   const byCollege=new Map<string,string[]>();
+   for(const row of recipients)byCollege.set(row.collegeId,[...(byCollege.get(row.collegeId)??[]),row.userId]);
+   for(const event of events){
+    if(!event.collegeId)continue;
+    await deliverInAppNotificationInTransaction(tx,event.id,byCollege.get(event.collegeId)??[],{
+     title:"From 42: "+input.title.slice(0,220),body:input.message.slice(0,2000),
+     actionHref:"/tpo/announcements",
+    });
+   }
+  }
   return inserted;
  });
  return {count:created.length,noticeIds:created.map(x=>x.id)};

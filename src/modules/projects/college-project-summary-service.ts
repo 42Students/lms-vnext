@@ -2,16 +2,15 @@ import "server-only";
 import {and,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMembers,projectSubmissions,sections,cohorts,programs,departments} from "@/db/schema";
-import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
+import type {RequestContext} from "@/modules/identity/context";
 import {ProjectsServiceError} from "./errors";
 import {requireProjectManageAccess} from "./access";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {collegeProjectSummaryPatch,collegeProjectStatusChangeAllowed} from "./college-project-summary-model";
 export async function updateCollegeProjectSummary(context:RequestContext,projectId:string,raw:unknown){
- if(!hasMembershipRole(context,"COLLEGE_ADMIN"))
-  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const scope=await requireProjectManageAccess(context,projectId);
+ if(scope.access!=="ADMIN")throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
  const input=collegeProjectSummaryPatch.parse(raw);
  return getDb().transaction(async tx=>{
   const [row]=await tx.select().from(projectInstances)

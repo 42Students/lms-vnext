@@ -12,10 +12,13 @@ import { projectMutation } from "./project-api";
 
 export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
-  description:originalDescription,updatedAt,
+  description:originalDescription,updatedAt,goal:originalGoal,definitionOfDone:originalDone,
+  startDate:originalStart,endDate:originalEnd,dueDate:originalDue,status,
 }:{
   projectId:string;sprintId:string;title:string;
   description:string|null;updatedAt:string;
+  goal:string|null;definitionOfDone:string|null;startDate:string|null;endDate:string|null;
+  dueDate:string|null;status:string;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
@@ -23,19 +26,27 @@ export function MentorSprintDetailsEdit({
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [title,setTitle]=useState(originalTitle);
   const [description,setDescription]=useState(originalDescription??"");
+  const [goal,setGoal]=useState(originalGoal??""),[done,setDone]=useState(originalDone??"");
+  const [start,setStart]=useState(originalStart??""),[end,setEnd]=useState(originalEnd??""),
+    [due,setDue]=useState(originalDue??"");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
   const changed=title.trim()!==originalTitle ||
-    (description.trim()||null)!==(originalDescription??null);
+    (description.trim()||null)!==(originalDescription??null)||
+    (goal.trim()||null)!==(originalGoal??null)||(done.trim()||null)!==(originalDone??null)||
+    (start||null)!==originalStart||(end||null)!==originalEnd||(due||null)!==originalDue;
   function begin() {
     setTitle(originalTitle);
     setDescription(originalDescription??"");
+    setGoal(originalGoal??"");setDone(originalDone??"");
+    setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
     setError(null);
     setOpen(true);
   }
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(!title.trim()||title.trim().length>200||description.trim().length>4000||!changed) {
+    if(!title.trim()||title.trim().length>200||description.trim().length>4000||goal.length>4000||done.length>4000||
+      (start&&end&&end<start)||!changed) {
       setError("Enter changed sprint details within the field limits.");
       return;
     }
@@ -53,6 +64,8 @@ export function MentorSprintDetailsEdit({
         "PATCH",
         {
           title:title.trim(),description:description.trim()||null,
+          goal:goal.trim()||null,definitionOfDone:done.trim()||null,
+          startDate:start||null,endDate:end||null,dueDate:due||null,
           expectedUpdatedAt:updatedAt,
         },
       );
@@ -70,7 +83,7 @@ export function MentorSprintDetailsEdit({
   return <>
     <Button size="sm" variant="secondary" onClick={begin}>Edit sprint</Button>
     <Dialog open={open} onOpenChange={setOpen} title="Edit sprint details"
-      description="Only the title and description are editable. Sprint lifecycle state stays unchanged.">
+      description="Edit sprint goals and dates. Dates are locked once a sprint is active.">
       <form onSubmit={review} className="grid gap-4">
         <label className="grid gap-1 text-xs font-semibold text-body">
           Sprint title
@@ -82,6 +95,18 @@ export function MentorSprintDetailsEdit({
           <Textarea maxLength={4000} value={description}
             onChange={event=>setDescription(event.target.value)} />
         </label>
+        <label className="grid gap-1 text-xs font-semibold text-body">Sprint goal
+          <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+        <label className="grid gap-1 text-xs font-semibold text-body">What does done look like?
+          <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
+        <div className="grid gap-3 sm:grid-cols-3">
+          {([{label:"Start date",value:start,set:setStart},
+             {label:"End date",value:end,set:setEnd},
+             {label:"Due date",value:due,set:setDue}]).map(row=>
+              <label key={row.label} className="text-xs font-semibold text-body">{row.label}
+                <Input type="date" value={row.value} disabled={status==="ACTIVE"}
+                  onChange={e=>row.set(e.target.value)}/></label>)}
+        </div>
         {error?<p role="alert" className="text-sm font-semibold text-error">{error}</p>:null}
         <div className="flex justify-end gap-2">
           <Button type="button" variant="secondary" onClick={()=>setOpen(false)}>

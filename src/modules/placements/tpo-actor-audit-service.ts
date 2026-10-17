@@ -2,7 +2,7 @@ import "server-only";
 
 import { and, count, desc, eq, gte, lte, type SQL } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { activityEvents } from "@/db/schema";
+import { activityEvents,users } from "@/db/schema";
 import { parseActivityDateBoundary } from "@/modules/activity/date-boundary";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
@@ -52,11 +52,13 @@ export async function getTpoActorAudit(
       id: activityEvents.id,
       occurredAt: activityEvents.occurredAt,
       actorId: activityEvents.actorUserId,
+      actorName:users.displayName,
       eventType: activityEvents.eventType,
       entityType: activityEvents.subjectType,
       entityId: activityEvents.subjectId,
     })
       .from(activityEvents)
+      .leftJoin(users,eq(users.id,activityEvents.actorUserId))
       .where(scope)
       .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
       .limit(options.exportLimit ?? query.pageSize)
