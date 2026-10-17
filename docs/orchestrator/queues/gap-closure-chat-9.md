@@ -263,6 +263,12 @@ Audit: `docs/audit/pages/college/projects.md` (and `projects-review.md` if prese
 | COL-projects-23 | S4 | RESPONSIVE | OPEN |
 
 ## Notes (blockers, one line each)
+- BLOCKED TPO-calendar-reports-23: ROUND_REMINDER provider-backed delivery and evening-before verification require real configured email provider credentials; no fake sends or delivery success claimed.
+- BLOCKED TPO-calendar-reports-43: Resume uploaded/verified state requires the private object-storage bucket and scanner integration owned by the storage service.
+- OPEN TPO-calendar-reports-31: Batch/branch/company/mode/pay category aggregation parity across all report APIs remains to implement; the verified company and summary table filters do not cover them all.
+- OPEN TPO-calendar-reports-38: Legacy gallery subtitle and main report titles align, but remaining individual page descriptions need evidence review.
+- OPEN TPO-calendar-reports-R01: Released/accepted rule now flows into accreditation student list; SELECTED needs a persisted selection outcome join before source closure.
+
 
 ## Needs shell (chat-9 only)
 
