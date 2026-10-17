@@ -36,7 +36,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
    <section className="space-y-2"><h2 className="font-semibold">Students ({named.students.length})</h2>
     {named.students.length===0?<p className="text-sm">No matching students.</p>:<ul className="space-y-2">
       {named.students.map(s=><li key={s.id} className="rounded border border-border p-3 text-sm">
-       <Link href={"/tpo/students?search="+encodeURIComponent(s.name??"")} className="text-primary-text underline">{s.name??"Student"}</Link>
+       <Link href={"/tpo/students?search="+encodeURIComponent(s.name??"")+"&student="+encodeURIComponent(s.id)} className="text-primary-text underline">{s.name??"Student"}</Link>
       </li>)}</ul>}
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Recruiter Leads ({named.recruiters.length})</h2>
@@ -53,7 +53,7 @@ export default async function TpoRecordFinder({searchParams}:{searchParams:Promi
    </section>
    <section className="space-y-2"><h2 className="font-semibold">Drives ({jobs.length})</h2>
     {jobs.length===0?<p className="text-sm">No matching drives.</p>:<ul className="space-y-2">{jobs.map(r=><li key={r.job.id} className="rounded border border-border p-3 text-sm">
-     <Link href={"/tpo/placements/jobs/"+r.job.id} className="text-primary-text underline">{r.job.title} · {r.job.company.name}</Link></li>)}</ul>}
+     <Link href={"/tpo/placements/jobs/"+r.job.id} className="text-primary-text underline">{r.job.title} · {r.job.company.name} · {r.job.status.replaceAll("_"," ")}</Link></li>)}</ul>}
    </section>
   </>}
  </main>;

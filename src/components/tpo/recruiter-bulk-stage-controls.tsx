@@ -36,6 +36,7 @@ export function RecruiterBulkStageControls({
   const [error, setError] = useState("");
   const [results, setResults] = useState<BulkResult[]>([]);
   const [copyNotice,setCopyNotice]=useState("");
+  const [runAuditId,setRunAuditId]=useState("");
 
   const available = rows.filter((row) =>
     ["NEW", "CONTACTED", "NOT_NOW"].includes(row.manualStage),
@@ -79,7 +80,7 @@ export function RecruiterBulkStageControls({
 
     setBusy(true);
     setError("");
-    setResults([]);
+    setResults([]);setRunAuditId("");
     try {
       const response = await fetch("/api/placements/tpo/leads/bulk-stage", {
         method: "POST",
@@ -97,12 +98,14 @@ export function RecruiterBulkStageControls({
       });
       const data = await response.json() as {
         results?: BulkResult[];
+        runAuditId?: string;
         error?: string;
       };
       if (!response.ok || !Array.isArray(data.results)) {
         throw new Error(data.error || "Bulk stage change could not be confirmed.");
       }
       setResults(data.results);
+      setRunAuditId(data.runAuditId??"");
       setChosenIds([]);
       setReason("");
       setRevisitDate("");
@@ -211,6 +214,7 @@ export function RecruiterBulkStageControls({
       {results.length ? (
         <section aria-live="polite">
           <h3 className="font-semibold text-foreground">Per-lead results</h3>
+          {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
           {tpoBulkFailedLines(results).length>0?(
             <button type="button" className={fieldClass+" mt-2"}
               onClick={()=>void copyFailed()}>Copy failed</button>

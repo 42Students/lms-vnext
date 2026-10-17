@@ -2,6 +2,7 @@ import "server-only";
 import {and,desc,eq,isNull,isNotNull,or,lte,gt} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
+import {users} from "@/db/schema/users";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -27,9 +28,10 @@ export async function listTpoPlacementAnnouncements(
    message:db10Announcements.message,isPinned:db10Announcements.isPinned,
    version:db10Announcements.version,deletedAt:db10Announcements.deletedAt,
    senderUserId:db10Announcements.senderUserId,
+   senderName:users.displayName,updatedAt:db10Announcements.updatedAt,
    createdAt:db10Announcements.createdAt,scheduledAt:db10Announcements.scheduledAt,
    expiresAt:db10Announcements.expiresAt,
-  }).from(db10Announcements).where(and(
+  }).from(db10Announcements).leftJoin(users,eq(users.id,db10Announcements.senderUserId)).where(and(
    eq(db10Announcements.organizationId,college.organizationId),
    eq(db10Announcements.collegeId,college.id),
    eq(db10Announcements.receiverType,"COLLEGE"),
