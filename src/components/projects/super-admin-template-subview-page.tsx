@@ -12,6 +12,7 @@ import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { SuperAdminTemplateTabs } from "@/components/projects/super-admin-template-tabs";
 import { SuperAdminTemplatePlanEditor } from "@/components/projects/super-admin-template-plan-editor";
 import {SuperAdminTemplateResourceEditor} from "@/components/projects/super-admin-template-resource-editor";
+import {SuperAdminTemplateOverviewEditor} from "@/components/projects/super-admin-template-overview-editor";
 import { can } from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import {
@@ -212,6 +213,11 @@ export async function SuperAdminTemplateSubviewPage({
           blueprint={blueprint}
           section={section} />
       ) : null}
+      {blueprint&&section==="overview"&&can(context,"project-template.manage")&&
+        detail.template.status!=="ARCHIVED"?<SuperAdminTemplateOverviewEditor
+         key={currentVersion?.version} templateId={detail.template.id}
+         title={detail.template.title} summary={detail.template.summary}
+         version={detail.template.currentVersion} blueprint={blueprint}/>:null}
       {blueprint&&section==="resources"&&can(context,"project-template.manage")&&
         detail.template.status!=="ARCHIVED"?<SuperAdminTemplateResourceEditor
           key={currentVersion?.version} templateId={detail.template.id}

@@ -142,6 +142,34 @@ export async function verifyAndReleaseTpoSelections(context:RequestContext,rawJo
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Selection changed. Refresh before releasing."});continue;
     }
     const candidate=candidateMap.get(selection.applicationId);
+    // A previous request can issue the canonical offer and time out before
+    // marking the selection RELEASED. Reconcile the exact issued offer first.
+    if(selection.status==="VERIFIED"&&candidate?.offer&&
+      ["ISSUED","ACCEPTED"].includes(candidate.offer.status)&&
+      candidate.offer.roleTitle===selection.roleTitle&&
+      candidate.offer.annualCtcInr===selection.annualCtcInr){
+      try{
+        const offerId=candidate.offer.id;
+        await getDb().transaction(async tx=>{
+          await requireTpoJobActor(tx,context);
+          const [updated]=await tx.update(placementDriveSelections).set({
+            status:"RELEASED",releasedOfferId:offerId,releasedAt:new Date(),updatedAt:new Date(),
+          }).where(and(eq(placementDriveSelections.id,id),
+            eq(placementDriveSelections.status,"VERIFIED"),
+            eq(placementDriveSelections.jobId,job.id))).returning({id:placementDriveSelections.id});
+          if(!updated)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+          await auditTpoJobChange(tx,context,job,
+            "PLACEMENTS_TPO_SELECTION_RELEASED","reconciled a verified selection for",{
+              selectionId:id,applicationId:selection.applicationId,offerId,
+            });
+        });
+        results.push({selectionId:id,applicationId:selection.applicationId,status:"released",offerId});
+      }catch(error){
+        results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",
+          reason:error instanceof Error?error.message:"Offer release reconciliation failed"});
+      }
+      continue;
+    }
     if(!candidate?.offerReady){
       results.push({selectionId:id,applicationId:selection.applicationId,status:"skipped",reason:"Final round or eligibility check is not ready"});continue;
     }

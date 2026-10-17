@@ -10,6 +10,7 @@ export type RecruiterCalendarJob = {
   archivedAt: Date | null;
   companyId: string;
   companyName: string;
+  collegeName?: string | null;
   applicationDeadline: Date | null;
 };
 
@@ -20,6 +21,7 @@ export type RecruiterCalendarRound = {
   kind: string;
   status: string;
   scheduledAt: Date | null;
+  durationMinutes?: number | null;
   timezone: string | null;
   venue: string | null;
   resultsDueAt?: Date | null;
@@ -85,6 +87,7 @@ export function buildRecruiterCalendarEvents(input: {
       title: `Applications close`,
       companyId: job.companyId,
       companyName: job.companyName,
+      collegeName: job.collegeName ?? null,
       jobId: job.id,
       jobTitle: job.title,
       roundId: null,
@@ -114,9 +117,13 @@ export function buildRecruiterCalendarEvents(input: {
       id: `round:${round.id}`,
       kind: "ROUND",
       startsAt: round.scheduledAt!,
+      endsAt: round.durationMinutes && round.durationMinutes > 0
+        ? new Date(round.scheduledAt!.getTime() + round.durationMinutes * 60_000)
+        : null,
       title: round.name,
       companyId: job.companyId,
       companyName: job.companyName,
+      collegeName: job.collegeName ?? null,
       jobId: job.id,
       jobTitle: job.title,
       roundId: round.id,
@@ -138,7 +145,7 @@ export function buildRecruiterCalendarEvents(input: {
     events.push({
       id:`slot:${slot.id}`,kind:"INTERVIEW_SLOT",startsAt:slot.startAt,
       title:"Interview slot",companyId:job.companyId,companyName:job.companyName,
-      jobId:job.id,jobTitle:job.title,roundId:slot.roundId,roundKind:"INTERVIEW",
+      collegeName:job.collegeName??null,jobId:job.id,jobTitle:job.title,roundId:slot.roundId,roundKind:"INTERVIEW",
       leadId:null,followupId:null,status:slot.status,timezone:slot.timezone,
       venue:slot.meetingLocation,note:null,completedAt:null,
     });

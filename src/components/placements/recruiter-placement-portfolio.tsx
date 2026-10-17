@@ -74,10 +74,19 @@ export function RecruiterPlacementPortfolio({
               <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
                 {item.job.description}
               </p>
-              <p className="mt-2 flex flex-wrap gap-3 text-sm text-foreground">
-                <span>{counts?.[item.job.id]?.sharedApplicants??0} shared applicants</span>
-                <span>{counts?.[item.job.id]?.offers??0} offers</span>
-              </p>
+              <nav aria-label={"Drive metrics for "+item.job.title}
+                className="mt-2 flex flex-wrap gap-3 text-sm">
+                <Link
+                  className="font-semibold text-primary-text underline"
+                  href={"/recruiter/drives/"+item.job.id+"?tab=applicants"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
+                  {counts?.[item.job.id]?.sharedApplicants??0} shared applicants
+                </Link>
+                <Link
+                  className="font-semibold text-primary-text underline"
+                  href={"/recruiter/drives/"+item.job.id+"?tab=offers"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
+                  {counts?.[item.job.id]?.offers??0} offers
+                </Link>
+              </nav>
               <p className="mt-2 text-sm text-body">
                 Next: {item.job.status==="CLOSED"
                   ? "Hire again with a new request."

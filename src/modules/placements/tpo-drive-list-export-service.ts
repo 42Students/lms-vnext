@@ -29,7 +29,8 @@ export async function exportTpoDriveLifecycle(context:RequestContext,raw:unknown
  const rows=all.flatMap(p=>p.rows);
  return {fileName:"drives-"+query.view.toLowerCase()+".csv",
   csv:placementReportCsv(["Drive ID","Company","Role","Status","Job type","Mode",
-   "Applications","Pay minimum (INR)","Pay maximum (INR)","Dream drive","Deadline (UTC)"],
+   "Applications","Pay minimum (INR)","Pay maximum (INR)","Stipend/month (INR)","Dream drive","Created by","Deadline (UTC)"],
    rows.map(r=>[r.id,r.company,r.title,r.status,r.employmentType,r.workMode,r.appliedCount,
-    r.minimumAnnualCtcInr,r.maximumAnnualCtcInr,r.isDream?"Yes":"No",r.applicationDeadline]))};
+    r.minimumAnnualCtcInr,r.maximumAnnualCtcInr,r.stipendPerMonthInr,
+    r.isDream?"Yes":"No",r.createdBy,r.applicationDeadline]))};
 }

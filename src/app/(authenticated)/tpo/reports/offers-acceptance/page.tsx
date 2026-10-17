@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoReportRecordLinks } from "@/components/placements/tpo-report-record-links";
@@ -90,6 +91,8 @@ export default async function TpoOffersAcceptanceReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
+      <ReportBarChart title="Accepted offers by company" units="offers"
+       rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
 
       <p className="text-sm leading-6 text-body">
         Outstanding and expired-outstanding are mutually exclusive subsets

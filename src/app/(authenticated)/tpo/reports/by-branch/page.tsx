@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -67,6 +68,11 @@ export default async function TpoByBranchReportPage({
       />
       <ReportMetrics metrics={workspace.report.metrics} />
       <ReportScopeNote note={workspace.registrationScopeNote} />
+      <ReportBarChart title="Placement rate by branch" units="percent"
+       rows={workspace.report.byBranch.flatMap(row=>row.placementRatePercent===null?[]:[{
+        label:row.departmentName,value:row.placementRatePercent,
+        detail:row.placed+" placed of "+row.registered+" registered",
+       }])}/>
 
       {workspace.noSeason ? (
         <EmptyState

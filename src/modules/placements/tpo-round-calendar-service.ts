@@ -1,5 +1,6 @@
 import "server-only";
-import { and, asc, eq, inArray, isNull, ne } from "drizzle-orm";
+import { and, asc, eq, ilike, inArray, isNull, ne, or } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import { placementCompanies, placementCompanyRelationships, placementJobRounds, placementJobs } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -22,7 +23,10 @@ async function requireTpo(context: RequestContext) {
 }
 
 /** Pages may schedule a registered pending round or update/cancel a scheduled one. */
-export async function listTpoCalendarRoundChoices(context: RequestContext) {
+export async function listTpoCalendarRoundChoices(context: RequestContext,raw:unknown={}) {
+  const input=z.strictObject({page:z.coerce.number().int().min(1).max(10000).default(1),
+   q:z.string().trim().max(100).default("")}).parse(raw);
+  const pattern="%"+input.q.replace(/[\\%_]/g, value=>"\\"+value)+"%";
   const college = await requireTpo(context);
   const rows = await getDb().select({
     id: placementJobRounds.id,
@@ -50,10 +54,11 @@ export async function listTpoCalendarRoundChoices(context: RequestContext) {
       eq(placementJobs.status, "PUBLISHED"),
       isNull(placementJobs.archivedAt),
       inArray(placementJobRounds.status, ["PENDING", "SCHEDULED"]),
+      input.q?or(ilike(placementJobs.title,pattern),ilike(placementCompanies.name,pattern),ilike(placementJobRounds.name,pattern)):undefined,
     ))
     .orderBy(asc(placementJobRounds.updatedAt), asc(placementJobRounds.id))
-    .limit(201);
-  return { rows: rows.slice(0, 200), limited: rows.length > 200 };
+    .limit(201).offset((input.page-1)*200);
+  return { rows: rows.slice(0, 200), limited: rows.length > 200, page:input.page, q:input.q };
 }
 
 /**

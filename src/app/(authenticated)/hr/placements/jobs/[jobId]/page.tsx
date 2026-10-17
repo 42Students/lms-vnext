@@ -218,6 +218,32 @@ export default async function HrPlacementJobPage({
                 {driveOverview.deadlineState.replaceAll("_"," ")}
               </StatusBadge>}
           </div>
+          <section aria-label="What students see" className="rounded-lg border border-border bg-surface-secondary p-4">
+            <h3 className="font-semibold text-foreground">What students see</h3>
+            <p className="mt-1 text-xs text-muted-foreground">
+              Student-facing draft facts are shown for reference. Exact publication and application access are controlled by the placement cell.
+            </p>
+            <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+              <div><dt className="font-semibold text-foreground">Job type</dt><dd className="text-body">{workspace.job.employmentType.replaceAll("_"," ")}</dd></div>
+              <div><dt className="font-semibold text-foreground">Mode</dt><dd className="text-body">{workspace.job.recruiterDriveMode==="OFF_CAMPUS"?"Off campus":"On campus"}</dd></div>
+              <div><dt className="font-semibold text-foreground">CTC</dt><dd className="text-body">
+                {workspace.job.ctcLpa!==null?workspace.job.ctcLpa+" LPA":ctc??"Not specified"}
+                {workspace.job.fixedCtcLpa!==null?" · Fixed "+workspace.job.fixedCtcLpa+" LPA":""}
+                {workspace.job.variableCtcLpa!==null?" · Variable "+workspace.job.variableCtcLpa+" LPA":""}
+              </dd></div>
+              <div><dt className="font-semibold text-foreground">Stipend</dt><dd className="text-body">{workspace.job.stipendPerMonthInr!==null?
+                "₹"+new Intl.NumberFormat("en-IN").format(workspace.job.stipendPerMonthInr)+" / month":"Not specified"}</dd></div>
+              <div><dt className="font-semibold text-foreground">Eligible branches</dt><dd className="break-words text-body">{workspace.job.eligibleBranches.length?
+                workspace.job.eligibleBranches.join(", "):"No branch restriction recorded"}</dd></div>
+              <div><dt className="font-semibold text-foreground">Passing year</dt><dd className="text-body">
+                {workspace.job.eligiblePassingYear??"Not specified"}
+              </dd></div>
+              <div><dt className="font-semibold text-foreground">Apply by</dt><dd className="text-body">
+                {workspace.job.applicationDeadline?
+                  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(workspace.job.applicationDeadline)+" IST":"Not specified"}
+              </dd></div>
+            </dl>
+          </section>
           <ol aria-label="Drive progress" className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6">
             {recruiterDriveProgressSteps(driveOverview).map(step=><li key={step.label}
               aria-current={step.state==="CURRENT"?"step":undefined}

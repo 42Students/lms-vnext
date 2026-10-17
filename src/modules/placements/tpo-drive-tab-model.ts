@@ -4,6 +4,7 @@ export function tpoDriveTabs(jobId:string):TpoDriveTab[]{
  return [
   {label:"Overview",href:root},
   {label:"About",href:root+"/about"},
+  {label:"Activity",href:root+"/about#activity"},
   {label:"Applicants",href:root+"/applicants"},
   {label:"Pipeline",href:root+"/applicants-pipeline"},
   {label:"Candidate schedule",href:root+"/candidate-schedule"},

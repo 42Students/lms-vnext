@@ -1,3 +1,4 @@
+import {ReportBarChart} from "@/components/placements/report-bar-chart";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -83,6 +84,8 @@ export default async function TpoCtcReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
+      <ReportBarChart title="Accepted full-time offers by annual package band" units="offers"
+       rows={ctc.bands.map(band=>({label:band.label,value:band.offers}))}/>
 
       <p className="text-sm leading-6 text-body">
         This histogram counts accepted full-time <strong>offer records</strong>.

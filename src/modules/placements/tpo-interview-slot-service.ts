@@ -280,7 +280,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    return {changed:1};
   }
   if(input.action==="BOOK"){
-   if(slot.status!=="AVAILABLE")throw Error("The slot is no longer available.");
+   if(slot.status!=="AVAILABLE"||slot.startsAt<=new Date())
+    throw Error("Only a future available interview slot can be booked.");
    const [candidate]=await tx.select({id:placementApplications.id})
     .from(placementApplications).innerJoin(placementApplicationScreenings,
       eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -313,7 +314,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
    const [target]=await tx.select().from(placementRoundCandidateSlots).where(and(
     eq(placementRoundCandidateSlots.id,input.targetSlotId),
     eq(placementRoundCandidateSlots.roundId,info.round.id))).for("update").limit(1);
-   if(!target||target.status!=="AVAILABLE")throw Error("Destination is not free.");
+   if(!target||target.status!=="AVAILABLE"||target.startsAt<=new Date())
+    throw Error("The destination must be a future available interview slot.");
    await tx.update(placementRoundCandidateSlots).set({
     status:"CANCELLED",applicationId:null,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,slot.id));
