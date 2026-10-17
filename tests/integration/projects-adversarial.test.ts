@@ -221,6 +221,16 @@ async function cleanup() {
      )`,
   );
   await pool.query(
+    `delete from project_delivery_events
+     where submission_id in (
+       select id from project_submissions
+       where project_id in (
+         select id from project_instances
+         where slug like 'adv-%'
+       )
+     )`,
+  );
+  await pool.query(
     `delete from project_submissions
      where project_id in (
        select id from project_instances
@@ -303,6 +313,14 @@ async function cleanup() {
   await pool.query(
     "delete from college_memberships where id = $1",
     [outsiderIds.membership],
+  );
+  await pool.query(
+    "delete from in_app_notifications where user_id = $1",
+    [outsiderIds.user],
+  );
+  await pool.query(
+    "delete from activity_events where actor_user_id = $1",
+    [outsiderIds.user],
   );
   await pool.query(
     "delete from users where id = $1",
@@ -747,6 +765,21 @@ describe("Projects adversarial isolation", () => {
       code: "PROJECT_LIFECYCLE_ACCESS_DENIED",
     });
 
+    // Learners may add plain team resources, but only to an ACTIVE project.
+    await expect(
+      createProjectResource(
+        learner,
+        project.id,
+        {
+          title: "Premature resource",
+          url: "https://example.com/no",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_RESOURCE_INVALID_STATE",
+    });
+
+    // Required or mentor-only resources stay mentor/admin privileges.
     await expect(
       createProjectResource(
         learner,
@@ -754,10 +787,24 @@ describe("Projects adversarial isolation", () => {
         {
           title: "Escalated resource",
           url: "https://example.com/no",
+          required: true,
         },
       ),
     ).rejects.toMatchObject({
-      code: "PROJECT_LIFECYCLE_ACCESS_DENIED",
+      code: "PROJECT_ACCESS_DENIED",
+    });
+    await expect(
+      createProjectResource(
+        learner,
+        project.id,
+        {
+          title: "Hidden resource",
+          url: "https://example.com/no",
+          visibility: "MENTOR_ONLY",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "PROJECT_ACCESS_DENIED",
     });
 
     const draft =

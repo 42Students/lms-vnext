@@ -4,6 +4,7 @@ import {describe,expect,it} from "vitest";
 import {getDb} from "@/db/client";
 import {db10Announcements} from "@/db/schema/db10-announcements";
 import {activityEvents} from "@/db/schema/activity";
+import {inAppNotifications,membershipRoles} from "@/db/schema";
 import {publishSuperAdminCollegeBroadcast} from "@/modules/announcements/super-admin-college-broadcast-service";
 import type {RequestContext} from "@/modules/identity/context";
 import {SEED_IDS} from "../../scripts/db-seed-data";
@@ -17,6 +18,13 @@ describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transaction
   const payload={audienceMode:"SELECTED_COLLEGES",collegeIds:[SEED_IDS.collegeA,SEED_IDS.collegeB],
    title,message:"Disposable test announcement",scheduledAt:null,expiresAt:null,isPinned:false,publishConsent:true};
   const noticeIds:string[]=[];
+  // Broadcast targets only colleges with an active TPO membership.
+  const tpoRoleIds:string[]=[];
+  for(const membershipId of [SEED_IDS.facultyCollegeAMembership,SEED_IDS.facultyCollegeBMembership]){
+   const [inserted]=await db.insert(membershipRoles).values({membershipId,role:"TPO"})
+    .onConflictDoNothing().returning({id:membershipRoles.id});
+   if(inserted)tpoRoleIds.push(inserted.id);
+  }
   try{
    await expect(publishSuperAdminCollegeBroadcast(admin,{...payload,publishConsent:false})).rejects.toBeDefined();
    await expect(publishSuperAdminCollegeBroadcast({...admin,user:{...admin.user,systemRoles:[]}},payload)).rejects.toBeDefined();
@@ -30,9 +38,14 @@ describe.skipIf(!enabled)("DB10 Super Admin announcement consent and transaction
    expect(audits).toHaveLength(2);
   }finally{
    if(noticeIds.length){
+    const events=await db.select({id:activityEvents.id}).from(activityEvents)
+     .where(inArray(activityEvents.subjectId,noticeIds));
+    if(events.length)await db.delete(inAppNotifications)
+     .where(inArray(inAppNotifications.eventId,events.map(event=>event.id)));
     await db.delete(activityEvents).where(inArray(activityEvents.subjectId,noticeIds));
     await db.delete(db10Announcements).where(inArray(db10Announcements.id,noticeIds));
    }
+   if(tpoRoleIds.length)await db.delete(membershipRoles).where(inArray(membershipRoles.id,tpoRoleIds));
   }
  });
 });

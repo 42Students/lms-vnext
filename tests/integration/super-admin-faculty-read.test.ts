@@ -22,7 +22,7 @@ describe.skipIf(!enabled)("Super Admin faculty read PostgreSQL",()=>{
   await pool!.query("insert into membership_roles(membership_id,role) values ($1,'FACULTY')",[row.rows[0]!.id]);
   const own=await listAdminScopedPeople(admin,"FACULTY",{q:code});
   expect(own.items).toEqual([expect.objectContaining({id:row.rows[0]!.id})]);
-  expect(JSON.stringify(own)).not.toContain("@example.test");
+  expect(own.items[0]!.details).toContain("Email: private-"+code+"@example.test");
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
   expect((await listAdminScopedPeople(foreign,"FACULTY",{q:code})).items).toHaveLength(0);
   expect((await listAdminScopedPeople(admin,"LEARNER",{q:code})).items).toHaveLength(0);

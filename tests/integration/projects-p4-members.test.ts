@@ -260,6 +260,14 @@ async function cleanup() {
     [outsider.membershipId, secondMentor.membershipId],
   );
   await pool.query(
+    "delete from in_app_notifications where user_id in ($1, $2)",
+    [outsider.userId, secondMentor.userId],
+  );
+  await pool.query(
+    "delete from activity_events where actor_user_id in ($1, $2)",
+    [outsider.userId, secondMentor.userId],
+  );
+  await pool.query(
     "delete from users where id in ($1, $2)",
     [outsider.userId, secondMentor.userId],
   );

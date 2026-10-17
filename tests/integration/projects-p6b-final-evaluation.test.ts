@@ -158,6 +158,15 @@ function blueprint() {
 
 async function cleanup() {
   await pool.query(
+    `delete from in_app_notifications
+     where event_id in (
+       select id from activity_events where module='PROJECTS'
+       and metadata ->> 'projectId' in (
+         select id::text from project_instances where slug like 'p6b-%'
+       )
+     )`,
+  );
+  await pool.query(
     `delete from activity_events where module='PROJECTS'
      and metadata ->> 'projectId' in (
        select id::text from project_instances where slug like 'p6b-%'

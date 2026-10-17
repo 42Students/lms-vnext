@@ -333,7 +333,7 @@ describe("Projects P7A resources and readiness", () => {
         },
       ),
     ).rejects.toMatchObject({
-      code: "PROJECT_LIFECYCLE_ACCESS_DENIED",
+      code: "PROJECT_RESOURCE_INVALID_STATE",
     });
 
     const created = await createProjectResource(

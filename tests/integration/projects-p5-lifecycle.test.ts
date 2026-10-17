@@ -392,7 +392,7 @@ describe("Projects P5 lifecycle", () => {
     })).rejects.toMatchObject({code:"PROJECT_TASK_INVALID_STATE"});
   });
 
-  it("blocks sprint completion until every task is done and reserves IN_REVIEW for submissions", async () => {
+  it("reserves IN_REVIEW and DONE for submissions and completes the sprint once its task is approved", async () => {
     const project = await createProject();
     const workspace =
       await getProjectInstanceWorkspace(
@@ -410,16 +410,6 @@ describe("Projects P5 lifecycle", () => {
       project.id,
       firstSprint.id,
     );
-
-    await expect(
-      completeProjectSprint(
-        mentor,
-        project.id,
-        firstSprint.id,
-      ),
-    ).rejects.toMatchObject({
-      code: "PROJECT_SPRINT_HAS_OPEN_TASKS",
-    });
 
     // Direct IN_REVIEW and DONE writes are not part of the task-status API.
     for (const status of ["IN_REVIEW","DONE"]) {
@@ -441,6 +431,36 @@ describe("Projects P5 lifecycle", () => {
       ),
     ).resolves.toMatchObject({
       status: "COMPLETED",
+    });
+  });
+
+  it("carries unfinished tasks to the product backlog when a sprint is completed", async () => {
+    const project = await createProject();
+    const workspace =
+      await getProjectInstanceWorkspace(
+        mentor,
+        project.id,
+      );
+    const sprint = workspace.sprints[0]!;
+    const openTask = workspace.tasks.find(
+      (task) => task.sprintId === sprint.id,
+    )!;
+
+    await startProjectSprint(mentor, project.id, sprint.id);
+    await expect(
+      completeProjectSprint(mentor, project.id, sprint.id),
+    ).resolves.toMatchObject({ status: "COMPLETED" });
+
+    const carried = await pool.query<{
+      sprint_id: string | null;
+      carried_from_sprint_id: string | null;
+    }>(
+      "select sprint_id, carried_from_sprint_id from project_tasks where id=$1",
+      [openTask.id],
+    );
+    expect(carried.rows[0]).toEqual({
+      sprint_id: null,
+      carried_from_sprint_id: sprint.id,
     });
   });
 

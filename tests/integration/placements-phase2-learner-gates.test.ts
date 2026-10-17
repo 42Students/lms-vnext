@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import { randomUUID } from "node:crypto";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import { Pool } from "pg";
@@ -94,6 +95,7 @@ async function makeJob(title: string, beforePublish?: (jobId: string) => Promise
     primaryDomain: "phase2-" + uid + ".example",
   });
   const job = await createPlacementJob(tpo, {
+      ...publishableJobTerms,
     collegeId: SEED_IDS.collegeA,
     companyRelationshipId: company.relationship.id,
     title, description: "Phase 2 isolated placement acceptance",

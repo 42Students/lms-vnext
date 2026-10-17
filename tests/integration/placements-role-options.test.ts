@@ -1,3 +1,4 @@
+import { publishableJobTerms } from "../support/publishable-job-terms";
 import {
   afterAll,
   beforeEach,
@@ -155,6 +156,7 @@ describe("Placement multi-role drives", () => {
     const draft = await createPlacementJob(
       tpo,
       {
+      ...publishableJobTerms,
         collegeId: SEED_IDS.collegeA,
         companyRelationshipId:
           company.relationship.id,

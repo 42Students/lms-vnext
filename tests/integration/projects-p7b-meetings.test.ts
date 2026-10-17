@@ -265,8 +265,8 @@ async function createProject() {
 const requestedWindow = {
   title: "Sprint help",
   agenda: "Clarify the acceptance criteria",
-  startsAt: "2026-10-10T10:00:00+05:30",
-  endsAt: "2026-10-10T10:30:00+05:30",
+  startsAt: "2099-10-10T10:00:00+05:30",
+  endsAt: "2099-10-10T10:30:00+05:30",
   timeZone: "Asia/Kolkata",
 };
 
@@ -430,9 +430,9 @@ describe("Projects P7B meetings", () => {
       {
         title: "Planning",
         startsAt:
-          "2026-10-11T11:00:00+05:30",
+          "2099-10-11T11:00:00+05:30",
         endsAt:
-          "2026-10-11T11:45:00+05:30",
+          "2099-10-11T11:45:00+05:30",
         timeZone: "Asia/Kolkata",
         meetingType: "PLANNING",
         meetingUrl:
@@ -459,9 +459,9 @@ describe("Projects P7B meetings", () => {
         {
           title: "Bad link",
           startsAt:
-            "2026-10-12T11:00:00+05:30",
+            "2099-10-12T11:00:00+05:30",
           endsAt:
-            "2026-10-12T11:30:00+05:30",
+            "2099-10-12T11:30:00+05:30",
           timeZone: "Asia/Kolkata",
           meetingUrl:
             "https://meet.example.com/bad",
@@ -484,9 +484,9 @@ describe("Projects P7B meetings", () => {
         {
           ...requestedWindow,
           startsAt:
-            "2026-10-10T11:00:00+05:30",
+            "2099-10-10T11:00:00+05:30",
           endsAt:
-            "2026-10-10T10:00:00+05:30",
+            "2099-10-10T10:00:00+05:30",
         },
       ),
     ).rejects.toMatchObject({
@@ -501,8 +501,8 @@ describe("Projects P7B meetings", () => {
          values ($1, 'Bad time', $2, $3, 'Asia/Kolkata', $4, $5)`,
         [
           project.id,
-          "2026-10-10T11:00:00+05:30",
-          "2026-10-10T10:00:00+05:30",
+          "2099-10-10T11:00:00+05:30",
+          "2099-10-10T10:00:00+05:30",
           SEED_IDS.learnerCollegeAMembership,
           SEED_IDS.learnerUser,
         ],

@@ -14,7 +14,7 @@ const admin:RequestContext={user:{id:SEED_IDS.superAdminUser,identityUid:"admin-
  membership:null,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeA}};
 describe.skipIf(!enabled)("Super Admin students read PostgreSQL",()=>{
  afterAll(async()=>{await pool?.end();await closeDatabaseConnection();});
- it("in-test learner is selected-college only, faculty excluded, contact withheld, wrong roles denied",async()=>{
+ it("in-test learner is selected-college only, faculty excluded, contact shown only in the selected college, wrong roles denied",async()=>{
   const id=randomUUID(),code=id.slice(0,8),name="Admin Student "+code;
   await pool!.query("insert into users(id,identity_uid,display_name,email) values ($1,$2,$3,$4)",
    [id,"student-"+code,name,"student-private-"+code+"@example.test"]);
@@ -22,7 +22,7 @@ describe.skipIf(!enabled)("Super Admin students read PostgreSQL",()=>{
   await pool!.query("insert into membership_roles(membership_id,role) values ($1,'LEARNER')",[row.rows[0]!.id]);
   const own=await listAdminScopedPeople(admin,"LEARNER",{q:code});
   expect(own.items).toEqual([expect.objectContaining({id:row.rows[0]!.id,status:"ACTIVE"})]);
-  expect(JSON.stringify(own)).not.toContain("@example.test");
+  expect(own.items[0]!.details).toContain("Email: student-private-"+code+"@example.test");
   expect((await listAdminScopedPeople(admin,"FACULTY",{q:code})).items).toHaveLength(0);
   const foreign={...admin,adminScope:{organizationId:SEED_IDS.organization,collegeId:SEED_IDS.collegeB}};
   expect((await listAdminScopedPeople(foreign,"LEARNER",{q:code})).items).toHaveLength(0);
