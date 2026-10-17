@@ -12,7 +12,7 @@ export function CollegeDriveBulkActions({drives}:{drives:Drive[]}){
  const [result,setResult]=useState<Result|null>(null);
  const [error,setError]=useState("");
  const [busy,setBusy]=useState(false);
- const eligible=drives.filter(row=>row.status==="PUBLISHED"||row.status==="CLOSED");
+ const eligible=drives.filter(row=>action==="CLOSE"?row.status==="PUBLISHED":row.status==="CLOSED");
  function toggle(id:string){setSelected(ids=>ids.includes(id)?ids.filter(x=>x!==id):[...ids,id]);setPreview(null);setResult(null);}
  async function send(stage:"PREVIEW"|"CONFIRM"){
   if(busy||selected.length===0)return;
