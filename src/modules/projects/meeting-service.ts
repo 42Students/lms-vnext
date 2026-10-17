@@ -390,6 +390,12 @@ export async function transitionProjectMeeting(
       metadata:{projectId:scope.project.id,meetingId:completed.id,status:"COMPLETED"},
       groupKey:"project:"+scope.project.id+":meetings",
     });
+    await notifyActiveProjectMembers(tx,event.id,{
+      projectId:scope.project.id,collegeId:scope.collegeId,
+      roles:["LEARNER"],exceptUserId:context.user.id,
+      title:"Project meeting completed",body:"The meeting "+completed.title+" has been completed.",
+      actionHref:"/learn/projects/"+scope.project.id+"?tab=meetings",
+    });
     return completed;
     });
   }
