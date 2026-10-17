@@ -38,7 +38,7 @@ export default async function BatchStudents({params,searchParams}:{params:Promis
  {finished?<p role="status" className="rounded border border-border bg-muted p-3 text-sm">This batch is finished. Eligibility decisions and import actions are read-only.</p>:<TpoBatchEligibilityImport batchId={batchId}/>}
  {!finished?<TpoBulkActionPanel key={batchId+":"+result.page+":"+view.data.q+":"+view.data.decision}
    target="STUDENTS" rows={visible.map(student=>({
-    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),
+    id:student.membershipId,label:student.name+" · "+(student.rollNumber??student.membershipId),rollNumber:student.rollNumber,
    }))} />:null}
  <p className="text-xs text-muted-foreground">Search covers the full active batch roster; bulk changes apply only to selected learners on this page.
   Clearing a direct override restores the recorded class or batch decision; it does not guarantee eligibility.
