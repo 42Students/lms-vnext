@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
+import {apiFetch} from "@/lib/api-fetch";
+import {useGuardedAction} from "@/hooks/use-guarded-action";
 
 export type PlacementAcademicTargetingChoice = {
   programs: Array<{
@@ -53,49 +55,10 @@ function splitList(value: string) {
     .filter(Boolean);
 }
 
-async function requestJson(
-  url: string,
-  method: "POST" | "PUT",
-  body: unknown,
-) {
-  const response = await fetch(url, {
-    method,
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-  const payload = (await response
-    .json()
-    .catch(() => null)) as
-    | Record<string, unknown>
-    | null;
-  if (!response.ok) {
-    const issues = Array.isArray(payload?.issues) ? payload.issues : [];
-    const issue = issues.find((item): item is { path: unknown[]; message: string } =>
-      typeof item === "object" && item !== null &&
-      "message" in item && typeof item.message === "string" &&
-      "path" in item && Array.isArray(item.path));
-    if (issue) {
-      const fields: Record<string, string> = {
-        title: "Job title",
-        description: "Description",
-        openings: "Openings",
-        maximumAnnualCtcInr: "Maximum CTC",
-        minimumAnnualCtcInr: "Minimum CTC",
-        externalApplicationUrl: "Employer application URL",
-        allowedPassingYears: "Passing years",
-        minCgpa: "Minimum CGPA",
-      };
-      const key = String(issue.path[0] ?? "");
-      throw new Error((fields[key] ?? "Please check the form") + ": " + issue.message);
-    }
-    const code = typeof payload?.error === "string" ? payload.error : "REQUEST_FAILED";
-    throw new Error(code === "INVALID_REQUEST"
-      ? "Please check the highlighted requirements and try again."
-      : code.toLowerCase().replaceAll("_", " "));
-  }
-  return payload ?? {};
+async function requestJson(url:string,method:"POST"|"PUT"|"PATCH",body:unknown){
+ return await apiFetch<Record<string,unknown>>(url,{
+  method,headers:{"content-type":"application/json"},body:JSON.stringify(body),
+ });
 }
 
 function nullableDecimal(value: string) {
@@ -151,8 +114,7 @@ export function PlacementJobCreateForm({
   const [newEmployerDomain,setNewEmployerDomain]=useState("");
   const matchingEmployer=companies.find(company=>company.name.toLowerCase()===newEmployerName.trim().toLowerCase()&&Boolean(newEmployerName.trim())||
     Boolean(newEmployerDomain.trim())&&company.primaryDomain?.toLowerCase().replace(/^www\./,"")===newEmployerDomain.trim().toLowerCase().replace(/^www\./,""));
-  const [pending, setPending] =
-    useState(false);
+  const {pending,run}=useGuardedAction();
   const [
     selectedProgramIds,
     setSelectedProgramIds,
@@ -186,8 +148,7 @@ export function PlacementJobCreateForm({
     event.preventDefault();
     const submitter = (event.nativeEvent as SubmitEvent).submitter;
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
-    setPending(true);
-
+    await run(async()=>{
     try {
       if (!activeSeason) {
         throw new Error(
@@ -471,9 +432,8 @@ export function PlacementJobCreateForm({
             ? error.message
             : "Please try again.",
       });
-    } finally {
-      setPending(false);
     }
+    });
   }
 
   return (
