@@ -25,5 +25,10 @@ export function allowedAssignmentMixedParts(methods:unknown,{
  const allowed=new Set<AssignmentMethod>(normalizeAssignmentMethods(methods));
  if(hasWrittenResponse&&!allowed.has("WRITTEN_RESPONSE"))return false;
  if(links.some(link=>!allowed.has(link.kind)))return false;
+ if(fileMimeTypes.length===0){
+  // A multipart submission may combine text and repository/website links
+  // without requiring a fabricated file; the caller enforces nonempty parts.
+  return hasWrittenResponse || links.length>0;
+ }
  return allowedAssignmentSubmissionPart(methods,{kind:"FILE",fileMimeTypes});
 }

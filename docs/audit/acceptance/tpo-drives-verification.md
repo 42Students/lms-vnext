@@ -113,3 +113,5 @@ No new schema or proposed migrations in this round. Shell was not edited. `TPO-d
 | TPO-drives-43 | OPEN | Partial job retry now also inspects round readback to avoid duplicate preset insertion, but persisted idempotency across lost job POST responses still needs server-side work. |
 | TPO-drives-51 | NOT-A-GAP | Existing College Admin Create route has explicit role gate; named source regression now matches the current route formatting. |
 | TPO-drives-42 | OPEN | Legacy future deadline/pay/HTTPS/company checks are performed before company creation; source regression assertions match current form, but full server publication parity remains. |
+
+| TPO-drives-11 | DONE (source verified; tests not executed) | Five persisted Needs doing categories on lifecycle list with SQL-scoped counts (pending review Requests, no applicants, no deadline, due soon, overdue), URL-filtered category links and active state. `tpo-drive-lifecycle-list-service.ts`, `lifecycle/page.tsx`, `tests/unit/tpo-drives-gap-closure.test.ts` named TPO-drives-11. |

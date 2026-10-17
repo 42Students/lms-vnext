@@ -28,7 +28,7 @@ export function MentorProjectCloseoutControl({
         confirmTeamNotified:true,confirmCloseout:true,
       });
       router.refresh();
-    }catch(e){setError(e instanceof Error?e.message:"Retry after refreshing.");}
+    }catch{setError("Project completion could not be saved. Please check the project status and try again.");}
     finally{setPending(false);}
   }
   return <div className="space-y-3">

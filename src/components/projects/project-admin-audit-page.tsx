@@ -137,6 +137,7 @@ export async function ProjectAdminAuditPage({
             group.latest.event.subjectLabel,
           summary:
             group.latest.event.summary,
+          metadata:(group.latest.event as {metadata?:Record<string,unknown>}).metadata??{},
           occurredAt:
             group.latest.event.occurredAt.toISOString(),
         },
@@ -334,6 +335,7 @@ export async function ProjectAdminAuditPage({
       }))}/>
       <ActivityCenter
         groups={groups}
+        nextRemaining={0}
         nextHref={
           result.nextCursor
             ? basePath +

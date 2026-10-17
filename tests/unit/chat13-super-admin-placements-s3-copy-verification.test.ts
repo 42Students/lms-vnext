@@ -62,7 +62,8 @@ describe("Chat 13 Super Admin placement legacy copy and S3 contracts", () => {
     const code = source("src/components/admin/super-admin-hr-accounts.tsx");
     expect(code).toContain("Add recruiter");
     expect(code).toContain("Recruiter account lifecycle");
-    expect(code).toContain("title=\"Recruiter account lifecycle\"");
+    expect(code).toContain('aria-label="Recruiter account lifecycle"');
+    expect(code).toContain("<h2 className=\"text-base font-semibold\">Recruiter account lifecycle</h2>");
   });
   it("SA-placements-projects-43 analytics legacy copy", () => {
     const code = source("src/app/(authenticated)/admin/placements/analytics/page.tsx");

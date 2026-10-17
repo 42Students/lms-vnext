@@ -8,6 +8,7 @@ import { messagingHistoryQuerySchema } from "@/modules/messaging/receipt-history
 import {listTpoCampaignDrafts} from "@/modules/messaging/tpo-campaign-draft-service";
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
+import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messaging/tpo-campaign-history-copy";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -68,10 +69,10 @@ export default async function CampaignHistory({searchParams}:PageProps){
       </Link>
       <p className="mt-1 text-sm font-medium text-foreground">Subject: {item.subject}</p>
       <p className="mt-1 text-xs text-muted-foreground">
-       {item.sender_name} · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(item.created_at))} IST
+       {item.sender_name} · {tpoCampaignHistoryTime(new Date(item.created_at))} IST
       </p>
       <p className="mt-2 text-sm text-body">
-       {item.status} · {item.total_recipients} selected · {item.sent} sent · {item.skipped} skipped · {item.failed} failed
+       {tpoCampaignHistoryStatus(item.status)} · {item.sent} sent{item.skipped>0?" · "+item.skipped+" skipped":""}{item.failed>0?" · "+item.failed+" failed":""}
       </p>
       <p className="mt-1 text-xs text-muted-foreground">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
@@ -86,7 +87,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
        <Link href={"/tpo/recruiters/campaigns/"+encodeURIComponent(row.id)}
         className="text-primary-text underline-offset-2 hover:underline">{row.purpose}</Link>
       </h2>
-      <p className="mt-1 text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.createdAt)} IST · {row.status}</p>
+      <p className="mt-1 text-xs text-muted-foreground">{tpoCampaignHistoryTime(row.createdAt)} IST · {row.status}</p>
       <dl className="mt-3 grid grid-cols-2 gap-2 text-sm text-body">
         <div><dt>Total</dt><dd>{row.total}</dd></div>
         <div><dt>Sent</dt><dd>{row.acceptedByProvider}</dd></div>

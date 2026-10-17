@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {placementJobs,sections,cohorts,programs,departments} from "@/db/schema";
+import {placementJobs,sections,cohorts,programs as programsTable,departments} from "@/db/schema";
 import { PlacementJobCreateForm } from "./placement-job-create-form";
 import {TpoDriveCloneAction} from "./tpo-drive-clone-action";
 import { PageHeader } from "@/components/ui/page-header";
@@ -80,13 +80,13 @@ export async function PlacementJobCreateWorkspace({
   // One scoped query for active classes, never one request per cohort.
   const sectionRows=await getDb().select({
     id:sections.id,name:sections.name,code:sections.code,
-    cohortId:cohorts.id,cohortName:cohorts.name,programId:programs.id,
+    cohortId:cohorts.id,cohortName:cohorts.name,programId:programsTable.id,
     departmentName:departments.name,
   }).from(sections).innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
-    .innerJoin(programs,eq(programs.id,cohorts.programId))
-    .innerJoin(departments,eq(departments.id,programs.departmentId))
+    .innerJoin(programsTable,eq(programsTable.id,cohorts.programId))
+    .innerJoin(departments,eq(departments.id,programsTable.departmentId))
     .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),
-      eq(sections.status,"ACTIVE"),eq(programs.status,"ACTIVE")))
+      eq(sections.status,"ACTIVE"),eq(programsTable.status,"ACTIVE")))
     .limit(1000);
 
   return (

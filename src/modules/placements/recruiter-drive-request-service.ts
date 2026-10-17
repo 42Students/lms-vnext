@@ -8,6 +8,7 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
 import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
@@ -98,7 +99,8 @@ export async function createOwnRecruiterDriveRequest(context:RequestContext,raw:
     const [source]=await tx.select({id:placementJobs.id}).from(placementJobs)
       .where(and(eq(placementJobs.id,input.sourceJobId),
         eq(placementJobs.collegeId,input.collegeId),
-        eq(placementJobs.companyRelationshipId,scope.relationshipId)))
+        eq(placementJobs.companyRelationshipId,scope.relationshipId),
+         recruiterOwnJobPredicate(context.user.id)))
       .for("share").limit(1);
     if(!source)throw new RecruiterDriveRequestError("FORBIDDEN");
   }

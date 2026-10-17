@@ -19,6 +19,7 @@ import { hrInlineRoundResultsHref, hrInlineRoundResultFilters } from "@/modules/
 import { buildHrApplicantDrawer } from "@/modules/placements/hr-applicant-drawer-model";
 import {recruiterDriveProgressSteps,recruiterDriveNextAction} from "@/modules/placements/recruiter-drive-progress-model";
 import { listRecruiterApplicantNotes } from "@/modules/placements/applicant-notes-service";
+import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import { ApplicantNotesPanel } from "@/components/placements/applicant-notes-panel";
 import {RecruiterPrivateRatingEditor} from "@/components/hr/recruiter-private-rating-editor";
 import {getOwnRecruiterCandidateRating} from "@/modules/placements/recruiter-private-rating-service";
@@ -566,6 +567,8 @@ export default async function HrPlacementJobPage({
                 <div><dt className="text-muted-foreground">Placement-cell screening</dt><dd className="text-foreground">{selectedApplicant.screening}</dd></div>
                 <div><dt className="text-muted-foreground">Applied (IST)</dt><dd className="text-foreground">{new Intl.DateTimeFormat("en-IN", {dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(selectedApplicant.submittedAt)}</dd></div>
               </dl>
+              <RecruiterPrivateRatingEditor key={selectedApplicant.id}
+                jobId={workspace.job.id} applicationId={selectedApplicant.id}/>
               {applicantNotes ? (
                 <div className="mt-5">
                   <ApplicantNotesPanel

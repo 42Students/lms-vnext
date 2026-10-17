@@ -22,6 +22,7 @@ import { can } from "@/modules/permissions/policy";
 import { isRecruiterJobVisible } from "./recruiter-job-visibility-model";
 import { isRecruiterSharedCandidateAllowed } from "./recruiter-shared-candidate-policy";
 import { PlacementsServiceError } from "./errors";
+import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import { placementJobIdSchema } from "./validation";
 
 function resultKey(
@@ -74,6 +75,7 @@ export async function getRecruiterPlacementWorkspace(
     .where(
       and(
         eq(placementJobs.id, jobId),
+        recruiterOwnJobPredicate(context.user.id),
         eq(
           placementCompanyRelationships.collegeId,
           placementJobs.collegeId,

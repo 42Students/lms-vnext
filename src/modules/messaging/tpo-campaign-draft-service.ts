@@ -1,7 +1,7 @@
 import "server-only";
 import {createHmac} from "node:crypto";
 import {z} from "zod";
-import {and,eq,sql} from "drizzle-orm";
+import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoLeads,placementTpoEmailCampaigns,placementTpoEmailCampaignRecipients}
  from "@/db/schema";
@@ -133,4 +133,40 @@ export async function getTpoCampaignDraft(context:RequestContext,rawId:unknown){
     and c.college_id=d.college_id
    where d.college_id=${college.id}::uuid and d.campaign_id=${parsed.data}::uuid limit 1`);
  return result.rows[0]??null;
+}
+
+/** TPO-campaigns-public-12: read a bounded, college-scoped recipient status
+ * list. Names are already visible in Engage; do not project email addresses,
+ * recipient HMACs, token values, body variables or provider credentials.
+ */
+export async function listTpoCampaignRecipientStatuses(context:RequestContext,rawId:unknown){
+ const id=z.string().uuid().parse(rawId);
+ const college=await scope(context);
+ if(!await tpoCampaignDraftStorageReady())return {ready:false as const,rows:[]};
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const [campaign]=await tx.select({id:placementTpoEmailCampaigns.id})
+   .from(placementTpoEmailCampaigns).where(and(
+    eq(placementTpoEmailCampaigns.id,id),
+    eq(placementTpoEmailCampaigns.collegeId,college.id),
+   )).limit(1);
+  if(!campaign)return {ready:false as const,rows:[]};
+  const rows=await tx.select({
+   id:placementTpoEmailCampaignRecipients.id,
+   leadId:placementTpoEmailCampaignRecipients.leadId,
+   name:placementTpoLeads.name,
+   status:placementTpoEmailCampaignRecipients.status,
+  }).from(placementTpoEmailCampaignRecipients)
+   .innerJoin(placementTpoLeads,and(
+    eq(placementTpoLeads.id,placementTpoEmailCampaignRecipients.leadId),
+    eq(placementTpoLeads.collegeId,placementTpoEmailCampaignRecipients.collegeId),
+   ))
+   .where(and(eq(placementTpoEmailCampaignRecipients.collegeId,college.id),
+    eq(placementTpoEmailCampaignRecipients.campaignId,campaign.id)))
+   .orderBy(asc(placementTpoLeads.name),asc(placementTpoEmailCampaignRecipients.id))
+   .limit(501);
+  return {ready:true as const,rows:rows.slice(0,500),hasMore:rows.length>500};
+ });
 }
