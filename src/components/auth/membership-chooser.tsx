@@ -3,11 +3,13 @@
 import {
   useEffect,
   useState,
-  useTransition,
 } from "react";
 import { useRouter } from "next/navigation";
 import type { MembershipChoice } from "@/modules/identity/context-service";
 import { Button } from "@/components/ui/button";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
+import { useGuardedAction } from "@/hooks/use-guarded-action";
+import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
 
 function roleLabel(roles: readonly string[]) {
   return roles
@@ -34,7 +36,7 @@ export function MembershipChooser({
     null,
   );
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const { pending, run } = useGuardedAction({ busyLabel: "Opening…", timeoutMs: 30_000 });
   const [lastUsed,setLastUsed]=useState<string|null>(null);
   const [selectedId,setSelectedId]=useState<string|null>(null);
   useEffect(()=>{
@@ -57,41 +59,34 @@ export function MembershipChooser({
     return Number(right.id===lastUsed)-Number(left.id===lastUsed);
   });
 
-  function choose(membershipId: string) {
-    if(pending)return;
+  async function choose(membershipId: string) {
+    if (pending) return;
     setError(null);
     setPendingId(membershipId);
 
-    startTransition(async () => {
-      try {
-        const response = await fetch(
-          "/api/auth/memberships",
-          {
-            method: "POST",
-            headers: {
-              "content-type": "application/json",
-            },
-            body: JSON.stringify({ membershipId }),
-          },
-        );
-
-        if (!response.ok) {
-          setError(
-            "That college membership is no longer available. Refresh and choose another.",
-          );
-          return;
-        }
-
-        try{window.sessionStorage.setItem("lms_last_membership_key",membershipId);}
-        catch{/* The selection still succeeds in private browsing. */}
+    try {
+      await run(async () => {
+        await apiFetch("/api/auth/memberships", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ membershipId }),
+          timeoutMs: 29_000,
+        });
+        try { window.sessionStorage.setItem("lms_last_membership_key", membershipId); }
+        catch { /* The selection still succeeds in private browsing. */ }
         router.push("/dashboard");
         router.refresh();
-      } catch {
-        setError("We couldn't open this college right now. Try again.");
-      } finally {
-        setPendingId(null);
+      });
+    } catch (reason) {
+      if (reason instanceof FriendlyFetchError &&
+          (reason.status === 403 || reason.status === 404)) {
+        setError("That college membership is no longer available. Refresh and choose another.");
+      } else {
+        setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
       }
-    });
+    } finally {
+      setPendingId(null);
+    }
   }
 
   if (memberships.length===0) {

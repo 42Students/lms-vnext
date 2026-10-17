@@ -22,3 +22,11 @@ Shell note: `src/components/shell` belongs to chat-9. Where a GR item needs a sh
 - GR-19 / GR-20 (`graceful-route-coverage`): four new route segments (admin student lookup, TPO drive discussion, placements overview, team everyone) now contain both bounded loading and retry boundaries.
 - GR-09 / GR-31 (`graceful-raw-error-scan`): test now distinguishes local Zod `result.error.issues` and noninteractive `/api/client-errors` telemetry from customer-facing raw errors/business writes. **Global scan not yet cleared** because multiple other lanes modified components with raw-error sinks or unguarded writes: examples `academics/college-section-management.tsx` (GR-09), `academics/college-cohort-management.tsx`, `activity/learner-notifications-inbox.tsx`, `admin/department-actions.tsx` (GR-31). Owning lanes must adopt safe message mapping and `useGuardedAction`, respectively; do not silently refresh their immutable SHA baseline.
 - The chat-14 core queue has no additional explicitly OPEN items; GR-51 remains provider-blocked as recorded above. No fabricated 25-item completion count. Tests are authored but not executed by this lane.
+
+
+## Round 3: refreshed unit-failures-r1 (2026-10-17, 18:50)
+
+- Synced `main` at `8736e0c` before editing. Refreshed report lists only **GR-09 and GR-31** in chat-14 (earlier GR-11/19/20/35/53 no longer fail according to the refreshed report).
+- GR-09: isolated the last changed-file hit: HR draft preview uses local Zod `result.error.issues.map`, not a raw API response. The source scan now distinguishes field issues from a direct `{result.error}` / `{body.error}` sink; named GR-09 regression added. No broad allowlist refresh.
+- GR-31: switched shared `src/components/auth/membership-chooser.tsx` to `apiFetch` + actual synchronous `useGuardedAction`, with GR-04/GR-30/GR-31 named regression. The scan still legitimately flags **27 account-lane components**. Full paths and required changes in `docs/audit/graceful/gr31-outstanding-mutations-r1.md`; account-lane owners must finish them. Do not disguise this as a green test or treat the orphaned component fixes as a GR-31 closure.
+- No new explicitly OPEN chat-14 core GR items exist. GR-51 is still provider-blocked. These two scanner repairs and one shared auth adoption are the current round's actual changes; no 30-item closure claim. Tests not run in this lane.

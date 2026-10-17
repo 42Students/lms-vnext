@@ -18,7 +18,7 @@ function blobHash(content: string) {
   return createHash("sha1").update(`blob ${Buffer.byteLength(content)}\0`).update(content).digest("hex");
 }
 const rawErrorPatterns = [
-  /\{\s*(?:result|body)\.error\b/,
+  /\{\s*(?:result|body)\.error\b(?!\s*(?:\.|\?\.))/,
   /\{\s*reason\.message\b/,
   // A local Zod issue tree is field-validation data, not a server error code.
   // Keep direct result.error assignments forbidden, including optional chaining.
@@ -45,6 +45,13 @@ describe("new raw-error and mutation regression gate", () => {
       return leaks && blobHash(content) !== baseline[file];
     });
     expect(offenders, `New unsafe error rendering in: ${offenders.join(", ")}`).toEqual([]);
+  });
+  it("GR-09 protects JSX from API error codes without treating local Zod issue lists as codes", () => {
+    const jsxPattern = rawErrorPatterns[0];
+    expect(jsxPattern.test("{result.error}")).toBe(true);
+    expect(jsxPattern.test("{body.error}")).toBe(true);
+    expect(jsxPattern.test("{result.error.issues.map((issue) => issue.message)}")).toBe(false);
+    expect(jsxPattern.test("{body.error?.issues[0]?.message}")).toBe(false);
   });
   it("GR-09 distinguishes direct raw API errors from client Zod issue details", () => {
     const pattern = rawErrorPatterns[2];
