@@ -16,6 +16,8 @@ export const AFTER_COLLEGE_LABELS:Record<AfterCollegeOutcome,string>={
 /** Placement and debarment outcomes require verified evidence in their own modules. */
 export const MANUAL_AFTER_COLLEGE_OUTCOMES=AFTER_COLLEGE_OUTCOMES.filter(value=>
  !["PLACED_ON_CAMPUS","PLACED_OFF_CAMPUS","DEBARRED"].includes(value));
+export const afterCollegeManualSchema=afterCollegeOutcomeSchema.refine(value=>
+ MANUAL_AFTER_COLLEGE_OUTCOMES.includes(value),"Use recorded offer or debarment evidence to mark placed or debarred.");
 export function afterCollegeOptions(){
  return MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}));
 }
