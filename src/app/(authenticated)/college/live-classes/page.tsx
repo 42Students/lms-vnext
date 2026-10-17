@@ -1,5 +1,5 @@
+import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
-import {redirect} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {CollegeLiveClassesDirectory} from "@/components/courses/college-live-classes-directory";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
@@ -13,7 +13,7 @@ export default async function CollegeLiveClassesPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
 }){
  const context=await getCurrentRequestContext();
- if(!context.membership)redirect("/dashboard");
+ if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
  const parsed=collegeLiveClassQuerySchema.safeParse(liveClassSearchParams(await searchParams));
  if(!parsed.success)return <div className="space-y-4">
   <PageHeader eyebrow="College Admin · Courses & Content" title="Live Classes"/>

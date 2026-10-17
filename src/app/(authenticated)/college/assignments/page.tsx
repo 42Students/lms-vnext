@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
@@ -17,7 +17,7 @@ export default async function CollegeAssignmentsPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
   const params = await searchParams;
   const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
