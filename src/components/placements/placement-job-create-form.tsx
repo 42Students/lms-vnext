@@ -647,6 +647,14 @@ export function PlacementJobCreateForm({
                   placeholder="https://example.com"
                 />
               </label>
+              {matchingEmployer?<div role="status" className="rounded border border-border bg-surface-subtle p-3 text-sm">
+                <p className="font-semibold">This may already be {matchingEmployer.name}</p>
+                <p className="mt-1 text-xs text-body">Reuse the existing college employer to keep recruiter and drive history together.</p>
+                <button type="button" onClick={()=>{setCompanyRelationshipId(matchingEmployer.relationshipId);setCompanyMode("EXISTING");setCompanySearch("");}}
+                  className="mt-2 min-h-10 rounded-md border border-primary px-3 font-semibold text-primary-text">
+                  Use {matchingEmployer.name}
+                </button>
+              </div>:null}
               <label className="flex items-center gap-2 self-end pb-2 text-sm text-body">
                 <input
                   name="companyTrusted"
