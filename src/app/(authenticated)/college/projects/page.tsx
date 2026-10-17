@@ -6,7 +6,6 @@ import {
   ProjectAdminPagination,
   type ProjectAdminCollectionQuery,
 } from "@/components/projects/project-admin-collection-controls";
-import { CreateProjectControl } from "@/components/projects/project-create-control";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import { ProjectAdminWorkspaceList } from "@/components/projects/project-admin-workspace-list";
 import {ProjectAdminWorkspacePageExport} from "@/components/projects/project-admin-workspace-page-export";
@@ -88,21 +87,15 @@ export default async function CollegeProjectsPage({
       <PageHeader
         title="Workspaces"
         description="Live projects, each run by a mentor with a team of students."
-        actions={
-          <CreateProjectControl
-            collegeId={membership.collegeId}
-            basePath="/college/projects"
-            templates={templates.map((template) => ({
-              templateId: template.templateId,
-              title: template.title,
-              version: template.version,
-              summary: template.summary,
-            }))}
-          />
-        }
+        actions={<Link href="/college/projects/create"
+          className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-semibold text-on-primary">
+          Create workspace
+        </Link>}
       />
 
-      <div className="flex flex-wrap gap-2"><Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <div className="flex flex-wrap gap-2">
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/create">Create workspace</Link>
+      <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold hover:bg-surface" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
       <Link className="inline-flex min-h-11 items-center rounded-md border border-border px-4 text-sm font-semibold text-primary-text hover:bg-surface" href="/college/projects/reassign-mentor">Bulk reassign mentor</Link></div>
 
       <div className="flex flex-wrap items-center gap-3">
