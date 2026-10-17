@@ -19,7 +19,7 @@ const pool=enabled?new Pool({connectionString:process.env.TEST_DATABASE_URL}):nu
 const collegeAdmin:RequestContext={
  user:{id:SEED_IDS.collegeAdminUser,identityUid:"chat11-college-company",platformStatus:"ACTIVE",systemRoles:[]},
  membership:{id:SEED_IDS.collegeAdminMembership,collegeId:SEED_IDS.collegeA,
-  organizationId:SEED_IDS.organization,showDeleted:"0",roles:["COLLEGE_ADMIN"]},
+  organizationId:SEED_IDS.organization,status:"ACTIVE",roles:["COLLEGE_ADMIN"]},
 };
 const companyIds:string[]=[],relationshipIds:string[]=[];
 afterAll(async()=>{
@@ -57,9 +57,9 @@ describe.skipIf(!enabled)("College archived company recovery PostgreSQL",()=>{
   const restored=await restorePlacementCompanyRelationship(collegeAdmin,created.relationship.id);
   expect(restored.relationship.status).toBe("ACTIVE");
   expect(restored.relationship.archivedAt).toBeNull();
-  const after=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ACTIVE"});
+  const after=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,showDeleted:"0"});
   expect(after.items.map(x=>x.relationshipId)).toContain(created.relationship.id);
-  const stillArchived=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,status:"ARCHIVED"});
+  const stillArchived=await listCollegeCompanyDirectory(collegeAdmin,{q:suffix,page:1,showDeleted:"1"});
   expect(stillArchived.items.find(x=>x.relationshipId===created.relationship.id)?.relationshipStatus).toBe("ACTIVE");
  });
  it("COL-placements-15 never resurrects an archived platform company",async()=>{
