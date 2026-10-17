@@ -1,6 +1,6 @@
 import "server-only";
 import {and,asc,desc,eq} from "drizzle-orm";
-import {z} from "zod";
+import {canPostToTpoCompanyTeam,tpoCompanyTeamCompanyIdSchema,tpoCompanyTeamPostSchema} from "./tpo-company-team-model";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,membershipRoles,placementCompanies,placementCompanyRelationships,users} from "@/db/schema";
 import {placementTpoCompanyThreads,placementTpoCompanyThreadMessages} from "@/db/schema/tpo-company-team";
@@ -11,11 +11,6 @@ import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
-const companyIdSchema=z.string().uuid();
-export const tpoCompanyTeamPostSchema=z.strictObject({
- body:z.string().trim().min(1).max(4000),
- idempotencyKey:z.string().uuid(),
-});
 async function scope(context:RequestContext){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
@@ -30,7 +25,7 @@ async function ready(){
 /** The relationship is the object; never create one for a global company
  * without explicit active college relationship membership. */
 export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unknown){
- const companyId=companyIdSchema.parse(rawCompanyId),{college}=await scope(context);
+ const companyId=tpoCompanyTeamCompanyIdSchema.parse(rawCompanyId),{college}=await scope(context);
  if(!await ready())return {status:"NOT_REGISTERED" as const};
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
@@ -61,7 +56,7 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
    .orderBy(desc(placementTpoCompanyThreadMessages.createdAt),desc(placementTpoCompanyThreadMessages.id))
    .limit(100):[];
   return {status:"READY" as const,companyId,companyName:relation.companyName,
-   canPost:relation.status==="ACTIVE",topic:thread?.topic??relation.companyName,
+   canPost:canPostToTpoCompanyTeam(relation.status),topic:thread?.topic??relation.companyName,
    messages:messages.reverse()};
  });
 }
@@ -70,7 +65,7 @@ export async function readTpoCompanyTeam(context:RequestContext,rawCompanyId:unk
 export async function postTpoCompanyTeamMessage(
  context:RequestContext,rawCompanyId:unknown,raw:unknown,
 ){
- const companyId=companyIdSchema.parse(rawCompanyId),input=tpoCompanyTeamPostSchema.parse(raw);
+ const companyId=tpoCompanyTeamCompanyIdSchema.parse(rawCompanyId),input=tpoCompanyTeamPostSchema.parse(raw);
  const {member,college}=await scope(context);
  if(!await ready())throw new Error("TPO_COMPANY_TEAM_NOT_REGISTERED");
  return getDb().transaction(async tx=>{
