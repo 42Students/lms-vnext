@@ -47,6 +47,8 @@ export async function ProjectAdminAtRiskPage({
   const bucket = one(searchParams.riskBucket);
   const query: ProjectAdminCollectionQuery = {
     riskBucket: bucket === "STALLED" || bucket === "BLOCKER" || bucket === "REVIEW" ? bucket : undefined,
+    riskSort: (["INACTIVE","WORKSPACE","SEVERITY"].includes(one(searchParams.riskSort)??"")
+      ? one(searchParams.riskSort) : undefined) as ProjectAdminCollectionQuery["riskSort"],
     q: one(searchParams.q),
     status: one(searchParams.status) as ProjectAdminCollectionQuery["status"],
     page: Number(one(searchParams.page) ?? 1),
