@@ -9,7 +9,6 @@ import {PlacementsServiceError} from "./errors";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
 import {collegeDriveIdSchema} from "./college-drive-read-model";
 import {collegeInterviewActionSchema} from "./college-interview-action-model";
-import {placementTableExists} from "./staged-tables";
 
 async function jobScope(context:RequestContext,rawJobId:unknown){
  const collegeId=await requireCollegePlacementAdmin(context),jobId=collegeDriveIdSchema.parse(rawJobId);
@@ -22,7 +21,7 @@ async function jobScope(context:RequestContext,rawJobId:unknown){
 }
 export async function getCollegeInterviewAppointments(context:RequestContext,rawJobId:unknown){
  const {collegeId,job}=await jobScope(context,rawJobId);
- const storageReady=await placementTableExists("placement_college_interviews");
+ const storageReady=true; // Registered in drizzle/0124_college_interviews.sql
  const [rounds,candidates,interviews]=await Promise.all([
   getDb().select({id:placementJobRounds.id,name:placementJobRounds.name,
    status:placementJobRounds.status,kind:placementJobRounds.kind})
@@ -54,8 +53,6 @@ export async function getCollegeInterviewAppointments(context:RequestContext,raw
 
 export async function mutateCollegeInterview(context:RequestContext,rawJobId:unknown,raw:unknown){
  const {collegeId,job}=await jobScope(context,rawJobId);
- if(!await placementTableExists("placement_college_interviews"))
-  throw Error("Candidate interview storage has not been registered.");
  const input=collegeInterviewActionSchema.parse(raw);
  if(job.status!=="PUBLISHED")throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
  return getDb().transaction(async tx=>{
