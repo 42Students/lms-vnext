@@ -109,6 +109,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
   if(input.action==="SEND"){
    if(input.dueAt&&(!input.assigneeId||Date.parse(input.dueAt)<=Date.now()))
     throw new TpoCompanyTeamError("BAD_ACTION");
+   if(input.assigneeId===membership.id)throw new TpoCompanyTeamError("BAD_ACTION");
    if(input.assigneeId){
     const [assignee]=await tx.select({id:collegeMemberships.id})
      .from(collegeMemberships).innerJoin(users,and(eq(users.id,collegeMemberships.userId),
@@ -171,6 +172,7 @@ export async function mutateTpoCompanyTeam(context:RequestContext,rawCompanyId:u
       actionHref:"/tpo/team/company/"+companyId+"#company-team-"+message.id,
     })));
    }
+   if(!message)throw new TpoCompanyTeamError("STALE");
    return {changed:true,id:message.id};
   }
   const [message]=await tx.select().from(messages).where(and(
