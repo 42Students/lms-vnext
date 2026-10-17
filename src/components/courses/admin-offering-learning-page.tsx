@@ -103,9 +103,10 @@ export async function AdminOfferingLearningPage({
       />
       </section>
       <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
-      <AdminOfferingLearningOverview
-        workspace={workspace}
-      />
+      <section id="course-syllabus" aria-label="Course Syllabus" className="space-y-2">
+       <h2 className="text-lg font-semibold">Syllabus</h2>
+       <AdminOfferingLearningOverview workspace={workspace}/>
+      </section>
     </div>
   );
 }
