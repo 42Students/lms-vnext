@@ -110,9 +110,9 @@ export default async function TpoHome(){
   ?(await getTpoStudentsIntelligence(ctx,{collegeId,batchId:firstBatch.id,
       page:1,pageSize:1}).catch(()=>null))?.summary.placed??null
   :null;
- const teamAsks=teamThreads.status==="READY"&&teamThreads.asksReady&&!teamThreads.hasMore
+ const teamAsks=teamThreads?.status==="READY"&&teamThreads.asksReady&&!teamThreads.hasMore
   ?teamThreads.items.reduce((sum,item)=>sum+Number(item.asksForMe),0):null;
- const teamUnread=teamThreads.status==="READY"
+ const teamUnread=teamThreads?.status==="READY"
   ?teamThreads.items.reduce((sum,item)=>sum+Number(item.unreadCount),0):null;
  const rows=buildTpoLegacyHomeRows({
   batch:firstBatch?{name:firstBatch.name,invited:!!firstBatch.invitedAt,
@@ -138,8 +138,8 @@ export default async function TpoHome(){
   placedUnique:studentStats?.summary.placed??null,recruiterLeads:crmCounts?.leads??null,
   followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
   pendingRequests:pendingRequestCount??0,
-  messages:unreadMessages,teamAsks:null,teamMentions:null,
-  teamUnread:teamThreads?.status==="READY"?teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0):null,
+  messages:unreadMessages,teamAsks,teamMentions:null,
+  teamUnread,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,
  });
  const next=buildTpoLegacyNextUp({
@@ -150,8 +150,14 @@ export default async function TpoHome(){
    ...deadlineTpoHomeNeeds(operations.jobs.map(item=>item.job)),
    ...operationalHomeNeeds(operations.workQueue),
    ...((unreadMessages??0)>0?[{type:"RECRUITER_MESSAGES",priority:4,title:unreadMessages+" recruiter messages to answer",count:unreadMessages!,link:"/tpo/messages"}]:[]),
-   ...(teamThreads?.status==="READY"&&teamThreads.items.some(item=>item.unreadCount>0)?[
-    {type:"TEAM_ASKS",priority:4,title:"Your team has new messages",count:teamThreads.items.reduce((sum,item)=>sum+item.unreadCount,0),link:"/tpo/team"}]:[]),
+   ...(teamAsks!==null&&teamAsks>0?[{
+    type:"TEAM_ASKS",priority:1,title:teamAsks+" team asks for you",
+    count:teamAsks,link:"/tpo/team?filter=me",
+   }]:[]),
+   ...(teamUnread!==null&&teamUnread>0&&!(teamAsks!==null&&teamAsks>0)?[{
+    type:"TEAM_MESSAGES",priority:4,title:"Your team has new messages",
+    count:teamUnread,link:"/tpo/team",
+   }]:[]),
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount!,link:"/tpo/requests"}]:[]),
   ],

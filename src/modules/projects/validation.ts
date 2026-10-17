@@ -841,7 +841,7 @@ export const scheduleProjectMeetingInputSchema =
     linkedTaskId:
       projectTaskIdSchema.nullable().optional(),
   }).superRefine((value,ctx)=>{
-    if(value.status!=="DRAFT" && !value.meetingUrl)
+    if(value.status!=="DRAFT" && !value.meetingUrl && !value.expectedUpdatedAt)
       ctx.addIssue({code:"custom",path:["meetingUrl"],message:"Meeting link is required."});
   });
 
