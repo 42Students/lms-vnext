@@ -54,14 +54,14 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
   {ready?tpoBatchPlacementState({finishedAt:lifecycle?.finishedAt??null,
    eligible:summary.complete?summary.eligible:null}):"Status unavailable"}
  </p>
- {ready && registrations.available ? <TpoBatchInvitationControl
+ {ready && registrations.available ? <section id="batch-invite" aria-label="Invite learners to register"><TpoBatchInvitationControl
   batchId={batchId} invitedAt={lifecycle?.invitedAt?.toISOString() ?? null}
   finishedAt={lifecycle?.finishedAt?.toISOString() ?? null}
   deadline={lifecycle?.registrationDeadline?.toISOString() ?? null}
   expectedVersion={lifecycle?.updatedAt.toISOString() ?? "none"}
   invitable={invitePreview.invitable} eligible={invitePreview.eligible}
   deadlinePassed={registrations.invitation.stage === "DEADLINE_PASSED"}
-  minDate={indianCalendarDate(new Date())} /> : null}
+  minDate={indianCalendarDate(new Date())} /></section> : null}
  {ready?<TpoBatchLifecycleControl batchId={batchId} state={lifecycle?{
   invitedAt:lifecycle.invitedAt?.toISOString()??null,finishedAt:lifecycle.finishedAt?.toISOString()??null,
   expectedVersion:lifecycle.updatedAt.toISOString(),
@@ -101,7 +101,7 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
    (registrations.unrecorded ?? 0)>0 ? <p className="text-sm text-body">{registrations.unrecorded} learners still need to record their registration choice.</p> :
    <p className="text-sm text-body">All recorded learners have a registration choice. Review the next steps on Students.</p>}
   <div className="flex flex-wrap gap-3">
-    <Link href={"/tpo/batches/"+batchId+(lifecycle?.finishedAt?"/history":summary.undecided>0?"/students?decision=NOT_DECIDED":!lifecycle?.invitedAt?"/invitation-prep":"/registrations")}
+    <Link href={"/tpo/batches/"+batchId+(lifecycle?.finishedAt?"/history":summary.undecided>0?"/students?decision=NOT_DECIDED":!lifecycle?.invitedAt?"#batch-invite":"/registrations")}
       className="inline-flex min-h-10 items-center rounded-md border border-border px-3 font-semibold text-primary-text">
       {lifecycle?.finishedAt?"Review history":summary.undecided>0?"Decide learners":!lifecycle?.invitedAt?"Invite to register":"Review registrations"} →
     </Link>
@@ -111,29 +111,8 @@ export default async function BatchPage({params,searchParams}:{params:Promise<{b
     </Link>:null}
   </div>
  </section>
- <section aria-label="Registration decisions" className="min-w-0 space-y-3 rounded-lg border border-border p-4">
-  <h2 className="font-semibold">Registration choices</h2>
-  <p className="text-sm">Registration window: {registrations.invitation.stage.replaceAll("_"," ").toLowerCase()}</p>
-  {registrations.invitation.deadline?<p className="text-xs text-muted-foreground">Deadline (absolute time): {registrations.invitation.deadline}</p>:null}
-  {registrations.invitation.markedAt?<p className="text-xs text-muted-foreground">
-   Invitation marked: {registrations.invitation.markedAt}. This is not a delivery receipt.</p>:null}
-  {!registrations.available?<p role="status" className="text-sm">Registration storage is unavailable; no counts are inferred.</p>:
-   <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-    {[
-     ["Active learners",registrations.activeLearners],
-     ["Choices recorded",registrations.registered],
-     ["No choice recorded",registrations.unrecorded],
-     ["Placements",registrations.byChoice?.PLACEMENTS],
-     ["Higher studies",registrations.byChoice?.HIGHER_STUDIES],
-     ["Other choices",(registrations.byChoice?.NOT_INTERESTED??0)+(registrations.byChoice?.ENTREPRENEURSHIP??0)+(registrations.byChoice?.COMPETITIVE_EXAMS??0)],
-    ].map(([name,value])=><div key={name} className="rounded border border-border p-2 text-sm">
-     <dt>{name}</dt><dd className="font-semibold tabular-nums">{value??"—"}</dd>
-    </div>)}
-   </dl>}
-  <p className="text-xs text-muted-foreground">Registration choices come from DB08 records; invitation, eligibility and consent are separate facts. A learner choosing Placements must have recorded their own consent.</p>
- </section>
- <Link href={"/tpo/batches/"+batchId+"/invitation-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Prepare invitation draft</Link>
- <Link href={"/tpo/batches/"+batchId+"/reminder-prep"} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm text-primary-text">Prepare registration reminder</Link>
+
+
  <nav aria-label="Batch workspace" className="flex flex-wrap gap-2">{tabs.map(tab=><Link key={tab.href} className="inline-flex min-h-11 items-center rounded border border-border px-4 text-sm" href={"/tpo/batches/"+batchId+"/"+tab.href}>{tab.label}</Link>)}</nav>
  <p className="rounded border border-border p-4 text-sm">Choose Students for eligibility, Registrations for recorded choices, Rules for policy, or History for decisions and exact undo.</p>
  </main>;

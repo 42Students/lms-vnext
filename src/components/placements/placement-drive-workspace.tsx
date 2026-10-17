@@ -263,7 +263,10 @@ export async function PlacementDriveWorkspace({
           " · " + headerFacts.status
         }
         actions={
-          <div className="flex flex-wrap gap-2">
+          <details className="group relative w-full md:w-auto" aria-label="Drive actions">
+            <summary className="flex min-h-11 cursor-pointer items-center rounded border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:hidden">Actions</summary>
+            <div role="group" aria-label="Drive action choices"
+              className="hidden max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto rounded border border-border bg-surface p-3 group-open:flex md:flex md:max-h-none md:flex-row md:flex-wrap md:overflow-visible md:border-0 md:p-0">
             {nextStep ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-10 items-center justify-center rounded-md border border-primary bg-primary px-4 text-sm font-semibold text-on-primary">
@@ -366,7 +369,8 @@ export async function PlacementDriveWorkspace({
             >
               {isTpo ? "Review and export applicants" : "Export applicants (CSV)"}
             </Link>
-          </div>
+            </div>
+          </details>
         }
       />
       {isTpo?<TpoDriveRefreshControl/>:null}
