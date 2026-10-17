@@ -28,7 +28,10 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    }catch(e){outcome.push({id:lead.id,name:lead.name,email:lead.emailNorm??"",
     url:null,reason:e instanceof Error?e.message:"Could not create link",emailed:false});}
   }
-  setResults(outcome);setBusy(false);onUpdated();
+  setResults(previous=>retryOnly?[
+    ...previous.filter(item=>!target.some(lead=>lead.id===item.id)),
+    ...outcome,
+  ]:outcome);setBusy(false);onUpdated();
  }
  async function copy(value:string){
   try{await navigator.clipboard.writeText(value);setNotice("Copied. Invitation tokens are shown only in this session.");}
