@@ -48,10 +48,8 @@ export function buildAccreditationStudentRows(offers:readonly AccreditationStude
   (a.rollNumber??"").localeCompare(b.rollNumber??"")||a.membershipId.localeCompare(b.membershipId));
 }
 export function accreditationStudentCsv(rows:readonly AccreditationStudentRow[]):string{
- return placementReportCsv(ACCREDITATION_STUDENT_HEADINGS,[
-  ...rows.map(row=>[row.name,row.rollNumber,row.programme,row.branch,row.batch,
-   row.employer,row.employerContact,row.packageInr,row.offersHeld,row.offerStatus,row.joining]),
-  // Warnings are a separate, unmistakable footer; never misrepresent as a student.
-  ["WARNING",ACCREDITATION_STUDENT_WARNING],
- ]);
+ return placementReportCsv(ACCREDITATION_STUDENT_HEADINGS,rows.map(row=>[
+   row.name,row.rollNumber,row.programme,row.branch,row.batch,
+   row.employer,row.employerContact,row.packageInr,row.offersHeld,row.offerStatus,row.joining,
+ ]));
 }
