@@ -15,7 +15,7 @@ describe("LEARNER-projects-25 learner project review notifications",()=>{
 
 it("LEARNER-projects-38 sends learner to team final-delivery review",()=>{
  const rejected=learnerProjectDeliveryReviewNotice("project","CHANGES_REQUESTED");
- expect(rejected).toMatchObject({title:"Changes requested on final submission",
+ expect(rejected).toMatchObject({title:"Changes requested",
   actionHref:"/learn/projects/project?tab=delivery"});
- expect(learnerProjectDeliveryReviewNotice("project","APPROVED").title).toBe("Final project submission approved");
+ expect(learnerProjectDeliveryReviewNotice("project","APPROVED").title).toBe("Delivery accepted");
 });

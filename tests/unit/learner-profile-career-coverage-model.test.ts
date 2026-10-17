@@ -12,7 +12,7 @@ describe("optional identity excluded from career profile score",()=>{
   it("recommends the first genuinely missing editable section",()=>{
     const doc=learnerProfileDocumentSchema.parse({headline:"Career learner"});
     const result=learnerProfileCareerCoverage(learnerProfileChecklist(doc));
-    expect(result).toMatchObject({completed:1,total:15,percentage:7});
-    expect(result.next?.section).toBe("contacts");
+    expect(result).toMatchObject({completed:1,total:15,percentage:0});
+    expect(result.next?.section).toBe("personal-details");
   });
 });

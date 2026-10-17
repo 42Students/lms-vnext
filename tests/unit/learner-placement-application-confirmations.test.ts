@@ -10,7 +10,7 @@ describe("Learner job application confirmations", () => {
   it("requires explicit confirmation for internal placement applications", () => {
     expect(source).toContain('onClick={() => setConfirmation("INTERNAL")}');
     expect(source).toContain('confirmation === "INTERNAL"');
-    expect(source).toContain("Confirm application");
+    expect(source).toContain("Confirm & apply");
     expect(source).toContain('void apply("INTERNAL")');
     expect(source).toContain("learnerDriveApplyGate");
   });

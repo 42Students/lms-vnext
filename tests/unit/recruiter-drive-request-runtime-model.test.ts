@@ -4,7 +4,7 @@ import {recruiterRequestUpdateSchema} from "@/modules/placements/recruiter-drive
 import {emptyHrDriveDraft} from "@/modules/placements/hr-drive-draft-model";
 describe("REC-home-drives-21 registered formal recruiter request contract",()=>{
  it("accepts a typed request with idempotency token",()=>{
-  const draft={...emptyHrDriveDraft(),title:"Graduate Engineer",description:"An engineering job for graduates",location:"Hyderabad"};
+  const draft={...emptyHrDriveDraft(),title:"Graduate Engineer",description:"An engineering job for graduates",location:"Hyderabad",ctcLpa:"10"};
   expect(recruiterDriveRequestInputSchema.safeParse({collegeId:"550e8400-e29b-41d4-a716-446655440000",
    submissionId:"550e8400-e29b-41d4-a716-446655440001",draft}).success).toBe(true);
  });
