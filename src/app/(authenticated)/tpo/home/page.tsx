@@ -135,7 +135,8 @@ export default async function TpoHome(){
  <p className="text-sm font-semibold text-muted-foreground">{greeting.date}</p>
  <PageHeader eyebrow="TPO" title={greeting.title}/>
  <p aria-live="polite" className="text-sm font-semibold text-body">{tpoHomeNeedsLine(rows)}</p>
- <section className="min-w-0 rounded-xl border border-border bg-surface p-5">
+ <div className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-start">
+ <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-xl border border-border bg-surface p-5">
   <h2 className="text-sm font-medium text-muted-foreground">Next up</h2>
   {next?<div className="mt-2 space-y-2">
    <p className="break-words font-semibold">{next.title}</p>
@@ -145,9 +146,7 @@ export default async function TpoHome(){
    <Link href={rows.find(row=>row.needsAttention)!.href} className="inline-flex min-h-11 items-center rounded bg-primary px-4 text-sm text-on-primary">Open</Link>
   </div>:<div className="mt-2 space-y-1"><p className="font-semibold">Nothing is waiting on you.</p><p className="text-sm text-muted-foreground">New requests, results and replies show up here first.</p></div>}
  </section>
- {pendingRequests?<section aria-label="Pending placement requests" className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-border bg-surface p-4"><p className="text-sm font-semibold">{pendingRequests.label}</p><Link href={pendingRequests.href} className="inline-flex min-h-11 items-center text-primary-text underline">Open decision inbox</Link></section>:null}
- {!batches.ready?<p className="text-xs text-muted-foreground">Batch attention is unavailable until its lifecycle migration is registered.</p>:null}
- <section className="space-y-2"><h2 className="font-semibold">Your placement work</h2>
+ <section className="min-w-0 space-y-2" aria-label="Your placement work">
   <ul className="divide-y divide-border rounded-xl border border-border bg-surface">{rows.map(row=><li key={row.key}>
     <Link href={row.href} data-testid={"home.row."+row.key}
      className="flex min-h-16 min-w-0 items-center gap-3 p-4 text-body hover:bg-primary-subtle focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
@@ -159,5 +158,6 @@ export default async function TpoHome(){
     </Link>
    </li>)}</ul>
  </section>
+ </div>
  </main>;
 }
