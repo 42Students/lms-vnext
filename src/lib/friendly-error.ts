@@ -23,6 +23,7 @@ export const FRIENDLY_MESSAGES = {
   unprocessable: "Please check the information and try again.",
   rateLimit: "Too many attempts. Please wait a minute and try again.",
   maintenance: "We are making a quick update. Please try again in a minute.",
+  databaseUnavailable: "Temporarily unavailable, please try again in a minute.",
   timeout: "This is taking longer than expected. Please try again.",
   offline: "You appear to be offline. Check your connection and try again.",
 } as const;
@@ -48,6 +49,7 @@ const conflictCodes = new Set(["STALE_VERSION", "STALE_AUDIENCE", "VERSION_CONFL
 /** GR-01 / GR-02: error codes are never shown in customer UI. */
 export function friendlyApiError({ status, code, network = false }: FriendlyErrorInput): string {
   if (network) return FRIENDLY_MESSAGES.offline;
+  if (code === "DATABASE_UNAVAILABLE") return FRIENDLY_MESSAGES.databaseUnavailable;
   if (status === 503) return FRIENDLY_MESSAGES.maintenance;
   if (status === 504) return FRIENDLY_MESSAGES.timeout;
   if (status !== undefined && status !== null && status >= 500) return FRIENDLY_MESSAGES.unexpected;

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { friendlyApiError } from "@/lib/friendly-error";
 import { createRequestId } from "@/lib/request-id";
+import { isDatabaseUnavailableError } from "@/lib/db-outage";
 import { ZodError } from "zod";
 import { SessionAuthenticationError } from "@/auth/session";
 import { ContextResolutionError } from "@/modules/identity/context-service";
@@ -33,6 +34,7 @@ export function apiErrorResponse(error: unknown) {
     const status = init?.status ?? 500;
     const headers = new Headers(init?.headers);
     headers.set("x-request-id", requestId);
+    if (status === 429 || status === 503) headers.set("Retry-After", "60");
     const code = typeof body.error === "string" ? body.error : undefined;
     return NextResponse.json({
       ...body,
@@ -375,13 +377,14 @@ export function apiErrorResponse(error: unknown) {
     );
   }
 
+  const isOutage = isDatabaseUnavailableError(error);
   logError("api.unhandled_error", error, {
     component: "api",
     requestId,
   });
 
   return respond(
-    { error: "INTERNAL_ERROR" },
-    { status: 500 },
+    { error: isOutage ? "DATABASE_UNAVAILABLE" : "INTERNAL_ERROR" },
+    { status: isOutage ? 503 : 500 },
   );
 }

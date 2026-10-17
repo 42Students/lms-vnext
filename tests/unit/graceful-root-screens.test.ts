@@ -37,6 +37,8 @@ describe("graceful route screens", () => {
     expect(safeReturnTo("/api/private")).toBeNull();
     expect(safeReturnTo("/learn/courses?page=2")).toBe("/learn/courses?page=2");
     expect(sessionExpiredHref("/learn/courses")).toContain("returnTo=%2Flearn%2Fcourses");
+    expect(source("src/components/auth/session-response-guard.tsx")).toContain("sessionExpiredHref(");
+    expect(source("src/components/auth/login-form.tsx")).toContain("safeReturnTo(");
   });
   it("GR-16 restores the screen after reconnecting", () => {
     expect(source("src/components/public/offline-banner.tsx")).toContain('addEventListener("online"');

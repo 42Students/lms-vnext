@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { safeReturnTo } from "@/lib/return-to";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -216,7 +217,8 @@ export function LoginForm({
       );
       if (!result.ok) return fail((result.data as { error?: string }).error);
       saveLoginAttempt(null);
-      window.location.assign(result.data.next ?? "/dashboard");
+      const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
+      window.location.assign(returnTo ?? result.data.next ?? "/dashboard");
     } catch {
       setError("Network problem. Check your connection and try again.");
     } finally {
