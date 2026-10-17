@@ -39,7 +39,7 @@ export function recruiterAttentionFromPersistedFacts(input: {
   const quietDays = days(input.lastActivityAt ?? input.lastContactAt ?? input.createdAt);
   if (quietDays >= 14) chips.push("QUIET");
   if (input.inviteBouncedAt) chips.push("BOUNCED");
-  // Invitation sent to a contact who has not joined remains unverified.
-  if (input.inviteSentAt && !input.recruiterUserId) chips.push("UNVERIFIED");
+  // Invitation-sent is not proof of an unverified joined recruiter.
+  // Only a persisted verification state may add the UNVERIFIED chip.
   return { chips, quietDays };
 }
