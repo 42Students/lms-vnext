@@ -24,7 +24,7 @@ test.describe("GR-80 TPO client-side roster and company directory failures", () 
         try {
           await page.goto(journey.route);
           const errors = captureUncaughtErrors(page);
-          await expect.poll(failure.hits).toBeGreaterThan(0);
+          await expect.poll(() => failure.requests().some((request) => request.includes(journey.title === "recruiter roster" ? "/api/placements/tpo/leads" : "/api/placements/tpo/companies"))).toBe(true);
           await expectFriendlyFailure(page, kind);
           await expectNoRawErrors(page);
           expect(errors).toEqual([]);

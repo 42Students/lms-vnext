@@ -24,5 +24,15 @@ test("GR-81 accepts actionable customer wording and creates actual intercepts", 
   });
   expect(status).toBe(500);
   expect(injection.hits()).toBe(1);
+  expect(injection.requests()).toContain("GET /api/graceful-probe");
   await injection.dispose();
+});
+
+test("GR-81 rejects SQL detail, network codes, framework and numerical status text", async ({ page }) => {
+  await page.setContent('<main><h1>We had a problem</h1><p>relation "student_private" violates foreign key constraint</p></main>');
+  await expect(expectNoRawErrors(page)).rejects.toThrow();
+  await page.setContent("<main><h1>There is a problem</h1><p>HTTP 500 INTERNAL_ERROR</p></main>");
+  await expect(expectNoRawErrors(page)).rejects.toThrow();
+  await page.setContent("<main><h1>Client-side issue</h1><nextjs-portal></nextjs-portal></main>");
+  await expect(expectNoRawErrors(page)).rejects.toThrow();
 });
