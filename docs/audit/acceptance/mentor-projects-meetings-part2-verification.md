@@ -22,6 +22,8 @@ DONE means source implemented and ID-named tests authored, not executed or certi
 | MEN-projects-meetings-63 | DONE | Mentor lock action, origin-guarded route and atomic delivery history/notice: src/components/projects/mentor-delivery-lock-control.tsx; src/app/api/projects/[projectId]/submissions/[submissionId]/mentor-lock/route.ts; src/modules/projects/mentor-delivery-lock-service.ts; tests/unit/chat11-mentor-resources-round8-verification.test.ts — `it("MEN-projects-meetings-63 protects mentor delivery locking and persists history")` |
 | MEN-projects-meetings-77 | DONE | Task scoped select and blocker controls: src/components/projects/mentor-task-status-transition.tsx; tests/unit/mentor-navigation-confirmations-round5.test.ts — `it("MEN-projects-meetings-77 exposes task-scoped state and blocker field labels")` |
 
+| MEN-projects-meetings-72 | DONE | src/modules/projects/project-notification-service.ts, member-service.ts, meeting-service.ts, task-comment-service.ts, task-assignment-service.ts; tests/unit/chat11-project-notice-persistence-round8.test.ts — `it("MEN-projects-meetings-72 records scoped persistent project event notifications atomically")`; tests/integration/project-notification-r01.test.ts checks real PostgreSQL notices for assigned mentor and learner, comments, meeting requests, changes and archive with duplicate rejection. Test execution pending. |
+
 ## Partial (still open)
 
 - MEN-projects-meetings-57: The safe link and legacy action labels are implemented, but file metadata, resource statuses and updated-time tags still differ. Test: `it("MEN-projects-meetings-57 shows Open link and guards invalid or blocked resource windows")` in `tests/unit/college-mentor-round7-gap-verification.test.ts`.
