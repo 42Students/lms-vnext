@@ -3,6 +3,7 @@ import "server-only";
 import { and, asc, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
+  activityEvents,
   collegeMemberships,
   membershipRoles,
   placementTpoLeadActivities,
@@ -68,6 +69,7 @@ export async function bulkAssignTpoLeadOwner(
   raw: unknown,
 ) {
   const collegeId = await requireTpoOwnerScope(context);
+  const college = await requirePlacementManageScope(context,collegeId);
   const input = confirmedTpoBulkLeadOwnerSchema.parse(raw);
   const actorUserId = context.user.id;
 
@@ -137,6 +139,15 @@ export async function bulkAssignTpoLeadOwner(
       if (!row) throw new Error("TPO_OWNER_RESULT_MISSING");
       return row;
     });
-    return { results, counts: summarizeTpoBulkLeadOwners(results) };
+    const counts=summarizeTpoBulkLeadOwners(results);
+    await tx.insert(activityEvents).values({
+      organizationId:college.organizationId,collegeId,
+      actorUserId:context.user.id,actorMembershipId:context.membership!.id,
+      module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_BULK_OWNER",
+      subjectType:"placement_tpo_lead",subjectId:results[0].leadId,
+      summary:"Bulk recruiter lead ownership update",
+      metadata:{ownerMembershipId:target.id,leadIds:results.map(r=>r.leadId),counts},
+    });
+    return { results, counts };
   });
 }
