@@ -4,6 +4,8 @@ import {
   eq,
   inArray,
   ne,
+  not,
+  isNull,
   or,
   sql,
   gt,
@@ -26,7 +28,7 @@ import {
 } from "./access";
 import { ProjectsServiceError } from "./errors";
 import { isFutureProjectMeetingWindow } from "./meeting-window-policy";
-import {mentorMeetingFacilitationSchema} from "./mentor-meeting-facilitation-model";
+import {mentorMeetingFacilitationSchema,emptyMentorMeetingFacilitation} from "./mentor-meeting-facilitation-model";
 import {
   projectMeetingIdSchema,
   projectMeetingTransitionInputSchema,
@@ -154,17 +156,28 @@ export async function listProjectMeetings(
       projectIdInput,
     );
 
-  return getDb()
+  const rows = await getDb()
     .select()
     .from(projectMeetings)
     .where(
       and(eq(projectMeetings.projectId,scope.project.id),
-        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [ne(projectMeetings.status,"DRAFT")] : [])),
+        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [
+          ne(projectMeetings.status,"DRAFT"),
+          // MEN-projects-meetings-27: cancelled private drafts were never announced.
+          // A cancelled learner request still has a requester and remains visible.
+          not(and(eq(projectMeetings.status,"CANCELLED"),
+            isNull(projectMeetings.requestedByMembershipId),
+            isNull(projectMeetings.scheduledByUserId))),
+        ] : [])),
     )
     .orderBy(
       asc(projectMeetings.startsAt),
       asc(projectMeetings.createdAt),
     );
+  // MEN-projects-meetings-27: facilitator notes belong to managers, not the
+  // learner/observer workspace payload (even if the UI hides the panel).
+  return scope.access==="MENTOR" || scope.access==="ADMIN" ? rows :
+    rows.map(row=>({...row,facilitation:emptyMentorMeetingFacilitation}));
 }
 
 export async function requestProjectMeeting(
