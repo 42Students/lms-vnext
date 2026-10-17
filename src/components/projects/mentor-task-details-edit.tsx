@@ -66,6 +66,7 @@ export function MentorTaskDetailsEdit(props:Props) {
           "/tasks/"+encodeURIComponent(props.taskId)+"/details",
         "PATCH",{
           title:title.trim(),description:description.trim()||null,
+          approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,
           priority,expectedUpdatedAt:props.updatedAt,
           taskType:taskType||null,estimatePoints:estimate!==""?Number(estimate):null,
