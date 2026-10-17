@@ -26,11 +26,11 @@ export function TpoAcademicImportWorkspace() {
   async function upload(file: File | null) {
     if (!file) return;
     if (!/\.csv$/i.test(file.name)) {
-      setError("Choose a .csv file. XLSX files cannot be imported without an Excel parser.");
+      setError("Choose a CSV file to import academic details.");
       return;
     }
     if (file.size > 200000) {
-      setError("CSV exceeds 200,000 characters.");
+      setError("This file is too large. Please split it into smaller CSV files.");
       return;
     }
     const value = await file.text();
@@ -43,7 +43,9 @@ export function TpoAcademicImportWorkspace() {
       body: JSON.stringify({ action, rows, skipUnmatched: action === "IMPORT" }),
     });
     const body = await response.json().catch(() => null);
-    if (!response.ok) throw new Error(body?.error ?? "Unable to process academic records");
+    if (!response.ok) throw new Error(response.status===409
+      ?"This changed while you were working. Your academic import choices are kept below. Refresh and try again."
+      :"Could not process the academic details. Please review your file and try again.");
     return body;
   }
 
