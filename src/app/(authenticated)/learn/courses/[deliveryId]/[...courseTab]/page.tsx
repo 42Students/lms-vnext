@@ -12,7 +12,7 @@ import { LearnerCourseOverview } from "@/components/courses/learner-course-overv
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { PageHeader } from "@/components/ui/page-header";
-import { learnerCourseAttendanceIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
+import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
 import { listCourseDiscussionMessages } from "@/modules/courses/discussion-service";
@@ -141,13 +141,19 @@ export default async function LearnerCourseTabPage({
       />
     );
   } else if (activeTab === "attendanceDetail") {
+    const currentMonth=learnerCourseAttendanceIstMonth(new Date());
+    const requested=first(query.month);
+    const selectedMonth=requested&&learnerCourseAttendanceIstWindow(requested)
+      ?requested:currentMonth;
+    const window=learnerCourseAttendanceIstWindow(selectedMonth)!;
     const attendance = await getLearnerAttendanceWorkspace(
       context,
-      { includeHistorical: true },
+      { includeHistorical: true,deliveryId,window },
     );
     content = (
       <LearnerCourseAttendance
-        defaultMonth={learnerCourseAttendanceIstMonth(new Date())}
+        key={selectedMonth}
+        defaultMonth={selectedMonth}
         deliveryId={deliveryId}
         workspace={attendance}
       />
