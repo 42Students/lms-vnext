@@ -147,9 +147,7 @@ export function CourseActions({
             <Button
               variant="secondary"
               disabled={pending}
-              onClick={() =>
-                setEditOpen(false)
-              }
+              onClick={() => closeEdit(false)
             >
               Cancel
             </Button>
