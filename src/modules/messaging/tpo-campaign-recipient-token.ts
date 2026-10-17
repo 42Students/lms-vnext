@@ -5,7 +5,9 @@ import {z} from "zod";
 export function resolveTpoCampaignRecipientSecret(config:Readonly<Record<string,string|undefined>>|NodeJS.ProcessEnv):string{
  // Existing TOKEN_SECRET deployments remain valid; support the old HMAC alias
  // only if the canonical setting is absent, never mixing two distinct keys.
- return config.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET??config.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET??"";
+ const canonical="TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET" in config ? config.TPO_CAMPAIGN_RECIPIENT_TOKEN_SECRET : undefined;
+ const legacy="TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET" in config ? config.TPO_CAMPAIGN_RECIPIENT_HMAC_SECRET : undefined;
+ return typeof canonical==="string"?canonical:typeof legacy==="string"?legacy:"";
 }
 
 const payload=z.object({
