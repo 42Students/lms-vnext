@@ -33,6 +33,16 @@ export function TpoBulkDriveReminder(){
   setBusy(false);
  }
  return <div className="flex flex-col gap-1">
+  <div className="flex flex-wrap gap-3 text-xs">
+   <button type="button" disabled={busy} className="font-semibold text-primary-text"
+    onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=true;});}}>
+    Select all visible drives
+   </button>
+   <button type="button" disabled={busy} className="font-semibold text-primary-text"
+    onClick={event=>{event.currentTarget.form?.querySelectorAll<HTMLInputElement>('input[name="ids"]').forEach(input=>{input.checked=false;});}}>
+    Clear selection
+   </button>
+  </div>
   <button type="button" disabled={busy} onClick={e=>void remind(e)}
    className="min-h-10 rounded border border-border px-4 text-sm font-semibold text-primary-text disabled:opacity-50">
    {busy?"Checking selected drives…":"Remind non-applicants in selected drives"}
