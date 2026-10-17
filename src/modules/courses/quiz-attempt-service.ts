@@ -577,7 +577,9 @@ export async function listQuizAttempts(
   context: RequestContext,
   quizIdInput: string,
   deliveryIdInput: string,
+  page = 1,
 ) {
+  if(!Number.isInteger(page)||page<1||page>1000)throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
   const deliveryId =
