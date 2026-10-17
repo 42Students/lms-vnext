@@ -187,6 +187,12 @@ describe("chat-14 graceful shared-layer edge regression audit", () => {
     expect(code).not.toContain("xhr.status === 503 ?");
   });
 
+  it("GR-54 applies the retry guidance to rate-limited uploads and API responses", () => {
+    expect(friendlyApiError({ status: 429 })).toBe(FRIENDLY_MESSAGES.rateLimit);
+    expect(source("src/lib/upload-progress.ts")).toContain("friendlyApiError({");
+    expect(source("src/lib/api-error.ts")).toContain('headers.set("Retry-After", "60")');
+  });
+
   it("GR-50 retries a keyed provider POST but not a duplicate-prone unkeyed POST", async () => {
     const spy = vi.spyOn(globalThis, "fetch");
     spy.mockResolvedValueOnce(new Response(null, { status: 503 }))
@@ -220,6 +226,7 @@ describe("chat-14 graceful shared-layer edge regression audit", () => {
     const code = source("src/hooks/use-form-draft.ts");
     expect(code).toContain("editedBeforeRestore.current");
     expect(code).toContain("latestDraft.current = value");
+    expect(code).toContain("dirtyRef.current = true");
   });
 
   it("GR-62 flushes the current draft during pagehide and before leaving", () => {
@@ -227,6 +234,7 @@ describe("chat-14 graceful shared-layer edge regression audit", () => {
     expect(code).toContain('window.addEventListener("pagehide", flushDraft)');
     expect(code).toContain('window.addEventListener("beforeunload", warn)');
     expect(code).toContain("flushDraft();");
+    expect(code).toContain("if (cleared.current || !dirtyRef.current) return;");
     expect(code).toContain("localStorage.removeItem(storageKey)");
   });
 
