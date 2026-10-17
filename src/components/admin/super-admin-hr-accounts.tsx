@@ -134,8 +134,12 @@ export function SuperAdminHrAccounts({
   list,
   filters,
   loadError,
+  statusSummary,
+  scopeDescription,
 }: {
   list: HrAccountsPageData | null;
+  statusSummary: {accounts:number;active:number;archived:number;disabled:number};
+  scopeDescription:string;
   filters: HrListFilters;
   loadError: string | null;
 }) {
@@ -619,6 +623,10 @@ export function SuperAdminHrAccounts({
         }
       />
 
+      <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
+      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
+        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended / archived",statusSummary.archived],["Disabled",statusSummary.disabled],
+      ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd></div>)}</dl>
       <form
         key={[
           filters.q,
