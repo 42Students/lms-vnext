@@ -394,7 +394,24 @@ export default async function TpoMessagesPage({
             }
           />
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+          <>
+          <ul aria-label="Recruiter conversations on phone" className="grid gap-3 md:hidden">
+           {items.map(item=><li key={item.id} className="rounded-xl border border-border bg-surface p-4">
+            <Link href={"/tpo/messages/"+encodeURIComponent(item.id)}
+              className="block min-h-11 font-semibold text-primary-text">
+             {item.participantName}{item.companyName?" · "+item.companyName:""} →
+            </Link>
+            <p className="text-sm text-body">{item.subject}</p>
+            {item.lastPreview?<p className="mt-2 line-clamp-2 text-xs text-muted-foreground">{item.lastPreview}</p>:null}
+            <div className="mt-2 flex flex-wrap gap-2 text-xs">
+             {item.waitingForYou?<span>Waiting for you</span>:null}
+             {item.accessEnded?<span>Access ended</span>:null}
+             <span>{item.unreadCount??0} unread</span>
+             <time dateTime={item.occurredAt.toISOString()}>{formatTpoInboxTime(item.occurredAt,now)}</time>
+            </div>
+           </li>)}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-xl border border-border bg-surface md:block">
             <table className="w-full min-w-[50rem] text-left text-sm">
               <thead className="bg-muted text-muted-foreground">
                 <tr>
@@ -498,6 +515,7 @@ export default async function TpoMessagesPage({
               </tbody>
             </table>
           </div>
+          </>
         )}
 
         <nav
