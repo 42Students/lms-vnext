@@ -159,7 +159,7 @@ export function CourseActions({
                           null,
                       },
                     ),
-                  "Course updated",
+                  "Updated course “"+name.trim()+"”.",
                   () => setEditOpen(false),
                 )
               }
