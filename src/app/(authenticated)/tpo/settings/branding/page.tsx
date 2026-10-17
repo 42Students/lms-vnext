@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import {TpoEmailSignatureEditor} from "@/components/tpo/tpo-communication-settings-editors";
+import {getTpoCommunicationSettings} from "@/modules/placements/tpo-communication-settings-service";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
@@ -78,8 +80,9 @@ export default async function TpoPlacementBrandingPage() {
     redirect("/dashboard");
   }
 
-  const branding =
-    await getTpoPlacementBranding(context);
+  const [branding,communication] = await Promise.all([
+    getTpoPlacementBranding(context),getTpoCommunicationSettings(context),
+  ]);
 
   const sourceLabel =
     tpoBrandingOriginLabel(
@@ -93,7 +96,7 @@ export default async function TpoPlacementBrandingPage() {
       <PageHeader
         eyebrow="TPO · Settings"
         title="Placement Branding"
-        description="Review your college's existing name, public logo and brand colours. This page does not upload or change branding."
+        description="Review your college's existing name, public logo and brand colours. Manage your placement email signature."
       />
 
       <section className="rounded-xl border border-border bg-surface p-5">
@@ -217,6 +220,8 @@ export default async function TpoPlacementBrandingPage() {
         </div>
       </section>
 
+      {communication.ready?<TpoEmailSignatureEditor initial={communication.emailSignature} version={communication.version}/>:
+       <p role="status" className="rounded-xl border border-border p-4 text-sm">Email signature settings are not available in this database.</p>}
       <section className="rounded-xl border border-border bg-surface-subtle p-4 text-sm leading-6 text-body">
         <h2 className="m-0 text-sm font-semibold text-foreground">
           Source and scope
@@ -241,9 +246,7 @@ export default async function TpoPlacementBrandingPage() {
       </section>
 
       <p className="text-xs leading-5 text-muted-foreground">
-        No editing, uploading, saving, contact-data
-        disclosure or private asset access is available
-        here. Placement-specific artwork, recruiter
+        No logo uploading, contact-data disclosure or private asset access is available here. The email signature may be edited. Placement-specific artwork, recruiter
         communications branding and full legacy
         parity require separate verification.
       </p>
