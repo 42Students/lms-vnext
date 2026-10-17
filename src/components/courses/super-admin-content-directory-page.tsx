@@ -38,7 +38,7 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  return <div className="min-w-0 space-y-5">
   <PageHeader eyebrow="Super Admin · Courses" title={title}
    description="Manage lesson content in the selected college. Uploaded files and private meeting links remain access controlled."/>
-  <SuperAdminContentAuthoring kind={kind} lessons={lessons} />
+  <SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false} />
   <form method="get" className="grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_auto_auto]">
    <label className="grid gap-1 text-sm font-semibold text-body">Search
     <input type="search" name="q" maxLength={100} defaultValue={data.query.q}
