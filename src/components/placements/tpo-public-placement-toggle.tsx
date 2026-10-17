@@ -17,7 +17,7 @@ export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;ca
     method:"POST",body,credentials:"same-origin",redirect:"manual",
    });
    if(response.type==="opaqueredirect"||response.status===303||response.ok){
-    router.refresh();setMessage("Publication preference updated.");return;
+    router.refresh();setMessage(enabled?"Your placements page is off":"Your placements page is live");return;
    }
    const payload=await response.json() as {error?:string};
    if(response.status===503)throw new Error(PUBLIC_PLACEMENT_TOGGLE_ERRORS.unavailable);
@@ -30,7 +30,7 @@ export function TpoPublicPlacementToggle({enabled,canEnable}:{enabled:boolean;ca
  return <div className="mt-4 space-y-2">
   <button type="button" disabled={busy||(!enabled&&!canEnable)} onClick={()=>void save()}
     className="min-h-11 rounded-md bg-primary px-4 text-sm font-semibold text-on-primary disabled:opacity-50">
-    {enabled?"Disable public statistics":"Enable public statistics"}
+    {enabled?"Turn placements page off":"Turn placements page on"}
   </button>
   {message?<p role="status" className="text-sm text-body">{message}</p>:null}
  </div>;
