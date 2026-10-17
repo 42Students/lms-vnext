@@ -97,6 +97,17 @@ describe("chat-4 College Course Tabs gap closure",()=>{
    expect(s).toContain("name=\"page\"");
   }
  });
+ it("COL-course-tabs-R01 excludes resource clicks and counts only measured work",()=>{
+  const service=source("src/modules/courses/college-learner-progress-service.ts");
+  const report=source("src/components/courses/college-learner-progress-report.tsx");
+  expect(service).toContain('inArray(lessonContents.contentType,["VIDEO","YOUTUBE"])');
+  expect(service).toContain("assignmentSubmissions.membershipId");
+  expect(service).toContain("quizAttempts.membershipId");
+  expect(service).toContain("out.get(item.membershipId)??new Set<string>()");
+  expect(report).toContain("Measured work only");
+  expect(report).toContain("Resources marked done by a student&apos;s own click are not included.");
+  expect(report).toContain("A retaken quiz counts once per learner.");
+ });
  it("COL-course-tabs-27 shows Lessons, Progress, Assignments and Quizzes as mobile cards",()=>{
   const directory=source("src/components/courses/college-learning-directory.tsx");
   expect(directory).toContain('aria-label={title+" mobile records"}');
