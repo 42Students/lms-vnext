@@ -24,11 +24,12 @@ function deadlineRelative(deadline:Date|null,now:Date):string{
 }
 
 export function RecruiterPlacementPortfolio({
-  jobs, returnTo, counts, now,
+  jobs, returnTo, counts, now, unansweredRequests={},
 }: {
   jobs: RecruiterJobs;
   returnTo?: string;
   counts?:Record<string,{sharedApplicants:number;offers:number}>;
+  unansweredRequests?:Record<string,number>;
   now:Date;
 }) {
   if (jobs.length === 0) {
@@ -102,8 +103,14 @@ export function RecruiterPlacementPortfolio({
                   {counts?.[item.job.id]?.offers??0} offers
                 </Link>
               </nav>
+              {unansweredRequests[item.job.id]>0?<Link
+                href={"/recruiter/drives/"+item.job.id+"?tab=requests"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}
+                className="mt-2 inline-flex min-h-10 items-center rounded-md border border-warning px-3 text-sm font-semibold text-primary-text">
+                Answer {unansweredRequests[item.job.id]} open {unansweredRequests[item.job.id]===1?"request":"requests"} →
+              </Link>:null}
               <p className="mt-2 text-sm text-body">
-                Next: {item.job.status==="CLOSED"
+                Next: {unansweredRequests[item.job.id]>0?
+                  "The placement cell asked for a change. Answer the open request.":item.job.status==="CLOSED"
                   ? "Hire again with a new request."
                   : (counts?.[item.job.id]?.sharedApplicants??0)===0
                     ? "Wait for the placement cell to share the applicant list."
