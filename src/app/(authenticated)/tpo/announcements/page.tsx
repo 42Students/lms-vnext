@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {TpoPlacementCellReadAction} from "@/components/tpo/tpo-placement-cell-read-action";
 import {TpoNoticeDeleteConfirm} from "@/components/tpo/tpo-notice-delete-confirm";
+import {TpoNoticeComposerDialog} from "@/components/tpo/tpo-notice-composer-dialog";
 import {tpoNoticeFormErrorMessage} from "@/modules/announcements/tpo-notice-form-error-model";
 import {canUndoTpoAnnouncementSend} from "@/modules/announcements/tpo-notice-undo-model";
 import {TpoNoticeReadProgress} from "@/components/tpo/tpo-notice-read-progress";
@@ -51,7 +52,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     "What you tell your students, to whom, and who has read it. They read it under Placements."}/>
   {noticeError?<p role="alert" className="rounded-md border border-border bg-surface p-4 text-sm text-danger">{noticeError}</p>:null}
   {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
-  {result.status==="READY" && tab.data==="yours"?<section className="rounded-xl border border-border bg-surface p-5">
+  {result.status==="READY" && tab.data==="yours"?<TpoNoticeComposerDialog><section className="space-y-4">
    <h2 className="font-semibold text-foreground">Compose a college notice</h2>
    <p className="mt-1 text-sm text-body">Only active college members can see published notices; this form does not send email or SMS.</p>
    <form method="get" action="/tpo/announcements"
@@ -114,7 +115,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
        canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
    </form>
-  </section>:null}
+  </section></TpoNoticeComposerDialog>:null}
   <nav aria-label="Announcement tabs" className="flex flex-wrap gap-2">
    {([["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]] as const).map(([value,label])=><Link
     key={value} href={"/tpo/announcements?tab="+value} aria-current={value===tab.data?"page":undefined}
