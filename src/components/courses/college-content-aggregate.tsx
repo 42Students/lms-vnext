@@ -200,6 +200,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                 <th scope="col" className="px-4 py-3">Content</th>
                 <th scope="col" className="px-4 py-3">Course / cohort</th>
                 <th scope="col" className="px-4 py-3">Lesson / learning path</th>
+                {!videos?<th scope="col" className="px-4 py-3">Materials</th>:null}
                 <th scope="col" className="px-4 py-3">Scope</th>
                 <th scope="col" className="px-4 py-3">State</th>
               </tr>
@@ -224,6 +225,7 @@ export function CollegeContentAggregate({ data }: { data: Data }) {
                     {item.lessonName}
                     <p className="mt-1 text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</p>
                   </td>
+                  {!videos?<td className="px-4 py-4 text-body">{item.materialsCount===null?"—":item.materialsCount}</td>:null}
                   <td className="px-4 py-4 text-body">
                     {collegeContentScopeLabel(item.deliveryId)}
                     <p className="mt-1 text-xs">{item.visibleToStudents ? "Visible to students" : "Hidden from students"}</p>
