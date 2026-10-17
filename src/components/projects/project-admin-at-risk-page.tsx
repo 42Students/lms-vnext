@@ -146,7 +146,7 @@ export async function ProjectAdminAtRiskPage({
               </div> : null}
               <dl className="mt-3 grid gap-3 text-sm text-body sm:grid-cols-3">
                 <div><dt className="font-semibold">Severity</dt><dd>
-                  {project.riskReasons.length > 1 || project.blockerReason ? "High" : "Medium"}
+                  {project.riskReasons.length > 1 || project.blockerReason ? "Risk" : "Watch"}
                 </dd></div>
                 <div><dt className="font-semibold">Inactive</dt><dd>
                   {project.inactiveDays} days
