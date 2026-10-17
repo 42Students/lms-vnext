@@ -268,4 +268,4 @@ Audit: `docs/audit/pages/faculty/courses.md` (and `courses-review.md` if present
 
 ## Chat-7 ownership check, 2026-10-17
 - Reassignment policy: skip OPEN recruiter/home-drives (chat-14), learner/placements (chat-15) and mentor/projects-meetings-part2 (chat-16). Mentor part 1 and faculty/courses remain chat-7.
-- Unit failures on learner-contact, learner-course, learner-notification and learner-projects concern reassigned learner pages; avoid overlapping chat-15 code changes. Tests authored here are unrun; orchestrator owns CI.
+- Addressed the two failing `tests/unit/learner-projects-round2-gap-closure.test.ts` source contracts `LEARNER-projects-09` and `LEARNER-projects-34` in shared `project-workspace.tsx` (Projects heading and Resource counts). Tests not run. Learner contact/course/notification and recruiter-drive failures touch chat-15/chat-14 reassigned pages, so their owners retain those failures.
