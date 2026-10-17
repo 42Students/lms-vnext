@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { TpoPublicJoinLinkCard } from "@/components/tpo/tpo-public-join-link-card";
+import {TpoCompanyTeamConversation} from "@/components/tpo/tpo-company-team-conversation";
 import {TpoCompanyTrustSwitch} from "@/components/placements/tpo-company-trust-switch";
 import {getTpoCompanyLifecycle} from "@/modules/placements/tpo-company-lifecycle-service";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -105,6 +106,7 @@ export default async function TpoCompanyDetailPage({
       />
 
       <TpoPublicJoinLinkCard initial={companyLink} scope="COMPANY" companyId={route.companyId} companyName={detail.company.name} />
+      <TpoCompanyTeamConversation companyId={route.companyId} companyName={company.name} actorMembershipId={context.membership.id} />
 
       <section aria-label="College company relationship" className="rounded-xl border border-border bg-surface p-5">
         <h2 className="text-base font-semibold text-foreground">College relationship and trust</h2>
