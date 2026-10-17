@@ -310,8 +310,8 @@ export default async function LearnerPlacementsPage({
                   {notice.title} →
                 </Link>
               ) : <p className="break-words text-sm font-semibold text-foreground">{notice.title}</p>}
+              <p className="mt-1 line-clamp-2 text-sm text-body">{notice.message}</p>
               <time dateTime={notice.createdAt} className="text-xs text-muted-foreground">{learnerNoticeRelativeDay(notice.createdAt,new Date())}</time>
-               {notice.message?<p className="mt-1 line-clamp-2 text-sm text-body">{notice.message}</p>:null}
             </li>)}</ul>}
         <div className="mt-4 border-t border-border pt-4">
           <h3 className="text-sm font-semibold text-foreground">Latest personal updates</h3>

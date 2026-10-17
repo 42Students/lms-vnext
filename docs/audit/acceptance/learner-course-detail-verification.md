@@ -29,12 +29,3 @@ LEARNER-course-detail-03/04/05/10/11/12/17/18 and other audit entries are not cl
 | LEARNER-course-detail-20 | DONE (source authored; execution pending) | `tests/unit/chat15-reassigned-learner-parity.test.ts` — `LEARNER-course-detail-20` test; existing implementation reviewed, corrected roadmap copy. |
 
 | LEARNER-course-detail-12 | PARTIAL | `tests/unit/chat15-player-and-placement-copy.test.ts`, playback-rate selector present; server tunables for progress cadence and threshold remain. |
-
-| LEARNER-course-detail-17 | DONE (authored, not executed) | `tests/unit/chat15-missed-quiz-release.test.ts` missed quiz read-only released answer key. |
-
-
-## Chat-11 deadline, submitted-work and empty-state source verification
-
-| LEARNER-course-detail-01 | DONE | src/modules/courses/assignment-submission-service.ts, assignment-submission-deadline-policy.ts, learner-course-workspace.tsx; tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-01 rejects missing and elapsed deadlines on the server and closes the learner card")` |
-| LEARNER-course-detail-06 | DONE | src/components/courses/learner-course-workspace.tsx; tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-06 shows both written and link submissions and safe read-only links")` |
-| LEARNER-course-detail-20 | DONE | src/modules/courses/learner-roadmap-empty-state-model.ts, learner-course-workspace.tsx; tests/unit/learner-roadmap-empty-state-model.test.ts and tests/unit/chat11-learner-course-deadline-empty.test.ts — `it("LEARNER-course-detail-20 restores no-roadmap, no-content and filtered lesson copy")` |

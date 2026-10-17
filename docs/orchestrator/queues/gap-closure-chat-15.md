@@ -55,27 +55,3 @@ LEARNER-course-detail-08, LEARNER-course-detail-09, LEARNER-course-detail-13, LE
 ## Chat-15 closure group B2
 
 - DONE source: LEARNER-placements-09, LEARNER-placements-33. PARTIAL LEARNER-course-detail-12 (six playback rates; platform-tunable save cadence still outstanding). `tests/unit/chat15-player-and-placement-copy.test.ts` (authored, not run).
-
-## Chat-15 missed quiz closure group C
-
-- SOURCE DONE: LEARNER-learning-misc-24, LEARNER-course-detail-17, LEARNER-learning-misc-27, LEARNER-learning-misc-28. Missed learners may review only after CLOSED, results published, and due date elapsed; standalone read-only answer key, no submission; progress per question desktop and mobile. `tests/unit/chat15-missed-quiz-release.test.ts` names each ID (tests not run).
-
-## Chat-15 placement group D
-
-SOURCE DONE: LEARNER-placements-R03 (policy-aware acceptance cascade already built, independently test-named). PARTIAL: LEARNER-placements-30 (origin banner without opt-out request type); LEARNER-placements-52 (absence escalation without registered dispute request type); LEARNER-placements-41 (safe test link, no verified deadline); LEARNER-placements-28 (company privacy footer, no dedicated company-preview data source). Tests authored but not run.
-
-## Chat-15 learner quiz table group E
-
-- SOURCE DONE LEARNER-learning-misc-16: seven-column accessible desktop table, mobile card alternative, grade withheld pending result publication, real quiz links. `tests/unit/chat15-quiz-table-legacy.test.ts` names the ID; authored not executed.
-
-## Chat-15 learner alerts group F
-
-- SOURCE DONE LEARNER-placements-01: personal placement alert open now uses recipient-scoped POST /api/notifications/[notificationId]/read before navigating, with an explicit mark-read button when no action link and a retryable friendly failure message. `tests/unit/chat15-personal-placement-alert-read.test.ts`, not executed. The separate global badge refreshes after mutation; college broadcast notices are NOT silently acknowledged by a GET.
-
-## Chat-15 class scope group G
-
-- SOURCE DONE LEARNER-learning-misc-19: read authoritative ACTIVE section enrollment independently of published course delivery, display legacy no-class copy only when truly absent, failed read with Retry, and generic no-quizzes when section exists; named test tests/unit/chat15-class-scope-quiz-empty.test.ts (not run).
-
-## Chat-15 calendar range group H
-
-- PARTIAL LEARNER-learning-misc-34: class schedule now fetches only the selected three-month IST window (previous/current/next month, including week spillover) with strict 100-day bound and SQL overlap predicate; attendance calendar still needs similar bounded query. `tests/unit/chat15-calendar-window-bounds.test.ts` authored, not run.
