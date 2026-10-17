@@ -1,3 +1,5 @@
+import {friendlyApiError} from "@/lib/friendly-error";
+
 export type CourseApiErrorBody = {
   error?: string;
   issues?: Array<{
@@ -131,7 +133,7 @@ export async function courseApiError(
     body =
       (await response.json()) as CourseApiErrorBody;
   } catch {
-    return "Something went wrong. Please try again.";
+    return friendlyApiError({status:response.status});
   }
 
   const issue = body.issues?.find(
@@ -140,11 +142,11 @@ export async function courseApiError(
       candidate.message.length > 0,
   )?.message;
 
-  if (issue) return issue;
+  if (issue && response.status===400 && issue.length<=150 && !/[<>]/.test(issue)) return issue;
 
   if (body.error && errorLabels[body.error]) {
     return errorLabels[body.error];
   }
 
-  return "Something went wrong. Please try again.";
+  return friendlyApiError({status:response.status,code:body.error});
 }
