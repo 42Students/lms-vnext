@@ -13,6 +13,7 @@ import {
   tpoInboxPageHref,
   tpoInboxQuerySchema,
   tpoInboxEmptyNavigation,
+  tpoEffectiveReadAt,
 } from "@/modules/activity/tpo-notifications-model";
 import { getTpoPersonalInbox } from "@/modules/activity/tpo-notifications-service";
 
@@ -57,7 +58,7 @@ export default async function TpoNotificationsPage({
     title: notification.title,
     body: notification.body,
     actionHref: notification.actionHref,
-    readAt: notification.readAt?.toISOString() ?? null,
+    readAt: tpoEffectiveReadAt(notification.readAt,notification.createdAt,inbox.recentCutoff)?.toISOString()??null,
     createdAt: notification.createdAt.toISOString(),
     module: event.module,
     importance: event.importance,
