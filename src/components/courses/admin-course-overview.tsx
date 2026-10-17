@@ -53,7 +53,7 @@ export function AdminCourseOverview({
   workspace,
   offeringBasePath,
   allowOfferingLifecycle = false,
-  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",
+  duplicateCourseId,catalogueQuery,catalogueData,courseBasePath="/college/courses",lessonCountByCourse,
 }: {
   workspace: Workspace;
   offeringBasePath: string;
@@ -62,6 +62,7 @@ export function AdminCourseOverview({
   courseBasePath?:string;
   catalogueQuery?:CollegeCourseCatalogueQuery;
   catalogueData?:Awaited<ReturnType<typeof listCollegeCourseCatalogue>>;
+  lessonCountByCourse?:Readonly<Record<string,number>>;
 }) {
   const catalogue=catalogueData??(catalogueQuery?paginateCollegeCourses(workspace.courses,catalogueQuery):null);
   const deliveryCountByOffering = new Map<
@@ -131,8 +132,9 @@ export function AdminCourseOverview({
       header: "Dependencies",
       cell: course=>{
         const count=activeOfferingCountByCourse.get(course.id)??0;
-        return <span title="Active Course Offerings to archive before this Course can be archived">
-          {count} active offering{count===1?"":"s"}
+        const lessons=lessonCountByCourse?.[course.id];
+        return <span title="Course lesson dependencies and active Offerings to archive before this Course can be archived">
+          {lessons===undefined?"":lessons+" lesson"+(lessons===1?"":"s")+" · "}{count} active offering{count===1?"":"s"}
         </span>;
       },
     },
