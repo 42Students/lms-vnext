@@ -8,22 +8,22 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| TPO-drives-01 | S2 | MISSING-PAGE | OPEN |
+| TPO-drives-01 | S2 | MISSING-PAGE | DONE |
 | TPO-drives-03 | S2 | MISSING-TAB | WRONG |
 | TPO-drives-05 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-06 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-07 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
-| TPO-drives-09 | S2 | COPY | OPEN |
+| TPO-drives-09 | S2 | COPY | DONE |
 | TPO-drives-10 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | TPO-drives-13 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| TPO-drives-14 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
+| TPO-drives-14 | S2 | SIDE-EFFECT | DONE |
 | TPO-drives-15 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-17 | S2 | MISSING-EXPORT | FIXED-ON-MAIN |
-| TPO-drives-21 | S2 | COPY | FIXED-ON-MAIN |
-| TPO-drives-22 | S2 | COPY | OPEN |
+| TPO-drives-21 | S2 | COPY | DONE |
+| TPO-drives-22 | S2 | COPY | DONE |
 | TPO-drives-23 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-drives-24 | S2 | VALIDATION | FIXED-ON-MAIN |
-| TPO-drives-26 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drives-26 | S2 | MISSING-ACTION | DONE |
 | TPO-drives-28 | S2 | MISSING-FIELD | UNCONFIRMED |
 | TPO-drives-31 | S2 | MISSING-ACTION | OPEN |
 | TPO-drives-32 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -34,14 +34,14 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-43 | S2 | STATE | OPEN |
 | TPO-drives-47 | S2 | MISSING-MODAL | OPEN |
 | TPO-drives-48 | S2 | MISSING-ACTION | OPEN |
-| TPO-drives-04 | S3 | STATE | OPEN |
+| TPO-drives-04 | S3 | STATE | DONE |
 | TPO-drives-08 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-drives-11 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-drives-12 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drives-12 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-16 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-18 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | TPO-drives-19 | S3 | STATE | FIXED-ON-MAIN |
-| TPO-drives-20 | S3 | PERMISSION | FIXED-ON-MAIN |
+| TPO-drives-20 | S3 | PERMISSION | DONE |
 | TPO-drives-25 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-27 | S3 | MISSING-FIELD | OPEN |
 | TPO-drives-29 | S3 | MISSING-FIELD | OPEN |
@@ -55,10 +55,10 @@ Audit: `docs/audit/pages/tpo/drives.md` (and `drives-review.md` if present; any 
 | TPO-drives-45 | S3 | VALIDATION | OPEN |
 | TPO-drives-49 | S3 | STATE | DONE |
 | TPO-drives-50 | S3 | PERMISSION | OPEN |
-| TPO-drives-51 | S3 | PERMISSION | UNCONFIRMED |
-| TPO-drives-R03 | S3 | VALIDATION | OPEN |
+| TPO-drives-51 | S3 | PERMISSION | NOT-A-GAP |
+| TPO-drives-R03 | S3 | VALIDATION | DONE |
 | TPO-drives-R05 | S3 | VALIDATION | FIXED-ON-MAIN |
-| TPO-drives-R06 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| TPO-drives-R06 | S3 | MISSING-ACTION | DONE |
 | TPO-drives-36 | S4 | MISSING-ACTION | OPEN |
 | TPO-drives-52 | S4 | MISSING-FIELD | OPEN |
 
@@ -74,34 +74,34 @@ Audit: `docs/audit/pages/learner/learning-misc.md` (and `learning-misc-review.md
 | LEARNER-learning-misc-04 | S2 | MISSING-ACTION | OPEN |
 | LEARNER-learning-misc-07 | S2 | VALIDATION | OPEN |
 | LEARNER-learning-misc-09 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
-| LEARNER-learning-misc-10 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-10 | S3 | COPY | DONE |
 | LEARNER-learning-misc-11 | S3 | MISSING-FIELD | OPEN |
-| LEARNER-learning-misc-14 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-14 | S3 | COPY | DONE |
 | LEARNER-learning-misc-15 | S3 | PERFORMANCE | OPEN |
-| LEARNER-learning-misc-16 | S3 | MISSING-COLUMN | OPEN |
-| LEARNER-learning-misc-17 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-18 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-19 | S3 | STATE | OPEN |
-| LEARNER-learning-misc-20 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
-| LEARNER-learning-misc-21 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-16 | S3 | MISSING-COLUMN | DONE |
+| LEARNER-learning-misc-17 | S3 | COPY | DONE |
+| LEARNER-learning-misc-18 | S3 | COPY | DONE |
+| LEARNER-learning-misc-19 | S3 | STATE | DONE |
+| LEARNER-learning-misc-20 | S3 | MISSING-MODAL | DONE |
+| LEARNER-learning-misc-21 | S3 | COPY | DONE |
 | LEARNER-learning-misc-22 | S3 | VALIDATION | FIXED-ON-MAIN |
-| LEARNER-learning-misc-24 | S3 | MISSING-FIELD | OPEN |
+| LEARNER-learning-misc-24 | S3 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-25 | S3 | MISSING-FIELD | UNCONFIRMED |
-| LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | OPEN |
-| LEARNER-learning-misc-30 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| LEARNER-learning-misc-27 | S3 | SIDE-EFFECT | DONE |
+| LEARNER-learning-misc-30 | S3 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-33 | S3 | COPY | FIXED-ON-MAIN |
 | LEARNER-learning-misc-34 | S3 | PERFORMANCE | OPEN |
-| LEARNER-learning-misc-36 | S3 | MISSING-COLUMN | FIXED-ON-MAIN |
+| LEARNER-learning-misc-36 | S3 | MISSING-COLUMN | DONE |
 | LEARNER-learning-misc-38 | S3 | COPY | FIXED-ON-MAIN |
-| LEARNER-learning-misc-39 | S3 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-39 | S3 | COPY | DONE |
 | LEARNER-learning-misc-12 | S4 | MISSING-ACTION | OPEN |
-| LEARNER-learning-misc-13 | S4 | COPY | OPEN |
-| LEARNER-learning-misc-28 | S4 | COPY | OPEN |
-| LEARNER-learning-misc-29 | S4 | COPY | OPEN |
-| LEARNER-learning-misc-31 | S4 | MISSING-FIELD | FIXED-ON-MAIN |
+| LEARNER-learning-misc-13 | S4 | COPY | DONE |
+| LEARNER-learning-misc-28 | S4 | COPY | DONE |
+| LEARNER-learning-misc-29 | S4 | COPY | DONE |
+| LEARNER-learning-misc-31 | S4 | MISSING-FIELD | DONE |
 | LEARNER-learning-misc-32 | S4 | COPY | FIXED-ON-MAIN |
 | LEARNER-learning-misc-35 | S4 | RESPONSIVE | FIXED-ON-MAIN |
-| LEARNER-learning-misc-37 | S4 | COPY | FIXED-ON-MAIN |
+| LEARNER-learning-misc-37 | S4 | COPY | DONE |
 | LEARNER-learning-misc-40 | S4 | COPY | FIXED-ON-MAIN |
 | LEARNER-learning-misc-41 | S4 | MISSING-PAGE | UNCONFIRMED |
 
@@ -113,21 +113,21 @@ Audit: `docs/audit/pages/college/people.md` (and `people-review.md` if present; 
 |---|---|---|---|
 | COL-people-01 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-people-02 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-03 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-04 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-05 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
+| COL-people-03 | S2 | MISSING-ACTION | DONE |
+| COL-people-04 | S2 | MISSING-ACTION | DONE |
+| COL-people-05 | S2 | MISSING-FIELD | DONE |
 | COL-people-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-08 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-17 | S2 | MISSING-TAB | FIXED-ON-MAIN |
+| COL-people-08 | S2 | MISSING-ACTION | DONE |
+| COL-people-17 | S2 | MISSING-TAB | DONE |
 | COL-people-20 | S2 | PERMISSION | DONE |
 | COL-people-21 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
 | COL-people-22 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-people-23 | S2 | SIDE-EFFECT | FIXED-ON-MAIN |
-| COL-people-06 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-10 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-people-11 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-people-06 | S3 | MISSING-ACTION | DONE |
+| COL-people-10 | S3 | MISSING-ACTION | DONE |
+| COL-people-11 | S3 | MISSING-ACTION | DONE |
 | COL-people-13 | S3 | COPY | OPEN |
-| COL-people-14 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| COL-people-14 | S3 | MISSING-FIELD | DONE |
 | COL-people-15 | S3 | COPY | OPEN |
 | COL-people-16 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
 | COL-people-18 | S3 | PERMISSION | FIXED-ON-MAIN |
@@ -147,29 +147,29 @@ Audit: `docs/audit/pages/public/auth-public-2-links-marketing.md` (and `auth-pub
 |---|---|---|---|
 | PUB-auth-public-44 | S2 | VALIDATION | FIXED-ON-MAIN |
 | PUB-auth-public-45 | S2 | STATE | FIXED-ON-MAIN |
-| PUB-auth-public-46 | S2 | STATE | OPEN |
+| PUB-auth-public-46 | S2 | STATE | DONE |
 | PUB-auth-public-47 | S2 | COPY | OPEN |
 | PUB-auth-public-50 | S2 | PERMISSION | OPEN |
 | PUB-auth-public-51 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
 | PUB-auth-public-52 | S2 | SIDE-EFFECT | OPEN |
 | PUB-auth-public-53 | S2 | MISSING-COLUMN | OPEN |
 | PUB-auth-public-55 | S2 | MISSING-EXPORT | OPEN |
-| PUB-auth-public-56 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| PUB-auth-public-59 | S2 | COPY | FIXED-ON-MAIN |
-| PUB-auth-public-67 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-68 | S2 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-48 | S3 | COPY | OPEN |
+| PUB-auth-public-56 | S2 | MISSING-FIELD | DONE |
+| PUB-auth-public-59 | S2 | COPY | DONE |
+| PUB-auth-public-67 | S2 | MISSING-PAGE | DONE |
+| PUB-auth-public-68 | S2 | MISSING-PAGE | DONE |
+| PUB-auth-public-48 | S3 | COPY | DONE |
 | PUB-auth-public-49 | S3 | SIDE-EFFECT | UNCONFIRMED |
 | PUB-auth-public-54 | S3 | MISSING-EXPORT | OPEN |
 | PUB-auth-public-57 | S3 | MISSING-FIELD | OPEN |
 | PUB-auth-public-60 | S3 | SIDE-EFFECT | UNCONFIRMED |
-| PUB-auth-public-58 | S4 | MISSING-FIELD | FIXED-ON-MAIN |
+| PUB-auth-public-58 | S4 | MISSING-FIELD | DONE |
 | PUB-auth-public-61 | S4 | MISSING-PAGE | OPEN |
-| PUB-auth-public-62 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-63 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-64 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-65 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
-| PUB-auth-public-66 | S4 | MISSING-PAGE | FIXED-ON-MAIN |
+| PUB-auth-public-62 | S4 | MISSING-PAGE | DONE |
+| PUB-auth-public-63 | S4 | MISSING-PAGE | DONE |
+| PUB-auth-public-64 | S4 | MISSING-PAGE | DONE |
+| PUB-auth-public-65 | S4 | MISSING-PAGE | DONE |
+| PUB-auth-public-66 | S4 | MISSING-PAGE | DONE |
 
 ## superadmin/tenants-modules (21: OPEN 12, FIXED-ON-MAIN 9)
 
@@ -177,16 +177,16 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| SA-tenants-modules-10 | S2 | VALIDATION | OPEN |
-| SA-tenants-modules-12 | S2 | VALIDATION | OPEN |
+| SA-tenants-modules-10 | S2 | VALIDATION | DONE |
+| SA-tenants-modules-12 | S2 | VALIDATION | DONE |
 | SA-tenants-modules-18 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| SA-tenants-modules-21 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
+| SA-tenants-modules-21 | S2 | MISSING-ACTION | DONE |
 | SA-tenants-modules-03 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
 | SA-tenants-modules-04 | S3 | COPY | OPEN |
 | SA-tenants-modules-06 | S3 | MISSING-TAB | OPEN |
 | SA-tenants-modules-07 | S3 | COPY | OPEN |
 | SA-tenants-modules-08 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| SA-tenants-modules-11 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
+| SA-tenants-modules-11 | S3 | MISSING-FIELD | DONE |
 | SA-tenants-modules-13 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
 | SA-tenants-modules-14 | S3 | COPY | OPEN |
 | SA-tenants-modules-16 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
@@ -195,7 +195,7 @@ Audit: `docs/audit/pages/superadmin/tenants-modules.md` (and `tenants-modules-re
 | SA-tenants-modules-23 | S3 | STATE | OPEN |
 | SA-tenants-modules-R02 | S3 | MISSING-ACTION | OPEN |
 | SA-tenants-modules-05 | S4 | A11Y | FIXED-ON-MAIN |
-| SA-tenants-modules-09 | S4 | STATE | OPEN |
+| SA-tenants-modules-09 | S4 | STATE | DONE |
 | SA-tenants-modules-R01 | S4 | MISSING-FIELD | OPEN |
 | SA-tenants-modules-R03 | S4 | PERMISSION | OPEN |
 
@@ -208,16 +208,16 @@ Audit: `docs/audit/pages/college/courses-content.md` (and `courses-content-revie
 | COL-courses-content-01 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
 | COL-courses-content-02 | S2 | MISSING-FIELD | UNCONFIRMED |
 | COL-courses-content-03 | S2 | MISSING-ACTION | OPEN |
-| COL-courses-content-07 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-courses-content-08 | S2 | MISSING-FIELD | FIXED-ON-MAIN |
-| COL-courses-content-09 | S2 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-courses-content-11 | S2 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-courses-content-04 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
+| COL-courses-content-07 | S2 | MISSING-ACTION | DONE |
+| COL-courses-content-08 | S2 | MISSING-FIELD | DONE |
+| COL-courses-content-09 | S2 | MISSING-FILTER | DONE |
+| COL-courses-content-11 | S2 | MISSING-ACTION | DONE |
+| COL-courses-content-04 | S3 | MISSING-ACTION | DONE |
 | COL-courses-content-05 | S3 | MISSING-COLUMN | OPEN |
-| COL-courses-content-10 | S3 | STATE | OPEN |
+| COL-courses-content-10 | S3 | STATE | DONE |
 | COL-courses-content-12 | S3 | MISSING-ACTION | FIXED-ON-MAIN |
-| COL-courses-content-14 | S4 | MISSING-FILTER | FIXED-ON-MAIN |
-| COL-courses-content-16 | S4 | MISSING-PAGE | UNCONFIRMED |
+| COL-courses-content-14 | S4 | MISSING-FILTER | DONE |
+| COL-courses-content-16 | S4 | MISSING-PAGE | NOT-A-GAP |
 | COL-courses-content-17 | S4 | STATE | OPEN |
 
 ## college/attendance (13: OPEN 11, UNCONFIRMED 2)
@@ -226,19 +226,19 @@ Audit: `docs/audit/pages/college/attendance.md` (and `attendance-review.md` if p
 
 | ID | Sev | Type | Status now |
 |---|---|---|---|
-| COL-attendance-03 | S3 | MISSING-COLUMN | OPEN |
-| COL-attendance-04 | S3 | MISSING-FIELD | OPEN |
-| COL-attendance-05 | S3 | STATE | OPEN |
-| COL-attendance-06 | S3 | STATE | OPEN |
-| COL-attendance-07 | S3 | VALIDATION | UNCONFIRMED |
+| COL-attendance-03 | S3 | MISSING-COLUMN | DONE |
+| COL-attendance-04 | S3 | MISSING-FIELD | DONE |
+| COL-attendance-05 | S3 | STATE | DONE |
+| COL-attendance-06 | S3 | STATE | DONE |
+| COL-attendance-07 | S3 | VALIDATION | NOT-A-GAP |
 | COL-attendance-09 | S3 | COPY | UNCONFIRMED |
-| COL-attendance-11 | S3 | STATE | OPEN |
+| COL-attendance-11 | S3 | STATE | DONE |
 | COL-attendance-16 | S3 | PERMISSION | DONE |
 | COL-attendance-10 | S4 | COPY | OPEN |
-| COL-attendance-12 | S4 | MISSING-EXPORT | OPEN |
+| COL-attendance-12 | S4 | MISSING-EXPORT | DONE |
 | COL-attendance-14 | S4 | MISSING-FIELD | OPEN |
 | COL-attendance-15 | S4 | MISSING-FILTER | OPEN |
-| COL-attendance-17 | S4 | A11Y | OPEN |
+| COL-attendance-17 | S4 | A11Y | DONE |
 
 ## learner/profile-learning (5: OPEN 2, FIXED-ON-MAIN 3)
 
@@ -248,9 +248,9 @@ Audit: `docs/audit/pages/learner/profile-learning.md` (and `profile-learning-rev
 |---|---|---|---|
 | LEARNER-learning-misc-R01 | S2 | SIDE-EFFECT | OPEN |
 | LEARNER-profile-misc-R01 | S3 | MISSING-MODAL / STATE | OPEN |
-| LEARNER-profile-misc-R02 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
-| LEARNER-profile-misc-R04 | S3 | VALIDATION | FIXED-ON-MAIN |
-| LEARNER-profile-misc-R05 | S4 | COPY / STATE | FIXED-ON-MAIN |
+| LEARNER-profile-misc-R02 | S3 | MISSING-FIELD | DONE |
+| LEARNER-profile-misc-R04 | S3 | VALIDATION | DONE |
+| LEARNER-profile-misc-R05 | S4 | COPY / STATE | DONE |
 
 ## Round 2 — verified source closure (tests authored, not run)
 
@@ -296,3 +296,14 @@ Updated queue statuses above are authoritative for this round. The previous "Rou
 - **NOT-A-GAP**: `COL-people-09` permanent delete is intentionally replaced by suspend/end membership per approved OD-23; existing attendance and membership history are not deleted. Unit test named `COL-people-09`.
 - **Remains OPEN after partial improvement**: `TPO-drives-39` (round presets need actual creation), `-42` (publish preflight still needs whole server/field parity), `-44` (not every domain error mapped), `-45` (end-of-day action exists but automatic default remains), `COL-courses-content-17` (offerings blocked; nested content dependencies uncounted). These are not counted as closed. Other OPEN rows remain assigned; no invented integration success.
 - **Evidence**: `docs/audit/acceptance/tpo-drives-verification.md`, `college-attendance-verification.md`, `college-people-verification.md`. Changed pages and services are covered by ID-named source/unit tests. **No tests, typecheck, lint, build, database migrations or runtime checks were executed** in the lane.
+
+## Round 6 — acceptance-backed queue reconciliation, 2026-10-17
+
+**Authoritative source-status reconciliation**: 75 entries had acceptance records saying source-level DONE/NOT-A-GAP while their original queue table still said OPEN, UNCONFIRMED or FIXED-ON-MAIN. This update reconciles 25 formerly **OPEN** IDs, 3 formerly **UNCONFIRMED**, and 47 formerly **FIXED-ON-MAIN**. It does **not** claim 75 newly implemented features: the referenced work and ID-named tests were already committed (some by other lanes) and merged onto main. See the eight per-page acceptance files for source paths, outcomes, and exact named unit tests.
+
+- From **OPEN** to source-DONE: `TPO-drives-01`, `TPO-drives-09`, `TPO-drives-22`, `TPO-drives-04`, `TPO-drives-R03`, `LEARNER-learning-misc-16`, `LEARNER-learning-misc-19`, `LEARNER-learning-misc-24`, `LEARNER-learning-misc-27`, `LEARNER-learning-misc-13`, `LEARNER-learning-misc-28`, `LEARNER-learning-misc-29`, `PUB-auth-public-46`, `PUB-auth-public-48`, `SA-tenants-modules-10`, `SA-tenants-modules-12`, `SA-tenants-modules-09`, `COL-courses-content-10`, `COL-attendance-03`, `COL-attendance-04`, `COL-attendance-05`, `COL-attendance-06`, `COL-attendance-11`, `COL-attendance-12`, `COL-attendance-17`.
+- From **UNCONFIRMED** to source-NOT-A-GAP: `TPO-drives-51`, `COL-courses-content-16`, `COL-attendance-07`.
+- Prior FIXED-ON-MAIN receipts moved to **DONE** only where existing per-ID acceptance documentation was explicit; 47 such receipts were verified against published ID-named test files.
+- **Runtime disclaimer**: no new test suite, integration suite, lint, typecheck, build, or database tests have been executed by chat-3. Source-DONE means authored, reviewed and test-covered in existing work, **not** independently runtime-accepted. All other OPEN rows remain OPEN; no status was inferred from a passing build or from absence of a failure.
+
+Evidence (already under `docs/audit/acceptance/`): `tpo-drives-verification.md`, `learner-learning-misc-verification.md`, `college-people-verification.md`, `superadmin-tenants-modules-verification.md`, `public-auth-public-2-links-marketing-verification.md`, `college-courses-content-verification.md`, `college-attendance-verification.md`, `learner-profile-learning-verification.md`.
