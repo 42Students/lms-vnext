@@ -108,3 +108,15 @@ The following DONE statuses are limited to the named source/model behavior. Thei
 | ID | Status | Evidence |
 |---|---|---|
 | TPO-requests-verification-13 | OPEN — idempotency subtask implemented, broader workflow incomplete | `src/modules/placements/tpo-request-bulk-run-model.ts` compares decision plus a duplicate-free set of request IDs, ignoring ordering but rejecting changed sets, missing metadata and changed decisions. `src/modules/placements/tpo-request-bulk-audit-service.ts` fails closed on reused keys with mismatched metadata and re-reads a concurrent winning event before accepting a replay, returning the persisted result count. `tests/unit/chat12-bulk-run-replay-r62.test.ts` contains 17 named regression cases (authored, **not executed**). The proof-aware bulk skip workflow, all-filtered selection and real PostgreSQL acceptance remain OPEN. |
+
+## [chat-5] Gap register FIXED-ON-MAIN citation reconciliation (2026-10-18)
+
+The generated `docs/audit/gap-register.md` still labels six requests gaps FIXED-ON-MAIN rather than VERIFIED despite earlier gap-named tests and acceptance citations. The 18-item source-and-citation recheck is `tests/unit/chat5-gap-register-citation-recheck.test.ts`. No generated register rows were edited by hand. Runtime and database acceptance still need CI.
+
+| IDs | Existing named evidence | Status in acceptance |
+|---|---|---|
+| TPO-requests-verification-01 | `tests/unit/chat12-general-request-scope-r61.test.ts` | Implemented portions and source tests; full legacy-request effects require end-to-end confirmation. |
+| TPO-requests-verification-05 | `tests/unit/chat12-fixed-main-students-requests-audit-r2.test.ts` | In-app notice/urgent cues source-backed; hourly escalation full parity remains incomplete. |
+| TPO-requests-verification-07 | `tests/unit/chat12-fixed-main-requests-audit-r3.test.ts` | Drive-close request settlement source-backed; integration behavior remains unrun. |
+| TPO-requests-verification-36 | `tests/unit/chat12-fixed-main-requests-audit-r3.test.ts` | Scoped drive-change-request lifecycle source-backed; remaining legacy actions not silently assumed. |
+| TPO-requests-verification-37 / TPO-requests-verification-38 | `tests/unit/chat12-recruiter-policy-autoapprove-37-38.test.ts` | Verified-grant and notification/policy paths source-backed; public-link/email-provider behavior remains separately incomplete. |
