@@ -10,6 +10,16 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
   programId:query.programId??"",sectionId:query.sectionId??"",batchId:query.batchId??"",branchId:query.branchId??""});
  const [fields,setFields]=useState<Fields>(selected),[error,setError]=useState("");
  const change=(key:keyof Fields,value:string)=>setFields(old=>({...old,[key]:value}));
+ function istDay(daysBeforeToday=0){
+  const date=new Date(Date.now()-daysBeforeToday*24*60*60*1000);
+  return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
+ }
+ function chooseWaitingPreset(preset:"TODAY"|"WEEK"|"OLDER"){
+  const next={...fields,ageBand:"ANY",attention:"ALL",waitingState:"ALL",
+   submittedFrom:preset==="TODAY"?istDay():preset==="WEEK"?istDay(7):"",
+   waitingSince:preset==="OLDER"?istDay(8):istDay()};
+  setFields(next);apply(next);
+ }
  function apply(value:Fields){
   if(value.q.length>100){setError("Name search is too long");return;}
   for(const key of ["programId","sectionId","batchId","branchId","membershipId"] as const){
@@ -57,6 +67,15 @@ export function VerificationFilterPanel({query,onApply,batchChoices,branchChoice
       <option value="ALL">All requests</option><option value="MISSING_MARKSHEET">Missing marksheets</option><option value="VERIFIED_DETAILS_CHANGED">Updated verified details</option><option value="WAITING_OVER_WEEK">Waiting over a week</option>
      </select>
     </label>
+    {query.tab==="WAITING"?<fieldset className="min-w-0 space-y-2 sm:col-span-2">
+      <legend className="text-sm font-semibold">Waiting since</legend>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={()=>chooseWaitingPreset("TODAY")} className="rounded border border-border px-3 py-2 text-sm">Today</button>
+        <button type="button" onClick={()=>chooseWaitingPreset("WEEK")} className="rounded border border-border px-3 py-2 text-sm">This week</button>
+        <button type="button" onClick={()=>chooseWaitingPreset("OLDER")} className="rounded border border-border px-3 py-2 text-sm">Over a week</button>
+      </div>
+      <p className="text-xs text-muted-foreground">These shortcuts filter persisted submitted dates in IST and reset conflicting waiting-age filters.</p>
+    </fieldset>:null}
     <label className="min-w-0 text-sm">Submitted on or after (IST)
      <input type="date" value={fields.submittedFrom} onChange={e=>change("submittedFrom",e.target.value)}
       className="mt-1 block w-full min-w-0 rounded-md border bg-background p-2"/>
