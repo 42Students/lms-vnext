@@ -422,6 +422,22 @@ export function SuperAdminHrAccounts({
     }
   }
 
+  async function quickStatus(account:HrAccount){
+    if(!account.accountManageable||pending||account.status==="DISABLED")return;
+    const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
+    const question=next==="ARCHIVED"
+      ? "Archive "+hrDisplayName(account)+"? Their college access will be revoked."
+      : "Reactivate "+hrDisplayName(account)+"? College access is not automatically restored.";
+    if(!window.confirm(question))return;
+    setPending(true);setActionError(null);
+    try{
+      await requestJson("/api/admin/hr/"+encodeURIComponent(account.userId),"PATCH",{status:next});
+      showToast({tone:"success",title:next==="ARCHIVED"?"Recruiter archived":"Recruiter reactivated"});
+      router.refresh();
+    }catch(error){showToast({tone:"error",title:"Recruiter status update failed",description:errorText(error)});}
+    finally{setPending(false);}
+  }
+
   async function grantAccess(
     companyRelationshipId: string,validUntil?:string,
   ): Promise<boolean> {
