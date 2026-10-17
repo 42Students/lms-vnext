@@ -130,6 +130,10 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    <button type="button" onClick={()=>{setPriority("");setAssignee("");setSprint("");setRelease("");setStatusFilter("");setScope("current");["priority","assignee","sprint","release","lane","scope"].forEach(k=>remember(k,""));}}
     className="min-h-10 text-sm font-semibold text-primary-text underline">Clear all</button>
   </div>
+  <p role="status" className="text-xs text-body">
+    {matching.length} matching {matching.length===1?"task":"tasks"} · {tasks.length} total in this project's full history.
+    {!sprint&&!release&&scope==="current"?" Showing the current sprint and backlog. Switch “Sprint scope” to see everything.":""}
+  </p>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
   {undo?<button type="button" disabled={busy} className="text-sm font-semibold text-primary-text underline"
     onClick={()=>{const prior=undo;setUndo(null);void move(prior.id,prior.status);}}>Undo last move</button>:null}
