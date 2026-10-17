@@ -1,5 +1,5 @@
 "use client";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {TPO_QUICK_REPLIES,recruiterMessageDraftKey} from "@/modules/placements/tpo-message-draft-model";
 export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
@@ -9,6 +9,19 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
  const [body,setBody]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[success,setSuccess]=useState("");
  const draftKey=recruiterMessageDraftKey(actorUserId,threadId);
+ const markedOnOpen=useRef<string|null>(null);
+ useEffect(()=>{
+  if(!unread||markedOnOpen.current===threadId)return;
+  markedOnOpen.current=threadId;
+  void fetch("/api/placements/tpo/messages/threads/"+encodeURIComponent(threadId)+"/read",{
+    method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({confirmed:true}),
+  }).then(response=>{
+    if(!response.ok)throw new Error("Could not mark this conversation read.");
+    router.refresh();
+  }).catch(()=>{setError("Messages could not be marked read. Use Mark as read to retry.");});
+ },[threadId,unread,router]);
+
  useEffect(()=>{
   if(!body.trim())return;
   const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
