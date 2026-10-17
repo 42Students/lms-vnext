@@ -25,16 +25,18 @@ export function offerExpiryIndicator(status:string,expiresAt:Date|null|undefined
  return expiresAt.getTime()-asOf.getTime()<=7*86400000?"DUE_SOON":"OPEN";
 }
 export function selectOfferRegisterFacts(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],search="",joiningState:z.infer<typeof offerRegisterQuery>["joining"]="ALL",kind:z.infer<typeof offerRegisterQuery>["kind"]="ALL",
- expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date()){
+ expiry:z.infer<typeof offerRegisterQuery>["expiry"]="ALL",asOf=new Date(),minCtcLpa?:number,maxCtcLpa?:number){
  const term=search.trim().toLocaleLowerCase("en-IN");
  return facts.filter(f=>(status==="ALL"||f.offer.status===status)&&
   (kind==="ALL"||f.offer.kind===kind)&&
+  (minCtcLpa===undefined||f.offer.annualCtcInr!==null&&f.offer.annualCtcInr>=minCtcLpa*100000)&&
+  (maxCtcLpa===undefined||f.offer.annualCtcInr!==null&&f.offer.annualCtcInr<=maxCtcLpa*100000)&&
   (expiry==="ALL"||offerExpiryIndicator(f.offer.status,f.offer.expiresAt,asOf)===expiry)&&(!term||
   [f.candidate.displayName,f.candidate.email,f.candidate.phone,f.candidate.rollNumber,f.candidate.batch,f.candidate.branch,f.offer.roleTitle].some(value=>value?.toLocaleLowerCase("en-IN").includes(term)))&&
   (joiningState==="ALL"||(f.offer.status==="ACCEPTED"&&(f.joining?.status??"PENDING")===joiningState))).sort((a,b)=>b.offer.issuedAt.getTime()-a.offer.issuedAt.getTime()||a.offer.id.localeCompare(b.offer.id));
 }
 export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z.infer<typeof offerRegisterQuery>["status"],requestedPage=1,search="",joiningState:"ALL"|"PENDING"|"JOINED"|"DEFERRED"|"DID_NOT_JOIN"="ALL",asOf=new Date(),kind:"ALL"|"OFFER"|"LOI"="ALL",
- expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL"){
+ expiry:"ALL"|"EXPIRED"|"DUE_SOON"|"OPEN"|"UNKNOWN"="ALL",minCtcLpa?:number,maxCtcLpa?:number){
  const counts={all:facts.length,issued:0,accepted:0,declined:0,withdrawn:0};
  for(const f of facts){
   if(f.offer.status==="ISSUED")counts.issued++;
@@ -42,7 +44,7 @@ export function projectOfferRegister(facts:readonly OfferRegisterFact[],status:z
   if(f.offer.status==="DECLINED")counts.declined++;
   if(f.offer.status==="WITHDRAWN")counts.withdrawn++;
  }
- const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind,expiry,asOf);
+ const match=selectOfferRegisterFacts(facts,status,search,joiningState,kind,expiry,asOf,minCtcLpa,maxCtcLpa);
  const totalPages=Math.max(1,Math.ceil(match.length/OFFER_REGISTER_PAGE_SIZE));
  const page=Math.max(1,Math.min(requestedPage,totalPages));
  const start=(page-1)*OFFER_REGISTER_PAGE_SIZE;
