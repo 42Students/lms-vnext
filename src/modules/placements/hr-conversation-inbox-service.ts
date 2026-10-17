@@ -20,7 +20,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   choices:grants,items:[],collegeId:null};
  const [threads,jobs]=await Promise.all([
   listMessageThreads(context,collegeId),
-  listOwnRecruiterPlacementJobs(context),
+  listOwnRecruiterPlacementJobs(context,collegeId),
  ]);
  const allowed=jobs.filter(j=>j.collegeId===collegeId&&j.companyId===context.recruiter!.companyId);
  const knownJobIds=new Set(allowed.map(j=>j.job.id));
