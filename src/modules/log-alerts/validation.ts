@@ -19,6 +19,7 @@ export const knownErrorMutationSchema = z.discriminatedUnion("action", [
     note: z.string().trim().max(500).optional(),
     issuePublicId: z.string().trim().min(1).max(32).optional(),
   }).strict(),
+  z.object({ action: z.literal("ACKNOWLEDGE") }).strict(),
   z.object({
     action: z.literal("LINK_ISSUE"),
     issuePublicId: z.string().trim().max(32).nullable(),

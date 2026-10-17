@@ -10,6 +10,7 @@ import {
   readLogAlertAdminState,
 } from "@/modules/log-alerts/admin-service";
 import { logAlertsRuntimeEnabled } from "@/modules/log-alerts/readiness";
+import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier";
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 
 export const dynamic = "force-dynamic";
@@ -81,6 +82,11 @@ export default async function TrackerLogsPage({
   return (
     <div className="space-y-6">
       {header}
+      {!telegramAlertsConfigured() ? (
+        <p role="status" className="rounded-xl border border-border bg-surface p-4 text-sm text-body">
+          Telegram alerts are not configured
+        </p>
+      ) : null}
       <nav aria-label="Log environment" className="flex flex-wrap gap-2">
         {(["PRODUCTION", "UAT", "DEVELOPMENT"] as const).map((value) => (
           <Link
