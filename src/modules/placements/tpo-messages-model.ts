@@ -24,6 +24,7 @@ export type TpoInboxRecord = {
   messageCount: number | null;
   unreadCount: number | null;
   lastPreview?:string|null;
+  searchSnippet?:string|null;
   waitingForYou?:boolean;
   companyName?:string|null;
   accessEnded?:boolean;
