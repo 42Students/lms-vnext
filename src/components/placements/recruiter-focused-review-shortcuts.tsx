@@ -36,5 +36,7 @@ export function RecruiterFocusedReviewShortcuts({closeHref,previousHref,nextHref
   return ()=>{window.cancelAnimationFrame(frame);document.removeEventListener("keydown",onKey);
     if(opener?.isConnected)opener.focus();};
  },[router,closeHref,nextHref,previousHref]);
- return <p className="mt-3 text-xs text-muted-foreground">Keyboard: N next, P previous, Esc close. Official decisions are made in Rounds.</p>;
+ return previousHref||nextHref
+  ? <p className="mt-3 text-xs text-muted-foreground">Keyboard: N next, P previous, Esc close. Official decisions are made in Rounds.</p>
+  : <p className="mt-3 text-xs text-muted-foreground">Press Esc to close this applicant review.</p>;
 }
