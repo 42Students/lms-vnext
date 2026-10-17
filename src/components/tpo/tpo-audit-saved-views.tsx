@@ -30,7 +30,7 @@ export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters
  }
  function save(){
   const title=name.trim();if(!title||title.length>50){setMessage("Name must be 1–50 characters.");return;}
-  const existing=views.find(v=>v.name===title);
+  const existing=views.find(v=>v.name.toLocaleLowerCase("en-IN")===title.toLocaleLowerCase("en-IN"));
   if(views.length>=12&&!existing){setMessage("Maximum 12 saved audit views.");return;}
   if(persist([...views.filter(v=>v.name!==title),{...filters,from:filters.from??"",to:filters.to??"",who:filters.who??"",
    name:title,pinned:existing?.pinned??false,usedAt:Date.now()}])){setSelected(title);setName("");setMessage("Audit view saved in this browser.");}
@@ -53,7 +53,7 @@ export function TpoAuditSavedViews({collegeId,filters}:{collegeId:string;filters
  }
  function rename(){
   const title=name.trim();if(!selected||!title||title.length>50)return;
-  if(views.some(v=>v.name===title&&v.name!==selected)){setMessage("That name already exists.");return;}
+  if(views.some(v=>v.name.toLocaleLowerCase("en-IN")===title.toLocaleLowerCase("en-IN")&&v.name!==selected)){setMessage("That name already exists.");return;}
   if(persist(views.map(v=>v.name===selected?{...v,name:title}:v))){setSelected(title);setName("");}
  }
  return <details className="rounded-xl border border-border bg-surface p-4">
