@@ -50,7 +50,8 @@ export default async function TpoUnplacedReportPage({
     collegeId:context.membership.collegeId,...(batchId?{batchId}:{}),...(branchId?{branchId}:{}),
     page:1,pageSize:100,
   },{includeExportRows:true}):null;
-  const rowsById=new Map(intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]);
+  const permittedBranch=!branchId||(intelligence?.branches??[]).some(item=>item.branchId===branchId);
+  const rowsById=new Map(permittedBranch?intelligence?.exportRows?.map(row=>[row.membershipId,row])??[]:[]);
   const unplaced=workspace.details.unplaced.filter(learner=>rowsById.has(learner.membershipId));
   const branches=[...new Map((intelligence?.branches??[]).map(row=>[row.branchId,row.branchName]))];
   const exportParams=new URLSearchParams({
@@ -65,7 +66,7 @@ export default async function TpoUnplacedReportPage({
         eyebrow="TPO · Reports"
         title="Unplaced students"
         description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
+        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-10 items-center rounded border border-border px-4 text-sm font-semibold text-primary-text">Download filtered CSV</a>:null}
       />
 
       <ReportNavigation workspace={workspace} />
@@ -86,6 +87,7 @@ export default async function TpoUnplacedReportPage({
         className="inline-flex min-h-10 items-center text-primary-text underline">Act on them on Students</Link>
       </form>
       {!permittedBatch?<p role="alert">The selected batch does not belong to this college.</p>:null}
+      {!permittedBranch?<p role="alert">The selected branch does not belong to this college or batch. <Link href="/tpo/reports/unplaced" className="text-primary-text underline">Clear filters</Link></p>:null}
       <p className="text-xs text-muted-foreground">Applications count is all recorded activity across the current roster; academic marks and resume verification require authoritative evidence and are shown as unavailable when not stored.</p>
       <ReportFilters workspace={workspace} path="/tpo/reports/unplaced" />
 
