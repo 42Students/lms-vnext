@@ -66,6 +66,10 @@ export function TpoStudentsSpreadsheet({rows,branches,programs,classes,afterColl
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+  {key:"profileStatus",urlKey:"profileStatus",label:"Profile verified",options:[
+   {value:"VERIFIED",label:"Verified"},{value:"WAITING",label:"Waiting to verify"},
+   {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
+  ]},
  ];
  return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
   onKeyDown={event=>{
