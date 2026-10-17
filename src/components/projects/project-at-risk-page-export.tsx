@@ -22,7 +22,8 @@ export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:s
   const url=URL.createObjectURL(blob);
   const anchor=document.createElement("a");
   anchor.href=url;anchor.download="at-risk-projects-college-"+collegeId+"-"+new Date().toISOString().slice(0,10)+".csv";
-  document.body.appendChild(anchor);anchor.click();anchor.remove();URL.revokeObjectURL(url);
+  document.body.appendChild(anchor);anchor.click();anchor.remove();
+  window.setTimeout(()=>URL.revokeObjectURL(url),0);
  }
  return <Button variant="secondary" size="sm" onClick={save} disabled={!rows.length}>
   Export this page
