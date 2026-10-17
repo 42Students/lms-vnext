@@ -15,6 +15,7 @@ import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 import { parseTrackerIssuesPageParams } from "@/modules/bug-tracker/issues-query-model";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+export const metadata={title:"Issues · 42 Tracker"};
 export default async function TrackerIssuesPage({
   searchParams,
 }: {
@@ -66,6 +67,7 @@ export default async function TrackerIssuesPage({
   if (current.severity) next.set("severity", current.severity);
   if (current.environment) next.set("environment", current.environment);
   if (current.q) next.set("q", current.q);
+  if (current.reporter) next.set("reporter", current.reporter);
   next.set("sort", current.sort);
   if (page.nextCursor) {
     next.set("beforeCreatedAt", page.nextCursor.beforeCreatedAt.toISOString());
@@ -87,7 +89,11 @@ export default async function TrackerIssuesPage({
       <form className="grid gap-3 rounded-xl border border-border bg-surface p-5 sm:grid-cols-2 xl:grid-cols-5">
         <label className="text-xs font-semibold text-body">
           Search
-          <input className={inputClass} name="q" defaultValue={current.q ?? ""} placeholder="ID, reporter, page, description" />
+          <input className={inputClass} name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
+        </label>
+        <label className="text-xs font-semibold text-body">
+          Reporter
+          <input className={inputClass} name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
         </label>
         <label className="text-xs font-semibold text-body">
           Status
@@ -113,8 +119,8 @@ export default async function TrackerIssuesPage({
         <label className="text-xs font-semibold text-body">
           Sort
           <select className={inputClass} name="sort" defaultValue={current.sort}>
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
           </select>
         </label>
         <div className="flex items-end gap-2 sm:col-span-2 xl:col-span-5">
@@ -129,7 +135,7 @@ export default async function TrackerIssuesPage({
 
       {page.items.length === 0 ? (
         <div className="rounded-xl border border-border bg-surface p-8 text-center">
-          <p className="m-0 font-semibold text-foreground">No issues match these filters.</p>
+          <p className="m-0 font-semibold text-foreground">No matching issues.</p>
         </div>
       ) : (
         <div className="grid gap-3">
@@ -138,8 +144,8 @@ export default async function TrackerIssuesPage({
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div className="min-w-0">
                   <div className="flex flex-wrap gap-2">
-                    <StatusBadge>{issue.status}</StatusBadge>
-                    <StatusBadge>{issue.severity}</StatusBadge>
+                    <StatusBadge>{issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
+                    <StatusBadge>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
                     <StatusBadge>{issue.environment}</StatusBadge>
                   </div>
                   <h2 className="mt-3 text-base font-semibold text-foreground">
@@ -149,7 +155,7 @@ export default async function TrackerIssuesPage({
                   </h2>
                   <p className="mt-1 line-clamp-2 text-sm text-body">{issue.description}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
-                    {issue.reporterName} · {issue.accountRole} · {issue.page} · {issue.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
+                    {issue.reporterName} · {issue.accountRole} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")} · {issue.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
                   </p>
                 </div>
                 <Link

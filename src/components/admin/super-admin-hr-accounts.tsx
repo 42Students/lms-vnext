@@ -426,13 +426,13 @@ export function SuperAdminHrAccounts({
     if(!account.accountManageable||pending||account.status==="DISABLED")return;
     const next=account.status==="ACTIVE"?"ARCHIVED":"ACTIVE";
     const question=next==="ARCHIVED"
-      ? "Archive "+hrDisplayName(account)+"? Their college access will be revoked."
+      ? "Suspend "+hrDisplayName(account)+"? Their college access will be revoked."
       : "Reactivate "+hrDisplayName(account)+"? College access is not automatically restored.";
     if(!window.confirm(question))return;
     setPending(true);setActionError(null);
     try{
       await requestJson("/api/admin/hr/"+encodeURIComponent(account.userId),"PATCH",{status:next});
-      showToast({tone:"success",title:next==="ARCHIVED"?"Recruiter archived":"Recruiter reactivated"});
+      showToast({tone:"success",title:next==="ARCHIVED"?"Recruiter suspended":"Recruiter reactivated"});
       router.refresh();
     }catch(error){showToast({tone:"error",title:"Recruiter status update failed",description:errorText(error)});}
     finally{setPending(false);}
@@ -585,7 +585,7 @@ export function SuperAdminHrAccounts({
         <StatusBadge
           tone={hrStatusTone(account.status)}
         >
-          {account.status}
+          {account.status==="ARCHIVED"?"Suspended":account.status}
         </StatusBadge>
       ),
     },
@@ -612,7 +612,7 @@ export function SuperAdminHrAccounts({
             Edit
           </Button>
           {account.status!=="DISABLED"?<Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
-            onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+            onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
           <Button size="sm" variant="secondary" disabled={pending||!account.accountManageable}
             onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
         </div>
@@ -635,8 +635,8 @@ export function SuperAdminHrAccounts({
   return (
     <div className="space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
-        title="Recruiter Accounts"
+        eyebrow="Industry access"
+        title="Recruiter account lifecycle"
         description="Manage employer recruiters, their college access and signed-in devices. Results follow the current platform or selected tenant safety scope."
         actions={
           <Button onClick={openCreate}>
@@ -646,9 +646,9 @@ export function SuperAdminHrAccounts({
       />
 
       <p role="status" className="rounded-lg border border-border bg-surface p-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
-      <h2 className="text-base font-semibold">Recruiter account lifecycle</h2>
+      <h2 className="text-base font-semibold">Recruiter accounts</h2>
       <dl className="grid grid-cols-2 gap-3 md:grid-cols-4">{([
-        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended / archived",statusSummary.archived],["Disabled",statusSummary.disabled],
+        ["Accounts",statusSummary.accounts],["Active",statusSummary.active],["Suspended",statusSummary.archived],["Disabled",statusSummary.disabled],
       ] as const).map(([label,value])=><div key={label} className="rounded-xl border border-border bg-surface p-4"><dt className="text-sm text-muted-foreground">{label}</dt><dd className="mt-2 text-2xl font-semibold tabular-nums">{value}</dd></div>)}</dl>
       <form
         key={[
@@ -667,7 +667,7 @@ export function SuperAdminHrAccounts({
             type="search"
             defaultValue={filters.q}
             maxLength={120}
-            placeholder="Name, mobile, email or company"
+            placeholder="Name, mobile or email"
           />
         </label>
 
@@ -679,7 +679,7 @@ export function SuperAdminHrAccounts({
           >
             <option value="">All statuses</option>
             <option value="ACTIVE">Active</option>
-            <option value="ARCHIVED">Archived</option>
+            <option value="ARCHIVED">Suspended</option>
             <option value="DISABLED">Disabled</option>
           </Select>
         </label>
@@ -766,7 +766,7 @@ export function SuperAdminHrAccounts({
                         <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
                         <p className="mt-1 break-all text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
                       </div>
-                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status}</StatusBadge>
+                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status==="ARCHIVED"?"Suspended":account.status}</StatusBadge>
                     </div>
                     <dl className="mt-3 grid min-w-0 gap-2 text-sm">
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
@@ -778,7 +778,7 @@ export function SuperAdminHrAccounts({
            title={!account.accountManageable?"Active grants exist outside the selected administrative scope":undefined}
            onClick={() => openEdit(account)}>Edit</Button>
                       {account.status!=="DISABLED"?<Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
-                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Archive":"Reactivate"}</Button>:null}
+                        onClick={()=>void quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
                       <Button variant="secondary" size="sm" disabled={pending||!account.accountManageable}
                         onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
                     </div>

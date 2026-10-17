@@ -26,6 +26,7 @@ export const trackerAdminListSchema = z.object({
   productionVerified: z.boolean().optional(),
   environment: z.enum(BUG_ENVIRONMENTS).optional(),
   q: z.string().trim().min(1).max(200).optional(),
+  reporter: z.string().trim().min(1).max(100).optional(),
   issueType: z.string().trim().min(1).max(80).optional(),
   createdFrom: z.date().optional(),
   createdBefore: z.date().optional(),

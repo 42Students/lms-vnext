@@ -1,6 +1,8 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {apiFetch} from "@/lib/api-fetch";
+import {friendlyApiError} from "@/lib/friendly-error";
 type Preview={job:{title:string;status:string};canArchive:boolean;applications:number;
  rounds:number;offers:Record<string,number>;note:string};
 export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
@@ -12,10 +14,10 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
  const url="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/archive";
  async function load(){
   setBusy(true);setError("");
-  try{const r=await fetch(url,{cache:"no-store"});const body=await r.json().catch(()=>null);
-   if(!r.ok||!body?.job)throw Error(body?.error??"Impact preview unavailable");
-   setPreview(body as Preview);setAwaitingConfirmation(false);
-  }catch(e){setError(e instanceof Error?e.message:"Impact preview unavailable");}
+  try{const body=await apiFetch<Preview>(url,{cache:"no-store"});
+   if(!body?.job)throw Error("Impact preview unavailable");
+   setPreview(body);setAwaitingConfirmation(false);
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setBusy(false);}
  }
  async function archive(){
@@ -23,12 +25,10 @@ export function CollegeDriveArchiveAction({jobId}:{jobId:string}){
   if(!awaitingConfirmation)return;
   setBusy(true);setError("");
   try{
-   const r=await fetch(url,{method:"POST",headers:{"content-type":"application/json"},
+   await apiFetch(url,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({confirmed:true})});
-   const body=await r.json().catch(()=>null);
-   if(!r.ok)throw Error(body?.error??"Could not archive drive");
    router.push("/college/placements/drives?status=ARCHIVED");router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Could not archive drive");}
+  }catch(e){setError(e instanceof Error?e.message:friendlyApiError({}));}
   finally{setBusy(false);}
  }
  return <div className="space-y-3 rounded-xl border border-border bg-surface p-4">
