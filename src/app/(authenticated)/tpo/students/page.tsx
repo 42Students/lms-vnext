@@ -957,7 +957,9 @@ export default async function TpoStudentsPage({
           }))??undefined:undefined}/>
 
         {manageAllowed?<TpoStudentsDriveVisibility
-          learners={roster.items.map(student=>({id:student.membershipId,name:student.displayName}))}
+          learners={(roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
+           id:student.membershipId,name:student.displayName,
+          }))}
           drives={managedJobs.filter(item=>["DRAFT","PUBLISHED"].includes(item.job.status)).map(item=>({
            id:item.job.id,name:item.company.name+" · "+item.job.title,status:item.job.status,
           }))}/>:null}

@@ -22,32 +22,19 @@ export class TpoDriveRequestDecisionError extends Error {
   }
 }
 const inr = (value:string) => value ? Number(value) : null;
-/** Approving creates a real DRAFT, never publishes implicitly. All writes are atomic. */
-export async function decideTpoRecruiterDriveRequest(
-  context:RequestContext, rawRequestId:unknown, raw:unknown,
-) {
-  const collegeId=await requireTpoJobCollege(context);
-  const requestId=tpoDriveRequestDecisionSchema.shape.requestId.parse(rawRequestId);
-  const input=tpoDriveRequestDecisionSchema.parse({...(raw as object),requestId});
-  return getDb().transaction(async tx=>{
-    await requireTpoJobActor(tx,context);
-    const [request]=await tx.select().from(placementRecruiterDriveRequests)
-      .where(and(eq(placementRecruiterDriveRequests.id,requestId),
-        eq(placementRecruiterDriveRequests.collegeId,collegeId)))
-      .for("update").limit(1);
-    if(!request)throw new TpoDriveRequestDecisionError("REQUEST_NOT_FOUND");
-    if(request.status!==input.expectedStatus)
-      throw new TpoDriveRequestDecisionError("REQUEST_STALE");
-    if(request.approvedJobId||!["REQUEST","SENT_BACK"].includes(request.status))
-      throw new TpoDriveRequestDecisionError("REQUEST_ALREADY_DECIDED");
-    const now=new Date();
-    let approvedJobId:string|null=null;
-    if(input.action==="APPROVE_LATER"){
-      const draft=hrDriveDraftSchema.parse(request.draft);
+type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+/** Shared atomic conversion of one authorized recruiter REQUEST to a real DRAFT.
+ * Called from verified policy auto-approval and from the TPO review decision.
+ * Never publishes or grants rights to an unverified account.
+ */
+export async function createDraftFromRecruiterRequest(
+ tx:Tx, collegeId:string, relationshipId:string, draftRaw:unknown, createdByUserId:string,
+):Promise<string>{
+      const draft=hrDriveDraftSchema.parse(draftRaw);
       const [relation]=await tx.select({id:placementCompanyRelationships.id})
         .from(placementCompanyRelationships)
         .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
-        .where(and(eq(placementCompanyRelationships.id,request.companyRelationshipId),
+        .where(and(eq(placementCompanyRelationships.id,relationshipId),
           eq(placementCompanyRelationships.collegeId,collegeId),
           eq(placementCompanyRelationships.status,"ACTIVE"),
           eq(placementCompanies.status,"ACTIVE")))
@@ -71,7 +58,7 @@ export async function decideTpoRecruiterDriveRequest(
         throw new TpoDriveRequestDecisionError("EXTERNAL_APPLICATION_URL_REQUIRED");
       const [job]=await tx.insert(placementJobs).values({
         collegeId,seasonId:seasons[0].id,
-        companyRelationshipId:request.companyRelationshipId,
+        companyRelationshipId:relationshipId,
         title:draft.title,description:draft.description,
         employmentType:draft.employmentType,workMode,
         locations:[draft.location],
@@ -83,12 +70,12 @@ export async function decideTpoRecruiterDriveRequest(
         minimumAnnualCtcInr:inr(draft.minimumAnnualCtcInr)??legacyAnnualCtc,
         maximumAnnualCtcInr:inr(draft.maximumAnnualCtcInr) ??
           (!draft.minimumAnnualCtcInr?legacyAnnualCtc:null),
-        createdByUserId:context.user.id,
+        createdByUserId:createdByUserId,
         status:"DRAFT",applicationMode:draft.driveMode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL",
         externalApplicationUrl:draft.driveMode==="OFF_CAMPUS"?draft.externalApplicationUrl:null,
       }).returning({id:placementJobs.id});
       if(!job)throw new TpoDriveRequestDecisionError("REQUEST_STALE");
-      approvedJobId=job.id;
+      return job.id;
       await tx.insert(placementJobRoleOptions).values({
         jobId:job.id,title:draft.title,
         employmentType:draft.employmentType,workMode,
@@ -103,13 +90,38 @@ export async function decideTpoRecruiterDriveRequest(
       });
       await tx.insert(placementJobRounds).values(draft.rounds.map((round,index)=>({
         jobId:job.id,sequence:index+1,
-        kind:round.kind,name:round.name,createdByUserId:context.user.id,
+        kind:round.kind,name:round.name,createdByUserId:createdByUserId,
       })));
       await tx.insert(placementJobEligibilityPolicies).values({
-        jobId:job.id,updatedByUserId:context.user.id,
+        jobId:job.id,updatedByUserId:createdByUserId,
         minCgpaHundredths:draft.minimumCgpa?Math.round(Number(draft.minimumCgpa)*100):null,
         maxActiveBacklogs:inr(draft.maximumActiveBacklogs),
       });
+}
+
+/** Approving creates a real DRAFT, never publishes implicitly. All writes are atomic. */
+export async function decideTpoRecruiterDriveRequest(
+  context:RequestContext, rawRequestId:unknown, raw:unknown,
+) {
+  const collegeId=await requireTpoJobCollege(context);
+  const requestId=tpoDriveRequestDecisionSchema.shape.requestId.parse(rawRequestId);
+  const input=tpoDriveRequestDecisionSchema.parse({...(raw as object),requestId});
+  return getDb().transaction(async tx=>{
+    await requireTpoJobActor(tx,context);
+    const [request]=await tx.select().from(placementRecruiterDriveRequests)
+      .where(and(eq(placementRecruiterDriveRequests.id,requestId),
+        eq(placementRecruiterDriveRequests.collegeId,collegeId)))
+      .for("update").limit(1);
+    if(!request)throw new TpoDriveRequestDecisionError("REQUEST_NOT_FOUND");
+    if(request.status!==input.expectedStatus)
+      throw new TpoDriveRequestDecisionError("REQUEST_STALE");
+    if(request.approvedJobId||!["REQUEST","SENT_BACK"].includes(request.status))
+      throw new TpoDriveRequestDecisionError("REQUEST_ALREADY_DECIDED");
+    const now=new Date();
+    let approvedJobId:string|null=null;
+    if(input.action==="APPROVE_LATER"){
+      approvedJobId=await createDraftFromRecruiterRequest(tx,collegeId,
+        request.companyRelationshipId,request.draft,context.user.id);
     }
     const status=input.action==="APPROVE_LATER"?"DRAFT":
       input.action==="DECLINE"?"REJECTED":"SENT_BACK";
