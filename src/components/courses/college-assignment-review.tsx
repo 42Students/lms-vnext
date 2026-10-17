@@ -74,7 +74,7 @@ export function CollegeAssignmentReview({
  return <div className="space-y-2">
   {options.length>1?<label className="grid gap-1 text-xs font-semibold text-body">
    Section
-   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);}}
+   <select value={selected.deliveryId} disabled={bulkBusy} onChange={event=>{setDeliveryId(event.target.value);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);}}
     className="min-h-10 rounded-md border border-border bg-surface px-2 text-sm text-foreground">
     {options.map(item=><option key={item.deliveryId} value={item.deliveryId}>
      {item.sectionName} ({item.sectionCode})
@@ -93,9 +93,9 @@ export function CollegeAssignmentReview({
   {bulkBusy?<p role="status" className="text-xs text-muted-foreground">Publishing graded submissions for this Section. {progress} Do not close this page.</p>:null}
   {bulkStatus?<p role="status" className="text-xs text-muted-foreground">{bulkStatus}</p>:null}
   {retryAllowed&&status==="PUBLISHED"?<button type="button" disabled={bulkBusy}
-   onClick={()=>void publishAllGrades(selected.deliveryId)}
+   onClick={()=>void publishAllGrades(selected.deliveryId,failedIds.length?failedIds:null)}
    className="min-h-10 rounded border border-border px-3 text-xs font-semibold text-primary-text">
-   Retry failed
+   {failedIds.length?"Retry "+failedIds.length+" failed":"Retry failed"}
   </button>:null}
  </div>;
 }
