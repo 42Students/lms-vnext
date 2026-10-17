@@ -145,7 +145,7 @@ export async function readCloudLogErrorPage(input: {
     resourceNames: ["projects/" + input.project],
     filter: buildCloudErrorFilter(input.start, input.end, input.namespace),
     orderBy: "timestamp asc",
-    pageSize: 100,
+    pageSize: 12,
     ...(input.pageToken ? { pageToken: input.pageToken } : {}),
   };
   const response = await boundedFetch(
@@ -156,9 +156,12 @@ export async function readCloudLogErrorPage(input: {
     }, body: JSON.stringify(body) },
     input.transport ?? fetch,
   );
+  if (response.status === 400 && input.pageToken) {
+    throw new Error("LOG_PROVIDER_CURSOR_EXPIRED");
+  }
   if (!response.ok) throw new Error("LOG_PROVIDER_UNAVAILABLE");
   const raw = asObject(await readCloudProviderJsonLimited(response));
-  const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 100) : [];
+  const entries = Array.isArray(raw.entries) ? raw.entries.slice(0, 12) : [];
   const errors = entries.map(parseCloudErrorEntry).filter((item): item is CloudErrorRecord => item !== null);
   const nextPageToken = optionalText(raw.nextPageToken);
   if (nextPageToken && nextPageToken.length > 1024) throw new Error("LOG_PROVIDER_INVALID_RESPONSE");

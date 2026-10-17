@@ -176,6 +176,29 @@ export function cloudPollSettings(env: NodeJS.ProcessEnv = process.env):
  * A delivery failure stops before advancing the cursor, so the same log
  * can be retried. Process a bounded batch to keep the lease under 3 minutes.
  */
+export function cloudPollWindow(
+  state: {
+    pollCursorAt: Date | null; pollPageToken: string | null;
+    pollWindowStartAt: Date | null; pollWindowEndAt: Date | null;
+  } | undefined,
+  now: Date,
+): { start: Date; end: Date; pageToken?: string } | null {
+  if (state?.pollPageToken && state.pollWindowStartAt && state.pollWindowEndAt) {
+    return { start: state.pollWindowStartAt, end: state.pollWindowEndAt, pageToken: state.pollPageToken };
+  }
+  const end = new Date(now.getTime() - 60_000);
+  const checkpoint = state?.pollCursorAt ?? new Date(now.getTime() - 600_000);
+  // Replay a small overlap; provider event/request hashes suppress duplicates
+  // while catching identical timestamps and delayed ingestion.
+  const start = new Date(checkpoint.getTime() - (state?.pollCursorAt ? 120_000 : 0));
+  return end > start ? { start, end } : null;
+}
+
+/**
+ * A checkpoint names a complete provider page, not merely its last timestamp.
+ * The cloud list API may return >12 events at the same instant, so advancing
+ * just a timestamp after processing a partial page loses events permanently.
+ */
 export async function pollCloudLoggingErrors(now = new Date()): Promise<number> {
   const settings = cloudPollSettings();
   if (!settings || !logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return 0;
@@ -186,39 +209,52 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
     await db.insert(states).values({ stateKey }).onConflictDoNothing();
     const [state] = await db.select().from(states)
       .where(eq(states.stateKey, stateKey)).limit(1);
-    const end = new Date(now.getTime() - 60_000);
-    const start = state?.pollCursorAt ?? new Date(now.getTime() - 10 * 60_000);
-    if (end <= start) return;
+    const window = cloudPollWindow(state, now);
+    if (!window) return;
     const token = await cloudLoggingAccessToken();
-    let nextPageToken: string | undefined;
-    let limit = 12;
-    let finished = false;
-    for (let page = 0; page < 3 && limit > 0; page++) {
-      const result = await readCloudLogErrorPage({
-        project: settings.project, namespace: settings.namespace,
-        start, end, token, ...(nextPageToken ? { pageToken: nextPageToken } : {}),
-      });
+    let nextPageToken = window.pageToken;
+    // At most two pages of 12, protecting the CronJob HTTP time limit.
+    for (let page = 0; page < 2; page++) {
+      let result: Awaited<ReturnType<typeof readCloudLogErrorPage>>;
+      try {
+        result = await readCloudLogErrorPage({
+          project: settings.project, namespace: settings.namespace,
+          start: window.start, end: window.end, token,
+          ...(nextPageToken ? { pageToken: nextPageToken } : {}),
+        });
+      } catch (error) {
+        if (error instanceof Error && error.message === "LOG_PROVIDER_CURSOR_EXPIRED") {
+          // Replay from the durable completed-window watermark, safely deduped.
+          await db.update(states).set({
+            pollPageToken: null, pollWindowStartAt: null, pollWindowEndAt: null,
+          }).where(eq(states.stateKey, stateKey));
+          return;
+        }
+        throw error;
+      }
       for (const record of result.errors) {
-        if (limit <= 0) break;
-        if (record.timestamp <= start || record.timestamp > end) continue;
+        if (record.timestamp <= window.start || record.timestamp > window.end) continue;
         const success = await reportErrorForAlert({
           event: record.event, error: record.message, path: record.path,
           requestId: record.requestId, component: record.component,
           sourceEventId: record.id,
         });
-        if (!success) return; // Must be eligible for the next poll.
-        await db.update(states).set({ pollCursorAt: record.timestamp })
-          .where(eq(states.stateKey, stateKey));
+        if (!success) return; // This page is replayed on next tick, not skipped.
         handled++;
-        limit--;
+      }
+      if (!result.nextPageToken) {
+        await db.update(states).set({
+          pollCursorAt: window.end, pollPageToken: null,
+          pollWindowStartAt: null, pollWindowEndAt: null,
+        }).where(eq(states.stateKey, stateKey));
+        break;
       }
       nextPageToken = result.nextPageToken;
-      if (!nextPageToken) { finished = true; break; }
-    }
-    if (finished && limit > 0) {
-      // The result set was exhausted; advance over a quiet window.
-      await db.update(states).set({ pollCursorAt: end })
-        .where(eq(states.stateKey, stateKey));
+      // The entire page has been acknowledged; store exact continuation.
+      await db.update(states).set({
+        pollPageToken: nextPageToken,
+        pollWindowStartAt: window.start, pollWindowEndAt: window.end,
+      }).where(eq(states.stateKey, stateKey));
     }
   });
   cloudPollFailureLogged = false;

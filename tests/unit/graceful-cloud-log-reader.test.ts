@@ -63,6 +63,14 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     await expect(readCloudProviderJsonLimited(new Response("not-json")))
       .rejects.toThrow("LOG_PROVIDER_INVALID_RESPONSE");
   });
+  it("GR-118 treats an expired Cloud Logging page token as a safe retry signal", async () => {
+    await expect(readCloudLogErrorPage({
+      project: "lms-vnext-1234", namespace: "lms-dev-2026",
+      start: new Date("2099-04-01T00:00:00Z"), end: new Date("2099-04-01T00:02:00Z"),
+      token: "synthetic", pageToken: "expired",
+      transport: (async () => new Response("bad page", { status: 400 })) as typeof fetch,
+    })).rejects.toThrow("LOG_PROVIDER_CURSOR_EXPIRED");
+  });
   it("GR-125 uses metadata ADC without leaking the access token on failures", async () => {
     const access = await cloudLoggingAccessToken(vi.fn(async () =>
       new Response(JSON.stringify({ access_token: "synthetic-access-value" }), { status: 200 })) as typeof fetch);
@@ -70,7 +78,7 @@ describe("GR-114 GR-118 Cloud Logging fallback", () => {
     const transport = vi.fn(async (_url: string, init?: RequestInit) => {
       expect(new Headers(init?.headers).get("authorization")).toBe("Bearer synthetic-access-value");
       const body = JSON.parse(String(init?.body)) as { pageSize: number; filter: string };
-      expect(body.pageSize).toBe(100);
+      expect(body.pageSize).toBe(12);
       expect(body.filter).toContain("severity>=ERROR");
       return Response.json({
         entries: [{

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { burstOverflowText, cloudPollSettings, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
+import { burstOverflowText, cloudPollSettings, cloudPollWindow, formatDailyDigest, healthWatchStatus, istDayAndHour } from "@/modules/log-alerts/scheduler";
 import { isValidTickSecret } from "@/app/api/internal/alerts/tick/route";
 
 describe("scheduled Telegram alerts", () => {
@@ -21,6 +21,21 @@ describe("scheduled Telegram alerts", () => {
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("13 more");
     expect(burstOverflowText(13, "DEVELOPMENT")).toContain("Logs page");
     expect(burstOverflowText(Number.NaN, "PRODUCTION")).toContain("0 more");
+  });
+  it("GR-118 resumes the exact provider page and timestamp window after a bounded tick", () => {
+    const now = new Date("2099-07-01T03:30:00Z");
+    const start = new Date("2099-06-30T20:00:00Z");
+    const end = new Date("2099-07-01T03:00:00Z");
+    expect(cloudPollWindow({
+      pollCursorAt: new Date("2099-06-30T19:00:00Z"),
+      pollPageToken: "safe-next-page", pollWindowStartAt: start, pollWindowEndAt: end,
+    }, now)).toEqual({ start, end, pageToken: "safe-next-page" });
+    const fresh = cloudPollWindow({
+      pollCursorAt: new Date("2099-07-01T03:00:00Z"),
+      pollPageToken: null, pollWindowStartAt: null, pollWindowEndAt: null,
+    }, now);
+    expect(fresh?.start.toISOString()).toBe("2099-07-01T02:58:00.000Z");
+    expect(fresh?.end.toISOString()).toBe("2099-07-01T03:29:00.000Z");
   });
   it("GR-118 requires explicit Cloud Logging enablement and namespace in production", () => {
     expect(cloudPollSettings({ APP_ENV: "production", GOOGLE_CLOUD_PROJECT: "lms-vnext-1234" } as unknown as NodeJS.ProcessEnv)).toBeNull();
