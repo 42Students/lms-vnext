@@ -7,6 +7,7 @@ import {hasActiveRecruiter,type RequestContext} from "@/modules/identity/context
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {isExactRecruiterEmployerRow} from "./recruiter-own-company-policy";
 import {HR_DRIVE_PAGE_SIZE,type RecruiterDriveListQuery} from "./recruiter-drive-list-model";
+import type {listOwnRecruiterPlacementJobs} from "./recruiter-service";
 
 /** REC-home-drives-R08: page and filter the authorized job set in PostgreSQL. */
 export async function searchOwnRecruiterDrives(
@@ -56,7 +57,7 @@ export async function searchOwnRecruiterDrives(
  const closed=Number(counts.find(row=>row.status==="CLOSED")?.count??0);
  const totals={all:live+closed,live,closed,waiting:0};
  if(query.view==="WAITING")return {
-  rows:[] as Awaited<ReturnType<ReturnType<typeof base>>>,
+  rows:[] as Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>,
   total:0,page:1,pages:0,pageSize:HR_DRIVE_PAGE_SIZE,totals,
  };
 
