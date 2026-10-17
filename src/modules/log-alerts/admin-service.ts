@@ -55,6 +55,7 @@ export async function listKnownErrorsForAdmin(context: RequestContext, raw: unkn
       statusNote: db10LogAlertSignatures.statusNote,
       mutedReason: db10LogAlertSignatures.mutedReason,
       issuePublicId: db10LogAlertSignatures.issuePublicId,
+      acknowledgedAt: db10LogAlertSignatures.acknowledgedAt,
     })
     .from(db10LogAlertSignatures)
     .where(eq(db10LogAlertSignatures.environment, input.environment))
@@ -96,6 +97,13 @@ export async function mutateKnownErrorForAdmin(
       .limit(1)
       .for("update");
     if (!current) throw new LogAlertsAdminError("KNOWN_ERROR_NOT_FOUND");
+    if (mutation.action === "ACKNOWLEDGE") {
+      const [ack] = await tx.update(db10LogAlertSignatures)
+        .set({ acknowledgedAt: new Date() })
+        .where(eq(db10LogAlertSignatures.id, id))
+        .returning({ id: db10LogAlertSignatures.id, acknowledgedAt: db10LogAlertSignatures.acknowledgedAt });
+      return ack;
+    }
     const patch = knownErrorTriagePatch({
       fixStatus: current.fixStatus as "OPEN" | "FIXED" | "EXPECTED",
       muted: current.muted,

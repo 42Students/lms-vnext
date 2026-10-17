@@ -1,3 +1,5 @@
+import { randomUUID } from "node:crypto";
+import { reportErrorForAlert } from "@/modules/log-alerts/reporter";
 export type LogSeverity =
   | "DEBUG"
   | "INFO"
@@ -80,8 +82,15 @@ export function logError(
   error: unknown,
   fields: Record<string, unknown> = {},
 ) {
-  writeStructuredLog("ERROR", event, {
-    ...fields,
-    ...createErrorLogFields(error),
-  });
+  const requestId = typeof fields.requestId === "string" ? fields.requestId : randomUUID();
+  writeStructuredLog("ERROR", event, { ...fields, requestId, ...createErrorLogFields(error) });
+  void reportErrorForAlert({
+    event, error, requestId,
+    component: typeof fields.component === "string" ? fields.component : undefined,
+    path: typeof fields.path === "string" ? fields.path :
+      typeof fields.route === "string" ? fields.route : undefined,
+    status: typeof fields.status === "number" ? fields.status : undefined,
+    userId: typeof fields.userId === "string" ? fields.userId : undefined,
+    collegeId: typeof fields.collegeId === "string" ? fields.collegeId : undefined,
+  }).catch(() => undefined);
 }
