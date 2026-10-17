@@ -59,6 +59,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
     Create one-time links only, then share them directly. This will not send any email. Retrying failed rows leaves previously created links unchanged.
    </p>
    <p className="text-sm">{eligible.length} eligible · {rows.length-eligible.length} left out</p>
+   <p className="text-xs text-muted-foreground">{eligible.filter(row=>Boolean(row.inviteSentAt)).length} eligible recruiters have an earlier invite. Issuing a new link invalidates their previous link.</p>
    <ul className="max-h-40 space-y-1 overflow-auto text-sm">
     {rows.map(row=><li key={row.id}>{row.name} · {bulkInviteDisposition(row)??"Ready"}</li>)}
    </ul>
