@@ -25,6 +25,8 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
    return NextResponse.json({error:"NOT_FOUND"},{status:404});
   if(error instanceof Error&&error.message==="TEAM_PARTICIPANT_INACTIVE")
    return NextResponse.json({error:"TEAM_PARTICIPANT_INACTIVE"},{status:409});
+  if(error instanceof Error&&error.message==="TEAM_IDEMPOTENCY_CONFLICT")
+   return NextResponse.json({error:"STALE_MESSAGE"},{status:409});
   if(error instanceof Error&&error.message==="TEAM_TABLES_PENDING")
    return NextResponse.json({error:"TEAM_TABLES_PENDING"},{status:503});
   throw error;
