@@ -168,3 +168,13 @@ Remaining queue entries are OPEN until the behavior described in the legacy audi
 | MEN-projects-meetings-25 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
 | MEN-projects-meetings-28 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
 | MEN-projects-meetings-29 | SOURCE / MODEL VERIFIED; CI pending | `tests/unit/chat7-round3-mentor-detail.test.ts` — gap-named regression for authored details, mentor review link, member visibility, ceremony wording or schedule validation. |
+
+## Chat-7 round 3 — release, board and task safeguards
+
+| Gap ID | Review | Gap-named evidence |
+|---|---|---|
+| MEN-projects-meetings-33 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-33 release roadmap and shipping readiness`. |
+| MEN-projects-meetings-38 | SOURCE VERIFIED; CI pending | `src/components/projects/project-workspace.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-38 mentor-visible release/sprint vocabulary and empty state`. |
+| MEN-projects-meetings-41 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-lane-board.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-41 board task evidence includes owner blocker estimate and due`. |
+| MEN-projects-meetings-46 | SOURCE VERIFIED; CI pending | `src/components/projects/mentor-task-delete-control.tsx`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-46 task deletion prompts and requires a version token`. |
+| MEN-projects-meetings-49 | SOURCE VERIFIED; CI pending | `src/modules/projects/project-notification-service.ts`; `tests/unit/chat7-round3-mentor-execution.test.ts` — `MEN-projects-meetings-49 project-scoped member notifications`. |
