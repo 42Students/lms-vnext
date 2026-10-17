@@ -37,12 +37,16 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
   window.history.replaceState(null,"",window.location.pathname+"?"+query.toString());
  }
  const bySprint=new Map(sprints.map(item=>[item.id,item]));
- const visible=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
+ const currentSprint=sprints.find(item=>item.status==="ACTIVE");
+ const matching=tasks.filter(task=>(!sprint||task.sprintId===sprint)&&
    (!release||(task.sprintId?bySprint.get(task.sprintId)?.releaseId:null)===release)&&
+   (Boolean(sprint||release)||scope==="all"||task.sprintId===null||
+     (Boolean(currentSprint)&&task.sprintId===currentSprint?.id))&&
    (!priority||task.priority===priority)&&
    (!assignee||(assignee==="UNASSIGNED"?task.assigneeMembershipId===null:
      task.assigneeMembershipId===assignee))&&
    (!statusFilter||task.status===statusFilter));
+ const visible=matching.slice(0,visibleLimit);
  const lanes=groupLearnerBoardLanes(visible,sprints);
  async function move(id:string,status:string){
   const task=tasks.find(item=>item.id===id),sp=task?.sprintId?bySprint.get(task.sprintId):null;
