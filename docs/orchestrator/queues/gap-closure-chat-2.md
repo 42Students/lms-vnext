@@ -49,9 +49,9 @@ Audit: `docs/audit/pages/tpo/inbox-team.md` (and `inbox-team-review.md` if prese
 | TPO-inbox-team-29 | S3 | SIDE-EFFECT | OPEN |
 | TPO-inbox-team-30 | S3 | STATE | OPEN |
 | TPO-inbox-team-32 | S3 | MISSING-FILTER | FIXED-ON-MAIN |
-| TPO-inbox-team-34 | S3 | MISSING-ACTION | OPEN |
+| TPO-inbox-team-34 | S3 | MISSING-ACTION | IN-BRANCH |
 | TPO-inbox-team-37 | S3 | COPY | OPEN |
-| TPO-inbox-team-38 | S3 | PERMISSION | OPEN |
+| TPO-inbox-team-38 | S3 | PERMISSION | IN-BRANCH |
 | TPO-inbox-team-40 | S3 | COPY | IN-BRANCH |
 | TPO-inbox-team-49 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-inbox-team-50 | S3 | MISSING-MODAL | FIXED-ON-MAIN |
@@ -181,7 +181,7 @@ Audit: `docs/audit/pages/tpo/companies.md` (and `companies-review.md` if present
 | TPO-companies-17 | S2 | MISSING-COLUMN | FIXED-ON-MAIN |
 | TPO-companies-19 | S2 | STATE | IN-BRANCH |
 | TPO-companies-25 | S2 | STATE | UNCONFIRMED |
-| TPO-companies-03 | S3 | COPY | OPEN |
+| TPO-companies-03 | S3 | COPY | IN-BRANCH |
 | TPO-companies-07 | S3 | MISSING-FIELD | FIXED-ON-MAIN |
 | TPO-companies-09 | S3 | COPY | IN-BRANCH |
 | TPO-companies-18 | S3 | MISSING-EXPORT | FIXED-ON-MAIN |
@@ -270,3 +270,11 @@ Audit: `docs/audit/pages/tpo/campaigns-public.md` (and `campaigns-public-review.
 - Recruiter: -12 guarded Discard / Keep writing DONE, -16 permission-aware access copy PARTIAL, -48 no-college address help DONE, -R03 misleading notification footer DONE; profile-edit mobile, comprehensive inbox and provider email relay remain OPEN.
 - TPO campaigns/public: -09 batch invalid UUID 404 DONE, -10 history copy PARTIAL, -16 and -R09 nonenumerating unsubscribes and inline retry DONE, -24 and -30 public invitation retry copy DONE, -35 unpublished 404 DONE, -36 legacy heading partial; -R01 stored optional phone, -R03 ALREADY_JOINED and -R07 company subdomains verified DONE outside this queue; -R02 field-level errors partial.
 - Shared caveats: storage/proxy/provider deployment checks remain required; never advertise delivery success without receipts. No numbered migrations added or scripts/auth/security/shell edited. Unit tests were added/updated but NOT RUN by this builder; orchestrator must run typecheck, lint, unit and disposable PostgreSQL before production.
+
+## Chat-2 verified-closure follow-up — October 17
+
+- Main was a strict descendant of this lane branch (562 commits ahead), so `chatgpt/chat-2-b` was fast-forwarded to main before this round; all later commits are on `chatgpt/chat-2-b` only.
+- Respect `docs/orchestrator/queues/reassignments.md`: recruiter/calendar-messages-profile OPEN gaps now belong to chat-14, so this lane does not edit them.
+- Tests in `docs/orchestrator/unit-failures-r1.md` rechecked on code: public join "One more step", exact Retry, recruiter edit Save, Teams filtered counts and bell slice, company-name capitalization, and guarded read action. Corrected code or stale source assertions without deleting test cases.
+- Source-closed with regression coverage: TPO-inbox-team-34, TPO-inbox-team-38, TPO-companies-03; source-verified TPO-companies-22, TPO-campaigns-public-24/30, TPO-recruiters-38; partial/OPEN: TPO-inbox-team-18/22/29/54/60, TPO-companies-20, TPO-recruiters-40, TPO-campaigns-public-R06. See the four acceptance documents for precise tests and evidence.
+- Remaining hard gaps include multiperson/object threads, mentions, announcement recipient delivery/receipts, college team handover, bell event producers, and company experience consolidation. Nothing marked DONE is claimed runtime-certified; CI and PostgreSQL were not run.
