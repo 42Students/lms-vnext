@@ -311,3 +311,7 @@ The existing queue blocker TPO-inbox-team-08 remains provider-credential depende
 ## Round 6 — ask away warning
 
 | TPO-inbox-team-34 | PARTIAL — OPEN | Scoped away-until is now checked when composing an ask to the other private-conversation participant. A legacy-format first-name warning appears without silently preventing an ask; the named **TPO-inbox-team-34** test in `tests/unit/tpo-team-away-chat2.test.ts` verifies the UI and source. Ask-to-self and multi-member asks remain. |
+
+## Round 6 — decisions on send
+
+| TPO-inbox-team-23 | DONE (source; tests not run) | `TpoTeamReplyComposer` allows **Mark as decision** before sending. The same scoped message transaction stores the decision event and checks that idempotency retries use the same decision flag, with pinned strip and per-message toggle already available. New **TPO-inbox-team-23** test in `tests/unit/tpo-team-decision-chat2.test.ts`. PostgreSQL acceptance pending orchestrator. |
