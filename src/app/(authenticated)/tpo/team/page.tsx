@@ -79,6 +79,7 @@ export default async function TpoTeamPage({searchParams}:{
   </section>:<section className="rounded-xl border border-border bg-surface p-5">
     <h2 className="font-semibold text-foreground">Internal conversations</h2>
     <div className="mt-3"><TpoTeamSearch value={search}/></div>
+    {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the first 100 conversations currently loaded.</p>:null}
     {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex flex-wrap gap-2">
      {(["ALL","FOLLOWING","UNREAD","TOPICS"] as const).map(key=><Link key={key}
       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
