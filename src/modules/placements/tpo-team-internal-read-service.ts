@@ -34,7 +34,12 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   }).from(tpoInternalThreads)
    .where(and(eq(tpoInternalThreads.collegeId,college.id),
     or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
-       eq(tpoInternalThreads.invitedMembershipId,membership.id))))
+       eq(tpoInternalThreads.invitedMembershipId,membership.id)),
+    q?or(sql`position(lower(${q}) in lower(${tpoInternalThreads.topic}))>0`,
+      sql`exists(select 1 from placement_tpo_internal_messages m
+        where m.thread_id=${tpoInternalThreads.id}
+        and m.college_id=${college.id}::uuid
+        and position(lower(${q}) in lower(m.body))>0)`) : undefined))
    .orderBy(desc(tpoInternalThreads.createdAt),desc(tpoInternalThreads.id)).limit(50);
   const unread = await tx.select({
    href:inAppNotifications.actionHref,
