@@ -5,7 +5,7 @@ import {
   db10BugReports,
   db10BugTrackerAccess,
 } from "@/db/schema/db10-bug-tracker";
-import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { type RequestContext } from "@/modules/identity/context";
 import { TrackerAdminError } from "./admin-errors";
 import { trackerReportSchema } from "./report-input-model";
 
@@ -16,7 +16,7 @@ import { trackerReportSchema } from "./report-input-model";
  * issued token/session, so it cannot grant someone access to tracker reports.
  */
 export async function createBugTrackerIssueForAdmin(context: RequestContext, rawInput: unknown) {
-  if (!isSuperAdmin(context)) throw new TrackerAdminError("FORBIDDEN");
+  if(context.user.platformStatus!=="ACTIVE")throw new TrackerAdminError("FORBIDDEN");
   const input = trackerReportSchema.parse(rawInput);
   const publicId = "LMS-" + randomBytes(8).readBigUInt64BE().toString().padStart(4, "0");
   const db = getDb();
@@ -31,6 +31,7 @@ export async function createBugTrackerIssueForAdmin(context: RequestContext, raw
     const [report] = await tx.insert(db10BugReports).values({
       publicId,
       reporterAccessId: reporter.id,
+      reporterUserId: context.user.id,
       collegeId: context.adminScope?.collegeId ?? null,
       reporterName: input.reporterName,
       accountRole: input.accountRole,
