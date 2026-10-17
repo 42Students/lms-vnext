@@ -466,6 +466,10 @@ export function AdminCourseOverview({
           </select>
          </label>
          <button type="submit" className="min-h-10 rounded bg-primary px-4 text-sm font-semibold text-on-primary">Filter</button>
+         <a href={collegeCourseCatalogueExportHref(catalogueQuery)} download
+          className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text">
+          Export CSV
+         </a>
          <Link className="inline-flex min-h-10 items-center rounded border border-border px-3 text-sm" href="/college/courses">Clear</Link>
         </form>:null}
         {catalogue&&catalogue.total===0?<p role="status" className="text-sm text-muted-foreground">
